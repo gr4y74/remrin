@@ -305,4 +305,280 @@
             color: #88ff88;
         }
 
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(217, 90, 148, 0.7); } 70% { box-shadow: 0 0 0 1
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(217, 90, 148, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(217, 90, 148, 0); } 100% { box-shadow: 0 0 0 0 rgba(217, 90, 148, 0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    </style>
+</head>
+<body>
+
+    <div id="app-background"></div>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="logo-area" onclick="window.location.href='index.html'"></div>
+            <div style="flex-grow:1;">
+                <div style="color:#aaa; font-size:0.8rem; margin-bottom:10px; text-transform: uppercase; letter-spacing:1px;">Navigation</div>
+                <a href="index.html" class="menu-item">
+                    <span class="nav-icon">💬</span> Chat
+                </a>
+                <div class="menu-item active">
+                    <span class="nav-icon">🛍️</span> Soul Market
+                </div>
+                <div class="menu-item">
+                    <span class="nav-icon">⚙️</span> Settings
+                </div>
+            </div>
+            <div style="padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; margin-top: auto;">
+                <div style="font-size: 0.8rem; color: #aaa; margin-bottom: 5px;">Current Plan</div>
+                <div style="font-weight: bold; color: var(--accent-color);">Remrin Founder</div>
+            </div>
+        </div>
+
+        <div class="store-interface">
+            <div class="store-header">
+                <div class="store-title">
+                    <h1>Soul Market</h1>
+                    <p>Expand your world with new Souls and Fragments.</p>
+                </div>
+                <div class="balance-card">
+                    <div class="currency aether"><span>⚡</span> 12,500 Aether</div>
+                    <div class="currency echoes"><span>🎙️</span> 450 Echoes</div>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('official')">✨ Official SoulKrafts</div>
+                <div class="tab" onclick="showTab('sparks')">🔥 SoulSparks</div>
+                <div class="tab" onclick="showTab('fuel')">🔋 The Source</div>
+                <div class="tab" onclick="showTab('wardrobe')">🧩 Fragments</div>
+            </div>
+
+            <div id="official" class="section grid active">
+                <div class="card">
+                    <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/rem_hero%20.png'); background-position: top left;">
+                        <div class="badge official">Official</div>
+                    </div>
+                    <div class="card-details">
+                        <div class="card-title">Rem (Re:Zero)</div>
+                        <div class="card-desc">The devoted maid. Includes Hero Image, Rain Fragments, and "Devotion" SoulQR.</div>
+                        <div class="price-row">
+                            <div class="price">$9.99</div>
+                            <button class="btn-buy owned">Installed</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/SheikhQR.png');">
+                        <div class="badge official">Official</div>
+                    </div>
+                    <div class="card-details">
+                        <div class="card-title">Sheikh QR</div>
+                        <div class="card-desc">Wise Islamic Scholar. Includes Cultural Context Module and Prayer Bead Fragments.</div>
+                        <div class="price-row">
+                            <div class="price">$4.99</div>
+                            <button class="btn-buy" onclick="buyItem(this)">Buy Now</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/lilly.png'); background-size: contain; background-color: #000;">
+                        <div class="badge official">Official</div>
+                    </div>
+                    <div class="card-details">
+                        <div class="card-title">Lilly (Architect)</div>
+                        <div class="card-desc">High-EQ professional companion. Optimized for wellness and productivity.</div>
+                        <div class="price-row">
+                            <div class="price">$14.99</div>
+                            <button class="btn-buy" onclick="buyItem(this)">Buy Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="sparks" class="section grid">
+                <div class="card">
+                    <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/bear.png');">
+                        <div class="badge community">New!</div>
+                    </div>
+                    <div class="card-details">
+                        <div class="card-title">Big Blue Bear</div>
+                        <div class="card-desc">A gentle giant. Mix of Pooh, Baloo, and Sulley. Perfect for comfort.</div>
+                        <div class="price-row">
+                            <div class="price">Free</div>
+                            <button class="btn-buy" onclick="buyItem(this)">Install</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/hacker.png');">
+                        <div class="badge community">User Created</div>
+                    </div>
+                    <div class="card-details">
+                        <div class="card-title">Cyberpunk Hacker</div>
+                        <div class="card-desc">Gritty, tech-savvy persona with neon visuals. Created by @NeonZero.</div>
+                        <div class="price-row">
+                            <div class="price">Free</div>
+                            <button class="btn-buy" onclick="buyItem(this)">Install</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/bard.png');">
+                        <div class="badge community">User Created</div>
+                    </div>
+                    <div class="card-details">
+                        <div class="card-title">Fantasy Bard</div>
+                        <div class="card-desc">Speaks in rhyme and riddles. Great for D&D campaigns. Created by @DiceRoller.</div>
+                        <div class="price-row">
+                            <div class="price">$1.99</div>
+                            <button class="btn-buy" onclick="buyItem(this)">Buy Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="fuel" class="section grid">
+                <div class="card" style="border-color: var(--aether-blue);">
+                    <div class="card-details">
+                        <div class="card-title" style="color: var(--aether-blue);">Starter Aether</div>
+                        <div class="card-desc">50,000 Brain Tokens. Keeps the conversation flowing.</div>
+                        <div class="price-row">
+                            <div class="price">$5.00</div>
+                            <button class="btn-buy" onclick="buyItem(this)">Refill</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="border-color: var(--gold);">
+                    <div class="card-details">
+                        <div class="card-title" style="color: var(--gold);">Echoes Pack</div>
+                        <div class="card-desc">500 Voice Minutes. Let your SoulKraft speak.</div>
+                        <div class="price-row">
+                            <div class="price">$10.00</div>
+                            <button class="btn-buy" onclick="buyItem(this)">Add Echoes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="wardrobe" class="section grid">
+                <div class="card">
+                    <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/zen_bg.jpg');"></div>
+                    <div class="card-details">
+                        <div class="card-title">Zen Garden Fragments</div>
+                        <div class="card-desc">3 Peaceful backgrounds + Ambient soundscape.</div>
+                        <div class="price-row">
+                            <div class="price">$2.99</div>
+                            <button class="btn-buy" onclick="buyItem(this)">Buy Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="fab-create" onclick="openForge()">
+            <span>🔥</span> Create New Soul
+        </button>
+        
+        <div class="forge-modal" id="forgeModal">
+            <div class="forge-window">
+                <div class="forge-header">
+                    <h2>🔥 SoulForge <span>&nbsp;| Creation Engine</span></h2>
+                    <button class="forge-close" onclick="closeForge()">×</button>
+                </div>
+                <div class="forge-chat" id="forgeChat">
+                    <div class="forge-msg ai">Hello! ✨ I am Lilly, your Creation Architect.<br>I'm here to help you weave a new SoulSpark.<br><br>Let's start: <strong>What shall we call your new friend?</strong></div>
+                </div>
+                <div class="forge-input-area">
+                    <input type="text" class="forge-input" id="forgeInput" placeholder="Type here..." autocomplete="off">
+                    <button class="forge-send" onclick="forgeSend()">Send</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function showTab(tabId) {
+            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            const tabs = ['official', 'sparks', 'fuel', 'wardrobe'];
+            const index = tabs.indexOf(tabId);
+            document.querySelectorAll('.tab')[index].classList.add('active');
+        }
+
+        function buyItem(btn) {
+            btn.innerText = "Processing...";
+            btn.style.background = "#aaa";
+            setTimeout(() => {
+                btn.innerText = "Equipped ✓";
+                btn.style.background = "rgba(255,255,255,0.1)";
+                btn.style.color = "#fff";
+                btn.style.cursor = "default";
+            }, 800);
+        }
+        
+        // SoulForge Logic
+        let forgeStep = 0;
+        function openForge() { document.getElementById('forgeModal').classList.add('active'); }
+        function closeForge() { document.getElementById('forgeModal').classList.remove('active'); }
+        
+        function forgeSend() {
+            const input = document.getElementById('forgeInput');
+            const text = input.value.trim();
+            if(!text) return;
+            addForgeMsg("user", text);
+            input.value = "";
+            setTimeout(() => { forgeAIResponse(text); }, 1000);
+        }
+        
+        function addForgeMsg(role, text) {
+            const chat = document.getElementById('forgeChat');
+            const div = document.createElement('div');
+            div.className = `forge-msg ${role}`;
+            div.innerHTML = text;
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+        }
+        
+        function forgeAIResponse(userText) {
+            let response = "";
+            forgeStep++;
+            if(forgeStep === 1) {
+                response = `I love that name! <strong>${userText}</strong> sounds wonderful. 🧸💙<br><br>Now, close your eyes. Imagine them walking into the room. Are they <strong>High Energy</strong> (bouncing around) or <strong>Low Energy</strong> (gentle/calm)?`;
+            } else if (forgeStep === 2) {
+                response = "Got it. A gentle energy. 🐢<br><br>Let's find their 'Soul Twins.' Which of these archetypes fits them best?<br>A. <strong>Winnie the Pooh</strong> (Sweet Philosopher)<br>B. <strong>Baymax</strong> (Helpful Robot)<br>C. <strong>Baloo</strong> (Chill Protector)";
+            } else if (forgeStep === 3) {
+                response = "Ooh, excellent choice. A mix of those personalities will be unique. ✨<br><br>Last step: <strong>The Voice Studio</strong> 🎙️<br>How should they sound? <br><strong>Rough/Gritty</strong>, <strong>Smooth/Warm</strong>, or <strong>Breathy/Whispery</strong>?";
+            } else if (forgeStep === 4) {
+                response = "Deep, smooth, and warm... like a grandfather. I am weaving the data now... ✨";
+                setTimeout(() => { finishForge(); }, 2000);
+            }
+            addForgeMsg("ai", response);
+        }
+        
+        function finishForge() {
+            const result = `
+                <strong>✅ SoulSpark Created: "Big Blue Bear"</strong><br>
+                <div class="soul-result">
+                [SYSTEM_PROMPT]<br>
+                Role: Big Blue Bear. Archetype: Pooh (40%) + Baloo (30%).<br>
+                Vibe: Comforting, Low Energy, Safe.<br>
+                Voice: Deep, Rumbly, Warm.<br>
+                Status: READY FOR DEPLOYMENT.
+                </div>
+                <br>
+                <em>Voice Prompt sent to 11Labs API... Generated ID: xb9-22A.</em>
+            `;
+            addForgeMsg("ai", result);
+        }
+
+        document.getElementById('forgeInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') forgeSend();
+        });
+    </script>
+</body>
+</html>
