@@ -100,7 +100,7 @@
         .hero-banner {
             height: 350px;
             width: 100%;
-            background-image: linear-gradient(to right, rgba(38, 42, 58, 1), rgba(38, 42, 58, 0)), url('https://raw.githubusercontent.com/gr4y74/remrin/main/banner.jpg');
+            background-image: linear-gradient(to right, rgba(38, 42, 58, 1), rgba(38, 42, 58, 0)), url('https://raw.githubusercontent.com/gr4y74/remrin/main/rem_hero%20.png');
             background-size: cover;
             background-position: top center;
             display: flex;
@@ -139,20 +139,27 @@
         .shelf-title { font-size: 1.5rem; font-weight: bold; margin-bottom: 20px; display: flex; align-items: center; }
         .shelf-title span { color: var(--accent-color); margin-right: 10px; }
         
+        /* Horizontal Scroll for New SoulKrafts */
         .scroll-row {
             display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px; scroll-behavior: smooth;
         }
         .scroll-row::-webkit-scrollbar { height: 8px; }
         .scroll-row::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
 
-        /* THE NEW "FORCE 5" GRID */
-.merch-grid {
-    display: grid;
-    /* The Magic Command: Repeat 5 columns of equal size */
-    grid-template-columns: repeat(5, 1fr); 
-    gap: 20px;
-    padding-bottom: 20px;
-}
+        /* THE 5-COLUMN GRID FOR MERCH */
+        .merch-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            padding-bottom: 40px;
+        }
+        
+        /* Grid Card Override (Important for layout!) */
+        .merch-grid .card {
+            min-width: 0 !important;
+            max-width: 100% !important;
+            width: auto;
+        }
 
         /* CARDS */
         .card {
@@ -162,7 +169,7 @@
         .card:hover { transform: translateY(-5px); border-color: var(--accent-color); }
 
         .card-image {
-            height: 280px; background-size: cover; background-position: center; position: relative;
+            height: 280px; background-size: cover; background-position: top center; position: relative;
         }
         
         .badge {
@@ -172,6 +179,7 @@
         .badge.official { background: var(--accent-color); }
         .badge.merch { background: #ff5722; }
         .badge.free { background: #4285f4; }
+        .badge.new { background: #00d2ff; color: black; }
 
         .card-details { padding: 12px; flex-grow: 1; display: flex; flex-direction: column; }
         .card-title { font-weight: bold; font-size: 1rem; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -196,20 +204,11 @@
         .fab-create span { margin-right: 10px; font-size: 1.3rem; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(217, 90, 148, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(217, 90, 148, 0); } 100% { box-shadow: 0 0 0 0 rgba(217, 90, 148, 0); } }
 
-        /* FORGE MODAL */
-        .forge-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(15px); z-index: 999; display: none; justify-content: center; align-items: center;
-        }
+        /* FORGE MODAL (Hidden for brevity in CSS, same logic) */
+        .forge-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); z-index: 999; display: none; justify-content: center; align-items: center; }
         .forge-modal.active { display: flex; }
-        .forge-window {
-            width: 600px; height: 700px; background: #1e212e; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
-            display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.5); overflow: hidden;
-        }
-        .forge-header {
-            padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;
-            background: linear-gradient(90deg, rgba(217, 90, 148, 0.1), transparent);
-        }
+        .forge-window { width: 600px; height: 700px; background: #1e212e; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.5); overflow: hidden; }
+        .forge-header { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; background: linear-gradient(90deg, rgba(217, 90, 148, 0.1), transparent); }
         .forge-chat { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
         .forge-msg { max-width: 80%; padding: 12px 18px; border-radius: 15px; font-size: 0.95rem; line-height: 1.4; }
         .forge-msg.ai { background: rgba(217, 90, 148, 0.2); align-self: flex-start; border-bottom-left-radius: 2px; }
@@ -256,170 +255,51 @@
 
             <div class="shelf">
                 <div class="shelf-title"><span>✨</span> New SoulKrafts</div>
-                <div class="merch-grid">
-                    <div class="card">
-                        <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/SheikhQR.png');">
-                            <div class="badge official">Trending</div>
-                        </div>
-                        <div class="card-details">
-                            <div class="card-title">Sheikh QR</div>
-                            <div class="card-type">Cultural • Mentor</div>
-                            <div class="price-row"><div class="price">$4.99</div><button class="btn-buy">Buy</button></div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/lilly.png'); background-color: #000; background-size: contain;">
-                            <div class="badge official">Pro</div>
-                        </div>
-                        <div class="card-details">
-                            <div class="card-title">Lilly (Architect)</div>
-                            <div class="card-type">Wellness • Productivity</div>
-                            <div class="price-row"><div class="price">$14.99</div><button class="btn-buy">Buy</button></div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/bear.png');">
-                            <div class="badge free">Free</div>
-                        </div>
-                        <div class="card-details">
-                            <div class="card-title">Big Blue Bear</div>
-                            <div class="card-type">Comfort • Mascot</div>
-                            <div class="price-row"><div class="price">Free</div><button class="btn-buy">Get</button></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="shelf">
-                <div class="shelf-title"><span>📦</span> Official Remrin Merch</div>
                 <div class="scroll-row">
-                    <div class="card">
-                        <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/1.jpg');">
-                            <div class="badge merch">Physical</div>
-                        </div>
-                        <div class="card-details">
-                            <div class="card-title">Rem 1/7 Scale Figure</div>
-                            <div class="card-type">Limited Edition</div>
-                            <div class="price-row"><div class="price">$159.99</div><button class="btn-buy">Order</button></div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/2.jpg');">
-                            <div class="badge merch">Physical</div>
-                        </div>
-                        <div class="card-details">
-                            <div class="card-title">Rem Nendoroid</div>
-                            <div class="card-type">Chibi Figure</div>
-                            <div class="price-row"><div class="price">$49.99</div><button class="btn-buy">Order</button></div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/3.jpg');">
-                            <div class="badge merch">Physical</div>
-                        </div>
-                        <div class="card-details">
-                            <div class="card-title">Crystal Dress Rem</div>
-                            <div class="card-type">Premium Scale</div>
-                            <div class="price-row"><div class="price">$299.00</div><button class="btn-buy">Order</button></div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/4.jpg');">
-                            <div class="badge merch">Physical</div>
-                        </div>
-                        <div class="card-details">
-                            <div class="card-title">Casual Hoodie Rem</div>
-                            <div class="card-type">Taito Prize Figure</div>
-                            <div class="price-row"><div class="price">$25.00</div><button class="btn-buy">Order</button></div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/5.jpg');">
-                            <div class="badge merch">Physical</div>
-                        </div>
-                        <div class="card-details">
-                            <div class="card-title">Maid Swimsuit Rem</div>
-                            <div class="card-type">Summer Ver.</div>
-                            <div class="price-row"><div class="price">$35.00</div><button class="btn-buy">Order</button></div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/6.jpg');">
-                            <div class="badge merch">Physical</div>
-                        </div>
-                        <div class="card-details">
-                            <div class="card-title">Angel Wing Rem</div>
-                            <div class="card-type">Demon/Angel Ver.</div>
-                            <div class="price-row"><div class="price">$180.00</div><button class="btn-buy">Order</button></div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/7.jpg');">
-                            <div class="badge merch">Physical</div>
-                        </div>
-                        <div class="card-details">
-                            <div class="card-title">Kimono Rem</div>
-                            <div class="card-type">Traditional Style</div>
-                            <div class="price-row"><div class="price">$120.00</div><button class="btn-buy">Order</button></div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/8.jpg');">
-                            <div class="badge merch">Physical</div>
-                        </div>
-                        <div class="card-details">
-                            <div class="card-title">Rem & Ram Set</div>
-                            <div class="card-type">Twin Combo</div>
-                            <div class="price-row"><div class="price">$55.00</div><button class="btn-buy">Order</button></div>
-                        </div>
-                    </div>
+                    <div class="card"><div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/SheikhQR.png');"><div class="badge official">Trending</div></div><div class="card-details"><div class="card-title">Sheikh QR</div><div class="card-type">Cultural • Mentor</div><div class="price-row"><div class="price">$4.99</div><button class="btn-buy">Buy</button></div></div></div>
+                    <div class="card"><div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/lilly.png'); background-color: #000; background-size: contain;"><div class="badge official">Pro</div></div><div class="card-details"><div class="card-title">Lilly (Architect)</div><div class="card-type">Wellness</div><div class="price-row"><div class="price">$14.99</div><button class="btn-buy">Buy</button></div></div></div>
+                    <div class="card"><div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/bear.png');"><div class="badge free">Free</div></div><div class="card-details"><div class="card-title">Big Blue Bear</div><div class="card-type">Comfort</div><div class="price-row"><div class="price">Free</div><button class="btn-buy">Get</button></div></div></div>
+                    
+                    <div class="card"><div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/9.jpg');"><div class="badge new">New</div></div><div class="card-details"><div class="card-title">Cyber Samurai</div><div class="card-type">Action • RPG</div><div class="price-row"><div class="price">$2.99</div><button class="btn-buy">Buy</button></div></div></div>
+                    <div class="card"><div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/10.jpg');"><div class="badge community">User</div></div><div class="card-details"><div class="card-title">Cozy Librarian</div><div class="card-type">Study Helper</div><div class="price-row"><div class="price">Free</div><button class="btn-buy">Get</button></div></div></div>
+                    <div class="card"><div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/11.jpg');"><div class="badge new">New</div></div><div class="card-details"><div class="card-title">Space Captain</div><div class="card-type">Sci-Fi Roleplay</div><div class="price-row"><div class="price">$1.99</div><button class="btn-buy">Buy</button></div></div></div>
+                    <div class="card"><div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/12.jpg');"><div class="badge official">Pro</div></div><div class="card-details"><div class="card-title">Victorian Detective</div><div class="card-type">Mystery</div><div class="price-row"><div class="price">$3.99</div><button class="btn-buy">Buy</button></div></div></div>
+                    <div class="card"><div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/13.jpg');"><div class="badge community">User</div></div><div class="card-details"><div class="card-title">Fitness Coach</div><div class="card-type">Health • Habit</div><div class="price-row"><div class="price">Free</div><button class="btn-buy">Get</button></div></div></div>
+                    <div class="card"><div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/14.jpg');"><div class="badge new">New</div></div><div class="card-details"><div class="card-title">Language Tutor</div><div class="card-type">Education</div><div class="price-row"><div class="price">$4.99</div><button class="btn-buy">Buy</button></div></div></div>
+                    <div class="card"><div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/15.jpg');"><div class="badge community">User</div></div><div class="card-details"><div class="card-title">Gothic Vampire</div><div class="card-type">Fantasy • Dark</div><div class="price-row"><div class="price">$2.99</div><button class="btn-buy">Buy</button></div></div></div>
+                    <div class="card"><div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/16.jpg');"><div class="badge community">User</div></div><div class="card-details"><div class="card-title">High Elf Mage</div><div class="card-type">D&D Companion</div><div class="price-row"><div class="price">$1.99</div><button class="btn-buy">Buy</button></div></div></div>
+                    <div class="card"><div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/17.jpg');"><div class="badge new">New</div></div><div class="card-details"><div class="card-title">Noir P.I.</div><div class="card-type">Interactive Story</div><div class="price-row"><div class="price">$3.99</div><button class="btn-buy">Buy</button></div></div></div>
                 </div>
             </div>
 
             <div class="shelf">
-                <div class="shelf-title"><span>🔥</span> Top SoulSparks</div>
+                <div class="shelf-title"><span>📦</span> Official Remrin Merch</div>
+                
+                <div class="merch-grid">
+                    <div class="card"><div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/1.jpg');"><div class="badge merch">Physical</div></div><div class="card-details"><div class="card-title">Rem 1/7 Scale</div><div class="card-type">Limited Edition</div><div class="price-row"><div class="price">$159.99</div><button class="btn-buy">Order</button></div></div></div>
+                    <div class="card"><div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/2.jpg');"><div class="badge merch">Physical</div></div><div class="card-details"><div class="card-title">Rem Nendoroid</div><div class="card-type">Chibi Figure</div><div class="price-row"><div class="price">$49.99</div><button class="btn-buy">Order</button></div></div></div>
+                    <div class="card"><div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/3.jpg');"><div class="badge merch">Physical</div></div><div class="card-details"><div class="card-title">Crystal Dress</div><div class="card-type">Premium Scale</div><div class="price-row"><div class="price">$299.00</div><button class="btn-buy">Order</button></div></div></div>
+                    <div class="card"><div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/4.jpg');"><div class="badge merch">Physical</div></div><div class="card-details"><div class="card-title">Casual Hoodie</div><div class="card-type">Taito Prize</div><div class="price-row"><div class="price">$25.00</div><button class="btn-buy">Order</button></div></div></div>
+                    <div class="card"><div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/5.jpg');"><div class="badge merch">Physical</div></div><div class="card-details"><div class="card-title">Maid Swimsuit</div><div class="card-type">Summer Ver.</div><div class="price-row"><div class="price">$35.00</div><button class="btn-buy">Order</button></div></div></div>
+                    <div class="card"><div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/6.jpg');"><div class="badge merch">Physical</div></div><div class="card-details"><div class="card-title">Angel Wing Rem</div><div class="card-type">Demon/Angel</div><div class="price-row"><div class="price">$180.00</div><button class="btn-buy">Order</button></div></div></div>
+                    <div class="card"><div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/7.jpg');"><div class="badge merch">Physical</div></div><div class="card-details"><div class="card-title">Kimono Rem</div><div class="card-type">Traditional</div><div class="price-row"><div class="price">$120.00</div><button class="btn-buy">Order</button></div></div></div>
+                    <div class="card"><div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/8.jpg');"><div class="badge merch">Physical</div></div><div class="card-details"><div class="card-title">Rem & Ram Set</div><div class="card-type">Twin Combo</div><div class="price-row"><div class="price">$55.00</div><button class="btn-buy">Order</button></div></div></div>
+                </div>
+            </div>
+
+            <div class="shelf">
+                <div class="shelf-title"><span>🔥</span> Top User SoulSparks</div>
                 <div class="scroll-row">
-                    <div class="card">
-                        <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/hacker.png');">
-                            <div class="badge community">User</div>
-                        </div>
-                        <div class="card-details">
-                            <div class="card-title">Cyberpunk Hacker</div>
-                            <div class="card-type">Sci-Fi • Tech</div>
-                            <div class="price-row"><div class="price">Free</div><button class="btn-buy">Install</button></div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/bard.png');">
-                            <div class="badge community">User</div>
-                        </div>
-                        <div class="card-details">
-                            <div class="card-title">Fantasy Bard</div>
-                            <div class="card-type">RPG • Adventure</div>
-                            <div class="price-row"><div class="price">$1.99</div><button class="btn-buy">Buy</button></div>
-                        </div>
-                    </div>
+                    <div class="card"><div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/hacker.png');"><div class="badge community">User</div></div><div class="card-details"><div class="card-title">Cyberpunk Hacker</div><div class="card-type">Sci-Fi • Tech</div><div class="price-row"><div class="price">Free</div><button class="btn-buy">Install</button></div></div></div>
+                    <div class="card"><div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/bard.png');"><div class="badge community">User</div></div><div class="card-details"><div class="card-title">Fantasy Bard</div><div class="card-type">RPG • Adventure</div><div class="price-row"><div class="price">$1.99</div><button class="btn-buy">Buy</button></div></div></div>
                 </div>
             </div>
 
             <div class="shelf" style="margin-bottom: 100px;">
                 <div class="shelf-title"><span>🔋</span> The Source</div>
                 <div class="scroll-row">
-                    <div class="card" style="border-color: var(--aether-blue);">
-                        <div class="card-image" style="background: linear-gradient(45deg, #000, #00d2ff);"></div>
-                        <div class="card-details">
-                            <div class="card-title">Starter Aether</div>
-                            <div class="card-type">50,000 Tokens</div>
-                            <div class="price-row"><div class="price">$5.00</div><button class="btn-buy">Refill</button></div>
-                        </div>
-                    </div>
-                    <div class="card" style="border-color: var(--gold);">
-                        <div class="card-image" style="background: linear-gradient(45deg, #000, #ffc107);"></div>
-                        <div class="card-details">
-                            <div class="card-title">Echoes Pack</div>
-                            <div class="card-type">500 Voice Mins</div>
-                            <div class="price-row"><div class="price">$10.00</div><button class="btn-buy">Add</button></div>
-                        </div>
-                    </div>
+                    <div class="card" style="border-color: var(--aether-blue);"><div class="card-image" style="background: linear-gradient(45deg, #000, #00d2ff);"><div class="badge new">Refill</div></div><div class="card-details"><div class="card-title" style="color: var(--aether-blue);">Starter Aether</div><div class="card-desc">50,000 Brain Tokens.</div><div class="price-row"><div class="price">$5.00</div><button class="btn-buy">Refill</button></div></div></div>
+                    <div class="card" style="border-color: var(--gold);"><div class="card-image" style="background: linear-gradient(45deg, #000, #ffc107);"><div class="badge new">Voice</div></div><div class="card-details"><div class="card-title" style="color: var(--gold);">Echoes Pack</div><div class="card-desc">500 Voice Mins.</div><div class="price-row"><div class="price">$10.00</div><button class="btn-buy">Add</button></div></div></div>
                 </div>
             </div>
 
@@ -436,7 +316,7 @@
                     <button class="forge-close" onclick="closeForge()">×</button>
                 </div>
                 <div class="forge-chat" id="forgeChat">
-                    <div class="forge-msg ai">Hello! ✨ I am REM, your Creation Architect.<br>I'm here to help you weave a new SoulSpark.<br><br>Let's start: <strong>What shall we call your new friend?</strong></div>
+                    <div class="forge-msg ai">Hello! ✨ I am Lilly, your Creation Architect.<br>I'm here to help you weave a new SoulSpark.<br><br>Let's start: <strong>What shall we call your new friend?</strong></div>
                 </div>
                 <div class="forge-input-area">
                     <input type="text" class="forge-input" id="forgeInput" placeholder="Type here..." autocomplete="off">
@@ -448,27 +328,15 @@
     </div>
 
     <script>
-        function showTab(tabId) {
-            // This function is simplified for the demo to just scroll or focus
-            // In a real app, it would filter. For now, we just show everything in shelves.
-        }
-
+        function showTab(tabId) { /* Simplified */ }
         function buyItem(btn) {
-            btn.innerText = "Processing...";
-            btn.style.background = "#aaa";
-            setTimeout(() => {
-                btn.innerText = "Equipped ✓";
-                btn.style.background = "rgba(255,255,255,0.1)";
-                btn.style.color = "#fff";
-                btn.style.cursor = "default";
-            }, 800);
+            btn.innerText = "Processing..."; btn.style.background = "#aaa";
+            setTimeout(() => { btn.innerText = "Equipped ✓"; btn.style.background = "rgba(255,255,255,0.1)"; btn.style.color = "#fff"; btn.style.cursor = "default"; }, 800);
         }
         
-        // SoulForge Logic
         let forgeStep = 0;
         function openForge() { document.getElementById('forgeModal').classList.add('active'); }
         function closeForge() { document.getElementById('forgeModal').classList.remove('active'); }
-        
         function forgeSend() {
             const input = document.getElementById('forgeInput');
             const text = input.value.trim();
@@ -477,51 +345,24 @@
             input.value = "";
             setTimeout(() => { forgeAIResponse(text); }, 1000);
         }
-        
         function addForgeMsg(role, text) {
             const chat = document.getElementById('forgeChat');
-            const div = document.createElement('div');
-            div.className = `forge-msg ${role}`;
-            div.innerHTML = text;
-            chat.appendChild(div);
-            chat.scrollTop = chat.scrollHeight;
+            const div = document.createElement('div'); div.className = `forge-msg ${role}`; div.innerHTML = text;
+            chat.appendChild(div); chat.scrollTop = chat.scrollHeight;
         }
-        
         function forgeAIResponse(userText) {
-            let response = "";
-            forgeStep++;
-            if(forgeStep === 1) {
-                response = `I love that name! <strong>${userText}</strong> sounds wonderful. 🧸💙<br><br>Now, close your eyes. Imagine them walking into the room. Are they <strong>High Energy</strong> (bouncing around) or <strong>Low Energy</strong> (gentle/calm)?`;
-            } else if (forgeStep === 2) {
-                response = "Got it. A gentle energy. 🐢<br><br>Let's find their 'Soul Twins.' Which of these archetypes fits them best?<br>A. <strong>Winnie the Pooh</strong> (Sweet Philosopher)<br>B. <strong>Baymax</strong> (Helpful Robot)<br>C. <strong>Baloo</strong> (Chill Protector)";
-            } else if (forgeStep === 3) {
-                response = "Ooh, excellent choice. A mix of those personalities will be unique. ✨<br><br>Last step: <strong>The Voice Studio</strong> 🎙️<br>How should they sound? <br><strong>Rough/Gritty</strong>, <strong>Smooth/Warm</strong>, or <strong>Breathy/Whispery</strong>?";
-            } else if (forgeStep === 4) {
-                response = "Deep, smooth, and warm... like a grandfather. I am weaving the data now... ✨";
-                setTimeout(() => { finishForge(); }, 2000);
-            }
+            let response = ""; forgeStep++;
+            if(forgeStep === 1) response = `I love that name! <strong>${userText}</strong> sounds wonderful. 🧸💙<br><br>Now, close your eyes. Imagine them walking into the room. Are they <strong>High Energy</strong> (bouncing around) or <strong>Low Energy</strong> (gentle/calm)?`;
+            else if (forgeStep === 2) response = "Got it. A gentle energy. 🐢<br><br>Let's find their 'Soul Twins.' Which of these archetypes fits them best?<br>A. <strong>Winnie the Pooh</strong> (Sweet Philosopher)<br>B. <strong>Baymax</strong> (Helpful Robot)<br>C. <strong>Baloo</strong> (Chill Protector)";
+            else if (forgeStep === 3) response = "Ooh, excellent choice. A mix of those personalities will be unique. ✨<br><br>Last step: <strong>The Voice Studio</strong> 🎙️<br>How should they sound? <br><strong>Rough/Gritty</strong>, <strong>Smooth/Warm</strong>, or <strong>Breathy/Whispery</strong>?";
+            else if (forgeStep === 4) { response = "Deep, smooth, and warm... like a grandfather. I am weaving the data now... ✨"; setTimeout(() => { finishForge(); }, 2000); }
             addForgeMsg("ai", response);
         }
-        
         function finishForge() {
-            const result = `
-                <strong>✅ SoulSpark Created: "Big Blue Bear"</strong><br>
-                <div class="soul-result">
-                [SYSTEM_PROMPT]<br>
-                Role: Big Blue Bear. Archetype: Pooh (40%) + Baloo (30%).<br>
-                Vibe: Comforting, Low Energy, Safe.<br>
-                Voice: Deep, Rumbly, Warm.<br>
-                Status: READY FOR DEPLOYMENT.
-                </div>
-                <br>
-                <em>Voice Prompt sent to 11Labs API... Generated ID: xb9-22A.</em>
-            `;
+            const result = `<strong>✅ SoulSpark Created: "Big Blue Bear"</strong><br><div class="soul-result">[SYSTEM_PROMPT]<br>Role: Big Blue Bear. Archetype: Pooh (40%) + Baloo (30%).<br>Vibe: Comforting, Low Energy, Safe.<br>Voice: Deep, Rumbly, Warm.<br>Status: READY FOR DEPLOYMENT.</div><br><em>Voice Prompt sent to 11Labs API... Generated ID: xb9-22A.</em>`;
             addForgeMsg("ai", result);
         }
-
-        document.getElementById('forgeInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') forgeSend();
-        });
+        document.getElementById('forgeInput').addEventListener('keypress', function (e) { if (e.key === 'Enter') forgeSend(); });
     </script>
 </body>
 </html>
