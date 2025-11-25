@@ -7,7 +7,7 @@
     <link rel="icon" type="image/png" href="https://github.com/gr4y74/remrin/blob/main/favicon.png?raw=true">
     
     <style>
-        /* REMRIN "CINEMATIC DARK" THEME 🌑✨ */
+        /* --- REMRIN "VISUAL NOVEL" THEME 🌑✨ --- */
         :root {
             --bg-color: #262a3a;
             --sidebar-bg: #1f2230;
@@ -15,7 +15,7 @@
             --accent-blue: #236ce1;
             --accent-pink: #de5ba7;
             --user-msg-bg: rgba(35, 108, 225, 0.85);
-            --ai-msg-bg: rgba(20, 20, 30, 0.8);
+            --ai-msg-bg: rgba(30, 41, 59, 0.9); /* Darker for readability */
             --border-color: rgba(255,255,255,0.1);
         }
 
@@ -34,7 +34,7 @@
             border-right: 1px solid var(--border-color); 
             display: flex; 
             flex-direction: column; 
-            z-index: 20;
+            z-index: 50; /* High Z-Index to ensure clicks work */
             box-shadow: 5px 0 30px rgba(0,0,0,0.6);
             transition: margin-left 0.4s ease-in-out;
             position: relative;
@@ -42,23 +42,15 @@
         
         #sidebar.collapsed { margin-left: -320px; } 
 
-        /* MINIMAL CLOSE BUTTON (Pink Chevron) */
+        /* CHEVRON CLOSE BUTTON */
         #close-sidebar-btn {
             position: absolute; 
-            top: 15px; 
-            right: 15px; 
-            background: transparent;
-            color: var(--accent-pink);
+            top: 15px; right: 15px; 
+            background: transparent; color: var(--accent-pink);
             border: 1px solid rgba(222, 91, 167, 0.3);
-            width: 30px; height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.2rem;
-            line-height: 28px;
-            text-align: center;
-            padding: 0;
-            transition: 0.3s;
-            z-index: 50;
+            width: 30px; height: 30px; border-radius: 50%;
+            cursor: pointer; font-size: 1.2rem; line-height: 28px; text-align: center; padding: 0;
+            transition: 0.3s; z-index: 51;
         }
         #close-sidebar-btn:hover { background: var(--accent-pink); color: white; }
 
@@ -94,12 +86,13 @@
             z-index: 0;
         }
 
+        /* HERO STANDING IMAGE */
         #hero-standing {
             position: absolute; bottom: 0; left: 5%; height: 90vh; max-height: 900px; width: auto;
             z-index: 1; filter: drop-shadow(0 0 20px rgba(0,0,0,0.5)); pointer-events: none; 
         }
 
-        /* GLASS COLUMN */
+        /* GLASS COLUMN (Right Side Chat) */
         .chat-container {
             position: relative; z-index: 2; width: 45%; max-width: 600px;
             margin-left: auto; margin-right: 0; height: 100%;
@@ -109,17 +102,17 @@
             backdrop-filter: blur(4px);
         }
 
-        /* HAMBURGER MENU (Visible only when sidebar collapsed, or via JS toggle) */
+        /* HEADER & TOGGLE */
+        #chat-header { 
+            padding: 20px 30px; display: flex; align-items: center; 
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
         #open-sidebar-btn {
             background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; margin-right: 15px;
             opacity: 0.7; transition: 0.3s;
         }
         #open-sidebar-btn:hover { opacity: 1; color: var(--accent-blue); }
-
-        #chat-header { 
-            padding: 20px 30px; display: flex; align-items: center; 
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
 
         #current-hero-img { width: 50px; height: 50px; border-radius: 12px; object-fit: cover; border: 2px solid var(--accent-pink); margin-right: 15px; }
         
@@ -142,7 +135,6 @@
         /* BUTTONS */
         .sidebar-btn { width: 100%; padding: 12px; background: rgba(255,255,255,0.05); color: #aaa; border: 1px solid #333; border-radius: 8px; cursor: pointer; margin-top: 10px; text-align: left; padding-left: 20px; }
         .sidebar-btn:hover { background: rgba(255,255,255,0.1); color: white; }
-        
         .market-btn { margin-top: auto; background: linear-gradient(90deg, rgba(35, 108, 225, 0.2), rgba(222, 91, 167, 0.2)); border: 1px solid var(--accent-pink); color: white; font-weight: bold; }
         .market-btn:hover { box-shadow: 0 0 15px rgba(222, 91, 167, 0.4); }
 
@@ -209,18 +201,15 @@
         <button onclick="saveKeys()" style="width:100%; padding:10px; background:var(--accent-blue); color:white; border:none; border-radius:5px; cursor:pointer;">Save</button>
     </div>
 
-   <script>
-        // 1. CONFIGURATION & ROSTER
+    <script>
+        // 1. CONFIGURATION
         const repoUrl = "https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/";
         const rawSuffix = "?raw=true";
 
         const characters = [
-            // THE OG TRINITY (Custom paths)
             { id: 'rem', name: 'Rem', file: 'rem.json', hero_standing: 'https://github.com/gr4y74/remrin/blob/main/rem_hero%20.png?raw=true', bg: 'https://github.com/gr4y74/remrin/blob/main/rem_bw.jpg?raw=true', avatar: 'https://github.com/gr4y74/remrin/blob/main/rem_hero%20.png?raw=true' },
             { id: 'lilly', name: 'Lilly', file: 'lilly.json', hero_standing: 'https://github.com/gr4y74/remrin/blob/main/lilly.png?raw=true', bg: 'https://github.com/gr4y74/remrin/blob/main/zen_bg.jpg?raw=true', avatar: 'https://github.com/gr4y74/remrin/blob/main/lilly.png?raw=true' },
             { id: 'sheikh', name: 'SheikhQR', file: 'sheikh_qr.json', hero_standing: 'https://github.com/gr4y74/remrin/blob/main/SheikhQR.png?raw=true', bg: 'https://github.com/gr4y74/remrin/blob/main/bg2.jpg?raw=true', avatar: 'https://github.com/gr4y74/remrin/blob/main/SheikhQR.png?raw=true' },
-            
-            // THE NEW 11 (Standardized paths)
             { id: 'bear_bear', name: 'Bear Bear', file: 'bear_bear.json', bg: repoUrl + 'bear_bear_hero.jpg' + rawSuffix, avatar: repoUrl + 'bear_bear_hero.jpg' + rawSuffix },
             { id: 'don', name: 'Don Pooh-leone', file: 'don_pooh_leone.json', bg: repoUrl + 'don_pooh_leone_hero.jpg' + rawSuffix, avatar: repoUrl + 'don_pooh_leone_hero.jpg' + rawSuffix },
             { id: 'xen', name: 'Master Xen', file: 'xen.json', bg: repoUrl + 'master_xen_hero.jpg' + rawSuffix, avatar: repoUrl + 'master_xen_hero.jpg' + rawSuffix },
@@ -237,7 +226,7 @@
         let currentPersona = null;
         let isSidebarOpen = true;
 
-        // 2. HELPER FUNCTIONS (Must be defined before use)
+        // 2. HELPER FUNCTIONS (Defined FIRST)
         function addMessage(role, text, isLoading = false) {
             const div = document.createElement('div');
             div.className = `message ${role} ${isLoading ? 'loading-msg' : ''}`;
@@ -269,7 +258,6 @@
         async function speakText(text) {
             const key = localStorage.getItem('eleven_key');
             if (!key) { alert("Save ElevenLabs Key!"); return; }
-            // Default Voice ID (Rachel) - Ideally this should be in the JSON!
             const voiceId = "21m00Tcm4TlvDq8ikWAM"; 
             try {
                 const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
@@ -293,7 +281,7 @@
             alert("Keys Saved!");
         }
 
-        // 3. INIT & LOADING
+        // 3. INIT
         window.onload = () => {
             const list = document.getElementById('roster-list');
             characters.forEach(char => {
@@ -303,14 +291,42 @@
                 div.innerHTML = `<img src="${char.avatar}" class="avatar-small"><div class="char-info"><h4>${char.name}</h4></div>`;
                 list.appendChild(div);
             });
-            
             if(localStorage.getItem('gemini_key')) document.getElementById('gemini-key').value = localStorage.getItem('gemini_key');
             if(localStorage.getItem('eleven_key')) document.getElementById('eleven-key').value = localStorage.getItem('eleven_key');
-            
             if(window.innerWidth < 800) toggleSidebar();
         };
 
-// 4. MAIN BRAIN (Fixed: Targeting Latest Stable 1.5 Flash)
+        async function loadCharacter(char) {
+            document.querySelectorAll('.character-card').forEach(c => c.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            document.getElementById('char-name').innerText = char.name;
+            document.getElementById('current-hero-img').src = char.avatar;
+            document.getElementById('current-hero-img').style.display = 'block';
+            document.getElementById('messages').innerHTML = ''; 
+            document.getElementById('main-chat').style.backgroundImage = `url('${char.bg}')`;
+
+            const heroImg = document.getElementById('hero-standing');
+            if (char.hero_standing) {
+                heroImg.src = char.hero_standing;
+                heroImg.style.display = 'block';
+            } else {
+                heroImg.style.display = 'none';
+            }
+
+            try {
+                const response = await fetch(`content/characters/${char.file}`);
+                if(!response.ok) throw new Error("JSON not found");
+                const data = await response.json();
+                currentPersona = data;
+                document.getElementById('char-tagline').innerText = currentPersona.CORE_IDENTITY.Tagline;
+                setTimeout(() => {
+                   const opening = currentPersona.BEHAVIORAL_DIRECTIVES["1_OPENING_HOOK"] || "Hello!";
+                   addMessage('ai', opening); 
+                }, 500);
+            } catch (e) { addMessage('ai', 'Error loading Soul file: ' + e.message); }
+        }
+
+        // 4. API CONNECTION (Fixed: Gemini 1.5 Latest)
         async function sendMessage() {
             const input = document.getElementById('user-input');
             const text = input.value;
@@ -320,7 +336,7 @@
             input.value = '';
 
             const geminiKey = localStorage.getItem('gemini_key');
-            if (!geminiKey) { addMessage('ai', '⚠️ Set API Key in Settings.'); return; }
+            if (!geminiKey) { addMessage('ai', '⚠️ Please set your Gemini API Key in Settings.'); return; }
 
             addMessage('ai', '...', true); 
 
@@ -329,7 +345,6 @@
 
                 const systemPrompt = `Roleplay as ${currentPersona.CORE_IDENTITY.Name}. TONE: ${currentPersona.TONE_AND_VOICE_RULES.Speech_Pattern}. CONTEXT: ${JSON.stringify(currentPersona.CORE_IDENTITY)}`;
                 
-                // FIX: Using 'gemini-1.5-flash-latest' to ensure the API finds the correct model
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiKey}`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
