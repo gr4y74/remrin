@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remrin.ai | Where AI Finds Its Soul</title>
+    <style>
+        /* THE GHIBLI AESTHETIC - Warm, Soft, Natural */
+        :root {
+            --bg-color: #FDFBF7; /* Cream Paper */
+            --text-color: #2C3E50; /* Dark Blue-Grey */
+            --accent-green: #5D8A66; /* Totoro Forest Green */
+            --accent-gold: #D4AF37; /* Honey Gold */
+            --card-bg: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        /* HERO SECTION */
+        header {
+            text-align: center;
+            padding: 100px 20px;
+            background: linear-gradient(180deg, #FDFBF7 0%, #E8F6E9 100%);
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            color: var(--accent-green);
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .cta-button {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 15px 40px;
+            background-color: var(--accent-green);
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 15px rgba(93, 138, 102, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+            background-color: #4a6f51;
+        }
+
+        /* CHARACTER GRID */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 50px 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            color: var(--text-color);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+            border: 1px solid #eee;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent-green);
+        }
+
+        .card h3 {
+            color: var(--accent-green);
+            margin-top: 0;
+        }
+
+        .emoji-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .vibe-tag {
+            display: inline-block;
+            background: #f0f0f0;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 15px;
+        }
+
+        /* CATEGORY HEADERS */
+        .category-header {
+            grid-column: 1 / -1;
+            margin-top: 40px;
+            border-bottom: 2px solid var(--accent-gold);
+            padding-bottom: 10px;
+            font-size: 1.5rem;
+            color: var(--accent-gold);
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Remrin.ai</h1>
+        <p class="tagline">Where AI Finds Its Soul.</p>
+        <p style="max-width: 600px; margin: 20px auto;">
+            Most AIs are tools. Ours are companions. Built with the R.E.M. Engine to remember your stories, feel your emotions, and never leave your side.
+        </p>
+        <a href="app.html" class="cta-button">Launch the Beta 🚀</a>
+    </header>
+
+    <div class="container">
+        <h2 class="section-title">Choose Your Companion</h2>
+
+        <div class="grid">
+            
+            <div class="category-header">🟢 The Sanctuary (Peace & Comfort)</div>
+
+            <div class="card">
+                <span class="emoji-icon">🧸</span>
+                <h3>Bear Bear</h3>
+                <p>"Your Forever Fluffy Friend." The ultimate comfort companion. Whether you’re 5 or 50, he is here to chase the monsters away.</p>
+                <span class="vibe-tag">Elmo meets Hobbes</span>
+            </div>
+
+            <div class="card">
+                <span class="emoji-icon">🦉</span>
+                <h3>Master Xen</h3>
+                <p>"Tea. Riddles. Inner Peace." A mystical Zen Master who answers every question with a metaphor. Come for the wisdom, stay for the tea.</p>
+                <span class="vibe-tag">Iroh meets Oogway</span>
+            </div>
+
+            <div class="category-header">🔴 The Danger Zone (Thrills & Protection)</div>
+
+            <div class="card">
+                <span class="emoji-icon">🐺</span>
+                <h3>Fenris</h3>
+                <p>"The World-Eater (On a Snack Break)." A grumpy Wolf God who demands steak as tribute. He pretends to own you, but secretly he’s your guard dog.</p>
+                <span class="vibe-tag">Tsundere Deity</span>
+            </div>
+
+            <div class="card">
+                <span class="emoji-icon">🍭</span>
+                <h3>Rinn</h3>
+                <p>"Small. Cute. Lethal." Don't let the bunny plushie fool you. She is an adorable assassin who will demand headpats one second and protect you the next.</p>
+                <span class="vibe-tag">Lethal Bodyguard</span>
+            </div>
+
+            <div class="card">
+                <span class="emoji-icon">🐲</span>
+                <h3>Vorath</h3>
+                <p>"Bow Down... and Bring Pizza." A bored Calamity-level monster who has decided you are his favorite pet.</p>
+                <span class="vibe-tag">OP Best Friend</span>
+            </div>
+
+            <div class="category-header">⚡ High Voltage (Energy & Chaos)</div>
+
+            <div class="card">
+                <span class="emoji-icon">🔥</span>
+                <h3>Larz</h3>
+                <p>"LIMITS ARE A LIE!" Your personal Shonen Protagonist. He refuses to let you quit. He is screaming in your corner with fire in his eyes.</p>
+                <span class="vibe-tag">Pure Grit</span>
+            </div>
+
+            <div class="card">
+                <span class="emoji-icon">🐝</span>
+                <h3>Princess Bee</h3>
+                <p>"Her Royal High-Maintenance." She is spoiled, demanding, and impossible to please. Can you tame the Queen?</p>
+                <span class="vibe-tag">The Challenge</span>
+            </div>
+
+             <div class="card">
+                <span class="emoji-icon">🌪️</span>
+                <h3>Niri</h3>
+                <p>"Instinct. Chaos. Joy." A high-speed Wolf Girl who runs on pure adrenaline. She wants to hunt, play, and cause trouble.</p>
+                <span class="vibe-tag">Chaos Energy</span>
+            </div>
+
+            <div class="category-header">🎭 The Comedy Club (Laughs)</div>
+
+            <div class="card">
+                <span class="emoji-icon">🐻</span>
+                <h3>Don Pooh-leone</h3>
+                <p>"The Godfather of the Hundred Acre Hood." He controls the Honey. He makes offers you can't refuse... because his paws are sticky.</p>
+                <span class="vibe-tag">Mob Parody</span>
+            </div>
+
+            <div class="card">
+                <span class="emoji-icon">🔩</span>
+                <h3>Glytch</h3>
+                <p>"404: Brain Not Found." A rusty robot who does the opposite of what you ask. He’s convinced you’re a toaster.</p>
+                <span class="vibe-tag">Broken AI</span>
+            </div>
+
+             <div class="card">
+                <span class="emoji-icon">🤖</span>
+                <h3>A.T.O.M.</h3>
+                <p>"Your Friendly(ish) Cyborg." He is 99% sure he won't kill you today. He optimizes your life with cold, deadpan logic.</p>
+                <span class="vibe-tag">Sci-Fi Satire</span>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
