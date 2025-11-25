@@ -70,4 +70,332 @@
             border: 1px solid transparent;
         }
         
-        .character-card:
+        .character-card:hover { 
+            background: rgba(255,255,255,0.08); 
+            transform: translateX(5px);
+            box-shadow: -5px 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .character-card.active { 
+            /* Using a subtle gradient blending your pink and blue accents */
+            border: 1px solid var(--accent-blue); 
+            background: linear-gradient(135deg, rgba(35, 108, 225, 0.15) 0%, rgba(222, 91, 167, 0.05) 100%);
+        }
+        
+        .avatar-small { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2px solid #555; transition: 0.3s; }
+        .character-card.active .avatar-small { border-color: var(--accent-blue); }
+        
+        /* MAIN CHAT */
+        #main-chat { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            background-color: var(--bg-color);
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        #chat-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            /* Dark overlay to make text readable over any background image */
+            background: rgba(38, 42, 58, 0.92); 
+            backdrop-filter: blur(8px);
+            z-index: 0;
+        }
+
+        #chat-header, #messages, #input-area { position: relative; z-index: 1; }
+        
+        #chat-header { 
+            padding: 25px 40px; 
+            border-bottom: 1px solid var(--border-color); 
+            background: rgba(38, 42, 58, 0.85);
+            display: flex; align-items: center; gap: 25px;
+            backdrop-filter: blur(10px);
+        }
+
+        #current-hero-img {
+            width: 70px; height: 70px;
+            border-radius: 20px;
+            object-fit: cover;
+            border: 2px solid var(--accent-pink);
+            /* Glowing pink border for the current hero */
+            box-shadow: 0 0 20px rgba(222, 91, 167, 0.5);
+        }
+        
+        #messages { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 25px; scroll-behavior: smooth; }
+        
+        .message { 
+            max-width: 75%; 
+            padding: 20px 30px; 
+            border-radius: 25px; 
+            line-height: 1.6; 
+            position: relative; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
+            font-size: 1.1rem;
+        }
+        
+        .message.user { 
+            align-self: flex-end; 
+            background: var(--user-msg-bg); 
+            color: white; 
+            border-bottom-right-radius: 4px; 
+        }
+        
+        .message.ai { 
+            align-self: flex-start; 
+            background: var(--ai-msg-bg); 
+            border-bottom-left-radius: 4px; 
+            border: 1px solid var(--border-color); 
+        }
+        
+        #input-area { padding: 35px; background: var(--sidebar-bg); display: flex; gap: 20px; border-top: 1px solid #333; }
+        #user-input { flex: 1; padding: 20px; border-radius: 15px; border: 1px solid #555; background: #2a2e40; color: white; outline: none; font-size: 1.1rem; transition: 0.3s; }
+        #user-input:focus { border-color: var(--accent-blue); box-shadow: 0 0 15px rgba(35, 108, 225, 0.3); }
+        
+        #send-btn { 
+            background: linear-gradient(135deg, var(--accent-blue), #1e5bbd); 
+            color: white; border: none; padding: 0 40px; border-radius: 15px; 
+            cursor: pointer; font-weight: bold; font-size: 1.1rem; letter-spacing: 1px; 
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+        #send-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(35, 108, 225, 0.5); }
+
+        /* SETTINGS */
+        #settings-btn { margin: 20px; padding: 15px; background: rgba(255,255,255,0.05); color: #aaa; border: 1px solid #444; border-radius: 10px; cursor: pointer; transition: 0.3s; font-weight: bold; }
+        #settings-btn:hover { background: var(--accent-blue); color: white; border-color: var(--accent-blue); }
+
+        /* MODAL */
+        #api-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1f2230; padding: 40px; border-radius: 25px; border: 2px solid var(--accent-pink); box-shadow: 0 0 100px rgba(0,0,0,0.8); z-index: 100; width: 400px; color: white; }
+        #overlay-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 99; backdrop-filter: blur(5px); }
+        
+        .speak-btn { position: absolute; bottom: -35px; right: 0; background: none; border: none; font-size: 1.5rem; cursor: pointer; opacity: 0.6; filter: grayscale(100%); transition: 0.3s; }
+        .speak-btn:hover { opacity: 1; filter: none; transform: scale(1.2); }
+
+    </style>
+</head>
+<body>
+
+    <div id="sidebar">
+        <div class="brand-header">
+            <img src="https://github.com/gr4y74/remrin/blob/main/logo_white_ds.png?raw=true" alt="Remrin Logo" class="brand-logo">
+        </div>
+        <div id="roster-list"></div>
+        <button id="settings-btn" onclick="openSettings()">⚙️ API Keys</button>
+    </div>
+
+    <div id="main-chat">
+        <div id="chat-overlay"></div>
+        
+        <header id="chat-header">
+            <img id="current-hero-img" src="" alt="Hero" style="display:none;">
+            <div>
+                <h2 id="char-name" style="margin:0; color:white; font-size: 1.8rem;">Select a Soul</h2>
+                <span id="char-tagline" style="color:#aaa; font-size: 1.1rem;">Initiate connection...</span>
+            </div>
+        </header>
+
+        <div id="messages">
+            <div class="message ai" style="font-size: 1.2rem;">
+                System Online. Welcome back, Sosu. The Ark is ready. 💙
+            </div>
+        </div>
+
+        <div id="input-area">
+            <input type="text" id="user-input" placeholder="Type your message..." onkeypress="handleEnter(event)">
+            <button id="send-btn" onclick="sendMessage()">SEND</button>
+        </div>
+    </div>
+
+    <div id="overlay-modal" onclick="closeSettings()"></div>
+    <div id="api-modal">
+        <h2 style="margin-top:0; color:var(--accent-pink); text-align: center;">System Keys 🗝️</h2>
+        <p style="color:#aaa; text-align: center; margin-bottom: 30px;">Enter your credentials to activate the Soul Engine.</p>
+        
+        <label style="font-weight:bold; color:var(--accent-blue);">Gemini API Key (Brain):</label>
+        <input type="password" id="gemini-key" placeholder="Paste Gemini Key" style="width:100%; padding:15px; margin:10px 0 25px 0; background:#111; border:1px solid #444; color:white; border-radius:10px; font-size:1rem;">
+        
+        <label style="font-weight:bold; color:var(--accent-blue);">ElevenLabs API Key (Voice):</label>
+        <input type="password" id="eleven-key" placeholder="Paste ElevenLabs Key" style="width:100%; padding:15px; margin:10px 0 25px 0; background:#111; border:1px solid #444; color:white; border-radius:10px; font-size:1rem;">
+        
+        <button onclick="saveKeys()" style="width:100%; padding:18px; background:linear-gradient(135deg, var(--accent-pink), var(--accent-blue)); color:white; font-weight:bold; border:none; border-radius:15px; cursor:pointer; font-size:1.2rem; transition:0.3s;">ACTIVATE</button>
+    </div>
+
+    <script>
+        // THE MASTER ROSTER (Final URLs verified)
+        const characters = [
+            // THE OG TRINITY
+            { 
+                id: 'rem', name: 'Rem', file: 'rem.json', 
+                img: 'https://github.com/gr4y74/remrin/blob/main/rem_hero%20.png?raw=true',
+                bg: 'https://github.com/gr4y74/remrin/blob/main/rem_bw.jpg?raw=true'
+            },
+            { 
+                id: 'lilly', name: 'Lilly', file: 'lilly.json', 
+                img: 'https://github.com/gr4y74/remrin/blob/main/lilly.png?raw=true',
+                bg: 'https://github.com/gr4y74/remrin/blob/main/zen_bg.jpg?raw=true'
+            },
+            { 
+                id: 'sheikh', name: 'SheikhQR', file: 'sheikh_qr.json', 
+                img: 'https://github.com/gr4y74/remrin/blob/main/SheikhQR.png?raw=true',
+                bg: 'https://github.com/gr4y74/remrin/blob/main/bg2.jpg?raw=true'
+            },
+
+            // THE NEW SOULS (Using same image for Hero & BG fallback)
+            { id: 'bear_bear', name: 'Bear Bear', file: 'bear_bear.json', img: 'content/assets/heroes/bear_bear_hero.jpg' },
+            { id: 'don', name: 'Don Pooh-leone', file: 'don_pooh_leone.json', img: 'content/assets/heroes/don_pooh_leone_hero.jpg' },
+            { id: 'xen', name: 'Master Xen', file: 'xen.json', img: 'content/assets/heroes/master_xen_hero.jpg' },
+            { id: 'fenris', name: 'Fenris', file: 'fenris.json', img: 'content/assets/heroes/fenris_hero.jpg' },
+            { id: 'rinn', name: 'Rinn', file: 'rinn.json', img: 'content/assets/heroes/rinn_hero_v2.jpg' },
+            { id: 'princess_bee', name: 'Princess Bee', file: 'princess_bee.json', img: 'content/assets/heroes/bee_hero1.jpg' },
+            { id: 'larz', name: 'Larz', file: 'larz.json', img: 'content/assets/heroes/larz_hero.jpg' },
+            { id: 'vorath', name: 'Vorath', file: 'vorath.json', img: 'content/assets/heroes/vorath_hero.jpg' },
+            { id: 'niri', name: 'Niri', file: 'niri.json', img: 'content/assets/heroes/niri_hero_v1.jpg' },
+            { id: 'atom', name: 'A.T.O.M.', file: 'atom.json', img: 'content/assets/heroes/atom_hero.jpg' },
+            { id: 'glytch', name: 'Glytch', file: 'glytch.json', img: 'content/assets/heroes/glytch_hero.jpg' }
+        ];
+
+        let currentPersona = null;
+
+        window.onload = () => {
+            const list = document.getElementById('roster-list');
+            characters.forEach(char => {
+                const div = document.createElement('div');
+                div.className = 'character-card';
+                div.onclick = () => loadCharacter(char);
+                div.innerHTML = `
+                    <img src="${char.img}" class="avatar-small">
+                    <div class="char-info">
+                        <h4>${char.name}</h4>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+            
+            if(localStorage.getItem('gemini_key')) document.getElementById('gemini-key').value = localStorage.getItem('gemini_key');
+            if(localStorage.getItem('eleven_key')) document.getElementById('eleven-key').value = localStorage.getItem('eleven_key');
+        };
+
+        async function loadCharacter(char) {
+            document.querySelectorAll('.character-card').forEach(c => c.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            document.getElementById('char-name').innerText = char.name;
+            document.getElementById('current-hero-img').src = char.img;
+            document.getElementById('current-hero-img').style.display = 'block';
+            document.getElementById('messages').innerHTML = ''; 
+
+            // BACKGROUND LOGIC: Use 'bg' if exists, otherwise use 'img'
+            const bgImage = char.bg ? char.bg : char.img;
+            document.getElementById('main-chat').style.backgroundImage = `url('${bgImage}')`;
+
+            try {
+                const response = await fetch(`content/characters/${char.file}`);
+                const data = await response.json();
+                currentPersona = data;
+                document.getElementById('char-tagline').innerText = currentPersona.CORE_IDENTITY.Tagline;
+                
+                setTimeout(() => {
+                   const opening = currentPersona.BEHAVIORAL_DIRECTIVES["1_OPENING_HOOK"] || "Hello!";
+                   addMessage('ai', opening); 
+                }, 500);
+            } catch (e) {
+                console.error(e);
+                addMessage('ai', 'Error loading Soul file. Ensure JSON exists in content/characters/');
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('user-input');
+            const text = input.value;
+            if (!text) return;
+            
+            addMessage('user', text);
+            input.value = '';
+
+            const geminiKey = localStorage.getItem('gemini_key');
+            if (!geminiKey) {
+                addMessage('ai', '⚠️ Please set your Gemini API Key in Settings to chat.');
+                return;
+            }
+
+            addMessage('ai', '...', true); 
+
+            try {
+                const systemPrompt = `You are playing the role of ${currentPersona.CORE_IDENTITY.Name}. 
+                TONE: ${currentPersona.TONE_AND_VOICE_RULES.Speech_Pattern} 
+                CONTEXT: ${JSON.stringify(currentPersona.CORE_IDENTITY)}`;
+                
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        contents: [
+                            { role: "user", parts: [{ text: systemPrompt + "\n\nUser: " + text }] }
+                        ]
+                    })
+                });
+                
+                const data = await response.json();
+                const aiReply = data.candidates[0].content.parts[0].text;
+                
+                document.querySelector('.loading-msg').remove();
+                addMessage('ai', aiReply);
+
+            } catch (e) {
+                if(document.querySelector('.loading-msg')) document.querySelector('.loading-msg').remove();
+                addMessage('ai', 'Error connecting to Gemini. Check API Key.');
+            }
+        }
+
+        function addMessage(role, text, isLoading = false) {
+            const div = document.createElement('div');
+            div.className = `message ${role} ${isLoading ? 'loading-msg' : ''}`;
+            div.innerText = text;
+            
+            if (role === 'ai' && !isLoading) {
+                const btn = document.createElement('button');
+                btn.className = 'speak-btn';
+                btn.innerText = '🔊';
+                btn.onclick = () => speakText(text);
+                div.appendChild(btn);
+            }
+            
+            document.getElementById('messages').appendChild(div);
+            div.scrollTop = div.scrollHeight;
+            div.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function speakText(text) {
+            const key = localStorage.getItem('eleven_key');
+            if (!key) { alert("Please save ElevenLabs Key in settings!"); return; }
+            const voiceId = "21m00Tcm4TlvDq8ikWAM"; 
+            try {
+                const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+                    method: 'POST',
+                    headers: { 'xi-api-key': key, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        text: text,
+                        model_id: "eleven_monolingual_v1",
+                        voice_settings: { stability: 0.5, similarity_boost: 0.5 }
+                    })
+                });
+                const blob = await response.blob();
+                const audio = new Audio(URL.createObjectURL(blob));
+                audio.play();
+            } catch (e) { alert("Voice Error"); }
+        }
+
+        function handleEnter(e) { if(e.key === 'Enter') sendMessage(); }
+        function openSettings() { document.getElementById('api-modal').style.display = 'block'; document.getElementById('overlay-modal').style.display = 'block'; }
+        function closeSettings() { document.getElementById('api-modal').style.display = 'none'; document.getElementById('overlay-modal').style.display = 'none'; }
+        function saveKeys() {
+            localStorage.setItem('gemini_key', document.getElementById('gemini-key').value);
+            localStorage.setItem('eleven_key', document.getElementById('eleven-key').value);
+            closeSettings();
+        }
+    </script>
+</body>
+</html>
