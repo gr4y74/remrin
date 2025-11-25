@@ -420,6 +420,7 @@
         }
 
         // --- SENDING A MESSAGE (The Brain) ---
+        // 4. MAIN BRAIN (Restored V1 Logic + Stable Model)
         async function sendMessage() {
             const input = document.getElementById('user-input');
             const text = input.value;
@@ -431,28 +432,48 @@
             const geminiKey = localStorage.getItem('gemini_key');
             if (!geminiKey) { addMessage('ai', '⚠️ Please set your Gemini API Key in Settings.'); return; }
 
-            addMessage('ai', '...', true); // Loading dots
+            addMessage('ai', '...', true); 
 
             try {
                 if(!currentPersona) throw new Error("Please select a character first.");
 
-                // Construct the Prompt
-                const systemPrompt = `Roleplay as ${currentPersona.CORE_IDENTITY.Name}. TONE: ${currentPersona.TONE_AND_VOICE_RULES.Speech_Pattern}. CONTEXT: ${JSON.stringify(currentPersona.CORE_IDENTITY)}`;
+                // V1 LOGIC: Separate System Instruction from User Message
+                // This is the "Official" way you saw in the V1 backup!
                 
-                // API CALL: Uses Gemini 1.5 Flash (Latest Stable)
-                // We use "v1beta" endpoint which is standard for free keys
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiKey}`, {
+                const systemPrompt = `You are ${currentPersona.CORE_IDENTITY.Name}. 
+                TONE: ${currentPersona.TONE_AND_VOICE_RULES.Speech_Pattern}. 
+                CONTEXT: ${JSON.stringify(currentPersona.CORE_IDENTITY)}. 
+                BEHAVIOR: ${JSON.stringify(currentPersona.BEHAVIORAL_DIRECTIVES)}.`;
+
+                // MODEL: Using 'gemini-1.5-flash' (The Toyota Hilux - Indestructible & Free)
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: systemPrompt + "\n\nUser: " + text }] }] })
+                    body: JSON.stringify({
+                        // The "Official Way" (V1 Style)
+                        system_instruction: {
+                            parts: [{ text: systemPrompt }]
+                        },
+                        contents: [
+                            { role: "user", parts: [{ text: text }] }
+                        ]
+                    })
                 });
 
                 const data = await response.json();
                 
-                if(data.error) throw new Error(data.error.message);
+                if(data.error) {
+                    throw new Error(data.error.message);
+                }
                 
                 document.querySelector('.loading-msg').remove();
-                addMessage('ai', data.candidates[0].content.parts[0].text);
+                
+                // Safety check if candidate is empty
+                if(data.candidates && data.candidates.length > 0) {
+                    addMessage('ai', data.candidates[0].content.parts[0].text);
+                } else {
+                    addMessage('ai', "..."); 
+                }
 
             } catch (e) { 
                 if(document.querySelector('.loading-msg')) document.querySelector('.loading-msg').remove();
