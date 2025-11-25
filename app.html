@@ -7,183 +7,96 @@
     <link rel="icon" type="image/png" href="https://github.com/gr4y74/remrin/blob/main/favicon.png?raw=true">
     
     <style>
-        /* --- 1990s vs 2025 Note: CSS VARIABLES ---
-           Instead of typing "#262a3a" 50 times, we define it ONCE here.
-           If we want to change the theme later, we just change it here!
-        */
+        /* --- REMRIN "CINEMATIC DARK" THEME 🌑✨ --- */
         :root {
-            --bg-color: #262a3a;            /* Main Background (Navy) */
-            --sidebar-bg: #1f2230;          /* Sidebar (Darker Navy) */
-            --text-color: #ffffff;          /* Text (White) */
-            --accent-blue: #236ce1;         /* Rem's Blue */
-            --accent-pink: #de5ba7;         /* Lilly's Pink */
-            --user-msg-bg: rgba(35, 108, 225, 0.85); /* User Bubble (See-through Blue) */
-            --ai-msg-bg: rgba(20, 20, 30, 0.9);      /* AI Bubble (Dark Grey) */
-            --border-color: rgba(255,255,255,0.1);   /* Subtle lines */
+            --bg-color: #262a3a;
+            --sidebar-bg: #1f2230;
+            --text-color: #ffffff;
+            --accent-blue: #236ce1;
+            --accent-pink: #de5ba7;
+            --user-msg-bg: rgba(35, 108, 225, 0.85);
+            --ai-msg-bg: rgba(20, 20, 30, 0.9);
+            --border-color: rgba(255,255,255,0.1);
         }
 
-        /* FLEXBOX: This is the magic layout engine.
-           'display: flex' lines things up side-by-side automatically.
-           'height: 100vh' means 100% of the Viewport Height (Full Screen).
-        */
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            margin: 0; 
-            display: flex; 
-            height: 100vh; 
-            color: var(--text-color); 
-            background: var(--bg-color); 
-            overflow: hidden; /* Prevents the whole page from scrolling */
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; display: flex; height: 100vh; color: var(--text-color); background: var(--bg-color); overflow: hidden; }
         
-        /* Modern Scrollbar Styling (Making it skinny and dark) */
+        /* SCROLLBARS */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--accent-blue); }
 
-        /* --- SIDEBAR SECTION --- */
+        /* --- SIDEBAR --- */
         #sidebar { 
-            width: 320px; 
-            background: var(--sidebar-bg); 
-            border-right: 1px solid var(--border-color); 
-            display: flex;              /* Stacks items vertically */
-            flex-direction: column;     /* Top to bottom */
-            z-index: 50;                /* Z-Index = Layer Order. 50 is high up! */
-            box-shadow: 5px 0 30px rgba(0,0,0,0.6); 
-            transition: margin-left 0.4s ease-in-out; /* Smooth animation when closing */
-            position: relative;
+            width: 320px; background: var(--sidebar-bg); border-right: 1px solid var(--border-color); 
+            display: flex; flex-direction: column; z-index: 50; 
+            box-shadow: 5px 0 30px rgba(0,0,0,0.6); transition: margin-left 0.4s ease-in-out; position: relative;
         }
-        
-        /* When we add this class via Javascript, the sidebar hides to the left */
         #sidebar.collapsed { margin-left: -320px; } 
 
-        /* THE PINK CHEVRON CLOSE BUTTON */
+        /* CHEVRON CLOSE BUTTON */
         #close-sidebar-btn {
             position: absolute; top: 15px; right: 15px; 
-            background: transparent; color: var(--accent-pink); 
-            border: 1px solid rgba(222, 91, 167, 0.3);
-            width: 30px; height: 30px; border-radius: 50%; 
-            cursor: pointer; font-size: 1.2rem; line-height: 28px; text-align: center; padding: 0; 
-            transition: 0.3s; z-index: 51;
+            background: transparent; color: var(--accent-pink); border: 1px solid rgba(222, 91, 167, 0.3);
+            width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+            font-size: 1.2rem; line-height: 28px; text-align: center; padding: 0; transition: 0.3s; z-index: 51;
         }
         #close-sidebar-btn:hover { background: var(--accent-pink); color: white; }
 
-        .brand-header { 
-            padding: 30px 20px; text-align: center; 
-            background: rgba(0,0,0,0.2); 
-            border-bottom: 1px solid var(--border-color); 
-        }
+        .brand-header { padding: 30px 20px; text-align: center; background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--border-color); }
         .brand-logo { max-width: 160px; filter: drop-shadow(0 0 10px rgba(35, 108, 225, 0.5)); }
 
-        /* The container for the list of characters */
-        #roster-list { 
-            padding: 15px; 
-            overflow-y: auto; /* Enables scrolling if list is long */
-            flex: 1;          /* Takes up all remaining space */
-            display: flex; flex-direction: column; gap: 10px; 
-        }
+        #roster-list { padding: 15px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 10px; }
 
-        /* The Individual Character Button */
-        .character-card { 
-            display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 10px; 
-            cursor: pointer; transition: 0.2s; 
-            background: rgba(255,255,255,0.03); border: 1px solid transparent; 
-        }
+        .character-card { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 10px; cursor: pointer; transition: 0.2s; background: rgba(255,255,255,0.03); border: 1px solid transparent; }
         .character-card:hover { background: rgba(255,255,255,0.08); transform: translateX(5px); }
-        
-        /* When a character is selected, they get a glow */
-        .character-card.active { 
-            border: 1px solid var(--accent-pink); 
-            background: linear-gradient(90deg, rgba(222, 91, 167, 0.2) 0%, rgba(0,0,0,0) 100%); 
-        }
+        .character-card.active { border: 1px solid var(--accent-pink); background: linear-gradient(90deg, rgba(222, 91, 167, 0.2) 0%, rgba(0,0,0,0) 100%); }
         .avatar-small { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #555; }
 
-        /* --- MAIN CHAT AREA --- */
-        #main-chat { 
-            flex: 1; display: flex; flex-direction: column; 
-            background-color: var(--bg-color); 
-            background-size: cover;       /* Make image fill screen */
-            background-position: center; 
-            position: relative; 
-            transition: 0.3s; 
-        }
+        /* --- MAIN CHAT --- */
+        #main-chat { flex: 1; display: flex; flex-direction: column; background-color: var(--bg-color); background-size: cover; background-position: center; position: relative; transition: 0.3s; }
+        #chat-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.3); z-index: 0; }
+        #hero-standing { position: absolute; bottom: 0; left: 5%; height: 90vh; max-height: 900px; width: auto; z-index: 1; filter: drop-shadow(0 0 20px rgba(0,0,0,0.5)); pointer-events: none; }
 
-        /* The Dark Dimmer so text is readable over background images */
-        #chat-overlay { 
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0; 
-            background: rgba(0, 0, 0, 0.3); /* 30% Black tint */
-            z-index: 0; 
-        }
-
-        /* The Hero standing on the left (Visual Novel Style) */
-        #hero-standing { 
-            position: absolute; bottom: 0; left: 5%; 
-            height: 90vh; max-height: 900px; width: auto; 
-            z-index: 1; 
-            filter: drop-shadow(0 0 20px rgba(0,0,0,0.5)); /* Shadow behind character */
-            pointer-events: none; /* Clicks go through the image */
-        }
-
-        /* GLASS COLUMN: The Right-Side Chat Layout
-           This uses a gradient background to look like frosted glass.
-        */
+        /* GLASS COLUMN */
         .chat-container {
-            position: relative; z-index: 2; 
-            width: 45%; max-width: 600px; 
-            margin-left: auto; margin-right: 0; /* Pushes it to the Right */
-            height: 100%;
-            display: flex; flex-direction: column; 
-            background: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0.85) 100%);
-            border-left: 1px solid rgba(255,255,255,0.05); 
-            backdrop-filter: blur(4px); /* Blurs the background behind it */
+            position: relative; z-index: 2; width: 45%; max-width: 600px; margin-left: auto; margin-right: 0; height: 100%;
+            display: flex; flex-direction: column; background: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0.85) 100%);
+            border-left: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(4px);
         }
 
-        #chat-header { 
-            padding: 20px 30px; display: flex; align-items: center; 
-            border-bottom: 1px solid rgba(255,255,255,0.05); 
-        }
-        
-        /* The Hamburger Menu Button (Visible when sidebar closed) */
-        #open-sidebar-btn { 
-            background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; margin-right: 15px; 
-            opacity: 0.7; transition: 0.3s; 
-        }
+        #chat-header { padding: 20px 30px; display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        #open-sidebar-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; margin-right: 15px; opacity: 0.7; transition: 0.3s; }
         #open-sidebar-btn:hover { opacity: 1; color: var(--accent-blue); }
-
         #current-hero-img { width: 50px; height: 50px; border-radius: 12px; object-fit: cover; border: 2px solid var(--accent-pink); margin-right: 15px; }
         
         #messages { flex: 1; padding: 20px 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
-        
-        .message { 
-            max-width: 85%; padding: 15px 20px; border-radius: 18px; line-height: 1.5; 
-            position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.2); font-size: 1rem; 
-            backdrop-filter: blur(10px); 
-        }
+        .message { max-width: 85%; padding: 15px 20px; border-radius: 18px; line-height: 1.5; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.2); font-size: 1rem; backdrop-filter: blur(10px); }
         .message.user { align-self: flex-end; background: var(--user-msg-bg); color: white; border-bottom-right-radius: 2px; }
         .message.ai { align-self: flex-start; background: var(--ai-msg-bg); border-bottom-left-radius: 2px; border: 1px solid rgba(255,255,255,0.1); }
         
         #input-area { padding: 20px; background: rgba(0,0,0,0.4); display: flex; gap: 10px; border-top: 1px solid rgba(255,255,255,0.1); }
         #user-input { flex: 1; padding: 15px; border-radius: 10px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); outline: none; }
         #user-input:focus { background: rgba(0,0,0,0.6); border-color: var(--accent-blue); }
-        
         #send-btn { background: var(--accent-blue); color: white; border: none; padding: 0 20px; border-radius: 10px; cursor: pointer; font-weight: bold; text-transform: uppercase; }
 
-        /* SIDEBAR BUTTONS */
+        /* BUTTONS */
         .sidebar-btn { width: 100%; padding: 12px; background: rgba(255,255,255,0.05); color: #aaa; border: 1px solid #333; border-radius: 8px; cursor: pointer; margin-top: 10px; text-align: left; padding-left: 20px; }
         .sidebar-btn:hover { background: rgba(255,255,255,0.1); color: white; }
         .market-btn { margin-top: auto; background: linear-gradient(90deg, rgba(35, 108, 225, 0.2), rgba(222, 91, 167, 0.2)); border: 1px solid var(--accent-pink); color: white; font-weight: bold; }
         .market-btn:hover { box-shadow: 0 0 15px rgba(222, 91, 167, 0.4); }
 
-        /* SETTINGS POPUP MODAL */
+        /* MODAL */
         #api-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1f2230; padding: 30px; border-radius: 15px; border: 2px solid var(--accent-blue); z-index: 100; width: 350px; color: white; }
         #overlay-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99; }
-        
-        /* The Speaker Button */
         .speak-btn { position: absolute; bottom: -25px; right: 0; background: none; border: none; font-size: 1.2rem; cursor: pointer; opacity: 0.6; filter: grayscale(100%); transition: 0.3s; }
         .speak-btn:hover { opacity: 1; filter: none; transform: scale(1.2); }
 
-        /* Mobile View: If screen is small, chat takes 100% width */
+        /* SETTINGS INPUTS */
+        .settings-input { width:100%; padding:10px; margin:10px 0; background:#111; border:1px solid #444; color:white; border-radius:5px; box-sizing: border-box; }
+        .settings-select { width:100%; padding:10px; margin:10px 0; background:#111; border:1px solid #444; color:white; border-radius:5px; cursor: pointer; }
+
         @media (max-width: 800px) {
             .chat-container { width: 100%; max-width: none; background: rgba(0,0,0,0.6); }
             #sidebar { position: absolute; height: 100%; }
@@ -193,7 +106,8 @@
 <body>
 
     <div id="sidebar">
-        <button id="close-sidebar-btn" onclick="toggleSidebar()">«</button> <div class="brand-header">
+        <button id="close-sidebar-btn" onclick="toggleSidebar()">«</button>
+        <div class="brand-header">
             <img src="https://github.com/gr4y74/remrin/blob/main/logo_white_ds.png?raw=true" alt="Remrin Logo" class="brand-logo">
         </div>
         
@@ -202,25 +116,22 @@
         <a href="market.html" style="text-decoration:none;">
             <button class="sidebar-btn market-btn">🛒 Visit SoulMarket</button>
         </a>
-        <button class="sidebar-btn" onclick="openSettings()">⚙️ System Keys</button>
+        <button class="sidebar-btn" onclick="openSettings()">⚙️ System Settings</button>
     </div>
 
     <div id="main-chat">
-        <div id="chat-overlay"></div> <img id="hero-standing" src="" style="display:none;">
-
+        <div id="chat-overlay"></div>
+        <img id="hero-standing" src="" style="display:none;">
         <div class="chat-container">
             <header id="chat-header">
                 <button id="open-sidebar-btn" onclick="toggleSidebar()" style="display:none;">☰</button>
-                
                 <img id="current-hero-img" src="" alt="Hero" style="display:none;">
                 <div>
                     <h2 id="char-name" style="margin:0; color:white; font-size: 1.2rem;">Select a Soul</h2>
                     <span id="char-tagline" style="color:#aaa; font-size: 0.9rem;">Initiate connection...</span>
                 </div>
             </header>
-
             <div id="messages"><div class="message ai">System Online. Cinematic Mode Active. 💙</div></div>
-
             <div id="input-area">
                 <input type="text" id="user-input" placeholder="Type your message..." onkeypress="handleEnter(event)">
                 <button id="send-btn" onclick="sendMessage()">Send</button>
@@ -230,27 +141,33 @@
 
     <div id="overlay-modal" onclick="closeSettings()"></div>
     <div id="api-modal">
-        <h3 style="margin-top:0;">System Keys 🗝️</h3>
-        <input type="password" id="gemini-key" placeholder="Gemini API Key" style="width:100%; padding:10px; margin:10px 0; background:#111; border:1px solid #444; color:white;">
-        <input type="password" id="eleven-key" placeholder="ElevenLabs API Key" style="width:100%; padding:10px; margin:10px 0; background:#111; border:1px solid #444; color:white;">
-        <button onclick="saveKeys()" style="width:100%; padding:10px; background:var(--accent-blue); color:white; border:none; border-radius:5px; cursor:pointer;">Save</button>
+        <h3 style="margin-top:0;">System Settings ⚙️</h3>
+        
+        <label>AI Model (Brain):</label>
+        <select id="model-selector" class="settings-select">
+            <option value="gemini-2.0-flash-001">Gemini 2.0 Flash-001 (Recommended)</option>
+            <option value="gemini-2.0-flash-exp">Gemini 2.0 Flash Experimental</option>
+            <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+            <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+        </select>
+
+        <label>Gemini API Key:</label>
+        <input type="password" id="gemini-key" class="settings-input" placeholder="Paste Gemini Key">
+        
+        <label>ElevenLabs API Key:</label>
+        <input type="password" id="eleven-key" class="settings-input" placeholder="Paste ElevenLabs Key">
+        
+        <button onclick="saveKeys()" style="width:100%; padding:10px; background:var(--accent-blue); color:white; border:none; border-radius:5px; cursor:pointer; margin-top:10px;">Save & Connect</button>
     </div>
 
     <script>
-        // 1. CONSTANTS - Useful paths we use often
         const repoUrl = "https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/";
         const rawSuffix = "?raw=true";
 
-        // 2. THE ROSTER - Our Database of Characters
-        // 'voice': ID from ElevenLabs. 'file': The JSON instructions.
         const characters = [
-            // OG TRINITY (Custom Paths)
             { id: 'rem', name: 'Rem', file: 'rem.json', voice: "Z9LeIswZogc2P670m0Bw", hero_standing: 'https://github.com/gr4y74/remrin/blob/main/rem_hero%20.png?raw=true', bg: 'https://github.com/gr4y74/remrin/blob/main/rem_bw.jpg?raw=true', avatar: 'https://github.com/gr4y74/remrin/blob/main/rem_hero%20.png?raw=true' },
             { id: 'lilly', name: 'Lilly', file: 'lilly.json', voice: "PLACEHOLDER", hero_standing: 'https://github.com/gr4y74/remrin/blob/main/lilly.png?raw=true', bg: 'https://github.com/gr4y74/remrin/blob/main/zen_bg.jpg?raw=true', avatar: 'https://github.com/gr4y74/remrin/blob/main/lilly.png?raw=true' },
             { id: 'sheikh', name: 'SheikhQR', file: 'sheikh_qr.json', voice: "PLACEHOLDER", hero_standing: 'https://github.com/gr4y74/remrin/blob/main/SheikhQR.png?raw=true', bg: 'https://github.com/gr4y74/remrin/blob/main/bg2.jpg?raw=true', avatar: 'https://github.com/gr4y74/remrin/blob/main/SheikhQR.png?raw=true' },
-            
-            // NEW SOULS (Standard Paths)
-            // NOTE: Replace "PLACEHOLDER" with real IDs tomorrow!
             { id: 'bear_bear', name: 'Bear Bear', file: 'bear_bear.json', voice: "PLACEHOLDER", bg: repoUrl + 'bear_bear_hero.jpg' + rawSuffix, avatar: repoUrl + 'bear_bear_hero.jpg' + rawSuffix },
             { id: 'don', name: 'Don Pooh-leone', file: 'don_pooh_leone.json', voice: "PLACEHOLDER", bg: repoUrl + 'don_pooh_leone_hero.jpg' + rawSuffix, avatar: repoUrl + 'don_pooh_leone_hero.jpg' + rawSuffix },
             { id: 'xen', name: 'Master Xen', file: 'xen.json', voice: "PLACEHOLDER", bg: repoUrl + 'master_xen_hero.jpg' + rawSuffix, avatar: repoUrl + 'master_xen_hero.jpg' + rawSuffix },
@@ -264,21 +181,17 @@
             { id: 'glytch', name: 'Glytch', file: 'glytch.json', voice: "PLACEHOLDER", bg: repoUrl + 'glytch_hero.jpg' + rawSuffix, avatar: repoUrl + 'glytch_hero.jpg' + rawSuffix }
         ];
 
-        // Global Variables to track state
         let currentPersona = null;
-        let currentVoiceId = "21m00Tcm4TlvDq8ikWAM"; // Default fallback (Rachel)
+        let currentVoiceId = "21m00Tcm4TlvDq8ikWAM";
         let isSidebarOpen = true;
 
-        // --- HELPER FUNCTIONS ---
-        // (Defined first so the computer knows what they are before using them)
-
-        // Adds a text bubble to the chat
         function addMessage(role, text, isLoading = false) {
             const div = document.createElement('div');
             div.className = `message ${role} ${isLoading ? 'loading-msg' : ''}`;
-            div.innerText = text;
             
-            // Only add speaker button if it's the AI talking
+            // Handle line breaks like V1
+            div.innerHTML = text.replace(/\n/g, "<br>");
+            
             if (role === 'ai' && !isLoading) {
                 const btn = document.createElement('button');
                 btn.className = 'speak-btn';
@@ -290,55 +203,36 @@
             div.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Opens/Closes the Sidebar
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const openBtn = document.getElementById('open-sidebar-btn');
             isSidebarOpen = !isSidebarOpen;
-            
             if (isSidebarOpen) {
-                sidebar.classList.remove('collapsed'); // Show
+                sidebar.classList.remove('collapsed');
                 openBtn.style.display = 'none';
             } else {
-                sidebar.classList.add('collapsed'); // Hide
+                sidebar.classList.add('collapsed');
                 openBtn.style.display = 'block';
             }
         }
 
-        // Calls ElevenLabs API to make the text speak
         async function speakText(text) {
             const key = localStorage.getItem('eleven_key');
             if (!key) { alert("⚠️ Please save ElevenLabs API Key in Settings!"); return; }
             
-            // Use specific ID if available, otherwise fallback to Rachel
             let voiceId = currentVoiceId;
-            const defaultVoice = "21m00Tcm4TlvDq8ikWAM"; 
-            
-            if (!voiceId || voiceId === "PLACEHOLDER" || voiceId.includes("REPLACE")) {
-                console.log("Using Default Voice");
-                voiceId = defaultVoice;
-            }
+            if (!voiceId || voiceId === "PLACEHOLDER") voiceId = "21m00Tcm4TlvDq8ikWAM"; // Default Rachel
             
             try {
                 const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
                     method: 'POST',
-                    headers: { 
-                        'xi-api-key': key, 
-                        'Content-Type': 'application/json' 
-                    },
-                    body: JSON.stringify({ 
-                        text: text, 
-                        // 'eleven_turbo_v2_5' is the new standard for free tier (Fast!)
-                        model_id: "eleven_turbo_v2_5",
-                        voice_settings: { stability: 0.5, similarity_boost: 0.5 }
-                    })
+                    headers: { 'xi-api-key': key, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text, model_id: "eleven_turbo_v2_5", voice_settings: { stability: 0.5, similarity_boost: 0.5 } })
                 });
-                
                 if(!response.ok) {
                     const err = await response.json();
                     throw new Error(err.detail.message || "Voice API Error");
                 }
-                
                 const blob = await response.blob();
                 const audio = new Audio(URL.createObjectURL(blob));
                 audio.play();
@@ -347,21 +241,26 @@
 
         function handleEnter(e) { if(e.key === 'Enter') sendMessage(); }
         
-        // Settings Modal Logic
-        function openSettings() { document.getElementById('api-modal').style.display = 'block'; document.getElementById('overlay-modal').style.display = 'block'; }
+        function openSettings() { 
+            document.getElementById('api-modal').style.display = 'block'; 
+            document.getElementById('overlay-modal').style.display = 'block'; 
+            // Reload saved values
+            if(localStorage.getItem('gemini_key')) document.getElementById('gemini-key').value = localStorage.getItem('gemini_key');
+            if(localStorage.getItem('eleven_key')) document.getElementById('eleven-key').value = localStorage.getItem('eleven_key');
+            if(localStorage.getItem('gemini_model')) document.getElementById('model-selector').value = localStorage.getItem('gemini_model');
+        }
         function closeSettings() { document.getElementById('api-modal').style.display = 'none'; document.getElementById('overlay-modal').style.display = 'none'; }
+        
         function saveKeys() {
             localStorage.setItem('gemini_key', document.getElementById('gemini-key').value);
             localStorage.setItem('eleven_key', document.getElementById('eleven-key').value);
+            localStorage.setItem('gemini_model', document.getElementById('model-selector').value);
             closeSettings();
-            alert("Keys Saved! 🛡️");
+            alert("Keys & Model Saved! 🛡️");
         }
 
-        // --- INITIALIZATION (Runs when page loads) ---
         window.onload = () => {
             const list = document.getElementById('roster-list');
-            
-            // Build the list of characters
             characters.forEach(char => {
                 const div = document.createElement('div');
                 div.className = 'character-card';
@@ -370,31 +269,26 @@
                 list.appendChild(div);
             });
             
-            // Load saved keys if they exist
+            // Load Keys
             if(localStorage.getItem('gemini_key')) document.getElementById('gemini-key').value = localStorage.getItem('gemini_key');
             if(localStorage.getItem('eleven_key')) document.getElementById('eleven-key').value = localStorage.getItem('eleven_key');
+            // Load Model Preference
+            if(localStorage.getItem('gemini_model')) document.getElementById('model-selector').value = localStorage.getItem('gemini_model');
             
-            // Auto-close sidebar on small screens
             if(window.innerWidth < 800) toggleSidebar();
         };
 
-        // --- LOADING A CHARACTER ---
         async function loadCharacter(char) {
-            // 1. Highlight the selected card
             document.querySelectorAll('.character-card').forEach(c => c.classList.remove('active'));
             event.currentTarget.classList.add('active');
-            
-            // 2. Update Text & Images
             document.getElementById('char-name').innerText = char.name;
             document.getElementById('current-hero-img').src = char.avatar;
             document.getElementById('current-hero-img').style.display = 'block';
             document.getElementById('messages').innerHTML = ''; 
             document.getElementById('main-chat').style.backgroundImage = `url('${char.bg}')`;
 
-            // 3. Set the Voice ID for this session
             currentVoiceId = char.voice;
 
-            // 4. Show/Hide Standing Hero (OG Trinity only)
             const heroImg = document.getElementById('hero-standing');
             if (char.hero_standing) {
                 heroImg.src = char.hero_standing;
@@ -403,15 +297,12 @@
                 heroImg.style.display = 'none';
             }
 
-            // 5. Fetch the JSON Instruction (The Soul)
             try {
                 const response = await fetch(`content/characters/${char.file}`);
-                if(!response.ok) throw new Error("JSON file not found");
+                if(!response.ok) throw new Error("JSON not found");
                 const data = await response.json();
                 currentPersona = data;
                 document.getElementById('char-tagline').innerText = currentPersona.CORE_IDENTITY.Tagline;
-                
-                // Wait 0.5s then show greeting
                 setTimeout(() => {
                    const opening = currentPersona.BEHAVIORAL_DIRECTIVES["1_OPENING_HOOK"] || "Hello!";
                    addMessage('ai', opening); 
@@ -419,8 +310,7 @@
             } catch (e) { addMessage('ai', 'Error loading Soul file: ' + e.message); }
         }
 
-        // --- SENDING A MESSAGE (The Brain) ---
-        // 4. MAIN BRAIN (Restored V1 Logic + Stable Model)
+        // --- MAIN BRAIN (Restored V1 Logic) ---
         async function sendMessage() {
             const input = document.getElementById('user-input');
             const text = input.value;
@@ -430,29 +320,29 @@
             input.value = '';
 
             const geminiKey = localStorage.getItem('gemini_key');
-            if (!geminiKey) { addMessage('ai', '⚠️ Please set your Gemini API Key in Settings.'); return; }
+            // Get Model from Dropdown or Default to V1 Brain
+            const selectedModel = document.getElementById('model-selector').value || 'gemini-2.0-flash-001';
+            
+            if (!geminiKey) { addMessage('ai', '⚠️ Set API Key in Settings.'); return; }
 
             addMessage('ai', '...', true); 
 
             try {
                 if(!currentPersona) throw new Error("Please select a character first.");
 
-                // V1 LOGIC: Separate System Instruction from User Message
-                // This is the "Official" way you saw in the V1 backup!
-                
-                const systemPrompt = `You are ${currentPersona.CORE_IDENTITY.Name}. 
+                // V1 LOGIC: System Instruction Construction
+                const systemInstructionText = `You are playing the role of ${currentPersona.CORE_IDENTITY.Name}. 
                 TONE: ${currentPersona.TONE_AND_VOICE_RULES.Speech_Pattern}. 
                 CONTEXT: ${JSON.stringify(currentPersona.CORE_IDENTITY)}. 
                 BEHAVIOR: ${JSON.stringify(currentPersona.BEHAVIORAL_DIRECTIVES)}.`;
 
-                // MODEL: Using 'gemini-1.5-flash' (The Toyota Hilux - Indestructible & Free)
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`, {
+                // API CALL: Uses selected model (Default 2.0 Flash-001)
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${geminiKey}`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
-                        // The "Official Way" (V1 Style)
                         system_instruction: {
-                            parts: [{ text: systemPrompt }]
+                            parts: [{ text: systemInstructionText }]
                         },
                         contents: [
                             { role: "user", parts: [{ text: text }] }
@@ -462,13 +352,10 @@
 
                 const data = await response.json();
                 
-                if(data.error) {
-                    throw new Error(data.error.message);
-                }
+                if(data.error) throw new Error(data.error.message);
                 
                 document.querySelector('.loading-msg').remove();
                 
-                // Safety check if candidate is empty
                 if(data.candidates && data.candidates.length > 0) {
                     addMessage('ai', data.candidates[0].content.parts[0].text);
                 } else {
