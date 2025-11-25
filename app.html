@@ -5,38 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Remrin.ai | Soul Interface</title>
     <style>
-        /* REMRIN "VISUAL NOVEL" THEME 🌑✨ */
+        /* REMRIN "CINEMATIC DARK" THEME 🌑✨ */
         :root {
             --bg-color: #262a3a;
             --sidebar-bg: #1f2230;
             --text-color: #ffffff;
             --accent-blue: #236ce1;
             --accent-pink: #de5ba7;
-            --user-msg-bg: rgba(35, 108, 225, 0.9);
-            --ai-msg-bg: rgba(30, 41, 59, 0.9);
+            --user-msg-bg: rgba(35, 108, 225, 0.8);
+            --ai-msg-bg: rgba(20, 20, 30, 0.7); /* Darker, more transparent */
+            --border-color: rgba(255,255,255,0.1);
         }
 
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; display: flex; height: 100vh; color: var(--text-color); background: var(--bg-color); overflow: hidden; }
         
-        /* SIDEBAR */
+        /* --- MODERN SCROLLBARS (Goodbye 1999) --- */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-blue); }
+
+        /* --- SIDEBAR --- */
         #sidebar { 
-            width: 300px; 
+            width: 320px; 
             background: var(--sidebar-bg); 
-            border-right: 1px solid rgba(255,255,255,0.1); 
+            border-right: 1px solid var(--border-color); 
             display: flex; 
             flex-direction: column; 
             z-index: 20;
             box-shadow: 5px 0 30px rgba(0,0,0,0.6);
+            transition: margin-left 0.4s ease-in-out; /* Smooth slide */
         }
+        
+        #sidebar.collapsed { margin-left: -320px; } /* Hide it off-screen */
 
         .brand-header {
             padding: 25px;
             text-align: center;
             background: rgba(0,0,0,0.2);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
         }
 
         .brand-logo { max-width: 150px; filter: drop-shadow(0 0 10px rgba(35, 108, 225, 0.5)); }
+
+        /* Close Button inside Sidebar */
+        #close-sidebar-btn {
+            position: absolute; top: 10px; right: 10px;
+            background: none; border: none; color: #aaa; font-size: 1.2rem; cursor: pointer;
+        }
 
         #roster-list { padding: 15px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 10px; }
 
@@ -48,7 +65,7 @@
         .character-card.active { border: 1px solid var(--accent-pink); background: linear-gradient(90deg, rgba(222, 91, 167, 0.2) 0%, rgba(0,0,0,0) 100%); }
         .avatar-small { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #555; }
 
-        /* MAIN CHAT AREA */
+        /* --- MAIN CHAT AREA --- */
         #main-chat { 
             flex: 1; 
             display: flex; 
@@ -57,62 +74,93 @@
             background-size: cover;
             background-position: center;
             position: relative;
+            transition: 0.3s; /* Smooth resize when sidebar closes */
         }
 
-        /* 1. THE BACKGROUND DIMMER */
+        /* TOGGLE BUTTON (Visible when sidebar is closed) */
+        #open-sidebar-btn {
+            position: absolute; top: 20px; left: 20px;
+            z-index: 100;
+            background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.2);
+            padding: 10px 15px; border-radius: 8px; cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: 0.3s;
+        }
+        #open-sidebar-btn:hover { background: var(--accent-blue); }
+
         #chat-overlay {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.4); 
+            background: rgba(0, 0, 0, 0.2); /* Very light dim */
             z-index: 0;
         }
 
-        /* 2. THE HERO STANDING IMAGE (Visual Novel Style) */
+        /* HERO STANDING IMAGE */
         #hero-standing {
             position: absolute;
             bottom: 0;
             left: 5%; 
-            height: 85vh; 
-            max-height: 800px;
+            height: 90vh; /* Taller */
+            max-height: 900px;
             width: auto;
             z-index: 1; 
             filter: drop-shadow(0 0 20px rgba(0,0,0,0.5));
-            transition: opacity 0.5s ease-in-out;
             pointer-events: none; 
         }
 
-        /* CHAT CONTENT */
-        #chat-header, #messages, #input-area { position: relative; z-index: 2; } 
+        /* --- THE GLASS COLUMN (Fixes the Face Covering!) --- */
+        .chat-container {
+            position: relative;
+            z-index: 2;
+            width: 45%; /* Takes up right side only */
+            max-width: 600px;
+            margin-left: auto; /* Pushes to the RIGHT */
+            margin-right: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0.8) 100%);
+            border-left: 1px solid rgba(255,255,255,0.05);
+            backdrop-filter: blur(2px);
+        }
 
         #chat-header { 
             padding: 20px 30px; 
-            background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
             display: flex; align-items: center; gap: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
         #current-hero-img {
-            width: 60px; height: 60px;
-            border-radius: 15px;
-            object-fit: cover;
-            border: 2px solid var(--accent-pink);
-            box-shadow: 0 0 15px rgba(222, 91, 167, 0.5);
+            width: 50px; height: 50px; border-radius: 12px; object-fit: cover; border: 2px solid var(--accent-pink);
         }
         
-        #messages { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+        #messages { 
+            flex: 1; 
+            padding: 20px 30px; 
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+        }
         
         .message { 
-            max-width: 65%; padding: 18px 25px; border-radius: 20px; line-height: 1.6; 
-            position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.3); font-size: 1.1rem;
-            backdrop-filter: blur(5px);
+            max-width: 85%; padding: 15px 20px; border-radius: 18px; line-height: 1.5; 
+            position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.2); font-size: 1rem;
+            backdrop-filter: blur(10px);
         }
         .message.user { align-self: flex-end; background: var(--user-msg-bg); color: white; border-bottom-right-radius: 2px; }
-        .message.ai { align-self: flex-start; background: var(--ai-msg-bg); border-bottom-left-radius: 2px; border: 1px solid rgba(255,255,255,0.1); margin-left: 20%; }
+        .message.ai { align-self: flex-start; background: var(--ai-msg-bg); border-bottom-left-radius: 2px; border: 1px solid rgba(255,255,255,0.1); }
         
-        #input-area { padding: 30px; background: rgba(31, 34, 48, 0.95); display: flex; gap: 15px; border-top: 1px solid #444; }
-        #user-input { flex: 1; padding: 18px; border-radius: 12px; background: #2a2e40; color: white; border: 1px solid #555; outline: none; font-size: 1rem; }
+        #input-area { 
+            padding: 20px; 
+            background: rgba(0,0,0,0.4); 
+            display: flex; gap: 10px; 
+            border-top: 1px solid rgba(255,255,255,0.1); 
+        }
+        #user-input { flex: 1; padding: 15px; border-radius: 10px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); outline: none; }
+        #user-input:focus { background: rgba(0,0,0,0.6); border-color: var(--accent-blue); }
         
         #send-btn { 
-            background: linear-gradient(135deg, var(--accent-blue), #1e5bbd); 
-            color: white; border: none; padding: 0 30px; border-radius: 12px; 
+            background: var(--accent-blue); color: white; border: none; padding: 0 20px; border-radius: 10px; 
             cursor: pointer; font-weight: bold; text-transform: uppercase;
         }
 
@@ -120,27 +168,28 @@
         .sidebar-btn { width: 100%; padding: 12px; background: rgba(255,255,255,0.05); color: #aaa; border: 1px solid #333; border-radius: 8px; cursor: pointer; margin-top: 10px; text-align: left; padding-left: 20px; }
         .sidebar-btn:hover { background: rgba(255,255,255,0.1); color: white; }
         
-        .market-btn {
-            margin-top: auto;
-            background: linear-gradient(90deg, rgba(35, 108, 225, 0.2), rgba(222, 91, 167, 0.2));
-            border: 1px solid var(--accent-pink);
-            color: white;
-            font-weight: bold;
-        }
+        .market-btn { margin-top: auto; background: linear-gradient(90deg, rgba(35, 108, 225, 0.2), rgba(222, 91, 167, 0.2)); border: 1px solid var(--accent-pink); color: white; font-weight: bold; }
         .market-btn:hover { box-shadow: 0 0 15px rgba(222, 91, 167, 0.4); }
 
         /* SETTINGS MODAL */
         #api-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1f2230; padding: 30px; border-radius: 15px; border: 2px solid var(--accent-blue); z-index: 100; width: 350px; color: white; }
         #overlay-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99; }
-
+        
         .speak-btn { position: absolute; bottom: -25px; right: 0; background: none; border: none; font-size: 1.2rem; cursor: pointer; opacity: 0.6; filter: grayscale(100%); transition: 0.3s; }
         .speak-btn:hover { opacity: 1; filter: none; transform: scale(1.2); }
+
+        /* RESPONSIVE: On small screens, chat takes full width */
+        @media (max-width: 800px) {
+            .chat-container { width: 100%; max-width: none; background: rgba(0,0,0,0.6); }
+            #sidebar { position: absolute; height: 100%; }
+        }
 
     </style>
 </head>
 <body>
 
     <div id="sidebar">
+        <button id="close-sidebar-btn" onclick="toggleSidebar()">✕</button>
         <div class="brand-header">
             <img src="https://github.com/gr4y74/remrin/blob/main/logo_white_ds.png?raw=true" alt="Remrin Logo" class="brand-logo">
         </div>
@@ -154,27 +203,30 @@
     </div>
 
     <div id="main-chat">
+        <button id="open-sidebar-btn" onclick="toggleSidebar()" style="display:none;">☰ Menu</button>
         <div id="chat-overlay"></div>
         
         <img id="hero-standing" src="" style="display:none;">
 
-        <header id="chat-header">
-            <img id="current-hero-img" src="" alt="Hero" style="display:none;">
-            <div>
-                <h2 id="char-name" style="margin:0; color:white; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">Select a Soul</h2>
-                <span id="char-tagline" style="color:#ddd; text-shadow: 0 1px 2px rgba(0,0,0,0.8);">Initiate connection...</span>
-            </div>
-        </header>
+        <div class="chat-container">
+            <header id="chat-header">
+                <img id="current-hero-img" src="" alt="Hero" style="display:none;">
+                <div>
+                    <h2 id="char-name" style="margin:0; color:white; font-size: 1.2rem;">Select a Soul</h2>
+                    <span id="char-tagline" style="color:#aaa; font-size: 0.9rem;">Initiate connection...</span>
+                </div>
+            </header>
 
-        <div id="messages">
-            <div class="message ai">
-                System Online. The Visual Interface is active. Select a companion to begin. 💙
+            <div id="messages">
+                <div class="message ai">
+                    System Online. Cinematic Mode Active. 💙
+                </div>
             </div>
-        </div>
 
-        <div id="input-area">
-            <input type="text" id="user-input" placeholder="Type your message..." onkeypress="handleEnter(event)">
-            <button id="send-btn" onclick="sendMessage()">Send</button>
+            <div id="input-area">
+                <input type="text" id="user-input" placeholder="Type your message..." onkeypress="handleEnter(event)">
+                <button id="send-btn" onclick="sendMessage()">Send</button>
+            </div>
         </div>
     </div>
 
@@ -187,92 +239,29 @@
     </div>
 
     <script>
-        // MASTER ROSTER WITH DIRECT LINKS TO IMAGES
-        // This bypasses any folder naming issues by going straight to the file on the web.
-        
+        // MASTER ROSTER (Same as before)
         const repoUrl = "https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/";
         const rawSuffix = "?raw=true";
 
         const characters = [
-            // --- THE OG TRINITY (Has 'hero_standing' PNGs) ---
-            { 
-                id: 'rem', name: 'Rem', file: 'rem.json', 
-                hero_standing: 'https://github.com/gr4y74/remrin/blob/main/rem_hero%20.png?raw=true',
-                bg: 'https://github.com/gr4y74/remrin/blob/main/rem_bw.jpg?raw=true',
-                avatar: 'https://github.com/gr4y74/remrin/blob/main/rem_hero%20.png?raw=true'
-            },
-            { 
-                id: 'lilly', name: 'Lilly', file: 'lilly.json', 
-                hero_standing: 'https://github.com/gr4y74/remrin/blob/main/lilly.png?raw=true',
-                bg: 'https://github.com/gr4y74/remrin/blob/main/zen_bg.jpg?raw=true',
-                avatar: 'https://github.com/gr4y74/remrin/blob/main/lilly.png?raw=true'
-            },
-            { 
-                id: 'sheikh', name: 'SheikhQR', file: 'sheikh_qr.json', 
-                hero_standing: 'https://github.com/gr4y74/remrin/blob/main/SheikhQR.png?raw=true',
-                bg: 'https://github.com/gr4y74/remrin/blob/main/bg2.jpg?raw=true',
-                avatar: 'https://github.com/gr4y74/remrin/blob/main/SheikhQR.png?raw=true'
-            },
-
-            // --- THE NEW 11 (Direct Links to the JPGs you uploaded) ---
-            { 
-                id: 'bear_bear', name: 'Bear Bear', file: 'bear_bear.json', 
-                bg: repoUrl + 'bear_bear_hero.jpg' + rawSuffix, 
-                avatar: repoUrl + 'bear_bear_hero.jpg' + rawSuffix 
-            },
-            { 
-                id: 'don', name: 'Don Pooh-leone', file: 'don_pooh_leone.json', 
-                bg: repoUrl + 'don_pooh_leone_hero.jpg' + rawSuffix, 
-                avatar: repoUrl + 'don_pooh_leone_hero.jpg' + rawSuffix 
-            },
-            { 
-                id: 'xen', name: 'Master Xen', file: 'xen.json', 
-                bg: repoUrl + 'master_xen_hero.jpg' + rawSuffix, 
-                avatar: repoUrl + 'master_xen_hero.jpg' + rawSuffix 
-            },
-            { 
-                id: 'fenris', name: 'Fenris', file: 'fenris.json', 
-                bg: repoUrl + 'fenris_hero.jpg' + rawSuffix, 
-                avatar: repoUrl + 'fenris_hero.jpg' + rawSuffix 
-            },
-            { 
-                id: 'rinn', name: 'Rinn', file: 'rinn.json', 
-                bg: repoUrl + 'rinn_hero_v2.jpg' + rawSuffix, 
-                avatar: repoUrl + 'rinn_hero_v2.jpg' + rawSuffix 
-            },
-            { 
-                id: 'princess_bee', name: 'Princess Bee', file: 'princess_bee.json', 
-                bg: repoUrl + 'bee_hero1.jpg' + rawSuffix, 
-                avatar: repoUrl + 'bee_hero1.jpg' + rawSuffix 
-            },
-            { 
-                id: 'larz', name: 'Larz', file: 'larz.json', 
-                bg: repoUrl + 'larz_hero.jpg' + rawSuffix, 
-                avatar: repoUrl + 'larz_hero.jpg' + rawSuffix 
-            },
-            { 
-                id: 'vorath', name: 'Vorath', file: 'vorath.json', 
-                bg: repoUrl + 'vorath_hero.jpg' + rawSuffix, 
-                avatar: repoUrl + 'vorath_hero.jpg' + rawSuffix 
-            },
-            { 
-                id: 'niri', name: 'Niri', file: 'niri.json', 
-                bg: repoUrl + 'niri_hero_v1.jpg' + rawSuffix, 
-                avatar: repoUrl + 'niri_hero_v1.jpg' + rawSuffix 
-            },
-            { 
-                id: 'atom', name: 'A.T.O.M.', file: 'atom.json', 
-                bg: repoUrl + 'atom_hero.jpg' + rawSuffix, 
-                avatar: repoUrl + 'atom_hero.jpg' + rawSuffix 
-            },
-            { 
-                id: 'glytch', name: 'Glytch', file: 'glytch.json', 
-                bg: repoUrl + 'glytch_hero.jpg' + rawSuffix, 
-                avatar: repoUrl + 'glytch_hero.jpg' + rawSuffix 
-            }
+            { id: 'rem', name: 'Rem', file: 'rem.json', hero_standing: 'https://github.com/gr4y74/remrin/blob/main/rem_hero%20.png?raw=true', bg: 'https://github.com/gr4y74/remrin/blob/main/rem_bw.jpg?raw=true', avatar: 'https://github.com/gr4y74/remrin/blob/main/rem_hero%20.png?raw=true' },
+            { id: 'lilly', name: 'Lilly', file: 'lilly.json', hero_standing: 'https://github.com/gr4y74/remrin/blob/main/lilly.png?raw=true', bg: 'https://github.com/gr4y74/remrin/blob/main/zen_bg.jpg?raw=true', avatar: 'https://github.com/gr4y74/remrin/blob/main/lilly.png?raw=true' },
+            { id: 'sheikh', name: 'SheikhQR', file: 'sheikh_qr.json', hero_standing: 'https://github.com/gr4y74/remrin/blob/main/SheikhQR.png?raw=true', bg: 'https://github.com/gr4y74/remrin/blob/main/bg2.jpg?raw=true', avatar: 'https://github.com/gr4y74/remrin/blob/main/SheikhQR.png?raw=true' },
+            { id: 'bear_bear', name: 'Bear Bear', file: 'bear_bear.json', bg: repoUrl + 'bear_bear_hero.jpg' + rawSuffix, avatar: repoUrl + 'bear_bear_hero.jpg' + rawSuffix },
+            { id: 'don', name: 'Don Pooh-leone', file: 'don_pooh_leone.json', bg: repoUrl + 'don_pooh_leone_hero.jpg' + rawSuffix, avatar: repoUrl + 'don_pooh_leone_hero.jpg' + rawSuffix },
+            { id: 'xen', name: 'Master Xen', file: 'xen.json', bg: repoUrl + 'master_xen_hero.jpg' + rawSuffix, avatar: repoUrl + 'master_xen_hero.jpg' + rawSuffix },
+            { id: 'fenris', name: 'Fenris', file: 'fenris.json', bg: repoUrl + 'fenris_hero.jpg' + rawSuffix, avatar: repoUrl + 'fenris_hero.jpg' + rawSuffix },
+            { id: 'rinn', name: 'Rinn', file: 'rinn.json', bg: repoUrl + 'rinn_hero_v2.jpg' + rawSuffix, avatar: repoUrl + 'rinn_hero_v2.jpg' + rawSuffix },
+            { id: 'princess_bee', name: 'Princess Bee', file: 'princess_bee.json', bg: repoUrl + 'bee_hero1.jpg' + rawSuffix, avatar: repoUrl + 'bee_hero1.jpg' + rawSuffix },
+            { id: 'larz', name: 'Larz', file: 'larz.json', bg: repoUrl + 'larz_hero.jpg' + rawSuffix, avatar: repoUrl + 'larz_hero.jpg' + rawSuffix },
+            { id: 'vorath', name: 'Vorath', file: 'vorath.json', bg: repoUrl + 'vorath_hero.jpg' + rawSuffix, avatar: repoUrl + 'vorath_hero.jpg' + rawSuffix },
+            { id: 'niri', name: 'Niri', file: 'niri.json', bg: repoUrl + 'niri_hero_v1.jpg' + rawSuffix, avatar: repoUrl + 'niri_hero_v1.jpg' + rawSuffix },
+            { id: 'atom', name: 'A.T.O.M.', file: 'atom.json', bg: repoUrl + 'atom_hero.jpg' + rawSuffix, avatar: repoUrl + 'atom_hero.jpg' + rawSuffix },
+            { id: 'glytch', name: 'Glytch', file: 'glytch.json', bg: repoUrl + 'glytch_hero.jpg' + rawSuffix, avatar: repoUrl + 'glytch_hero.jpg' + rawSuffix }
         ];
 
         let currentPersona = null;
+        let isSidebarOpen = true;
 
         window.onload = () => {
             const list = document.getElementById('roster-list');
@@ -280,63 +269,59 @@
                 const div = document.createElement('div');
                 div.className = 'character-card';
                 div.onclick = () => loadCharacter(char);
-                div.innerHTML = `
-                    <img src="${char.avatar}" class="avatar-small">
-                    <div class="char-info">
-                        <h4>${char.name}</h4>
-                    </div>
-                `;
+                div.innerHTML = `<img src="${char.avatar}" class="avatar-small"><div class="char-info"><h4>${char.name}</h4></div>`;
                 list.appendChild(div);
             });
             if(localStorage.getItem('gemini_key')) document.getElementById('gemini-key').value = localStorage.getItem('gemini_key');
             if(localStorage.getItem('eleven_key')) document.getElementById('eleven-key').value = localStorage.getItem('eleven_key');
+            
+            // Check screen size
+            if(window.innerWidth < 800) toggleSidebar();
         };
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const openBtn = document.getElementById('open-sidebar-btn');
+            isSidebarOpen = !isSidebarOpen;
+            
+            if (isSidebarOpen) {
+                sidebar.classList.remove('collapsed');
+                openBtn.style.display = 'none';
+            } else {
+                sidebar.classList.add('collapsed');
+                openBtn.style.display = 'block';
+            }
+        }
 
         async function loadCharacter(char) {
             document.querySelectorAll('.character-card').forEach(c => c.classList.remove('active'));
             event.currentTarget.classList.add('active');
-            
             document.getElementById('char-name').innerText = char.name;
             document.getElementById('current-hero-img').src = char.avatar;
             document.getElementById('current-hero-img').style.display = 'block';
             document.getElementById('messages').innerHTML = ''; 
-
-            // 1. SET BACKGROUND
             document.getElementById('main-chat').style.backgroundImage = `url('${char.bg}')`;
 
-            // 2. HERO STANDING LOGIC
             const heroImg = document.getElementById('hero-standing');
             if (char.hero_standing) {
-                // If character has a cutout (Rem, Lilly, Sheikh), show it!
                 heroImg.src = char.hero_standing;
                 heroImg.style.display = 'block';
-                // Move text to the right to avoid overlapping the hero
-                document.documentElement.style.setProperty('--ai-msg-bg', 'rgba(30, 41, 59, 0.9)');
             } else {
-                // If Ghibli character, hide the cutout (let the BG shine)
                 heroImg.style.display = 'none';
             }
 
-            // 3. LOAD JSON
-            // Using a relative path for JSONs assuming they are in content/characters
-            // If this fails, we can do the 'Direct Link' trick for JSONs too!
             try {
                 const response = await fetch(`content/characters/${char.file}`);
                 const data = await response.json();
                 currentPersona = data;
                 document.getElementById('char-tagline').innerText = currentPersona.CORE_IDENTITY.Tagline;
-                
                 setTimeout(() => {
                    const opening = currentPersona.BEHAVIORAL_DIRECTIVES["1_OPENING_HOOK"] || "Hello!";
                    addMessage('ai', opening); 
                 }, 500);
-            } catch (e) {
-                console.error(e);
-                addMessage('ai', 'Error loading Soul file. Please ensure JSONs are in content/characters/');
-            }
+            } catch (e) { addMessage('ai', 'Error loading Soul file.'); }
         }
 
-        // CHAT LOGIC
         async function sendMessage() {
             const input = document.getElementById('user-input');
             const text = input.value;
@@ -366,7 +351,6 @@
             const div = document.createElement('div');
             div.className = `message ${role} ${isLoading ? 'loading-msg' : ''}`;
             div.innerText = text;
-            
             if (role === 'ai' && !isLoading) {
                 const btn = document.createElement('button');
                 btn.className = 'speak-btn';
