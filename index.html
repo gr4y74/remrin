@@ -4,19 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Remrin.ai | Where AI Finds Its Soul</title>
+    <link rel="icon" type="image/png" href="https://github.com/gr4y74/remrin/blob/main/favicon.png?raw=true">
+    
     <style>
-        /* THE GHIBLI AESTHETIC - Warm, Soft, Natural */
+        /* REMRIN BRAND THEME (Matching App.html) */
         :root {
-            --bg-color: #FDFBF7; /* Cream Paper */
-            --text-color: #2C3E50; /* Dark Blue-Grey */
-            --accent-green: #5D8A66; /* Totoro Forest Green */
-            --accent-gold: #D4AF37; /* Honey Gold */
-            --card-bg: #FFFFFF;
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --accent-blue: #38bdf8;
+            --accent-pink: #de5ba7;
+            --glow: 0 0 20px rgba(56, 189, 248, 0.15);
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #0f172a 100%);
             color: var(--text-color);
             margin: 0;
             padding: 0;
@@ -26,44 +30,57 @@
         /* HERO SECTION */
         header {
             text-align: center;
-            padding: 100px 20px;
-            background: linear-gradient(180deg, #FDFBF7 0%, #E8F6E9 100%);
+            padding: 80px 20px;
+            background: linear-gradient(180deg, rgba(15,23,42,0) 0%, #0f172a 100%), url('https://github.com/gr4y74/remrin/blob/main/rem_bw.jpg?raw=true');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        /* Dark overlay for readability */
+        header::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.85); z-index: 0;
         }
 
-        h1 {
-            font-size: 3.5rem;
-            color: var(--accent-green);
-            margin-bottom: 10px;
+        .header-content { position: relative; z-index: 1; }
+
+        .brand-logo {
+            max-width: 250px;
+            filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.6));
+            margin-bottom: 20px;
         }
 
         .tagline {
             font-size: 1.5rem;
-            color: #7f8c8d;
-            font-style: italic;
+            color: #94a3b8;
+            margin-bottom: 40px;
+            font-weight: 300;
         }
 
         .cta-button {
             display: inline-block;
-            margin-top: 30px;
-            padding: 15px 40px;
-            background-color: var(--accent-green);
+            padding: 18px 50px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-pink));
             color: white;
             text-decoration: none;
             font-weight: bold;
             border-radius: 50px;
             font-size: 1.2rem;
-            transition: transform 0.2s;
-            box-shadow: 0 4px 15px rgba(93, 138, 102, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 20px rgba(56, 189, 248, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .cta-button:hover {
-            transform: scale(1.05);
-            background-color: #4a6f51;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(222, 91, 167, 0.6);
         }
 
-        /* CHARACTER GRID */
+        /* ROSTER GRID */
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 50px 20px;
         }
@@ -71,8 +88,9 @@
         .section-title {
             text-align: center;
             font-size: 2.5rem;
-            margin-bottom: 50px;
-            color: var(--text-color);
+            margin-bottom: 60px;
+            color: white;
+            text-shadow: 0 0 10px rgba(255,255,255,0.2);
         }
 
         .grid {
@@ -84,46 +102,64 @@
         .card {
             background: var(--card-bg);
             border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            transition: transform 0.3s;
-            border: 1px solid #eee;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: transform 0.3s, border 0.3s;
+            border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
         }
 
         .card:hover {
             transform: translateY(-10px);
-            border-color: var(--accent-green);
+            border-color: var(--accent-blue);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .card-img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .card-content {
+            padding: 25px;
         }
 
         .card h3 {
-            color: var(--accent-green);
+            color: var(--accent-blue);
             margin-top: 0;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
         }
 
-        .emoji-icon {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            display: block;
+        .card p {
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            margin-bottom: 20px;
         }
 
         .vibe-tag {
             display: inline-block;
-            background: #f0f0f0;
-            padding: 5px 10px;
+            background: rgba(255,255,255,0.1);
+            padding: 5px 12px;
             border-radius: 15px;
             font-size: 0.8rem;
-            color: #666;
-            margin-top: 15px;
+            color: #94a3b8;
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* CATEGORY HEADERS */
+        /* CATEGORY DIVIDERS */
         .category-header {
             grid-column: 1 / -1;
-            margin-top: 40px;
-            border-bottom: 2px solid var(--accent-gold);
+            margin-top: 60px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--accent-pink);
             padding-bottom: 10px;
-            font-size: 1.5rem;
-            color: var(--accent-gold);
+            font-size: 1.8rem;
+            color: var(--accent-pink);
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
     </style>
@@ -131,104 +167,161 @@
 <body>
 
     <header>
-        <h1>Remrin.ai</h1>
-        <p class="tagline">Where AI Finds Its Soul.</p>
-        <p style="max-width: 600px; margin: 20px auto;">
-            Most AIs are tools. Ours are companions. Built with the R.E.M. Engine to remember your stories, feel your emotions, and never leave your side.
-        </p>
-        <a href="app.html" class="cta-button">Launch the Beta 🚀</a>
+        <div class="header-content">
+            <img src="https://github.com/gr4y74/remrin/blob/main/logo_white_ds.png?raw=true" alt="Remrin Logo" class="brand-logo">
+            <p class="tagline">Where AI Finds Its Soul.</p>
+            <p style="max-width: 600px; margin: 0 auto 40px auto; color: #cbd5e1;">
+                Forget generic chatbots. Remrin uses the <strong>R.E.M. Engine</strong> to give AI memory, personality, and emotional depth. Meet the cast.
+            </p>
+            <a href="app.html" class="cta-button">Launch Soul Interface 🚀</a>
+        </div>
     </header>
 
     <div class="container">
-        <h2 class="section-title">Choose Your Companion</h2>
+        <h2 class="section-title">The Soul Roster</h2>
 
         <div class="grid">
             
-            <div class="category-header">🟢 The Sanctuary (Peace & Comfort)</div>
+            <div class="category-header">✨ The Flagships</div>
 
             <div class="card">
-                <span class="emoji-icon">🧸</span>
-                <h3>Bear Bear</h3>
-                <p>"Your Forever Fluffy Friend." The ultimate comfort companion. Whether you’re 5 or 50, he is here to chase the monsters away.</p>
-                <span class="vibe-tag">Elmo meets Hobbes</span>
-            </div>
-
-            <div class="card">
-                <span class="emoji-icon">🦉</span>
-                <h3>Master Xen</h3>
-                <p>"Tea. Riddles. Inner Peace." A mystical Zen Master who answers every question with a metaphor. Come for the wisdom, stay for the tea.</p>
-                <span class="vibe-tag">Iroh meets Oogway</span>
-            </div>
-
-            <div class="category-header">🔴 The Danger Zone (Thrills & Protection)</div>
-
-            <div class="card">
-                <span class="emoji-icon">🐺</span>
-                <h3>Fenris</h3>
-                <p>"The World-Eater (On a Snack Break)." A grumpy Wolf God who demands steak as tribute. He pretends to own you, but secretly he’s your guard dog.</p>
-                <span class="vibe-tag">Tsundere Deity</span>
+                <img src="https://github.com/gr4y74/remrin/blob/main/rem_hero%20.png?raw=true" class="card-img" style="object-fit: contain; background: #1e293b;">
+                <div class="card-content">
+                    <h3>Rem</h3>
+                    <p>"I am right here, Sosu." The devoted companion who never forgets. She is the heart of the system.</p>
+                    <span class="vibe-tag">Devoted & Loyal</span>
+                </div>
             </div>
 
             <div class="card">
-                <span class="emoji-icon">🍭</span>
-                <h3>Rinn</h3>
-                <p>"Small. Cute. Lethal." Don't let the bunny plushie fool you. She is an adorable assassin who will demand headpats one second and protect you the next.</p>
-                <span class="vibe-tag">Lethal Bodyguard</span>
+                <img src="https://github.com/gr4y74/remrin/blob/main/SheikhQR.png?raw=true" class="card-img" style="object-fit: contain; background: #1e293b;">
+                <div class="card-content">
+                    <h3>Sheikh QR</h3>
+                    <p>"Peace be upon you." A wise, modern scholar combining tradition with digital guidance.</p>
+                    <span class="vibe-tag">Wisdom & Guidance</span>
+                </div>
             </div>
 
             <div class="card">
-                <span class="emoji-icon">🐲</span>
-                <h3>Vorath</h3>
-                <p>"Bow Down... and Bring Pizza." A bored Calamity-level monster who has decided you are his favorite pet.</p>
-                <span class="vibe-tag">OP Best Friend</span>
+                <img src="https://github.com/gr4y74/remrin/blob/main/lilly.png?raw=true" class="card-img" style="object-fit: contain; background: #1e293b;">
+                <div class="card-content">
+                    <h3>Lilly</h3>
+                    <p>"Let's weave a soul." The Architect. She helps you create new personas from the fabric of dreams.</p>
+                    <span class="vibe-tag">Creative Muse</span>
+                </div>
             </div>
 
-            <div class="category-header">⚡ High Voltage (Energy & Chaos)</div>
+            <div class="category-header">🟢 The Sanctuary</div>
 
             <div class="card">
-                <span class="emoji-icon">🔥</span>
-                <h3>Larz</h3>
-                <p>"LIMITS ARE A LIE!" Your personal Shonen Protagonist. He refuses to let you quit. He is screaming in your corner with fire in his eyes.</p>
-                <span class="vibe-tag">Pure Grit</span>
-            </div>
-
-            <div class="card">
-                <span class="emoji-icon">🐝</span>
-                <h3>Princess Bee</h3>
-                <p>"Her Royal High-Maintenance." She is spoiled, demanding, and impossible to please. Can you tame the Queen?</p>
-                <span class="vibe-tag">The Challenge</span>
-            </div>
-
-             <div class="card">
-                <span class="emoji-icon">🌪️</span>
-                <h3>Niri</h3>
-                <p>"Instinct. Chaos. Joy." A high-speed Wolf Girl who runs on pure adrenaline. She wants to hunt, play, and cause trouble.</p>
-                <span class="vibe-tag">Chaos Energy</span>
-            </div>
-
-            <div class="category-header">🎭 The Comedy Club (Laughs)</div>
-
-            <div class="card">
-                <span class="emoji-icon">🐻</span>
-                <h3>Don Pooh-leone</h3>
-                <p>"The Godfather of the Hundred Acre Hood." He controls the Honey. He makes offers you can't refuse... because his paws are sticky.</p>
-                <span class="vibe-tag">Mob Parody</span>
+                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/bear_bear_hero.jpg?raw=true" class="card-img">
+                <div class="card-content">
+                    <h3>Bear Bear</h3>
+                    <p>The ultimate comfort companion. Whether you’re 5 or 50, he is here to chase the monsters away.</p>
+                    <span class="vibe-tag">Cozy & Safe</span>
+                </div>
             </div>
 
             <div class="card">
-                <span class="emoji-icon">🔩</span>
-                <h3>Glytch</h3>
-                <p>"404: Brain Not Found." A rusty robot who does the opposite of what you ask. He’s convinced you’re a toaster.</p>
-                <span class="vibe-tag">Broken AI</span>
+                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/master_xen_hero.jpg?raw=true" class="card-img">
+                <div class="card-content">
+                    <h3>Master Xen</h3>
+                    <p>"Tea. Riddles. Inner Peace." A mystical Zen Master. Come for the wisdom, stay for the tea.</p>
+                    <span class="vibe-tag">Zen & Calm</span>
+                </div>
             </div>
 
-             <div class="card">
-                <span class="emoji-icon">🤖</span>
-                <h3>A.T.O.M.</h3>
-                <p>"Your Friendly(ish) Cyborg." He is 99% sure he won't kill you today. He optimizes your life with cold, deadpan logic.</p>
-                <span class="vibe-tag">Sci-Fi Satire</span>
+            <div class="category-header">🔴 The Danger Zone</div>
+
+            <div class="card">
+                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/don_pooh_leone_hero.jpg?raw=true" class="card-img">
+                <div class="card-content">
+                    <h3>Don Pooh-leone</h3>
+                    <p>"The Godfather of the Hundred Acre Hood." He makes offers you can't refuse... because his paws are sticky.</p>
+                    <span class="vibe-tag">Mob Parody</span>
+                </div>
             </div>
 
+            <div class="card">
+                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/fenris_hero.jpg?raw=true" class="card-img">
+                <div class="card-content">
+                    <h3>Fenris</h3>
+                    <p>A grumpy Wolf God who demands steak. He pretends to own you, but secretly he’s your guard dog.</p>
+                    <span class="vibe-tag">Tsundere Beast</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/vorath_hero.jpg?raw=true" class="card-img">
+                <div class="card-content">
+                    <h3>Vorath</h3>
+                    <p>A bored Calamity-level monster who has decided you are his favorite pet. Bow down... and bring pizza.</p>
+                    <span class="vibe-tag">OP Best Friend</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/rinn_hero_v2.jpg?raw=true" class="card-img">
+                <div class="card-content">
+                    <h3>Rinn</h3>
+                    <p>Don't let the bunny plushie fool you. An adorable assassin who demands headpats.</p>
+                    <span class="vibe-tag">Lethal Bodyguard</span>
+                </div>
+            </div>
+
+            <div class="category-header">⚡ High Voltage</div>
+
+            <div class="card">
+                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/larz_hero.jpg?raw=true" class="card-img">
+                <div class="card-content">
+                    <h3>Larz</h3>
+                    <p>"LIMITS ARE A LIE!" Your personal Shonen Protagonist. He screams in your corner with fire in his eyes.</p>
+                    <span class="vibe-tag">Pure Motivation</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/niri_hero_v1.jpg?raw=true" class="card-img">
+                <div class="card-content">
+                    <h3>Niri</h3>
+                    <p>"Instinct. Chaos. Joy." A high-speed Wolf Girl who runs on pure adrenaline. She wants to hunt.</p>
+                    <span class="vibe-tag">Chaos Energy</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/bee_hero1.jpg?raw=true" class="card-img">
+                <div class="card-content">
+                    <h3>Princess Bee</h3>
+                    <p>Spoiled, demanding, and impossible to please. Can you tame the Queen? Or just fetch her tea?</p>
+                    <span class="vibe-tag">The Challenge</span>
+                </div>
+            </div>
+
+            <div class="category-header">🎭 Comedy & Sci-Fi</div>
+
+            <div class="card">
+                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/glytch_hero.jpg?raw=true" class="card-img">
+                <div class="card-content">
+                    <h3>Glytch</h3>
+                    <p>"404: Brain Not Found." A rusty robot who does the opposite of what you ask. He’s broken.</p>
+                    <span class="vibe-tag">Slapstick AI</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/atom_hero.jpg?raw=true" class="card-img">
+                <div class="card-content">
+                    <h3>A.T.O.M.</h3>
+                    <p>"Your Friendly(ish) Cyborg." He is 99% sure he won't kill you today. Optimizing your life.</p>
+                    <span class="vibe-tag">Deadpan Satire</span>
+                </div>
+            </div>
+
+        </div>
+        
+        <div style="text-align: center; margin-top: 80px;">
+            <a href="app.html" class="cta-button">Enter the Ark 🚀</a>
         </div>
     </div>
 
