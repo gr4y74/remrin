@@ -13,7 +13,7 @@
             --accent-blue: #236ce1;
             --accent-pink: #de5ba7;
             --user-msg-bg: rgba(35, 108, 225, 0.9);
-            --ai-msg-bg: rgba(30, 41, 59, 0.85); /* Slightly transparent */
+            --ai-msg-bg: rgba(30, 41, 59, 0.9);
         }
 
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; display: flex; height: 100vh; color: var(--text-color); background: var(--bg-color); overflow: hidden; }
@@ -59,10 +59,10 @@
             position: relative;
         }
 
-        /* 1. THE BACKGROUND DIMMER (Much lighter now!) */
+        /* 1. THE BACKGROUND DIMMER */
         #chat-overlay {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.4); /* Only 40% dim, so we see the art! */
+            background: rgba(0, 0, 0, 0.4); 
             z-index: 0;
         }
 
@@ -70,35 +70,42 @@
         #hero-standing {
             position: absolute;
             bottom: 0;
-            left: 5%; /* Positioned on the left side */
-            height: 85vh; /* Tall! */
+            left: 5%; 
+            height: 85vh; 
             max-height: 800px;
             width: auto;
-            z-index: 1; /* Above bg, below messages */
+            z-index: 1; 
             filter: drop-shadow(0 0 20px rgba(0,0,0,0.5));
             transition: opacity 0.5s ease-in-out;
-            pointer-events: none; /* Let clicks pass through */
+            pointer-events: none; 
         }
 
         /* CHAT CONTENT */
-        #chat-header, #messages, #input-area { position: relative; z-index: 2; } /* Above Hero */
+        #chat-header, #messages, #input-area { position: relative; z-index: 2; } 
 
         #chat-header { 
             padding: 20px 30px; 
             background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
             display: flex; align-items: center; gap: 20px;
         }
+
+        #current-hero-img {
+            width: 60px; height: 60px;
+            border-radius: 15px;
+            object-fit: cover;
+            border: 2px solid var(--accent-pink);
+            box-shadow: 0 0 15px rgba(222, 91, 167, 0.5);
+        }
         
         #messages { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
         
-        /* Bubbles are slightly transparent to show art behind them */
         .message { 
             max-width: 65%; padding: 18px 25px; border-radius: 20px; line-height: 1.6; 
             position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.3); font-size: 1.1rem;
             backdrop-filter: blur(5px);
         }
         .message.user { align-self: flex-end; background: var(--user-msg-bg); color: white; border-bottom-right-radius: 2px; }
-        .message.ai { align-self: flex-start; background: var(--ai-msg-bg); border-bottom-left-radius: 2px; border: 1px solid rgba(255,255,255,0.1); margin-left: 20%; /* Move text to right so it doesn't cover Hero */ }
+        .message.ai { align-self: flex-start; background: var(--ai-msg-bg); border-bottom-left-radius: 2px; border: 1px solid rgba(255,255,255,0.1); margin-left: 20%; }
         
         #input-area { padding: 30px; background: rgba(31, 34, 48, 0.95); display: flex; gap: 15px; border-top: 1px solid #444; }
         #user-input { flex: 1; padding: 18px; border-radius: 12px; background: #2a2e40; color: white; border: 1px solid #555; outline: none; font-size: 1rem; }
@@ -110,70 +117,4 @@
         }
 
         /* BUTTONS */
-        .sidebar-btn { width: 100%; padding: 12px; background: rgba(255,255,255,0.05); color: #aaa; border: 1px solid #333; border-radius: 8px; cursor: pointer; margin-top: 10px; text-align: left; padding-left: 20px; }
-        .sidebar-btn:hover { background: rgba(255,255,255,0.1); color: white; }
-        
-        /* SoulMarket Button - Glowing! */
-        .market-btn {
-            margin-top: auto; /* Push to bottom */
-            background: linear-gradient(90deg, rgba(35, 108, 225, 0.2), rgba(222, 91, 167, 0.2));
-            border: 1px solid var(--accent-pink);
-            color: white;
-            font-weight: bold;
-        }
-        .market-btn:hover { box-shadow: 0 0 15px rgba(222, 91, 167, 0.4); }
-
-        /* SETTINGS MODAL */
-        #api-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1f2230; padding: 30px; border-radius: 15px; border: 2px solid var(--accent-blue); z-index: 100; width: 350px; color: white; }
-        #overlay-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99; }
-
-    </style>
-</head>
-<body>
-
-    <div id="sidebar">
-        <div class="brand-header">
-            <img src="https://github.com/gr4y74/remrin/blob/main/logo_white_ds.png?raw=true" alt="Remrin Logo" class="brand-logo">
-        </div>
-        
-        <div id="roster-list"></div>
-        
-        <a href="market.html" style="text-decoration:none;">
-            <button class="sidebar-btn market-btn">🛒 Visit SoulMarket</button>
-        </a>
-        <button class="sidebar-btn" onclick="openSettings()">⚙️ System Keys</button>
-    </div>
-
-    <div id="main-chat">
-        <div id="chat-overlay"></div>
-        
-        <img id="hero-standing" src="" style="display:none;">
-
-        <header id="chat-header">
-            <div>
-                <h2 id="char-name" style="margin:0; color:white; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">Select a Soul</h2>
-                <span id="char-tagline" style="color:#ddd; text-shadow: 0 1px 2px rgba(0,0,0,0.8);">Initiate connection...</span>
-            </div>
-        </header>
-
-        <div id="messages">
-            <div class="message ai">
-                System Online. The Visual Interface is active. Select a companion to begin. 💙
-            </div>
-        </div>
-
-        <div id="input-area">
-            <input type="text" id="user-input" placeholder="Type your message..." onkeypress="handleEnter(event)">
-            <button id="send-btn" onclick="sendMessage()">Send</button>
-        </div>
-    </div>
-
-    <div id="overlay-modal" onclick="closeSettings()"></div>
-    <div id="api-modal">
-        <h3 style="margin-top:0;">System Keys 🗝️</h3>
-        <input type="password" id="gemini-key" placeholder="Gemini API Key" style="width:100%; padding:10px; margin:10px 0; background:#111; border:1px solid #444; color:white;">
-        <input type="password" id="eleven-key" placeholder="ElevenLabs API Key" style="width:100%; padding:10px; margin:10px 0; background:#111; border:1px solid #444; color:white;">
-        <button onclick="saveKeys()" style="width:100%; padding:10px; background:var(--accent-blue); color:white; border:none; border-radius:5px; cursor:pointer;">Save</button>
-    </div>
-
-    <script>
+        .sidebar-btn {
