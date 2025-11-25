@@ -213,33 +213,65 @@
             }
         }
 
+      // --- IMPROVED VOICE FUNCTION (Checks for ID or uses Default) ---
         async function speakText(text) {
             const key = localStorage.getItem('eleven_key');
-            if (!key) { alert("Save ElevenLabs Key!"); return; }
-            const voiceId = "21m00Tcm4TlvDq8ikWAM"; 
+            if (!key) { alert("⚠️ Error: Please save your ElevenLabs API Key in Settings!"); return; }
+            
+            // LOGIC: Use the current character's voice. If missing/placeholder, use Default (Rachel).
+            let voiceId = currentVoiceId;
+            const defaultVoice = "21m00Tcm4TlvDq8ikWAM"; 
+            
+            if (!voiceId || voiceId === "PLACEHOLDER" || voiceId.includes("REPLACE")) {
+                console.log("Voice ID missing/placeholder, defaulting to Rachel.");
+                voiceId = defaultVoice;
+            }
+            
             try {
                 const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
                     method: 'POST',
-                    headers: { 'xi-api-key': key, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text: text, model_id: "eleven_monolingual_v1" })
+                    headers: { 
+                        'xi-api-key': key, 
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify({ 
+                        text: text, 
+                        model_id: "eleven_monolingual_v1",
+                        voice_settings: { stability: 0.5, similarity_boost: 0.5 }
+                    })
                 });
+                
+                if(!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail.message || "API Error");
+                }
+                
                 const blob = await response.blob();
                 const audio = new Audio(URL.createObjectURL(blob));
                 audio.play();
-            } catch (e) { alert("Voice Error: " + e.message); }
+                
+            } catch (e) { 
+                alert("Voice Error: " + e.message); 
+                console.error("ElevenLabs Error:", e);
+            }
         }
 
         function handleEnter(e) { if(e.key === 'Enter') sendMessage(); }
         function openSettings() { document.getElementById('api-modal').style.display = 'block'; document.getElementById('overlay-modal').style.display = 'block'; }
         function closeSettings() { document.getElementById('api-modal').style.display = 'none'; document.getElementById('overlay-modal').style.display = 'none'; }
+        
         function saveKeys() {
             localStorage.setItem('gemini_key', document.getElementById('gemini-key').value);
             localStorage.setItem('eleven_key', document.getElementById('eleven-key').value);
-            localStorage.setItem('gemini_model', document.getElementById('model-selector').value);
+            // Also save the model selection if it exists
+            if(document.getElementById('model-selector')) {
+                localStorage.setItem('gemini_model', document.getElementById('model-selector').value);
+            }
             closeSettings();
-            alert("Settings Saved!");
+            alert("Keys Saved!");
         }
 
+        // --- INIT ---
         window.onload = () => {
             const list = document.getElementById('roster-list');
             characters.forEach(char => {
@@ -249,13 +281,17 @@
                 div.innerHTML = `<img src="${char.avatar}" class="avatar-small"><div class="char-info"><h4>${char.name}</h4></div>`;
                 list.appendChild(div);
             });
+            
             if(localStorage.getItem('gemini_key')) document.getElementById('gemini-key').value = localStorage.getItem('gemini_key');
             if(localStorage.getItem('eleven_key')) document.getElementById('eleven-key').value = localStorage.getItem('eleven_key');
-            if(localStorage.getItem('gemini_model')) document.getElementById('model-selector').value = localStorage.getItem('gemini_model');
+            if(localStorage.getItem('gemini_model') && document.getElementById('model-selector')) {
+                 document.getElementById('model-selector').value = localStorage.getItem('gemini_model');
+            }
             
             if(window.innerWidth < 800) toggleSidebar();
         };
 
+        // --- LOAD CHARACTER (Updates Voice ID Global) ---
         async function loadCharacter(char) {
             document.querySelectorAll('.character-card').forEach(c => c.classList.remove('active'));
             event.currentTarget.classList.add('active');
@@ -264,6 +300,9 @@
             document.getElementById('current-hero-img').style.display = 'block';
             document.getElementById('messages').innerHTML = ''; 
             document.getElementById('main-chat').style.backgroundImage = `url('${char.bg}')`;
+
+            // *** CRITICAL: Set the Voice ID for this session ***
+            currentVoiceId = char.voice;
 
             const heroImg = document.getElementById('hero-standing');
             if (char.hero_standing) {
