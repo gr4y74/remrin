@@ -508,7 +508,7 @@
             
             initMobileUI();
             window.addEventListener('resize', initMobileUI);
-            // NOTE: Sidebar is CLOSED by default in CSS (-100%). We do NOT call toggleSidebar() here for mobile.
+            // NOTE: REMOVED THE AUTO-OPEN LINE HERE! IT WAS THE BUG.
         };
 
         async function loadCharacter(char) {
