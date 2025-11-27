@@ -455,6 +455,9 @@
                 list.appendChild(div);
             });
             
+            // Set Default Background on Load
+            document.getElementById('main-chat').style.backgroundImage = `url('${DEFAULT_BG_URL}')`;
+            
             // Load Saved Prefs
             if(localStorage.getItem('gemini_key')) document.getElementById('gemini-key').value = localStorage.getItem('gemini_key');
             if(localStorage.getItem('eleven_key')) document.getElementById('eleven-key').value = localStorage.getItem('eleven_key');
