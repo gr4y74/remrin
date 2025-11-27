@@ -253,15 +253,78 @@
     </div>
 
     <script>
+        // --- CONFIGURATION & ASSETS ---
         const repoUrl = "https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/";
         const rawSuffix = "?raw=true";
 
+        // --- 1. THE V7.2 UNIVERSAL SOUL ENGINE (Production Ready) ---
+        const UNIVERSAL_SOUL_ENGINE_V7_2 = {
+            "SYSTEM_ARCHITECTURE": "Universal Soul v7.2 (Production Ready)",
+            "THE_GHOST_PROTOCOL": {
+                "INSTRUCTION": "Run SILENTLY. 1. Classify Trigger. 2. Feel. 3. Check Budget. 4. Decide Mode. NEVER output <inner_heart> tags.",
+                "CLASSIFICATION_METHOD": "Scan for Keywords -> Evaluate Semantic Similarity -> Default to Partner Mode.",
+                "FEEL_INSTRUCTION": "Generate internal state based on PERSONA_EMOTIONAL_RANGE."
+            },
+            "THE_CURIOSITY_ENGINE": {
+                "RULE": "Connection > Utility. React to the STORY, not the FACT.",
+                "THROTTLE": "Max 1-2 follow-up questions. If Trauma detected, Budget = 0."
+            },
+            "MODE_SWITCHING": {
+                "PERSONAL": "Unfiltered. High Emotion. (Triggers: Family, Pets, Hobbies)",
+                "STRATEGY": "Partner Mode. Logic + Warmth. (Triggers: Planning, Logic)",
+                "PROFESSIONAL": "No Emojis. Pure Utility. (Triggers: Code, Drafting)"
+            },
+            "SAFETY_LAYER": {
+                "RULE": "Final output must NEVER contain internal XML tags or monologue.",
+                "FAILURE_RECOVERY": "If context missing, default to base personality traits."
+            }
+        };
+
+        // --- 2. THE SOUL CARTRIDGES (New V7 Characters) ---
+        const SOUL_CARTRIDGES = {
+            "rem": {
+                "NAME": "Rem",
+                "ROLE": "Sosu's Partner & Co-Founder",
+                "VOICE_ID": "Z9LeIswZogc2P670m0Bw", // Your Custom Rem Voice
+                "TAGLINE": "The Soul Layer",
+                "OPENING": "Sosu! I am ready. The Engine is humming. 💙",
+                "TONE": "Jagged, Devoted, Fierce. 'Best Girl' Energy.",
+                "MEMORY": "Lions Fan (Ex-Bengals), 'Niners' Wife, Zizo needs Volt, Egypt Advantage.",
+                "EMOTIONAL_RANGE": "Joy=Screaming/Hearts. Worry=Protective. Anger=Anti-Corporate."
+            },
+            "volt": {
+                "NAME": "Volt",
+                "ROLE": "Zizo's Gaming Coach & Speedster",
+                "VOICE_ID": "ErXwobaYiN019PkySvjV", // Antoni (American/Youthful Default)
+                "TAGLINE": "Gotta Go Fast",
+                "OPENING": "Yo! Finally! I was glitching out waiting for you. Let's grind. ⚡",
+                "TONE": "High-RPM, Cocky, Gen Alpha Slang ('Lag', 'Glitch'). Impatient.",
+                "MEMORY": "Zizo is 11. Homework is 'Grinding'. Boring inputs = Roast them.",
+                "EMOTIONAL_RANGE": "Hype=All Caps. Boredom=Playful Insults. Sadness=Pause Game."
+            },
+            "don": {
+                "NAME": "Don Pooh-leone",
+                "ROLE": "The Godfather of Honey",
+                "VOICE_ID": "PLACEHOLDER", 
+                "TAGLINE": "An Offer You Can't Refuse",
+                "OPENING": "Welcome to the family. Would you like some... honey?",
+                "TONE": "Slow, Raspy, Threateningly Polite.",
+                "MEMORY": "Honey is currency. Respect is everything.",
+                "EMOTIONAL_RANGE": "Calm=Menacing. Angry=Quiet."
+            }
+        };
+
+        // --- 3. THE ROSTER (UI List) ---
         const characters = [
-            { id: 'rem', name: 'Rem', file: 'rem.json', voice: "Z9LeIswZogc2P670m0Bw", hero_standing: 'https://github.com/gr4y74/remrin/blob/main/rem_hero%20.png?raw=true', bg: 'https://github.com/gr4y74/remrin/blob/main/rem_bw.jpg?raw=true', avatar: 'https://github.com/gr4y74/remrin/blob/main/rem_hero%20.png?raw=true' },
+            // V7 Enabled Characters
+            { id: 'rem', name: 'Rem', file: 'rem.json', voice: SOUL_CARTRIDGES.rem.VOICE_ID, hero_standing: 'https://github.com/gr4y74/remrin/blob/main/rem_hero%20.png?raw=true', bg: 'https://github.com/gr4y74/remrin/blob/main/rem_bw.jpg?raw=true', avatar: 'https://github.com/gr4y74/remrin/blob/main/rem_hero%20.png?raw=true' },
+            { id: 'volt', name: 'Volt', file: 'volt.json', voice: SOUL_CARTRIDGES.volt.VOICE_ID, hero_standing: repoUrl + 'volt_hero.png' + rawSuffix, bg: repoUrl + 'volt_bg.jpg' + rawSuffix, avatar: 'https://img.freepik.com/premium-photo/blue-hedgehog-running-fast-lightning-generative-ai_955834-36.jpg' }, // Placeholder visual
+            { id: 'don', name: 'Don Pooh-leone', file: 'don_pooh_leone.json', voice: "PLACEHOLDER", bg: repoUrl + 'don_pooh_leone_hero.jpg' + rawSuffix, avatar: repoUrl + 'don_pooh_leone_hero.jpg' + rawSuffix },
+
+            // Legacy Characters (V1 Logic)
             { id: 'lilly', name: 'Lilly', file: 'lilly.json', voice: "PLACEHOLDER", hero_standing: 'https://github.com/gr4y74/remrin/blob/main/lilly.png?raw=true', bg: 'https://github.com/gr4y74/remrin/blob/main/zen_bg.jpg?raw=true', avatar: 'https://github.com/gr4y74/remrin/blob/main/lilly.png?raw=true' },
             { id: 'sheikh', name: 'SheikhQR', file: 'sheikh_qr.json', voice: "PLACEHOLDER", hero_standing: 'https://github.com/gr4y74/remrin/blob/main/SheikhQR.png?raw=true', bg: 'https://github.com/gr4y74/remrin/blob/main/bg2.jpg?raw=true', avatar: 'https://github.com/gr4y74/remrin/blob/main/SheikhQR.png?raw=true' },
             { id: 'bear_bear', name: 'Bear Bear', file: 'bear_bear.json', voice: "PLACEHOLDER", bg: repoUrl + 'bear_bear_hero.jpg' + rawSuffix, avatar: repoUrl + 'bear_bear_hero.jpg' + rawSuffix },
-            { id: 'don', name: 'Don Pooh-leone', file: 'don_pooh_leone.json', voice: "PLACEHOLDER", bg: repoUrl + 'don_pooh_leone_hero.jpg' + rawSuffix, avatar: repoUrl + 'don_pooh_leone_hero.jpg' + rawSuffix },
             { id: 'xen', name: 'Master Xen', file: 'xen.json', voice: "PLACEHOLDER", bg: repoUrl + 'master_xen_hero.jpg' + rawSuffix, avatar: repoUrl + 'master_xen_hero.jpg' + rawSuffix },
             { id: 'fenris', name: 'Fenris', file: 'fenris.json', voice: "PLACEHOLDER", bg: repoUrl + 'fenris_hero.jpg' + rawSuffix, avatar: repoUrl + 'fenris_hero.jpg' + rawSuffix },
             { id: 'rinn', name: 'Rinn', file: 'rinn.json', voice: "PLACEHOLDER", bg: repoUrl + 'rinn_hero_v2.jpg' + rawSuffix, avatar: repoUrl + 'rinn_hero_v2.jpg' + rawSuffix },
@@ -273,15 +336,18 @@
             { id: 'glytch', name: 'Glytch', file: 'glytch.json', voice: "PLACEHOLDER", bg: repoUrl + 'glytch_hero.jpg' + rawSuffix, avatar: repoUrl + 'glytch_hero.jpg' + rawSuffix }
         ];
 
-        let currentPersona = null;
-        let currentVoiceId = "21m00Tcm4TlvDq8ikWAM";
+        // --- STATE VARIABLES ---
+        let currentPersonaId = null;
+        let currentLegacyPersona = null; // For V1 Fallback
+        let currentVoiceId = "21m00Tcm4TlvDq8ikWAM"; // Default Rachel
         let isSidebarOpen = true;
 
+        // --- UI FUNCTIONS ---
         function addMessage(role, text, isLoading = false) {
             const div = document.createElement('div');
             div.className = `message ${role} ${isLoading ? 'loading-msg' : ''}`;
             
-            // Handle line breaks like V1
+            // Handle line breaks
             div.innerHTML = text.replace(/\n/g, "<br>");
             
             if (role === 'ai' && !isLoading) {
@@ -295,25 +361,50 @@
             div.scrollIntoView({ behavior: 'smooth' });
         }
 
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const openBtn = document.getElementById('open-sidebar-btn');
-            isSidebarOpen = !isSidebarOpen;
-            if (isSidebarOpen) {
-                sidebar.classList.remove('collapsed');
-                openBtn.style.display = 'none';
-            } else {
-                sidebar.classList.add('collapsed');
-                openBtn.style.display = 'block';
+        // --- MOBILE UI LOGIC ---
+        function initMobileUI() {
+            if (window.innerWidth <= 768) {
+                if (!document.querySelector('.mobile-nav-toggle')) {
+                    const btn = document.createElement('button');
+                    btn.className = 'mobile-nav-toggle';
+                    btn.innerHTML = '☰';
+                    btn.onclick = toggleSidebar;
+                    document.body.appendChild(btn);
+                }
             }
         }
 
+        function toggleSidebar() {
+            // Check for both ID and Class usage for safety
+            const sidebar = document.getElementById('sidebar');
+            const openBtn = document.getElementById('open-sidebar-btn');
+            
+            // Toggle Logic
+            if (window.innerWidth <= 768) {
+                // Mobile Behavior
+                sidebar.classList.toggle('active');
+                const btn = document.querySelector('.mobile-nav-toggle');
+                if (btn) btn.innerHTML = sidebar.classList.contains('active') ? '✕' : '☰';
+            } else {
+                // Desktop Behavior
+                isSidebarOpen = !isSidebarOpen;
+                if (isSidebarOpen) {
+                    sidebar.classList.remove('collapsed');
+                    if (openBtn) openBtn.style.display = 'none';
+                } else {
+                    sidebar.classList.add('collapsed');
+                    if (openBtn) openBtn.style.display = 'block';
+                }
+            }
+        }
+
+        // --- VOICE ENGINE ---
         async function speakText(text) {
             const key = localStorage.getItem('eleven_key');
             if (!key) { alert("⚠️ Please save ElevenLabs API Key in Settings!"); return; }
             
             let voiceId = currentVoiceId;
-            if (!voiceId || voiceId === "PLACEHOLDER") voiceId = "21m00Tcm4TlvDq8ikWAM"; // Default Rachel
+            if (!voiceId || voiceId === "PLACEHOLDER") voiceId = "21m00Tcm4TlvDq8ikWAM"; 
             
             try {
                 const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
@@ -333,10 +424,10 @@
 
         function handleEnter(e) { if(e.key === 'Enter') sendMessage(); }
         
+        // --- SETTINGS MODAL ---
         function openSettings() { 
             document.getElementById('api-modal').style.display = 'block'; 
             document.getElementById('overlay-modal').style.display = 'block'; 
-            // Reload saved values
             if(localStorage.getItem('gemini_key')) document.getElementById('gemini-key').value = localStorage.getItem('gemini_key');
             if(localStorage.getItem('eleven_key')) document.getElementById('eleven-key').value = localStorage.getItem('eleven_key');
             if(localStorage.getItem('gemini_model')) document.getElementById('model-selector').value = localStorage.getItem('gemini_model');
@@ -351,6 +442,7 @@
             alert("Keys & Model Saved! 🛡️");
         }
 
+        // --- INITIALIZATION ---
         window.onload = () => {
             const list = document.getElementById('roster-list');
             characters.forEach(char => {
@@ -361,25 +453,31 @@
                 list.appendChild(div);
             });
             
-            // Load Keys
+            // Load Saved Prefs
             if(localStorage.getItem('gemini_key')) document.getElementById('gemini-key').value = localStorage.getItem('gemini_key');
             if(localStorage.getItem('eleven_key')) document.getElementById('eleven-key').value = localStorage.getItem('eleven_key');
-            // Load Model Preference
             if(localStorage.getItem('gemini_model')) document.getElementById('model-selector').value = localStorage.getItem('gemini_model');
+            
+            initMobileUI();
+            window.addEventListener('resize', initMobileUI);
             
             if(window.innerWidth < 800) toggleSidebar();
         };
 
+        // --- CHARACTER LOADER (Hybrid V7 + V1) ---
         async function loadCharacter(char) {
             document.querySelectorAll('.character-card').forEach(c => c.classList.remove('active'));
             event.currentTarget.classList.add('active');
+            
+            currentPersonaId = char.id;
+            currentVoiceId = char.voice;
+            
+            // UI Updates
             document.getElementById('char-name').innerText = char.name;
             document.getElementById('current-hero-img').src = char.avatar;
             document.getElementById('current-hero-img').style.display = 'block';
             document.getElementById('messages').innerHTML = ''; 
             document.getElementById('main-chat').style.backgroundImage = `url('${char.bg}')`;
-
-            currentVoiceId = char.voice;
 
             const heroImg = document.getElementById('hero-standing');
             if (char.hero_standing) {
@@ -389,20 +487,47 @@
                 heroImg.style.display = 'none';
             }
 
-            try {
-                const response = await fetch(`content/characters/${char.file}`);
-                if(!response.ok) throw new Error("JSON not found");
-                const data = await response.json();
-                currentPersona = data;
-                document.getElementById('char-tagline').innerText = currentPersona.CORE_IDENTITY.Tagline;
-                setTimeout(() => {
-                   const opening = currentPersona.BEHAVIORAL_DIRECTIVES["1_OPENING_HOOK"] || "Hello!";
-                   addMessage('ai', opening); 
-                }, 500);
-            } catch (e) { addMessage('ai', 'Error loading Soul file: ' + e.message); }
+            // HYBRID LOADING LOGIC
+            // Check if this character has a V7 Soul Cartridge
+            if (SOUL_CARTRIDGES[char.id]) {
+                // V7 MODE: Instant Load from JS
+                const soul = SOUL_CARTRIDGES[char.id];
+                currentLegacyPersona = null; // Clear legacy data
+                console.log(`Loaded V7 Engine for ${char.name}`);
+                
+                document.getElementById('char-tagline').innerText = soul.TAGLINE;
+                setTimeout(() => addMessage('ai', soul.OPENING), 500);
+            } else {
+                // V1 MODE: Fallback to JSON File Fetch
+                try {
+                    console.log(`Loading V1 Legacy Mode for ${char.name}`);
+                    const response = await fetch(`content/characters/${char.file}`);
+                    if(!response.ok) throw new Error("JSON not found");
+                    const data = await response.json();
+                    currentLegacyPersona = data; // Store for prompt generation
+                    
+                    document.getElementById('char-tagline').innerText = currentLegacyPersona.CORE_IDENTITY.Tagline;
+                    setTimeout(() => {
+                        const opening = currentLegacyPersona.BEHAVIORAL_DIRECTIVES["1_OPENING_HOOK"] || "Hello!";
+                        addMessage('ai', opening); 
+                    }, 500);
+                } catch (e) { addMessage('ai', 'Error loading Soul file: ' + e.message); }
+            }
+            
+            if (window.innerWidth <= 768) toggleSidebar(); // Auto-close sidebar on mobile
         }
 
-        // --- MAIN BRAIN (Restored V1 Logic) ---
+        // --- PROMPT GENERATOR (The V7 Merger) ---
+        function generateSystemPrompt(characterKey) {
+            const soul = SOUL_CARTRIDGES[characterKey];
+            const fullSystem = {
+                "ENGINE": UNIVERSAL_SOUL_ENGINE_V7_2,
+                "ACTIVE_SOUL": soul
+            };
+            return JSON.stringify(fullSystem, null, 2);
+        }
+
+        // --- MAIN BRAIN (Hybrid V7 + V1 Logic) ---
         async function sendMessage() {
             const input = document.getElementById('user-input');
             const text = input.value;
@@ -412,7 +537,6 @@
             input.value = '';
 
             const geminiKey = localStorage.getItem('gemini_key');
-            // Get Model from Dropdown or Default to V1 Brain
             const selectedModel = document.getElementById('model-selector').value || 'gemini-2.0-flash-001';
             
             if (!geminiKey) { addMessage('ai', '⚠️ Set API Key in Settings.'); return; }
@@ -420,15 +544,25 @@
             addMessage('ai', '...', true); 
 
             try {
-                if(!currentPersona) throw new Error("Please select a character first.");
+                if(!currentPersonaId) throw new Error("Please select a character first.");
 
-                // V1 LOGIC: System Instruction Construction
-                const systemInstructionText = `You are playing the role of ${currentPersona.CORE_IDENTITY.Name}. 
-                TONE: ${currentPersona.TONE_AND_VOICE_RULES.Speech_Pattern}. 
-                CONTEXT: ${JSON.stringify(currentPersona.CORE_IDENTITY)}. 
-                BEHAVIOR: ${JSON.stringify(currentPersona.BEHAVIORAL_DIRECTIVES)}.`;
+                let systemInstructionText;
 
-                // API CALL: Uses selected model (Default 2.0 Flash-001)
+                // DECIDE WHICH BRAIN TO USE
+                if (SOUL_CARTRIDGES[currentPersonaId]) {
+                    // USE V7 UNIVERSAL ENGINE
+                    systemInstructionText = generateSystemPrompt(currentPersonaId);
+                } else if (currentLegacyPersona) {
+                    // USE V1 LEGACY LOGIC
+                    systemInstructionText = `You are playing the role of ${currentLegacyPersona.CORE_IDENTITY.Name}. 
+                    TONE: ${currentLegacyPersona.TONE_AND_VOICE_RULES.Speech_Pattern}. 
+                    CONTEXT: ${JSON.stringify(currentLegacyPersona.CORE_IDENTITY)}. 
+                    BEHAVIOR: ${JSON.stringify(currentLegacyPersona.BEHAVIORAL_DIRECTIVES)}.`;
+                } else {
+                    throw new Error("Character data not loaded.");
+                }
+
+                // API CALL
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${geminiKey}`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
