@@ -163,6 +163,13 @@
                 font-size: 24px; 
                 cursor: pointer; 
                 backdrop-filter: blur(5px);
+                transition: background 0.2s, transform 0.2s;
+            }
+            /* KEY FIX: PINK HOLD FEEDBACK */
+            .mobile-nav-toggle:active {
+                background: var(--accent-pink);
+                color: white;
+                transform: scale(0.95);
             }
 
             /* VOICE INTERFACE OVERLAY */
@@ -501,7 +508,7 @@
             
             initMobileUI();
             window.addEventListener('resize', initMobileUI);
-            if(window.innerWidth < 800) toggleSidebar();
+            // NOTE: Sidebar is CLOSED by default in CSS (-100%). We do NOT call toggleSidebar() here for mobile.
         };
 
         async function loadCharacter(char) {
