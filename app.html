@@ -36,7 +36,7 @@
         }
         #sidebar.collapsed { margin-left: -320px; } 
 
-        /* CHEVRON CLOSE BUTTON */
+        /* CHEVRON CLOSE BUTTON (Desktop Only) */
         #close-sidebar-btn {
             position: absolute; top: 15px; right: 15px; 
             background: transparent; color: var(--accent-pink); border: 1px solid rgba(222, 91, 167, 0.3);
@@ -135,6 +135,9 @@
                 backdrop-filter: blur(15px); 
             }
             .sidebar.active { left: 0; }
+            
+            /* REMOVE THE INTERNAL CLOSE BUTTON ON MOBILE */
+            #close-sidebar-btn { display: none !important; }
 
             /* Chat Column */
             .chat-container { width: 100% !important; height: 100% !important; margin: 0; border-radius: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); border: none; position: relative; z-index: 10; }
@@ -142,13 +145,13 @@
             /* Hide Chat in Voice Mode */
             .main-container.voice-mode .chat-container { display: none !important; }
 
-            /* Mobile Nav Toggle (PINK CHEVRON) */
+            /* Mobile Nav Toggle (PINK CHEVRON) - Z-INDEX 3001 (ABOVE SIDEBAR) */
             .mobile-nav-toggle { 
                 display: flex !important; 
                 position: fixed; 
                 top: 20px; 
                 left: 20px; 
-                z-index: 2500; 
+                z-index: 3001; /* KEY FIX: Higher than sidebar (3000) */
                 background: rgba(0,0,0,0.6); 
                 border: 1px solid var(--accent-pink); /* PINK BORDER */
                 color: var(--accent-pink); /* PINK TEXT */
@@ -249,6 +252,7 @@
     </div>
 
     <div id="sidebar">
+        <!-- NOTE: Internal button hidden on mobile via CSS -->
         <button id="close-sidebar-btn" onclick="toggleSidebar()">«</button>
         <div class="brand-header" onclick="location.reload()" title="Reset to Home">
             <img src="https://github.com/gr4y74/remrin/blob/main/logo_white_ds.png?raw=true" alt="Remrin Logo" class="brand-logo">
@@ -354,7 +358,7 @@
         let currentPersonaId = null;
         let currentLegacyPersona = null;
         let currentVoiceId = "21m00Tcm4TlvDq8ikWAM";
-        let isSidebarOpen = false; // CHANGED: Start Closed
+        let isSidebarOpen = false;
         let deferredPrompt; 
 
         // --- UI FUNCTIONS ---
@@ -403,7 +407,7 @@
             if (window.innerWidth <= 768) {
                 sidebar.classList.toggle('active');
                 const btn = document.querySelector('.mobile-nav-toggle');
-                // PINK CHEVRON TOGGLE LOGIC
+                // SINGLE BUTTON TOGGLE LOGIC: Change icon based on state
                 if (btn) btn.innerHTML = sidebar.classList.contains('active') ? '«' : '»';
             } else {
                 isSidebarOpen = !isSidebarOpen;
@@ -422,7 +426,7 @@
                 if (!document.querySelector('.mobile-nav-toggle')) {
                     const btn = document.createElement('button');
                     btn.className = 'mobile-nav-toggle';
-                    btn.innerHTML = '»'; // Default Open Icon (Pink Chevron)
+                    btn.innerHTML = '»'; // Default CLOSED state icon
                     btn.onclick = toggleSidebar;
                     document.body.appendChild(btn);
                 }
@@ -497,7 +501,7 @@
             
             initMobileUI();
             window.addEventListener('resize', initMobileUI);
-            // NOTE: Sidebar is CLOSED by default in CSS (-100%). We do NOT call toggleSidebar() here for mobile.
+            if(window.innerWidth < 800) toggleSidebar();
         };
 
         async function loadCharacter(char) {
@@ -511,11 +515,9 @@
             document.getElementById('current-hero-img').style.display = 'block';
             document.getElementById('messages').innerHTML = ''; 
             
-            // DYNAMIC STATUS TEXT
             const statusText = document.getElementById('voice-status');
             if (statusText) statusText.innerText = `${char.name.toUpperCase()} IS LISTENING...`;
 
-            // Handle Default BG vs Character BG
             const mainChat = document.getElementById('main-chat');
             mainChat.style.backgroundImage = `url('${char.bg || DEFAULT_BG_URL}')`;
             mainChat.style.backgroundPosition = 'center top'; 
@@ -563,7 +565,6 @@
         }
 
         async function sendMessage(isDemoTrigger = false) {
-            // If triggered by Orb demo, use a default "Hello"
             const input = document.getElementById('user-input');
             const text = isDemoTrigger ? "Hello" : input.value;
             
