@@ -122,7 +122,8 @@
             .hero-background { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; background-position: center; background-size: cover; }
 
             /* Sidebar Drawer - Z-INDEX 3000 (Top) */
-            .sidebar { 
+            /* FIX: Use #sidebar instead of .sidebar to match ID specificity */
+            #sidebar { 
                 position: fixed; 
                 left: -100%; /* START CLOSED */
                 top: 0; 
@@ -134,7 +135,7 @@
                 box-shadow: 10px 0 50px rgba(0,0,0,0.8); 
                 backdrop-filter: blur(15px); 
             }
-            .sidebar.active { left: 0; }
+            #sidebar.active { left: 0; }
             
             /* REMOVE THE INTERNAL CLOSE BUTTON ON MOBILE */
             #close-sidebar-btn { display: none !important; }
@@ -167,8 +168,8 @@
             }
             /* KEY FIX: PINK HOLD FEEDBACK */
             .mobile-nav-toggle:active {
-                background: var(--accent-pink);
-                color: white;
+                background: var(--accent-pink) !important;
+                color: white !important;
                 transform: scale(0.95);
             }
 
