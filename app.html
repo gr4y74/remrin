@@ -103,7 +103,7 @@
         
         @media (max-width: 800px) {
             .chat-container { width: 100%; max-width: none; background: rgba(0,0,0,0.6); }
-            #sidebar { position: absolute; height: 100%; }
+            /* This was the conflict line - Removing ambiguous sidebar definition */
         }
 
         /* --- MOBILE STYLES (Overrides) --- */
@@ -122,11 +122,13 @@
             .hero-background { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; background-position: center; background-size: cover; }
 
             /* Sidebar Drawer - Z-INDEX 3000 (Top) */
-            .sidebar { 
-                position: fixed; 
-                left: -100%; /* START CLOSED */
+            /* Using #sidebar ID to override desktop styles with !important force */
+            #sidebar { 
+                position: fixed !important; 
+                left: -100% !important; /* START CLOSED */
+                margin-left: 0 !important; /* Reset desktop margins */
                 top: 0; 
-                width: 85%; /* Narrower width */
+                width: 85% !important; /* Narrower width */
                 max-width: 300px;
                 height: 100%; 
                 background: rgba(15, 15, 20, 0.98); 
@@ -135,7 +137,7 @@
                 box-shadow: 10px 0 50px rgba(0,0,0,0.8); 
                 backdrop-filter: blur(15px); 
             }
-            .sidebar.active { left: 0; }
+            #sidebar.active { left: 0 !important; }
 
             /* Close Button inside Sidebar needs high z-index */
             #close-sidebar-btn { z-index: 3001; }
@@ -411,6 +413,7 @@
             if (window.innerWidth <= 768) {
                 sidebar.classList.toggle('active');
                 const btn = document.querySelector('.mobile-nav-toggle');
+                // Correct Z-Index handling if needed, but CSS handles it (Sidebar is 3000)
                 if (btn) btn.innerHTML = sidebar.classList.contains('active') ? '✕' : '☰';
             } else {
                 isSidebarOpen = !isSidebarOpen;
@@ -513,6 +516,7 @@
             currentPersonaId = char.id;
             currentVoiceId = char.voice;
             
+            // UI Updates
             document.getElementById('char-name').innerText = char.name;
             document.getElementById('current-hero-img').src = char.avatar;
             document.getElementById('current-hero-img').style.display = 'block';
@@ -522,6 +526,7 @@
             const statusText = document.getElementById('voice-status');
             if (statusText) statusText.innerText = `${char.name.toUpperCase()} IS LISTENING...`;
 
+            // Handle Default BG vs Character BG
             const mainChat = document.getElementById('main-chat');
             mainChat.style.backgroundImage = `url('${char.bg || DEFAULT_BG_URL}')`;
             mainChat.style.backgroundPosition = 'center top'; 
@@ -555,10 +560,10 @@
             }
             if (window.innerWidth <= 768) {
                 const sidebar = document.getElementById('sidebar');
-                sidebar.classList.remove('active'); // Close Sidebar
+                sidebar.classList.remove('active'); // Force Close
                 const btn = document.querySelector('.mobile-nav-toggle');
                 if(btn) btn.innerHTML = '☰';
-                toggleMobileMode('voice');
+                toggleMobileMode('voice'); // Auto-switch to voice on char select
             }
         }
 
@@ -605,7 +610,7 @@
                 if(data.candidates && data.candidates.length > 0) {
                     const reply = data.candidates[0].content.parts[0].text;
                     addMessage('ai', reply);
-                    speakText(reply);
+                    speakText(reply); // AUTO SPEAK ON MOBILE
                 }
             } catch (e) { 
                 if(document.querySelector('.loading-msg')) document.querySelector('.loading-msg').remove();
