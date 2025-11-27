@@ -455,10 +455,10 @@
                 list.appendChild(div);
             });
             
-            // Set Default Background on Load
+            // Set Default Background on Load (FLOWER LOGIC: Center/Center)
             const mainChat = document.getElementById('main-chat');
             mainChat.style.backgroundImage = `url('${DEFAULT_BG_URL}')`;
-            mainChat.style.backgroundPosition = 'center';
+            mainChat.style.backgroundPosition = 'center center'; // Center the pattern
             mainChat.style.backgroundSize = 'cover';
             mainChat.style.backgroundRepeat = 'no-repeat';
             
@@ -487,10 +487,10 @@
             document.getElementById('current-hero-img').style.display = 'block';
             document.getElementById('messages').innerHTML = ''; 
             
-            // Handle Default BG vs Character BG
+            // Handle Character BG (CHARACTER LOGIC: Center Top)
             const mainChat = document.getElementById('main-chat');
             mainChat.style.backgroundImage = `url('${char.bg || DEFAULT_BG_URL}')`;
-            mainChat.style.backgroundPosition = 'center';
+            mainChat.style.backgroundPosition = 'center top'; // Anchor to top for scenes/portraits
             mainChat.style.backgroundSize = 'cover';
             mainChat.style.backgroundRepeat = 'no-repeat';
 
