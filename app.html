@@ -103,6 +103,96 @@
             .chat-container { width: 100%; max-width: none; background: rgba(0,0,0,0.6); }
             #sidebar { position: absolute; height: 100%; }
         }
+
+        /* --- REMRIN MOBILE PWA PATCH (Glass & Gold Edition) --- */
+
+/* 1. The Mobile Breakpoint */
+@media screen and (max-width: 768px) {
+
+    /* Layout Reset: Stack everything */
+    body {
+        overflow: hidden; /* Prevent body scroll, handle internally */
+    }
+
+    /* 2. Hero Image: Make it Fixed & Full Cover */
+    .hero-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 0;
+        background-position: center;
+        background-size: cover;
+    }
+
+    /* 3. The Sidebar: Transform into a Slide-Out Drawer */
+    .sidebar {
+        position: fixed;
+        left: -100%; /* Hidden by default */
+        top: 0;
+        width: 80%; /* Leave a sliver of the map visible */
+        height: 100%;
+        background: rgba(10, 10, 15, 0.95); /* Deep dark for contrast */
+        z-index: 1000;
+        transition: left 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+        box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+        backdrop-filter: blur(10px);
+    }
+
+    /* Class to toggle sidebar open */
+    .sidebar.active {
+        left: 0;
+    }
+
+    /* 4. The Chat Column: Full Screen Glass Overlay */
+    .chat-container {
+        width: 100% !important; /* Override inline styles */
+        height: 100% !important;
+        margin: 0;
+        border-radius: 0;
+        background: rgba(0, 0, 0, 0.4); /* Lighter glass to see Rem */
+        backdrop-filter: blur(5px);
+        border: none;
+        position: relative;
+        z-index: 10;
+    }
+
+    /* 5. Header: Add Space for the "Notch" and Status Bar */
+    .chat-header {
+        padding-top: 20px; /* Safe area */
+        background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+    }
+
+    /* 6. Input Area: Fix to Bottom */
+    .input-area {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.85);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 20px; /* Safe area for swipe bar */
+    }
+
+    /* 7. Mobile Navigation Controls (Hamburger) */
+    .mobile-nav-toggle {
+        display: flex !important; /* Reveal the button */
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 1001;
+        background: rgba(0,0,0,0.6);
+        border: 1px solid rgba(255,255,255,0.2);
+        color: #fff;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        cursor: pointer;
+    }
+}
     </style>
 </head>
 <body>
