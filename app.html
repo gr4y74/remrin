@@ -28,7 +28,7 @@
         ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--accent-blue); }
 
-        /* --- SIDEBAR --- */
+        /* --- SIDEBAR (Desktop Default) --- */
         #sidebar { 
             width: 320px; background: var(--sidebar-bg); border-right: 1px solid var(--border-color); 
             display: flex; flex-direction: column; z-index: 50; 
@@ -89,8 +89,8 @@
         .market-btn:hover { box-shadow: 0 0 15px rgba(222, 91, 167, 0.4); }
 
         /* MODAL */
-        #api-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1f2230; padding: 30px; border-radius: 15px; border: 2px solid var(--accent-blue); z-index: 100; width: 350px; color: white; }
-        #overlay-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99; }
+        #api-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1f2230; padding: 30px; border-radius: 15px; border: 2px solid var(--accent-blue); z-index: 3100; width: 350px; color: white; }
+        #overlay-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3099; }
         .speak-btn { position: absolute; bottom: -25px; right: 0; background: none; border: none; font-size: 1.2rem; cursor: pointer; opacity: 0.6; filter: grayscale(100%); transition: 0.3s; }
         .speak-btn:hover { opacity: 1; filter: none; transform: scale(1.2); }
 
@@ -98,6 +98,9 @@
         .settings-input { width:100%; padding:10px; margin:10px 0; background:#111; border:1px solid #444; color:white; border-radius:5px; box-sizing: border-box; }
         .settings-select { width:100%; padding:10px; margin:10px 0; background:#111; border:1px solid #444; color:white; border-radius:5px; cursor: pointer; }
 
+        /* --- PORTRAIT LOCK OVERLAY --- */
+        #portrait-lock { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 9999; color: white; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        
         @media (max-width: 800px) {
             .chat-container { width: 100%; max-width: none; background: rgba(0,0,0,0.6); }
             #sidebar { position: absolute; height: 100%; }
@@ -106,6 +109,10 @@
         /* --- MOBILE VOICE ORB STYLES --- */
         .mobile-only { display: none; }
 
+        @media screen and (max-width: 768px) and (orientation: landscape) {
+            #portrait-lock { display: flex; }
+        }
+
         @media screen and (max-width: 768px) {
             /* Layout Reset */
             body { overflow: hidden; }
@@ -113,24 +120,46 @@
             /* Hero Image Fixed */
             .hero-background { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; background-position: center; background-size: cover; }
 
-            /* Sidebar Drawer */
-            .sidebar { position: fixed; left: -100%; top: 0; width: 80%; height: 100%; background: rgba(10, 10, 15, 0.95); z-index: 1000; transition: left 0.3s ease; box-shadow: 10px 0 30px rgba(0,0,0,0.5); backdrop-filter: blur(10px); }
+            /* Sidebar Drawer - Z-INDEX 3000 (Top) */
+            .sidebar { 
+                position: fixed; 
+                left: -100%; /* START CLOSED */
+                top: 0; 
+                width: 85%; /* Slightly narrower than full screen */
+                height: 100%; 
+                background: rgba(15, 15, 20, 0.98); 
+                z-index: 3000; 
+                transition: left 0.3s cubic-bezier(0.4, 0.0, 0.2, 1); 
+                box-shadow: 10px 0 50px rgba(0,0,0,0.8); 
+                backdrop-filter: blur(15px); 
+            }
             .sidebar.active { left: 0; }
 
             /* Chat Column */
-            .chat-container { width: 100% !important; height: 100% !important; margin: 0; border-radius: 0; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px); border: none; position: relative; z-index: 10; }
+            .chat-container { width: 100% !important; height: 100% !important; margin: 0; border-radius: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); border: none; position: relative; z-index: 10; }
             
             /* Hide Chat in Voice Mode */
             .main-container.voice-mode .chat-container { display: none !important; }
 
-            /* Header Adjustments */
-            .chat-header { padding-top: 20px; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); }
-            
-            /* Input Area */
-            .input-area { position: absolute; bottom: 0; width: 100%; background: rgba(0, 0, 0, 0.85); padding-bottom: 20px; }
-
-            /* Mobile Nav Toggle */
-            .mobile-nav-toggle { display: flex !important; position: fixed; top: 15px; left: 15px; z-index: 1001; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 50%; width: 40px; height: 40px; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; }
+            /* Mobile Nav Toggle (Hamburger) */
+            .mobile-nav-toggle { 
+                display: flex !important; 
+                position: fixed; 
+                top: 20px; 
+                left: 20px; 
+                z-index: 2500; /* Above Orb, Below Sidebar */
+                background: rgba(0,0,0,0.4); 
+                border: 1px solid rgba(255,255,255,0.1); 
+                color: #fff; 
+                border-radius: 50%; 
+                width: 45px; 
+                height: 45px; 
+                align-items: center; 
+                justify-content: center; 
+                font-size: 24px; 
+                cursor: pointer; 
+                backdrop-filter: blur(5px);
+            }
 
             /* VOICE INTERFACE OVERLAY */
             .mobile-only { display: block; }
@@ -140,20 +169,46 @@
                 padding: 20px; box-sizing: border-box;
             }
             .voice-controls, .voice-header { pointer-events: auto; }
-            .voice-controls { display: flex; align-items: center; justify-content: space-between; margin-bottom: 40px; }
             
-            .icon-btn { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); color: white; width: 50px; height: 50px; border-radius: 20px; font-size: 24px; cursor: pointer; transition: transform 0.2s; }
-            .icon-btn:active { transform: scale(0.9); }
-
-            .orb-container { position: relative; width: 80px; height: 80px; display: flex; justify-content: center; align-items: center; }
-            .orb-core { width: 60px; height: 60px; background: linear-gradient(135deg, #00C6FF, #0072FF); border-radius: 50%; box-shadow: 0 0 20px rgba(0, 198, 255, 0.6); z-index: 2; animation: breathe 3s infinite ease-in-out; }
-            .orb-glow { position: absolute; width: 100%; height: 100%; background: rgba(0, 198, 255, 0.3); border-radius: 50%; z-index: 1; animation: pulse-ring 2s infinite; }
-
-            .voice-status-text { text-align: center; color: rgba(255, 255, 255, 0.8); font-family: 'Courier New', monospace; font-size: 14px; letter-spacing: 2px; margin-bottom: 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-            
-            .status-indicator { background: rgba(0,0,0,0.6); padding: 5px 12px; border-radius: 20px; font-size: 12px; display: flex; align-items: center; gap: 5px; color: #00ff88; margin-left: auto; }
+            /* Status Indicator (Top Right) */
+            .voice-header { display: flex; justify-content: flex-end; padding-top: 10px; }
+            .status-indicator { background: rgba(0,0,0,0.6); padding: 6px 14px; border-radius: 20px; font-size: 13px; display: flex; align-items: center; gap: 6px; color: #00ff88; border: 1px solid rgba(0,255,136,0.2); }
             .dot { width: 8px; height: 8px; background: #00ff88; border-radius: 50%; }
             .dot.live { animation: blink 1s infinite; }
+
+            /* Bottom Controls Alignment */
+            .voice-controls { 
+                display: flex; 
+                align-items: flex-end; /* Align to bottom */
+                justify-content: space-between; 
+                margin-bottom: 20px;
+                padding-bottom: 40px; /* Space for the text below */
+                position: relative;
+            }
+            
+            .icon-btn { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); color: white; width: 50px; height: 50px; border-radius: 50%; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+            .icon-btn:active { transform: scale(0.9); background: rgba(255,255,255,0.2); }
+
+            /* THE ORB */
+            .orb-container { position: relative; width: 90px; height: 90px; display: flex; justify-content: center; align-items: center; margin-bottom: 10px; cursor: pointer; }
+            .orb-core { width: 70px; height: 70px; background: linear-gradient(135deg, #00C6FF, #0072FF); border-radius: 50%; box-shadow: 0 0 25px rgba(0, 198, 255, 0.6); z-index: 2; animation: breathe 3s infinite ease-in-out; transition: 0.3s; }
+            .orb-glow { position: absolute; width: 100%; height: 100%; background: rgba(0, 198, 255, 0.3); border-radius: 50%; z-index: 1; animation: pulse-ring 2s infinite; }
+            .orb-container:active .orb-core { transform: scale(0.9); background: #fff; }
+
+            /* Status Text (Bottom Center) */
+            .voice-status-text { 
+                position: absolute; 
+                bottom: 30px; 
+                left: 0; 
+                width: 100%; 
+                text-align: center; 
+                color: rgba(255, 255, 255, 0.6); 
+                font-family: 'Courier New', monospace; 
+                font-size: 12px; 
+                letter-spacing: 3px; 
+                text-transform: uppercase;
+                pointer-events: none;
+            }
         }
 
         @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
@@ -163,20 +218,33 @@
 </head>
 <body>
 
+    <!-- PORTRAIT LOCK OVERLAY -->
+    <div id="portrait-lock">
+        <div style="font-size: 40px; margin-bottom: 20px;">📱🔄</div>
+        <h3>Please Rotate to Portrait</h3>
+        <p style="color:#aaa;">Remrin is designed for soul connection,<br>not landscape mode.</p>
+    </div>
+
     <!-- MOBILE VOICE INTERFACE (The Orb Layer) -->
     <div id="mobile-voice-interface" class="mobile-only" style="display:none;">
         <div class="voice-header">
             <div class="status-indicator"><span class="dot live"></span> Live</div>
         </div>
-        <div class="voice-controls">
-            <button class="icon-btn secondary" onclick="toggleMobileMode('chat')">⌨️</button>
-            <div class="orb-container" onclick="addMessage('user', 'Hello!')"> <!-- Simple trigger for demo -->
-                <div class="orb-core"></div>
-                <div class="orb-glow"></div>
+        
+        <!-- Controls Container -->
+        <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end;">
+            <div class="voice-controls">
+                <button class="icon-btn secondary" onclick="toggleMobileMode('chat')">⌨️</button>
+                
+                <div class="orb-container" onclick="triggerOrbAction()">
+                    <div class="orb-core"></div>
+                    <div class="orb-glow"></div>
+                </div>
+                
+                <button class="icon-btn secondary" onclick="openSettings()">⚙️</button>
             </div>
-            <button class="icon-btn secondary" onclick="openSettings()">⚙️</button>
+            <div class="voice-status-text" id="voice-status">REM IS LISTENING...</div>
         </div>
-        <div class="voice-status-text" id="voice-status">REM IS LISTENING...</div>
     </div>
 
     <div id="sidebar">
@@ -212,6 +280,7 @@
     <div id="overlay-modal" onclick="closeSettings()"></div>
     <div id="api-modal">
         <h3 style="margin-top:0;">System Settings ⚙️</h3>
+        <button id="install-btn" onclick="triggerInstall()" style="display:none; width:100%; padding:12px; background:var(--accent-pink); color:white; border:none; border-radius:5px; cursor:pointer; margin-bottom:15px; font-weight:bold;">📲 Install App</button>
         <label>AI Model (Brain):</label>
         <select id="model-selector" class="settings-select">
             <option value="gemini-2.0-flash-001">Gemini 2.0 Flash-001 (Recommended)</option>
@@ -284,7 +353,8 @@
         let currentPersonaId = null;
         let currentLegacyPersona = null;
         let currentVoiceId = "21m00Tcm4TlvDq8ikWAM";
-        let isSidebarOpen = true;
+        let isSidebarOpen = false; // CHANGED: Start Closed
+        let deferredPrompt; 
 
         // --- UI FUNCTIONS ---
         function addMessage(role, text, isLoading = false) {
@@ -300,6 +370,24 @@
             }
             document.getElementById('messages').appendChild(div);
             div.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function triggerOrbAction() {
+            // Demo Action: User Says "Hello"
+            addMessage('user', 'Hello!');
+            // Simulate AI processing (the existing logic will handle response if hooked up, 
+            // for now, let's trigger the AI Brain manually if needed or just visual feedback)
+            // A simple hack for the demo is to just make it Pulse
+            const orbCore = document.querySelector('.orb-core');
+            orbCore.style.transform = "scale(1.2)";
+            setTimeout(() => orbCore.style.transform = "scale(1)", 200);
+            
+            // To actually chat via voice, we'd need STT (Speech to Text). 
+            // For this demo, clicking the orb sends a "Hello" to prove it works.
+            sendMessage(true); // Call sendMessage with a flag? 
+            // Actually, let's just simulate the "Listening" state visually for now.
+            document.getElementById('voice-status').innerText = "LISTENING...";
+            setTimeout(() => document.getElementById('voice-status').innerText = "PROCESSING...", 1500);
         }
 
         function toggleMobileMode(mode) {
@@ -322,6 +410,7 @@
             if (window.innerWidth <= 768) {
                 sidebar.classList.toggle('active');
                 const btn = document.querySelector('.mobile-nav-toggle');
+                // Correct Z-Index handling if needed, but CSS handles it (Sidebar is 3000)
                 if (btn) btn.innerHTML = sidebar.classList.contains('active') ? '✕' : '☰';
             } else {
                 isSidebarOpen = !isSidebarOpen;
@@ -345,6 +434,23 @@
                     document.body.appendChild(btn);
                 }
                 toggleMobileMode('voice'); // Default to Orb on Mobile
+            }
+        }
+
+        // --- PWA INSTALL MAGIC ---
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('install-btn').style.display = 'block';
+        });
+
+        async function triggerInstall() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User installed: ${outcome}`);
+                deferredPrompt = null;
+                document.getElementById('install-btn').style.display = 'none';
             }
         }
 
@@ -398,7 +504,7 @@
             
             initMobileUI();
             window.addEventListener('resize', initMobileUI);
-            if(window.innerWidth < 800) toggleSidebar();
+            // NOTE: Sidebar is CLOSED by default in CSS (-100%). We do NOT call toggleSidebar() here for mobile.
         };
 
         async function loadCharacter(char) {
@@ -407,11 +513,17 @@
             currentPersonaId = char.id;
             currentVoiceId = char.voice;
             
+            // UI Updates
             document.getElementById('char-name').innerText = char.name;
             document.getElementById('current-hero-img').src = char.avatar;
             document.getElementById('current-hero-img').style.display = 'block';
             document.getElementById('messages').innerHTML = ''; 
             
+            // DYNAMIC STATUS TEXT
+            const statusText = document.getElementById('voice-status');
+            if (statusText) statusText.innerText = `${char.name.toUpperCase()} IS LISTENING...`;
+
+            // Handle Default BG vs Character BG
             const mainChat = document.getElementById('main-chat');
             mainChat.style.backgroundImage = `url('${char.bg || DEFAULT_BG_URL}')`;
             mainChat.style.backgroundPosition = 'center top'; 
@@ -445,7 +557,7 @@
             }
             if (window.innerWidth <= 768) {
                 const sidebar = document.getElementById('sidebar');
-                sidebar.classList.remove('active');
+                sidebar.classList.remove('active'); // Force Close
                 const btn = document.querySelector('.mobile-nav-toggle');
                 if(btn) btn.innerHTML = '☰';
                 toggleMobileMode('voice'); // Auto-switch to voice on char select
@@ -458,17 +570,19 @@
             return JSON.stringify(fullSystem, null, 2);
         }
 
-        async function sendMessage() {
+        async function sendMessage(isDemoTrigger = false) {
+            // If triggered by Orb demo, use a default "Hello"
             const input = document.getElementById('user-input');
-            const text = input.value;
+            const text = isDemoTrigger ? "Hello" : input.value;
+            
             if (!text) return;
-            addMessage('user', text);
+            if (!isDemoTrigger) addMessage('user', text);
             input.value = '';
             
             const geminiKey = localStorage.getItem('gemini_key');
             const selectedModel = document.getElementById('model-selector').value || 'gemini-2.0-flash-001';
             if (!geminiKey) { addMessage('ai', '⚠️ Set API Key'); return; }
-            addMessage('ai', '...', true); 
+            if (!isDemoTrigger) addMessage('ai', '...', true); 
 
             try {
                 if(!currentPersonaId) throw new Error("Select a character");
@@ -488,11 +602,13 @@
                     })
                 });
                 const data = await response.json();
-                document.querySelector('.loading-msg').remove();
+                const loader = document.querySelector('.loading-msg');
+                if(loader) loader.remove();
+                
                 if(data.candidates && data.candidates.length > 0) {
                     const reply = data.candidates[0].content.parts[0].text;
                     addMessage('ai', reply);
-                    // Auto-speak in voice mode? Optional.
+                    speakText(reply); // AUTO SPEAK ON MOBILE
                 }
             } catch (e) { 
                 if(document.querySelector('.loading-msg')) document.querySelector('.loading-msg').remove();
