@@ -456,7 +456,11 @@
             });
             
             // Set Default Background on Load
-            document.getElementById('main-chat').style.backgroundImage = `url('${DEFAULT_BG_URL}')`;
+            const mainChat = document.getElementById('main-chat');
+            mainChat.style.backgroundImage = `url('${DEFAULT_BG_URL}')`;
+            mainChat.style.backgroundPosition = 'center';
+            mainChat.style.backgroundSize = 'cover';
+            mainChat.style.backgroundRepeat = 'no-repeat';
             
             // Load Saved Prefs
             if(localStorage.getItem('gemini_key')) document.getElementById('gemini-key').value = localStorage.getItem('gemini_key');
@@ -484,7 +488,11 @@
             document.getElementById('messages').innerHTML = ''; 
             
             // Handle Default BG vs Character BG
-            document.getElementById('main-chat').style.backgroundImage = `url('${char.bg || DEFAULT_BG_URL}')`;
+            const mainChat = document.getElementById('main-chat');
+            mainChat.style.backgroundImage = `url('${char.bg || DEFAULT_BG_URL}')`;
+            mainChat.style.backgroundPosition = 'center';
+            mainChat.style.backgroundSize = 'cover';
+            mainChat.style.backgroundRepeat = 'no-repeat';
 
             const heroImg = document.getElementById('hero-standing');
             if (char.hero_standing) {
