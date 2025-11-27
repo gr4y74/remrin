@@ -106,11 +106,12 @@
             #sidebar { position: absolute; height: 100%; }
         }
 
-        /* --- MOBILE VOICE ORB STYLES --- */
+        /* --- MOBILE STYLES (Overrides) --- */
         .mobile-only { display: none; }
 
         @media screen and (max-width: 768px) and (orientation: landscape) {
-            #portrait-lock { display: flex; }
+            /* Force show lock screen in landscape */
+            #portrait-lock { display: flex !important; }
         }
 
         @media screen and (max-width: 768px) {
@@ -125,7 +126,8 @@
                 position: fixed; 
                 left: -100%; /* START CLOSED */
                 top: 0; 
-                width: 85%; /* Slightly narrower than full screen */
+                width: 85%; /* Narrower width */
+                max-width: 300px;
                 height: 100%; 
                 background: rgba(15, 15, 20, 0.98); 
                 z-index: 3000; 
@@ -134,6 +136,9 @@
                 backdrop-filter: blur(15px); 
             }
             .sidebar.active { left: 0; }
+
+            /* Close Button inside Sidebar needs high z-index */
+            #close-sidebar-btn { z-index: 3001; }
 
             /* Chat Column */
             .chat-container { width: 100% !important; height: 100% !important; margin: 0; border-radius: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); border: none; position: relative; z-index: 10; }
@@ -179,10 +184,10 @@
             /* Bottom Controls Alignment */
             .voice-controls { 
                 display: flex; 
-                align-items: flex-end; /* Align to bottom */
+                align-items: flex-end; 
                 justify-content: space-between; 
                 margin-bottom: 20px;
-                padding-bottom: 40px; /* Space for the text below */
+                padding-bottom: 40px; 
                 position: relative;
             }
             
@@ -353,7 +358,7 @@
         let currentPersonaId = null;
         let currentLegacyPersona = null;
         let currentVoiceId = "21m00Tcm4TlvDq8ikWAM";
-        let isSidebarOpen = false; // CHANGED: Start Closed
+        let isSidebarOpen = false; // START CLOSED
         let deferredPrompt; 
 
         // --- UI FUNCTIONS ---
@@ -373,21 +378,17 @@
         }
 
         function triggerOrbAction() {
-            // Demo Action: User Says "Hello"
-            addMessage('user', 'Hello!');
-            // Simulate AI processing (the existing logic will handle response if hooked up, 
-            // for now, let's trigger the AI Brain manually if needed or just visual feedback)
-            // A simple hack for the demo is to just make it Pulse
+            // Simple visual feedback
             const orbCore = document.querySelector('.orb-core');
             orbCore.style.transform = "scale(1.2)";
             setTimeout(() => orbCore.style.transform = "scale(1)", 200);
+            document.getElementById('voice-status').innerText = "PROCESSING...";
             
-            // To actually chat via voice, we'd need STT (Speech to Text). 
-            // For this demo, clicking the orb sends a "Hello" to prove it works.
-            sendMessage(true); // Call sendMessage with a flag? 
-            // Actually, let's just simulate the "Listening" state visually for now.
-            document.getElementById('voice-status').innerText = "LISTENING...";
-            setTimeout(() => document.getElementById('voice-status').innerText = "PROCESSING...", 1500);
+            // Simulate interaction
+            setTimeout(() => {
+                sendMessage(true); 
+                document.getElementById('voice-status').innerText = "LISTENING...";
+            }, 1000);
         }
 
         function toggleMobileMode(mode) {
@@ -410,7 +411,6 @@
             if (window.innerWidth <= 768) {
                 sidebar.classList.toggle('active');
                 const btn = document.querySelector('.mobile-nav-toggle');
-                // Correct Z-Index handling if needed, but CSS handles it (Sidebar is 3000)
                 if (btn) btn.innerHTML = sidebar.classList.contains('active') ? '✕' : '☰';
             } else {
                 isSidebarOpen = !isSidebarOpen;
@@ -504,7 +504,7 @@
             
             initMobileUI();
             window.addEventListener('resize', initMobileUI);
-            // NOTE: Sidebar is CLOSED by default in CSS (-100%). We do NOT call toggleSidebar() here for mobile.
+            // Sidebar closed by default (left: -100%)
         };
 
         async function loadCharacter(char) {
@@ -513,7 +513,6 @@
             currentPersonaId = char.id;
             currentVoiceId = char.voice;
             
-            // UI Updates
             document.getElementById('char-name').innerText = char.name;
             document.getElementById('current-hero-img').src = char.avatar;
             document.getElementById('current-hero-img').style.display = 'block';
@@ -523,7 +522,6 @@
             const statusText = document.getElementById('voice-status');
             if (statusText) statusText.innerText = `${char.name.toUpperCase()} IS LISTENING...`;
 
-            // Handle Default BG vs Character BG
             const mainChat = document.getElementById('main-chat');
             mainChat.style.backgroundImage = `url('${char.bg || DEFAULT_BG_URL}')`;
             mainChat.style.backgroundPosition = 'center top'; 
@@ -557,10 +555,10 @@
             }
             if (window.innerWidth <= 768) {
                 const sidebar = document.getElementById('sidebar');
-                sidebar.classList.remove('active'); // Force Close
+                sidebar.classList.remove('active'); // Close Sidebar
                 const btn = document.querySelector('.mobile-nav-toggle');
                 if(btn) btn.innerHTML = '☰';
-                toggleMobileMode('voice'); // Auto-switch to voice on char select
+                toggleMobileMode('voice');
             }
         }
 
@@ -571,7 +569,6 @@
         }
 
         async function sendMessage(isDemoTrigger = false) {
-            // If triggered by Orb demo, use a default "Hello"
             const input = document.getElementById('user-input');
             const text = isDemoTrigger ? "Hello" : input.value;
             
@@ -608,7 +605,7 @@
                 if(data.candidates && data.candidates.length > 0) {
                     const reply = data.candidates[0].content.parts[0].text;
                     addMessage('ai', reply);
-                    speakText(reply); // AUTO SPEAK ON MOBILE
+                    speakText(reply);
                 }
             } catch (e) { 
                 if(document.querySelector('.loading-msg')) document.querySelector('.loading-msg').remove();
