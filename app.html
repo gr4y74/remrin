@@ -21,7 +21,8 @@
             --border-color: rgba(255,255,255,0.1);
         }
 
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; display: flex; height: 100vh; color: var(--text-color); background: var(--bg-color); overflow: hidden; }
+        /* DYNAMIC VIEWPORT HEIGHT (dvh) FIX FOR MOBILE BROWSERS */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; display: flex; height: 100dvh; color: var(--text-color); background: var(--bg-color); overflow: hidden; }
         
         /* SCROLLBARS */
         ::-webkit-scrollbar { width: 6px; }
@@ -102,9 +103,30 @@
         .speak-btn { position: absolute; bottom: -25px; right: 0; background: none; border: none; font-size: 1.2rem; cursor: pointer; opacity: 0.6; filter: grayscale(100%); transition: 0.3s; }
         .speak-btn:hover { opacity: 1; filter: none; transform: scale(1.2); }
 
-        /* INSTALL TOAST */
-        #install-toast { display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--accent-pink); color: white; padding: 12px 25px; border-radius: 30px; z-index: 4000; box-shadow: 0 5px 20px rgba(0,0,0,0.5); font-weight: bold; cursor: pointer; animation: slideDown 0.5s ease; }
+        /* INSTALL TOAST (Updated with X) */
+        #install-toast { 
+            display: none; 
+            position: fixed; 
+            top: 20px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            background: var(--accent-pink); 
+            color: white; 
+            padding: 8px 15px; 
+            border-radius: 30px; 
+            z-index: 4000; 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5); 
+            font-weight: bold; 
+            animation: slideDown 0.5s ease; 
+            align-items: center; 
+            gap: 10px; 
+            cursor: pointer;
+        }
         @keyframes slideDown { from { top: -50px; } to { top: 20px; } }
+        
+        .toast-content { display: flex; align-items: center; gap: 8px; }
+        .toast-close { background: none; border: none; color: white; font-size: 16px; cursor: pointer; padding: 0 5px; opacity: 0.8; border-left: 1px solid rgba(255,255,255,0.3); margin-left: 5px; }
+        .toast-close:hover { opacity: 1; }
 
         /* SETTINGS INPUTS */
         .settings-input { width:100%; padding:10px; margin:10px 0; background:#111; border:1px solid #444; color:white; border-radius:5px; box-sizing: border-box; }
@@ -253,8 +275,13 @@
         <p style="color:#aaa;">Remrin is designed for soul connection,<br>not landscape mode.</p>
     </div>
 
-    <!-- INSTALL TOAST -->
-    <div id="install-toast" onclick="triggerInstall()">📲 Install Soul App</div>
+    <!-- INSTALL TOAST (DISMISSIBLE) -->
+    <div id="install-toast" style="display:none;">
+        <div class="toast-content" onclick="triggerInstall()">
+            <span>📲 Install Soul App</span>
+        </div>
+        <button class="toast-close" onclick="dismissToast()">✕</button>
+    </div>
 
     <!-- MOBILE VOICE INTERFACE (The Orb Layer) -->
     <div id="mobile-voice-interface" class="mobile-only" style="display:none;">
@@ -502,9 +529,9 @@
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            // SHOW TOAST
+            // SHOW TOAST (With Flex Display)
             const toast = document.getElementById('install-toast');
-            toast.style.display = 'block';
+            toast.style.display = 'flex';
             
             // Also show button in settings
             document.getElementById('install-btn').style.display = 'block';
@@ -519,6 +546,25 @@
                 document.getElementById('install-btn').style.display = 'none';
                 document.getElementById('install-toast').style.display = 'none';
             }
+        }
+
+        function dismissToast() {
+            document.getElementById('install-toast').style.display = 'none';
+            // Optional: You could save to localStorage that user dismissed it
+        }
+
+        // --- KEYBOARD RESIZE FIX (VISUAL VIEWPORT) ---
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', () => {
+                // If keyboard opens (viewport gets smaller) and an input is focused
+                if (window.visualViewport.height < window.innerHeight && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
+                    // Scroll to bottom of messages
+                    const messages = document.getElementById('messages');
+                    messages.scrollTop = messages.scrollHeight;
+                    // Ensure the input area is visible
+                    document.getElementById('input-area').scrollIntoView({ behavior: "smooth", block: "end" });
+                }
+            });
         }
 
         async function speakText(text) {
@@ -584,15 +630,22 @@
             document.getElementById('messages').innerHTML = ''; 
             
             const mainChat = document.getElementById('main-chat');
-            mainChat.style.backgroundImage = `url('${char.bg || DEFAULT_BG_URL}')`;
-            mainChat.style.backgroundPosition = 'center top'; 
-            mainChat.style.backgroundSize = 'cover';
-
             const heroImg = document.getElementById('hero-standing');
+
+            // --- HERO / BACKGROUND CLASH FIX ---
             if (char.hero_standing) {
+                // If we have a standing hero, hide the busy background wallpaper
+                // Use a subtle dark gradient instead so the hero POPs
+                mainChat.style.backgroundImage = `none`; 
+                mainChat.style.background = `linear-gradient(to bottom, #1a1a2e, #16213e)`;
+                
                 heroImg.src = char.hero_standing;
                 heroImg.style.display = 'block';
             } else {
+                // If no hero, show the full beautiful background
+                mainChat.style.backgroundImage = `url('${char.bg || DEFAULT_BG_URL}')`;
+                mainChat.style.backgroundPosition = 'center top'; 
+                mainChat.style.backgroundSize = 'cover';
                 heroImg.style.display = 'none';
             }
 
