@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -71,6 +70,10 @@
         #chat-header { padding: 20px 30px; display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
         #open-sidebar-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; margin-right: 15px; opacity: 0.7; transition: 0.3s; }
         #open-sidebar-btn:hover { opacity: 1; color: var(--accent-blue); }
+        
+        /* New Back to Voice Button */
+        #back-to-voice-btn { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; margin-right: 15px; }
+
         #current-hero-img { width: 50px; height: 50px; border-radius: 12px; object-fit: cover; border: 2px solid var(--accent-pink); margin-right: 15px; }
         
         #messages { flex: 1; padding: 20px 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
@@ -149,6 +152,9 @@
             /* Hide Chat in Voice Mode */
             .main-container.voice-mode .chat-container { display: none !important; }
 
+            /* Show Back to Voice Button */
+            #back-to-voice-btn { display: block; }
+
             /* Mobile Nav Toggle (Hamburger) */
             .mobile-nav-toggle { 
                 display: flex !important; 
@@ -198,10 +204,13 @@
             .icon-btn:active { transform: scale(0.9); background: rgba(255,255,255,0.2); }
 
             /* THE ORB */
-            .orb-container { position: relative; width: 90px; height: 90px; display: flex; justify-content: center; align-items: center; margin-bottom: 10px; cursor: pointer; }
+            .orb-container { position: relative; width: 90px; height: 90px; display: flex; justify-content: center; align-items: center; margin-bottom: 10px; cursor: pointer; transition: transform 0.1s; }
             .orb-core { width: 70px; height: 70px; background: linear-gradient(135deg, #00C6FF, #0072FF); border-radius: 50%; box-shadow: 0 0 25px rgba(0, 198, 255, 0.6); z-index: 2; animation: breathe 3s infinite ease-in-out; transition: 0.3s; }
             .orb-glow { position: absolute; width: 100%; height: 100%; background: rgba(0, 198, 255, 0.3); border-radius: 50%; z-index: 1; animation: pulse-ring 2s infinite; }
-            .orb-container:active .orb-core { transform: scale(0.9); background: #fff; }
+            
+            /* ACTIVE (PRESSED) STATE - RAM PINK */
+            .orb-container.active .orb-core { background: linear-gradient(135deg, #de5ba7, #ff7eb3); box-shadow: 0 0 35px rgba(222, 91, 167, 0.8); transform: scale(1.1); }
+            .orb-container.active .orb-glow { background: rgba(222, 91, 167, 0.4); animation: none; transform: scale(1.3); }
 
             /* Status Text (Bottom Center) */
             .voice-status-text { 
@@ -244,14 +253,15 @@
             <div class="voice-controls">
                 <button class="icon-btn secondary" onclick="toggleMobileMode('chat')">⌨️</button>
                 
-                <div class="orb-container" onclick="triggerOrbAction()">
+                <!-- HOLD TO SPEAK ORB -->
+                <div class="orb-container" id="orb-btn">
                     <div class="orb-core"></div>
                     <div class="orb-glow"></div>
                 </div>
                 
                 <button class="icon-btn secondary" onclick="openSettings()">⚙️</button>
             </div>
-            <div class="voice-status-text" id="voice-status">REM IS LISTENING...</div>
+            <div class="voice-status-text" id="voice-status">HOLD TO SPEAK</div>
         </div>
     </div>
 
@@ -270,6 +280,9 @@
         <img id="hero-standing" src="" style="display:none;">
         <div class="chat-container">
             <header id="chat-header">
+                <!-- Back to Voice Button (Mobile Only) -->
+                <button id="back-to-voice-btn" onclick="toggleMobileMode('voice')">🎙️</button>
+                
                 <button id="open-sidebar-btn" onclick="toggleSidebar()" style="display:none;">☰</button>
                 <img id="current-hero-img" src="" alt="Hero" style="display:none;">
                 <div>
@@ -380,18 +393,38 @@
             div.scrollIntoView({ behavior: 'smooth' });
         }
 
-        function triggerOrbAction() {
-            // Simple visual feedback
-            const orbCore = document.querySelector('.orb-core');
-            orbCore.style.transform = "scale(1.2)";
-            setTimeout(() => orbCore.style.transform = "scale(1)", 200);
-            document.getElementById('voice-status').innerText = "PROCESSING...";
+        // --- ORB INTERACTION ---
+        const orbBtn = document.getElementById('orb-btn');
+        const statusText = document.getElementById('voice-status');
+
+        // Mouse/Touch Down
+        orbBtn.addEventListener('mousedown', startListening);
+        orbBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startListening(); });
+
+        // Mouse/Touch Up
+        orbBtn.addEventListener('mouseup', stopListening);
+        orbBtn.addEventListener('touchend', (e) => { e.preventDefault(); stopListening(); });
+
+        function startListening() {
+            orbBtn.classList.add('active'); // Turn Pink
+            statusText.innerText = "LISTENING...";
+            statusText.style.color = "#de5ba7"; // Pink text
+        }
+
+        function stopListening() {
+            orbBtn.classList.remove('active'); // Revert
+            statusText.innerText = "SENT!";
+            statusText.style.color = "#00ff88"; // Green text
             
-            // Simulate interaction
+            // Demo Action: Simulate sending "Hello"
             setTimeout(() => {
                 sendMessage(true); 
-                document.getElementById('voice-status').innerText = "LISTENING...";
-            }, 1000);
+                // Reset text after sending
+                setTimeout(() => {
+                    statusText.innerText = "HOLD TO SPEAK";
+                    statusText.style.color = "rgba(255, 255, 255, 0.6)";
+                }, 2000);
+            }, 500);
         }
 
         function toggleMobileMode(mode) {
@@ -414,7 +447,6 @@
             if (window.innerWidth <= 768) {
                 sidebar.classList.toggle('active');
                 const btn = document.querySelector('.mobile-nav-toggle');
-                // Correct Z-Index handling if needed, but CSS handles it (Sidebar is 3000)
                 if (btn) btn.innerHTML = sidebar.classList.contains('active') ? '✕' : '☰';
             } else {
                 isSidebarOpen = !isSidebarOpen;
@@ -437,7 +469,10 @@
                     btn.onclick = toggleSidebar;
                     document.body.appendChild(btn);
                 }
-                toggleMobileMode('voice'); // Default to Orb on Mobile
+                // Only default to voice on FRESH load, do NOT auto-toggle on resize
+                if (!document.querySelector('.voice-mode')) {
+                    toggleMobileMode('voice'); 
+                }
             }
         }
 
@@ -507,8 +542,9 @@
             mainChat.style.backgroundSize = 'cover';
             
             initMobileUI();
-            window.addEventListener('resize', initMobileUI);
-            // Sidebar closed by default (left: -100%)
+            // Don't bind resize to initMobileUI anymore to prevent keyboard closure bug
+            // window.addEventListener('resize', initMobileUI); 
+            // Instead, handle resize only for major layout shifts if needed
         };
 
         async function loadCharacter(char) {
@@ -517,17 +553,11 @@
             currentPersonaId = char.id;
             currentVoiceId = char.voice;
             
-            // UI Updates
             document.getElementById('char-name').innerText = char.name;
             document.getElementById('current-hero-img').src = char.avatar;
             document.getElementById('current-hero-img').style.display = 'block';
             document.getElementById('messages').innerHTML = ''; 
             
-            // DYNAMIC STATUS TEXT
-            const statusText = document.getElementById('voice-status');
-            if (statusText) statusText.innerText = `${char.name.toUpperCase()} IS LISTENING...`;
-
-            // Handle Default BG vs Character BG
             const mainChat = document.getElementById('main-chat');
             mainChat.style.backgroundImage = `url('${char.bg || DEFAULT_BG_URL}')`;
             mainChat.style.backgroundPosition = 'center top'; 
@@ -611,7 +641,7 @@
                 if(data.candidates && data.candidates.length > 0) {
                     const reply = data.candidates[0].content.parts[0].text;
                     addMessage('ai', reply);
-                    speakText(reply); // AUTO SPEAK ON MOBILE
+                    speakText(reply);
                 }
             } catch (e) { 
                 if(document.querySelector('.loading-msg')) document.querySelector('.loading-msg').remove();
