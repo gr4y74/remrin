@@ -67,6 +67,33 @@
         }
         .cta-btn:hover { transform: scale(1.05); box-shadow: 0 0 40px rgba(222, 91, 167, 0.8); }
 
+        /* QR CODE STYLING */
+        .qr-container {
+            margin-top: 40px;
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+        .qr-image {
+            width: 160px;
+            border-radius: 15px;
+            border: 3px solid var(--accent-pink);
+            padding: 5px;
+            background: white; /* Necessary for scanning contrast */
+            box-shadow: 0 0 20px rgba(222, 91, 167, 0.3);
+            transition: transform 0.3s;
+        }
+        .qr-image:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(222, 91, 167, 0.6); }
+        .qr-text {
+            color: var(--accent-pink);
+            font-size: 0.9rem;
+            margin-top: 10px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
         /* --- STICKY NAVIGATION --- */
         nav {
             position: sticky;
@@ -215,6 +242,12 @@
             The first High-Utility Companion Platform. We don't just sell chat. We sell Resonant Emotional Memory.
         </p>
         <a href="app.html" class="cta-btn">🚀 Launch Soul Interface</a>
+
+        <!-- QR CODE BOSS MOVE -->
+        <div class="qr-container">
+            <img src="https://github.com/gr4y74/remrin/blob/main/remrin_QR.png?raw=true" alt="Download App" class="qr-image">
+            <div class="qr-text">Scan QR to download the App</div>
+        </div>
     </header>
 
     <!-- NAVIGATION -->
@@ -326,11 +359,20 @@
             <p>Solving "Catastrophic Forgetting" with a Hybrid Search Strategy.</p>
             
             <div class="tech-flow" style="margin-top: 30px;">
-                <div class="tech-box"><strong>1. Semantic Search</strong><br><span class="text-dim">User input embedded (pgvector)</span></div>
+                <div class="tech-box">
+                    <strong>Step 1: Semantic Search</strong><br>
+                    <span class="text-dim">Input embedded via text-embedding-3-small</span>
+                </div>
                 <div class="arrow">⬇</div>
-                <div class="tech-box"><strong>2. Relational Filtering</strong><br><span class="text-dim">Filter by User_ID & Time_Decay</span></div>
+                <div class="tech-box">
+                    <strong>Step 2: Relational Filtering</strong><br>
+                    <span class="text-dim">Filtered by User_ID & Time_Decay</span>
+                </div>
                 <div class="arrow">⬇</div>
-                <div class="tech-box"><strong>3. Re-Ranking Layer</strong><br><span class="text-dim">Cross-Encoder sorts Top-5 memories</span></div>
+                <div class="tech-box" style="border-color: var(--accent-pink);">
+                    <strong>Step 3: Re-Ranking Layer</strong><br>
+                    <span class="text-dim">Cross-Encoder re-ranks top 5 memories for context</span>
+                </div>
             </div>
         </div>
 
