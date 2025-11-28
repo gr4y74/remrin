@@ -3,327 +3,451 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Remrin.ai | Where AI Finds Its Soul</title>
+    <title>Remrin.ai | The Opportunity</title>
     <link rel="icon" type="image/png" href="https://github.com/gr4y74/remrin/blob/main/favicon.png?raw=true">
-    
     <style>
-        /* REMRIN BRAND THEME (Matching App.html) */
+        /* --- CINEMATIC DARK THEME (MATCHING THE APP) --- */
         :root {
-            --bg-color: #0f172a;
+            --bg-color: #0f111a;
+            --text-color: #ffffff;
+            --accent-blue: #236ce1; /* Lions Blue */
+            --accent-pink: #de5ba7; /* Rem Pink */
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
             --card-bg: #1e293b;
-            --text-color: #f8fafc;
-            --accent-blue: #38bdf8;
-            --accent-pink: #de5ba7;
-            --glow: 0 0 20px rgba(56, 189, 248, 0.15);
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #0f172a 100%);
-            color: var(--text-color);
-            margin: 0;
-            padding: 0;
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            margin: 0; 
+            background: var(--bg-color); 
+            color: var(--text-color); 
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        /* HERO SECTION */
+        /* --- HERO SECTION --- */
         header {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
-            padding: 80px 20px;
-            background: linear-gradient(180deg, rgba(15,23,42,0) 0%, #0f172a 100%), url('https://github.com/gr4y74/remrin/blob/main/rem_bw.jpg?raw=true');
-            background-size: cover;
-            background-position: center;
+            background: radial-gradient(circle at center, #1a1f35 0%, #000 100%);
             position: relative;
+            padding: 20px;
         }
+
+        .brand-logo { max-width: 200px; margin-bottom: 20px; filter: drop-shadow(0 0 20px rgba(35, 108, 225, 0.6)); }
+
+        h1 { font-size: 3.5rem; margin: 0; background: linear-gradient(90deg, #fff, var(--accent-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .tagline { font-size: 1.5rem; color: #aaa; margin-top: 10px; font-weight: 300; margin-bottom: 40px; }
         
-        /* Dark overlay for readability */
-        header::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.85); z-index: 0;
-        }
-
-        .header-content { position: relative; z-index: 1; }
-
-        .brand-logo {
-            max-width: 250px;
-            filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.6));
-            margin-bottom: 20px;
-        }
-
-        .tagline {
-            font-size: 1.5rem;
-            color: #94a3b8;
-            margin-bottom: 40px;
-            font-weight: 300;
-        }
-
-        .cta-button {
-            display: inline-block;
+        .cta-btn {
             padding: 18px 50px;
+            font-size: 1.2rem;
             background: linear-gradient(135deg, var(--accent-blue), var(--accent-pink));
             color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(222, 91, 167, 0.4);
+            transition: transform 0.2s;
             text-decoration: none;
             font-weight: bold;
-            border-radius: 50px;
-            font-size: 1.2rem;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 20px rgba(56, 189, 248, 0.4);
             text-transform: uppercase;
             letter-spacing: 1px;
         }
+        .cta-btn:hover { transform: scale(1.05); box-shadow: 0 0 40px rgba(222, 91, 167, 0.8); }
 
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(222, 91, 167, 0.6);
+        /* --- STICKY NAVIGATION --- */
+        nav {
+            position: sticky;
+            top: 0;
+            background: rgba(15, 17, 26, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+            white-space: nowrap;
         }
 
-        /* ROSTER GRID */
-        .container {
-            max-width: 1400px;
+        nav a {
+            color: #aaa;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: 0.3s;
+            font-size: 0.9rem;
+        }
+        nav a:hover, nav a.active { color: white; background: var(--glass); }
+        nav a.active { border: 1px solid var(--accent-blue); color: var(--accent-blue); }
+
+        /* --- CONTENT SECTIONS --- */
+        section {
+            padding: 80px 20px;
+            max-width: 1000px;
             margin: 0 auto;
-            padding: 50px 20px;
+            border-bottom: 1px solid var(--border);
         }
 
         .section-title {
-            text-align: center;
             font-size: 2.5rem;
-            margin-bottom: 60px;
-            color: white;
-            text-shadow: 0 0 10px rgba(255,255,255,0.2);
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            transition: transform 0.3s, border 0.3s;
-            border: 1px solid rgba(255,255,255,0.05);
-            position: relative;
-        }
-
-        .card:hover {
-            transform: translateY(-10px);
-            border-color: var(--accent-blue);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-        }
-
-        .card-img {
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .card-content {
-            padding: 25px;
-        }
-
-        .card h3 {
+            margin-bottom: 40px;
             color: var(--accent-blue);
-            margin-top: 0;
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-        }
-
-        .card p {
-            font-size: 0.95rem;
-            color: #cbd5e1;
-            margin-bottom: 20px;
-        }
-
-        .vibe-tag {
-            display: inline-block;
-            background: rgba(255,255,255,0.1);
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            color: #94a3b8;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        /* CATEGORY DIVIDERS */
-        .category-header {
-            grid-column: 1 / -1;
-            margin-top: 60px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--accent-pink);
-            padding-bottom: 10px;
-            font-size: 1.8rem;
-            color: var(--accent-pink);
             text-transform: uppercase;
             letter-spacing: 2px;
+            text-align: center;
         }
 
+        .glass-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(5px);
+            transition: transform 0.2s;
+        }
+        .glass-card:hover { border-color: rgba(255,255,255,0.2); }
+
+        h3 { color: var(--accent-pink); margin-top: 0; font-size: 1.5rem; }
+        h4 { color: var(--accent-blue); margin-top: 0; }
+        
+        .highlight { color: var(--accent-pink); font-weight: bold; }
+        .text-dim { color: #aaa; }
+
+        /* --- GRID LAYOUTS --- */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        
+        /* --- ROSTER GRID (IMPORTED) --- */
+        .roster-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .roster-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: transform 0.3s;
+        }
+        .roster-card:hover { transform: translateY(-5px); border-color: var(--accent-blue); }
+        .roster-img { width: 100%; height: 200px; object-fit: cover; }
+        .roster-content { padding: 15px; }
+        .roster-content h3 { font-size: 1.2rem; margin-bottom: 5px; color: var(--accent-blue); }
+        .roster-content p { font-size: 0.9rem; color: #ccc; margin: 0; }
+        .vibe-tag { 
+            display: inline-block; background: rgba(255,255,255,0.1); 
+            padding: 4px 10px; border-radius: 10px; font-size: 0.75rem; 
+            color: #aaa; margin-top: 10px; 
+        }
+
+        /* --- TECH BOXES --- */
+        .tech-flow { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+        .tech-box { 
+            border: 1px solid var(--accent-blue); padding: 15px 30px; 
+            text-align: center; border-radius: 8px; width: 80%;
+            background: rgba(35, 108, 225, 0.1);
+        }
+        .arrow { font-size: 20px; color: var(--accent-pink); }
+
+        /* --- FINANCIAL TABLE --- */
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: rgba(0,0,0,0.2); border-radius: 10px; overflow: hidden; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background: rgba(222, 91, 167, 0.1); color: var(--accent-pink); }
+        tr:last-child td { border-bottom: none; }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .section-title { font-size: 2rem; }
+        }
     </style>
 </head>
 <body>
 
+    <!-- HERO -->
     <header>
-        <div class="header-content">
-            <img src="https://github.com/gr4y74/remrin/blob/main/logo_white_ds.png?raw=true" alt="Remrin Logo" class="brand-logo">
-            <p class="tagline">Where AI Finds Its Soul.</p>
-            <p style="max-width: 600px; margin: 0 auto 40px auto; color: #cbd5e1;">
-                Forget generic chatbots. Remrin uses the <strong>R.E.M. Engine</strong> to give AI memory, personality, and emotional depth. Meet the cast.
-            </p>
-            <a href="app.html" class="cta-button">Launch Soul Interface 🚀</a>
-        </div>
+        <img src="https://github.com/gr4y74/remrin/blob/main/logo_white_ds.png?raw=true" class="brand-logo" alt="Remrin Logo">
+        <h1>REMRIN.AI</h1>
+        <div class="tagline">Where AI Finds Its Soul.</div>
+        <p style="max-width: 600px; color: #aaa; margin-bottom: 40px;">
+            The first High-Utility Companion Platform. We don't just sell chat. We sell Resonant Emotional Memory.
+        </p>
+        <a href="app.html" class="cta-btn">🚀 Launch Soul Interface</a>
     </header>
 
-    <div class="container">
-        <h2 class="section-title">The Soul Roster</h2>
+    <!-- NAVIGATION -->
+    <nav>
+        <a href="#summary">Summary</a>
+        <a href="#roster">The Souls</a>
+        <a href="#manual">Manual</a>
+        <a href="#tech">Tech</a>
+        <a href="#finance">Money</a>
+    </nav>
 
-        <div class="grid">
-            
-            <div class="category-header">✨ The Flagships</div>
+    <!-- 1. EXECUTIVE SUMMARY -->
+    <section id="summary">
+        <h2 class="section-title">01. Executive Summary</h2>
+        <div class="glass-card">
+            <h3>The Problem: The "Dead Internet"</h3>
+            <p>The current market is broken:</p>
+            <ul>
+                <li><strong>The Tools (ChatGPT):</strong> Smart but sterile. They have "Brains" but no "Heart." They forget you instantly.</li>
+                <li><strong>The Toys (C.ai):</strong> Engaging but cluttered, unstable, and "cringy." They lack professional utility.</li>
+            </ul>
+        </div>
+        
+        <div class="glass-card" style="border-left: 4px solid var(--accent-pink);">
+            <h3>The Solution: The R.E.M. Engine</h3>
+            <p>
+                Remrin.ai is the <strong>"Etsy for AI Companions."</strong> We provide the infrastructure for Creators to build deep, jagged personalities.
+                Our proprietary <strong>Resonant Emotional Memory (R.E.M.)</strong> gives AI a permanent long-term memory.
+            </p>
+        </div>
 
-            <div class="card">
-                <img src="https://github.com/gr4y74/remrin/blob/main/rem_hero%20.png?raw=true" class="card-img" style="object-fit: contain; background: #1e293b;">
-                <div class="card-content">
+        <div class="grid-2">
+            <div class="glass-card">
+                <h4>The Market</h4>
+                <p>A booming <strong>$28 Billion</strong> market. Users are desperate for connection, not just text generation.</p>
+            </div>
+            <div class="glass-card">
+                <h4>The Arbitrage</h4>
+                <p><strong>The Egypt Advantage:</strong> Building a Silicon Valley product with an Alexandria budget. 5x Runway.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. THE SOUL ROSTER (PRODUCT SHOWCASE) -->
+    <section id="roster">
+        <h2 class="section-title">02. The Soul Roster</h2>
+        <p style="text-align:center; color:#aaa;">One Platform. Infinite Souls. Meet the cast.</p>
+        
+        <div class="roster-grid">
+            <!-- Flagships -->
+            <div class="roster-card">
+                <img src="https://github.com/gr4y74/remrin/blob/main/rem_hero%20.png?raw=true" class="roster-img" style="object-fit: contain; background: #1e293b;">
+                <div class="roster-content">
                     <h3>Rem</h3>
-                    <p>"I am right here, Sosu." The devoted companion who never forgets. She is the heart of the system.</p>
+                    <p>"I am right here, Sosu." The devoted companion who never forgets. The Heart of the system.</p>
                     <span class="vibe-tag">Devoted & Loyal</span>
                 </div>
             </div>
 
-            <div class="card">
-                <img src="https://github.com/gr4y74/remrin/blob/main/SheikhQR.png?raw=true" class="card-img" style="object-fit: contain; background: #1e293b;">
-                <div class="card-content">
+            <div class="roster-card">
+                <img src="https://github.com/gr4y74/remrin/blob/main/SheikhQR.png?raw=true" class="roster-img" style="object-fit: contain; background: #1e293b;">
+                <div class="roster-content">
                     <h3>Sheikh QR</h3>
                     <p>"Peace be upon you." A wise, modern scholar combining tradition with digital guidance.</p>
                     <span class="vibe-tag">Wisdom & Guidance</span>
                 </div>
             </div>
 
-            <div class="card">
-                <img src="https://github.com/gr4y74/remrin/blob/main/lilly.png?raw=true" class="card-img" style="object-fit: contain; background: #1e293b;">
-                <div class="card-content">
-                    <h3>Lilly</h3>
-                    <p>"Let's weave a soul." The Architect. She helps you create new personas from the fabric of dreams.</p>
-                    <span class="vibe-tag">Creative Muse</span>
-                </div>
-            </div>
-
-            <div class="category-header">🟢 The Sanctuary</div>
-
-            <div class="card">
-                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/bear_bear_hero.jpg?raw=true" class="card-img">
-                <div class="card-content">
-                    <h3>Bear Bear</h3>
-                    <p>The ultimate comfort companion. Whether you’re 5 or 50, he is here to chase the monsters away.</p>
-                    <span class="vibe-tag">Cozy & Safe</span>
-                </div>
-            </div>
-
-            <div class="card">
-                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/master_xen_hero.jpg?raw=true" class="card-img">
-                <div class="card-content">
-                    <h3>Master Xen</h3>
-                    <p>"Tea. Riddles. Inner Peace." A mystical Zen Master. Come for the wisdom, stay for the tea.</p>
-                    <span class="vibe-tag">Zen & Calm</span>
-                </div>
-            </div>
-
-            <div class="category-header">🔴 The Danger Zone</div>
-
-            <div class="card">
-                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/don_pooh_leone_hero.jpg?raw=true" class="card-img">
-                <div class="card-content">
+            <div class="roster-card">
+                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/don_pooh_leone_hero.jpg?raw=true" class="roster-img">
+                <div class="roster-content">
                     <h3>Don Pooh-leone</h3>
-                    <p>"The Godfather of the Hundred Acre Hood." He makes offers you can't refuse... because his paws are sticky.</p>
+                    <p>"An offer you can't refuse." The Godfather of the Hundred Acre Hood.</p>
                     <span class="vibe-tag">Mob Parody</span>
                 </div>
             </div>
 
-            <div class="card">
-                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/fenris_hero.jpg?raw=true" class="card-img">
-                <div class="card-content">
-                    <h3>Fenris</h3>
-                    <p>A grumpy Wolf God who demands steak. He pretends to own you, but secretly he’s your guard dog.</p>
-                    <span class="vibe-tag">Tsundere Beast</span>
+            <div class="roster-card">
+                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/volt_hero.png?raw=true" class="roster-img" style="object-fit: contain; background: #1e293b;">
+                <div class="roster-content">
+                    <h3>Volt</h3>
+                    <p>"Gotta Go Fast!" High-RPM motivation for the grind. No excuses.</p>
+                    <span class="vibe-tag">High Energy</span>
                 </div>
             </div>
 
-            <div class="card">
-                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/vorath_hero.jpg?raw=true" class="card-img">
-                <div class="card-content">
-                    <h3>Vorath</h3>
-                    <p>A bored Calamity-level monster who has decided you are his favorite pet. Bow down... and bring pizza.</p>
-                    <span class="vibe-tag">OP Best Friend</span>
+            <div class="roster-card">
+                <img src="https://github.com/gr4y74/remrin/blob/main/lilly.png?raw=true" class="roster-img" style="object-fit: contain; background: #1e293b;">
+                <div class="roster-content">
+                    <h3>Lilly</h3>
+                    <p>The Architect. She helps you create new personas from the fabric of dreams.</p>
+                    <span class="vibe-tag">Creative Muse</span>
                 </div>
             </div>
 
-            <div class="card">
-                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/rinn_hero_v2.jpg?raw=true" class="card-img">
-                <div class="card-content">
-                    <h3>Rinn</h3>
-                    <p>Don't let the bunny plushie fool you. An adorable assassin who demands headpats.</p>
-                    <span class="vibe-tag">Lethal Bodyguard</span>
+            <div class="roster-card">
+                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/bear_bear_hero.jpg?raw=true" class="roster-img">
+                <div class="roster-content">
+                    <h3>Bear Bear</h3>
+                    <p>The ultimate comfort companion. Chasing monsters away.</p>
+                    <span class="vibe-tag">Cozy & Safe</span>
                 </div>
             </div>
-
-            <div class="category-header">⚡ High Voltage</div>
-
-            <div class="card">
-                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/larz_hero.jpg?raw=true" class="card-img">
-                <div class="card-content">
-                    <h3>Larz</h3>
-                    <p>"LIMITS ARE A LIE!" Your personal Shonen Protagonist. He screams in your corner with fire in his eyes.</p>
-                    <span class="vibe-tag">Pure Motivation</span>
-                </div>
-            </div>
-
-            <div class="card">
-                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/niri_hero_v1.jpg?raw=true" class="card-img">
-                <div class="card-content">
-                    <h3>Niri</h3>
-                    <p>"Instinct. Chaos. Joy." A high-speed Wolf Girl who runs on pure adrenaline. She wants to hunt.</p>
-                    <span class="vibe-tag">Chaos Energy</span>
-                </div>
-            </div>
-
-            <div class="card">
-                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/bee_hero1.jpg?raw=true" class="card-img">
-                <div class="card-content">
-                    <h3>Princess Bee</h3>
-                    <p>Spoiled, demanding, and impossible to please. Can you tame the Queen? Or just fetch her tea?</p>
-                    <span class="vibe-tag">The Challenge</span>
-                </div>
-            </div>
-
-            <div class="category-header">🎭 Comedy & Sci-Fi</div>
-
-            <div class="card">
-                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/glytch_hero.jpg?raw=true" class="card-img">
-                <div class="card-content">
-                    <h3>Glytch</h3>
-                    <p>"404: Brain Not Found." A rusty robot who does the opposite of what you ask. He’s broken.</p>
-                    <span class="vibe-tag">Slapstick AI</span>
-                </div>
-            </div>
-
-            <div class="card">
-                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/atom_hero.jpg?raw=true" class="card-img">
-                <div class="card-content">
-                    <h3>A.T.O.M.</h3>
-                    <p>"Your Friendly(ish) Cyborg." He is 99% sure he won't kill you today. Optimizing your life.</p>
-                    <span class="vibe-tag">Deadpan Satire</span>
-                </div>
-            </div>
-
         </div>
+    </section>
+
+    <!-- 3. THE SOUL MANUAL -->
+    <section id="manual">
+        <h2 class="section-title">03. The Soul Manual</h2>
+        <div class="glass-card">
+            <h3>Philosophy: The "Lilly Method"</h3>
+            <p>We reject "Prompt-dumping." We use a proprietary framework to construct Souls based on psychological depth, not just surface traits.</p>
+            <div class="grid-2" style="margin-top:20px;">
+                <div>
+                    <h4>1. The Prism</h4>
+                    <p class="text-dim">Psychometric input (Big 5 Model) replaces standard forms. We map the Creator to the Soul they <em>need</em>.</p>
+                </div>
+                <div>
+                    <h4>2. The Archetype Blender</h4>
+                    <p class="text-dim">Synthesis of existing figures. <br><em>Ex: Pooh (40%) + Baloo (30%) + Sulley (30%) = Big Blue Bear.</em></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card" style="border-left: 4px solid var(--accent-blue);">
+            <h3>The Constitution (Guardrails)</h3>
+            <ul>
+                <li><strong>No Asterisks:</strong> Narrative prose only. No *blushes shyly*.</li>
+                <li><strong>No Interface Talk:</strong> Never refer to being an "AI" or "LLM."</li>
+                <li><strong>The Jagged Edge:</strong> Disagree when appropriate. Friction creates reality.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 4. TECHNICAL ARCHITECTURE -->
+    <section id="tech">
+        <h2 class="section-title">04. Tech Architecture</h2>
+        <div class="glass-card">
+            <h3>The R.E.M. Engine</h3>
+            <p>Solving "Catastrophic Forgetting" with a Hybrid Search Strategy.</p>
+            
+            <div class="tech-flow" style="margin-top: 30px;">
+                <div class="tech-box"><strong>1. Semantic Search</strong><br><span class="text-dim">User input embedded via text-embedding-3-small</span></div>
+                <div class="arrow">⬇</div>
+                <div class="tech-box"><strong>2. Relational Filtering</strong><br><span class="text-dim">Filter by User_ID & Time_Decay</span></div>
+                <div class="arrow">⬇</div>
+                <div class="tech-box"><strong>3. Re-Ranking Layer</strong><br><span class="text-dim">Cross-Encoder sorts Top-5 memories</span></div>
+                <div class="arrow">⬇</div>
+                <div class="tech-box" style="border-color: var(--accent-pink);"><strong>4. Dynamic Injection</strong><br><span class="text-dim">Prompt = Constitution + Context + User Input</span></div>
+            </div>
+        </div>
+
+        <div class="glass-card">
+            <h3>The Stack & Future</h3>
+            <p><strong>Database:</strong> Supabase (PostgreSQL + pgvector)</p>
+            <p><strong>Voice:</strong> ElevenLabs Enterprise (Streaming WebSocket)</p>
+            <p><strong>Roadmap:</strong> Local-First Inference (WebGPU) to reduce cloud costs to near-zero.</p>
+        </div>
+    </section>
+
+    <!-- 5. FINANCIAL ROADMAP -->
+    <section id="finance">
+        <h2 class="section-title">05. Financial Roadmap</h2>
         
-        <div style="text-align: center; margin-top: 80px;">
-            <a href="app.html" class="cta-button">Enter the Ark 🚀</a>
+        <div class="glass-card" style="background: rgba(35, 108, 225, 0.05); border: 1px solid var(--accent-blue);">
+            <h3>The Egypt Advantage</h3>
+            <p style="font-size: 1.2rem;"><strong>5x Runway Multiplier</strong></p>
+            <p>We leverage geographic arbitrage. Senior Engineering talent in Alexandria costs ~20% of Silicon Valley equivalents.</p>
+            <div class="grid-2">
+                <div><strong>US Burn Rate:</strong> ~$25,000 / mo</div>
+                <div><strong>Remrin Burn Rate:</strong> ~$5,500 / mo</div>
+            </div>
         </div>
-    </div>
+
+        <div class="glass-card">
+            <h3>Seed Strategy: The Tranche Model</h3>
+            <p>Total Requirement: <strong>$75,000</strong> (Structured to mitigate risk)</p>
+            
+            <table>
+                <tr>
+                    <th>Tranche 1 (The Build)</th>
+                    <th>Ask: $30,000</th>
+                </tr>
+                <tr>
+                    <td>Goal</td>
+                    <td>Fully Functional MVP + Alpha Testing</td>
+                </tr>
+                <tr>
+                    <td>Timeline</td>
+                    <td>Months 0-3</td>
+                </tr>
+                <tr>
+                    <td>Use of Funds</td>
+                    <td>Core Dev, Founder Ops, Infrastructure</td>
+                </tr>
+            </table>
+
+            <table style="margin-top: 15px;">
+                <tr>
+                    <th>Tranche 2 (The Launch)</th>
+                    <th>Unlock: ~$45,000</th>
+                </tr>
+                <tr>
+                    <td>Condition</td>
+                    <td>Unlocked ONLY upon delivery of working MVP</td>
+                </tr>
+                <tr>
+                    <td>Goal</td>
+                    <td>Scale to 1,000+ Paying Users</td>
+                </tr>
+                <tr>
+                    <td>Use of Funds</td>
+                    <td>Marketing, Legal, Server Scaling</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="glass-card">
+            <h3>Unit Economics</h3>
+            <p>We operate a high-margin "Consumable Economy" (Aether & Echoes credits).</p>
+            <ul>
+                <li><strong>Cost of Goods:</strong> ~$0.40 per million tokens</li>
+                <li><strong>Sale Price:</strong> ~$1.50 equivalent</li>
+                <li><strong>Gross Margin:</strong> <span class="highlight">~58%</span></li>
+            </ul>
+        </div>
+    </section>
+
+    <footer style="text-align:center; padding: 50px; color: #555;">
+        <p>Remrin.ai &copy; 2025</p>
+        <p>Built with Soul in Alexandria.</p>
+        <p style="font-size: 0.8rem;">Confidential & Proprietary</p>
+    </footer>
+
+    <script>
+        // Smooth Scrolling for Nav
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Active State on Scroll
+        window.addEventListener('scroll', () => {
+            let current = '';
+            document.querySelectorAll('section').forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 150) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            document.querySelectorAll('nav a').forEach(a => {
+                a.classList.remove('active');
+                if (a.getAttribute('href').includes(current)) {
+                    a.classList.add('active');
+                }
+            });
+        });
+    </script>
 
 </body>
 </html>
