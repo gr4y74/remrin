@@ -172,9 +172,9 @@
                 display: flex !important; 
                 position: fixed; 
                 top: 20px; 
-                right: 20px; /* MOVED TO RIGHT to avoid Avatar */
+                right: 20px; /* RIGHT SIDE */
                 left: auto; /* Reset left */
-                z-index: 3001; /* KEY FIX: Higher than sidebar (3000) */
+                z-index: 3001; /* ABOVE sidebar (3000) */
                 background: rgba(0,0,0,0.6); 
                 border: 1px solid var(--accent-pink); /* PINK BORDER */
                 color: var(--accent-pink); /* PINK TEXT */
@@ -220,7 +220,9 @@
             .orb-container { position: relative; width: 90px; height: 90px; display: flex; justify-content: center; align-items: center; margin-bottom: 10px; cursor: pointer; }
             .orb-core { width: 70px; height: 70px; background: linear-gradient(135deg, #00C6FF, #0072FF); border-radius: 50%; box-shadow: 0 0 25px rgba(0, 198, 255, 0.6); z-index: 2; animation: breathe 3s infinite ease-in-out; transition: 0.3s; }
             .orb-glow { position: absolute; width: 100%; height: 100%; background: rgba(0, 198, 255, 0.3); border-radius: 50%; z-index: 1; animation: pulse-ring 2s infinite; }
-            .orb-container:active .orb-core { transform: scale(0.9); background: #fff; }
+            
+            /* ORB ACTIVE STATE: PINK */
+            .orb-container:active .orb-core { transform: scale(0.9); background: #de5ba7; box-shadow: 0 0 25px rgba(222, 91, 167, 0.8); }
 
             /* Status Text (Bottom Center) */
             .voice-status-text { 
@@ -381,7 +383,7 @@
         let currentPersonaId = null;
         let currentLegacyPersona = null;
         let currentVoiceId = "21m00Tcm4TlvDq8ikWAM";
-        let isSidebarOpen = false; // CHANGED: Start Closed
+        let isSidebarOpen = false;
         let deferredPrompt; 
 
         // --- UI FUNCTIONS ---
@@ -522,9 +524,14 @@
             mainChat.style.backgroundPosition = 'center center'; 
             mainChat.style.backgroundSize = 'cover';
             
+            // FIX: Remove auto-open logic
+            if (window.innerWidth <= 768) {
+                const sidebar = document.getElementById('sidebar');
+                sidebar.classList.remove('active'); // Start CLOSED
+            }
+            
             initMobileUI();
             window.addEventListener('resize', initMobileUI);
-            if(window.innerWidth < 800) toggleSidebar();
         };
 
         async function loadCharacter(char) {
@@ -574,9 +581,13 @@
             }
             if (window.innerWidth <= 768) {
                 const sidebar = document.getElementById('sidebar');
-                sidebar.classList.remove('active'); // Force Close
                 const btn = document.querySelector('.mobile-nav-toggle');
-                if(btn) btn.innerHTML = '»'; // RESET TO OPEN ICON
+                
+                // Smart Close Logic
+                if (sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                    if(btn) btn.innerHTML = '»'; // RESET TO OPEN ICON
+                }
                 toggleMobileMode('voice'); // Auto-switch to voice on char select
             }
         }
