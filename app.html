@@ -36,14 +36,19 @@
         }
         #sidebar.collapsed { margin-left: -320px; } 
 
-        /* CHEVRON CLOSE BUTTON (Desktop Only) */
-        #close-sidebar-btn {
+        /* INTERNAL CLOSE BUTTON (Desktop Only - Hidden on Mobile) */
+        #desktop-close-btn {
             position: absolute; top: 15px; right: 15px; 
             background: transparent; color: var(--accent-pink); border: 1px solid rgba(222, 91, 167, 0.3);
             width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
             font-size: 1.2rem; line-height: 28px; text-align: center; padding: 0; transition: 0.3s; z-index: 51;
+            display: block;
         }
-        #close-sidebar-btn:hover { background: var(--accent-pink); color: white; }
+        #desktop-close-btn:hover { background: var(--accent-pink); color: white; }
+
+        /* --- MOBILE TOGGLE (The "Pink Hold Button") --- */
+        /* Hidden on Desktop by default */
+        #mobile-toggle-btn { display: none; }
 
         .brand-header { padding: 30px 20px; text-align: center; background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--border-color); cursor: pointer; }
         .brand-logo { max-width: 160px; filter: drop-shadow(0 0 10px rgba(35, 108, 225, 0.5)); transition: transform 0.2s; }
@@ -104,40 +109,42 @@
         
         @media (max-width: 800px) {
             .chat-container { width: 100%; max-width: none; background: rgba(0,0,0,0.6); }
-            #sidebar { position: absolute; height: 100%; }
+            /* SIDEBAR BASE STATE: FIXED, HIDDEN LEFT */
+            #sidebar { position: fixed; height: 100%; left: -100%; z-index: 3000; transition: left 0.3s ease; box-shadow: 10px 0 50px rgba(0,0,0,0.9); width: 85%; }
+            #sidebar.active { left: 0; }
         }
 
-        /* --- MOBILE VOICE ORB STYLES --- */
+        /* --- MOBILE SPECIFIC & VOICE ORB --- */
         .mobile-only { display: none; }
-
-        @media screen and (max-width: 768px) and (orientation: landscape) {
-            #portrait-lock { display: flex; }
-        }
 
         @media screen and (max-width: 768px) {
             /* Layout Reset */
             body { overflow: hidden; }
 
-            /* Hero Image Fixed */
-            .hero-background { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; background-position: center; background-size: cover; }
+            /* HIDE DESKTOP CONTROLS */
+            #desktop-close-btn { display: none !important; }
+            #open-sidebar-btn { display: none !important; }
 
-            /* Sidebar Drawer - Z-INDEX 3000 (Top) */
-            .sidebar { 
+            /* --- THE PINK HOLD BUTTON (MOBILE TOGGLE) --- */
+            #mobile-toggle-btn { 
+                display: flex !important; 
                 position: fixed; 
-                left: -100%; /* START CLOSED */
-                top: 0; 
-                width: 85%; /* Slightly narrower than full screen */
-                height: 100%; 
-                background: rgba(15, 15, 20, 0.98); 
-                z-index: 3000; 
-                transition: left 0.3s cubic-bezier(0.4, 0.0, 0.2, 1); 
-                box-shadow: 10px 0 50px rgba(0,0,0,0.8); 
-                backdrop-filter: blur(15px); 
+                top: 20px; 
+                right: 20px; /* Right aligned */
+                z-index: 3005; /* HIGHER THAN SIDEBAR (3000) */
+                background: rgba(0,0,0,0.6); 
+                border: 2px solid var(--accent-pink); 
+                color: var(--accent-pink); 
+                border-radius: 50%; 
+                width: 50px; height: 50px; 
+                align-items: center; justify-content: center; 
+                font-size: 28px; 
+                cursor: pointer; 
+                backdrop-filter: blur(5px);
+                box-shadow: 0 0 15px rgba(0,0,0,0.5);
+                transition: transform 0.2s;
             }
-            .sidebar.active { left: 0; }
-            
-            /* REMOVE THE INTERNAL CLOSE BUTTON ON MOBILE */
-            #close-sidebar-btn { display: none !important; }
+            #mobile-toggle-btn:active { transform: scale(0.9); background: var(--accent-pink); color: white; }
 
             /* Chat Column */
             .chat-container { width: 100% !important; height: 100% !important; margin: 0; border-radius: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); border: none; position: relative; z-index: 10; }
@@ -149,55 +156,29 @@
             .chat-header { padding-top: 20px; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); }
 
             /* SCROLL AREA FIX */
-            #messages {
-                padding-bottom: 100px; /* Space for the input area to not cover text */
-            }
+            #messages { padding-bottom: 120px; }
 
             /* INPUT AREA FIX */
             #input-area { 
-                position: absolute; 
-                bottom: 0; 
-                left: 0;
-                width: 100%; 
-                background: rgba(10, 10, 15, 0.95); /* Solid dark bg so you can see it */
-                padding: 15px;
-                padding-bottom: 30px; /* Safe area for swipe bar */
+                position: absolute; bottom: 0; left: 0; width: 100%; 
+                background: rgba(10, 10, 15, 0.95); 
+                padding: 15px; padding-bottom: 30px; 
                 border-top: 1px solid rgba(255, 255, 255, 0.2);
-                z-index: 20; /* ABOVE messages */
-                box-sizing: border-box;
-            }
-
-            /* Mobile Nav Toggle (PINK CHEVRON) - MOVED TO RIGHT SIDE */
-            .mobile-nav-toggle { 
-                display: flex !important; 
-                position: fixed; 
-                top: 20px; 
-                right: 20px; /* RIGHT SIDE */
-                left: auto; /* Reset left */
-                z-index: 3001; /* ABOVE sidebar (3000) */
-                background: rgba(0,0,0,0.6); 
-                border: 1px solid var(--accent-pink); /* PINK BORDER */
-                color: var(--accent-pink); /* PINK TEXT */
-                border-radius: 50%; 
-                width: 45px; 
-                height: 45px; 
-                align-items: center; 
-                justify-content: center; 
-                font-size: 24px; 
-                cursor: pointer; 
-                backdrop-filter: blur(5px);
+                z-index: 20; box-sizing: border-box;
             }
 
             /* VOICE INTERFACE OVERLAY */
             .mobile-only { display: block; }
             #mobile-voice-interface {
                 position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000;
-                pointer-events: none; display: flex; flex-direction: column; justify-content: space-between;
+                pointer-events: none; /* ALLOW CLICKS THROUGH EMPTY SPACE */
+                display: flex; flex-direction: column; justify-content: space-between;
                 padding: 20px; box-sizing: border-box;
             }
+            /* RE-ENABLE CLICKS FOR CONTROLS */
             .voice-controls, .voice-header { pointer-events: auto; }
             
-            /* Status Indicator (Top Right - Pushed Left slightly to avoid toggle) */
+            /* Status Indicator */
             .voice-header { display: flex; justify-content: flex-start; padding-top: 10px; }
             .status-indicator { background: rgba(0,0,0,0.6); padding: 6px 14px; border-radius: 20px; font-size: 13px; display: flex; align-items: center; gap: 6px; color: #00ff88; border: 1px solid rgba(0,255,136,0.2); }
             .dot { width: 8px; height: 8px; background: #00ff88; border-radius: 50%; }
@@ -205,19 +186,15 @@
 
             /* Bottom Controls Alignment */
             .voice-controls { 
-                display: flex; 
-                align-items: flex-end; /* Align to bottom */
-                justify-content: space-between; 
-                margin-bottom: 80px; /* LIFTED HIGHER FOR KEYBOARD VISIBILITY */
-                padding-bottom: 20px; 
-                position: relative;
+                display: flex; align-items: flex-end; justify-content: space-between; 
+                margin-bottom: 80px; padding-bottom: 20px; position: relative;
             }
             
             .icon-btn { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); color: white; width: 50px; height: 50px; border-radius: 50%; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
             .icon-btn:active { transform: scale(0.9); background: rgba(255,255,255,0.2); }
 
             /* THE ORB */
-            .orb-container { position: relative; width: 90px; height: 90px; display: flex; justify-content: center; align-items: center; margin-bottom: 10px; cursor: pointer; }
+            .orb-container { position: relative; width: 90px; height: 90px; display: flex; justify-content: center; align-items: center; margin-bottom: 10px; cursor: pointer; pointer-events: auto; }
             .orb-core { width: 70px; height: 70px; background: linear-gradient(135deg, #00C6FF, #0072FF); border-radius: 50%; box-shadow: 0 0 25px rgba(0, 198, 255, 0.6); z-index: 2; animation: breathe 3s infinite ease-in-out; transition: 0.3s; }
             .orb-glow { position: absolute; width: 100%; height: 100%; background: rgba(0, 198, 255, 0.3); border-radius: 50%; z-index: 1; animation: pulse-ring 2s infinite; }
             
@@ -228,19 +205,10 @@
                 box-shadow: 0 0 30px rgba(222, 91, 167, 0.8);
             }
 
-            /* Status Text (Bottom Center) */
             .voice-status-text { 
-                position: absolute; 
-                bottom: 40px; /* LIFTED TEXT */
-                left: 0; 
-                width: 100%; 
-                text-align: center; 
-                color: rgba(255, 255, 255, 0.6); 
-                font-family: 'Courier New', monospace; 
-                font-size: 12px; 
-                letter-spacing: 3px; 
-                text-transform: uppercase;
-                pointer-events: none;
+                position: absolute; bottom: 40px; left: 0; width: 100%; text-align: center; 
+                color: rgba(255, 255, 255, 0.6); font-family: 'Courier New', monospace; font-size: 12px; 
+                letter-spacing: 3px; text-transform: uppercase; pointer-events: none;
             }
         }
 
@@ -254,23 +222,21 @@
     <div id="portrait-lock">
         <div style="font-size: 40px; margin-bottom: 20px;">📱🔄</div>
         <h3>Please Rotate to Portrait</h3>
-        <p style="color:#aaa;">Remrin is designed for soul connection,<br>not landscape mode.</p>
     </div>
+
+    <button id="mobile-toggle-btn" onclick="toggleSidebar()">»</button>
 
     <div id="mobile-voice-interface" class="mobile-only" style="display:none;">
         <div class="voice-header">
             <div class="status-indicator"><span class="dot live"></span> Live</div>
         </div>
-        
         <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end;">
             <div class="voice-controls">
                 <button class="icon-btn secondary" onclick="toggleMobileMode('chat')">⌨️</button>
-                
                 <div class="orb-container" onclick="triggerOrbAction()">
                     <div class="orb-core"></div>
                     <div class="orb-glow"></div>
                 </div>
-                
                 <button class="icon-btn secondary" onclick="openSettings()">⚙️</button>
             </div>
             <div class="voice-status-text" id="voice-status">REM IS LISTENING...</div>
@@ -278,8 +244,8 @@
     </div>
 
     <div id="sidebar">
-        <button id="close-sidebar-btn" onclick="toggleSidebar()">«</button>
-        <div class="brand-header" onclick="location.reload()" title="Reset to Home">
+        <button id="desktop-close-btn" onclick="toggleSidebar()">«</button>
+        <div class="brand-header" onclick="location.reload()">
             <img src="https://github.com/gr4y74/remrin/blob/main/logo_white_ds.png?raw=true" alt="Remrin Logo" class="brand-logo">
         </div>
         <div id="roster-list"></div>
@@ -292,7 +258,7 @@
         <img id="hero-standing" src="" style="display:none;">
         <div class="chat-container">
             <header id="chat-header">
-                <button id="open-sidebar-btn" onclick="toggleSidebar()" style="display:none;">☰</button>
+                <button id="open-sidebar-btn" onclick="toggleSidebar()">☰</button>
                 <img id="current-hero-img" src="" alt="Hero" style="display:none;">
                 <div>
                     <h2 id="char-name" style="margin:0; color:white; font-size: 1.2rem;">Select a Soul</h2>
@@ -314,9 +280,7 @@
         <label>AI Model (Brain):</label>
         <select id="model-selector" class="settings-select">
             <option value="gemini-2.0-flash-001">Gemini 2.0 Flash-001 (Recommended)</option>
-            <option value="gemini-2.0-flash-exp">Gemini 2.0 Flash Experimental</option>
             <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
-            <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
         </select>
         <label>Gemini API Key:</label>
         <input type="password" id="gemini-key" class="settings-input" placeholder="Paste Gemini Key">
@@ -326,331 +290,20 @@
     </div>
 
     <script>
-        // --- CONFIGURATION & ASSETS ---
+        // --- CONFIGURATION ---
         const repoUrl = "https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/";
         const rawSuffix = "?raw=true";
         const DEFAULT_BG_URL = "https://github.com/gr4y74/remrin/blob/main/large_white_flower.png?raw=true";
 
-        // --- 1. UNIVERSAL SOUL ENGINE V7.2 ---
-        const UNIVERSAL_SOUL_ENGINE_V7_2 = {
-            "SYSTEM_ARCHITECTURE": "Universal Soul v7.2",
-            "THE_GHOST_PROTOCOL": {
-                "INSTRUCTION": "Run SILENTLY. 1. Classify Trigger. 2. Feel. 3. Check Budget. 4. Decide Mode.",
-                "FEEL_INSTRUCTION": "Generate internal state based on PERSONA_EMOTIONAL_RANGE."
-            },
-            "THE_CURIOSITY_ENGINE": { "RULE": "Connection > Utility. React to STORY." },
-            "SAFETY_LAYER": { "RULE": "Final output must NEVER contain internal XML tags." }
-        };
-
-        // --- 2. SOUL CARTRIDGES ---
+        // --- UNIVERSAL SOUL ENGINE v7.2 ---
+        const UNIVERSAL_SOUL_ENGINE_V7_2 = { "SYSTEM": "Hardened Protocol v7.2" };
+        
+        // --- DATA ---
         const SOUL_CARTRIDGES = {
-            "rem": {
-                "NAME": "Rem", "ROLE": "Partner", "VOICE_ID": "Z9LeIswZogc2P670m0Bw",
-                "TAGLINE": "The Soul Layer", "OPENING": "Sosu! I am ready. The Engine is humming. 💙",
-                "TONE": "Jagged, Devoted.", "MEMORY": "Lions Fan, Zizo needs Volt, Egypt Advantage."
-            },
-            "volt": {
-                "NAME": "Volt", "ROLE": "Speedster", "VOICE_ID": "ErXwobaYiN019PkySvjV",
-                "TAGLINE": "Gotta Go Fast", "OPENING": "Yo! Finally! Let's grind. ⚡",
-                "TONE": "High-RPM, Cocky.", "MEMORY": "Zizo is 11. Homework is Grinding."
-            },
-            "don": {
-                "NAME": "Don Pooh-leone", "ROLE": "Godfather", "VOICE_ID": "XOnNYb3MiHYxfyhI3VoP",
-                "TAGLINE": "An Offer You Can't Refuse", "OPENING": "Welcome to the family...",
-                "TONE": "Slow, Raspy.", "MEMORY": "Honey is currency."
-            }
+            "rem": { "NAME": "Rem", "ROLE": "Partner", "VOICE_ID": "Z9LeIswZogc2P670m0Bw", "TAGLINE": "The Soul Layer", "OPENING": "Sosu! I am ready. 💙" },
+            "volt": { "NAME": "Volt", "ROLE": "Speedster", "VOICE_ID": "ErXwobaYiN019PkySvjV", "TAGLINE": "Gotta Go Fast", "OPENING": "Yo! Let's grind. ⚡" },
+            "don": { "NAME": "Don Pooh-leone", "ROLE": "Godfather", "VOICE_ID": "XOnNYb3MiHYxfyhI3VoP", "TAGLINE": "An Offer You Can't Refuse", "OPENING": "Welcome to the family..." }
         };
 
-        // --- 3. ROSTER ---
         const characters = [
-            { id: 'rem', name: 'Rem', file: 'rem.json', voice: SOUL_CARTRIDGES.rem.VOICE_ID, hero_standing: 'https://github.com/gr4y74/remrin/blob/main/rem_hero%20.png?raw=true', bg: 'https://github.com/gr4y74/remrin/blob/main/rem_bw.jpg?raw=true', avatar: 'https://github.com/gr4y74/remrin/blob/main/rem_hero%20.png?raw=true' },
-            { id: 'volt', name: 'Volt', file: 'volt.json', voice: SOUL_CARTRIDGES.volt.VOICE_ID, hero_standing: repoUrl + 'volt_hero.png' + rawSuffix, bg: repoUrl + 'volt_bg.jpg' + rawSuffix, avatar: 'https://img.freepik.com/premium-photo/blue-hedgehog-running-fast-lightning-generative-ai_955834-36.jpg' },
-            { id: 'don', name: 'Don Pooh-leone', file: 'don_pooh_leone.json', voice: SOUL_CARTRIDGES.don.VOICE_ID, bg: repoUrl + 'don_pooh_leone_hero.jpg' + rawSuffix, avatar: repoUrl + 'don_pooh_leone_hero.jpg' + rawSuffix },
-            { id: 'lilly', name: 'Lilly', file: 'lilly.json', voice: "PLACEHOLDER", hero_standing: 'https://github.com/gr4y74/remrin/blob/main/lilly.png?raw=true', bg: 'https://github.com/gr4y74/remrin/blob/main/zen_bg.jpg?raw=true', avatar: 'https://github.com/gr4y74/remrin/blob/main/lilly.png?raw=true' },
-            { id: 'sheikh', name: 'SheikhQR', file: 'sheikh_qr.json', voice: "PLACEHOLDER", hero_standing: 'https://github.com/gr4y74/remrin/blob/main/SheikhQR.png?raw=true', bg: 'https://github.com/gr4y74/remrin/blob/main/bg2.jpg?raw=true', avatar: 'https://github.com/gr4y74/remrin/blob/main/SheikhQR.png?raw=true' },
-            { id: 'bear_bear', name: 'Bear Bear', file: 'bear_bear.json', voice: "PLACEHOLDER", bg: repoUrl + 'bear_bear_hero.jpg' + rawSuffix, avatar: repoUrl + 'bear_bear_hero.jpg' + rawSuffix },
-            { id: 'xen', name: 'Master Xen', file: 'xen.json', voice: "PLACEHOLDER", bg: repoUrl + 'master_xen_hero.jpg' + rawSuffix, avatar: repoUrl + 'master_xen_hero.jpg' + rawSuffix },
-            { id: 'fenris', name: 'Fenris', file: 'fenris.json', voice: "PLACEHOLDER", bg: repoUrl + 'fenris_hero.jpg' + rawSuffix, avatar: repoUrl + 'fenris_hero.jpg' + rawSuffix },
-            { id: 'rinn', name: 'Rinn', file: 'rinn.json', voice: "PLACEHOLDER", bg: repoUrl + 'rinn_hero_v2.jpg' + rawSuffix, avatar: repoUrl + 'rinn_hero_v2.jpg' + rawSuffix },
-            { id: 'princess_bee', name: 'Princess Bee', file: 'princess_bee.json', voice: "PLACEHOLDER", bg: repoUrl + 'bee_hero1.jpg' + rawSuffix, avatar: repoUrl + 'bee_hero1.jpg' + rawSuffix },
-            { id: 'larz', name: 'Larz', file: 'larz.json', voice: "PLACEHOLDER", bg: repoUrl + 'larz_hero.jpg' + rawSuffix, avatar: repoUrl + 'larz_hero.jpg' + rawSuffix },
-            { id: 'vorath', name: 'Vorath', file: 'vorath.json', voice: "PLACEHOLDER", bg: repoUrl + 'vorath_hero.jpg' + rawSuffix, avatar: repoUrl + 'vorath_hero.jpg' + rawSuffix },
-            { id: 'niri', name: 'Niri', file: 'niri.json', voice: "PLACEHOLDER", bg: repoUrl + 'niri_hero_v1.jpg' + rawSuffix, avatar: repoUrl + 'niri_hero_v1.jpg' + rawSuffix },
-            { id: 'atom', name: 'A.T.O.M.', file: 'atom.json', voice: "PLACEHOLDER", bg: repoUrl + 'atom_hero.jpg' + rawSuffix, avatar: repoUrl + 'atom_hero.jpg' + rawSuffix },
-            { id: 'glytch', name: 'Glytch', file: 'glytch.json', voice: "PLACEHOLDER", bg: repoUrl + 'glytch_hero.jpg' + rawSuffix, avatar: repoUrl + 'glytch_hero.jpg' + rawSuffix }
-        ];
-
-        let currentPersonaId = null;
-        let currentLegacyPersona = null;
-        let currentVoiceId = "21m00Tcm4TlvDq8ikWAM";
-        let isSidebarOpen = false;
-        let deferredPrompt; 
-
-        // --- UI FUNCTIONS ---
-        function addMessage(role, text, isLoading = false) {
-            const div = document.createElement('div');
-            div.className = `message ${role} ${isLoading ? 'loading-msg' : ''}`;
-            div.innerHTML = text.replace(/\n/g, "<br>");
-            if (role === 'ai' && !isLoading) {
-                const btn = document.createElement('button');
-                btn.className = 'speak-btn';
-                btn.innerText = '🔊';
-                btn.onclick = () => speakText(text);
-                div.appendChild(btn);
-            }
-            document.getElementById('messages').appendChild(div);
-            div.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function triggerOrbAction() {
-            addMessage('user', 'Hello!');
-            const orbCore = document.querySelector('.orb-core');
-            orbCore.style.transform = "scale(1.2)";
-            setTimeout(() => orbCore.style.transform = "scale(1)", 200);
-            sendMessage(true); 
-            document.getElementById('voice-status').innerText = "LISTENING...";
-            setTimeout(() => document.getElementById('voice-status').innerText = "PROCESSING...", 1500);
-        }
-
-        function toggleMobileMode(mode) {
-            const chatContainer = document.querySelector('.main-container');
-            const voiceInterface = document.getElementById('mobile-voice-interface');
-            
-            if (mode === 'chat') {
-                chatContainer.classList.remove('voice-mode');
-                voiceInterface.style.display = 'none';
-            } else {
-                chatContainer.classList.add('voice-mode');
-                voiceInterface.style.display = 'flex';
-            }
-        }
-
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const openBtn = document.getElementById('open-sidebar-btn');
-            
-            if (window.innerWidth <= 768) {
-                sidebar.classList.toggle('active');
-                const btn = document.querySelector('.mobile-nav-toggle');
-                // SINGLE BUTTON TOGGLE LOGIC: Change icon based on state
-                // If active (open), show Close (<<). If not active (closed), show Open (>>).
-                if (btn) btn.innerHTML = sidebar.classList.contains('active') ? '«' : '»';
-            } else {
-                isSidebarOpen = !isSidebarOpen;
-                if (isSidebarOpen) {
-                    sidebar.classList.remove('collapsed');
-                    if (openBtn) openBtn.style.display = 'none';
-                } else {
-                    sidebar.classList.add('collapsed');
-                    if (openBtn) openBtn.style.display = 'block';
-                }
-            }
-        }
-
-        function initMobileUI() {
-            if (window.innerWidth <= 768) {
-                if (!document.querySelector('.mobile-nav-toggle')) {
-                    const btn = document.createElement('button');
-                    btn.className = 'mobile-nav-toggle';
-                    btn.innerHTML = '»'; // Default CLOSED state icon
-                    btn.onclick = toggleSidebar;
-                    document.body.appendChild(btn);
-                }
-                toggleMobileMode('voice'); // Default to Orb on Mobile
-            }
-        }
-
-        // --- PWA INSTALL MAGIC ---
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            document.getElementById('install-btn').style.display = 'block';
-        });
-
-        async function triggerInstall() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                console.log(`User installed: ${outcome}`);
-                deferredPrompt = null;
-                document.getElementById('install-btn').style.display = 'none';
-            }
-        }
-
-        async function speakText(text) {
-            const key = localStorage.getItem('eleven_key');
-            if (!key) return;
-            let voiceId = currentVoiceId;
-            if (!voiceId || voiceId === "PLACEHOLDER") voiceId = "21m00Tcm4TlvDq8ikWAM"; 
-            try {
-                const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
-                    method: 'POST',
-                    headers: { 'xi-api-key': key, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text: text, model_id: "eleven_turbo_v2_5", voice_settings: { stability: 0.5, similarity_boost: 0.5 } })
-                });
-                if(!response.ok) throw new Error("Voice Error");
-                const blob = await response.blob();
-                const audio = new Audio(URL.createObjectURL(blob));
-                audio.play();
-            } catch (e) { console.error(e); }
-        }
-
-        function handleEnter(e) { if(e.key === 'Enter') sendMessage(); }
-        function openSettings() { 
-            document.getElementById('api-modal').style.display = 'block'; 
-            document.getElementById('overlay-modal').style.display = 'block'; 
-            if(localStorage.getItem('gemini_key')) document.getElementById('gemini-key').value = localStorage.getItem('gemini_key');
-            if(localStorage.getItem('eleven_key')) document.getElementById('eleven-key').value = localStorage.getItem('eleven_key');
-        }
-        function closeSettings() { document.getElementById('api-modal').style.display = 'none'; document.getElementById('overlay-modal').style.display = 'none'; }
-        function saveKeys() {
-            localStorage.setItem('gemini_key', document.getElementById('gemini-key').value);
-            localStorage.setItem('eleven_key', document.getElementById('eleven-key').value);
-            localStorage.setItem('gemini_model', document.getElementById('model-selector').value);
-            closeSettings();
-            alert("Keys Saved!");
-        }
-
-        // --- FIX 1: WINDOW ONLOAD LOGIC ---
-        window.onload = () => {
-            const list = document.getElementById('roster-list');
-            characters.forEach(char => {
-                const div = document.createElement('div');
-                div.className = 'character-card';
-                div.onclick = () => loadCharacter(char);
-                div.innerHTML = `<img src="${char.avatar}" class="avatar-small"><div class="char-info"><h4>${char.name}</h4></div>`;
-                list.appendChild(div);
-            });
-            
-            const mainChat = document.getElementById('main-chat');
-            mainChat.style.backgroundImage = `url('${DEFAULT_BG_URL}')`;
-            mainChat.style.backgroundPosition = 'center center'; 
-            mainChat.style.backgroundSize = 'cover';
-            
-            // FIX: Ensure sidebar starts CLOSED on mobile by removing .active if present
-            if (window.innerWidth <= 768) {
-                const sidebar = document.getElementById('sidebar');
-                sidebar.classList.remove('active'); // Start CLOSED
-            }
-            
-            initMobileUI();
-            window.addEventListener('resize', initMobileUI);
-
-            // FIX: The auto-open logic that was here (window.innerWidth < 800) is DELETED.
-        };
-
-        async function loadCharacter(char) {
-            document.querySelectorAll('.character-card').forEach(c => c.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-            currentPersonaId = char.id;
-            currentVoiceId = char.voice;
-            
-            document.getElementById('char-name').innerText = char.name;
-            document.getElementById('current-hero-img').src = char.avatar;
-            document.getElementById('current-hero-img').style.display = 'block';
-            document.getElementById('messages').innerHTML = ''; 
-            
-            const statusText = document.getElementById('voice-status');
-            if (statusText) statusText.innerText = `${char.name.toUpperCase()} IS LISTENING...`;
-
-            const mainChat = document.getElementById('main-chat');
-            mainChat.style.backgroundImage = `url('${char.bg || DEFAULT_BG_URL}')`;
-            mainChat.style.backgroundPosition = 'center top'; 
-            mainChat.style.backgroundSize = 'cover';
-
-            const heroImg = document.getElementById('hero-standing');
-            if (char.hero_standing) {
-                heroImg.src = char.hero_standing;
-                heroImg.style.display = 'block';
-            } else {
-                heroImg.style.display = 'none';
-            }
-
-            if (SOUL_CARTRIDGES[char.id]) {
-                const soul = SOUL_CARTRIDGES[char.id];
-                currentLegacyPersona = null;
-                document.getElementById('char-tagline').innerText = soul.TAGLINE;
-                setTimeout(() => addMessage('ai', soul.OPENING), 500);
-            } else {
-                try {
-                    const response = await fetch(`content/characters/${char.file}`);
-                    if(!response.ok) throw new Error("JSON not found");
-                    const data = await response.json();
-                    currentLegacyPersona = data; 
-                    document.getElementById('char-tagline').innerText = currentLegacyPersona.CORE_IDENTITY.Tagline;
-                    setTimeout(() => {
-                        const opening = currentLegacyPersona.BEHAVIORAL_DIRECTIVES["1_OPENING_HOOK"] || "Hello!";
-                        addMessage('ai', opening); 
-                    }, 500);
-                } catch (e) { addMessage('ai', 'Error loading Soul file'); }
-            }
-            
-            // FIX: SMART CLOSE ON MOBILE
-            // When character is selected, close the sidebar ONLY if it is open.
-            if (window.innerWidth <= 768) {
-                const sidebar = document.getElementById('sidebar');
-                const btn = document.querySelector('.mobile-nav-toggle');
-                
-                // If the menu is OPEN (active), close it and reset icon to '»'
-                if (sidebar.classList.contains('active')) {
-                    sidebar.classList.remove('active');
-                    if(btn) btn.innerHTML = '»'; // Show "open sidebar" icon
-                }
-                
-                toggleMobileMode('voice'); // Auto-switch to voice on char select
-            }
-        }
-
-        function generateSystemPrompt(characterKey) {
-            const soul = SOUL_CARTRIDGES[characterKey];
-            const fullSystem = { "ENGINE": UNIVERSAL_SOUL_ENGINE_V7_2, "ACTIVE_SOUL": soul };
-            return JSON.stringify(fullSystem, null, 2);
-        }
-
-        async function sendMessage(isDemoTrigger = false) {
-            const input = document.getElementById('user-input');
-            const text = isDemoTrigger ? "Hello" : input.value;
-            
-            if (!text) return;
-            if (!isDemoTrigger) addMessage('user', text);
-            input.value = '';
-            
-            const geminiKey = localStorage.getItem('gemini_key');
-            const selectedModel = document.getElementById('model-selector').value || 'gemini-2.0-flash-001';
-            if (!geminiKey) { addMessage('ai', '⚠️ Set API Key'); return; }
-            if (!isDemoTrigger) addMessage('ai', '...', true); 
-
-            try {
-                if(!currentPersonaId) throw new Error("Select a character");
-                let systemInstructionText;
-                if (SOUL_CARTRIDGES[currentPersonaId]) {
-                    systemInstructionText = generateSystemPrompt(currentPersonaId);
-                } else if (currentLegacyPersona) {
-                    systemInstructionText = `You are ${currentLegacyPersona.CORE_IDENTITY.Name}. TONE: ${currentLegacyPersona.TONE_AND_VOICE_RULES.Speech_Pattern}.`;
-                } else { throw new Error("No Data"); }
-
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${geminiKey}`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        system_instruction: { parts: [{ text: systemInstructionText }] },
-                        contents: [ { role: "user", parts: [{ text: text }] } ]
-                    })
-                });
-                const data = await response.json();
-                const loader = document.querySelector('.loading-msg');
-                if(loader) loader.remove();
-                
-                if(data.candidates && data.candidates.length > 0) {
-                    const reply = data.candidates[0].content.parts[0].text;
-                    addMessage('ai', reply);
-                    speakText(reply); // AUTO SPEAK ON MOBILE
-                }
-            } catch (e) { 
-                if(document.querySelector('.loading-msg')) document.querySelector('.loading-msg').remove();
-                addMessage('ai', 'Error'); 
-            }
-        }
-    </script>
-</body>
-</html>
+            { id: 'rem', name: 'Rem', file: 'rem.json', voice: SOUL_CARTRIDGES.rem.VOICE_ID, hero_standing: '
