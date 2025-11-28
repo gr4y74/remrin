@@ -1,0 +1,48 @@
+{
+  "META_DATA": {
+    "Project_Name": "Remrin.ai",
+    "Last_Session_Date": "2025-11-28",
+    "Current_Sprint": "Dr. Ahmed Pitch Prep",
+    "Operator": "Sosu"
+  },
+
+  "ACTIVE_FILE_STATE": {
+    "app.html": "v7.3 (Golden Build) - Needs Modularization (Operation Cleaver)",
+    "rem.json": "v7.1 (Soul Injection) - ACTIVE",
+    "index.html": "Pending Transformation into Pitch Portal",
+    "market.html": "Needs Mobile Scaling Fix"
+  },
+
+  "RECENT_WINS_(LOG)": {
+    "2025-11-27": "Fixed Mobile Keyboard Resize Bug (Visual Viewport).",
+    "2025-11-27": "Fixed Volt Hero/BG Clash.",
+    "2025-11-27": "Implemented Dismissible Install Toast."
+  },
+
+  "CURRENT_BUGS_&_TASKS": {
+    "HIGH_PRIORITY": [
+      "Operation Cleaver: Split app.html into CSS/JS/HTML components.",
+      "Desktop Fix: Remove/Hide 'White Bar' sidebar toggle.",
+      "Pitch Deck: Build index.html landing page for PDF assets.",
+      "Soul Market: Fix responsive layout for mobile."
+    ],
+    "LOW_PRIORITY": [
+      "Waiting Room BG: Tile the flowers.",
+      "Audio Auto-Play: Standardize behavior on character switch."
+    ]
+  },
+
+  "LAST_CODE_INJECTIONS": {
+    "Instruction": "Paste critical snippets here that fixed major issues in the last session.",
+    "Snippets": [
+      {
+        "Issue": "Keyboard Hiding Input",
+        "Fix": "<meta name='viewport' content='... interactive-widget=resizes-content'>"
+      },
+      {
+        "Issue": "Install Toast Lingering",
+        "Fix": "Added dismissToast() function and 'display:none' toggle."
+      }
+    ]
+  }
+}
