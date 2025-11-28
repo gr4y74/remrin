@@ -122,8 +122,7 @@
             .hero-background { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; background-position: center; background-size: cover; }
 
             /* Sidebar Drawer - Z-INDEX 3000 (Top) */
-            /* FIX: Use #sidebar instead of .sidebar to match ID specificity */
-            #sidebar { 
+            .sidebar { 
                 position: fixed; 
                 left: -100%; /* START CLOSED */
                 top: 0; 
@@ -135,7 +134,7 @@
                 box-shadow: 10px 0 50px rgba(0,0,0,0.8); 
                 backdrop-filter: blur(15px); 
             }
-            #sidebar.active { left: 0; }
+            .sidebar.active { left: 0; }
             
             /* REMOVE THE INTERNAL CLOSE BUTTON ON MOBILE */
             #close-sidebar-btn { display: none !important; }
@@ -146,12 +145,35 @@
             /* Hide Chat in Voice Mode */
             .main-container.voice-mode .chat-container { display: none !important; }
 
-            /* Mobile Nav Toggle (PINK CHEVRON) - Z-INDEX 3001 (ABOVE SIDEBAR) */
+            /* Header Adjustments */
+            .chat-header { padding-top: 20px; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); }
+
+            /* SCROLL AREA FIX */
+            #messages {
+                padding-bottom: 100px; /* Space for the input area to not cover text */
+            }
+
+            /* INPUT AREA FIX */
+            #input-area { 
+                position: absolute; 
+                bottom: 0; 
+                left: 0;
+                width: 100%; 
+                background: rgba(10, 10, 15, 0.95); /* Solid dark bg so you can see it */
+                padding: 15px;
+                padding-bottom: 30px; /* Safe area for swipe bar */
+                border-top: 1px solid rgba(255, 255, 255, 0.2);
+                z-index: 20; /* ABOVE messages */
+                box-sizing: border-box;
+            }
+
+            /* Mobile Nav Toggle (PINK CHEVRON) - MOVED TO RIGHT SIDE */
             .mobile-nav-toggle { 
                 display: flex !important; 
                 position: fixed; 
                 top: 20px; 
-                left: 20px; 
+                right: 20px; /* MOVED TO RIGHT to avoid Avatar */
+                left: auto; /* Reset left */
                 z-index: 3001; /* KEY FIX: Higher than sidebar (3000) */
                 background: rgba(0,0,0,0.6); 
                 border: 1px solid var(--accent-pink); /* PINK BORDER */
@@ -164,13 +186,6 @@
                 font-size: 24px; 
                 cursor: pointer; 
                 backdrop-filter: blur(5px);
-                transition: background 0.2s, transform 0.2s;
-            }
-            /* KEY FIX: PINK HOLD FEEDBACK */
-            .mobile-nav-toggle:active {
-                background: var(--accent-pink) !important;
-                color: white !important;
-                transform: scale(0.95);
             }
 
             /* VOICE INTERFACE OVERLAY */
@@ -182,8 +197,8 @@
             }
             .voice-controls, .voice-header { pointer-events: auto; }
             
-            /* Status Indicator (Top Right) */
-            .voice-header { display: flex; justify-content: flex-end; padding-top: 10px; }
+            /* Status Indicator (Top Right - Pushed Left slightly to avoid toggle) */
+            .voice-header { display: flex; justify-content: flex-start; padding-top: 10px; }
             .status-indicator { background: rgba(0,0,0,0.6); padding: 6px 14px; border-radius: 20px; font-size: 13px; display: flex; align-items: center; gap: 6px; color: #00ff88; border: 1px solid rgba(0,255,136,0.2); }
             .dot { width: 8px; height: 8px; background: #00ff88; border-radius: 50%; }
             .dot.live { animation: blink 1s infinite; }
@@ -366,7 +381,7 @@
         let currentPersonaId = null;
         let currentLegacyPersona = null;
         let currentVoiceId = "21m00Tcm4TlvDq8ikWAM";
-        let isSidebarOpen = false;
+        let isSidebarOpen = false; // CHANGED: Start Closed
         let deferredPrompt; 
 
         // --- UI FUNCTIONS ---
@@ -509,7 +524,7 @@
             
             initMobileUI();
             window.addEventListener('resize', initMobileUI);
-            // NOTE: REMOVED THE AUTO-OPEN LINE HERE! IT WAS THE BUG.
+            if(window.innerWidth < 800) toggleSidebar();
         };
 
         async function loadCharacter(char) {
