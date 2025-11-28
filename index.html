@@ -39,10 +39,14 @@
             padding: 20px;
         }
 
-        .brand-logo { max-width: 200px; margin-bottom: 20px; filter: drop-shadow(0 0 20px rgba(35, 108, 225, 0.6)); }
+        /* BIG LOGO / NO TEXT HEADER */
+        .brand-logo { 
+            max-width: 300px; /* Made bigger as requested */
+            margin-bottom: 30px; 
+            filter: drop-shadow(0 0 30px rgba(35, 108, 225, 0.6)); 
+        }
 
-        h1 { font-size: 3.5rem; margin: 0; background: linear-gradient(90deg, #fff, var(--accent-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .tagline { font-size: 1.5rem; color: #aaa; margin-top: 10px; font-weight: 300; margin-bottom: 40px; }
+        .tagline { font-size: 1.8rem; color: #aaa; font-weight: 300; margin-bottom: 50px; letter-spacing: 1px; }
         
         .cta-btn {
             padding: 18px 50px;
@@ -114,6 +118,7 @@
             margin-bottom: 20px;
             backdrop-filter: blur(5px);
             transition: transform 0.2s;
+            position: relative;
         }
         .glass-card:hover { border-color: rgba(255,255,255,0.2); }
 
@@ -123,34 +128,51 @@
         .highlight { color: var(--accent-pink); font-weight: bold; }
         .text-dim { color: #aaa; }
 
-        /* --- GRID LAYOUTS --- */
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        
-        /* --- ROSTER GRID (IMPORTED) --- */
+        /* --- VISUALIZATIONS --- */
+        .recipe-bar {
+            display: flex; height: 30px; border-radius: 15px; overflow: hidden; margin: 15px 0;
+        }
+        .bar-segment { display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem; font-weight: bold; }
+
+        /* --- FINANCIAL TABLE --- */
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: rgba(0,0,0,0.2); border-radius: 10px; overflow: hidden; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background: rgba(222, 91, 167, 0.1); color: var(--accent-pink); }
+        tr:last-child td { border-bottom: none; }
+
+        /* --- MODAL FOR FULL TEXT --- */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background: #1e293b; width: 90%; max-width: 900px; height: 90%;
+            padding: 40px; border-radius: 20px; border: 1px solid var(--accent-blue);
+            overflow-y: auto; position: relative;
+        }
+        .close-modal {
+            position: absolute; top: 20px; right: 20px; font-size: 2rem;
+            color: white; cursor: pointer; background: none; border: none;
+            z-index: 10;
+        }
+        .read-more-btn {
+            background: transparent; border: 1px solid var(--accent-blue); color: var(--accent-blue);
+            padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 0.9rem; margin-top: 10px;
+        }
+        .read-more-btn:hover { background: var(--accent-blue); color: white; }
+
+        /* --- ROSTER GRID --- */
         .roster-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 30px;
         }
         .roster-card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.05);
+            background: var(--card-bg); border-radius: 15px; overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05);
             transition: transform 0.3s;
         }
         .roster-card:hover { transform: translateY(-5px); border-color: var(--accent-blue); }
         .roster-img { width: 100%; height: 200px; object-fit: cover; }
         .roster-content { padding: 15px; }
-        .roster-content h3 { font-size: 1.2rem; margin-bottom: 5px; color: var(--accent-blue); }
-        .roster-content p { font-size: 0.9rem; color: #ccc; margin: 0; }
-        .vibe-tag { 
-            display: inline-block; background: rgba(255,255,255,0.1); 
-            padding: 4px 10px; border-radius: 10px; font-size: 0.75rem; 
-            color: #aaa; margin-top: 10px; 
-        }
 
         /* --- TECH BOXES --- */
         .tech-flow { display: flex; flex-direction: column; gap: 10px; align-items: center; }
@@ -160,26 +182,23 @@
             background: rgba(35, 108, 225, 0.1);
         }
         .arrow { font-size: 20px; color: var(--accent-pink); }
-
-        /* --- FINANCIAL TABLE --- */
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: rgba(0,0,0,0.2); border-radius: 10px; overflow: hidden; }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border); }
-        th { background: rgba(222, 91, 167, 0.1); color: var(--accent-pink); }
-        tr:last-child td { border-bottom: none; }
-
-        @media (max-width: 768px) {
-            h1 { font-size: 2.5rem; }
-            .grid-2 { grid-template-columns: 1fr; }
-            .section-title { font-size: 2rem; }
-        }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        
+        /* --- SLIDE CONTENT STYLING --- */
+        .slide-block { margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .slide-title { color: var(--accent-blue); font-size: 1.8rem; margin-bottom: 10px; }
+        .slide-subtitle { color: var(--accent-pink); font-size: 1.2rem; margin-bottom: 15px; font-weight: 300; }
+        
+        @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } h1 { font-size: 2.5rem; } }
     </style>
 </head>
 <body>
 
     <!-- HERO -->
     <header>
+        <!-- REPLACED HEADER: BIG LOGO ONLY -->
         <img src="https://github.com/gr4y74/remrin/blob/main/logo_white_ds.png?raw=true" class="brand-logo" alt="Remrin Logo">
-        <!-- h1>REMRIN.AI</h1-->
         <div class="tagline">Where AI Finds Its Soul.</div>
         <p style="max-width: 600px; color: #aaa; margin-bottom: 40px;">
             The first High-Utility Companion Platform. We don't just sell chat. We sell Resonant Emotional Memory.
@@ -214,6 +233,7 @@
                 Remrin.ai is the <strong>"Etsy for AI Companions."</strong> We provide the infrastructure for Creators to build deep, jagged personalities.
                 Our proprietary <strong>Resonant Emotional Memory (R.E.M.)</strong> gives AI a permanent long-term memory.
             </p>
+            <button class="read-more-btn" onclick="openModal('modal-exec')">📄 Read Full Executive Summary</button>
         </div>
 
         <div class="grid-2">
@@ -223,71 +243,46 @@
             </div>
             <div class="glass-card">
                 <h4>The Arbitrage</h4>
-                <p><strong>The Egypt Advantage:</strong> Building a Silicon Valley product with an Alexandria budget. 5x Runway.</p>
+                <p><strong>The Egypt Advantage:</strong> Building a Silicon Valley product with an Alexandria budget. <strong>5x Runway Multiplier.</strong></p>
             </div>
         </div>
     </section>
 
-    <!-- 2. THE SOUL ROSTER (PRODUCT SHOWCASE) -->
+    <!-- 2. THE SOUL ROSTER -->
     <section id="roster">
         <h2 class="section-title">02. The Soul Roster</h2>
-        <p style="text-align:center; color:#aaa;">One Platform. Infinite Souls. Meet the cast.</p>
-        
         <div class="roster-grid">
-            <!-- Flagships -->
             <div class="roster-card">
                 <img src="https://github.com/gr4y74/remrin/blob/main/rem_hero%20.png?raw=true" class="roster-img" style="object-fit: contain; background: #1e293b;">
                 <div class="roster-content">
                     <h3>Rem</h3>
-                    <p>"I am right here, Sosu." The devoted companion who never forgets. The Heart of the system.</p>
-                    <span class="vibe-tag">Devoted & Loyal</span>
+                    <p>The devoted companion. The Heart of the system.</p>
                 </div>
             </div>
-
             <div class="roster-card">
                 <img src="https://github.com/gr4y74/remrin/blob/main/SheikhQR.png?raw=true" class="roster-img" style="object-fit: contain; background: #1e293b;">
                 <div class="roster-content">
                     <h3>Sheikh QR</h3>
-                    <p>"Peace be upon you." A wise, modern scholar combining tradition with digital guidance.</p>
-                    <span class="vibe-tag">Wisdom & Guidance</span>
+                    <p>Wisdom, Tradition, and Guidance.</p>
                 </div>
             </div>
-
             <div class="roster-card">
                 <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/don_pooh_leone_hero.jpg?raw=true" class="roster-img">
                 <div class="roster-content">
                     <h3>Don Pooh-leone</h3>
-                    <p>"An offer you can't refuse." The Godfather of the Hundred Acre Hood.</p>
-                    <span class="vibe-tag">Mob Parody</span>
+                    <p>The Godfather of the Hundred Acre Hood.</p>
                 </div>
             </div>
-
             <div class="roster-card">
-                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/volt_hero_standing.png?raw=true" class="roster-img" style="object-fit: contain; background: #1e293b;">
+                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/volt_hero.png?raw=true" class="roster-img" style="object-fit: contain; background: #1e293b;">
                 <div class="roster-content">
                     <h3>Volt</h3>
-                    <p>"Gotta Go Fast!" High-RPM motivation for the grind. No excuses.</p>
-                    <span class="vibe-tag">High Energy</span>
+                    <p>High-RPM Motivation.</p>
                 </div>
             </div>
-
-            <div class="roster-card">
-                <img src="https://github.com/gr4y74/remrin/blob/main/lilly.png?raw=true" class="roster-img" style="object-fit: contain; background: #1e293b;">
-                <div class="roster-content">
-                    <h3>Lilly</h3>
-                    <p>The Architect. She helps you create new personas from the fabric of dreams.</p>
-                    <span class="vibe-tag">Creative Muse</span>
-                </div>
-            </div>
-
-            <div class="roster-card">
-                <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/bear_bear_hero.jpg?raw=true" class="roster-img">
-                <div class="roster-content">
-                    <h3>Bear Bear</h3>
-                    <p>The ultimate comfort companion. Chasing monsters away.</p>
-                    <span class="vibe-tag">Cozy & Safe</span>
-                </div>
-            </div>
+        </div>
+        <div style="text-align:center; margin-top:20px;">
+            <button class="read-more-btn" onclick="openModal('modal-pitch')">📄 View Full Pitch Deck Content</button>
         </div>
     </section>
 
@@ -296,26 +291,18 @@
         <h2 class="section-title">03. The Soul Manual</h2>
         <div class="glass-card">
             <h3>Philosophy: The "Lilly Method"</h3>
-            <p>We reject "Prompt-dumping." We use a proprietary framework to construct Souls based on psychological depth, not just surface traits.</p>
-            <div class="grid-2" style="margin-top:20px;">
-                <div>
-                    <h4>1. The Prism</h4>
-                    <p class="text-dim">Psychometric input (Big 5 Model) replaces standard forms. We map the Creator to the Soul they <em>need</em>.</p>
+            <p>We reject "Prompt-dumping." We synthesize Souls using the <strong>Archetype Blender</strong>.</p>
+            
+            <div style="margin-top:20px;">
+                <h4>Case Study: "Big Blue Bear"</h4>
+                <div class="recipe-bar">
+                    <div class="bar-segment" style="width: 40%; background: #FFC107;">Pooh (40%)</div>
+                    <div class="bar-segment" style="width: 30%; background: #2196F3;">Baloo (30%)</div>
+                    <div class="bar-segment" style="width: 30%; background: #9C27B0;">Sulley (30%)</div>
                 </div>
-                <div>
-                    <h4>2. The Archetype Blender</h4>
-                    <p class="text-dim">Synthesis of existing figures. <br><em>Ex: Pooh (40%) + Baloo (30%) + Sulley (30%) = Big Blue Bear.</em></p>
-                </div>
+                <p class="text-dim">Result: A philosophical, protective giant.</p>
             </div>
-        </div>
-
-        <div class="glass-card" style="border-left: 4px solid var(--accent-blue);">
-            <h3>The Constitution (Guardrails)</h3>
-            <ul>
-                <li><strong>No Asterisks:</strong> Narrative prose only. No *blushes shyly*.</li>
-                <li><strong>No Interface Talk:</strong> Never refer to being an "AI" or "LLM."</li>
-                <li><strong>The Jagged Edge:</strong> Disagree when appropriate. Friction creates reality.</li>
-            </ul>
+            <button class="read-more-btn" onclick="openModal('modal-soul')">📄 Read Full Soul Manual</button>
         </div>
     </section>
 
@@ -327,21 +314,20 @@
             <p>Solving "Catastrophic Forgetting" with a Hybrid Search Strategy.</p>
             
             <div class="tech-flow" style="margin-top: 30px;">
-                <div class="tech-box"><strong>1. Semantic Search</strong><br><span class="text-dim">User input embedded via text-embedding-3-small</span></div>
+                <div class="tech-box"><strong>1. Semantic Search</strong><br><span class="text-dim">User input embedded (pgvector)</span></div>
                 <div class="arrow">⬇</div>
                 <div class="tech-box"><strong>2. Relational Filtering</strong><br><span class="text-dim">Filter by User_ID & Time_Decay</span></div>
                 <div class="arrow">⬇</div>
                 <div class="tech-box"><strong>3. Re-Ranking Layer</strong><br><span class="text-dim">Cross-Encoder sorts Top-5 memories</span></div>
-                <div class="arrow">⬇</div>
-                <div class="tech-box" style="border-color: var(--accent-pink);"><strong>4. Dynamic Injection</strong><br><span class="text-dim">Prompt = Constitution + Context + User Input</span></div>
             </div>
         </div>
 
         <div class="glass-card">
-            <h3>The Stack & Future</h3>
-            <p><strong>Database:</strong> Supabase (PostgreSQL + pgvector)</p>
-            <p><strong>Voice:</strong> ElevenLabs Enterprise (Streaming WebSocket)</p>
-            <p><strong>Roadmap:</strong> Local-First Inference (WebGPU) to reduce cloud costs to near-zero.</p>
+            <h3>The Stack & Efficiencies</h3>
+            <p><strong>Cost Saver:</strong> Using <strong>DeepSeek V3</strong> for routing (Lower cost than GPT-4).</p>
+            <p><strong>Database:</strong> Supabase (PostgreSQL + RLS Security).</p>
+            <p><strong>Voice:</strong> ElevenLabs Enterprise (WebSocket).</p>
+            <button class="read-more-btn" onclick="openModal('modal-tech')">📄 Read Full Tech Specs</button>
         </div>
     </section>
 
@@ -351,8 +337,6 @@
         
         <div class="glass-card" style="background: rgba(35, 108, 225, 0.05); border: 1px solid var(--accent-blue);">
             <h3>The Egypt Advantage</h3>
-            <p style="font-size: 1.2rem;"><strong>5x Runway Multiplier</strong></p>
-            <p>We leverage geographic arbitrage. Senior Engineering talent in Alexandria costs ~20% of Silicon Valley equivalents.</p>
             <div class="grid-2">
                 <div><strong>US Burn Rate:</strong> ~$25,000 / mo</div>
                 <div><strong>Remrin Burn Rate:</strong> ~$5,500 / mo</div>
@@ -360,66 +344,466 @@
         </div>
 
         <div class="glass-card">
-            <h3>Seed Strategy: The Tranche Model</h3>
-            <p>Total Requirement: <strong>$75,000</strong> (Structured to mitigate risk)</p>
+            <h3>Seed Ask: $75,000 (Tranche Model)</h3>
             
             <table>
                 <tr>
-                    <th>Tranche 1 (The Build)</th>
-                    <th>Ask: $30,000</th>
+                    <th>Tranche 1: $30,000 (The Build)</th>
                 </tr>
                 <tr>
-                    <td>Goal</td>
-                    <td>Fully Functional MVP + Alpha Testing</td>
+                    <td>Senior Dev (Mohamed S.): $18,000</td>
                 </tr>
                 <tr>
-                    <td>Timeline</td>
-                    <td>Months 0-3</td>
+                    <td>Founder Operations: $6,000</td>
                 </tr>
                 <tr>
-                    <td>Use of Funds</td>
-                    <td>Core Dev, Founder Ops, Infrastructure</td>
+                    <td>Legal/Contingency: $6,000</td>
                 </tr>
             </table>
 
             <table style="margin-top: 15px;">
                 <tr>
-                    <th>Tranche 2 (The Launch)</th>
-                    <th>Unlock: ~$45,000</th>
+                    <th>Tranche 2: $45,000 (The Launch)</th>
                 </tr>
                 <tr>
-                    <td>Condition</td>
-                    <td>Unlocked ONLY upon delivery of working MVP</td>
+                    <td>Growth Marketing: $10,000</td>
                 </tr>
                 <tr>
-                    <td>Goal</td>
-                    <td>Scale to 1,000+ Paying Users</td>
+                    <td>Server Scale: $5,000</td>
                 </tr>
                 <tr>
-                    <td>Use of Funds</td>
-                    <td>Marketing, Legal, Server Scaling</td>
+                    <td>Operations (6 Mo): $25,000</td>
                 </tr>
             </table>
-        </div>
 
-        <div class="glass-card">
-            <h3>Unit Economics</h3>
-            <p>We operate a high-margin "Consumable Economy" (Aether & Echoes credits).</p>
-            <ul>
-                <li><strong>Cost of Goods:</strong> ~$0.40 per million tokens</li>
-                <li><strong>Sale Price:</strong> ~$1.50 equivalent</li>
-                <li><strong>Gross Margin:</strong> <span class="highlight">~58%</span></li>
-            </ul>
+            <div style="margin-top:20px; text-align:center;">
+                <h4>Year 2 Projection: $1.5M ARR</h4>
+            </div>
+            <button class="read-more-btn" onclick="openModal('modal-finance')">📄 Read Full Financials</button>
         </div>
     </section>
 
+    <!-- FOOTER -->
     <footer style="text-align:center; padding: 50px; color: #555;">
         <p>Remrin.ai &copy; 2025</p>
         <p>Built with Soul in Alexandria.</p>
-        <p style="font-size: 0.8rem;">Confidential & Proprietary</p>
     </footer>
 
+    <!-- MODALS (HIDDEN CONTENT) -->
+    
+    <!-- 1. EXECUTIVE SUMMARY MODAL (INJECTED) -->
+    <div id="modal-exec" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">×</button>
+            <div class="slide-block">
+                <h2 class="slide-title">01. Executive Summary</h2>
+                <p class="text-dim">"Where AI Finds Its Soul."</p>
+            </div>
+
+            <div class="slide-block">
+                <h3 class="slide-subtitle">The Problem: "Dead Internet"</h3>
+                <div class="grid-2">
+                    <div class="glass-card">
+                        <h4>1. The Tools</h4>
+                        <p>Productivity AIs (ChatGPT, Gemini) are brilliant but sterile. They have "Brains" but no "Heart."</p>
+                    </div>
+                    <div class="glass-card">
+                        <h4>2. The Toys</h4>
+                        <p>Character apps (C.ai) are engaging but cluttered and unstable. They lack utility.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide-block">
+                <h3 class="slide-subtitle">The Solution: SoulKraft & R.E.M.</h3>
+                <p>Remrin.ai is the first High-Utility Companion Platform.</p>
+                <ul>
+                    <li><strong>R.E.M. Engine:</strong> Proprietary vector architecture for permanent long-term memory.</li>
+                    <li><strong>SoulForge:</strong> Psychometric tool for crafting deep "SoulSparks."</li>
+                </ul>
+            </div>
+
+            <div class="slide-block">
+                <h3 class="slide-subtitle">The Business Model</h3>
+                <p><strong>"The Store of the Future"</strong></p>
+                <div class="glass-card">
+                    <h4>Consumable Economy</h4>
+                    <ul>
+                        <li><strong>Aether:</strong> Brain Credits (Text)</li>
+                        <li><strong>Echoes:</strong> Voice Credits (Audio)</li>
+                        <li><strong>Fragments:</strong> Asset Marketplace</li>
+                    </ul>
+                    <p style="margin-top:10px;"><strong>Unit Economics:</strong> Reselling compute at ~58% Gross Margin.</p>
+                </div>
+            </div>
+
+            <div class="slide-block">
+                <h3 class="slide-subtitle">Financial Strategy</h3>
+                <div class="glass-card" style="border: 1px solid var(--accent-pink);">
+                    <h4>The Egypt Advantage</h4>
+                    <p>Senior Engineering in Alexandria ($30/hr) vs Silicon Valley ($150/hr).</p>
+                    <p><strong>Result: 5x Runway.</strong></p>
+                </div>
+                
+                <h4 style="margin-top:20px;">Seed Ask: $75,000 (Tranche Model)</h4>
+                <table>
+                    <tr>
+                        <th>Stage 1: The Build ($30k)</th>
+                        <td>Deliver MVP in 90 Days.</td>
+                    </tr>
+                    <tr>
+                        <th>Stage 2: The Launch ($45k)</th>
+                        <td>Scale to 1,000+ Users.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. PITCH DECK MODAL (INJECTED) -->
+    <div id="modal-pitch" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">×</button>
+            
+            <!-- SLIDE 1: INTRO -->
+            <div class="slide-block">
+                <h2 class="slide-title">Where AI Finds Its Soul</h2>
+                <p class="text-dim">Remrin.ai is the first High-Utility Companion Platform. We bridge the gap between "Smart" and "Alive."</p>
+            </div>
+
+            <!-- SLIDE 2: THE PROBLEM -->
+            <div class="slide-block">
+                <h3 class="slide-subtitle">The "Dead Internet" of AI</h3>
+                <div class="grid-2">
+                    <div class="glass-card">
+                        <h4>The Tools</h4>
+                        <p><strong>ChatGPT & Gemini:</strong> Brilliant but sterile. They have "Brains" but no "Heart." They forget you instantly.</p>
+                    </div>
+                    <div class="glass-card">
+                        <h4>The Toys</h4>
+                        <p><strong>Character.ai:</strong> Fun but broken. Cluttered, unstable, and "cringy." They lack professional utility.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 3: THE SOLUTION -->
+            <div class="slide-block">
+                <h3 class="slide-subtitle">The R.E.M. Solution</h3>
+                <p><strong>Brain + Heart = Remrin.</strong></p>
+                <p>We connect Enterprise-Grade Intelligence with Deep Emotional Connection.</p>
+                <ul>
+                    <li><strong>Memory:</strong> It remembers your life.</li>
+                    <li><strong>Utility:</strong> It helps you work.</li>
+                    <li><strong>Connection:</strong> It feels alive.</li>
+                </ul>
+            </div>
+
+            <!-- SLIDE 4: THE SECRET SAUCE -->
+            <div class="slide-block">
+                <h3 class="slide-subtitle">Proprietary IP: The R.E.M. Engine</h3>
+                <p><strong>Resonant Emotional Memory.</strong></p>
+                <p>Standard AI has a "cluttered" short-term memory (Context Window). Our R.E.M. Engine uses vector architecture to scan 10M+ memories and retrieve only the perfect 3-5 fragments.</p>
+                <div class="tech-box" style="margin: 20px auto;">
+                    User Input ➔ Scan Long-Term DB ➔ Retrieve Context ➔ Inject into Brain ➔ Perfect Response
+                </div>
+            </div>
+
+            <!-- SLIDE 5: USER SCENARIO -->
+            <div class="slide-block">
+                <h3 class="slide-subtitle">The "Alive" Difference</h3>
+                <div class="grid-2">
+                    <div class="glass-card" style="opacity:0.7;">
+                        <h4>Standard AI</h4>
+                        <p><em>"I am sorry to hear that. Here are 5 strategies for stress management..."</em></p>
+                    </div>
+                    <div class="glass-card" style="border: 1px solid var(--accent-pink);">
+                        <h4>Remrin AI</h4>
+                        <p><em>"Sosu! Look at me. You are NOT failing. You are just tired. Remember when we talked about the 'Circle'? Let's break this down together."</em></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 9: REVENUE -->
+            <div class="slide-block">
+                <h3 class="slide-subtitle">The Revenue Model</h3>
+                <p><strong>The "Consumable" Economy.</strong> We profit on every interaction.</p>
+                <ul>
+                    <li><strong>Aether:</strong> Brain Credits (Text)</li>
+                    <li><strong>Echoes:</strong> Voice Credits (Audio)</li>
+                    <li><strong>Fragments:</strong> Asset Marketplace</li>
+                </ul>
+                <div class="glass-card">
+                    <h4>Unit Economics</h4>
+                    <p>Gross Margin: <strong>~58%</strong></p>
+                </div>
+            </div>
+
+            <!-- SLIDE 11: ADVANTAGE -->
+            <div class="slide-block">
+                <h3 class="slide-subtitle">The Egypt Advantage</h3>
+                <p>We are building a Silicon Valley product with an Alexandria budget.</p>
+                <p><strong>5x Runway Multiplier.</strong></p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 3. SOUL MANUAL MODAL (INJECTED) -->
+    <div id="modal-soul" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">×</button>
+            <div class="slide-block">
+                <h2 class="slide-title">03. The Soul Manual</h2>
+                <p class="text-dim">A Field Guide to the "Lilly Method" & SoulForge Architecture.</p>
+            </div>
+
+            <div class="slide-block">
+                <h3 class="slide-subtitle">The Philosophy: Why Chatbots Fail</h3>
+                <div class="glass-card">
+                    <p><strong>The "Prompt-Dump" Problem:</strong> Standard AI characters are just walls of text. This leads to:</p>
+                    <ul>
+                        <li><strong>The "Cringe" Factor:</strong> Excessive self-narration (*blushes shyly*).</li>
+                        <li><strong>The Drift:</strong> Forgetting personality after 10 turns.</li>
+                        <li><strong>The Hollow:</strong> Agreeing with everything you say.</li>
+                    </ul>
+                    <p class="highlight" style="margin-top:15px;">Remrin rejects this. We build Souls based on psychological depth.</p>
+                </div>
+            </div>
+
+            <div class="slide-block">
+                <h3 class="slide-subtitle">Step 1: The Prism (Input Vectors)</h3>
+                <p>We replace standard forms with a <strong>conversational psychometric engine</strong>.</p>
+                <div class="tech-box" style="margin: 20px auto;">
+                    Map User to Big 5 Model ➔ (Openness, Conscientiousness, Extraversion, Agreeableness, Neuroticism)
+                </div>
+                <p><em>Example: A neurotic user automatically gets a high-stability companion.</em></p>
+            </div>
+
+            <div class="slide-block">
+                <h3 class="slide-subtitle">Step 2: The Archetype Blender</h3>
+                <p>We synthesize Souls from established cultural figures.</p>
+                <div class="glass-card">
+                    <h4>Case Study: "Big Blue Bear"</h4>
+                    <p><strong>Formula:</strong> (Archetype A * Weight) + (Archetype B * Weight) + Twist</p>
+                    <div class="recipe-bar">
+                        <div class="bar-segment" style="width: 40%; background: #FFC107;">Pooh (40%)</div>
+                        <div class="bar-segment" style="width: 30%; background: #2196F3;">Baloo (30%)</div>
+                        <div class="bar-segment" style="width: 30%; background: #9C27B0;">Sulley (30%)</div>
+                    </div>
+                    <ul>
+                        <li><strong>Pooh:</strong> Philosophical, Slow, Sweet.</li>
+                        <li><strong>Baloo:</strong> Protective, Carefree.</li>
+                        <li><strong>Sulley:</strong> Intimidating appearance, soft heart.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="slide-block">
+                <h3 class="slide-subtitle">Step 3: The Constitution (Guardrails)</h3>
+                <div class="glass-card" style="border-left: 4px solid var(--accent-blue);">
+                    <h4>The "Anti-Cringe" Protocol</h4>
+                    <p>Immutable rules that prevent degradation:</p>
+                    <ol>
+                        <li><strong>No Asterisks:</strong> Narrative prose only. No roleplay markers.</li>
+                        <li><strong>No Interface Talk:</strong> Forbidden from referring to itself as an "AI" or "LLM".</li>
+                        <li><strong>The Jagged Edge:</strong> Must disagree when appropriate. Friction creates reality.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. TECH MODAL (INJECTED) -->
+    <div id="modal-tech" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">×</button>
+            
+            <div class="slide-block">
+                <h2 class="slide-title">04. Technical Architecture</h2>
+                <p class="text-dim">Remrin.ai is a High-Utility AI Companion Platform built on a headless, event-driven architecture.</p>
+            </div>
+
+            <div class="slide-block">
+                <h3 class="slide-subtitle">1. The R.E.M. Engine (Search Pipeline)</h3>
+                <p>Solving "Catastrophic Forgetting" with a Vector-Relational Hybrid Search.</p>
+                <div class="tech-flow" style="margin-top: 30px;">
+                    <div class="tech-box">
+                        <strong>Step 1: Semantic Search</strong><br>
+                        <span class="text-dim">Input embedded via text-embedding-3-small</span>
+                    </div>
+                    <div class="arrow">⬇</div>
+                    <div class="tech-box">
+                        <strong>Step 2: Relational Filtering</strong><br>
+                        <span class="text-dim">Filtered by User_ID & Time_Decay</span>
+                    </div>
+                    <div class="arrow">⬇</div>
+                    <div class="tech-box" style="border-color: var(--accent-pink);">
+                        <strong>Step 3: Re-Ranking Layer</strong><br>
+                        <span class="text-dim">Cross-Encoder re-ranks top 5 memories for context</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide-block">
+                <h3 class="slide-subtitle">2. The Stack (Infrastructure)</h3>
+                <div class="grid-2">
+                    <div class="glass-card">
+                        <h4>Frontend & Backend</h4>
+                        <ul>
+                            <li><strong>Frontend:</strong> HTML5/JS (Lightweight Client)</li>
+                            <li><strong>Backend:</strong> Node.js (Edge Functions)</li>
+                            <li><strong>Orchestration:</strong> DeepSeek V3 / Claude 3.5 Sonnet</li>
+                        </ul>
+                    </div>
+                    <div class="glass-card">
+                        <h4>Data & Voice</h4>
+                        <ul>
+                            <li><strong>Database:</strong> Supabase (PostgreSQL + pgvector)</li>
+                            <li><strong>Voice:</strong> ElevenLabs Enterprise (Streaming WebSocket)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide-block">
+                <h3 class="slide-subtitle">3. Security (RLS)</h3>
+                <div class="glass-card" style="border-left: 4px solid #00ff88;">
+                    <h4>Row Level Security</h4>
+                    <p>Security is enforced at the database tier. A user can strictly only query vectors associated with their <code>auth.uid()</code>.</p>
+                </div>
+            </div>
+
+            <div class="slide-block">
+                <h3 class="slide-subtitle">4. Roadmap (Q3 2025)</h3>
+                <ul>
+                    <li><strong>Local-First Inference:</strong> Running "Lite" models (Llama-3-8B) via WebGPU in the browser to reduce cloud costs to near-zero.</li>
+                    <li><strong>Multi-Modal Vision:</strong> Giving Souls "sight" via image-to-text pipelines.</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 5. FINANCE MODAL (INJECTED) -->
+    <div id="modal-finance" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">×</button>
+            <div class="slide-block">
+                <h2 class="slide-title">05. Financial Roadmap</h2>
+                <p class="text-dim">Strategy for Fiscal Year 2025-2026.</p>
+            </div>
+
+            <div class="slide-block">
+                <h3 class="slide-subtitle">The "Egypt Advantage"</h3>
+                <div class="glass-card" style="border: 1px solid var(--accent-pink);">
+                    <h4>Capital Efficiency</h4>
+                    <p>Unlike US startups requiring $250k+, we leverage geographic arbitrage.</p>
+                    <ul>
+                        <li><strong>US Burn Rate:</strong> $15,000 - $25,000 / month</li>
+                        <li><strong>Remrin Burn Rate:</strong> ~$5,500 / month</li>
+                        <li><strong>Result:</strong> Your investment buys 5x the runway.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="slide-block">
+                <h3 class="slide-subtitle">Seed Funding Strategy (Tranche Model)</h3>
+                <p><strong>Total Requirement: $75,000</strong></p>
+                
+                <h4 style="margin-top:20px;">Tranche 1: The Build ($30,000)</h4>
+                <p>Objective: Fully functional MVP (R.E.M. Engine + Soul Market) in 3 Months.</p>
+                <table>
+                    <tr>
+                        <th>Allocation</th>
+                        <th>Cost</th>
+                        <th>Notes</th>
+                    </tr>
+                    <tr>
+                        <td>Product Development</td>
+                        <td>$18,000</td>
+                        <td>3 Months Senior Full-Stack Dev + Tech Stack</td>
+                    </tr>
+                    <tr>
+                        <td>Founder Operations</td>
+                        <td>$6,000</td>
+                        <td>Full-time Project Management Stipend ($2k/mo)</td>
+                    </tr>
+                    <tr>
+                        <td>Legal & Admin</td>
+                        <td>$2,000</td>
+                        <td>Incorporation & Setup</td>
+                    </tr>
+                    <tr>
+                        <td>Contingency</td>
+                        <td>$4,000</td>
+                        <td>15% Buffer</td>
+                    </tr>
+                </table>
+
+                <h4 style="margin-top:30px;">Tranche 2: The Launch (~$45,000)</h4>
+                <p>Objective: Public Beta & 1,000 Users. Unlocked upon MVP delivery.</p>
+                <table>
+                    <tr>
+                        <th>Allocation</th>
+                        <th>Cost</th>
+                    </tr>
+                    <tr>
+                        <td>Marketing & Growth</td>
+                        <td>$10,000</td>
+                    </tr>
+                    <tr>
+                        <td>Legal & Banking</td>
+                        <td>$5,000</td>
+                    </tr>
+                    <tr>
+                        <td>Infrastructure Scale</td>
+                        <td>$5,000</td>
+                    </tr>
+                    <tr>
+                        <td>Operations (6 Mo)</td>
+                        <td>$25,000</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="slide-block">
+                <h3 class="slide-subtitle">Financial Projections</h3>
+                <div class="grid-2">
+                    <div class="glass-card">
+                        <h4>Year 1: Viability</h4>
+                        <p>Target: 500-1,000 Users</p>
+                        <p>Revenue: ~$10k MRR</p>
+                        <p><strong>Status: Cash Flow Positive</strong></p>
+                    </div>
+                    <div class="glass-card" style="border-left: 4px solid #00ff88;">
+                        <h4>Year 2: Scalability</h4>
+                        <p>Target: 10,000+ Users</p>
+                        <p>Projected Revenue: <strong>~$1.5M ARR</strong></p>
+                        <p>Operating Profit: ~$902,000</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Modal Logic
+        function openModal(id) {
+            document.getElementById(id).style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Stop scrolling
+        }
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+            document.body.style.overflow = 'auto'; // Resume scrolling
+        }
+
+        // Close on clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                closeModal();
+            }
+        }
+
         // Smooth Scrolling for Nav
         document.querySelectorAll('nav a').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
