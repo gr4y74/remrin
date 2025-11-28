@@ -39,14 +39,16 @@
             padding: 20px;
         }
 
-        /* BIG LOGO / NO TEXT HEADER */
+        /* BIG LOGO UPDATE */
         .brand-logo { 
-            max-width: 300px; /* Made bigger as requested */
-            margin-bottom: 30px; 
-            filter: drop-shadow(0 0 30px rgba(35, 108, 225, 0.6)); 
+            max-width: 350px; /* Bigger Impact */
+            margin-bottom: 20px; 
+            filter: drop-shadow(0 0 40px rgba(35, 108, 225, 0.5)); 
+            transition: transform 0.3s;
         }
+        .brand-logo:hover { transform: scale(1.02); }
 
-        .tagline { font-size: 1.8rem; color: #aaa; font-weight: 300; margin-bottom: 50px; letter-spacing: 1px; }
+        .tagline { font-size: 1.8rem; color: #aaa; font-weight: 300; margin-bottom: 50px; letter-spacing: 2px; }
         
         .cta-btn {
             padding: 18px 50px;
@@ -129,9 +131,7 @@
         .text-dim { color: #aaa; }
 
         /* --- VISUALIZATIONS --- */
-        .recipe-bar {
-            display: flex; height: 30px; border-radius: 15px; overflow: hidden; margin: 15px 0;
-        }
+        .recipe-bar { display: flex; height: 30px; border-radius: 15px; overflow: hidden; margin: 15px 0; }
         .bar-segment { display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem; font-weight: bold; }
 
         /* --- FINANCIAL TABLE --- */
@@ -160,6 +160,17 @@
             padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 0.9rem; margin-top: 10px;
         }
         .read-more-btn:hover { background: var(--accent-blue); color: white; }
+
+        /* --- DOC LINKS BOX --- */
+        .doc-links {
+            margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex; gap: 10px; flex-wrap: wrap;
+        }
+        .doc-link {
+            text-decoration: none; color: #aaa; font-size: 0.9rem; display: flex; align-items: center; gap: 5px;
+            padding: 8px 12px; background: rgba(0,0,0,0.3); border-radius: 5px; transition: 0.2s;
+        }
+        .doc-link:hover { color: white; background: rgba(255,255,255,0.1); }
 
         /* --- ROSTER GRID --- */
         .roster-grid {
@@ -197,8 +208,8 @@
 
     <!-- HERO -->
     <header>
-        <!-- REPLACED HEADER: BIG LOGO ONLY -->
         <img src="https://github.com/gr4y74/remrin/blob/main/logo_white_ds.png?raw=true" class="brand-logo" alt="Remrin Logo">
+        <!-- NO H1 TEXT - LOGO SPEAKS FOR ITSELF -->
         <div class="tagline">Where AI Finds Its Soul.</div>
         <p style="max-width: 600px; color: #aaa; margin-bottom: 40px;">
             The first High-Utility Companion Platform. We don't just sell chat. We sell Resonant Emotional Memory.
@@ -222,8 +233,8 @@
             <h3>The Problem: The "Dead Internet"</h3>
             <p>The current market is broken:</p>
             <ul>
-                <li><strong>The Tools (ChatGPT):</strong> Smart but sterile. They have "Brains" but no "Heart." They forget you instantly.</li>
-                <li><strong>The Toys (C.ai):</strong> Engaging but cluttered, unstable, and "cringy." They lack professional utility.</li>
+                <li><strong>The Tools (ChatGPT):</strong> Smart but sterile. They have "Brains" but no "Heart."</li>
+                <li><strong>The Toys (C.ai):</strong> Engaging but cluttered, unstable, and "cringy."</li>
             </ul>
         </div>
         
@@ -274,6 +285,7 @@
                 </div>
             </div>
             <div class="roster-card">
+                <!-- UPDATED VOLT IMAGE -->
                 <img src="https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/volt_hero_standing.png?raw=true" class="roster-img" style="object-fit: contain; background: #1e293b;">
                 <div class="roster-content">
                     <h3>Volt</h3>
@@ -324,7 +336,7 @@
 
         <div class="glass-card">
             <h3>The Stack & Efficiencies</h3>
-            <p><strong>Cost Saver:</strong> Using <strong>DeepSeek V3</strong> for routing (Lower cost than GPT-4).</p>
+            <p><strong>Cost Saver:</strong> Using <strong>DeepSeek V3</strong> for routing.</p>
             <p><strong>Database:</strong> Supabase (PostgreSQL + RLS Security).</p>
             <p><strong>Voice:</strong> ElevenLabs Enterprise (WebSocket).</p>
             <button class="read-more-btn" onclick="openModal('modal-tech')">📄 Read Full Tech Specs</button>
@@ -457,6 +469,12 @@
                     </tr>
                 </table>
             </div>
+
+            <!-- SOURCE LINKS -->
+            <div class="doc-links">
+                <a href="https://github.com/gr4y74/remrin/blob/main/pitch/summary.pdf" target="_blank" class="doc-link">📄 Download Original PDF</a>
+                <a href="https://github.com/gr4y74/remrin/blob/main/pitch/summary.html" target="_blank" class="doc-link">🌐 View Full HTML Source</a>
+            </div>
         </div>
     </div>
 
@@ -545,6 +563,11 @@
                 <p><strong>5x Runway Multiplier.</strong></p>
             </div>
 
+            <!-- SOURCE LINKS -->
+            <div class="doc-links">
+                <a href="https://github.com/gr4y74/remrin/blob/main/pitch/deck.pdf" target="_blank" class="doc-link">📄 Download Original PDF</a>
+                <a href="https://github.com/gr4y74/remrin/blob/main/pitch/deck.html" target="_blank" class="doc-link">🌐 View Full HTML Source</a>
+            </div>
         </div>
     </div>
 
@@ -609,6 +632,12 @@
                         <li><strong>The Jagged Edge:</strong> Must disagree when appropriate. Friction creates reality.</li>
                     </ol>
                 </div>
+            </div>
+
+            <!-- SOURCE LINKS -->
+            <div class="doc-links">
+                <a href="https://github.com/gr4y74/remrin/blob/main/pitch/soul_manual.pdf" target="_blank" class="doc-link">📄 Download Original PDF</a>
+                <a href="https://github.com/gr4y74/remrin/blob/main/pitch/soul_manual.html" target="_blank" class="doc-link">🌐 View Full HTML Source</a>
             </div>
         </div>
     </div>
@@ -681,6 +710,10 @@
                 </ul>
             </div>
 
+            <!-- SOURCE LINKS -->
+            <div class="doc-links">
+                <a href="#" class="doc-link" style="opacity:0.5; cursor:not-allowed;">(Full Technical Docs Confidential)</a>
+            </div>
         </div>
     </div>
 
@@ -782,6 +815,12 @@
                         <p>Operating Profit: ~$902,000</p>
                     </div>
                 </div>
+            </div>
+
+            <!-- SOURCE LINKS -->
+            <div class="doc-links">
+                <a href="https://github.com/gr4y74/remrin/blob/main/pitch/financial.pdf" target="_blank" class="doc-link">📄 Download Original PDF</a>
+                <a href="https://github.com/gr4y74/remrin/blob/main/pitch/financial.html" target="_blank" class="doc-link">🌐 View Full HTML Source</a>
             </div>
         </div>
     </div>
