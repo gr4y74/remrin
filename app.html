@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- KEYBOARD FIX: interactive-widget=resizes-content forces the viewport to shrink when keyboard opens -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
     <title>Remrin.ai | Soul Interface</title>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="https://github.com/gr4y74/remrin/blob/main/favicon.png?raw=true">
@@ -31,12 +32,12 @@
         /* --- SIDEBAR (Desktop Default) --- */
         #sidebar { 
             width: 320px; background: var(--sidebar-bg); border-right: 1px solid var(--border-color); 
-            display: flex; flex-direction: column; z-index: 50; 
+            display: flex; flex-direction: column; z-index: 3000; 
             box-shadow: 5px 0 30px rgba(0,0,0,0.6); transition: margin-left 0.4s ease-in-out; position: relative;
         }
         #sidebar.collapsed { margin-left: -320px; } 
 
-        /* CHEVRON CLOSE BUTTON */
+        /* CHEVRON CLOSE BUTTON (Inside Sidebar) */
         #close-sidebar-btn {
             position: absolute; top: 15px; right: 15px; 
             background: transparent; color: var(--accent-pink); border: 1px solid rgba(222, 91, 167, 0.3);
@@ -45,8 +46,9 @@
         }
         #close-sidebar-btn:hover { background: var(--accent-pink); color: white; }
 
-        .brand-header { padding: 30px 20px; text-align: center; background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--border-color); }
-        .brand-logo { max-width: 160px; filter: drop-shadow(0 0 10px rgba(35, 108, 225, 0.5)); }
+        .brand-header { padding: 30px 20px; text-align: center; background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--border-color); cursor: pointer; }
+        .brand-logo { max-width: 160px; filter: drop-shadow(0 0 10px rgba(35, 108, 225, 0.5)); transition: transform 0.2s; }
+        .brand-header:active .brand-logo { transform: scale(0.95); }
 
         #roster-list { padding: 15px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 10px; }
 
@@ -57,7 +59,7 @@
 
         /* --- MAIN CHAT --- */
         #main-chat { flex: 1; display: flex; flex-direction: column; background-color: var(--bg-color); background-size: cover; background-position: center; position: relative; transition: 0.3s; }
-        #chat-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.3); z-index: 0; }
+        #chat-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.3); z-index: 0; pointer-events: none; }
         #hero-standing { position: absolute; bottom: 0; left: 5%; height: 90vh; max-height: 900px; width: auto; z-index: 1; filter: drop-shadow(0 0 20px rgba(0,0,0,0.5)); pointer-events: none; }
 
         /* GLASS COLUMN */
@@ -67,9 +69,10 @@
             border-left: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(4px);
         }
 
-        #chat-header { padding: 20px 30px; display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        #open-sidebar-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; margin-right: 15px; opacity: 0.7; transition: 0.3s; }
-        #open-sidebar-btn:hover { opacity: 1; color: var(--accent-blue); }
+        #chat-header { padding: 20px 30px; display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); min-height: 60px; }
+        
+        /* HIDE HAMBURGER FOREVER */
+        #open-sidebar-btn { display: none !important; }
         
         /* New Back to Voice Button */
         #back-to-voice-btn { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; margin-right: 15px; }
@@ -81,6 +84,7 @@
         .message.user { align-self: flex-end; background: var(--user-msg-bg); color: white; border-bottom-right-radius: 2px; }
         .message.ai { align-self: flex-start; background: var(--ai-msg-bg); border-bottom-left-radius: 2px; border: 1px solid rgba(255,255,255,0.1); }
         
+        /* INPUT AREA - FIXED FOR KEYBOARD */
         #input-area { padding: 20px; background: rgba(0,0,0,0.4); display: flex; gap: 10px; border-top: 1px solid rgba(255,255,255,0.1); }
         #user-input { flex: 1; padding: 15px; border-radius: 10px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); outline: none; }
         #user-input:focus { background: rgba(0,0,0,0.6); border-color: var(--accent-blue); }
@@ -98,6 +102,10 @@
         .speak-btn { position: absolute; bottom: -25px; right: 0; background: none; border: none; font-size: 1.2rem; cursor: pointer; opacity: 0.6; filter: grayscale(100%); transition: 0.3s; }
         .speak-btn:hover { opacity: 1; filter: none; transform: scale(1.2); }
 
+        /* INSTALL TOAST */
+        #install-toast { display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--accent-pink); color: white; padding: 12px 25px; border-radius: 30px; z-index: 4000; box-shadow: 0 5px 20px rgba(0,0,0,0.5); font-weight: bold; cursor: pointer; animation: slideDown 0.5s ease; }
+        @keyframes slideDown { from { top: -50px; } to { top: 20px; } }
+
         /* SETTINGS INPUTS */
         .settings-input { width:100%; padding:10px; margin:10px 0; background:#111; border:1px solid #444; color:white; border-radius:5px; box-sizing: border-box; }
         .settings-select { width:100%; padding:10px; margin:10px 0; background:#111; border:1px solid #444; color:white; border-radius:5px; cursor: pointer; }
@@ -107,14 +115,13 @@
         
         @media (max-width: 800px) {
             .chat-container { width: 100%; max-width: none; background: rgba(0,0,0,0.6); }
-            /* This was the conflict line - Removing ambiguous sidebar definition */
         }
 
         /* --- MOBILE STYLES (Overrides) --- */
         .mobile-only { display: none; }
 
-        @media screen and (max-width: 768px) and (orientation: landscape) {
-            /* Force show lock screen in landscape */
+        /* FORCE PORTRAIT LOCK ON LANDSCAPE MOBILE */
+        @media screen and (orientation: landscape) and (max-height: 600px) {
             #portrait-lock { display: flex !important; }
         }
 
@@ -126,7 +133,6 @@
             .hero-background { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; background-position: center; background-size: cover; }
 
             /* Sidebar Drawer - Z-INDEX 3000 (Top) */
-            /* Using #sidebar ID to override desktop styles with !important force */
             #sidebar { 
                 position: fixed !important; 
                 left: -100% !important; /* START CLOSED */
@@ -155,25 +161,30 @@
             /* Show Back to Voice Button */
             #back-to-voice-btn { display: block; }
 
-            /* Mobile Nav Toggle (Hamburger) */
+            /* Mobile Nav Toggle (PINK CHEVRON) - MOVED TO RIGHT TO AVOID AVATAR */
             .mobile-nav-toggle { 
                 display: flex !important; 
                 position: fixed; 
-                top: 20px; 
-                left: 20px; 
-                z-index: 2500; /* Above Orb, Below Sidebar */
-                background: rgba(0,0,0,0.4); 
-                border: 1px solid rgba(255,255,255,0.1); 
-                color: #fff; 
+                top: 15px; 
+                right: 15px; /* MOVED TO RIGHT */
+                left: auto; /* Reset Left */
+                z-index: 3005; /* HIGHER THAN EVERYTHING */
+                background: rgba(0,0,0,0.6); 
+                border: 2px solid var(--accent-pink); 
+                color: var(--accent-pink); 
                 border-radius: 50%; 
                 width: 45px; 
                 height: 45px; 
                 align-items: center; 
                 justify-content: center; 
                 font-size: 24px; 
+                font-weight: bold;
                 cursor: pointer; 
                 backdrop-filter: blur(5px);
+                box-shadow: 0 0 15px rgba(0,0,0,0.5);
+                transition: transform 0.2s;
             }
+            .mobile-nav-toggle:active { transform: scale(0.9); background: var(--accent-pink); color: white; }
 
             /* VOICE INTERFACE OVERLAY */
             .mobile-only { display: block; }
@@ -184,8 +195,8 @@
             }
             .voice-controls, .voice-header { pointer-events: auto; }
             
-            /* Status Indicator (Top Right) */
-            .voice-header { display: flex; justify-content: flex-end; padding-top: 10px; }
+            /* Status Indicator (Top Right - Pushed Left by Button) */
+            .voice-header { display: flex; justify-content: flex-start; padding-top: 10px; }
             .status-indicator { background: rgba(0,0,0,0.6); padding: 6px 14px; border-radius: 20px; font-size: 13px; display: flex; align-items: center; gap: 6px; color: #00ff88; border: 1px solid rgba(0,255,136,0.2); }
             .dot { width: 8px; height: 8px; background: #00ff88; border-radius: 50%; }
             .dot.live { animation: blink 1s infinite; }
@@ -242,6 +253,9 @@
         <p style="color:#aaa;">Remrin is designed for soul connection,<br>not landscape mode.</p>
     </div>
 
+    <!-- INSTALL TOAST -->
+    <div id="install-toast" onclick="triggerInstall()">📲 Install Soul App</div>
+
     <!-- MOBILE VOICE INTERFACE (The Orb Layer) -->
     <div id="mobile-voice-interface" class="mobile-only" style="display:none;">
         <div class="voice-header">
@@ -265,9 +279,13 @@
         </div>
     </div>
 
+    <!-- PINK CHEVRON TOGGLE (Moved to Right via CSS) -->
+    <button id="mobile-toggle-btn" class="mobile-nav-toggle" onclick="toggleSidebar()">»</button>
+
     <div id="sidebar">
         <button id="close-sidebar-btn" onclick="toggleSidebar()">«</button>
-        <div class="brand-header">
+        <!-- CLICK LOGO TO RESET -->
+        <div class="brand-header" onclick="location.reload()">
             <img src="https://github.com/gr4y74/remrin/blob/main/logo_white_ds.png?raw=true" alt="Remrin Logo" class="brand-logo">
         </div>
         <div id="roster-list"></div>
@@ -283,7 +301,9 @@
                 <!-- Back to Voice Button (Mobile Only) -->
                 <button id="back-to-voice-btn" onclick="toggleMobileMode('voice')">🎙️</button>
                 
+                <!-- HAMBURGER IS GONE -->
                 <button id="open-sidebar-btn" onclick="toggleSidebar()" style="display:none;">☰</button>
+                
                 <img id="current-hero-img" src="" alt="Hero" style="display:none;">
                 <div>
                     <h2 id="char-name" style="margin:0; color:white; font-size: 1.2rem;">Select a Soul</h2>
@@ -355,7 +375,8 @@
         // --- 3. ROSTER ---
         const characters = [
             { id: 'rem', name: 'Rem', file: 'rem.json', voice: SOUL_CARTRIDGES.rem.VOICE_ID, hero_standing: 'https://github.com/gr4y74/remrin/blob/main/rem_hero%20.png?raw=true', bg: 'https://github.com/gr4y74/remrin/blob/main/rem_bw.jpg?raw=true', avatar: 'https://github.com/gr4y74/remrin/blob/main/rem_hero%20.png?raw=true' },
-            { id: 'volt', name: 'Volt', file: 'volt.json', voice: SOUL_CARTRIDGES.volt.VOICE_ID, hero_standing: repoUrl + 'volt_hero.png' + rawSuffix, bg: repoUrl + 'volt_bg.jpg' + rawSuffix, avatar: 'https://img.freepik.com/premium-photo/blue-hedgehog-running-fast-lightning-generative-ai_955834-36.jpg' },
+            /* FIXED VOLT HERO URL BELOW */
+            { id: 'volt', name: 'Volt', file: 'volt.json', voice: SOUL_CARTRIDGES.volt.VOICE_ID, hero_standing: repoUrl + 'volt_hero_standing.png' + rawSuffix, bg: repoUrl + 'volt_bg.jpg' + rawSuffix, avatar: 'https://img.freepik.com/premium-photo/blue-hedgehog-running-fast-lightning-generative-ai_955834-36.jpg' },
             { id: 'don', name: 'Don Pooh-leone', file: 'don_pooh_leone.json', voice: SOUL_CARTRIDGES.don.VOICE_ID, bg: repoUrl + 'don_pooh_leone_hero.jpg' + rawSuffix, avatar: repoUrl + 'don_pooh_leone_hero.jpg' + rawSuffix },
             { id: 'lilly', name: 'Lilly', file: 'lilly.json', voice: "PLACEHOLDER", hero_standing: 'https://github.com/gr4y74/remrin/blob/main/lilly.png?raw=true', bg: 'https://github.com/gr4y74/remrin/blob/main/zen_bg.jpg?raw=true', avatar: 'https://github.com/gr4y74/remrin/blob/main/lilly.png?raw=true' },
             { id: 'sheikh', name: 'SheikhQR', file: 'sheikh_qr.json', voice: "PLACEHOLDER", hero_standing: 'https://github.com/gr4y74/remrin/blob/main/SheikhQR.png?raw=true', bg: 'https://github.com/gr4y74/remrin/blob/main/bg2.jpg?raw=true', avatar: 'https://github.com/gr4y74/remrin/blob/main/SheikhQR.png?raw=true' },
@@ -430,46 +451,47 @@
         function toggleMobileMode(mode) {
             const chatContainer = document.querySelector('.main-container');
             const voiceInterface = document.getElementById('mobile-voice-interface');
+            const toggleBtn = document.getElementById('mobile-toggle-btn');
             
             if (mode === 'chat') {
                 chatContainer.classList.remove('voice-mode');
                 voiceInterface.style.display = 'none';
+                if(toggleBtn) toggleBtn.style.display = 'flex'; // Show Menu Button in Chat
             } else {
                 chatContainer.classList.add('voice-mode');
                 voiceInterface.style.display = 'flex';
+                if(toggleBtn) toggleBtn.style.display = 'flex'; // Keep Menu Button in Voice
             }
         }
 
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
-            const openBtn = document.getElementById('open-sidebar-btn');
+            const btn = document.getElementById('mobile-toggle-btn');
             
             if (window.innerWidth <= 768) {
                 sidebar.classList.toggle('active');
-                const btn = document.querySelector('.mobile-nav-toggle');
-                if (btn) btn.innerHTML = sidebar.classList.contains('active') ? '✕' : '☰';
+                
+                // Rotate the arrow
+                if (sidebar.classList.contains('active')) {
+                    btn.innerHTML = '«'; // Point back (Close)
+                    btn.style.zIndex = '3001'; // Ensure it stays on top
+                } else {
+                    btn.innerHTML = '»'; // Point forward (Open)
+                }
             } else {
+                // Desktop Logic
                 isSidebarOpen = !isSidebarOpen;
                 if (isSidebarOpen) {
                     sidebar.classList.remove('collapsed');
-                    if (openBtn) openBtn.style.display = 'none';
                 } else {
                     sidebar.classList.add('collapsed');
-                    if (openBtn) openBtn.style.display = 'block';
                 }
             }
         }
 
         function initMobileUI() {
             if (window.innerWidth <= 768) {
-                if (!document.querySelector('.mobile-nav-toggle')) {
-                    const btn = document.createElement('button');
-                    btn.className = 'mobile-nav-toggle';
-                    btn.innerHTML = '☰';
-                    btn.onclick = toggleSidebar;
-                    document.body.appendChild(btn);
-                }
-                // Only default to voice on FRESH load, do NOT auto-toggle on resize
+                // Only default to voice on FRESH load
                 if (!document.querySelector('.voice-mode')) {
                     toggleMobileMode('voice'); 
                 }
@@ -480,6 +502,11 @@
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
+            // SHOW TOAST
+            const toast = document.getElementById('install-toast');
+            toast.style.display = 'block';
+            
+            // Also show button in settings
             document.getElementById('install-btn').style.display = 'block';
         });
 
@@ -490,6 +517,7 @@
                 console.log(`User installed: ${outcome}`);
                 deferredPrompt = null;
                 document.getElementById('install-btn').style.display = 'none';
+                document.getElementById('install-toast').style.display = 'none';
             }
         }
 
@@ -542,9 +570,6 @@
             mainChat.style.backgroundSize = 'cover';
             
             initMobileUI();
-            // Don't bind resize to initMobileUI anymore to prevent keyboard closure bug
-            // window.addEventListener('resize', initMobileUI); 
-            // Instead, handle resize only for major layout shifts if needed
         };
 
         async function loadCharacter(char) {
@@ -593,7 +618,7 @@
                 const sidebar = document.getElementById('sidebar');
                 sidebar.classList.remove('active'); // Force Close
                 const btn = document.querySelector('.mobile-nav-toggle');
-                if(btn) btn.innerHTML = '☰';
+                if(btn) btn.innerHTML = '»';
                 toggleMobileMode('voice'); // Auto-switch to voice on char select
             }
         }
