@@ -45,9 +45,8 @@
         }
         #close-sidebar-btn:hover { background: var(--accent-pink); color: white; }
 
-        .brand-header { padding: 30px 20px; text-align: center; background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--border-color); cursor: pointer; }
-        .brand-logo { max-width: 160px; filter: drop-shadow(0 0 10px rgba(35, 108, 225, 0.5)); transition: transform 0.2s; }
-        .brand-logo:active { transform: scale(0.95); }
+        .brand-header { padding: 30px 20px; text-align: center; background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--border-color); }
+        .brand-logo { max-width: 160px; filter: drop-shadow(0 0 10px rgba(35, 108, 225, 0.5)); }
 
         #roster-list { padding: 15px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 10px; }
 
@@ -71,6 +70,10 @@
         #chat-header { padding: 20px 30px; display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
         #open-sidebar-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; margin-right: 15px; opacity: 0.7; transition: 0.3s; }
         #open-sidebar-btn:hover { opacity: 1; color: var(--accent-blue); }
+        
+        /* New Back to Voice Button */
+        #back-to-voice-btn { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; margin-right: 15px; }
+
         #current-hero-img { width: 50px; height: 50px; border-radius: 12px; object-fit: cover; border: 2px solid var(--accent-pink); margin-right: 15px; }
         
         #messages { flex: 1; padding: 20px 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
@@ -104,14 +107,15 @@
         
         @media (max-width: 800px) {
             .chat-container { width: 100%; max-width: none; background: rgba(0,0,0,0.6); }
-            #sidebar { position: absolute; height: 100%; }
+            /* This was the conflict line - Removing ambiguous sidebar definition */
         }
 
-        /* --- MOBILE VOICE ORB STYLES --- */
+        /* --- MOBILE STYLES (Overrides) --- */
         .mobile-only { display: none; }
 
         @media screen and (max-width: 768px) and (orientation: landscape) {
-            #portrait-lock { display: flex; }
+            /* Force show lock screen in landscape */
+            #portrait-lock { display: flex !important; }
         }
 
         @media screen and (max-width: 768px) {
@@ -122,11 +126,14 @@
             .hero-background { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; background-position: center; background-size: cover; }
 
             /* Sidebar Drawer - Z-INDEX 3000 (Top) */
-            .sidebar { 
-                position: fixed; 
-                left: -100%; /* START CLOSED */
+            /* Using #sidebar ID to override desktop styles with !important force */
+            #sidebar { 
+                position: fixed !important; 
+                left: -100% !important; /* START CLOSED */
+                margin-left: 0 !important; /* Reset desktop margins */
                 top: 0; 
-                width: 85%; /* Slightly narrower than full screen */
+                width: 85% !important; /* Narrower width */
+                max-width: 300px;
                 height: 100%; 
                 background: rgba(15, 15, 20, 0.98); 
                 z-index: 3000; 
@@ -134,7 +141,10 @@
                 box-shadow: 10px 0 50px rgba(0,0,0,0.8); 
                 backdrop-filter: blur(15px); 
             }
-            .sidebar.active { left: 0; }
+            #sidebar.active { left: 0 !important; }
+
+            /* Close Button inside Sidebar needs high z-index */
+            #close-sidebar-btn { z-index: 3001; }
 
             /* Chat Column */
             .chat-container { width: 100% !important; height: 100% !important; margin: 0; border-radius: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); border: none; position: relative; z-index: 10; }
@@ -142,16 +152,19 @@
             /* Hide Chat in Voice Mode */
             .main-container.voice-mode .chat-container { display: none !important; }
 
-            /* Mobile Nav Toggle (PINK CHEVRON) */
+            /* Show Back to Voice Button */
+            #back-to-voice-btn { display: block; }
+
+            /* Mobile Nav Toggle (Hamburger) */
             .mobile-nav-toggle { 
                 display: flex !important; 
                 position: fixed; 
                 top: 20px; 
                 left: 20px; 
-                z-index: 2500; 
-                background: rgba(0,0,0,0.6); 
-                border: 1px solid var(--accent-pink); /* PINK BORDER */
-                color: var(--accent-pink); /* PINK TEXT */
+                z-index: 2500; /* Above Orb, Below Sidebar */
+                background: rgba(0,0,0,0.4); 
+                border: 1px solid rgba(255,255,255,0.1); 
+                color: #fff; 
                 border-radius: 50%; 
                 width: 45px; 
                 height: 45px; 
@@ -180,10 +193,10 @@
             /* Bottom Controls Alignment */
             .voice-controls { 
                 display: flex; 
-                align-items: flex-end; /* Align to bottom */
+                align-items: flex-end; 
                 justify-content: space-between; 
-                margin-bottom: 80px; /* LIFTED HIGHER FOR KEYBOARD VISIBILITY */
-                padding-bottom: 20px; 
+                margin-bottom: 20px;
+                padding-bottom: 40px; 
                 position: relative;
             }
             
@@ -191,15 +204,18 @@
             .icon-btn:active { transform: scale(0.9); background: rgba(255,255,255,0.2); }
 
             /* THE ORB */
-            .orb-container { position: relative; width: 90px; height: 90px; display: flex; justify-content: center; align-items: center; margin-bottom: 10px; cursor: pointer; }
+            .orb-container { position: relative; width: 90px; height: 90px; display: flex; justify-content: center; align-items: center; margin-bottom: 10px; cursor: pointer; transition: transform 0.1s; }
             .orb-core { width: 70px; height: 70px; background: linear-gradient(135deg, #00C6FF, #0072FF); border-radius: 50%; box-shadow: 0 0 25px rgba(0, 198, 255, 0.6); z-index: 2; animation: breathe 3s infinite ease-in-out; transition: 0.3s; }
             .orb-glow { position: absolute; width: 100%; height: 100%; background: rgba(0, 198, 255, 0.3); border-radius: 50%; z-index: 1; animation: pulse-ring 2s infinite; }
-            .orb-container:active .orb-core { transform: scale(0.9); background: #fff; }
+            
+            /* ACTIVE (PRESSED) STATE - RAM PINK */
+            .orb-container.active .orb-core { background: linear-gradient(135deg, #de5ba7, #ff7eb3); box-shadow: 0 0 35px rgba(222, 91, 167, 0.8); transform: scale(1.1); }
+            .orb-container.active .orb-glow { background: rgba(222, 91, 167, 0.4); animation: none; transform: scale(1.3); }
 
             /* Status Text (Bottom Center) */
             .voice-status-text { 
                 position: absolute; 
-                bottom: 40px; /* LIFTED TEXT */
+                bottom: 30px; 
                 left: 0; 
                 width: 100%; 
                 text-align: center; 
@@ -237,20 +253,21 @@
             <div class="voice-controls">
                 <button class="icon-btn secondary" onclick="toggleMobileMode('chat')">⌨️</button>
                 
-                <div class="orb-container" onclick="triggerOrbAction()">
+                <!-- HOLD TO SPEAK ORB -->
+                <div class="orb-container" id="orb-btn">
                     <div class="orb-core"></div>
                     <div class="orb-glow"></div>
                 </div>
                 
                 <button class="icon-btn secondary" onclick="openSettings()">⚙️</button>
             </div>
-            <div class="voice-status-text" id="voice-status">REM IS LISTENING...</div>
+            <div class="voice-status-text" id="voice-status">HOLD TO SPEAK</div>
         </div>
     </div>
 
     <div id="sidebar">
         <button id="close-sidebar-btn" onclick="toggleSidebar()">«</button>
-        <div class="brand-header" onclick="location.reload()" title="Reset to Home">
+        <div class="brand-header">
             <img src="https://github.com/gr4y74/remrin/blob/main/logo_white_ds.png?raw=true" alt="Remrin Logo" class="brand-logo">
         </div>
         <div id="roster-list"></div>
@@ -263,6 +280,9 @@
         <img id="hero-standing" src="" style="display:none;">
         <div class="chat-container">
             <header id="chat-header">
+                <!-- Back to Voice Button (Mobile Only) -->
+                <button id="back-to-voice-btn" onclick="toggleMobileMode('voice')">🎙️</button>
+                
                 <button id="open-sidebar-btn" onclick="toggleSidebar()" style="display:none;">☰</button>
                 <img id="current-hero-img" src="" alt="Hero" style="display:none;">
                 <div>
@@ -354,7 +374,7 @@
         let currentPersonaId = null;
         let currentLegacyPersona = null;
         let currentVoiceId = "21m00Tcm4TlvDq8ikWAM";
-        let isSidebarOpen = false; // CHANGED: Start Closed
+        let isSidebarOpen = false; // START CLOSED
         let deferredPrompt; 
 
         // --- UI FUNCTIONS ---
@@ -373,14 +393,38 @@
             div.scrollIntoView({ behavior: 'smooth' });
         }
 
-        function triggerOrbAction() {
-            addMessage('user', 'Hello!');
-            const orbCore = document.querySelector('.orb-core');
-            orbCore.style.transform = "scale(1.2)";
-            setTimeout(() => orbCore.style.transform = "scale(1)", 200);
-            sendMessage(true); 
-            document.getElementById('voice-status').innerText = "LISTENING...";
-            setTimeout(() => document.getElementById('voice-status').innerText = "PROCESSING...", 1500);
+        // --- ORB INTERACTION ---
+        const orbBtn = document.getElementById('orb-btn');
+        const statusText = document.getElementById('voice-status');
+
+        // Mouse/Touch Down
+        orbBtn.addEventListener('mousedown', startListening);
+        orbBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startListening(); });
+
+        // Mouse/Touch Up
+        orbBtn.addEventListener('mouseup', stopListening);
+        orbBtn.addEventListener('touchend', (e) => { e.preventDefault(); stopListening(); });
+
+        function startListening() {
+            orbBtn.classList.add('active'); // Turn Pink
+            statusText.innerText = "LISTENING...";
+            statusText.style.color = "#de5ba7"; // Pink text
+        }
+
+        function stopListening() {
+            orbBtn.classList.remove('active'); // Revert
+            statusText.innerText = "SENT!";
+            statusText.style.color = "#00ff88"; // Green text
+            
+            // Demo Action: Simulate sending "Hello"
+            setTimeout(() => {
+                sendMessage(true); 
+                // Reset text after sending
+                setTimeout(() => {
+                    statusText.innerText = "HOLD TO SPEAK";
+                    statusText.style.color = "rgba(255, 255, 255, 0.6)";
+                }, 2000);
+            }, 500);
         }
 
         function toggleMobileMode(mode) {
@@ -403,8 +447,7 @@
             if (window.innerWidth <= 768) {
                 sidebar.classList.toggle('active');
                 const btn = document.querySelector('.mobile-nav-toggle');
-                // PINK CHEVRON TOGGLE LOGIC
-                if (btn) btn.innerHTML = sidebar.classList.contains('active') ? '«' : '»';
+                if (btn) btn.innerHTML = sidebar.classList.contains('active') ? '✕' : '☰';
             } else {
                 isSidebarOpen = !isSidebarOpen;
                 if (isSidebarOpen) {
@@ -422,11 +465,14 @@
                 if (!document.querySelector('.mobile-nav-toggle')) {
                     const btn = document.createElement('button');
                     btn.className = 'mobile-nav-toggle';
-                    btn.innerHTML = '»'; // Default Open Icon (Pink Chevron)
+                    btn.innerHTML = '☰';
                     btn.onclick = toggleSidebar;
                     document.body.appendChild(btn);
                 }
-                toggleMobileMode('voice'); // Default to Orb on Mobile
+                // Only default to voice on FRESH load, do NOT auto-toggle on resize
+                if (!document.querySelector('.voice-mode')) {
+                    toggleMobileMode('voice'); 
+                }
             }
         }
 
@@ -496,8 +542,9 @@
             mainChat.style.backgroundSize = 'cover';
             
             initMobileUI();
-            window.addEventListener('resize', initMobileUI);
-            // NOTE: Sidebar is CLOSED by default in CSS (-100%). We do NOT call toggleSidebar() here for mobile.
+            // Don't bind resize to initMobileUI anymore to prevent keyboard closure bug
+            // window.addEventListener('resize', initMobileUI); 
+            // Instead, handle resize only for major layout shifts if needed
         };
 
         async function loadCharacter(char) {
@@ -511,11 +558,6 @@
             document.getElementById('current-hero-img').style.display = 'block';
             document.getElementById('messages').innerHTML = ''; 
             
-            // DYNAMIC STATUS TEXT
-            const statusText = document.getElementById('voice-status');
-            if (statusText) statusText.innerText = `${char.name.toUpperCase()} IS LISTENING...`;
-
-            // Handle Default BG vs Character BG
             const mainChat = document.getElementById('main-chat');
             mainChat.style.backgroundImage = `url('${char.bg || DEFAULT_BG_URL}')`;
             mainChat.style.backgroundPosition = 'center top'; 
@@ -551,7 +593,7 @@
                 const sidebar = document.getElementById('sidebar');
                 sidebar.classList.remove('active'); // Force Close
                 const btn = document.querySelector('.mobile-nav-toggle');
-                if(btn) btn.innerHTML = '»'; // RESET TO OPEN ICON
+                if(btn) btn.innerHTML = '☰';
                 toggleMobileMode('voice'); // Auto-switch to voice on char select
             }
         }
@@ -563,7 +605,6 @@
         }
 
         async function sendMessage(isDemoTrigger = false) {
-            // If triggered by Orb demo, use a default "Hello"
             const input = document.getElementById('user-input');
             const text = isDemoTrigger ? "Hello" : input.value;
             
@@ -600,7 +641,7 @@
                 if(data.candidates && data.candidates.length > 0) {
                     const reply = data.candidates[0].content.parts[0].text;
                     addMessage('ai', reply);
-                    speakText(reply); // AUTO SPEAK ON MOBILE
+                    speakText(reply);
                 }
             } catch (e) { 
                 if(document.querySelector('.loading-msg')) document.querySelector('.loading-msg').remove();
