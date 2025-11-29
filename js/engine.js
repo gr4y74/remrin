@@ -260,17 +260,19 @@ async function loadCharacter(char) {
 
         // Check for VIDEO
         if (char.bg && (char.bg.endsWith('.mp4') || char.bg.endsWith('.webm'))) {
-            // [SCENARIO B] VIDEO MODE
-            console.log("🎬 Loading Video Mode: " + char.name);
-            mainChat.style.backgroundImage = 'none'; 
-            
-            if(bgVideo) {
-                bgVideo.src = char.bg;
-                bgVideo.classList.add('active');
-                bgVideo.play().catch(e => console.warn("Autoplay blocked:", e));
-            }
+           // [SCENARIO B] VIDEO MODE
+console.log("🎬 Loading Video Mode: " + char.name);
 
-        } else {
+// 1. MAKE THE RUG TRANSPARENT
+mainChat.style.background = 'transparent'; // <--- ADD THIS!
+mainChat.style.backgroundImage = 'none'; 
+
+// 2. Play the Video
+if(bgVideo) {
+    bgVideo.src = char.bg;
+    bgVideo.classList.add('active');
+    bgVideo.play().catch(e => console.warn("Autoplay blocked:", e));
+}
             // [SCENARIO C] IMAGE MODE
             if(bgVideo) {
                 bgVideo.classList.remove('active');
