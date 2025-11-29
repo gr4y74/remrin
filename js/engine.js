@@ -186,23 +186,29 @@ window.onload = () => {
     characters.forEach(char => {
         const div = document.createElement('div');
         div.className = 'character-card';
+        div.id = `card-${char.id}`; // Added ID for easier lookup
         div.onclick = () => loadCharacter(char);
         div.innerHTML = `<img src="${char.avatar}" class="avatar-small"><div class="char-info"><h4>${char.name}</h4></div>`;
         list.appendChild(div);
     });
     const mainChat = document.getElementById('main-chat');
-    // USE THE NEW GRADIENT FOR WAITING ROOM (Data loaded from souls.js)
-    mainChat.style.background = DEFAULT_BG_STYLE;
+    
+    // USE THE NEW GRADIENT FOR WAITING ROOM (Check if variable exists, otherwise default)
+    if (typeof DEFAULT_BG_STYLE !== 'undefined') {
+        mainChat.style.background = DEFAULT_BG_STYLE;
+    } else {
+        mainChat.style.background = "#0f111a";
+    }
     
     // Add subtle particle effect (Pseudo-code via simple gradient hack)
     mainChat.style.backgroundImage = "radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px), radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px)";
     mainChat.style.backgroundSize = "50px 50px, 100px 100px";
     mainChat.style.backgroundPosition = "0 0, 25px 25px";
-    mainChat.style.backgroundColor = "#0f111a";
     
     initMobileUI();
 };
 
+// --- THE REPAIRED LOAD CHARACTER FUNCTION ---
 async function loadCharacter(char) {
     // --- 1. SIDEBAR HIGHLIGHT LOGIC (CRASH FIX) ---
     // We clear all active classes first
@@ -212,8 +218,7 @@ async function loadCharacter(char) {
     if (typeof event !== 'undefined' && event && event.currentTarget) {
         event.currentTarget.classList.add('active');
     } else {
-        // OPTIONAL: If auto-loading, try to find the card by ID and highlight it manually
-        // (Assumes your cards have IDs like 'card-rem', if not, it just skips highlighting for now)
+        // Fallback: Try to find card by ID
         const autoCard = document.getElementById(`card-${char.id}`);
         if (autoCard) autoCard.classList.add('active');
     }
@@ -230,9 +235,9 @@ async function loadCharacter(char) {
     // --- 3. GRAB ELEMENTS ---
     const mainChat = document.getElementById('main-chat');
     const heroImg = document.getElementById('hero-standing');
-    const bgVideo = document.getElementById('bg-video'); // Ensure this ID is in HTML
+    const bgVideo = document.getElementById('bg-video');
 
-    // --- 4. THE BACKGROUND LOGIC ---
+    // --- 4. THE BACKGROUND LOGIC (Video vs Hero) ---
     if (char.hero_standing) {
         // [SCENARIO A] STANDING HERO (Priority 1)
         
@@ -271,14 +276,16 @@ async function loadCharacter(char) {
                 bgVideo.classList.remove('active');
                 setTimeout(() => bgVideo.pause(), 500);
             }
-            mainChat.style.backgroundImage = `url('${char.bg || DEFAULT_BG_URL}')`;
+            // Fallback for default BG URL if undefined
+            const bgUrl = char.bg || (typeof DEFAULT_BG_URL !== 'undefined' ? DEFAULT_BG_URL : '');
+            mainChat.style.backgroundImage = `url('${bgUrl}')`;
             mainChat.style.backgroundPosition = 'center top'; 
             mainChat.style.backgroundSize = 'cover';
         }
     }
-}
 
-    if (SOUL_CARTRIDGES[char.id]) {
+    // --- 5. OPENING MESSAGE LOGIC (This was missing!) ---
+    if (typeof SOUL_CARTRIDGES !== 'undefined' && SOUL_CARTRIDGES[char.id]) {
         const soul = SOUL_CARTRIDGES[char.id];
         currentLegacyPersona = null;
         document.getElementById('char-tagline').innerText = soul.TAGLINE;
@@ -294,8 +301,13 @@ async function loadCharacter(char) {
                 const opening = currentLegacyPersona.BEHAVIORAL_DIRECTIVES["1_OPENING_HOOK"] || "Hello!";
                 addMessage('ai', opening); 
             }, 500);
-        } catch (e) { addMessage('ai', 'Error loading Soul file'); }
+        } catch (e) { 
+            console.error(e);
+            addMessage('ai', 'Error loading Soul file'); 
+        }
     }
+
+    // --- 6. MOBILE LOGIC ---
     if (window.innerWidth <= 768) {
         const sidebar = document.getElementById('sidebar');
         sidebar.classList.remove('active'); // Force Close
@@ -307,7 +319,9 @@ async function loadCharacter(char) {
 
 function generateSystemPrompt(characterKey) {
     const soul = SOUL_CARTRIDGES[characterKey];
-    const fullSystem = { "ENGINE": UNIVERSAL_SOUL_ENGINE_V7_2, "ACTIVE_SOUL": soul };
+    // Ensure UNIVERSAL_SOUL_ENGINE_V7_2 is available
+    const engine = (typeof UNIVERSAL_SOUL_ENGINE_V7_2 !== 'undefined') ? UNIVERSAL_SOUL_ENGINE_V7_2 : {};
+    const fullSystem = { "ENGINE": engine, "ACTIVE_SOUL": soul };
     return JSON.stringify(fullSystem, null, 2);
 }
 
