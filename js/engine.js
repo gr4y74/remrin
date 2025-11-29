@@ -204,10 +204,21 @@ window.onload = () => {
 };
 
 async function loadCharacter(char) {
-    // 1. Update UI Basics
+    // --- 1. SIDEBAR HIGHLIGHT LOGIC (CRASH FIX) ---
+    // We clear all active classes first
     document.querySelectorAll('.character-card').forEach(c => c.classList.remove('active'));
-    event.currentTarget.classList.add('active');
-    
+
+    // SAFETY CHECK: Only try to highlight the clicked card if 'event' actually exists!
+    if (typeof event !== 'undefined' && event && event.currentTarget) {
+        event.currentTarget.classList.add('active');
+    } else {
+        // OPTIONAL: If auto-loading, try to find the card by ID and highlight it manually
+        // (Assumes your cards have IDs like 'card-rem', if not, it just skips highlighting for now)
+        const autoCard = document.getElementById(`card-${char.id}`);
+        if (autoCard) autoCard.classList.add('active');
+    }
+
+    // --- 2. UPDATE CORE IDENTITY ---
     currentPersonaId = char.id;
     currentVoiceId = char.voice;
     
@@ -216,51 +227,50 @@ async function loadCharacter(char) {
     document.getElementById('current-hero-img').style.display = 'block';
     document.getElementById('messages').innerHTML = ''; 
     
-    // 2. Grab Elements
+    // --- 3. GRAB ELEMENTS ---
     const mainChat = document.getElementById('main-chat');
     const heroImg = document.getElementById('hero-standing');
-    const bgVideo = document.getElementById('bg-video'); // Make sure this exists in index.html!
+    const bgVideo = document.getElementById('bg-video'); // Ensure this ID is in HTML
 
-    // --- THE TRIPLE THREAT LOGIC ---
-
+    // --- 4. THE BACKGROUND LOGIC ---
     if (char.hero_standing) {
         // [SCENARIO A] STANDING HERO (Priority 1)
-        // We want a clean gradient so the hero pops.
         
-        // 1. Kill the video (if one was playing)
-        bgVideo.classList.remove('active');
-        bgVideo.pause();
+        // Kill Video
+        if(bgVideo) {
+            bgVideo.classList.remove('active');
+            bgVideo.pause();
+        }
 
-        // 2. Set the gradient background
+        // Set Gradient & Show Hero
         mainChat.style.backgroundImage = `none`; 
         mainChat.style.background = `linear-gradient(to bottom, #1a1a2e, #16213e)`;
         
-        // 3. Show the Hero
         heroImg.src = char.hero_standing;
         heroImg.style.display = 'block';
 
     } else {
-        // [SCENARIO B & C] NO HERO (Check for Video vs Image)
-        heroImg.style.display = 'none'; // Hide the standing hero container
+        // [SCENARIO B & C] NO STANDING HERO
+        heroImg.style.display = 'none'; 
 
-        // Check if the background is a VIDEO
+        // Check for VIDEO
         if (char.bg && (char.bg.endsWith('.mp4') || char.bg.endsWith('.webm'))) {
-            // [SCENARIO B] VIDEO BACKGROUND
-            console.log("🎬 Loading Video Mode for: " + char.name);
-
-            mainChat.style.backgroundImage = 'none'; // Clear static BG
+            // [SCENARIO B] VIDEO MODE
+            console.log("🎬 Loading Video Mode: " + char.name);
+            mainChat.style.backgroundImage = 'none'; 
             
-            bgVideo.src = char.bg;
-            bgVideo.classList.add('active'); // Fade video in
-            bgVideo.play().catch(e => console.warn("Autoplay blocked:", e));
-        
-        } else {
-            // [SCENARIO C] STATIC IMAGE BACKGROUND
-            // 1. Kill the video
-            bgVideo.classList.remove('active');
-            setTimeout(() => bgVideo.pause(), 500); // Pause after fade out to save RAM
+            if(bgVideo) {
+                bgVideo.src = char.bg;
+                bgVideo.classList.add('active');
+                bgVideo.play().catch(e => console.warn("Autoplay blocked:", e));
+            }
 
-            // 2. Set the image
+        } else {
+            // [SCENARIO C] IMAGE MODE
+            if(bgVideo) {
+                bgVideo.classList.remove('active');
+                setTimeout(() => bgVideo.pause(), 500);
+            }
             mainChat.style.backgroundImage = `url('${char.bg || DEFAULT_BG_URL}')`;
             mainChat.style.backgroundPosition = 'center top'; 
             mainChat.style.backgroundSize = 'cover';
