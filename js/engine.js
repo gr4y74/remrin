@@ -193,14 +193,14 @@ window.onload = () => {
     });
     const mainChat = document.getElementById('main-chat');
     
-    // USE THE NEW GRADIENT FOR WAITING ROOM (Check if variable exists, otherwise default)
+    // USE THE NEW GRADIENT FOR WAITING ROOM
     if (typeof DEFAULT_BG_STYLE !== 'undefined') {
         mainChat.style.background = DEFAULT_BG_STYLE;
     } else {
         mainChat.style.background = "#0f111a";
     }
     
-    // Add subtle particle effect (Pseudo-code via simple gradient hack)
+    // Add subtle particle effect
     mainChat.style.backgroundImage = "radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px), radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px)";
     mainChat.style.backgroundSize = "50px 50px, 100px 100px";
     mainChat.style.backgroundPosition = "0 0, 25px 25px";
@@ -210,20 +210,18 @@ window.onload = () => {
 
 // --- THE REPAIRED LOAD CHARACTER FUNCTION ---
 async function loadCharacter(char) {
-    // --- 1. SIDEBAR HIGHLIGHT LOGIC (CRASH FIX) ---
-    // We clear all active classes first
+    // 1. SIDEBAR HIGHLIGHT LOGIC
     document.querySelectorAll('.character-card').forEach(c => c.classList.remove('active'));
 
-    // SAFETY CHECK: Only try to highlight the clicked card if 'event' actually exists!
+    // Safety Check for 'event'
     if (typeof event !== 'undefined' && event && event.currentTarget) {
         event.currentTarget.classList.add('active');
     } else {
-        // Fallback: Try to find card by ID
         const autoCard = document.getElementById(`card-${char.id}`);
         if (autoCard) autoCard.classList.add('active');
     }
 
-    // --- 2. UPDATE CORE IDENTITY ---
+    // 2. UPDATE CORE IDENTITY
     currentPersonaId = char.id;
     currentVoiceId = char.voice;
     
@@ -232,14 +230,14 @@ async function loadCharacter(char) {
     document.getElementById('current-hero-img').style.display = 'block';
     document.getElementById('messages').innerHTML = ''; 
     
-    // --- 3. GRAB ELEMENTS ---
+    // 3. GRAB ELEMENTS
     const mainChat = document.getElementById('main-chat');
     const heroImg = document.getElementById('hero-standing');
     const bgVideo = document.getElementById('bg-video');
 
-    // --- 4. THE BACKGROUND LOGIC (Video vs Hero) ---
+    // 4. THE BACKGROUND LOGIC (Video vs Hero vs Image)
     if (char.hero_standing) {
-        // [SCENARIO A] STANDING HERO (Priority 1)
+        // [SCENARIO A] STANDING HERO
         
         // Kill Video
         if(bgVideo) {
@@ -247,6 +245,9 @@ async function loadCharacter(char) {
             bgVideo.pause();
         }
 
+        // Restore Void Color (In case video made it transparent)
+        document.body.style.backgroundColor = '#0f111a';
+        
         // Set Gradient & Show Hero
         mainChat.style.backgroundImage = `none`; 
         mainChat.style.background = `linear-gradient(to bottom, #1a1a2e, #16213e)`;
@@ -260,19 +261,14 @@ async function loadCharacter(char) {
 
         // Check for VIDEO
         if (char.bg && (char.bg.endsWith('.mp4') || char.bg.endsWith('.webm'))) {
-
-
-// [SCENARIO B] VIDEO MODE
-        if (char.bg && (char.bg.endsWith('.mp4') || char.bg.endsWith('.webm'))) {
+            // [SCENARIO B] VIDEO MODE 🎥
             console.log("🎬 Loading Video Mode: " + char.name);
 
-            // 1. ROLL UP THE RUG (Clear Background Colors)
-            // We need to make the body transparent so the video (z-index: -1) shows through
-            document.body.style.backgroundColor = 'transparent'; 
-            document.body.style.backgroundImage = 'none';
-            mainChat.style.background = 'transparent'; 
+            // CRITICAL FIX: Make the "Rug" Transparent
+            document.body.style.backgroundColor = 'transparent';
+            mainChat.style.background = 'transparent';
+            mainChat.style.backgroundImage = 'none'; 
             
-            // 2. PLAY THE VIDEO
             if(bgVideo) {
                 bgVideo.src = char.bg;
                 bgVideo.classList.add('active');
@@ -280,11 +276,10 @@ async function loadCharacter(char) {
             }
 
         } else {
-            // [SCENARIO C] IMAGE MODE / DEFAULT
+            // [SCENARIO C] IMAGE MODE / DEFAULT 🖼️
             
-            // 1. PUT THE RUG BACK (Restore Void Color)
-            // If we don't do this, the background might stay white/transparent!
-            document.body.style.backgroundColor = '#0f111a'; 
+            // Restore Void Color (Important!)
+            document.body.style.backgroundColor = '#0f111a';
 
             if(bgVideo) {
                 bgVideo.classList.remove('active');
@@ -296,9 +291,9 @@ async function loadCharacter(char) {
             mainChat.style.backgroundPosition = 'center top'; 
             mainChat.style.backgroundSize = 'cover';
         }
+    }
 
-            
-    // --- 5. OPENING MESSAGE LOGIC (This was missing!) ---
+    // 5. OPENING MESSAGE LOGIC
     if (typeof SOUL_CARTRIDGES !== 'undefined' && SOUL_CARTRIDGES[char.id]) {
         const soul = SOUL_CARTRIDGES[char.id];
         currentLegacyPersona = null;
@@ -321,13 +316,13 @@ async function loadCharacter(char) {
         }
     }
 
-    // --- 6. MOBILE LOGIC ---
+    // 6. MOBILE LOGIC
     if (window.innerWidth <= 768) {
         const sidebar = document.getElementById('sidebar');
-        sidebar.classList.remove('active'); // Force Close
+        sidebar.classList.remove('active'); 
         const btn = document.querySelector('.mobile-nav-toggle');
         if(btn) btn.innerHTML = '»';
-        toggleMobileMode('voice'); // Auto-switch to voice on char select
+        toggleMobileMode('voice'); 
     }
 }
 
