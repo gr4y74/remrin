@@ -71,9 +71,9 @@ const characters = [
     },
     { 
         id: 'jarvis', name: 'JARVIS', file: 'jarvis.json', voice: SOUL_CARTRIDGES.jarvis.VOICE_ID, 
-        bg: 'https://github.com/gr4y74/remrin/blob/main/content/assets/backgrounds/jarvis_bg.jpg?raw=true', 
+        bg: 'https://github.com/gr4y74/remrin/blob/main/content/assets/backgrounds/jarvis.mp4?raw=true', 
         avatar: 'https://github.com/gr4y74/remrin/blob/main/content/assets/backgrounds/jarvis.gif?raw=true',
-        hero_standing: 'https://github.com/gr4y74/remrin/blob/main/content/assets/backgrounds/jarvis.gif?raw=true'
+       /* --- hero_standing: 'https://github.com/gr4y74/remrin/blob/main/content/assets/backgrounds/jarvis.gif?raw=true'  --- */
     },
     { 
         id: 'computer', name: 'Computer', file: 'computer.json', voice: SOUL_CARTRIDGES.computer.VOICE_ID, 
