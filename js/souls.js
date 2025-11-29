@@ -70,17 +70,15 @@ const characters = [
         hero_standing: 'https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/emh_hero_mk2.png?raw=true'
     },
 
-    jarvis: { 
+   {
         id: 'jarvis', 
         name: 'JARVIS', 
         file: 'jarvis.json', 
         voice: SOUL_CARTRIDGES.jarvis.VOICE_ID, 
-        // 👇 THE CLEAN LINK (Direct to file, no redirects)
         bg: 'https://raw.githubusercontent.com/gr4y74/remrin/main/content/assets/backgrounds/jarvis.mp4', 
         avatar: 'https://github.com/gr4y74/remrin/blob/main/content/assets/backgrounds/jarvis.gif?raw=true',
-        /* --- hero_standing: 'https://github.com/gr4y74/remrin/blob/main/content/assets/backgrounds/jarvis.gif?raw=true'  --- */
+        /* --- hero_standing: ... --- */
     },
-
     
     { 
         id: 'computer', name: 'Computer', file: 'computer.json', voice: SOUL_CARTRIDGES.computer.VOICE_ID, 
