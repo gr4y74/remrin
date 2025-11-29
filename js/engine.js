@@ -204,8 +204,10 @@ window.onload = () => {
 };
 
 async function loadCharacter(char) {
+    // 1. Update UI Basics
     document.querySelectorAll('.character-card').forEach(c => c.classList.remove('active'));
     event.currentTarget.classList.add('active');
+    
     currentPersonaId = char.id;
     currentVoiceId = char.voice;
     
@@ -214,25 +216,57 @@ async function loadCharacter(char) {
     document.getElementById('current-hero-img').style.display = 'block';
     document.getElementById('messages').innerHTML = ''; 
     
+    // 2. Grab Elements
     const mainChat = document.getElementById('main-chat');
     const heroImg = document.getElementById('hero-standing');
+    const bgVideo = document.getElementById('bg-video'); // Make sure this exists in index.html!
 
-    // --- HERO / BACKGROUND CLASH FIX ---
+    // --- THE TRIPLE THREAT LOGIC ---
+
     if (char.hero_standing) {
-        // If we have a standing hero, hide the busy background wallpaper
-        // Use a subtle dark gradient instead so the hero POPs
+        // [SCENARIO A] STANDING HERO (Priority 1)
+        // We want a clean gradient so the hero pops.
+        
+        // 1. Kill the video (if one was playing)
+        bgVideo.classList.remove('active');
+        bgVideo.pause();
+
+        // 2. Set the gradient background
         mainChat.style.backgroundImage = `none`; 
         mainChat.style.background = `linear-gradient(to bottom, #1a1a2e, #16213e)`;
         
+        // 3. Show the Hero
         heroImg.src = char.hero_standing;
         heroImg.style.display = 'block';
+
     } else {
-        // If no hero, show the full beautiful background
-        mainChat.style.backgroundImage = `url('${char.bg || DEFAULT_BG_URL}')`;
-        mainChat.style.backgroundPosition = 'center top'; 
-        mainChat.style.backgroundSize = 'cover';
-        heroImg.style.display = 'none';
+        // [SCENARIO B & C] NO HERO (Check for Video vs Image)
+        heroImg.style.display = 'none'; // Hide the standing hero container
+
+        // Check if the background is a VIDEO
+        if (char.bg && (char.bg.endsWith('.mp4') || char.bg.endsWith('.webm'))) {
+            // [SCENARIO B] VIDEO BACKGROUND
+            console.log("🎬 Loading Video Mode for: " + char.name);
+
+            mainChat.style.backgroundImage = 'none'; // Clear static BG
+            
+            bgVideo.src = char.bg;
+            bgVideo.classList.add('active'); // Fade video in
+            bgVideo.play().catch(e => console.warn("Autoplay blocked:", e));
+        
+        } else {
+            // [SCENARIO C] STATIC IMAGE BACKGROUND
+            // 1. Kill the video
+            bgVideo.classList.remove('active');
+            setTimeout(() => bgVideo.pause(), 500); // Pause after fade out to save RAM
+
+            // 2. Set the image
+            mainChat.style.backgroundImage = `url('${char.bg || DEFAULT_BG_URL}')`;
+            mainChat.style.backgroundPosition = 'center top'; 
+            mainChat.style.backgroundSize = 'cover';
+        }
     }
+}
 
     if (SOUL_CARTRIDGES[char.id]) {
         const soul = SOUL_CARTRIDGES[char.id];
