@@ -260,32 +260,44 @@ async function loadCharacter(char) {
 
         // Check for VIDEO
         if (char.bg && (char.bg.endsWith('.mp4') || char.bg.endsWith('.webm'))) {
-           // [SCENARIO B] VIDEO MODE
-console.log("🎬 Loading Video Mode: " + char.name);
 
-// 1. MAKE THE RUG TRANSPARENT
-mainChat.style.background = 'transparent'; // <--- ADD THIS!
-mainChat.style.backgroundImage = 'none'; 
 
-// 2. Play the Video
-if(bgVideo) {
-    bgVideo.src = char.bg;
-    bgVideo.classList.add('active');
-    bgVideo.play().catch(e => console.warn("Autoplay blocked:", e));
-}
-            // [SCENARIO C] IMAGE MODE
+// [SCENARIO B] VIDEO MODE
+        if (char.bg && (char.bg.endsWith('.mp4') || char.bg.endsWith('.webm'))) {
+            console.log("🎬 Loading Video Mode: " + char.name);
+
+            // 1. ROLL UP THE RUG (Clear Background Colors)
+            // We need to make the body transparent so the video (z-index: -1) shows through
+            document.body.style.backgroundColor = 'transparent'; 
+            document.body.style.backgroundImage = 'none';
+            mainChat.style.background = 'transparent'; 
+            
+            // 2. PLAY THE VIDEO
+            if(bgVideo) {
+                bgVideo.src = char.bg;
+                bgVideo.classList.add('active');
+                bgVideo.play().catch(e => console.warn("Autoplay blocked:", e));
+            }
+
+        } else {
+            // [SCENARIO C] IMAGE MODE / DEFAULT
+            
+            // 1. PUT THE RUG BACK (Restore Void Color)
+            // If we don't do this, the background might stay white/transparent!
+            document.body.style.backgroundColor = '#0f111a'; 
+
             if(bgVideo) {
                 bgVideo.classList.remove('active');
                 setTimeout(() => bgVideo.pause(), 500);
             }
-            // Fallback for default BG URL if undefined
+            
             const bgUrl = char.bg || (typeof DEFAULT_BG_URL !== 'undefined' ? DEFAULT_BG_URL : '');
             mainChat.style.backgroundImage = `url('${bgUrl}')`;
             mainChat.style.backgroundPosition = 'center top'; 
             mainChat.style.backgroundSize = 'cover';
         }
-    }
 
+            
     // --- 5. OPENING MESSAGE LOGIC (This was missing!) ---
     if (typeof SOUL_CARTRIDGES !== 'undefined' && SOUL_CARTRIDGES[char.id]) {
         const soul = SOUL_CARTRIDGES[char.id];
