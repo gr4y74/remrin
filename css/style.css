@@ -254,23 +254,27 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; 
     }
 }
 
+/* --- SOUL VIDEO ENGINE --- */
 #bg-video {
     position: fixed;
-    top: 50%;
-    left: 50%;
+    top: 0;
+    left: 0;
     min-width: 100%;
     min-height: 100%;
     width: auto;
     height: auto;
-    z-index: -2; /* Deep background */
-    transform: translate(-50%, -50%);
-    object-fit: cover;
+    z-index: -1; /* Sit behind the text */
+    object-fit: cover; /* Stretch to fill without warping */
+    
+    /* DEFAULT STATE: HIDDEN */
     opacity: 0;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.8s ease-in-out;
 }
 
+/* ACTIVE STATE: VISIBLE */
 #bg-video.active {
-    opacity: 0.4; /* Adjust dimness here */
+    opacity: 0.6; /* Adjust this: 1.0 is full brightness, 0.4 is subtle */
+    display: block !important;
 }
 
 @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
