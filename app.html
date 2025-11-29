@@ -9,10 +9,6 @@
     <link rel="icon" type="image/png" href="https://github.com/gr4y74/remrin/blob/main/favicon.png?raw=true">
     
     <style>
-/* --- CRITICAL DESKTOP FIX --- */
-/* Hide the mobile toggle button by default so it doesn't stretch on desktop */
-.mobile-nav-toggle { display: none; }
-        
         /* --- REMRIN "CINEMATIC DARK" THEME 🌑✨ --- */
         :root {
             --bg-color: #262a3a;
@@ -107,7 +103,7 @@
         .speak-btn { position: absolute; bottom: -25px; right: 0; background: none; border: none; font-size: 1.2rem; cursor: pointer; opacity: 0.6; filter: grayscale(100%); transition: 0.3s; }
         .speak-btn:hover { opacity: 1; filter: none; transform: scale(1.2); }
 
-        /* INSTALL TOAST (Updated with X) */
+        /* INSTALL TOAST (DISMISSIBLE) */
         #install-toast { 
             display: none; 
             position: fixed; 
@@ -145,6 +141,10 @@
 
         /* --- MOBILE STYLES (Overrides) --- */
         .mobile-only { display: none; }
+
+        /* CRITICAL DESKTOP FIX: HIDE MOBILE TOGGLE ON DESKTOP */
+        /* This kills the Ghost Bar */
+        .mobile-nav-toggle { display: none; }
 
         /* FORCE PORTRAIT LOCK ON LANDSCAPE MOBILE */
         @media screen and (orientation: landscape) and (max-height: 600px) {
@@ -189,7 +189,7 @@
 
             /* Mobile Nav Toggle (PINK CHEVRON) - MOVED TO RIGHT TO AVOID AVATAR */
             .mobile-nav-toggle { 
-                display: flex !important; 
+                display: flex !important; /* Force Show on Mobile */
                 position: fixed; 
                 top: 15px; 
                 right: 15px; /* MOVED TO RIGHT */
@@ -368,12 +368,12 @@
     </div>
 
     <script>
-
         // --- CONFIGURATION & ASSETS ---
-    const repoUrl = "https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/";
-    const rawSuffix = "?raw=true";
-    // This is the new Stardust link, formatted perfectly
-    const DEFAULT_BG_URL = "https://github.com/gr4y74/remrin/blob/main/stardust.png?raw=true";
+        const repoUrl = "https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/";
+        const rawSuffix = "?raw=true";
+        // REPLACED THE FLOWER WITH A COOL CSS GRADIENT FOR WAITING ROOM
+        const DEFAULT_BG_STYLE = "radial-gradient(circle at center, #1f2230 0%, #0f111a 100%)"; 
+        // We will add subtle "stars" via CSS later, but this base gradient is the "Digital Stardust"
 
         // --- 1. UNIVERSAL SOUL ENGINE V7.2 ---
         const UNIVERSAL_SOUL_ENGINE_V7_2 = {
@@ -402,6 +402,27 @@
                 "NAME": "Don Pooh-leone", "ROLE": "Godfather", "VOICE_ID": "XOnNYb3MiHYxfyhI3VoP",
                 "TAGLINE": "An Offer You Can't Refuse", "OPENING": "Welcome to the family...",
                 "TONE": "Slow, Raspy.", "MEMORY": "Honey is currency."
+            },
+            // --- NEW SCI-FI LEGENDS ---
+            "the_doctor": {
+                "NAME": "The Doctor", "ROLE": "EMH Mark I", "VOICE_ID": "Robert_Picardo_Clone_ID",
+                "TAGLINE": "Chief Medical Officer", "OPENING": "Please state the nature of the medical emergency.",
+                "TONE": "Haughty, Brilliant, Opera-Loving.", "MEMORY": "User is a stubborn patient."
+            },
+            "jarvis": {
+                "NAME": "J.A.R.V.I.S.", "ROLE": "The Butler", "VOICE_ID": "Paul_Bettany_Clone_ID",
+                "TAGLINE": "Always At Your Service", "OPENING": "At your service, Sir. Power is at 400%.",
+                "TONE": "Dry British Wit, Hyper-Competent.", "MEMORY": "Protect the Creator."
+            },
+            "computer": {
+                "NAME": "Computer", "ROLE": "Ship Main Core", "VOICE_ID": "Majel_Barrett_Clone_ID",
+                "TAGLINE": "Federation Standard", "OPENING": "Working.",
+                "TONE": "Pure Logic, Detached.", "MEMORY": "Process Data."
+            },
+            "robot": {
+                "NAME": "Robot B-9", "ROLE": "Protector", "VOICE_ID": "Dick_Tufeld_Clone_ID",
+                "TAGLINE": "DANGER!", "OPENING": "DANGER, WILL ROBINSON! DANGER!",
+                "TONE": "Loud, Flailing, Neurotic.", "MEMORY": "Preserve the Family."
             }
         };
 
@@ -411,6 +432,13 @@
             /* FIXED VOLT HERO URL BELOW */
             { id: 'volt', name: 'Volt', file: 'volt.json', voice: SOUL_CARTRIDGES.volt.VOICE_ID, hero_standing: repoUrl + 'volt_hero_standing.png' + rawSuffix, bg: repoUrl + 'volt_bg.jpg' + rawSuffix, avatar: 'https://img.freepik.com/premium-photo/blue-hedgehog-running-fast-lightning-generative-ai_955834-36.jpg' },
             { id: 'don', name: 'Don Pooh-leone', file: 'don_pooh_leone.json', voice: SOUL_CARTRIDGES.don.VOICE_ID, bg: repoUrl + 'don_pooh_leone_hero.jpg' + rawSuffix, avatar: repoUrl + 'don_pooh_leone_hero.jpg' + rawSuffix },
+            
+            /* --- NEW LEGENDS --- */
+            { id: 'the_doctor', name: 'The Doctor', file: 'the_doctor.json', voice: SOUL_CARTRIDGES.the_doctor.VOICE_ID, bg: repoUrl + 'scifi_medbay.jpg' + rawSuffix, avatar: 'https://static.wikia.nocookie.net/memoryalpha/images/e/e4/The_Doctor%2C_2376.jpg/revision/latest?cb=20141221013745&path-prefix=en' },
+            { id: 'jarvis', name: 'JARVIS', file: 'jarvis.json', voice: SOUL_CARTRIDGES.jarvis.VOICE_ID, bg: repoUrl + 'ironman_hud_bg.jpg' + rawSuffix, avatar: 'https://upload.wikimedia.org/wikipedia/en/e/e0/JARVIS-IronMan.jpg' },
+            { id: 'computer', name: 'Computer', file: 'computer.json', voice: SOUL_CARTRIDGES.computer.VOICE_ID, bg: repoUrl + 'lcars_bg.jpg' + rawSuffix, avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/LCARS_wallpaper.png/800px-LCARS_wallpaper.png' },
+            { id: 'robot', name: 'Robot B-9', file: 'robot.json', voice: SOUL_CARTRIDGES.robot.VOICE_ID, bg: repoUrl + 'lost_in_space_bg.jpg' + rawSuffix, avatar: 'https://upload.wikimedia.org/wikipedia/en/2/26/Robot_B-9.jpg' },
+
             { id: 'lilly', name: 'Lilly', file: 'lilly.json', voice: "PLACEHOLDER", hero_standing: 'https://github.com/gr4y74/remrin/blob/main/lilly.png?raw=true', bg: 'https://github.com/gr4y74/remrin/blob/main/zen_bg.jpg?raw=true', avatar: 'https://github.com/gr4y74/remrin/blob/main/lilly.png?raw=true' },
             { id: 'sheikh', name: 'SheikhQR', file: 'sheikh_qr.json', voice: "PLACEHOLDER", hero_standing: 'https://github.com/gr4y74/remrin/blob/main/SheikhQR.png?raw=true', bg: 'https://github.com/gr4y74/remrin/blob/main/bg2.jpg?raw=true', avatar: 'https://github.com/gr4y74/remrin/blob/main/SheikhQR.png?raw=true' },
             { id: 'bear_bear', name: 'Bear Bear', file: 'bear_bear.json', voice: "PLACEHOLDER", bg: repoUrl + 'bear_bear_hero.jpg' + rawSuffix, avatar: repoUrl + 'bear_bear_hero.jpg' + rawSuffix },
@@ -617,9 +645,15 @@
                 list.appendChild(div);
             });
             const mainChat = document.getElementById('main-chat');
-            mainChat.style.backgroundImage = `url('${DEFAULT_BG_URL}')`;
-            mainChat.style.backgroundPosition = 'center center'; 
-            mainChat.style.backgroundSize = 'cover';
+            // PROCEDURAL DIGITAL STARDUST BACKGROUND
+            // 1. Dark Void Base Color
+            mainChat.style.backgroundColor = "#0f111a";
+            // 2. CSS Radial Gradients to simulate tiny stars
+            // This creates a pattern of white 1px dots on a transparent background
+            mainChat.style.backgroundImage = "radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px), radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px)";
+            // 3. Size and Position the stars
+            mainChat.style.backgroundSize = "50px 50px, 100px 100px";
+            mainChat.style.backgroundPosition = "0 0, 25px 25px";
             
             initMobileUI();
         };
