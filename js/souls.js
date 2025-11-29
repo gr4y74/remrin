@@ -78,7 +78,7 @@ const characters = [
     { 
         id: 'computer', name: 'Computer', file: 'computer.json', voice: SOUL_CARTRIDGES.computer.VOICE_ID, 
         bg: 'https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/computer.png?raw=true', 
-        avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/LCARS_wallpaper.png/800px-LCARS_wallpaper.png' 
+        avatar: 'https://github.com/gr4y74/remrin/blob/main/content/assets/heroes/st_computer_avatar.png' 
     },
     { 
         id: 'robot', name: 'Robot B-9', file: 'robot.json', voice: SOUL_CARTRIDGES.robot.VOICE_ID, 
