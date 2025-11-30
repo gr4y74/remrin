@@ -254,29 +254,38 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; 
     }
 }
 
-/* --- SOUL VIDEO ENGINE --- */
+/* --- THE JARVIS PROTOCOL (Video Backgrounds) --- */
+
+/* 1. The Video Player Itself */
 #bg-video {
     position: fixed;
-    top: 0;
+    top: 0; 
     left: 0;
-    min-width: 100%;
-    min-height: 100%;
-    width: auto;
-    height: auto;
-    z-index: 9999; /* Sit behind the text */
-    object-fit: cover; /* Stretch to fill without warping */
-    
-    /* DEFAULT STATE: HIDDEN */
-    opacity: 0;
-    transition: opacity 0.8s ease-in-out;
+    width: 100%; 
+    height: 100%;
+    object-fit: cover;
+    z-index: -1; /* Sit behind the chat */
+    opacity: 0; /* Hidden by default */
+    transition: opacity 1s ease;
+    /* Ensure it doesn't block clicks when hidden */
+    pointer-events: none; 
 }
 
-/* ACTIVE STATE: VISIBLE */
-#bg-video.active {
-    opacity: 0.6; /* Adjust this: 1.0 is full brightness, 0.4 is subtle */
-    display: block !important;
+/* 2. When Video is Active (Visible) */
+body.video-active #bg-video {
+    opacity: 1; /* Show it! */
+    pointer-events: auto;
 }
 
+/* 3. TEAR DOWN THE DRYWALL (Make backgrounds transparent) */
+/* This forces the gray container to vanish so we see the video behind it */
+body.video-active,
+body.video-active .main-container,
+body.video-active #main-chat {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+}
 @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(1.5); opacity: 0; } }
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
