@@ -75,9 +75,9 @@ const characters = [
         name: 'JARVIS', 
         file: 'jarvis.json', 
         voice: SOUL_CARTRIDGES.jarvis.VOICE_ID, 
-        bg: 'https://cdn.jsdelivr.net/gh/gr4y74/remrin@main/content/assets/backgrounds/jarvis.mp4',
+        // 👇 USE THIS RELATIVE PATH
+        bg: 'content/assets/backgrounds/jarvis.mp4', 
         avatar: 'https://github.com/gr4y74/remrin/blob/main/content/assets/backgrounds/jarvis.gif?raw=true',
-        /* --- hero_standing: ... --- */
     },
     
     { 
