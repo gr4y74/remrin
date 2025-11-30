@@ -147,7 +147,7 @@ function dismissToast() {
 if (window.visualViewport) {
     window.visualViewport.addEventListener('resize', () => {
         // If keyboard opens (viewport gets smaller) and an input is focused
-        if (window.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
+        if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
             if (window.visualViewport.height < window.innerHeight) {
                 // Scroll to bottom of messages
                 const messages = document.getElementById('messages');
@@ -175,7 +175,10 @@ async function speakText(text) {
         const blob = await response.blob();
         const audio = new Audio(URL.createObjectURL(blob));
         audio.play();
-    } catch (e) { console.error(e); }
+    } catch (e) { 
+        // Silently fail if voice is broken/unauthorized
+        // console.error(e); 
+    }
 }
 
 function handleEnter(e) { if(e.key === 'Enter') sendMessage(); }
@@ -231,12 +234,11 @@ window.onload = () => {
         initMobileUI();
     } else {
         // --- WE ARE ON THE PITCH PAGE (index.html) ---
-        // Do not try to load the sidebar or init chat UI.
         console.log("Remrin Engine Loaded in Presentation Mode.");
     }
 };
 
-// --- THE REPAIRED LOAD CHARACTER FUNCTION ---
+// --- LOAD CHARACTER ---
 async function loadCharacter(char) {
     // 1. Sidebar Logic
     document.querySelectorAll('.character-card').forEach(c => c.classList.remove('active'));
@@ -251,7 +253,6 @@ async function loadCharacter(char) {
     currentPersonaId = char.id;
     currentVoiceId = char.voice;
     
-    // Safety check for UI elements (in case of partial load)
     if(document.getElementById('char-name')) document.getElementById('char-name').innerText = char.name;
     if(document.getElementById('current-hero-img')) {
         const img = document.getElementById('current-hero-img');
@@ -266,10 +267,9 @@ async function loadCharacter(char) {
     const bgVideo = document.getElementById('bg-video');
 
     // --- THE BACKGROUND LOGIC ---
-
     if (char.hero_standing) {
         // [SCENARIO A] STANDING HERO
-        document.body.classList.remove('video-active'); // Turn off video mode
+        document.body.classList.remove('video-active'); 
         if(bgVideo) bgVideo.pause();
 
         mainChat.style.background = `linear-gradient(to bottom, #1a1a2e, #16213e)`;
@@ -277,7 +277,6 @@ async function loadCharacter(char) {
             heroImg.src = char.hero_standing;
             heroImg.style.display = 'block';
         }
-
     } else {
         if(heroImg) heroImg.style.display = 'none'; 
 
@@ -285,21 +284,17 @@ async function loadCharacter(char) {
         if (char.bg && (char.bg.endsWith('.mp4') || char.bg.endsWith('.webm'))) {
             // [SCENARIO B] VIDEO MODE 🎥
             console.log("🎬 Activating Video Class for: " + char.name);
-            
-            document.body.classList.add('video-active'); // <--- THE MAGIC SWITCH
-            
+            document.body.classList.add('video-active'); 
             if(bgVideo) {
                 bgVideo.src = char.bg;
                 bgVideo.play().catch(e => console.warn("Autoplay blocked:", e));
             }
-
         } else {
             // [SCENARIO C] IMAGE MODE 🖼️
-            document.body.classList.remove('video-active'); // Turn off video mode
+            document.body.classList.remove('video-active'); 
             if(bgVideo) {
                 setTimeout(() => bgVideo.pause(), 500);
             }
-            
             const bgUrl = char.bg || (typeof DEFAULT_BG_URL !== 'undefined' ? DEFAULT_BG_URL : '');
             mainChat.style.backgroundImage = `url('${bgUrl}')`;
             mainChat.style.backgroundPosition = 'center top'; 
@@ -307,26 +302,22 @@ async function loadCharacter(char) {
         }
     }
 
-    // 4. Load Soul Data (Legacy Logic)
+    // 4. Load Soul Data
     if (typeof SOUL_CARTRIDGES !== 'undefined' && SOUL_CARTRIDGES[char.id]) {
         const soul = SOUL_CARTRIDGES[char.id];
-        // Check if tagline element exists (it might not on Pitch Page)
         const tagline = document.getElementById('char-tagline');
         if(tagline) tagline.innerText = soul.TAGLINE;
         setTimeout(() => addMessage('ai', soul.OPENING), 500);
     } 
-
-    // 5. OPENING MESSAGE LOGIC (JSON Fallback)
     else {
+        // Fallback for Legacy JSON files
         try {
             const response = await fetch(`content/characters/${char.file}`);
             if(!response.ok) throw new Error("JSON not found");
             const data = await response.json();
             currentLegacyPersona = data; 
-            
             const tagline = document.getElementById('char-tagline');
             if(tagline) tagline.innerText = currentLegacyPersona.CORE_IDENTITY.Tagline;
-            
             setTimeout(() => {
                 const opening = currentLegacyPersona.BEHAVIORAL_DIRECTIVES["1_OPENING_HOOK"] || "Hello!";
                 addMessage('ai', opening); 
@@ -337,7 +328,7 @@ async function loadCharacter(char) {
         }
     }
 
-    // 6. MOBILE LOGIC
+    // 6. Mobile Logic
     if (window.innerWidth <= 768) {
         const sidebar = document.getElementById('sidebar');
         if(sidebar) sidebar.classList.remove('active'); 
@@ -345,14 +336,12 @@ async function loadCharacter(char) {
         if(btn) btn.innerHTML = '»';
         toggleMobileMode('voice'); 
     }
-} // <--- THIS BRACKET WAS MISSING / MISPLACED!
+}
 
-// --- REPLACE THE OLD FUNCTION WITH THIS ---
+// --- NEW GENERATE SYSTEM PROMPT (DIRECTOR MODE) ---
 function generateSystemPrompt(characterKey) {
     const soul = SOUL_CARTRIDGES[characterKey];
     
-    // THE NEW "DIRECTOR" PROMPT
-    // This stops her from reading JSON and makes her ACT.
     return `
     IDENTITY PROTOCOL:
     You are ${soul.NAME}.
@@ -369,9 +358,9 @@ function generateSystemPrompt(characterKey) {
     `;
 }
 
+// --- SEND MESSAGE (WITH R.E.M. & HEARTBEAT) ---
 async function sendMessage(isDemoTrigger = false) {
     const input = document.getElementById('user-input');
-    // Safety check if we are on a page without input (like Pitch Page)
     if (!input) return;
 
     const text = isDemoTrigger ? "Hello" : input.value;
@@ -380,23 +369,23 @@ async function sendMessage(isDemoTrigger = false) {
     
     if (!isDemoTrigger) {
         addMessage('user', text);
-        // 👇 SAVE TO CLOUD
+        // 1. UPDATE HEARTBEAT
+        if (typeof updateLastSeen === 'function') updateLastSeen(); 
+        // 2. SAVE MEMORY
         if (typeof saveMemory === 'function') saveMemory('user', text, currentPersonaId);
     }
-    
-    if (typeof updateLastSeen === 'function') updateLastSeen();
     input.value = '';
     
     const geminiKey = localStorage.getItem('gemini_key');
-    const selectedModel = document.getElementById('model-selector') ? document.getElementById('model-selector').value : 'gemini-2.0-flash-001';
+    const selectedModel = document.getElementById('model-selector') ? document.getElementById('model-selector').value : 'gemini-2.0-flash-exp';
     
     if (!geminiKey) { addMessage('ai', '⚠️ Set API Key'); return; }
     if (!isDemoTrigger) addMessage('ai', '...', true); 
 
-   try {
+    try {
         if(!currentPersonaId) throw new Error("Select a character");
         
-        // 1. GENERATE IDENTITY
+        // 3. IDENTITY
         let systemInstructionText;
         if (SOUL_CARTRIDGES[currentPersonaId]) {
             systemInstructionText = generateSystemPrompt(currentPersonaId);
@@ -404,14 +393,11 @@ async function sendMessage(isDemoTrigger = false) {
             systemInstructionText = `You are ${currentLegacyPersona.CORE_IDENTITY.Name}. TONE: ${currentLegacyPersona.TONE_AND_VOICE_RULES.Speech_Pattern}.`;
         } else { throw new Error("No Data"); }
 
-        // 2. FETCH R.E.M. CONTEXT (The New Magic) ✨
-        // We act like a ghost is whispering the past into the AI's ear
+        // 4. FETCH R.E.M. CONTEXT
         let history = [];
         if (typeof fetchRecentMemories === 'function') {
             console.log("🧠 R.E.M. Engine: Fetching context...");
             const pastMessages = await fetchRecentMemories(currentPersonaId);
-            
-            // Format the history for Gemini (Map 'ai' -> 'model')
             history = pastMessages.map(msg => ({
                 role: msg.role === 'ai' ? 'model' : 'user', 
                 parts: [{ text: msg.content }]
@@ -419,20 +405,18 @@ async function sendMessage(isDemoTrigger = false) {
             console.log(`🧠 R.E.M. Engine: Injected ${history.length} memories.`);
         }
 
-        // 3. CONSTRUCT THE PAYLOAD
-        // We attach the history BEFORE the new message
         const fullConversation = [
             ...history, 
             { role: "user", parts: [{ text: text }] }
         ];
 
-        // 4. SEND TO GEMINI
+        // 5. SEND TO GEMINI
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${geminiKey}`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
                 system_instruction: { parts: [{ text: systemInstructionText }] },
-                contents: fullConversation // <--- This now contains the Past + Present
+                contents: fullConversation
             })
         });
 
@@ -445,12 +429,13 @@ async function sendMessage(isDemoTrigger = false) {
             addMessage('ai', reply);
             speakText(reply);
             
-            // 👇 SAVE TO CLOUD (Write the new memory)
+            // 6. SAVE AI REPLY
             if (typeof saveMemory === 'function') saveMemory('ai', reply, currentPersonaId);
         }
 
     } catch (e) { 
         if(document.querySelector('.loading-msg')) document.querySelector('.loading-msg').remove();
-        console.error(e); // Log the error so we can see it
+        console.error(e);
         addMessage('ai', 'Error connecting to Soul.'); 
     }
+}
