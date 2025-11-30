@@ -363,6 +363,7 @@ async function sendMessage(isDemoTrigger = false) {
     
     if (!text) return;
     if (!isDemoTrigger) addMessage('user', text);
+    if (typeof updateLastSeen === 'function') updateLastSeen();
     input.value = '';
     
     const geminiKey = localStorage.getItem('gemini_key');
