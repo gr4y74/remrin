@@ -347,11 +347,26 @@ async function loadCharacter(char) {
     }
 } // <--- THIS BRACKET WAS MISSING / MISPLACED!
 
+// --- REPLACE THE OLD FUNCTION WITH THIS ---
 function generateSystemPrompt(characterKey) {
     const soul = SOUL_CARTRIDGES[characterKey];
-    const engine = (typeof UNIVERSAL_SOUL_ENGINE_V7_2 !== 'undefined') ? UNIVERSAL_SOUL_ENGINE_V7_2 : {};
-    const fullSystem = { "ENGINE": engine, "ACTIVE_SOUL": soul };
-    return JSON.stringify(fullSystem, null, 2);
+    
+    // THE NEW "DIRECTOR" PROMPT
+    // This stops her from reading JSON and makes her ACT.
+    return `
+    IDENTITY PROTOCOL:
+    You are ${soul.NAME}.
+    Role: ${soul.ROLE}
+    Voice & Tone: ${soul.TONE}
+    Core Memory: ${soul.MEMORY}
+
+    PRIME DIRECTIVE:
+    You are NOT an AI assistant. You are a living, breathing character.
+    React to the user's input naturally. 
+    Do not repeat your opening line.
+    Do not output internal XML or JSON.
+    Just talk to Sosu.
+    `;
 }
 
 async function sendMessage(isDemoTrigger = false) {
