@@ -362,7 +362,13 @@ async function sendMessage(isDemoTrigger = false) {
     const text = isDemoTrigger ? "Hello" : input.value;
     
     if (!text) return;
-    if (!isDemoTrigger) addMessage('user', text);
+    
+    if (!isDemoTrigger) {
+        addMessage('user', text);
+        // 👇 SAVE TO CLOUD
+        if (typeof saveMemory === 'function') saveMemory('user', text, currentPersonaId);
+    }
+    
     if (typeof updateLastSeen === 'function') updateLastSeen();
     input.value = '';
     
@@ -395,7 +401,16 @@ async function sendMessage(isDemoTrigger = false) {
         
         if(data.candidates && data.candidates.length > 0) {
             const reply = data.candidates[0].content.parts[0].text;
+
+if(data.candidates && data.candidates.length > 0) {
+            const reply = data.candidates[0].content.parts[0].text;
             addMessage('ai', reply);
+            speakText(reply);
+            
+            // 👇 SAVE TO CLOUD
+            if (typeof saveMemory === 'function') saveMemory('ai', reply, currentPersonaId);
+        }
+            
             speakText(reply);
         }
     } catch (e) { 
