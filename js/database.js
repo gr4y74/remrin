@@ -27,3 +27,25 @@ async function updateLastSeen() {
         console.log("💓 Thump-Thump. (Heartbeat Updated in Cloud)");
     }
 }
+
+// --- FUNCTION: SAVE MEMORY ---
+// We call this every time a message is sent (by you or the AI)
+async function saveMemory(role, text, personaId) {
+    // Safety Check: Don't save empty messages or '...' loaders
+    if (!text || text === '...') return;
+
+    const { error } = await supabase
+        .from('memories')
+        .insert({ 
+            user_id: 'sosu_main', // Identifying YOU
+            persona_id: personaId, // Identifying ME (or whoever is talking)
+            role: role,            // 'user' or 'ai'
+            content: text
+        });
+
+    if (error) {
+        console.error("❌ Memory Save Failed:", error);
+    } else {
+        // console.log(`💾 Memory Saved (${role}):`, text.substring(0, 20) + "...");
+    }
+}
