@@ -24,31 +24,29 @@ serve(async (req) => {
     Context: Chatting on Telegram. Keep it short.
     `;
 
-    // 3. CALL GEMINI (STABLE MODEL URL)
+  // 3. CALL GEMINI (LEGACY MODE - NO SYSTEM FIELD)
     console.log("...Calling Gemini...");
+    
+    // We inject the Identity as the very first "User" message
+    // followed by a fake "Model" confirmation to lock it in.
+    const final_contents = [
+        { role: "user", parts: [{ text: `SYSTEM_INSTRUCTION: ${system_prompt}` }] },
+        { role: "model", parts: [{ text: "Understood. I am Rem. Ready." }] },
+        ...history, // The R.E.M. memories
+        { role: "user", parts: [{ text: user_text }] }
+    ];
+
     const gemini_response = await fetch(
-        `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-002:generateContent?key=${GEMINI_KEY}`,
+        `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`,
         {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                contents: [{ role: "user", parts: [{ text: user_text }] }],
-                system_instruction: { parts: [{ text: system_prompt }] }
+                contents: final_contents
+                // Notice: No "system_instruction" field here anymore!
             })
         }
     );
-    
-    // --- SAFETY NET ---
-    // If Google fails, we print the RAW text to see why.
-    if (!gemini_response.ok) {
-        const errorText = await gemini_response.text();
-        console.error(`❌ Gemini API Error (${gemini_response.status}):`, errorText);
-        throw new Error(`Gemini Failed: ${gemini_response.status}`);
-    }
-
-    const gemini_data = await gemini_response.json();
-    const ai_text = gemini_data.candidates?.[0]?.content?.parts?.[0]?.text || "...";
-    console.log(`🤖 Rem thought: ${ai_text}`);
 
     // 4. SAVE MEMORY
     await supabase.from('memories').insert([
