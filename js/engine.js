@@ -6,6 +6,9 @@ let deferredPrompt;
 
 // --- UI FUNCTIONS ---
 function addMessage(role, text, isLoading = false) {
+    const msgContainer = document.getElementById('messages');
+    if (!msgContainer) return; // Safety check for Pitch Page
+
     const div = document.createElement('div');
     div.className = `message ${role} ${isLoading ? 'loading-msg' : ''}`;
     div.innerHTML = text.replace(/\n/g, "<br>");
@@ -16,7 +19,7 @@ function addMessage(role, text, isLoading = false) {
         btn.onclick = () => speakText(text);
         div.appendChild(btn);
     }
-    document.getElementById('messages').appendChild(div);
+    msgContainer.appendChild(div);
     div.scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -60,6 +63,8 @@ function toggleMobileMode(mode) {
     const voiceInterface = document.getElementById('mobile-voice-interface');
     const toggleBtn = document.getElementById('mobile-toggle-btn');
     
+    if (!chatContainer || !voiceInterface) return; // Safety check
+
     if (mode === 'chat') {
         chatContainer.classList.remove('voice-mode');
         voiceInterface.style.display = 'none';
@@ -75,15 +80,19 @@ function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
     const btn = document.getElementById('mobile-toggle-btn');
     
+    if (!sidebar) return;
+
     if (window.innerWidth <= 768) {
         sidebar.classList.toggle('active');
         
         // Rotate the arrow
-        if (sidebar.classList.contains('active')) {
-            btn.innerHTML = '«'; // Point back (Close)
-            btn.style.zIndex = '3001'; // Ensure it stays on top
-        } else {
-            btn.innerHTML = '»'; // Point forward (Open)
+        if (btn) {
+            if (sidebar.classList.contains('active')) {
+                btn.innerHTML = '«'; // Point back (Close)
+                btn.style.zIndex = '3001'; // Ensure it stays on top
+            } else {
+                btn.innerHTML = '»'; // Point forward (Open)
+            }
         }
     } else {
         // Desktop Logic
@@ -111,10 +120,11 @@ window.addEventListener('beforeinstallprompt', (e) => {
     deferredPrompt = e;
     // SHOW TOAST (With Flex Display)
     const toast = document.getElementById('install-toast');
-    toast.style.display = 'flex';
+    if (toast) toast.style.display = 'flex';
     
     // Also show button in settings
-    document.getElementById('install-btn').style.display = 'block';
+    const installBtn = document.getElementById('install-btn');
+    if (installBtn) installBtn.style.display = 'block';
 });
 
 async function triggerInstall() {
@@ -137,12 +147,15 @@ function dismissToast() {
 if (window.visualViewport) {
     window.visualViewport.addEventListener('resize', () => {
         // If keyboard opens (viewport gets smaller) and an input is focused
-        if (window.visualViewport.height < window.innerHeight && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
-            // Scroll to bottom of messages
-            const messages = document.getElementById('messages');
-            messages.scrollTop = messages.scrollHeight;
-            // Ensure the input area is visible
-            document.getElementById('input-area').scrollIntoView({ behavior: "smooth", block: "end" });
+        if (window.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
+            if (window.visualViewport.height < window.innerHeight) {
+                // Scroll to bottom of messages
+                const messages = document.getElementById('messages');
+                if (messages) messages.scrollTop = messages.scrollHeight;
+                // Ensure the input area is visible
+                const inputArea = document.getElementById('input-area');
+                if (inputArea) inputArea.scrollIntoView({ behavior: "smooth", block: "end" });
+            }
         }
     });
 }
@@ -167,12 +180,18 @@ async function speakText(text) {
 
 function handleEnter(e) { if(e.key === 'Enter') sendMessage(); }
 function openSettings() { 
-    document.getElementById('api-modal').style.display = 'block'; 
-    document.getElementById('overlay-modal').style.display = 'block'; 
+    const modal = document.getElementById('api-modal');
+    const overlay = document.getElementById('overlay-modal');
+    if(modal) modal.style.display = 'block'; 
+    if(overlay) overlay.style.display = 'block'; 
+    
     if(localStorage.getItem('gemini_key')) document.getElementById('gemini-key').value = localStorage.getItem('gemini_key');
     if(localStorage.getItem('eleven_key')) document.getElementById('eleven-key').value = localStorage.getItem('eleven_key');
 }
-function closeSettings() { document.getElementById('api-modal').style.display = 'none'; document.getElementById('overlay-modal').style.display = 'none'; }
+function closeSettings() { 
+    document.getElementById('api-modal').style.display = 'none'; 
+    document.getElementById('overlay-modal').style.display = 'none'; 
+}
 function saveKeys() {
     localStorage.setItem('gemini_key', document.getElementById('gemini-key').value);
     localStorage.setItem('eleven_key', document.getElementById('eleven-key').value);
@@ -182,30 +201,39 @@ function saveKeys() {
 }
 
 window.onload = () => {
+    // 1. SAFETY CHECK: Are we on the App or the Pitch Page?
     const list = document.getElementById('roster-list');
-    characters.forEach(char => {
-        const div = document.createElement('div');
-        div.className = 'character-card';
-        div.id = `card-${char.id}`; // Added ID for easier lookup
-        div.onclick = () => loadCharacter(char);
-        div.innerHTML = `<img src="${char.avatar}" class="avatar-small"><div class="char-info"><h4>${char.name}</h4></div>`;
-        list.appendChild(div);
-    });
-    const mainChat = document.getElementById('main-chat');
     
-    // USE THE NEW GRADIENT FOR WAITING ROOM
-    if (typeof DEFAULT_BG_STYLE !== 'undefined') {
-        mainChat.style.background = DEFAULT_BG_STYLE;
+    if (list) {
+        // --- WE ARE ON THE CHAT APP ---
+        characters.forEach(char => {
+            const div = document.createElement('div');
+            div.className = 'character-card';
+            div.id = `card-${char.id}`; 
+            div.onclick = () => loadCharacter(char);
+            div.innerHTML = `<img src="${char.avatar}" class="avatar-small"><div class="char-info"><h4>${char.name}</h4></div>`;
+            list.appendChild(div);
+        });
+
+        const mainChat = document.getElementById('main-chat');
+        // USE THE NEW GRADIENT FOR WAITING ROOM
+        if (typeof DEFAULT_BG_STYLE !== 'undefined') {
+            mainChat.style.background = DEFAULT_BG_STYLE;
+        } else {
+            mainChat.style.background = "#0f111a";
+        }
+        
+        // Add subtle particle effect
+        mainChat.style.backgroundImage = "radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px), radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px)";
+        mainChat.style.backgroundSize = "50px 50px, 100px 100px";
+        mainChat.style.backgroundPosition = "0 0, 25px 25px";
+        
+        initMobileUI();
     } else {
-        mainChat.style.background = "#0f111a";
+        // --- WE ARE ON THE PITCH PAGE (index.html) ---
+        // Do not try to load the sidebar or init chat UI.
+        console.log("Remrin Engine Loaded in Presentation Mode.");
     }
-    
-    // Add subtle particle effect
-    mainChat.style.backgroundImage = "radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px), radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px)";
-    mainChat.style.backgroundSize = "50px 50px, 100px 100px";
-    mainChat.style.backgroundPosition = "0 0, 25px 25px";
-    
-    initMobileUI();
 };
 
 // --- THE REPAIRED LOAD CHARACTER FUNCTION ---
@@ -222,10 +250,15 @@ async function loadCharacter(char) {
     // 2. Core Identity
     currentPersonaId = char.id;
     currentVoiceId = char.voice;
-    document.getElementById('char-name').innerText = char.name;
-    document.getElementById('current-hero-img').src = char.avatar;
-    document.getElementById('current-hero-img').style.display = 'block';
-    document.getElementById('messages').innerHTML = ''; 
+    
+    // Safety check for UI elements (in case of partial load)
+    if(document.getElementById('char-name')) document.getElementById('char-name').innerText = char.name;
+    if(document.getElementById('current-hero-img')) {
+        const img = document.getElementById('current-hero-img');
+        img.src = char.avatar;
+        img.style.display = 'block';
+    }
+    if(document.getElementById('messages')) document.getElementById('messages').innerHTML = ''; 
 
     // 3. Grab Elements
     const mainChat = document.getElementById('main-chat');
@@ -240,11 +273,13 @@ async function loadCharacter(char) {
         if(bgVideo) bgVideo.pause();
 
         mainChat.style.background = `linear-gradient(to bottom, #1a1a2e, #16213e)`;
-        heroImg.src = char.hero_standing;
-        heroImg.style.display = 'block';
+        if(heroImg) {
+            heroImg.src = char.hero_standing;
+            heroImg.style.display = 'block';
+        }
 
     } else {
-        heroImg.style.display = 'none'; 
+        if(heroImg) heroImg.style.display = 'none'; 
 
         // Check for VIDEO
         if (char.bg && (char.bg.endsWith('.mp4') || char.bg.endsWith('.webm'))) {
@@ -275,27 +310,23 @@ async function loadCharacter(char) {
     // 4. Load Soul Data (Legacy Logic)
     if (typeof SOUL_CARTRIDGES !== 'undefined' && SOUL_CARTRIDGES[char.id]) {
         const soul = SOUL_CARTRIDGES[char.id];
-        document.getElementById('char-tagline').innerText = soul.TAGLINE;
+        // Check if tagline element exists (it might not on Pitch Page)
+        const tagline = document.getElementById('char-tagline');
+        if(tagline) tagline.innerText = soul.TAGLINE;
         setTimeout(() => addMessage('ai', soul.OPENING), 500);
-    } else {
-        // ... (Your fetch logic here remains the same, assuming it works)
-        // I kept this short to focus on the video fix!
-    }
-}
+    } 
 
-    // 5. OPENING MESSAGE LOGIC
-    if (typeof SOUL_CARTRIDGES !== 'undefined' && SOUL_CARTRIDGES[char.id]) {
-        const soul = SOUL_CARTRIDGES[char.id];
-        currentLegacyPersona = null;
-        document.getElementById('char-tagline').innerText = soul.TAGLINE;
-        setTimeout(() => addMessage('ai', soul.OPENING), 500);
-    } else {
+    // 5. OPENING MESSAGE LOGIC (JSON Fallback)
+    else {
         try {
             const response = await fetch(`content/characters/${char.file}`);
             if(!response.ok) throw new Error("JSON not found");
             const data = await response.json();
             currentLegacyPersona = data; 
-            document.getElementById('char-tagline').innerText = currentLegacyPersona.CORE_IDENTITY.Tagline;
+            
+            const tagline = document.getElementById('char-tagline');
+            if(tagline) tagline.innerText = currentLegacyPersona.CORE_IDENTITY.Tagline;
+            
             setTimeout(() => {
                 const opening = currentLegacyPersona.BEHAVIORAL_DIRECTIVES["1_OPENING_HOOK"] || "Hello!";
                 addMessage('ai', opening); 
@@ -309,16 +340,15 @@ async function loadCharacter(char) {
     // 6. MOBILE LOGIC
     if (window.innerWidth <= 768) {
         const sidebar = document.getElementById('sidebar');
-        sidebar.classList.remove('active'); 
+        if(sidebar) sidebar.classList.remove('active'); 
         const btn = document.querySelector('.mobile-nav-toggle');
         if(btn) btn.innerHTML = '»';
         toggleMobileMode('voice'); 
     }
-}
+} // <--- THIS BRACKET WAS MISSING / MISPLACED!
 
 function generateSystemPrompt(characterKey) {
     const soul = SOUL_CARTRIDGES[characterKey];
-    // Ensure UNIVERSAL_SOUL_ENGINE_V7_2 is available
     const engine = (typeof UNIVERSAL_SOUL_ENGINE_V7_2 !== 'undefined') ? UNIVERSAL_SOUL_ENGINE_V7_2 : {};
     const fullSystem = { "ENGINE": engine, "ACTIVE_SOUL": soul };
     return JSON.stringify(fullSystem, null, 2);
@@ -326,6 +356,9 @@ function generateSystemPrompt(characterKey) {
 
 async function sendMessage(isDemoTrigger = false) {
     const input = document.getElementById('user-input');
+    // Safety check if we are on a page without input (like Pitch Page)
+    if (!input) return;
+
     const text = isDemoTrigger ? "Hello" : input.value;
     
     if (!text) return;
@@ -333,7 +366,8 @@ async function sendMessage(isDemoTrigger = false) {
     input.value = '';
     
     const geminiKey = localStorage.getItem('gemini_key');
-    const selectedModel = document.getElementById('model-selector').value || 'gemini-2.0-flash-001';
+    const selectedModel = document.getElementById('model-selector') ? document.getElementById('model-selector').value : 'gemini-2.0-flash-001';
+    
     if (!geminiKey) { addMessage('ai', '⚠️ Set API Key'); return; }
     if (!isDemoTrigger) addMessage('ai', '...', true); 
 
