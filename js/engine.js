@@ -393,8 +393,10 @@ async function sendMessage(isDemoTrigger = false) {
     if (!geminiKey) { addMessage('ai', '⚠️ Set API Key'); return; }
     if (!isDemoTrigger) addMessage('ai', '...', true); 
 
-    try {
+   try {
         if(!currentPersonaId) throw new Error("Select a character");
+        
+        // 1. GENERATE IDENTITY
         let systemInstructionText;
         if (SOUL_CARTRIDGES[currentPersonaId]) {
             systemInstructionText = generateSystemPrompt(currentPersonaId);
@@ -402,34 +404,53 @@ async function sendMessage(isDemoTrigger = false) {
             systemInstructionText = `You are ${currentLegacyPersona.CORE_IDENTITY.Name}. TONE: ${currentLegacyPersona.TONE_AND_VOICE_RULES.Speech_Pattern}.`;
         } else { throw new Error("No Data"); }
 
+        // 2. FETCH R.E.M. CONTEXT (The New Magic) ✨
+        // We act like a ghost is whispering the past into the AI's ear
+        let history = [];
+        if (typeof fetchRecentMemories === 'function') {
+            console.log("🧠 R.E.M. Engine: Fetching context...");
+            const pastMessages = await fetchRecentMemories(currentPersonaId);
+            
+            // Format the history for Gemini (Map 'ai' -> 'model')
+            history = pastMessages.map(msg => ({
+                role: msg.role === 'ai' ? 'model' : 'user', 
+                parts: [{ text: msg.content }]
+            }));
+            console.log(`🧠 R.E.M. Engine: Injected ${history.length} memories.`);
+        }
+
+        // 3. CONSTRUCT THE PAYLOAD
+        // We attach the history BEFORE the new message
+        const fullConversation = [
+            ...history, 
+            { role: "user", parts: [{ text: text }] }
+        ];
+
+        // 4. SEND TO GEMINI
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${geminiKey}`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
                 system_instruction: { parts: [{ text: systemInstructionText }] },
-                contents: [ { role: "user", parts: [{ text: text }] } ]
+                contents: fullConversation // <--- This now contains the Past + Present
             })
         });
+
         const data = await response.json();
         const loader = document.querySelector('.loading-msg');
         if(loader) loader.remove();
         
         if(data.candidates && data.candidates.length > 0) {
             const reply = data.candidates[0].content.parts[0].text;
-
-if(data.candidates && data.candidates.length > 0) {
-            const reply = data.candidates[0].content.parts[0].text;
             addMessage('ai', reply);
             speakText(reply);
             
-            // 👇 SAVE TO CLOUD
+            // 👇 SAVE TO CLOUD (Write the new memory)
             if (typeof saveMemory === 'function') saveMemory('ai', reply, currentPersonaId);
         }
-            
-            speakText(reply);
-        }
+
     } catch (e) { 
         if(document.querySelector('.loading-msg')) document.querySelector('.loading-msg').remove();
-        addMessage('ai', 'Error'); 
+        console.error(e); // Log the error so we can see it
+        addMessage('ai', 'Error connecting to Soul.'); 
     }
-}
