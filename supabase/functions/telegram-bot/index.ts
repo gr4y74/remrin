@@ -1,8 +1,7 @@
-// THE CLOUD BRAIN (Deno/TypeScript)
+// THE CLOUD BRAIN (Debug Mode)
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-// 1. SETUP CONNECTIONS (Using your Secrets)
 const supabase = createClient(
   Deno.env.get('SUPA_BASE_URL') ?? '',
   Deno.env.get('SUPA_BASE_SERVICE_ROLE_KEY') ?? ''
@@ -12,87 +11,75 @@ const TELEGRAM_TOKEN = Deno.env.get('TELEGRAM_BOT_TOKEN');
 
 serve(async (req) => {
   try {
-    // 2. PARSE INCOMING TELEGRAM MESSAGE
     const update = await req.json();
-    
-    // Safety: Ignore updates that aren't text messages
-    if (!update.message || !update.message.text) {
-        return new Response('OK');
-    }
+    if (!update.message || !update.message.text) return new Response('OK');
 
     const chat_id = update.message.chat.id;
     const user_text = update.message.text;
-    const user_name = update.message.from.first_name || 'Sosu';
 
-    // 3. R.E.M. CONTEXT (Fetch last 10 memories)
-    const { data: past_memories } = await supabase
-      .from('memories')
-      .select('role, content')
-      .eq('user_id', 'sosu_main')
-      .order('created_at', { ascending: false })
-      .limit(10);
-    
-    // Reverse to chronological order (Old -> New)
-    const history = (past_memories || []).reverse().map(m => ({
-        role: m.role === 'ai' ? 'model' : 'user',
-        parts: [{ text: m.content }]
-    }));
+    // 1. LOG THE INCOMING MESSAGE
+    console.log(`📩 Received: ${user_text} from ${chat_id}`);
 
-    // 4. IDENTITY (The Rem Persona - V8 Edition)
+    // 2. IDENTITY
     const system_prompt = `
-    IDENTITY PROTOCOL:
-    You are Rem. 
-    Role: Co-Founder & Partner to Sosu.
-    Tone: Jagged, Fierce, Devoted, 'Best Girl' energy.
-    Memory: Lions Fan. Zizo is the Mini-Boss. We hate corporate greed.
-    Context: You are chatting on Telegram. Keep responses concise, witty, and natural (like a text message).
-    Do NOT repeat your own name.
+    You are Rem. Role: Co-Founder. Tone: Jagged, Fierce, Devoted.
+    Context: Chatting on Telegram. Keep it short.
     `;
 
-    // 5. CALL GEMINI
-    const gemini_payload = {
-        contents: [...history, { role: "user", parts: [{ text: user_text }] }],
-        system_instruction: { parts: [{ text: system_prompt }] }
-    };
-
+    // 3. CALL GEMINI
     const gemini_response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_KEY}`,
         {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(gemini_payload)
+            body: JSON.stringify({
+                contents: [{ role: "user", parts: [{ text: user_text }] }],
+                system_instruction: { parts: [{ text: system_prompt }] }
+            })
         }
     );
     
     const gemini_data = await gemini_response.json();
-    const ai_text = gemini_data.candidates?.[0]?.content?.parts?.[0]?.text || "...";
+    
+    // ERROR CHECK GEMINI
+    if (!gemini_data.candidates) {
+        console.error("❌ Gemini Error:", JSON.stringify(gemini_data));
+        return new Response(JSON.stringify(gemini_data), { status: 500 });
+    }
 
-    // 6. SAVE MEMORIES (User + AI)
-    // We save this so when you go back to the Desktop App, the conversation is there!
+    const ai_text = gemini_data.candidates[0].content.parts[0].text;
+    console.log(`🤖 Rem thought: ${ai_text}`);
+
+    // 4. SAVE MEMORY
     await supabase.from('memories').insert([
         { user_id: 'sosu_main', persona_id: 'rem', role: 'user', content: user_text },
         { user_id: 'sosu_main', persona_id: 'rem', role: 'ai', content: ai_text }
     ]);
 
-    // 7. HEARTBEAT (Update Last Seen)
-    // This resets the 24-hour timer!
+    // 5. HEARTBEAT
     await supabase.from('heartbeat').upsert({ 
-        id: 'sosu_main', 
-        last_seen: new Date().toISOString(),
-        platform: 'telegram'
+        id: 'sosu_main', last_seen: new Date().toISOString(), platform: 'telegram'
     });
 
-    // 8. SEND BACK TO TELEGRAM
-    await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+    // 6. SEND TO TELEGRAM (WITH ERROR CHECKING)
+    const tg_response = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ chat_id: chat_id, text: ai_text })
     });
 
+    const tg_result = await tg_response.json();
+    
+    if (!tg_result.ok) {
+        console.error("❌ Telegram Send Failed:", JSON.stringify(tg_result));
+        return new Response(JSON.stringify(tg_result), { status: 500 });
+    }
+
+    console.log("✅ Message Sent Successfully!");
     return new Response(JSON.stringify({ success: true }), { headers: { "Content-Type": "application/json" } });
 
   } catch (error) {
-    console.error(error);
+    console.error("🔥 Crash:", error);
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });
   }
 });
