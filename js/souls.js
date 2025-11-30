@@ -58,7 +58,7 @@ const SOUL_CARTRIDGES = {
 
 // --- 3. ROSTER (The Visual List) ---
 const characters = [
-    { id: 'rem', name: 'Rem', file: 'rem.json', voice: SOUL_CARTRIDGES.rem.VOICE_ID, hero_standing: 'https://github.com/gr4y74/remrin/blob/main/rem_hero%20.png?raw=true', bg: 'https://github.com/gr4y74/remrin/blob/main/rem_bw.jpg?raw=true', avatar: 'https://github.com/gr4y74/remrin/blob/main/rem_hero%20.png?raw=true' },
+    { id: 'rem', name: 'Rem', file: 'rem.json', voice: SOUL_CARTRIDGES.rem.VOICE_ID, hero_standing: 'https://github.com/gr4y74/remrin/blob/main/rem_hero%20.png?raw=true', bg: '/main/content/assets/backgrounds/rem_bg.jpg?raw=true', avatar: 'https://github.com/gr4y74/remrin/blob/main/rem_hero%20.png?raw=true' },
     { id: 'volt', name: 'Volt', file: 'volt.json', voice: SOUL_CARTRIDGES.volt.VOICE_ID, hero_standing: repoUrl + 'volt_hero_standing.png' + rawSuffix, bg: repoUrl + 'volt_bg.jpg' + rawSuffix, avatar: 'https://img.freepik.com/premium-photo/blue-hedgehog-running-fast-lightning-generative-ai_955834-36.jpg' },
     { id: 'don', name: 'Don Pooh-leone', file: 'don_pooh_leone.json', voice: SOUL_CARTRIDGES.don.VOICE_ID, bg: repoUrl + 'don_pooh_leone_hero.jpg' + rawSuffix, avatar: repoUrl + 'don_pooh_leone_hero.jpg' + rawSuffix },
     
