@@ -27,7 +27,7 @@ serve(async (req) => {
     // 3. CALL GEMINI (STABLE MODEL URL)
     console.log("...Calling Gemini...");
     const gemini_response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_KEY}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-001:generateContent?key=${GEMINI_KEY}`,
         {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
