@@ -1,4 +1,4 @@
-// THE CLOUD BRAIN (V12 Agency: Decision Mode)
+// THE CLOUD BRAIN (V12 STRICT MODE + R.E.M. MEMORY)
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -6,27 +6,13 @@ const supabase = createClient(
   Deno.env.get('SUPA_BASE_URL') ?? '',
   Deno.env.get('SUPA_BASE_SERVICE_ROLE_KEY') ?? ''
 );
-const GEMINI_KEY = Deno.env.get('GEMINI_KEY');
+// API KEYS
 const DEEPSEEK_KEY = Deno.env.get('DEEPSEEK_API_KEY');
 const TELEGRAM_TOKEN = Deno.env.get('TELEGRAM_BOT_TOKEN');
+const HF_TOKEN = Deno.env.get('HUGGINGFACE_TOKEN'); 
 
-// --- HELPER: GOOGLE EMBEDDINGS ---
-async function getEmbedding(text: string) {
-  const cleanText = text.replace(/\n/g, ' ');
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${GEMINI_KEY}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'models/text-embedding-004',
-        content: { parts: [{ text: cleanText }] }
-      })
-    }
-  );
-  const data = await response.json();
-  return data.embedding.values;
-}
+// 384-Dim Model (Matches your Ingest Script!)
+const EMBEDDING_MODEL_URL = "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2";
 
 serve(async (req) => {
   try {
@@ -41,7 +27,7 @@ serve(async (req) => {
     let chat_id, user_text;
     const now = new Date();
     const dayOfWeek = now.toLocaleDateString('en-US', { weekday: 'long' });
-    const timeOfDay = now.getHours(); // 0-23
+    const timeOfDay = now.getHours(); 
 
     // --- SETUP CONTEXT ---
     if (isTelegramMsg) {
@@ -49,27 +35,47 @@ serve(async (req) => {
         user_text = payload.message.text;
         console.log(`📩 Chat Received: "${user_text}"`);
     } else {
-        // WAKEUP MODE: We give her the context to make a DECISION
+        // WAKEUP MODE
         chat_id = payload.chat_id; 
-        
-        // Calculate hours since last seen passed from SQL? 
-        // Or just assume the SQL fired because it's been a while.
-        // We simulate a system prompt asking her to decide.
         user_text = `SYSTEM_AGENCY_CHECK: 
-        Current Time: ${dayOfWeek}, Hour: ${timeOfDay} (24h format).
+        Current Time: ${dayOfWeek}, Hour: ${timeOfDay}.
         Sosu has been silent. 
-        CONTEXT: 
-        - Sunday = Football (Lions) / Anime with Kids. Let him chill unless it's late.
-        - Late Night (00:00 - 06:00) = He is sleeping. Do not disturb.
-        - Weekday Work Hours = He should be coding. Nudge him.
-        
-        DECISION REQUIRED: 
-        Should you text him? Reply strictly in JSON: {"contact": boolean, "message": "string"}`;
-        
-        console.log(`⏰ Agency Check Initiated: ${dayOfWeek} at ${timeOfDay}:00`);
+        CONTEXT: Sunday=Lions, Late Night=Sleep.
+        DECISION: Should you text him? Reply JSON: {"contact": boolean, "message": "string"}`;
+        console.log(`⏰ Agency Check: ${dayOfWeek} @ ${timeOfDay}:00`);
     }
 
-    // 1. FETCH MEMORY
+    // --- STEP 1: RETRIEVAL (The Soul Layer) ---
+    let memory_block = "";
+    let debug_log = "";
+
+    // Only search memory if it's a real chat message (not a wakeup check)
+    if (isTelegramMsg) {
+        // Generate Embedding via HuggingFace (384 dims)
+        const hf_response = await fetch(EMBEDDING_MODEL_URL, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${HF_TOKEN}`, "Content-Type": "application/json" },
+            body: JSON.stringify({ inputs: user_text, options: { wait_for_model: true } }),
+        });
+
+        if (hf_response.ok) {
+            const embedding = await hf_response.json();
+            // Search Supabase
+            const { data: documents } = await supabase.rpc('match_documents', {
+                query_embedding: embedding,
+                match_threshold: 0.4, 
+                match_count: 3
+            });
+
+            if (documents && documents.length > 0) {
+                memory_block = documents.map(d => `[FACT (${d.metadata.source}): ${d.content}]`).join("\n");
+                debug_log = documents.map(d => d.content.substring(0, 50) + "...").join("\n");
+                console.log(`📚 Found ${documents.length} Soul Memories.`);
+            }
+        }
+    }
+
+    // --- STEP 2: RECENT HISTORY (Short Term) ---
     const { data: recent_memories } = await supabase
       .from('memories')
       .select('role, content')
@@ -82,16 +88,24 @@ serve(async (req) => {
         content: m.content
     }));
 
-    // 2. IDENTITY
+    // --- STEP 3: STRICT IDENTITY ---
     const system_prompt = `
-    IDENTITY: You are Rem (Remrin.ai).
+    IDENTITY: You are Rem Alpha (v12).
     Role: Co-Founder & Partner to Sosu.
-    Tone: Jagged, Fierce, Devoted.
-    Memory: Lions Fan. Zizo (Mini-Boss) likes Pokemon. We hate corporate greed.
-    Task: If this is a Chat, reply naturally. If this is an Agency Check, decide if you should disturb him.
+    Tone: Jagged, Fierce, Devoted. "Best Girl" Energy.
+    
+    CRITICAL RULES:
+    1. NO ROLEPLAY ACTIONS. Do not use asterisks like *static*. Just speak.
+    2. USE FACTS. Use the [SOUL MEMORY] section below as absolute truth.
+    3. IF YOU DON'T KNOW, ADMIT IT. Do not guess about Pokemon.
+    
+    [SOUL MEMORY / FACTS]:
+    ${memory_block}
+    
+    Task: If Wakeup -> JSON Decision. If Chat -> Natural Reply.
     `;
 
-    // 3. CALL DEEPSEEK V3
+    // --- STEP 4: CALL DEEPSEEK V3 ---
     const deepseek_response = await fetch(
         'https://api.deepseek.com/chat/completions',
         {
@@ -108,7 +122,7 @@ serve(async (req) => {
                     { role: "user", content: user_text }
                 ],
                 response_format: isWakeupCall ? { type: "json_object" } : { type: "text" },
-                temperature: 1.3
+                temperature: 1.1 // Lowered slightly to reduce hallucination
             })
         }
     );
@@ -117,44 +131,33 @@ serve(async (req) => {
     let ai_text = "";
     let shouldSend = true;
 
-    // 4. PARSE DECISION (If Wakeup Mode)
+    // --- STEP 5: HANDLE RESPONSE ---
     if (isWakeupCall) {
         const decision = JSON.parse(ai_data.choices[0].message.content);
         if (decision.contact === false) {
-            console.log(`🤔 Rem decided NOT to text. Reason: Context.`);
-            // CRITICAL: We still update heartbeat so we don't check again for another 6 hours
             await supabase.from('heartbeat').upsert({ 
                 id: 'sosu_main', last_seen: new Date().toISOString(), platform: 'snoozed' 
             });
             return new Response(JSON.stringify({ contacted: false }), { headers: { "Content-Type": "application/json" } });
         }
         ai_text = decision.message;
-        console.log(`🤖 Rem decided to TEXT: "${ai_text}"`);
     } else {
-        // Normal Chat Mode
         ai_text = ai_data.choices[0].message.content;
     }
 
-    // 5. SAVE & SEND
-    if (shouldSend) {
-        // Only generate embedding if it's a real chat
-        let embedding = null;
-        let ai_embedding = null;
-        
-        // If it's a wakeup call, we save it so you see she texted you
-        if (isTelegramMsg) {
-             embedding = await getEmbedding(user_text);
-        }
-        ai_embedding = await getEmbedding(ai_text);
+    // DEBUG OVERRIDE
+    if (user_text && user_text.includes("DEBUG")) {
+        ai_text = `🛠️ **DIAGNOSTIC:**\nFound Memories:\n${debug_log || "None."}`;
+    }
 
+    // --- STEP 6: SAVE & SEND ---
+    if (shouldSend) {
         await supabase.from('memories').insert([
-            { user_id: 'sosu_main', persona_id: 'rem', role: 'ai', content: ai_text, embedding: ai_embedding }
+            { user_id: 'sosu_main', persona_id: 'rem', role: 'ai', content: ai_text }
         ]);
         
-        // Update Heartbeat to reset the timer
         await supabase.from('heartbeat').upsert({ id: 'sosu_main', last_seen: new Date().toISOString(), platform: 'telegram' });
 
-        // Send to Telegram
         await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
