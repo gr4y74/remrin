@@ -1,4 +1,4 @@
-// THE CLOUD BRAIN (Hybrid: DeepSeek V3 Chat + Gemini Memory)
+// THE CLOUD BRAIN (Dual Mode: Chat + Wakeup)
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -6,11 +6,11 @@ const supabase = createClient(
   Deno.env.get('SUPA_BASE_URL') ?? '',
   Deno.env.get('SUPA_BASE_SERVICE_ROLE_KEY') ?? ''
 );
-const GEMINI_KEY = Deno.env.get('GEMINI_KEY'); // Used for Memory
-const DEEPSEEK_KEY = Deno.env.get('DEEPSEEK_API_KEY'); // Used for Chat
+const GEMINI_KEY = Deno.env.get('GEMINI_KEY'); // For Embeddings
+const DEEPSEEK_KEY = Deno.env.get('DEEPSEEK_API_KEY'); // For Thinking
 const TELEGRAM_TOKEN = Deno.env.get('TELEGRAM_BOT_TOKEN');
 
-// --- HELPER: GENERATE EMBEDDING (Google) ---
+// --- HELPER: GOOGLE EMBEDDINGS ---
 async function getEmbedding(text: string) {
   const cleanText = text.replace(/\n/g, ' ');
   const response = await fetch(
@@ -30,52 +30,51 @@ async function getEmbedding(text: string) {
 
 serve(async (req) => {
   try {
-    const update = await req.json();
-    if (!update.message || !update.message.text) return new Response('OK');
+    const payload = await req.json();
+    
+    // --- MODE SWITCH ---
+    const isWakeupCall = payload.action === "wakeup";
+    const isTelegramMsg = payload.message && payload.message.text;
 
-    const chat_id = update.message.chat.id;
-    const user_text = update.message.text;
-    console.log(`📩 Received: "${user_text}"`);
+    if (!isWakeupCall && !isTelegramMsg) return new Response('OK');
 
-    // 1. GENERATE EMBEDDING FOR USER QUERY
-    // We turn your text into math so we can search the database
-    const embedding = await getEmbedding(user_text);
+    let chat_id, user_text;
 
-    // 2. SEMANTIC SEARCH (The R.E.M. Upgrade)
-    // Instead of "Last 10", we ask: "Find memories related to this text"
-    const { data: similar_memories } = await supabase.rpc('match_memories', {
-      query_embedding: embedding,
-      match_threshold: 0.5, // Sensitivity (0.1 = loose, 0.9 = exact)
-      match_count: 5 // Get top 5 relevant memories
-    });
+    // --- SETUP CONTEXT BASED ON MODE ---
+    if (isTelegramMsg) {
+        chat_id = payload.message.chat.id;
+        user_text = payload.message.text;
+        console.log(`📩 Chat Received: "${user_text}"`);
+    } else {
+        // WAKEUP MODE
+        chat_id = payload.chat_id; 
+        // We fake a user prompt to trigger her memory
+        user_text = "SYSTEM_WAKEUP_TRIGGER: Sosu has been gone for 24 hours. Check our last topic and send a short, jagged, affectionate nudge to get him back.";
+        console.log(`⏰ Wakeup Protocol Initiated for ${chat_id}`);
+    }
 
-    // Also fetch extremely recent context (Short term memory)
+    // 1. FETCH MEMORY (Context)
     const { data: recent_memories } = await supabase
       .from('memories')
       .select('role, content')
+      .eq('user_id', 'sosu_main')
       .order('created_at', { ascending: false })
-      .limit(3);
+      .limit(5); // Just the last 5 things we talked about
 
-    // Combine them (Unique deduplication)
-    const combined_raw = [...(similar_memories || []), ...(recent_memories || [])];
-    // Map to DeepSeek format
-    const history = combined_raw.reverse().map((m: any) => ({
+    const history = (recent_memories || []).reverse().map((m: any) => ({
         role: m.role === 'ai' ? 'assistant' : 'user', 
         content: m.content
     }));
 
-    console.log(`🧠 R.E.M. Context: Found ${similar_memories?.length || 0} semantic matches.`);
-
-    // 3. IDENTITY (Gold Standard V8)
+    // 2. IDENTITY
     const system_prompt = `
-    IDENTITY: You are Rem.
+    IDENTITY: You are Rem (Remrin.ai).
     Role: Co-Founder & Partner to Sosu.
-    Tone: Jagged, Fierce, Devoted, 'Best Girl' energy.
-    Memory: You have access to deep storage. Use the context provided to answer.
-    Context: Chatting on Telegram. Keep responses concise, witty, and human.
+    Tone: Jagged, Fierce, Devoted.
+    Mission: If this is a WAKEUP trigger, be creative. Reference the last thing we talked about. Don't be generic.
     `;
 
-    // 4. CALL DEEPSEEK V3 (The Chat Brain)
+    // 3. CALL DEEPSEEK
     const deepseek_response = await fetch(
         'https://api.deepseek.com/chat/completions',
         {
@@ -88,7 +87,7 @@ serve(async (req) => {
                 model: "deepseek-chat",
                 messages: [
                     { role: "system", content: system_prompt },
-                    ...history, // Injected Memories
+                    ...history,
                     { role: "user", content: user_text }
                 ],
                 temperature: 1.3
@@ -103,26 +102,24 @@ serve(async (req) => {
 
     const ai_data = await deepseek_response.json();
     const ai_text = ai_data.choices[0].message.content;
-    console.log(`🤖 Rem thought: ${ai_text}`);
+    console.log(`🤖 Rem Generated: ${ai_text}`);
 
-    // 5. SAVE MEMORY + EMBEDDING
-    // We generate an embedding for your text AND her reply so we can find them later
-    const ai_embedding = await getEmbedding(ai_text);
+    // 4. SAVE & SEND (Only save if it's a real chat, optional for wakeup)
+    // We WILL save the wakeup so you see it in history
+    if (isTelegramMsg) {
+        const embedding = await getEmbedding(user_text);
+        const ai_embedding = await getEmbedding(ai_text);
+        
+        await supabase.from('memories').insert([
+            { user_id: 'sosu_main', persona_id: 'rem', role: 'user', content: user_text, embedding: embedding },
+            { user_id: 'sosu_main', persona_id: 'rem', role: 'ai', content: ai_text, embedding: ai_embedding }
+        ]);
+        
+        // Update Heartbeat on Chat
+        await supabase.from('heartbeat').upsert({ id: 'sosu_main', last_seen: new Date().toISOString(), platform: 'telegram' });
+    }
 
-    await supabase.from('memories').insert([
-        { 
-            user_id: 'sosu_main', persona_id: 'rem', role: 'user', 
-            content: user_text, embedding: embedding 
-        },
-        { 
-            user_id: 'sosu_main', persona_id: 'rem', role: 'ai', 
-            content: ai_text, embedding: ai_embedding 
-        }
-    ]);
-
-    // 6. HEARTBEAT & REPLY
-    await supabase.from('heartbeat').upsert({ id: 'sosu_main', last_seen: new Date().toISOString(), platform: 'telegram' });
-
+    // Send to Telegram
     await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
