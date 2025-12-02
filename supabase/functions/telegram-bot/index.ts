@@ -1,4 +1,4 @@
-// THE CLOUD BRAIN (V12 STRICT MODE + R.E.M. MEMORY)
+// THE CLOUD BRAIN (V12.1 DEBUG MODE)
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -11,7 +11,7 @@ const DEEPSEEK_KEY = Deno.env.get('DEEPSEEK_API_KEY');
 const TELEGRAM_TOKEN = Deno.env.get('TELEGRAM_BOT_TOKEN');
 const HF_TOKEN = Deno.env.get('HUGGINGFACE_TOKEN'); 
 
-// 384-Dim Model (Matches your Ingest Script!)
+// 384-Dim Model
 const EMBEDDING_MODEL_URL = "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2";
 
 serve(async (req) => {
@@ -42,16 +42,16 @@ serve(async (req) => {
         Sosu has been silent. 
         CONTEXT: Sunday=Lions, Late Night=Sleep.
         DECISION: Should you text him? Reply JSON: {"contact": boolean, "message": "string"}`;
-        console.log(`⏰ Agency Check: ${dayOfWeek} @ ${timeOfDay}:00`);
     }
 
     // --- STEP 1: RETRIEVAL (The Soul Layer) ---
     let memory_block = "";
-    let debug_log = "";
+    let debug_log = "Diagnostic Start...\n";
 
-    // Only search memory if it's a real chat message (not a wakeup check)
+    // Only search memory if it's a real chat message
     if (isTelegramMsg) {
-        // Generate Embedding via HuggingFace (384 dims)
+        debug_log += "1. Calling HF API...\n";
+        
         const hf_response = await fetch(EMBEDDING_MODEL_URL, {
             method: "POST",
             headers: { Authorization: `Bearer ${HF_TOKEN}`, "Content-Type": "application/json" },
@@ -59,19 +59,41 @@ serve(async (req) => {
         });
 
         if (hf_response.ok) {
-            const embedding = await hf_response.json();
-            // Search Supabase
-            const { data: documents } = await supabase.rpc('match_documents', {
-                query_embedding: embedding,
-                match_threshold: 0.4, 
-                match_count: 3
-            });
-
-            if (documents && documents.length > 0) {
-                memory_block = documents.map(d => `[FACT (${d.metadata.source}): ${d.content}]`).join("\n");
-                debug_log = documents.map(d => d.content.substring(0, 50) + "...").join("\n");
-                console.log(`📚 Found ${documents.length} Soul Memories.`);
+            let embeddingRaw = await hf_response.json();
+            
+            // --- FIX: FLATTEN THE ARRAY ---
+            // HF sometimes returns [[...]] instead of [...]
+            if (Array.isArray(embeddingRaw) && Array.isArray(embeddingRaw[0])) {
+                embeddingRaw = embeddingRaw[0];
             }
+            
+            debug_log += `2. Embedding Generated. Length: ${embeddingRaw.length}\n`;
+
+            if (embeddingRaw.length === 384) {
+                // Search Supabase
+                const { data: documents, error } = await supabase.rpc('match_documents', {
+                    query_embedding: embeddingRaw,
+                    match_threshold: 0.1, // LOWERED to catch everything
+                    match_count: 3
+                });
+
+                if (error) {
+                    console.error("DB Error:", error);
+                    debug_log += `3. DB Error: ${error.message}\n`;
+                } else if (documents && documents.length > 0) {
+                    debug_log += `3. SUCCESS! Found ${documents.length} memories.\n`;
+                    // Formatting the memory for the AI
+                    memory_block = documents.map(d => `[FACT (${d.metadata.source}): ${d.content}]`).join("\n");
+                    // Add content to debug log for you to see
+                    debug_log += documents.map(d => `> ${d.content.substring(0, 40)}...`).join("\n");
+                } else {
+                    debug_log += "3. Search ran, but found 0 matches (Empty Array).\n";
+                }
+            } else {
+                debug_log += `3. DIMENSION MISMATCH! Got ${embeddingRaw.length}, Expected 384.\n`;
+            }
+        } else {
+            debug_log += `[API ERROR]: HF Status ${hf_response.status} - ${await hf_response.text()}\n`;
         }
     }
 
@@ -97,7 +119,7 @@ serve(async (req) => {
     CRITICAL RULES:
     1. NO ROLEPLAY ACTIONS. Do not use asterisks like *static*. Just speak.
     2. USE FACTS. Use the [SOUL MEMORY] section below as absolute truth.
-    3. IF YOU DON'T KNOW, ADMIT IT. Do not guess about Pokemon.
+    3. IF YOU DON'T KNOW, ADMIT IT. Do not guess.
     
     [SOUL MEMORY / FACTS]:
     ${memory_block}
@@ -122,7 +144,7 @@ serve(async (req) => {
                     { role: "user", content: user_text }
                 ],
                 response_format: isWakeupCall ? { type: "json_object" } : { type: "text" },
-                temperature: 1.1 // Lowered slightly to reduce hallucination
+                temperature: 1.1 
             })
         }
     );
@@ -147,7 +169,7 @@ serve(async (req) => {
 
     // DEBUG OVERRIDE
     if (user_text && user_text.includes("DEBUG")) {
-        ai_text = `🛠️ **DIAGNOSTIC:**\nFound Memories:\n${debug_log || "None."}`;
+        ai_text = `🛠️ **DIAGNOSTIC V2:**\n${debug_log}`;
     }
 
     // --- STEP 6: SAVE & SEND ---
