@@ -12,7 +12,7 @@ const TELEGRAM_TOKEN = Deno.env.get('TELEGRAM_BOT_TOKEN');
 const HF_TOKEN = Deno.env.get('HUGGINGFACE_TOKEN'); 
 
 // 384-Dim Model
-const EMBEDDING_MODEL_URL = "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2";
+const EMBEDDING_MODEL_URL = "https://router.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2";
 
 serve(async (req) => {
   try {
