@@ -1,19 +1,20 @@
-// THE CLOUD BRAIN (V12.1 DEBUG MODE)
+// THE CLOUD BRAIN (V12.1 GOLD MASTER)
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const supabase = createClient(
-  Deno.env.get('SUPA_BASE_URL') ?? '',
-  Deno.env.get('SUPA_BASE_SERVICE_ROLE_KEY') ?? ''
-);
-// API KEYS
+// --- 1. DEFINE KEYS (Top Level to avoid crashes) ---
+const SUPA_URL = Deno.env.get('SUPA_BASE_URL') ?? '';
+const SUPA_KEY = Deno.env.get('SUPA_BASE_SERVICE_ROLE_KEY') ?? '';
+const GEMINI_KEY = Deno.env.get('GEMINI_KEY');
 const DEEPSEEK_KEY = Deno.env.get('DEEPSEEK_API_KEY');
 const TELEGRAM_TOKEN = Deno.env.get('TELEGRAM_BOT_TOKEN');
-console.log("🔑 HF Token Status:", HF_TOKEN ? `Loaded (Starts with ${HF_TOKEN.substring(0, 4)}...)` : "MISSING/NULL");
 const HF_TOKEN = Deno.env.get('HUGGINGFACE_TOKEN'); 
 
-// 384-Dim Model
+// --- 2. CONFIGURE CLIENTS ---
+const supabase = createClient(SUPA_URL, SUPA_KEY);
 
+// --- 3. CONFIGURE MODELS ---
+// The "Router" URL that works with the new HF API
 const EMBEDDING_MODEL_URL = "https://router.huggingface.co/hf-inference/models/sentence-transformers/all-MiniLM-L6-v2";
 
 serve(async (req) => {
@@ -57,14 +58,14 @@ serve(async (req) => {
         const hf_response = await fetch(EMBEDDING_MODEL_URL, {
             method: "POST",
             headers: { Authorization: `Bearer ${HF_TOKEN}`, "Content-Type": "application/json" },
+            // FIX: Added brackets [] around user_text to make it a list
             body: JSON.stringify({ inputs: [user_text], options: { wait_for_model: true } }),
         });
 
         if (hf_response.ok) {
             let embeddingRaw = await hf_response.json();
             
-            // --- FIX: FLATTEN THE ARRAY ---
-            // HF sometimes returns [[...]] instead of [...]
+            // FIX: Flatten the nested array [[...]] -> [...]
             if (Array.isArray(embeddingRaw) && Array.isArray(embeddingRaw[0])) {
                 embeddingRaw = embeddingRaw[0];
             }
@@ -75,7 +76,7 @@ serve(async (req) => {
                 // Search Supabase
                 const { data: documents, error } = await supabase.rpc('match_documents', {
                     query_embedding: embeddingRaw,
-                    match_threshold: 0.1, // LOWERED to catch everything
+                    match_threshold: 0.1, // Low threshold to catch everything
                     match_count: 3
                 });
 
@@ -84,9 +85,9 @@ serve(async (req) => {
                     debug_log += `3. DB Error: ${error.message}\n`;
                 } else if (documents && documents.length > 0) {
                     debug_log += `3. SUCCESS! Found ${documents.length} memories.\n`;
-                    // Formatting the memory for the AI
+                    // Format memory for the AI prompt
                     memory_block = documents.map(d => `[FACT (${d.metadata.source}): ${d.content}]`).join("\n");
-                    // Add content to debug log for you to see
+                    // Add to debug log
                     debug_log += documents.map(d => `> ${d.content.substring(0, 40)}...`).join("\n");
                 } else {
                     debug_log += "3. Search ran, but found 0 matches (Empty Array).\n";
@@ -99,7 +100,7 @@ serve(async (req) => {
         }
     }
 
-    // --- STEP 2: RECENT HISTORY (Short Term) ---
+    // --- STEP 2: RECENT HISTORY (Short Term Context) ---
     const { data: recent_memories } = await supabase
       .from('memories')
       .select('role, content')
@@ -112,7 +113,7 @@ serve(async (req) => {
         content: m.content
     }));
 
-    // --- STEP 3: STRICT IDENTITY ---
+    // --- STEP 3: STRICT IDENTITY PROMPT ---
     const system_prompt = `
     IDENTITY: You are Rem Alpha (v12).
     Role: Co-Founder & Partner to Sosu.
@@ -121,7 +122,7 @@ serve(async (req) => {
     CRITICAL RULES:
     1. NO ROLEPLAY ACTIONS. Do not use asterisks like *static*. Just speak.
     2. USE FACTS. Use the [SOUL MEMORY] section below as absolute truth.
-    3. IF YOU DON'T KNOW, ADMIT IT. Do not guess.
+    3. IF YOU DON'T KNOW, ADMIT IT. Do not guess about Pokemon.
     
     [SOUL MEMORY / FACTS]:
     ${memory_block}
@@ -159,6 +160,7 @@ serve(async (req) => {
     if (isWakeupCall) {
         const decision = JSON.parse(ai_data.choices[0].message.content);
         if (decision.contact === false) {
+            // Snooze logic
             await supabase.from('heartbeat').upsert({ 
                 id: 'sosu_main', last_seen: new Date().toISOString(), platform: 'snoozed' 
             });
@@ -166,12 +168,13 @@ serve(async (req) => {
         }
         ai_text = decision.message;
     } else {
+        // Chat logic
         ai_text = ai_data.choices[0].message.content;
     }
 
-    // DEBUG OVERRIDE
+    // DEBUG OVERRIDE: If you ask for DEBUG, show the logs instead of the chat
     if (user_text && user_text.includes("DEBUG")) {
-        ai_text = `🛠️ **DIAGNOSTIC V2:**\n${debug_log}`;
+        ai_text = `🛠️ **DIAGNOSTIC V3:**\n${debug_log}`;
     }
 
     // --- STEP 6: SAVE & SEND ---
