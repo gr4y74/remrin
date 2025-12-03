@@ -16,7 +16,10 @@ const supabase = createClient(SUPA_URL, SUPA_KEY);
 // --- 3. CONFIGURE MODELS ---
 // The "Router" URL that works with the new HF API
 // REVERT TO THIS URL (The one that exists):
-const EMBEDDING_MODEL_URL = "https://router.huggingface.co/hf-inference/models/sentence-transformers/all-MiniLM-L6-v2";
+
+// THE GOLDEN URL (Router + Model + Pipeline):
+const EMBEDDING_MODEL_URL = "https://router.huggingface.co/hf-inference/models/sentence-transformers/all-MiniLM-L6-v2/pipeline/feature-extraction";
+
 serve(async (req) => {
   try {
     const payload = await req.json();
