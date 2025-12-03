@@ -15,7 +15,8 @@ const supabase = createClient(SUPA_URL, SUPA_KEY);
 
 // --- 3. CONFIGURE MODELS ---
 // The "Router" URL that works with the new HF API
-const EMBEDDING_MODEL_URL = "https://router.huggingface.co/hf-inference/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2";
+// REVERT TO THIS URL (The one that exists):
+const EMBEDDING_MODEL_URL = "https://router.huggingface.co/hf-inference/models/sentence-transformers/all-MiniLM-L6-v2";
 serve(async (req) => {
   try {
     const payload = await req.json();
@@ -58,7 +59,7 @@ serve(async (req) => {
             method: "POST",
             headers: { Authorization: `Bearer ${HF_TOKEN}`, "Content-Type": "application/json" },
             // FIX: Added brackets [] around user_text to make it a list
-            body: JSON.stringify({ inputs: [user_text], options: { wait_for_model: true } }),
+           body: JSON.stringify({ inputs: [user_text], options: { wait_for_model: true } }),
         });
 
         if (hf_response.ok) {
