@@ -9,6 +9,7 @@ const supabase = createClient(
 // API KEYS
 const DEEPSEEK_KEY = Deno.env.get('DEEPSEEK_API_KEY');
 const TELEGRAM_TOKEN = Deno.env.get('TELEGRAM_BOT_TOKEN');
+console.log("🔑 HF Token Status:", HF_TOKEN ? `Loaded (Starts with ${HF_TOKEN.substring(0, 4)}...)` : "MISSING/NULL");
 const HF_TOKEN = Deno.env.get('HUGGINGFACE_TOKEN'); 
 
 // 384-Dim Model
@@ -56,7 +57,7 @@ serve(async (req) => {
         const hf_response = await fetch(EMBEDDING_MODEL_URL, {
             method: "POST",
             headers: { Authorization: `Bearer ${HF_TOKEN}`, "Content-Type": "application/json" },
-            body: JSON.stringify({ inputs: user_text, options: { wait_for_model: true } }),
+            body: JSON.stringify({ inputs: [user_text], options: { wait_for_model: true } }),
         });
 
         if (hf_response.ok) {
