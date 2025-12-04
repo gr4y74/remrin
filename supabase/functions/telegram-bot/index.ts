@@ -165,7 +165,6 @@ serve(async (req) => {
         ai_text = raw_content
             .replace(/\(.*?\)/g, "")
             .replace(/\*.*?\*/g, "")
-            .replace(/\s+/g, " ")
             .trim();
     }
 
