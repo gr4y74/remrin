@@ -192,29 +192,38 @@ serve(async (req) => {
         ai_text = `🛠️ **DIAGNOSTIC V3:**\n${debug_log}`;
     }
 
-    // --- STEP 6: SAVE & SEND ---
-    if (shouldSend) {
-        await supabase.from('memories').insert([
-            { user_id: 'sosu_main', persona_id: 'rem', role: 'ai', content: ai_text }
-        ]);
-        
-        await supabase.from('heartbeat').upsert({ id: 'sosu_main', last_seen: new Date().toISOString(), platform: 'telegram' });
+    
+   // --- STEP 6: ROBUST SEND (The Anti-Crash) ---
+   if (shouldSend) {
+    // 1. Save to Memory (Always do this)
+    await supabase.from('memories').insert([
+        { user_id: 'sosu_main', persona_id: 'rem', role: 'ai', content: ai_text }
+    ]);
+    await supabase.from('heartbeat').upsert({ id: 'sosu_main', last_seen: new Date().toISOString(), platform: 'telegram' });
 
+    // 2. Try sending with Markdown first (Pretty)
+    const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            chat_id: chat_id, 
+            text: ai_text, 
+            parse_mode: 'Markdown' 
+        })
+    });
+
+    // 3. If Markdown fails, send as Plain Text (Reliable)
+    if (!response.ok) {
+        console.log("⚠️ Markdown failed, falling back to plain text.");
         await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
                 chat_id: chat_id, 
-                text: ai_text,            // <--- Added Comma!
-                parse_mode: 'Markdown'    // This tells Telegram to format bold/italics
+                text: ai_text 
+                // No parse_mode here = Raw Text
             })
         });
     }
-
-    return new Response(JSON.stringify({ success: true }), { headers: { "Content-Type": "application/json" } });
-
-  } catch (error) {
-    console.error("🔥 CRASH:", error.message);
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
-  }
+}
 });
