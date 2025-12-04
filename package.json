@@ -1,0 +1,21 @@
+{
+  "name": "remrin",
+  "version": "1.0.0",
+  "description": "> **Where AI Finds Its Soul.** The first High-Utility AI Companion Platform built on the proprietary R.E.M. (Resonant Emotional Memory) Engine.",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "npx supabase functions deploy telegram-bot --project-ref wftsctqfiqbdyllxwagi"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gr4y74/remrin.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/gr4y74/remrin/issues"
+  },
+  "homepage": "https://github.com/gr4y74/remrin#readme"
+}
