@@ -153,7 +153,9 @@ serve(async (req) => {
                 messages: [
                     { role: "system", content: system_prompt },
                     ...history,
-                    { role: "user", content: user_text }
+                    { role: "user", content: user_text },
+                    // THE FIX: Force her to start speaking casually
+                    { role: "assistant", content: "Sosu," } 
                 ],
                 response_format: isWakeupCall ? { type: "json_object" } : { type: "text" },
                 temperature: 1.1 
