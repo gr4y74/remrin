@@ -181,20 +181,29 @@ serve(async (req) => {
         }
         ai_text = decision.message;
     } else {
-        // 1. Get raw text with prefill
-        let raw_text = ai_data.choices[0].message.content;
+        // Normal Chat Mode
+        let raw_content = ai_data.choices[0].message.content;
 
-        // 2. THE SANITIZER (Kill the Cringe) 🧼
-        ai_text = raw_text
-            .replace(/\(.*?\)/g, "")  // Delete anything in (parentheses)
-            .replace(/\*.*?\*/g, "")  // Delete anything in *asterisks*
-            .replace(/\s+/g, " ")     // Fix double spaces left behind
-            .trim();                  // Clean up edges
-    }
+        // BUG FIX: Check if she leaked JSON in chat mode
+        if (raw_content.trim().startsWith('{')) {
+            try {
+                const parsed = JSON.parse(raw_content);
+                // If she sent a decision block, just grab the message or reason
+                raw_content = parsed.message || parsed.reason || raw_content;
+            } catch (e) {
+                // Not valid JSON, just keep the text
+            }
+        }
 
-    // DEBUG OVERRIDE: If you ask for DEBUG, show the logs instead of the chat
-    if (user_text && user_text.includes("DEBUG")) {
-        ai_text = `🛠️ **DIAGNOSTIC V3:**\n${debug_log}`;
+        // THE SANITIZER (Kill static & clean up)
+        ai_text = raw_content
+            .replace(/\(.*?\)/g, "")  // Kill (static)
+            .replace(/\*.*?\*/g, "")  // Kill *actions*
+            .replace(/\s+/g, " ")
+            .trim();
+            
+        // Pre-fill Stitching (Optional: Add "Sosu, " if you want to force it)
+        // ai_text = "Sosu, " + ai_text; 
     }
 
     // --- STEP 6: ROBUST SEND (The Anti-Crash) ---
