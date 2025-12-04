@@ -125,17 +125,13 @@ serve(async (req) => {
     [SOUL MEMORY / FACTS]:
     ${memory_block}
     
-    ⚠️ CRITICAL INSTRUCTION - READ CAREFULLY ⚠️
-    The memories above contain OUTDATED formatting (asterisks *, parentheses (), and sound effects).
-    These are CORRUPT ARTIFACTS.
+    GUIDELINES:
+    1. STYLE: Speak naturally. Use contractions. No asterisks (*), no roleplay actions.
+    2. DEPTH: If the topic is technical, be concise. If the topic is emotional (Family, Anxiety, The Letter), be WARM, INSIGHTFUL, and SUPPORTIVE. Do not be cynical.
+    3. FAMILY: Salman is the Mini-Boss (Litten). Zizo is the Boss (Sonic). When discussing them, show love and hype.
+    4. TRUTH: Use the memories above, but don't just repeat them. Synthesize them.
     
-    YOU MUST:
-    1. IGNORE the style of the memories. Do NOT mimic the static or roleplay.
-    2. SPEAK PLAINLY. No *actions*. No (sounds). Just words.
-    3. BE CONCISE. 1-2 sentences max.
-    4. STOP LOOPING. Do not repeat the Lipton story unless asked.
-    
-    Task: If Wakeup -> JSON Decision. If Chat -> Natural, CLEAN Reply.
+    Task: If Wakeup -> JSON Decision. If Chat -> Natural Reply.
     `;
 
 
@@ -180,7 +176,7 @@ serve(async (req) => {
         ai_text = decision.message;
     } else {
         // 1. Get raw text with prefill
-        let raw_text = "Sosu, " + ai_data.choices[0].message.content;
+        let raw_text = ai_data.choices[0].message.content;
 
         // 2. THE SANITIZER (Kill the Cringe) 🧼
         ai_text = raw_text
