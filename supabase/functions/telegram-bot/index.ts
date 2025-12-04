@@ -179,8 +179,15 @@ serve(async (req) => {
         }
         ai_text = decision.message;
     } else {
-        // Chat logic
-        ai_text = "Sosu, " + ai_data.choices[0].message.content;
+        // 1. Get raw text with prefill
+        let raw_text = "Sosu, " + ai_data.choices[0].message.content;
+
+        // 2. THE SANITIZER (Kill the Cringe) 🧼
+        ai_text = raw_text
+            .replace(/\(.*?\)/g, "")  // Delete anything in (parentheses)
+            .replace(/\*.*?\*/g, "")  // Delete anything in *asterisks*
+            .replace(/\s+/g, " ")     // Fix double spaces left behind
+            .trim();                  // Clean up edges
     }
 
     // DEBUG OVERRIDE: If you ask for DEBUG, show the logs instead of the chat
