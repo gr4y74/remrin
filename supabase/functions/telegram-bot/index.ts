@@ -202,8 +202,11 @@ serve(async (req) => {
         await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: chat_id, text: ai_text })
-            parse_mode: 'Markdown' // <--- THIS FIXES THE FORMATTING
+            body: JSON.stringify({ 
+                chat_id: chat_id, 
+                text: ai_text,            // <--- Added Comma!
+                parse_mode: 'Markdown'    // This tells Telegram to format bold/italics
+            })
         });
     }
 
