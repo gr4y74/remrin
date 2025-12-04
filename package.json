@@ -4,7 +4,7 @@
   "description": "> **Where AI Finds Its Soul.** The first High-Utility AI Companion Platform built on the proprietary R.E.M. (Resonant Emotional Memory) Engine.",
   "main": "index.js",
   "scripts": {
-    "deploy": "npx supabase functions deploy telegram-bot --project-ref wftsctqfiqbdyllxwagi"
+    "deploy": "npx supabase functions deploy telegram-bot --project-ref wftsctqfiqbdyllxwagi --no-verify-jwt"
   },
   "repository": {
     "type": "git",
