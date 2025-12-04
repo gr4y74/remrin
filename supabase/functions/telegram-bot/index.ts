@@ -232,4 +232,4 @@ serve(async (req) => {
     console.error("🔥 CRASH:", error.message);
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });
   }
-});
+})
