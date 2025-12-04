@@ -180,7 +180,7 @@ serve(async (req) => {
         ai_text = decision.message;
     } else {
         // Chat logic
-        ai_text = ai_data.choices[0].message.content;
+        ai_text = "Sosu," + ai_data.choices[0].message.content;
     }
 
     // DEBUG OVERRIDE: If you ask for DEBUG, show the logs instead of the chat
