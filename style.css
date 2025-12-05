@@ -31,3 +31,35 @@ body { font-family: 'Inter', sans-serif; }
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+
+/* The Levitation (Up and Down) */
+@keyframes soulFloat {
+    0%, 100% { transform: translateY(0px) scale(1); }
+    50% { transform: translateY(-15px) scale(1.02); }
+}
+
+/* The Glow (Pulsing Light) */
+@keyframes soulGlow {
+    0%, 100% { opacity: 0.3; transform: scale(0.8); }
+    50% { opacity: 0.6; transform: scale(1.2); }
+}
+
+/* The Rotation (Slow Spin - Optional, remove if it looks dizzy) */
+@keyframes soulSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Apply the Magic */
+.animate-soul {
+    animation: soulFloat 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+    animation: soulGlow 4s ease-in-out infinite;
+}
+
+/* If you want the orb itself to slowly rotate */
+.animate-spin-slow {
+    animation: soulSpin 20s linear infinite;
+}
