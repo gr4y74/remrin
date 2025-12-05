@@ -17,5 +17,13 @@
   "bugs": {
     "url": "https://github.com/gr4y74/remrin/issues"
   },
-  "homepage": "https://github.com/gr4y74/remrin#readme"
+  "homepage": "https://github.com/gr4y74/remrin#readme",
+  "dependencies": {
+    "@huggingface/transformers": "^3.8.1",
+    "@langchain/community": "^1.0.6",
+    "@langchain/core": "^1.1.2",
+    "@langchain/textsplitters": "^1.0.1",
+    "@supabase/supabase-js": "^2.86.2",
+    "dotenv": "^17.2.3"
+  }
 }
