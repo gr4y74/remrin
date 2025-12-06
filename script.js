@@ -75,13 +75,15 @@ async function callGenesisAPI(userMessage) {
                 const visionData = await visionResp.json();
                 
                 if (visionData.image_url) {
-                    const imgDiv = document.createElement('div');
-                    imgDiv.className = 'flex justify-start fade-in mb-4';
-                    imgDiv.innerHTML = `
-                        <div class="max-w-[80%] rounded-xl overflow-hidden border-2 border-rem-blue shadow-[0_0_30px_rgba(100,181,246,0.3)]">
-                            <img src="${visionData.image_url}" class="w-full h-auto" alt="Generated Vision">
-                        </div>
-                    `;
+                    
+                   // Inject the Image (Centered Fix)
+                   const imgDiv = document.createElement('div');
+                   imgDiv.className = 'w-full flex justify-center fade-in my-4'; // <--- CHANGED
+                   imgDiv.innerHTML = `
+                       <div class="max-w-[85%] rounded-xl overflow-hidden border-2 border-rem-blue shadow-[0_0_30px_rgba(100,181,246,0.3)]">
+                           <img src="${visionData.image_url}" class="w-full h-auto" alt="Generated Vision">
+                       </div>
+                   `;
                     chatBox.appendChild(imgDiv);
                     const container = document.getElementById('chat-box');
                     container.scrollTop = container.scrollHeight;
