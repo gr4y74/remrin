@@ -1,0 +1,4024 @@
+/* Landing Template */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+flex-wrap: wrap;
+align-items: flex-start;
+align-content: flex-start;
+padding: 20px;
+gap: 14px;
+
+position: relative;
+width: 1598px;
+height: 946px;
+
+background: #12141F;
+border-radius: 30px;
+
+
+/* Size=Screen */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: flex-start;
+padding: 0px;
+
+width: 1554px;
+height: 902px;
+
+background: rgba(38, 42, 58, 0.2);
+border: 5px solid #DE5BA7;
+/* Class/Card */
+box-shadow: 0px 7px 14px rgba(0, 0, 0, 0.25);
+backdrop-filter: blur(24px);
+/* Note: backdrop-filter has minimal browser support */
+border-radius: 20px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Section 1 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0px;
+
+width: 360px;
+height: 810px;
+
+/* Class/Background Blur
+
+Background Blur
+*/
+backdrop-filter: blur(8px);
+/* Note: backdrop-filter has minimal browser support */
+border-radius: 10px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Aside Header */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 14px 20px;
+gap: 14px;
+
+width: 360px;
+height: 76px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Header 1 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 16px;
+
+width: 36px;
+height: 36px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Logo 1 */
+
+display: none;
+width: 36px;
+height: 36px;
+
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Header 2 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 14px;
+
+width: 210px;
+height: 48px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 1;
+
+
+/* Search 1 */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px 16px;
+gap: 10px;
+
+width: 160px;
+height: 48px;
+
+border: 1px solid #87909C;
+border-radius: 10px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Microphone Icon */
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Rectangle 210 */
+
+position: absolute;
+width: 6px;
+height: 1px;
+left: calc(50% - 6px/2);
+top: calc(50% - 1px/2 + 7.5px);
+
+background: #BBC2CA;
+border-radius: 0.5px;
+transform: matrix(1, 0, 0, -1, 0, 0);
+
+
+/* Rectangle 211 */
+
+position: absolute;
+width: 2px;
+height: 2px;
+left: calc(50% - 2px/2);
+top: calc(50% - 2px/2 + 6px);
+
+background: #BBC2CA;
+transform: matrix(1, 0, 0, -1, 0, 0);
+
+
+/* Vector 197 */
+
+position: absolute;
+width: 9px;
+height: 6px;
+left: calc(50% - 9px/2);
+top: calc(50% - 6px/2 + 1.5px);
+
+border: 1px solid #BBC2CA;
+
+
+/* Rectangle 212 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 6px;
+height: 11px;
+left: calc(50% - 6px/2);
+top: calc(50% - 11px/2 - 2.5px);
+
+border: 1px solid #BBC2CA;
+border-radius: 3px;
+
+
+/* Value */
+
+width: 76px;
+height: 22px;
+
+/* Text/Bold (b) */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 14px;
+line-height: 155%;
+/* identical to box height, or 22px */
+
+color: #BBC2CA;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Search Icon */
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* line */
+
+position: absolute;
+width: 4.95px;
+height: 0px;
+right: 0.05px;
+bottom: 5px;
+
+border: 3px solid #BBC2CA;
+transform: rotate(45deg);
+
+
+/* circle */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 12px;
+height: 12px;
+left: 0px;
+top: 0px;
+
+border: 2px solid #BBC2CA;
+
+
+/* Header 3 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: flex-end;
+align-items: center;
+padding: 0px;
+gap: 14px;
+
+width: 46px;
+height: 48px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Input Button 1 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 10px;
+
+width: 16px;
+height: 48px;
+
+border-radius: 10px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Button Icon 1 */
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Rectangle 153 */
+
+position: absolute;
+width: 2px;
+height: 12px;
+left: calc(50% - 2px/2);
+top: calc(50% - 12px/2);
+
+background: #EAECEF;
+border-radius: 1px;
+
+
+/* Rectangle 154 */
+
+position: absolute;
+width: 12px;
+height: 2px;
+left: calc(50% - 12px/2);
+top: calc(50% - 2px/2);
+
+background: #EAECEF;
+border-radius: 1px;
+
+
+/* Value */
+
+display: none;
+width: 85px;
+height: 22px;
+
+/* Text/Bold (b) */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 14px;
+line-height: 155%;
+/* identical to box height, or 22px */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #EAECEF;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Caret Down Icon 1 */
+
+display: none;
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Input Button 2 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 10px;
+
+width: 16px;
+height: 48px;
+
+border-radius: 10px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Button Icon 1 */
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Ellipse 76 */
+
+position: absolute;
+width: 2px;
+height: 2px;
+left: calc(50% - 2px/2);
+top: calc(50% - 2px/2);
+
+background: #EAECEF;
+
+
+/* Ellipse 77 */
+
+position: absolute;
+width: 2px;
+height: 2px;
+left: calc(50% - 2px/2);
+top: calc(50% - 2px/2 - 5px);
+
+background: #EAECEF;
+
+
+/* Ellipse 78 */
+
+position: absolute;
+width: 2px;
+height: 2px;
+left: calc(50% - 2px/2);
+top: calc(50% - 2px/2 + 5px);
+
+background: #EAECEF;
+
+
+/* Value */
+
+display: none;
+width: 85px;
+height: 22px;
+
+/* Text/Bold (b) */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 14px;
+line-height: 155%;
+/* identical to box height, or 22px */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #EAECEF;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Caret Down Icon 1 */
+
+display: none;
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Aside Main + Scrollbar */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+
+width: 360px;
+height: 658px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 1;
+
+
+/* Aside Main */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 8px 4px 8px 20px;
+gap: 14px;
+
+width: 344px;
+height: 658px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 1;
+
+
+/* Details 1 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 12px;
+
+width: 320px;
+height: 189px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Summary 1 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 8px;
+
+width: 320px;
+height: 25px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Icon 1 */
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Vector 199 */
+
+box-sizing: border-box;
+
+position: absolute;
+left: 18.75%;
+right: 18.75%;
+top: 37.5%;
+bottom: 31.25%;
+
+background: #EAECEF;
+border: 1px solid #EAECEF;
+
+
+/* Heading 1 */
+
+width: 227px;
+height: 25px;
+
+/* Heading/H6 */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 16px;
+line-height: 155%;
+/* identical to box height, or 25px */
+
+color: #CDD2D8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 1;
+
+
+/* Heading 2 */
+
+width: 37px;
+height: 15px;
+
+/* Web/Subscript (sub) */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 10px;
+line-height: 155%;
+/* or 15px */
+text-align: right;
+
+color: #4FA7FF;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Icon 2 */
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* Frame 286 */
+
+position: absolute;
+width: 15px;
+height: 9px;
+left: calc(50% - 15px/2);
+top: calc(50% - 9px/2);
+
+
+
+/* Vector 204 */
+
+position: absolute;
+width: 0px;
+height: 15px;
+left: 0px;
+top: 4.5px;
+
+border: 1px solid #EAECEF;
+transform: rotate(-90deg);
+
+
+/* Vector 205 */
+
+position: absolute;
+width: 9px;
+height: 4.5px;
+left: calc(50% - 9px/2 + 7.5px);
+top: calc(50% - 4.5px/2 - 2.25px);
+
+border: 1px solid #EAECEF;
+transform: rotate(-90deg);
+
+
+/* Details 1 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 4px;
+
+width: 320px;
+height: 152px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Row 1 */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px 12px;
+gap: 10px;
+
+width: 320px;
+height: 48px;
+
+background: #444C57;
+border-left: 2px solid #7ABDFF;
+border-radius: 8px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Icon 0 */
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Comment Icon */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+
+
+/* Comment icon */
+
+position: absolute;
+width: 16px;
+height: 16px;
+left: calc(50% - 16px/2);
+top: calc(50% - 16px/2);
+
+background: #F5F6F7;
+
+
+/* Icon Small 0 */
+
+position: absolute;
+left: 37.5%;
+right: 0%;
+top: 37.5%;
+bottom: 0%;
+
+
+
+/* clock */
+
+position: absolute;
+width: 8px;
+height: 8px;
+left: calc(50% - 8px/2 + 1px);
+top: calc(50% - 8px/2 + 1px);
+
+background: #9ECFFF;
+border: 2px solid #2A3038;
+
+
+/* hours */
+
+position: absolute;
+width: 1px;
+height: 4px;
+left: calc(50% - 1px/2 + 1px);
+top: calc(50% - 4px/2 - 0.5px);
+
+background: #2A3038;
+border-radius: 1px;
+
+
+/* Line 20 */
+
+position: absolute;
+width: 1.77px;
+height: 1.06px;
+left: calc(50% - 1.77px/2 + 1.88px);
+top: calc(50% - 1.06px/2 + 0.28px);
+
+border: 1px solid #2A3038;
+transform: rotate(-45deg);
+
+
+/* Speak Any Language: Translate phrases instantly. */
+
+width: 244px;
+height: 22px;
+
+/* Text/Regular (body) */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 155%;
+/* identical to box height, or 22px */
+
+color: #F5F6F7;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 1;
+
+
+/* Button Icon 1 */
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Ellipse 76 */
+
+position: absolute;
+width: 2px;
+height: 2px;
+left: calc(50% - 2px/2);
+top: calc(50% - 2px/2);
+
+background: #F5F6F7;
+
+
+/* Ellipse 77 */
+
+position: absolute;
+width: 2px;
+height: 2px;
+left: calc(50% - 2px/2);
+top: calc(50% - 2px/2 - 5px);
+
+background: #F5F6F7;
+
+
+/* Ellipse 78 */
+
+position: absolute;
+width: 2px;
+height: 2px;
+left: calc(50% - 2px/2);
+top: calc(50% - 2px/2 + 5px);
+
+background: #F5F6F7;
+
+
+/* Row 1 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px 0px 0px 12px;
+gap: 10px;
+
+width: 320px;
+height: 48px;
+
+border-radius: 8px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Icon 0 */
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Comment Icon */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+
+
+/* Comment icon */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 16px;
+height: 16px;
+left: calc(50% - 16px/2);
+top: calc(50% - 16px/2);
+
+border: 1px solid #EAECEF;
+
+
+/* Icon Small 0 */
+
+position: absolute;
+left: 37.5%;
+right: 0%;
+top: 37.5%;
+bottom: 0%;
+
+
+
+/* clock */
+
+position: absolute;
+width: 8px;
+height: 8px;
+left: calc(50% - 8px/2 + 1px);
+top: calc(50% - 8px/2 + 1px);
+
+background: #9ECFFF;
+border: 2px solid #2A3038;
+
+
+/* hours */
+
+position: absolute;
+width: 1px;
+height: 4px;
+left: calc(50% - 1px/2 + 1px);
+top: calc(50% - 4px/2 - 0.5px);
+
+background: #2A3038;
+border-radius: 1px;
+
+
+/* Line 20 */
+
+position: absolute;
+width: 1.77px;
+height: 1.06px;
+left: calc(50% - 1.77px/2 + 1.88px);
+top: calc(50% - 1.06px/2 + 0.28px);
+
+border: 1px solid #2A3038;
+transform: rotate(-45deg);
+
+
+/* Explore Philosophy:Discuss profound questions. */
+
+width: 266px;
+height: 22px;
+
+/* Text/Regular (body) */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 155%;
+/* identical to box height, or 22px */
+
+color: #D6DAE0;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 1;
+
+
+/* Ellipse 105 */
+
+width: 6px;
+height: 6px;
+
+background: #0058B0;
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Row 3 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px 12px;
+gap: 10px;
+
+width: 320px;
+height: 48px;
+
+border-radius: 8px;
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Icon 0 */
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Comment Icon */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+
+
+/* Comment icon */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 16px;
+height: 16px;
+left: calc(50% - 16px/2);
+top: calc(50% - 16px/2);
+
+border: 1px solid #FFFFFF;
+
+
+/* Icon Small 0 */
+
+position: absolute;
+left: 37.5%;
+right: 0%;
+top: 37.5%;
+bottom: 0%;
+
+
+
+/* clock */
+
+position: absolute;
+width: 8px;
+height: 8px;
+left: calc(50% - 8px/2 + 1px);
+top: calc(50% - 8px/2 + 1px);
+
+background: #9ECFFF;
+border: 2px solid #2A3038;
+
+
+/* hours */
+
+position: absolute;
+width: 1px;
+height: 4px;
+left: calc(50% - 1px/2 + 1px);
+top: calc(50% - 4px/2 - 0.5px);
+
+background: #2A3038;
+border-radius: 1px;
+
+
+/* Line 20 */
+
+position: absolute;
+width: 1.77px;
+height: 1.06px;
+left: calc(50% - 1.77px/2 + 1.88px);
+top: calc(50% - 1.06px/2 + 0.28px);
+
+border: 1px solid #2A3038;
+transform: rotate(-45deg);
+
+
+/* Code Problem Solver: Debug coding issues with ease. */
+
+width: 270px;
+height: 22px;
+
+/* Text/Regular (body) */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 155%;
+/* identical to box height, or 22px */
+
+color: #D6DAE0;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 1;
+
+
+/* Details 2 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 12px;
+
+width: 320px;
+height: 501px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Summary 2 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 8px;
+
+width: 320px;
+height: 25px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Icon 1 */
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Vector 199 */
+
+box-sizing: border-box;
+
+position: absolute;
+left: 18.75%;
+right: 18.75%;
+top: 37.5%;
+bottom: 31.25%;
+
+background: #EAECEF;
+border: 1px solid #EAECEF;
+
+
+/* Heading 1 */
+
+width: 227px;
+height: 25px;
+
+/* Heading/H6 */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 16px;
+line-height: 155%;
+/* identical to box height, or 25px */
+
+color: #CDD2D8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 1;
+
+
+/* Heading 2 */
+
+width: 37px;
+height: 15px;
+
+/* Web/Subscript (sub) */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 10px;
+line-height: 155%;
+/* or 15px */
+text-align: right;
+
+color: #B9BABB;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Icon 2 */
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* Frame 286 */
+
+position: absolute;
+width: 15px;
+height: 9px;
+left: calc(50% - 15px/2);
+top: calc(50% - 9px/2);
+
+
+
+/* Vector 204 */
+
+position: absolute;
+width: 0px;
+height: 15px;
+left: 0px;
+top: 4.5px;
+
+border: 1px solid #EAECEF;
+transform: rotate(-90deg);
+
+
+/* Vector 205 */
+
+position: absolute;
+width: 9px;
+height: 4.5px;
+left: calc(50% - 9px/2 + 7.5px);
+top: calc(50% - 4.5px/2 - 2.25px);
+
+border: 1px solid #EAECEF;
+transform: rotate(-90deg);
+
+
+/* Details 2 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 4px;
+
+width: 320px;
+height: 464px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Row 2 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px 0px 0px 12px;
+gap: 10px;
+
+width: 320px;
+height: 48px;
+
+border-radius: 8px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Icon 0 */
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Comment Icon */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+
+
+/* Comment icon */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 16px;
+height: 16px;
+left: calc(50% - 16px/2);
+top: calc(50% - 16px/2);
+
+border: 1px solid #EAECEF;
+
+
+/* Icon Small 0 */
+
+position: absolute;
+left: 37.5%;
+right: 0%;
+top: 37.5%;
+bottom: 0%;
+
+
+
+/* stroke (Stroke) */
+
+position: absolute;
+width: 9.51px;
+height: 9.05px;
+right: 0.24px;
+bottom: 0.95px;
+
+background: #9ECFFF;
+
+
+/* Imagination Unleashed: Create a unique story from any idea. */
+
+width: 282px;
+height: 22px;
+
+/* Text/Regular (body) */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 155%;
+/* identical to box height, or 22px */
+
+color: #D6DAE0;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 1;
+
+
+/* Row 4 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px 0px 0px 12px;
+gap: 10px;
+
+width: 320px;
+height: 48px;
+
+border-radius: 8px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Icon 0 */
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Comment Icon */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+
+
+/* Comment icon */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 16px;
+height: 16px;
+left: calc(50% - 16px/2);
+top: calc(50% - 16px/2);
+
+border: 1px solid #EAECEF;
+
+
+/* Icon Small 0 */
+
+position: absolute;
+left: 37.5%;
+right: 0%;
+top: 37.5%;
+bottom: 0%;
+
+
+
+/* stroke (Stroke) */
+
+position: absolute;
+width: 9.51px;
+height: 9.05px;
+right: 0.24px;
+bottom: 0.95px;
+
+background: #9ECFFF;
+
+
+/* Learn Something New: Explain complex topics in simple terms. */
+
+width: 282px;
+height: 22px;
+
+/* Text/Regular (body) */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 155%;
+/* identical to box height, or 22px */
+
+color: #D6DAE0;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 1;
+
+
+/* Row 3 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px 0px 0px 12px;
+gap: 10px;
+
+width: 320px;
+height: 48px;
+
+border-radius: 8px;
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Icon 0 */
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Comment Icon */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+
+
+/* Comment icon */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 16px;
+height: 16px;
+left: calc(50% - 16px/2);
+top: calc(50% - 16px/2);
+
+border: 1px solid #EAECEF;
+
+
+/* Icon Small 0 */
+
+position: absolute;
+left: 37.5%;
+right: 0%;
+top: 37.5%;
+bottom: 0%;
+
+
+
+/* clock */
+
+position: absolute;
+width: 8px;
+height: 8px;
+left: calc(50% - 8px/2 + 1px);
+top: calc(50% - 8px/2 + 1px);
+
+background: #9ECFFF;
+border: 2px solid #2A3038;
+
+
+/* hours */
+
+position: absolute;
+width: 1px;
+height: 4px;
+left: calc(50% - 1px/2 + 1px);
+top: calc(50% - 4px/2 - 0.5px);
+
+background: #2A3038;
+border-radius: 1px;
+
+
+/* Line 20 */
+
+position: absolute;
+width: 1.77px;
+height: 1.06px;
+left: calc(50% - 1.77px/2 + 1.88px);
+top: calc(50% - 1.06px/2 + 0.28px);
+
+border: 1px solid #2A3038;
+transform: rotate(-45deg);
+
+
+/* Cooking Made Easy: Get custom recipes from your ingredients. */
+
+width: 282px;
+height: 22px;
+
+/* Text/Regular (body) */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 155%;
+/* identical to box height, or 22px */
+
+color: #D6DAE0;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 1;
+
+
+/* Row 5 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px 0px 0px 12px;
+gap: 10px;
+
+width: 320px;
+height: 48px;
+
+border-radius: 8px;
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Icon 0 */
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Comment Icon */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+
+
+/* Comment icon */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 16px;
+height: 16px;
+left: calc(50% - 16px/2);
+top: calc(50% - 16px/2);
+
+border: 1px solid #EAECEF;
+
+
+/* Icon Small 0 */
+
+position: absolute;
+left: 37.5%;
+right: 0%;
+top: 37.5%;
+bottom: 0%;
+
+
+
+/* clock */
+
+position: absolute;
+width: 8px;
+height: 8px;
+left: calc(50% - 8px/2 + 1px);
+top: calc(50% - 8px/2 + 1px);
+
+background: #9ECFFF;
+border: 2px solid #2A3038;
+
+
+/* hours */
+
+position: absolute;
+width: 1px;
+height: 4px;
+left: calc(50% - 1px/2 + 1px);
+top: calc(50% - 4px/2 - 0.5px);
+
+background: #2A3038;
+border-radius: 1px;
+
+
+/* Line 20 */
+
+position: absolute;
+width: 1.77px;
+height: 1.06px;
+left: calc(50% - 1.77px/2 + 1.88px);
+top: calc(50% - 1.06px/2 + 0.28px);
+
+border: 1px solid #2A3038;
+transform: rotate(-45deg);
+
+
+/* Virtual Travel Buddy:Tour the world virtually. */
+
+width: 282px;
+height: 22px;
+
+/* Text/Regular (body) */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 155%;
+/* identical to box height, or 22px */
+
+color: #D6DAE0;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 1;
+
+
+/* Row 6 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px 0px 0px 12px;
+gap: 10px;
+
+width: 320px;
+height: 48px;
+
+border-radius: 8px;
+
+/* Inside auto layout */
+flex: none;
+order: 4;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Icon 0 */
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Comment Icon */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+
+
+/* Comment icon */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 16px;
+height: 16px;
+left: calc(50% - 16px/2);
+top: calc(50% - 16px/2);
+
+border: 1px solid #EAECEF;
+
+
+/* Icon Small 0 */
+
+position: absolute;
+left: 37.5%;
+right: 0%;
+top: 37.5%;
+bottom: 0%;
+
+
+
+/* clock */
+
+position: absolute;
+width: 8px;
+height: 8px;
+left: calc(50% - 8px/2 + 1px);
+top: calc(50% - 8px/2 + 1px);
+
+background: #9ECFFF;
+border: 2px solid #2A3038;
+
+
+/* hours */
+
+position: absolute;
+width: 1px;
+height: 4px;
+left: calc(50% - 1px/2 + 1px);
+top: calc(50% - 4px/2 - 0.5px);
+
+background: #2A3038;
+border-radius: 1px;
+
+
+/* Line 20 */
+
+position: absolute;
+width: 1.77px;
+height: 1.06px;
+left: calc(50% - 1.77px/2 + 1.88px);
+top: calc(50% - 1.06px/2 + 0.28px);
+
+border: 1px solid #2A3038;
+transform: rotate(-45deg);
+
+
+/* Healthy Living Tips: Receive fitness and wellness advice. */
+
+width: 282px;
+height: 22px;
+
+/* Text/Regular (body) */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 155%;
+/* identical to box height, or 22px */
+
+color: #D6DAE0;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 1;
+
+
+/* Row 7 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px 0px 0px 12px;
+gap: 10px;
+
+width: 320px;
+height: 48px;
+
+border-radius: 8px;
+
+/* Inside auto layout */
+flex: none;
+order: 5;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Icon 0 */
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Comment Icon */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+
+
+/* Comment icon */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 16px;
+height: 16px;
+left: calc(50% - 16px/2);
+top: calc(50% - 16px/2);
+
+border: 1px solid #EAECEF;
+
+
+/* Icon Small 0 */
+
+position: absolute;
+left: 37.5%;
+right: 0%;
+top: 37.5%;
+bottom: 0%;
+
+
+
+/* clock */
+
+position: absolute;
+width: 8px;
+height: 8px;
+left: calc(50% - 8px/2 + 1px);
+top: calc(50% - 8px/2 + 1px);
+
+background: #9ECFFF;
+border: 2px solid #2A3038;
+
+
+/* hours */
+
+position: absolute;
+width: 1px;
+height: 4px;
+left: calc(50% - 1px/2 + 1px);
+top: calc(50% - 4px/2 - 0.5px);
+
+background: #2A3038;
+border-radius: 1px;
+
+
+/* Line 20 */
+
+position: absolute;
+width: 1.77px;
+height: 1.06px;
+left: calc(50% - 1.77px/2 + 1.88px);
+top: calc(50% - 1.06px/2 + 0.28px);
+
+border: 1px solid #2A3038;
+transform: rotate(-45deg);
+
+
+/* Art & Music Picks: Discover art and music recommendations. */
+
+width: 282px;
+height: 22px;
+
+/* Text/Regular (body) */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 155%;
+/* identical to box height, or 22px */
+
+color: #D6DAE0;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 1;
+
+
+/* Row 8 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px 0px 0px 12px;
+gap: 10px;
+
+width: 320px;
+height: 48px;
+
+border-radius: 8px;
+
+/* Inside auto layout */
+flex: none;
+order: 6;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Icon 0 */
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Comment Icon */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+
+
+/* Comment icon */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 16px;
+height: 16px;
+left: calc(50% - 16px/2);
+top: calc(50% - 16px/2);
+
+border: 1px solid #EAECEF;
+
+
+/* Icon Small 0 */
+
+position: absolute;
+left: 37.5%;
+right: 0%;
+top: 37.5%;
+bottom: 0%;
+
+
+
+/* clock */
+
+position: absolute;
+width: 8px;
+height: 8px;
+left: calc(50% - 8px/2 + 1px);
+top: calc(50% - 8px/2 + 1px);
+
+background: #9ECFFF;
+border: 2px solid #2A3038;
+
+
+/* hours */
+
+position: absolute;
+width: 1px;
+height: 4px;
+left: calc(50% - 1px/2 + 1px);
+top: calc(50% - 4px/2 - 0.5px);
+
+background: #2A3038;
+border-radius: 1px;
+
+
+/* Line 20 */
+
+position: absolute;
+width: 1.77px;
+height: 1.06px;
+left: calc(50% - 1.77px/2 + 1.88px);
+top: calc(50% - 1.06px/2 + 0.28px);
+
+border: 1px solid #2A3038;
+transform: rotate(-45deg);
+
+
+/* Speak Any Language: Translate phrases instantly. */
+
+width: 282px;
+height: 22px;
+
+/* Text/Regular (body) */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 155%;
+/* identical to box height, or 22px */
+
+color: #D6DAE0;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 1;
+
+
+/* Row 9 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px 0px 0px 12px;
+gap: 10px;
+
+width: 320px;
+height: 48px;
+
+border-radius: 8px;
+
+/* Inside auto layout */
+flex: none;
+order: 7;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Icon 0 */
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Comment Icon */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+
+
+/* Comment icon */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 16px;
+height: 16px;
+left: calc(50% - 16px/2);
+top: calc(50% - 16px/2);
+
+border: 1px solid #EAECEF;
+
+
+/* Icon Small 0 */
+
+position: absolute;
+left: 37.5%;
+right: 0%;
+top: 37.5%;
+bottom: 0%;
+
+
+
+/* clock */
+
+position: absolute;
+width: 8px;
+height: 8px;
+left: calc(50% - 8px/2 + 1px);
+top: calc(50% - 8px/2 + 1px);
+
+background: #9ECFFF;
+border: 2px solid #2A3038;
+
+
+/* hours */
+
+position: absolute;
+width: 1px;
+height: 4px;
+left: calc(50% - 1px/2 + 1px);
+top: calc(50% - 4px/2 - 0.5px);
+
+background: #2A3038;
+border-radius: 1px;
+
+
+/* Line 20 */
+
+position: absolute;
+width: 1.77px;
+height: 1.06px;
+left: calc(50% - 1.77px/2 + 1.88px);
+top: calc(50% - 1.06px/2 + 0.28px);
+
+border: 1px solid #2A3038;
+transform: rotate(-45deg);
+
+
+/* Explore Philosophy:Discuss profound questions. */
+
+width: 282px;
+height: 22px;
+
+/* Text/Regular (body) */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 155%;
+/* identical to box height, or 22px */
+
+color: #D6DAE0;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 1;
+
+
+/* Row 10 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px 0px 0px 12px;
+gap: 10px;
+
+width: 320px;
+height: 48px;
+
+border-radius: 8px;
+
+/* Inside auto layout */
+flex: none;
+order: 8;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Icon 0 */
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Comment Icon */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+
+
+/* Comment icon */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 16px;
+height: 16px;
+left: calc(50% - 16px/2);
+top: calc(50% - 16px/2);
+
+border: 1px solid #EAECEF;
+
+
+/* Icon Small 0 */
+
+position: absolute;
+left: 37.5%;
+right: 0%;
+top: 37.5%;
+bottom: 0%;
+
+
+
+/* clock */
+
+position: absolute;
+width: 8px;
+height: 8px;
+left: calc(50% - 8px/2 + 1px);
+top: calc(50% - 8px/2 + 1px);
+
+background: #9ECFFF;
+border: 2px solid #2A3038;
+
+
+/* hours */
+
+position: absolute;
+width: 1px;
+height: 4px;
+left: calc(50% - 1px/2 + 1px);
+top: calc(50% - 4px/2 - 0.5px);
+
+background: #2A3038;
+border-radius: 1px;
+
+
+/* Line 20 */
+
+position: absolute;
+width: 1.77px;
+height: 1.06px;
+left: calc(50% - 1.77px/2 + 1.88px);
+top: calc(50% - 1.06px/2 + 0.28px);
+
+border: 1px solid #2A3038;
+transform: rotate(-45deg);
+
+
+/* Code Problem Solver: Debug coding issues with ease. */
+
+width: 282px;
+height: 22px;
+
+/* Text/Regular (body) */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 155%;
+/* identical to box height, or 22px */
+
+color: #D6DAE0;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 1;
+
+
+/* Scrollbar 1 */
+
+width: 16px;
+height: 658px;
+
+border-radius: 8px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* scrollbar-thumb */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 6px;
+height: 176px;
+left: calc(50% - 6px/2);
+top: 5px;
+
+background: #7ABDFF;
+border: 1px solid #87909C;
+border-radius: 3px;
+
+
+/* Aside Footer */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 14px 20px 14px 8px;
+gap: 14px;
+
+width: 360px;
+height: 76px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Button 1 */
+
+margin: 0 auto;
+width: 48px;
+height: 48px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Icon 0 */
+
+position: absolute;
+width: 16px;
+height: 16px;
+left: calc(50% - 16px/2);
+top: calc(50% - 16px/2);
+
+
+
+/* User Icon */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+
+
+/* Body */
+
+box-sizing: border-box;
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 62.5%;
+bottom: 0%;
+
+border: 1px solid #EAECEF;
+border-radius: 1px;
+
+
+/* Head */
+
+box-sizing: border-box;
+
+position: absolute;
+left: 25%;
+right: 25%;
+top: 0%;
+bottom: 50%;
+
+border: 1px solid #EAECEF;
+
+
+/* Icon Small 0 */
+
+position: absolute;
+left: 37.5%;
+right: 0%;
+top: 37.5%;
+bottom: 0%;
+
+
+
+/* Vector 106 (Stroke) */
+
+position: absolute;
+width: 8px;
+height: 5.41px;
+left: calc(50% - 8px/2 + 1px);
+top: calc(50% - 5.41px/2 - 0.29px);
+
+background: #9ECFFF;
+border: 2px solid #2A3038;
+transform: rotate(-180deg);
+
+
+/* plus */
+
+position: absolute;
+width: 2px;
+height: 7px;
+left: calc(50% - 2px/2 + 1px);
+top: calc(50% - 7px/2 + 1.41px);
+
+background: #9ECFFF;
+border: 2px solid #2A3038;
+transform: rotate(-180deg);
+
+
+/* Vector 105 */
+
+position: absolute;
+width: 6px;
+height: 3px;
+left: calc(50% - 6px/2 + 1px);
+top: calc(50% - 3px/2 - 0.09px);
+
+border: 2px solid #9ECFFF;
+transform: rotate(-180deg);
+
+
+/* Upgrade plan for more access to new models */
+
+margin: 0 auto;
+width: 284px;
+height: 22px;
+
+/* Text/Regular (body) */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 155%;
+/* identical to box height, or 22px */
+
+color: #FFFFFF;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 1;
+
+
+/* Section 2 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 14px 20px;
+gap: 44px;
+
+width: 1194px;
+height: 902px;
+
+background: rgba(38, 42, 58, 0.2);
+box-shadow: 0px 4px 4px rgba(222, 91, 167, 0.25);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 1;
+
+
+/* Section Header 1 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 5px 0px;
+
+width: 1154px;
+height: 58px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Select 1 */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 11.5px 20px;
+gap: 10px;
+
+margin: 0 auto;
+width: 109px;
+height: 45px;
+
+background: #3D454F;
+border: 1px solid #000000;
+border-radius: 10px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Option */
+
+width: 43px;
+height: 22px;
+
+/* Text/Bold (b) */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 14px;
+line-height: 155%;
+/* identical to box height, or 22px */
+
+color: #EAECEF;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Caret Down Icon */
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Vector 199 */
+
+box-sizing: border-box;
+
+position: absolute;
+left: 18.75%;
+right: 18.75%;
+top: 37.5%;
+bottom: 31.25%;
+
+border: 1px solid #EAECEF;
+
+
+/* Actions 1 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+
+margin: 0 auto;
+width: 96px;
+height: 48px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Button 1 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 0px;
+gap: 10px;
+
+width: 48px;
+min-width: 48px;
+height: 48px;
+
+border-radius: 10px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Icon 1 */
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Ellipse 91 */
+
+box-sizing: border-box;
+
+position: absolute;
+left: 31.25%;
+right: 31.25%;
+top: 62.5%;
+bottom: 0%;
+
+border: 1px solid #EAECEF;
+
+
+/* Ellipse 92 */
+
+box-sizing: border-box;
+
+position: absolute;
+left: 0%;
+right: 62.5%;
+top: 0%;
+bottom: 62.5%;
+
+border: 1px solid #EAECEF;
+
+
+/* Ellipse 93 */
+
+box-sizing: border-box;
+
+position: absolute;
+left: 62.5%;
+right: 0%;
+top: 0%;
+bottom: 62.5%;
+
+border: 1px solid #EAECEF;
+
+
+/* Line 24 */
+
+position: absolute;
+left: 24.33%;
+right: 36.52%;
+top: 34.38%;
+bottom: 64.85%;
+
+border: 1px solid #EAECEF;
+transform: rotate(60.26deg);
+
+
+/* Line 25 */
+
+position: absolute;
+left: 56.25%;
+right: 4.62%;
+top: 33.75%;
+bottom: 64.85%;
+
+border: 1px solid #EAECEF;
+transform: rotate(116.57deg);
+
+
+/* Button Text */
+
+display: none;
+width: 47px;
+height: 22px;
+
+/* Text/Bold (b) */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 14px;
+line-height: 155%;
+/* identical to box height, or 22px */
+text-align: center;
+
+color: #EAECEF;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Avatar 1 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 0px;
+
+width: 48px;
+height: 48px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* avatar-frame */
+
+box-sizing: border-box;
+
+width: 24px;
+height: 24px;
+
+background: url(john-avatar.jpg);
+border: 1px solid #000000;
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Status 0 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 9px;
+height: 9px;
+right: 0px;
+top: 0px;
+
+background: #008A55;
+border: 1px solid #F5F6F7;
+border-radius: 6px 0px 6px 6px;
+
+
+/* check */
+
+position: absolute;
+left: 25%;
+right: 20.83%;
+top: 25%;
+bottom: 25%;
+
+background: #F5F6F7;
+
+
+/* Heading 1 */
+
+width: 202px;
+height: 87px;
+
+/* Heading/H1 */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 56px;
+line-height: 155%;
+/* identical to box height, or 87px */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #CDD2D8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Chat */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 0px;
+gap: 12px;
+
+width: 760px;
+height: 641px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 1;
+
+
+/* Main */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: flex-start;
+padding: 0px 20px;
+gap: 14px;
+
+width: 760px;
+height: 550px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 1;
+
+
+/* Column 2 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 14px;
+
+width: 230.67px;
+height: 277px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 1;
+
+
+/* Row */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 14px;
+
+width: 134px;
+height: 37px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Icon 0 */
+
+width: 24px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* History Icon */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+
+
+/* Clock */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 14px;
+height: 14px;
+left: calc(50% - 14px/2);
+top: calc(50% - 14px/2);
+
+background: #FF78E8;
+border: 1px solid #2A3038;
+
+
+/* Ellipse 21 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 4px;
+height: 4px;
+left: calc(50% - 4px/2);
+top: calc(50% - 4px/2);
+
+border: 1px solid #2A3038;
+
+
+/* Ellipse 104 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 10px;
+height: 10px;
+left: calc(50% - 10px/2);
+top: calc(50% - 10px/2);
+
+background: #2A3038;
+border: 1px solid #2A3038;
+
+
+/* chevron-right */
+
+position: absolute;
+width: 9px;
+height: 9px;
+left: calc(50% - 9px/2 - 3.5px);
+top: calc(50% - 9px/2 - 1.5px);
+
+background: #2A3038;
+transform: matrix(-1, 0, 0, 1, 0, 0);
+
+
+/* chevron-right */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 3.5px;
+height: 7px;
+left: calc(50% - 3.5px/2 - 1.75px);
+top: calc(50% - 7px/2 - 5.5px);
+
+border: 1px solid #FF78E8;
+transform: matrix(-1, 0, 0, 1, 0, 0);
+
+
+/* Ellipse 103 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 2px;
+height: 2px;
+left: calc(50% - 2px/2);
+top: calc(50% - 2px/2);
+
+border: 1px solid #FF78E8;
+
+
+/* Vector 217 */
+
+position: absolute;
+width: 2.5px;
+height: 2.5px;
+left: 4px;
+top: 4px;
+
+border: 1px solid #FF78E8;
+
+
+/* Icon Small 0 */
+
+position: absolute;
+left: 37.5%;
+right: 0%;
+top: 37.5%;
+bottom: 0%;
+
+
+
+/* clock */
+
+position: absolute;
+width: 8px;
+height: 8px;
+left: calc(50% - 8px/2 + 1.5px);
+top: calc(50% - 8px/2 + 1.5px);
+
+background: #9ECFFF;
+border: 2px solid #2A3038;
+
+
+/* hours */
+
+position: absolute;
+width: 1px;
+height: 4px;
+left: calc(50% - 1px/2 + 1.5px);
+top: calc(50% - 4px/2);
+
+background: #2A3038;
+border-radius: 1px;
+
+
+/* Line 20 */
+
+position: absolute;
+width: 1.77px;
+height: 1.06px;
+left: calc(50% - 1.77px/2 + 2.38px);
+top: calc(50% - 1.06px/2 + 0.78px);
+
+border: 1px solid #2A3038;
+transform: rotate(-45deg);
+
+
+/* Recents */
+
+width: 96px;
+height: 37px;
+
+/* Heading/H5 */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 24px;
+line-height: 155%;
+/* or 37px */
+
+color: #FFFFFF;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Blockquote 0
+
+blockquote
+*/
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 14px 20px;
+gap: 14px;
+
+width: 230.67px;
+height: 66px;
+
+background: #363E47;
+border-left: 3px solid #FF78E8;
+border-radius: 6px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Blockquote */
+
+width: 190.67px;
+height: 38px;
+
+/* Text/Small */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 155%;
+/* or 19px */
+
+color: #FFFFFF;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Blockquote 0
+
+blockquote
+*/
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 14px 20px;
+gap: 14px;
+
+width: 230.67px;
+height: 66px;
+
+background: #363E47;
+border-left: 3px solid #FF78E8;
+border-radius: 6px;
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Blockquote */
+
+width: 190.67px;
+height: 38px;
+
+/* Text/Small */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 155%;
+/* or 19px */
+
+color: #FFFFFF;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Blockquote 0
+
+blockquote
+*/
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 14px 20px;
+gap: 14px;
+
+width: 230.67px;
+height: 66px;
+
+background: #363E47;
+border-left: 3px solid #FF78E8;
+border-radius: 6px;
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Blockquote */
+
+width: 190.67px;
+height: 38px;
+
+/* Text/Small */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 155%;
+/* or 19px */
+
+color: #FFFFFF;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Column 1 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 14px;
+
+width: 230.67px;
+height: 277px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 1;
+
+
+/* Row */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 14px;
+
+width: 145px;
+height: 37px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Icon 0 */
+
+width: 24px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Circle Arrow Up Icon */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+
+
+/* Ellipse 81 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 16px;
+height: 16px;
+left: calc(50% - 16px/2);
+top: calc(50% - 16px/2);
+
+border: 1px solid #FF78E8;
+
+
+/* Line 31 */
+
+position: absolute;
+left: 50%;
+right: 12.5%;
+top: 34.38%;
+bottom: 65.62%;
+
+border: 1px solid #FF78E8;
+transform: rotate(90deg);
+
+
+/* Vector 183 */
+
+position: absolute;
+left: 31.25%;
+right: 31.25%;
+top: 31.25%;
+bottom: 50%;
+
+border: 1px solid #FF78E8;
+border-radius: 0.5px;
+
+
+/* Icon Small 0 */
+
+position: absolute;
+left: 37.5%;
+right: 0%;
+top: 37.5%;
+bottom: 0%;
+
+
+
+/* stroke */
+
+position: absolute;
+left: 30%;
+right: -20%;
+top: 0%;
+bottom: -20%;
+
+background: #2A3038;
+
+
+/* fire */
+
+position: absolute;
+left: 50%;
+right: 0%;
+top: 20%;
+bottom: 0%;
+
+background: #9ECFFF;
+border: 2px solid #2A3038;
+
+
+/* Frequent */
+
+width: 107px;
+height: 37px;
+
+/* Heading/H5 */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 24px;
+line-height: 155%;
+/* or 37px */
+
+color: #FFFFFF;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Blockquote 0
+
+blockquote
+*/
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 14px 20px;
+gap: 14px;
+
+width: 230.67px;
+height: 66px;
+
+background: #363E47;
+border-left: 3px solid #FF78E8;
+border-radius: 6px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Blockquote */
+
+width: 190.67px;
+height: 38px;
+
+/* Text/Small */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 155%;
+/* or 19px */
+
+color: #FFFFFF;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Blockquote 0
+
+blockquote
+*/
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 14px 20px;
+gap: 14px;
+
+width: 230.67px;
+height: 66px;
+
+background: #363E47;
+border-left: 3px solid #FF78E8;
+border-radius: 6px;
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Blockquote */
+
+width: 190.67px;
+height: 38px;
+
+/* Text/Small */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 155%;
+/* or 19px */
+
+color: #FFFFFF;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Blockquote 0
+
+blockquote
+*/
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 14px 20px;
+gap: 14px;
+
+width: 230.67px;
+height: 66px;
+
+background: #363E47;
+border-left: 3px solid #FF78E8;
+border-radius: 6px;
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Blockquote */
+
+width: 190.67px;
+height: 38px;
+
+/* Text/Small */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 155%;
+/* or 19px */
+
+color: #FFFFFF;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Column 3 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 14px;
+
+width: 230.67px;
+height: 277px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 1;
+
+
+/* Row */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 14px;
+
+width: 215px;
+height: 37px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Icon 0 */
+
+width: 24px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Star Half Icon */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+
+
+/* Star Half Icon */
+
+position: absolute;
+left: 3.54%;
+right: 3.53%;
+top: 1.48%;
+bottom: 9.52%;
+
+background: #FF78E8;
+
+
+/* Icon Small 0 */
+
+position: absolute;
+left: 37.5%;
+right: 0%;
+top: 37.5%;
+bottom: 0%;
+
+
+
+/* stroke (Stroke) */
+
+position: absolute;
+width: 9.51px;
+height: 9.05px;
+right: 0.24px;
+bottom: 0.95px;
+
+background: #9ECFFF;
+
+
+/* Recommended */
+
+width: 177px;
+height: 37px;
+
+/* Heading/H5 */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 24px;
+line-height: 155%;
+/* or 37px */
+
+color: #FFFFFF;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Blockquote 0
+
+blockquote
+*/
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 14px 20px;
+gap: 14px;
+
+width: 230.67px;
+height: 66px;
+
+background: #363E47;
+border-left: 3px solid #FF78E8;
+border-radius: 6px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Blockquote */
+
+width: 190.67px;
+height: 38px;
+
+/* Text/Small */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 155%;
+/* or 19px */
+
+color: #FFFFFF;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Blockquote 0
+
+blockquote
+*/
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 14px 20px;
+gap: 14px;
+
+width: 230.67px;
+height: 66px;
+
+background: #363E47;
+border-left: 3px solid #FF78E8;
+border-radius: 6px;
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Blockquote */
+
+width: 190.67px;
+height: 38px;
+
+/* Text/Small */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 155%;
+/* or 19px */
+
+color: #FFFFFF;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Blockquote 0
+
+blockquote
+*/
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 14px 20px;
+gap: 14px;
+
+width: 230.67px;
+height: 66px;
+
+background: #363E47;
+border-radius: 6px;
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Blockquote */
+
+width: 190.67px;
+height: 38px;
+
+/* Text/Small */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 155%;
+/* or 19px */
+
+color: #FFFFFF;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Input Button 0 */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px 16px;
+gap: 10px;
+
+width: 760px;
+height: 48px;
+
+background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), #3D454F;
+border: 1px solid #000000;
+border-radius: 10px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* AI icon
+
+artificial intelligence
+*/
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Star */
+
+box-sizing: border-box;
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+border: 2px solid #EAECEF;
+
+
+/* Value */
+
+width: 676px;
+height: 22px;
+
+/* Text/Bold (b) */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 14px;
+line-height: 155%;
+/* identical to box height, or 22px */
+display: flex;
+align-items: center;
+
+color: #B3BAC3;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 1;
+
+
+/* Submit Icon */
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Union */
+
+position: absolute;
+left: 0.08%;
+right: 0.09%;
+top: 0.74%;
+bottom: -0.55%;
+
+background: #EAECEF;
+
+
+/* AI can make mistakes. Check important info. Privacy Policy Legal Notice Copyright © 2024 Ai Chat. All rights reserved. */
+
+width: 672px;
+height: 19px;
+
+/* Text/Small */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 155%;
+/* identical to box height, or 19px */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #BBC2CA;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
