@@ -21,7 +21,8 @@ async function generateVision() {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                version: "f4aec9342f9e754118835056722d3b238d330592f232490234479c937207b827",
+                version: "black-forest-labs/flux-1.1-pro",
+                // Try one of these version IDs instead: "black-forest-labs/flux-1.1-pro"  // or check their latest versions "stability-ai/stable-diffusion"   // alternative model
                 input: {
                     prompt: prompt,
                     aspect_ratio: "1:1",
