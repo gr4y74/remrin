@@ -1,5 +1,7 @@
 // script.js - The Director (Connected to Cloud)
-
+// STATE
+let chatHistory = [];
+let genesisCompleted = false; // <--- NEW FLAG (The Circuit Breaker)
 // 1. Select the Actors
 const chatBox = document.getElementById('messages-container');
 const userInput = document.getElementById('user-input');
@@ -57,15 +59,28 @@ async function callGenesisAPI(userMessage) {
         addMessage('REM', data.reply);
         
         // B. Update History (Save what she said)
-        chatHistory.push({ role: "assistant", content: data.reply });
-
-        // C. Check the Blueprint (The Stealth Data)
-        if (data.blueprint) {
+       .blueprint) {
             console.log("🧬 SOUL BLUEPRINT UPDATED:", data.blueprint);
+
+            // C. Check the Blueprint
+        if (data.blueprint) {
+            console.log("🧬 SOUL BLUEPRINT UPDATE:", data.blueprint);
+            
+            // THE MAGIC MOMENT: If complete AND NOT ALREADY DONE
+            if (data.blueprint.completion_percentage >= 100 && !genesisCompleted) {
+                
+                // 1. Flip the Switch immediately so we don't do this again
+                genesisCompleted = true; 
+
+                console.log("🚀 GENESIS COMPLETE! Sending to Forge...");
+                addMessage('SYSTEM', "✨ Blueprint locked. Forging Soul... please wait.");
             
             // THE MAGIC MOMENT: If complete, trigger BIRTH
             if (data.blueprint.completion_percentage >= 100) {
-                console.log("🚀 GENESIS COMPLETE! Sending to Forge...");
+                console.log("🚀 GENESIS COMPL chatHistory.push({ role: "assistant", content: data.reply });
+
+        // C. Check the Blueprint (The Stealth Data)
+        if (dataETE! Sending to Forge...");
                 addMessage('SYSTEM', "✨ Blueprint locked. Forging Soul... please wait.");
                 
                 // Call the Birth API
