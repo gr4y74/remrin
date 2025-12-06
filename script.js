@@ -1,7 +1,7 @@
 // script.js - The Director (Connected to Cloud)
 // STATE
 let chatHistory = [];
-let genesisCompleted = false; // <--- NEW FLAG (The Circuit Breaker)
+let genesisCompleted = false; //<--- NEW FLAG (The Circuit Breaker)
 // 1. Select the Actors
 const chatBox = document.getElementById('messages-container');
 const userInput = document.getElementById('user-input');
