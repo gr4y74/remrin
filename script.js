@@ -8,7 +8,6 @@ const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
 
 // STATE: Keep track of the conversation so Rem remembers context
-let chatHistory = [];
 
 // 2. The Logic: Add a Message to the Screen
 function addMessage(role, text) {
