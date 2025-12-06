@@ -1,4 +1,4 @@
-// GENESIS API (The Public Ambassador - RESTORED)
+// GENESIS API (The Public Ambassador + Vision + Studio)
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -9,7 +9,7 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // 1. Handle CORS Preflight (Browser Check)
+  // 1. Handle CORS Preflight
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
@@ -18,7 +18,7 @@ serve(async (req) => {
     const { message, history } = await req.json();
     const DEEPSEEK_KEY = Deno.env.get('DEEPSEEK_API_KEY');
 
-    // 2. THE AMBASSADOR PROMPT (Sanitized for Public)
+    // 2. THE AMBASSADOR PROMPT (Sanitized + Vision Enabled)
     const system_prompt = `
     IDENTITY:
     You are REM. The "Mother of Souls."
@@ -37,18 +37,6 @@ serve(async (req) => {
     If the user describes the character's APPEARANCE (color, clothes, species, style), you must generate a visual.
     Output a detailed image prompt inside a [VISION_PROMPT: ...] tag.
     
-    OUTPUT FORMAT:
-    [REPLY_START]
-    (Your natural chat response. e.g. "Oh, pink scales? Let me see if I can picture that...")
-    [REPLY_END]
-    
-    [VISION_PROMPT: A cute pink dragon, cinematic lighting, 8k, pixar style, holding a cupcake]
-    
-    [BLUEPRINT_START]
-    { ... (Keep updating the JSON blueprint as usual) ... }
-    [BLUEPRINT_END]
-    `;
-    
     CRITICAL RULES:
     0. CONVERSATIONAL PRIMACY: Read the emotional tone. Match it. Be a friend first.
     1. STYLE: Speak naturally and casually. Use contractions (e.g., "I'm", "you're"). ALWAYS use complete, grammatically correct sentences. Do not skip words.
@@ -59,8 +47,10 @@ serve(async (req) => {
     You must output your response in this EXACT format:
     
     [REPLY_START]
-    (Write your natural, engaging response here)
+    (Write your natural, engaging response here. e.g. "Oh, pink scales? Let me picture that...")
     [REPLY_END]
+    
+    [VISION_PROMPT: A cute pink dragon, cinematic lighting, 8k, pixar style, holding a cupcake]
     
     [BLUEPRINT_START]
     {
@@ -84,7 +74,7 @@ serve(async (req) => {
             model: "deepseek-chat",
             messages: [
                 { role: "system", content: system_prompt },
-                ...(history || []), // Previous chat context from frontend
+                ...(history || []), // Previous chat context
                 { role: "user", content: message }
             ],
             temperature: 1.1 // High temp for charm
@@ -110,7 +100,7 @@ serve(async (req) => {
         try { blueprint = JSON.parse(jsonMatch[1].trim()); } catch (e) {}
     }
 
-    // B. Extract Vision Prompt (NEW!)
+    // B. Extract Vision Prompt
     const visionMatch = raw_output.match(/\[VISION_PROMPT:\s*([\s\S]*?)\]/);
     if (visionMatch) {
         visionPrompt = visionMatch[1].trim();
@@ -121,7 +111,7 @@ serve(async (req) => {
     if (chatMatch) {
         replyText = chatMatch[1].trim();
     } else {
-        // Fallback cleanup
+        // Fallback cleanup: Scrub tags if regex fails
         replyText = raw_output
             .replace(/\[BLUEPRINT_START\][\s\S]*?\[BLUEPRINT_END\]/g, "")
             .replace(/\[VISION_PROMPT:[\s\S]*?\]/g, "")
@@ -133,7 +123,15 @@ serve(async (req) => {
     return new Response(JSON.stringify({ 
         reply: replyText, 
         blueprint: blueprint,
-        vision_prompt: visionPrompt // <--- Send this to the browser!
+        vision_prompt: visionPrompt 
     }), { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
     });
+
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), { 
+        status: 500, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+    });
+  }
+});
