@@ -41,7 +41,7 @@ async function callGenesisAPI(userMessage) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
                 message: userMessage,
-                history: chatHistory // Send context so she remembers!
+                history: chatHistory 
             })
         });
 
@@ -57,23 +57,56 @@ async function callGenesisAPI(userMessage) {
         // A. Show Reply
         addMessage('REM', data.reply);
         
-        // B. Update History (Save what she said)
+        // Save history
         chatHistory.push({ role: "assistant", content: data.reply });
 
-        // C. Check the Blueprint (The Stealth Data)
+        // B. CHECK FOR VISION (The Missing Link!) 📸
+        if (data.vision_prompt) {
+            console.log("🎨 Vision Triggered:", data.vision_prompt);
+            addMessage('SYSTEM', "✨ Rem is visualizing... (Prompt sent to Studio)");
+            
+            try {
+                const visionResp = await fetch('https://wftsctqfiqbdyllxwagi.supabase.co/functions/v1/genesis-vision', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: data.vision_prompt })
+                });
+                
+                const visionData = await visionResp.json();
+                
+                if (visionData.image_url) {
+                    const imgDiv = document.createElement('div');
+                    imgDiv.className = 'flex justify-start fade-in mb-4';
+                    imgDiv.innerHTML = `
+                        <div class="max-w-[80%] rounded-xl overflow-hidden border-2 border-rem-blue shadow-[0_0_30px_rgba(100,181,246,0.3)]">
+                            <img src="${visionData.image_url}" class="w-full h-auto" alt="Generated Vision">
+                        </div>
+                    `;
+                    chatBox.appendChild(imgDiv);
+                    const container = document.getElementById('chat-box');
+                    container.scrollTop = container.scrollHeight;
+                }
+            } catch (vErr) {
+                console.error("❌ VISION FAILURE:", vErr);
+                addMessage('SYSTEM', "⚠️ Vision Failed: " + vErr.message);
+            }
+        }
+
+        // C. Check the Blueprint
         if (data.blueprint) {
             console.log("🧬 SOUL BLUEPRINT UPDATED:", data.blueprint);
             
-            // THE MAGIC MOMENT: If complete AND NOT ALREADY DONE
-            if (data.blueprint.completion_percentage >= 100 && !genesisCompleted) {
-                
-                // 1. Flip the Switch immediately so we don't do this again
-                genesisCompleted = true; 
+            // DYNAMIC NAME CHANGE
+            if (data.blueprint.user_name && data.blueprint.user_name !== "value_or_null") {
+                currentUserName = data.blueprint.user_name.toUpperCase();
+            }
 
+            // THE BIRTH MOMENT
+            if (data.blueprint.completion_percentage >= 100 && !genesisCompleted) {
+                genesisCompleted = true; 
                 console.log("🚀 GENESIS COMPLETE! Sending to Forge...");
                 addMessage('SYSTEM', "✨ Blueprint locked. Forging Soul... please wait.");
                 
-                // Call the Birth API
                 const birthResponse = await fetch('https://wftsctqfiqbdyllxwagi.supabase.co/functions/v1/genesis-birth', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -83,15 +116,9 @@ async function callGenesisAPI(userMessage) {
                 const birthData = await birthResponse.json();
                 
                 if (birthData.soul_prompt) {
-                    console.log("🧬 SOUL BORN:", birthData.soul_prompt);
-                    
-                    // SAVE THIS PROMPT LOCALLY (For the demo)
                     localStorage.setItem('active_soul_prompt', birthData.soul_prompt);
                     localStorage.setItem('active_soul_name', data.blueprint.soul_name);
-                    
-                    // TRANSITION VISUALS
                     addMessage('SYSTEM', `✨ ${data.blueprint.soul_name} is awake.`);
-                    // Ideally: Redirect to the chat app or swap the "Rem" avatar for the new one here!
                     alert(`Welcome to the world, ${data.blueprint.soul_name}!`);
                 }
             }
