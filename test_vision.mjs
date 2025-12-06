@@ -44,16 +44,6 @@ async function generateVision() {
             return;
         }
 
-        console.log(`⏳ Generation started... ID: ${prediction.id}`);
-        await checkStatus(prediction.urls.get);
-
-    } catch (e) {
-        console.error("🔥 Network Error:", e);
-    }
-}
-
-        const prediction = await response.json();
-        
         if (prediction.error) {
             console.error("🔥 Replicate Error:", prediction.error);
             return;
