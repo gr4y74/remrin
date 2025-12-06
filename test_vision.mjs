@@ -11,7 +11,6 @@ if (!REPLICATE_KEY) {
 console.log("🎨 Initializing The Studio (Flux-Schnell)...");
 
 async function generateVision() {
-    // The Prompt: Let's test with Sui!
     const prompt = "A cute pink dragon with butterfly wings, eating a cupcake, cinematic lighting, 3d render, pixar style, 4k";
 
     try {
@@ -22,7 +21,6 @@ async function generateVision() {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                // This is the ID for Flux-Schnell (The Fast Model)
                 version: "f4aec9342f9e754118835056722d3b238d330592f232490234479c937207b827",
                 input: {
                     prompt: prompt,
@@ -32,6 +30,27 @@ async function generateVision() {
                 }
             })
         });
+
+        // DEBUG: Print the raw status
+        console.log(`📡 API Status: ${response.status} ${response.statusText}`);
+
+        const prediction = await response.json();
+        
+        // DEBUG: Print the FULL response so we see the error message
+        console.log("📦 API Response:", JSON.stringify(prediction, null, 2));
+
+        if (response.status !== 201) {
+            console.error("❌ STOPPING: API returned an error.");
+            return;
+        }
+
+        console.log(`⏳ Generation started... ID: ${prediction.id}`);
+        await checkStatus(prediction.urls.get);
+
+    } catch (e) {
+        console.error("🔥 Network Error:", e);
+    }
+}
 
         const prediction = await response.json();
         
