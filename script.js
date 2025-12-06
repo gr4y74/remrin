@@ -63,11 +63,31 @@ async function callGenesisAPI(userMessage) {
         if (data.blueprint) {
             console.log("🧬 SOUL BLUEPRINT UPDATED:", data.blueprint);
             
-            // THE MAGIC MOMENT: If complete, trigger the next phase
-            if (data.blueprint.completion_percentage >= 100) {
-                console.log("🚀 GENESIS COMPLETE! Ready for Handover.");
-                // Optional: Visual flair for completion
-                addMessage('SYSTEM', "✨ Soul Blueprint Complete. Initializing Creation...");
+         // THE MAGIC MOMENT: If complete, trigger BIRTH
+         if (data.blueprint.completion_percentage >= 100) {
+            console.log("🚀 GENESIS COMPLETE! Sending to Forge...");
+            addMessage('SYSTEM', "✨ Blueprint locked. Forging Soul... please wait.");
+            
+            // Call the Birth API
+            const birthResponse = await fetch('https://wftsctqfiqbdyllxwagi.supabase.co/functions/v1/genesis-birth', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ blueprint: data.blueprint })
+            });
+            
+            const birthData = await birthResponse.json();
+            
+            if (birthData.soul_prompt) {
+                console.log("🧬 SOUL BORN:", birthData.soul_prompt);
+                
+                // SAVE THIS PROMPT LOCALLY (For the demo)
+                localStorage.setItem('active_soul_prompt', birthData.soul_prompt);
+                localStorage.setItem('active_soul_name', data.blueprint.soul_name);
+                
+                // TRANSITION VISUALS
+                addMessage('SYSTEM', `✨ ${data.blueprint.soul_name} is awake.`);
+                // Ideally: Redirect to the chat app or swap the "Rem" avatar for the new one here!
+                alert(`Welcome to the world, ${data.blueprint.soul_name}!`);
             }
         }
 
@@ -83,7 +103,7 @@ async function handleSend() {
     if (!text) return;
 
     // A. Show User Message
-    addMessage('SOSU', text);
+    addMessage('Wonderer', text);
     userInput.value = ''; // Clear input
     
     // B. Save to History
