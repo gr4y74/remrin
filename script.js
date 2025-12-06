@@ -104,7 +104,7 @@ async function handleSend() {
     if (!text) return;
 
     // A. Show User Message
-    addMessage('SOSU', text);
+    addMessage('浪人', text);
     userInput.value = ''; // Clear input
     
     // B. Save to History
