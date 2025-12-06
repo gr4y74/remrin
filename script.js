@@ -59,10 +59,9 @@ async function callGenesisAPI(userMessage) {
         addMessage('REM', data.reply);
         
         // B. Update History (Save what she said)
-       .blueprint) {
-            console.log("🧬 SOUL BLUEPRINT UPDATED:", data.blueprint);
+        chatHistory.push({ role: "assistant", content: data.reply });
 
-            // C. Check the Blueprint
+        // C. Check the Blueprint (The Stealth Data)
         if (data.blueprint) {
             console.log("🧬 SOUL BLUEPRINT UPDATE:", data.blueprint);
             
@@ -73,14 +72,6 @@ async function callGenesisAPI(userMessage) {
                 genesisCompleted = true; 
 
                 console.log("🚀 GENESIS COMPLETE! Sending to Forge...");
-                addMessage('SYSTEM', "✨ Blueprint locked. Forging Soul... please wait.");
-            
-            // THE MAGIC MOMENT: If complete, trigger BIRTH
-            if (data.blueprint.completion_percentage >= 100) {
-                console.log("🚀 GENESIS COMPL chatHistory.push({ role: "assistant", content: data.reply });
-
-        // C. Check the Blueprint (The Stealth Data)
-        if (dataETE! Sending to Forge...");
                 addMessage('SYSTEM', "✨ Blueprint locked. Forging Soul... please wait.");
                 
                 // Call the Birth API
