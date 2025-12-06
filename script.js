@@ -1,7 +1,7 @@
 // script.js - The Director (Connected to Cloud)
 // STATE
 let chatHistory = [];
-let genesisCompleted = false; //<--- NEW FLAG (The Circuit Breaker)
+let genesisCompleted = false; // <--- NEW FLAG (The Circuit Breaker)
 // 1. Select the Actors
 const chatBox = document.getElementById('messages-container');
 const userInput = document.getElementById('user-input');
@@ -63,7 +63,7 @@ async function callGenesisAPI(userMessage) {
 
         // C. Check the Blueprint (The Stealth Data)
         if (data.blueprint) {
-            console.log("🧬 SOUL BLUEPRINT UPDATE:", data.blueprint);
+            console.log("🧬 SOUL BLUEPRINT UPDATED:", data.blueprint);
             
             // THE MAGIC MOMENT: If complete AND NOT ALREADY DONE
             if (data.blueprint.completion_percentage >= 100 && !genesisCompleted) {
