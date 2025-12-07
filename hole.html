@@ -23,23 +23,27 @@
             background: #000; /* Keep it pure black for deep contrast */
         }
 
-        /* 2. THE PHANTOM CROWN (Double Faded) */
+        /* 2. THE PHANTOM CROWN (Cinema Scope) */
         #singularity-bg {
-            /* ... keep your existing position/size settings ... */
             position: absolute;
-            top: 10%; /* Or whatever top value you settled on */
+            
+            /* --- YOUR PERFECT COORDINATES --- */
+            top: 10%; 
+            height: 85%;
+            
             left: 0;
             width: 100%;
-            height: 85%;
-            object-fit: contain; 
+            
+            /* --- THE FIX: 'cover' fills the width --- */
+            object-fit: cover; 
+            
+            /* Keep it centered so the zoom happens evenly */
             object-position: center center;
+            
             z-index: 0;
             opacity: 1;
 
-            /* --- THE DOUBLE FADE SPELL --- */
-            /* 0% to 15%: Fade IN from top */
-            /* 15% to 85%: Fully Visible Middle */
-            /* 85% to 100%: Fade OUT at bottom */
+            /* The Double Fade Spell (Keep this!) */
             mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
         }
