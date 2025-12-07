@@ -15,101 +15,99 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
     <style>
-        /* 1. THE VIEWPORT LOCK (Critical Fix) */
+        /* 1. VIEWPORT LOCK */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body, html { 
-            width: 100%; 
-            height: 100%; 
-            overflow: hidden; /* <--- KILLS THE SCROLL BARS */
+            width: 100%; height: 100%; overflow: hidden; 
             font-family: 'Inter', sans-serif; 
-            background: #000;
+            background: #000; /* Deep Black Void */
         }
 
-        /* 2. THE EVENT HORIZON (Video Background) */
+        /* 2. THE CROWN (Video Zone) */
         #singularity-bg {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            object-fit: cover; /* Forces video to fit the screen, not stretch it */
-            /* ALIGNMENT TWEAK: This moves the hole UP so it sits above the chat */
-            object-position: center 30%; 
+            /* CHANGE: Restrict height to top 45% of screen */
+            height: 45%; 
+            /* CHANGE: 'contain' shrinks the video to fit fully inside the box (Smaller Hole) */
+            object-fit: contain; 
+            object-position: bottom center; /* Sits right above the chat */
             z-index: 0;
-            opacity: 0.8;
+            opacity: 0.9;
         }
 
-        /* 3. THE STAGE (Layout Manager) */
+        /* 3. THE STAGE (The Layout Grid) */
         #ambassador-stage {
-            position: absolute; /* Locks it to the screen */
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
             z-index: 10;
             display: flex;
             
-            /* THIS CENTERS IT HORIZONTALLY */
+            /* Center Horizontally */
             justify-content: center; 
             
-            /* THIS PUSHES IT TO THE BOTTOM (Hero Layout) */
+            /* Push Chat to Bottom */
             align-items: flex-end; 
             
-            padding-bottom: 50px; /* Lift it off the floor slightly */
+            padding-bottom: 30px; /* Space from bottom edge */
         }
 
-        /* 4. THE GLASS TERMINAL (The UI) */
+        /* 4. THE WIDESCREEN TERMINAL */
         .glass-terminal {
-            width: 90%; /* Mobile Friendly width */
-            max-width: 550px; /* Desktop Max width */
-            height: 55vh; /* Takes up bottom half only */
+            width: 95%; /* Mobile: Almost full width */
             
-            background: rgba(20, 20, 20, 0.65);
+            /* CHANGE: Increased from 550px to 850px (50% wider) */
+            max-width: 850px; 
+            
+            /* CHANGE: Height set to bottom 50% so it doesn't touch the hole */
+            height: 50vh; 
+            
+            background: rgba(15, 15, 15, 0.7); /* Slightly darker for contrast */
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 0 80px rgba(0, 0, 0, 0.8); /* Stronger shadow to pop against void */
             
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+            display: flex; flex-direction: column; overflow: hidden;
             animation: floatUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
         /* HEADER */
         .terminal-header {
-            padding: 15px 20px;
+            padding: 12px 25px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             display: flex; align-items: center; gap: 10px;
-            font-size: 0.75rem; letter-spacing: 1.5px; text-transform: uppercase;
+            font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
             color: rgba(255, 255, 255, 0.4);
-            background: rgba(0,0,0,0.2);
+            background: rgba(0,0,0,0.3);
         }
-        .status-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 8px #00ff88; animation: pulse 2s infinite; }
+        .status-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 10px #00ff88; animation: pulse 2s infinite; }
 
         /* CHAT LOG */
-        .chat-log { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .chat-log { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
         
         /* BUBBLES */
-        .message { display: flex; gap: 12px; align-items: flex-end; max-width: 90%; }
+        .message { display: flex; gap: 15px; align-items: flex-end; max-width: 85%; } /* Tweak max-width for wider screen */
         .rem-msg { align-self: flex-start; }
         .user-msg { align-self: flex-end; flex-direction: row-reverse; }
-        .bubble { padding: 12px 16px; border-radius: 18px; font-size: 0.95rem; line-height: 1.5; color: #eee; }
-        .rem-msg .bubble { background: rgba(255, 255, 255, 0.08); border-bottom-left-radius: 4px; }
-        .user-msg .bubble { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border-bottom-right-radius: 4px; }
-        .avatar { font-size: 1.2rem; }
+        .bubble { padding: 14px 20px; border-radius: 18px; font-size: 1rem; line-height: 1.6; color: #eee; }
+        .rem-msg .bubble { background: rgba(255, 255, 255, 0.08); border-bottom-left-radius: 4px; border: 1px solid rgba(255,255,255,0.02); }
+        .user-msg .bubble { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border-bottom-right-radius: 4px; box-shadow: 0 4px 20px rgba(37, 99, 235, 0.2); }
+        .avatar { font-size: 1.4rem; }
 
         /* INPUT ZONE */
-        .input-zone { padding: 20px; background: rgba(0, 0, 0, 0.3); display: flex; gap: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
-        input { flex: 1; background: transparent; border: none; outline: none; color: white; font-size: 1rem; font-family: 'Inter', sans-serif; }
-        button { background: rgba(255, 255, 255, 0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: all 0.2s; }
+        .input-zone { padding: 20px 30px; background: rgba(0, 0, 0, 0.3); display: flex; gap: 15px; border-top: 1px solid rgba(255,255,255,0.05); }
+        input { flex: 1; background: transparent; border: none; outline: none; color: white; font-size: 1.1rem; font-family: 'Inter', sans-serif; }
+        button { background: rgba(255, 255, 255, 0.1); border: none; color: white; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
         button:hover { background: white; color: black; transform: scale(1.1); }
 
-        @keyframes floatUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes floatUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
+
 </head>
 <body>
 
