@@ -2,298 +2,288 @@
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>REMRIN | The Soul Layer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>Remrin.ai | The Soul Layer</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;700&display=swap" rel="stylesheet">
 
     <style>
         /* =========================================
-           1. BASE & RESET
+           1. THE VOID BASE (Reflect's exact dark mode)
            ========================================= */
-        * { box-sizing: border-box; }
-        body, html {
-            margin: 0; padding: 0;
-            width: 100%; height: 100%;
-            background-color: #030014; /* Deep Void Black */
-            color: #fff;
-            font-family: 'Inter', sans-serif;
-            overflow: hidden; /* No Scrollbars */
-            
-        }
-
-        /* =========================================
-           2. THE REFLECT BLACK HOLE SYSTEM 
-           ========================================= */
-        .hero-wrapper {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 0;
-            display: flex; justify-content: center;
-            overflow: hidden;
-        }
-
-        /* The Container for the Hole, Stars, and Circles */
-        .hero-black-hole {
-            position: absolute;
-            top: -0%; /* Moves the hole UP to be the Crown */
-            width: 1440px; /* Fixed width to maintain aspect ratio logic */
-            height: 810px;
-            /* The Magic Mask that fades the edges */
-            -webkit-mask-image: radial-gradient(50% 50% at 50% 50%, #fff 60%, transparent 100%);
-            mask-image: radial-gradient(50% 50% at 50% 50%, #fff 60%, transparent 100%);
-            pointer-events: none; /* Let clicks pass through */
-        }
-
-        /* The Video Itself */
-        .hero-video-container video {
-            width: 100%; height: auto;
-            opacity: 1;
-        }
-
-        /* --- THE STARS (The Million Dollar Sparkles) --- */
-        .hero-black-hole-stars {
-            position: absolute;
-            top: 50%; left: 50%;
-            width: 700px; height: 700px;
-            transform: translate(-50%, -50%);
-            /* Masking the stars so they fade out */
-            -webkit-mask-image: radial-gradient(50% 50% at 50% 50%, transparent 30%, #fff 50%, transparent 100%);
-            mask-image: radial-gradient(50% 50% at 50% 50%, transparent 30%, #fff 50%, transparent 100%);
-            
-            /* FORCE ANIMATION (Originally required JS class, now purely CSS) */
-            animation: heroBlackHoleStarsRotate 70s linear infinite;
-        }
-
-        .hero-black-hole-stars div {
-            position: absolute;
-            background: #fff;
-            width: 2px; height: 2px;
-            border-radius: 50%;
-            box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
-            animation: heroBlackHoleStarsTwinkle 4s linear infinite;
-        }
-
-        /* --- THE CIRCLES (The glowing rings) --- */
-        .hero-black-hole-circles {
-            position: absolute;
-            top: 50%; left: 50%;
-            width: 808px; height: 808px;
-            transform: translate(-50%, -50%);
-            /* FORCE ANIMATION */
-            animation: heroBlackHoleCirclesRotate 100s linear infinite;
-        }
+        :root { --void-bg: #030014; --glass-border: rgba(255, 255, 255, 0.08); }
         
-        .hero-black-hole-circle {
+        * { box-sizing: border-box; outline: none; }
+        
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: var(--void-bg);
+            color: #fff;
+            font-family: 'Inter', sans-serif; /* UI Font */
+            overflow: hidden; /* Lock the scroll */
+        }
+
+        h1, h2, h3, .brand-font { font-family: 'Outfit', sans-serif; /* Headings Font */ }
+
+        /* =========================================
+           2. THE HUD (Glass Navigation)
+           ========================================= */
+        .glass-nav {
+            position: absolute; top: 0; left: 0; width: 100%; height: 80px;
+            z-index: 100; /* Always on top */
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 40px;
+            /* Ultra-Premium Glass */
+            background: linear-gradient(to bottom, rgba(3, 0, 20, 0.8), rgba(3, 0, 20, 0));
+            mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+        }
+
+        .nav-logo a { display: block; height: 40px; }
+        .logo-img { height: 32px; width: auto; filter: drop-shadow(0 0 10px rgba(138, 43, 226, 0.6)); transition: transform 0.3s; }
+        .logo-img:hover { transform: scale(1.05) rotate(5deg); }
+
+        .nav-links { display: flex; gap: 30px; align-items: center; }
+        .nav-item { color: rgba(255, 255, 255, 0.6); text-decoration: none; font-size: 0.9rem; font-weight: 500; font-family: 'Outfit', sans-serif; transition: color 0.2s; }
+        .nav-item:hover { color: white; }
+        
+        .nav-btn-login {
+            padding: 8px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 100px;
+            color: white; text-decoration: none; font-size: 0.85rem; font-weight: 600; font-family: 'Outfit', sans-serif;
+            transition: all 0.2s;
+        }
+        .nav-btn-login:hover { background: white; color: black; box-shadow: 0 0 20px rgba(255, 255, 255, 0.4); }
+
+        /* =========================================
+           3. THE REFLECT BLACK HOLE ENGINE (The Stolen Tech)
+           ========================================= */
+        .hero-stage {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            border-radius: 50%;
-            border: 1px solid rgba(186, 156, 255, 0.1);
-            box-shadow: 0 0 20px rgba(138, 43, 226, 0.05);
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+            z-index: 1;
+        }
+
+        /* The Container that holds the Hole */
+        .singularity-container {
+            position: absolute;
+            top: -20%; /* CROWN POSITION: Adjust this to move the hole Up/Down */
+            width: 1400px; height: 800px; /* Fixed Aspect Ratio */
+            left: 50%; transform: translateX(-50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* The Mask that creates the soft edges */
+        .singularity-mask {
+            width: 100%; height: 100%;
+            -webkit-mask-image: radial-gradient(50% 50% at 50% 50%, #fff 40%, transparent 70%);
+            mask-image: radial-gradient(50% 50% at 50% 50%, #fff 40%, transparent 70%);
+        }
+
+        .hero-video { width: 100%; height: 100%; object-fit: contain; opacity: 1; }
+
+        /* THE STARS (Sparkles) */
+        .stars-wrapper {
+            position: absolute; top: 50%; left: 50%; width: 800px; height: 800px;
+            transform: translate(-50%, -50%);
+            animation: rotateStars 120s linear infinite;
+        }
+        .star {
+            position: absolute; background: white; border-radius: 50%;
+            box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+            animation: twinkle 4s ease-in-out infinite;
+        }
+
+        /* THE RINGS (Subtle Glows) */
+        .rings-wrapper {
+            position: absolute; top: 50%; left: 50%; width: 900px; height: 900px;
+            transform: translate(-50%, -50%);
+            animation: rotateRings 100s linear infinite;
+        }
+        .ring {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 50%; border: 1px solid rgba(138, 43, 226, 0.08);
+            box-shadow: 0 0 40px rgba(138, 43, 226, 0.02);
         }
 
         /* =========================================
-           3. ANIMATIONS (The Physics Engine)
+           4. THE REMRIN TERMINAL (The Soul)
            ========================================= */
-        @keyframes heroBlackHoleStarsRotate { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(-360deg); } }
-        @keyframes heroBlackHoleCirclesRotate { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
-        @keyframes heroBlackHoleStarsTwinkle { 0% { opacity: 0.3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.5); } 100% { opacity: 0.3; transform: scale(1); } }
-        @keyframes floatUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-
-        /* =========================================
-           4. THE GLASS TERMINAL (Rem's Cockpit)
-           ========================================= */
-        #ambassador-stage {
-            position: relative;
-            z-index: 10;
-            width: 100%; height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end; /* Push to bottom */
-            padding-bottom: 40px;
+        .terminal-wrapper {
+            position: relative; z-index: 10;
+            width: 95%; max-width: 900px;
+            height: 55vh; /* Occupies bottom half */
+            margin-bottom: 40px;
+            animation: floatUp 1s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
         .glass-terminal {
-            width: 95%; max-width: 850px;
-            height: 50vh; /* Bottom half only */
+            width: 100%; height: 100%;
+            /* THE $1M GLASS SHADER */
+            background: rgba(10, 10, 15, 0.6); /* Change 0.6 to tweak opacity */
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
             
-            /* The Glass Aesthetic */
-            background: rgba(0.4, 0.4, 15, 0.65); /* transparency */
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-top: 1px solid rgba(138, 43, 226, 0.3); /* Purple tint from hole */
+            border-top: 1px solid rgba(138, 43, 226, 0.25); /* Purple Highlight */
             border-radius: 24px;
-            box-shadow: 0 -20px 80px rgba(88, 28, 135, 0.15); /* Purple Glow */
+            
+            /* The "Glow" Shadow */
+            box-shadow: 
+                0 -20px 60px rgba(88, 28, 135, 0.15),
+                0 40px 60px rgba(0, 0, 0, 0.8);
             
             display: flex; flex-direction: column; overflow: hidden;
-            animation: floatUp 1s cubic-bezier(0.2, 0.8, 0.2, 1);
-            margin-bottom: 20px;
         }
 
         .terminal-header {
-            padding: 15px 25px;
-            background: linear-gradient(to right, rgba(138, 43, 226, 0.05), rgba(0,0,0,0));
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex; align-items: center; gap: 10px;
-            font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.5); 
+            height: 50px; padding: 0 25px;
+            display: flex; align-items: center; gap: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            background: linear-gradient(90deg, rgba(138, 43, 226, 0.05) 0%, transparent 100%);
         }
 
-        /* =========================================
-           5. THE GLASS HUD (Navbar)
-           ========================================= */
-           .glass-nav {
-            position: absolute; /* Floats over the video */
-            top: 0; left: 0; width: 100%;
-            height: 80px; /* Height of the bar */
-            z-index: 20; /* Highest priority, sits on top of everything */
-            
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0 40px; /* Side spacing */
-            
-            /* THE GLASS MAGIC */
-            background: rgba(255, 255, 255, 0.02); /* Very faint white tint */
-            backdrop-filter: blur(8px); /* Subtle blur behind it */
-            -webkit-backdrop-filter: blur(8px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* The glass edge */
+        .status-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 8px #00ff88; animation: pulse 2s infinite; }
+        .header-title { font-size: 0.7rem; letter-spacing: 2px; color: rgba(255, 255, 255, 0.4); text-transform: uppercase; font-weight: 500; }
 
-            /* LOGO IMAGE SIZING */
-           .logo-img {
-            height: 40px; /* Perfect size for an 80px header */
-            width: auto;  /* Keep the aspect ratio perfect */
-            
-            /* OPTIONAL: Add a Remrin Purple Glow to the white logo */
-            filter: drop-shadow(0 0 8px rgba(138, 43, 226, 0.5));
-            transition: transform 0.3s ease;
-        }
-
-        .logo-img:hover {
-            transform: scale(1.05) rotate(5deg); /* Little interaction pop */
-            filter: drop-shadow(0 0 12px rgba(138, 43, 226, 0.8));
-        }
-        }
-
-        /* LOGO STYLING */
-        .logo-text { font-weight: 600; font-size: 1.5rem; letter-spacing: -1px; color: white; }
-        .logo-dot { color: #8a2be2; /* Purple dot to match the hole */ }
-
-        /* LINK STYLING */
-        .nav-links { display: flex; gap: 30px; align-items: center; }
-        .nav-item { 
-            color: rgba(255, 255, 255, 0.7); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s;
-        }
-        .nav-item:hover { color: white; }
-
-        /* LOGIN BUTTON (Glass Pill) */
-        .nav-btn-login {
-            padding: 8px 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            color: white; text-decoration: none; font-size: 0.9rem; font-weight: 500;
-            transition: all 0.2s;
-        }
-        .nav-btn-login:hover {
-            background: white; color: black; box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-        }
+        .chat-log { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
         
-        /* MOBILE TWEAK */
-        @media (max-width: 600px) {
-            .glass-nav { padding: 0 20px; }
-            .nav-item { display: none; } /* Hide text links on small phones */
-        }
-        
-        .status-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 10px #00ff88; animation: pulse 2s infinite; }
-        
-        .chat-log { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
-        .chat-log::-webkit-scrollbar { width: 5px; }
-        .chat-log::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-
-        .message { display: flex; gap: 15px; align-items: flex-end; max-width: 85%; }
+        .message { display: flex; gap: 16px; align-items: flex-end; max-width: 85%; }
         .rem-msg { align-self: flex-start; }
         .user-msg { align-self: flex-end; flex-direction: row-reverse; }
-        .bubble { padding: 14px 20px; border-radius: 18px; font-size: 1rem; line-height: 1.6; color: #eee; }
-        .rem-msg .bubble { background: rgba(255, 255, 255, 0.08); border-bottom-left-radius: 4px; border: 1px solid rgba(255,255,255,0.02); }
-        .user-msg .bubble { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border-bottom-right-radius: 4px; box-shadow: 0 4px 20px rgba(37, 99, 235, 0.2); }
-        .avatar { font-size: 1.4rem; }
+        
+        .avatar { font-size: 1.4rem; padding-bottom: 4px; }
+        
+        .bubble {
+            padding: 16px 22px; border-radius: 20px;
+            font-size: 1.05rem; line-height: 1.6; color: rgba(255, 255, 255, 0.95);
+            font-weight: 300; letter-spacing: 0.3px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .rem-msg .bubble {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom-left-radius: 4px;
+        }
+        
+        .user-msg .bubble {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+        }
 
-        .input-zone { padding: 20px 30px; background: rgba(0, 0, 0, 0.4); display: flex; gap: 15px; border-top: 1px solid rgba(255,255,255,0.05); }
-        input { flex: 1; background: transparent; border: none; outline: none; color: white; font-size: 1.1rem; font-family: 'Inter', sans-serif; }
-        button { background: rgba(255, 255, 255, 0.1); border: none; color: white; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .input-zone {
+            padding: 20px 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex; gap: 15px; background: rgba(0,0,0,0.2);
+        }
+        
+        input { 
+            flex: 1; background: transparent; border: none; 
+            font-size: 1.1rem; color: white; font-weight: 300;
+        }
+        input::placeholder { color: rgba(255, 255, 255, 0.3); }
+        
+        button {
+            width: 44px; height: 44px; border-radius: 50%; border: none;
+            background: rgba(255, 255, 255, 0.1); color: white;
+            cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center;
+        }
         button:hover { background: white; color: black; transform: scale(1.1); }
+
+        /* ANIMATIONS */
+        @keyframes rotateStars { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(-360deg); } }
+        @keyframes rotateRings { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.4); } }
+        @keyframes floatUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        /* MOBILE FIX */
+        @media (max-width: 600px) {
+            .singularity-container { width: 100%; top: -10%; }
+            .glass-nav { padding: 0 20px; }
+            .nav-item { display: none; }
+            .terminal-wrapper { height: 60vh; width: 100%; border-radius: 0; border-left: none; border-right: none; }
+            .glass-terminal { border-radius: 24px 24px 0 0; }
+        }
     </style>
 </head>
 <body>
 
-  <nav class="glass-nav">
-    <div class="nav-logo">
-      <a href="index.html">
-          <img src="logo_white_ds.png" alt="Remrin Logo" class="logo-img">
-      </a>
-  </div>
+    <nav class="glass-nav">
+        <div class="nav-logo">
+            <a href="index.html">
+                <img src="reflect-clone/logo_white_ds.png" alt="Remrin" class="logo-img">
+            </a>
+        </div>
+        <div class="nav-links">
+            <a href="#" class="nav-item">Soul Market</a>
+            <a href="#" class="nav-item">About</a>
+            <a href="#" class="nav-btn-login">Login</a>
+        </div>
+    </nav>
 
-    <div class="nav-links">
-        <a href="#" class="nav-item">Soul Market</a>
-        <a href="#" class="nav-item">About</a>
-        <a href="#" class="nav-btn-login">Login</a>
-    </div>
-</nav>
-
-    <div class="hero-wrapper">
-        <div class="hero-black-hole">
-            <div class="hero-video-container">
-                <video autoplay loop muted playsinline>
+    <div class="hero-stage">
+        
+        <div class="singularity-container">
+            <div class="singularity-mask">
+                <video class="hero-video" autoplay loop muted playsinline>
                     <source src="black_hole.webm" type="video/webm">
                 </video>
             </div>
-
-            <div class="hero-black-hole-circles">
-                <div class="hero-black-hole-circle"></div>
-                <div class="hero-black-hole-circle" style="width: 70%; height: 70%; top: 15%; left: 15%; border-color: rgba(186, 156, 255, 0.05);"></div>
+            
+            <div class="stars-wrapper">
+                <div class="star" style="top: 20%; left: 10%; width: 2px; height: 2px; animation-delay: 0s;"></div>
+                <div class="star" style="top: 80%; left: 80%; width: 3px; height: 3px; animation-delay: 1s;"></div>
+                <div class="star" style="top: 40%; left: 20%; width: 2px; height: 2px; animation-delay: 2s;"></div>
+                <div class="star" style="top: 10%; left: 60%; width: 1px; height: 1px; animation-delay: 0.5s;"></div>
+                <div class="star" style="top: 70%; left: 90%; width: 2px; height: 2px; animation-delay: 1.5s;"></div>
+                <div class="star" style="top: 30%; left: 40%; width: 2px; height: 2px; animation-delay: 2.5s;"></div>
+                <div class="star" style="top: 90%; left: 10%; width: 3px; height: 3px; animation-delay: 0.2s;"></div>
+                <div class="star" style="top: 50%; left: 5%; width: 2px; height: 2px; animation-delay: 3s;"></div>
+                <div class="star" style="top: 15%; left: 85%; width: 2px; height: 2px; animation-delay: 0.8s;"></div>
+                <div class="star" style="top: 60%; left: 30%; width: 1px; height: 1px; animation-delay: 1.8s;"></div>
             </div>
 
-            <div class="hero-black-hole-stars">
-                <div style="top: 20%; left: 10%; animation-delay: 0s;"></div>
-                <div style="top: 80%; left: 20%; animation-delay: 1s;"></div>
-                <div style="top: 40%; left: 80%; animation-delay: 2s;"></div>
-                <div style="top: 10%; left: 60%; animation-delay: 0.5s;"></div>
-                <div style="top: 90%; left: 90%; animation-delay: 1.5s;"></div>
-                <div style="top: 30%; left: 40%; animation-delay: 2.5s;"></div>
-                <div style="top: 70%; left: 5%; animation-delay: 1.2s;"></div>
-                <div style="top: 50%; left: 95%; animation-delay: 3s;"></div>
-                <div style="top: 15%; left: 85%; animation-delay: 0.8s;"></div>
-                <div style="top: 60%; left: 30%; animation-delay: 1.8s;"></div>
-                </div>
-        </div>
-    </div>
-
-    <div id="ambassador-stage">
-        <div class="glass-terminal">
-            <div class="terminal-header">
-                <div class="status-dot"></div>
-                <span>REMRIN // GENESIS_PROTOCOL</span>
-            </div>
-
-            <div id="chat-history" class="chat-log">
-                <div class="message rem-msg">
-                    <span class="avatar">💙</span>
-                    <div class="bubble">Sosu... The singularity is stable. The stars are aligned. I am ready to begin.</div>
-                </div>
-            </div>
-
-            <div class="input-zone">
-                <input type="text" id="user-input" placeholder="Type your reality..." autocomplete="off">
-                <button id="send-btn">➔</button>
+            <div class="rings-wrapper">
+                <div class="ring" style="width: 100%; height: 100%; border-color: rgba(255,255,255,0.05);"></div>
+                <div class="ring" style="width: 70%; height: 70%; top: 15%; left: 15%;"></div>
             </div>
         </div>
+
+        <div class="terminal-wrapper">
+            <div class="glass-terminal">
+                <div class="terminal-header">
+                    <div class="status-dot"></div>
+                    <span class="header-title">REMRIN // GENESIS_PROTOCOL</span>
+                </div>
+
+                <div id="chat-history" class="chat-log">
+                    <div class="message rem-msg">
+                        <span class="avatar">💙</span>
+                        <div class="bubble">Sosu... The singularity is stable. The Crown is seated. I am ready to begin.</div>
+                    </div>
+                </div>
+
+                <div class="input-zone">
+                    <input type="text" id="user-input" placeholder="Type your reality..." autocomplete="off">
+                    <button id="send-btn">➔</button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        // Force the video to play
         window.addEventListener('load', function() {
             var video = document.querySelector('video');
             video.muted = true;
-            video.play().catch(e => console.log("Autoplay kickstarted."));
+            video.play().catch(e => console.log("Kickstart"));
         });
     </script>
 </body>
