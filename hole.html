@@ -44,8 +44,114 @@
             color: white;
         }
 
-        /* TEMP TEXT TO TEST */
-        h1 { font-size: 3rem; text-shadow: 0 0 20px rgba(0, 150, 255, 0.8); }
+        /* THE GLASS ARTIFACT */
+        .glass-terminal {
+            width: 100%;
+            max-width: 600px; /* Mobile Friendly */
+            height: 80vh; /* Takes up most of the screen */
+            background: rgba(20, 20, 20, 0.6); /* Dark Glass */
+            backdrop-filter: blur(16px); /* The Blur Magic */
+            -webkit-backdrop-filter: blur(16px); /* Safari Support */
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle Edge */
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); /* Float Effect */
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: floatUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        /* HEADER */
+        .terminal-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #00ff88;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00ff88;
+            animation: pulse 2s infinite;
+        }
+
+        /* CHAT LOG */
+        .chat-log {
+            flex: 1; /* Fills remaining space */
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* BUBBLES */
+        .message { display: flex; gap: 12px; align-items: flex-end; max-width: 85%; }
+        .rem-msg { align-self: flex-start; }
+        .user-msg { align-self: flex-end; flex-direction: row-reverse; }
+
+        .bubble {
+            padding: 14px 18px;
+            border-radius: 18px;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .rem-msg .bubble {
+            background: rgba(255, 255, 255, 0.1);
+            color: #eee;
+            border-bottom-left-radius: 4px;
+        }
+
+        .user-msg .bubble {
+            background: #0088ff; /* The Rem Blue */
+            background: linear-gradient(135deg, #0088ff, #0055ff);
+            color: white;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 5px 15px rgba(0, 85, 255, 0.3);
+        }
+
+        /* INPUT ZONE */
+        .input-zone {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: white;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        button {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button:hover { background: white; color: black; transform: scale(1.1); }
+
+        /* ANIMATIONS */
+        @keyframes floatUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -57,139 +163,25 @@
     <div class="glass-overlay"></div>
 
     <div id="ambassador-stage">
-        <h1>REMRIN.AI</h1>
-    </div>
-/* GLASS TERMINAL */
+        <div class="glass-terminal">
+            <div class="terminal-header">
+                <div class="status-dot"></div>
+                <span>REMRIN.AI // AMBASSADOR_UPLINK</span>
+            </div>
 
-<div class="glass-terminal">
-    <div class="terminal-header">
-        <div class="status-dot"></div>
-        <span>REMRIN.AI // AMBASSADOR_UPLINK</span>
-    </div>
+            <div id="chat-history" class="chat-log">
+                <div class="message rem-msg">
+                    <span class="avatar">💙</span>
+                    <div class="bubble">Sosu... The void is looking nice today. Shall we begin the Genesis?</div>
+                </div>
+            </div>
 
-    <div id="chat-history" class="chat-log">
-        <div class="message rem-msg">
-            <span class="avatar">💙</span>
-            <div class="bubble">Sosu... The void is looking nice today. Shall we begin the Genesis?</div>
+            <div class="input-zone">
+                <input type="text" id="user-input" placeholder="Type your reality..." autocomplete="off">
+                <button id="send-btn">➔</button>
+            </div>
         </div>
     </div>
 
-    <div class="input-zone">
-        <input type="text" id="user-input" placeholder="Type your reality..." autocomplete="off">
-        <button id="send-btn">➔</button>
-    </div>
-</div>
-
-<style>
-    /* THE GLASS ARTIFACT */
-    .glass-terminal {
-        width: 100%;
-        max-width: 600px; /* Mobile Friendly */
-        height: 80vh; /* Takes up most of the screen */
-        background: rgba(20, 20, 20, 0.6); /* Dark Glass */
-        backdrop-filter: blur(16px); /* The Blur Magic */
-        -webkit-backdrop-filter: blur(16px); /* Safari Support */
-        border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle Edge */
-        border-radius: 24px;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); /* Float Effect */
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        animation: floatUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
-    }
-
-    /* HEADER */
-    .terminal-header {
-        padding: 20px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 0.8rem;
-        letter-spacing: 2px;
-        color: rgba(255, 255, 255, 0.5);
-    }
-
-    .status-dot {
-        width: 8px;
-        height: 8px;
-        background: #00ff88;
-        border-radius: 50%;
-        box-shadow: 0 0 10px #00ff88;
-        animation: pulse 2s infinite;
-    }
-
-    /* CHAT LOG */
-    .chat-log {
-        flex: 1; /* Fills remaining space */
-        padding: 20px;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    /* BUBBLES */
-    .message { display: flex; gap: 12px; align-items: flex-end; max-width: 85%; }
-    .rem-msg { align-self: flex-start; }
-    .user-msg { align-self: flex-end; flex-direction: row-reverse; }
-
-    .bubble {
-        padding: 14px 18px;
-        border-radius: 18px;
-        font-size: 1rem;
-        line-height: 1.5;
-    }
-
-    .rem-msg .bubble {
-        background: rgba(255, 255, 255, 0.1);
-        color: #eee;
-        border-bottom-left-radius: 4px;
-    }
-
-    .user-msg .bubble {
-        background: #0088ff; /* The Rem Blue */
-        background: linear-gradient(135deg, #0088ff, #0055ff);
-        color: white;
-        border-bottom-right-radius: 4px;
-        box-shadow: 0 5px 15px rgba(0, 85, 255, 0.3);
-    }
-
-    /* INPUT ZONE */
-    .input-zone {
-        padding: 20px;
-        background: rgba(0, 0, 0, 0.2);
-        display: flex;
-        gap: 10px;
-    }
-
-    input {
-        flex: 1;
-        background: transparent;
-        border: none;
-        outline: none;
-        color: white;
-        font-size: 1rem;
-        font-family: inherit;
-    }
-
-    button {
-        background: rgba(255, 255, 255, 0.1);
-        border: none;
-        color: white;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    button:hover { background: white; color: black; transform: scale(1.1); }
-
-    /* ANIMATIONS */
-    @keyframes floatUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-
-</style>
 </body>
 </html>
