@@ -1,527 +1,221 @@
 <!DOCTYPE html>
-
-<html lang="en-us">
+<html lang="en">
 <head>
-<meta charset="utf-8"/>
-<title>
-   
-  </title>
-<meta charset="utf-8"/>
-<meta content="width=device-width" name="viewport"/>
-<meta content="Remrin - AI-powered digital souls and companions" name="description"/>
-<meta content="#080808" name="theme-color"/>
-<link href="content/assets/backgrounds/favicon.png"" rel="favicon"/>
-<link href="data:image/png;base64,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" rel="icon"/>
-<style data-src="/build/q-7570f8e3.css">
-   @font-face{font-family:swiper-icons;src:url(data:application/font-woff;charset=utf-8;base64,\ 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);font-weight:400;font-style:normal}:root{--swiper-theme-color:#007aff}.swiper,swiper-container{margin-left:auto;margin-right:auto;position:relative;overflow:hidden;list-style:none;padding:0;z-index:1;display:block}.swiper-vertical>.swiper-wrapper{flex-direction:column}.swiper-wrapper{position:relative;width:100%;height:100%;z-index:1;display:flex;transition-property:transform;transition-timing-function:var(--swiper-wrapper-transition-timing-function,initial);box-sizing:content-box}.swiper-android .swiper-slide,.swiper-wrapper{transform:translateZ(0)}.swiper-horizontal{touch-action:pan-y}.swiper-vertical{touch-action:pan-x}.swiper-slide,swiper-slide{flex-shrink:0;width:100%;height:100%;position:relative;transition-property:transform;display:block}.swiper-slide-invisible-blank{visibility:hidden}.swiper-autoheight,.swiper-autoheight .swiper-slide{height:auto}.swiper-autoheight .swiper-wrapper{align-items:flex-start;transition-property:transform,height}.swiper-backface-hidden .swiper-slide{transform:translateZ(0);backface-visibility:hidden}.swiper-3d.swiper-css-mode .swiper-wrapper{perspective:1200px}.swiper-3d .swiper-wrapper{transform-style:preserve-3d}.swiper-3d{perspective:1200px}.swiper-3d .swiper-cube-shadow,.swiper-3d .swiper-slide,.swiper-3d .swiper-slide-shadow,.swiper-3d .swiper-slide-shadow-bottom,.swiper-3d .swiper-slide-shadow-left,.swiper-3d .swiper-slide-shadow-right,.swiper-3d .swiper-slide-shadow-top{transform-style:preserve-3d}.swiper-3d .swiper-slide-shadow,.swiper-3d .swiper-slide-shadow-bottom,.swiper-3d .swiper-slide-shadow-left,.swiper-3d .swiper-slide-shadow-right,.swiper-3d .swiper-slide-shadow-top{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:10}.swiper-3d .swiper-slide-shadow{background:rgba(0,0,0,.15)}.swiper-3d .swiper-slide-shadow-left{background-image:linear-gradient(to left,rgba(0,0,0,.5),rgba(0,0,0,0))}.swiper-3d .swiper-slide-shadow-right{background-image:linear-gradient(to right,rgba(0,0,0,.5),rgba(0,0,0,0))}.swiper-3d .swiper-slide-shadow-top{background-image:linear-gradient(to top,rgba(0,0,0,.5),rgba(0,0,0,0))}.swiper-3d .swiper-slide-shadow-bottom{background-image:linear-gradient(to bottom,rgba(0,0,0,.5),rgba(0,0,0,0))}.swiper-css-mode>.swiper-wrapper{overflow:auto;scrollbar-width:none;-ms-overflow-style:none}.swiper-css-mode>.swiper-wrapper::-webkit-scrollbar{display:none}.swiper-css-mode>.swiper-wrapper>.swiper-slide{scroll-snap-align:start start}.swiper-horizontal.swiper-css-mode>.swiper-wrapper{scroll-snap-type:x mandatory}.swiper-vertical.swiper-css-mode>.swiper-wrapper{scroll-snap-type:y mandatory}.swiper-centered>.swiper-wrapper:before{content:"";flex-shrink:0;order:9999}.swiper-centered>.swiper-wrapper>.swiper-slide{scroll-snap-align:center center;scroll-snap-stop:always}.swiper-centered.swiper-horizontal>.swiper-wrapper>.swiper-slide:first-child{-webkit-margin-start:var(--swiper-centered-offset-before);margin-inline-start:var(--swiper-centered-offset-before)}.swiper-centered.swiper-horizontal>.swiper-wrapper:before{height:100%;min-height:1px;width:var(--swiper-centered-offset-after)}.swiper-centered.swiper-vertical>.swiper-wrapper>.swiper-slide:first-child{-webkit-margin-before:var(--swiper-centered-offset-before);margin-block-start:var(--swiper-centered-offset-before)}.swiper-centered.swiper-vertical>.swiper-wrapper:before{width:100%;min-width:1px;height:var(--swiper-centered-offset-after)}.swiper-lazy-preloader{width:42px;height:42px;position:absolute;left:50%;top:50%;margin-left:-21px;margin-top:-21px;z-index:10;transform-origin:50%;box-sizing:border-box;border:4px solid var(--swiper-preloader-color,var(--swiper-theme-color));border-radius:50%;border-top-color:transparent}.swiper-watch-progress .swiper-slide-visible .swiper-lazy-preloader,.swiper:not(.swiper-watch-progress) .swiper-lazy-preloader,swiper-container:not(.swiper-watch-progress) .swiper-lazy-preloader{animation:swiper-preloader-spin 1s infinite linear}.swiper-lazy-preloader-white{--swiper-preloader-color:#fff}.swiper-lazy-preloader-black{--swiper-preloader-color:#000}@keyframes swiper-preloader-spin{0%{transform:rotate(0)}to{transform:rotate(360deg)}}
-  </style>
-<style hidden="">
-   @keyframes hue-rotate{0%{filter:hue-rotate(0deg)}to{filter:hue-rotate(360deg)}}@font-face{src:url(assets/home_fonts_AeonikPro_medium.woff2),url(assets/home_fonts_AeonikPro_medium.woff);font-display:swap;font-family:AeonikPro;font-weight:500}@font-face{src:url(assets/home_fonts_InterV_medium.woff2),url(assets/home_fonts_InterV_medium.woff);font-display:swap;font-family:Inter V;font-weight:500}@font-face{src:url(assets/home_fonts_InterV_regular.woff2),url(assets/home_fonts_InterV_regular.woff);font-display:swap;font-family:Inter V;font-weight:400}body{background-color:#030014;color:#fff;font-family:Inter V,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif;overflow-y:hidden;width:100vw}@media (max-width: 1248px){body{font-family:system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif}}.modal-open{overflow:hidden!important;padding-right:5px}html,body{overflow-x:hidden;position:relative}::-moz-selection{background:rgba(147,130,255,.5);color:#fff;-webkit-text-fill-color:#fff}::selection{background:rgba(147,130,255,.5);color:#fff;-webkit-text-fill-color:#fff}::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:inherit}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.05);border-radius:99px}::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.1)}*:focus{outline:none}h1,h2,h3,h4,h5,h6,p,body{margin:0}ul{list-style:none;-webkit-margin-after:0;margin-block-end:0;-webkit-margin-before:0;margin-block-start:0;padding:0}svg{display:block}img{border:0;display:block;-o-object-fit:cover;object-fit:cover;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}a{color:inherit;text-decoration:none}button{-webkit-appearance:button;-moz-appearance:button;appearance:button;background-color:transparent;border:0;cursor:pointer;text-transform:none}button,input{font-family:inherit;font-size:100%;line-height:normal;margin:0;vertical-align:baseline}button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}button[disabled],input[disabled]{cursor:default}*{box-sizing:border-box;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}.container,.container-md,.container-sm,.container-lg{margin:0 auto}.container-lg{max-width:1296px}.container{max-width:1248px}.container-md{max-width:1200px}.container-sm{max-width:1128px}@media (max-width: 1248px){.container,.container-md{max-width:358px}.container-sm{max-width:342px}}@media (max-width: 390px){.container,.container-md,.container-sm{max-width:100%;padding:0 4px}}
-  </style>
-<style hidden="">
-   :root{view-transition-name: none}
-  </style>
-</head>
-<body lang="en">
-<!-- ============================================
-  HEADER / NAVIGATION
-  ============================================
-  Top navigation bar with REMRIN branding
-  Contains: Logo, navigation menu (removed), mobile toggle
-  ============================================ -->
-<div class="header">
-<div class="container-lg">
-<h1 style="margin: 0; font-size: 24px; font-weight: 500;">
-     REMRIN
-    </h1>
-<div class="header-actions">
-<style hidden="">
-      .button{font-feature-settings:"ss01" on,"cv10" on,"calt" off,"liga" off}.button{font-size:14px;line-height:20px}.button{font-weight:500}@keyframes hue-rotate{0%{filter:hue-rotate(0deg)}to{filter:hue-rotate(360deg)}}.button{-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-radius:8px;color:#f4f0ff;display:block;padding:8px 16px;position:relative;width:-moz-max-content;width:max-content}.button:before,.button:after,.button-border{border-radius:inherit;height:100%;left:0;position:absolute;top:0;width:100%;z-index:-1}.button:before,.button:after{content:"";display:block;transition:.2s opacity cubic-bezier(.6,.6,0,1)}.button:after{opacity:0}.button:hover:before{opacity:0}.button:hover:after{opacity:1}.button-primary .button-border:before{background:linear-gradient(180deg,rgba(207,184,255,.24) 0%,rgba(207,184,255,0) 100%),linear-gradient(0deg,rgba(207,184,255,.32),rgba(207,184,255,.32));border-radius:inherit;content:"";inset:0;-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:xor;-webkit-mask-composite:xor;mask-composite:exclude;padding:1px;pointer-events:none;position:absolute}.button-primary:before{background:linear-gradient(180deg,rgba(60,8,126,0) 0%,rgba(60,8,126,.32) 100%),rgba(113,47,255,.12);box-shadow:inset 0 0 12px #bf97ff3d}.button-primary:after{background:linear-gradient(180deg,rgba(60,8,126,0) 0%,rgba(60,8,126,.42) 100%),rgba(113,47,255,.24);box-shadow:inset 0 0 12px #bf97ff70}.button-secondary .button-border{border:1px solid rgba(243,238,255,.08)}.button-secondary:before{background:linear-gradient(180deg,rgba(243,238,255,0) 0%,rgba(243,238,255,.04) 100%),rgba(147,130,255,.01);box-shadow:inset 0 0 12px #ffffff14}.button-secondary:after{box-shadow:inset 0 0 12px #ffffff14;background:linear-gradient(180deg,rgba(243,238,255,0) 0%,rgba(243,238,255,.05) 100%),rgba(147,130,255,.04)}
-     </style>
-<style hidden="">
-      @keyframes hue-rotate{0%{filter:hue-rotate(0deg)}to{filter:hue-rotate(360deg)}}.header-toggle{margin-left:18px;padding:5px;cursor:pointer}.header-toggle div{width:20px;height:1.5px;background-color:#fff;border-radius:500px;transition:all .3s ease-in-out}.header-toggle div:not(:last-child){margin-bottom:5px}.header-toggle-active div:nth-child(1){transform:rotate(45deg) translate(5px,5px)}.header-toggle-active div:nth-child(2){opacity:0}.header-toggle-active div:nth-child(3){transform:rotate(-45deg) translate(4px,-5px)}@media (min-width: 1248px){.header-toggle{display:none}}
-     </style>
-<div class="header-toggle">
-</div>
-<style>
-  /* 1. THE VOID BASE */
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body, html { 
-      width: 100%; height: 100%; overflow: hidden; 
-      font-family: 'Inter', sans-serif; 
-      background: #000; /* Keep it pure black for deep contrast */
-  }
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>REMRIN | The Soul Layer</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-  /* 2. THE PHANTOM CROWN (Cinema Scope) */
-  #singularity-bg {
-      position: absolute;
-      
-      /* --- YOUR PERFECT COORDINATES --- */
-      top: 10%; 
-      height: 75%;
-      
-      left: 0;
-      width: 100%;
-      
-      /* --- THE FIX: 'cover' fills the width --- */
-      object-fit: cover; 
-      
-      /* Keep it centered so the zoom happens evenly */
-      object-position: center center;
-      
-      z-index: 0;
-      opacity: 1;
+    <style>
+        /* =========================================
+           1. BASE & RESET
+           ========================================= */
+        * { box-sizing: border-box; }
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background-color: #030014; /* Deep Void Black */
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden; /* No Scrollbars */
+        }
 
-      /* The Double Fade Spell (Keep this!) */
-      mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-  }
+        /* =========================================
+           2. THE REFLECT BLACK HOLE SYSTEM (Stolen & Tuned)
+           ========================================= */
+        .hero-wrapper {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0;
+            display: flex; justify-content: center;
+            overflow: hidden;
+        }
 
-  /* 3. THE STAGE */
-  #ambassador-stage {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      z-index: 10;
-      display: flex;
-      justify-content: center; 
-      align-items: flex-end; /* Push to bottom */
-      padding-bottom: 40px;
-  }
+        /* The Container for the Hole, Stars, and Circles */
+        .hero-black-hole {
+            position: absolute;
+            top: -15%; /* Moves the hole UP to be the Crown */
+            width: 1440px; /* Fixed width to maintain aspect ratio logic */
+            height: 810px;
+            /* The Magic Mask that fades the edges */
+            -webkit-mask-image: radial-gradient(50% 50% at 50% 50%, #fff 60%, transparent 100%);
+            mask-image: radial-gradient(50% 50% at 50% 50%, #fff 60%, transparent 100%);
+            pointer-events: none; /* Let clicks pass through */
+        }
 
-  /* 4. THE GLASS TERMINAL (Moved Up into the Glow) */
-  .glass-terminal {
-      width: 95%; 
-      max-width: 800px;
-      height: 50vh; /* Bottom half of screen */
-      
-      /* Dark Glass that lets the purple shine through */
-      background: rgba(10, 10, 15, 0.65); 
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-top: 1px solid rgba(138, 43, 226, 0.3); /* Purple tint on top edge */
-      border-radius: 24px;
-      box-shadow: 0 -20px 80px rgba(88, 28, 135, 0.2); /* Purple Glow Shadow */
-      
-      display: flex; flex-direction: column; overflow: hidden;
-      animation: floatUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
-      
-      /* --- THE OVERLAP --- */
-      /* This makes the terminal sit nicely in the fade zone */
-      margin-bottom: 20px; 
-  }
+        /* The Video Itself */
+        .hero-video-container video {
+            width: 100%; height: auto;
+            opacity: 1;
+        }
 
-  /* HEADER (Transparent to catch the light) */
-  .terminal-header {
-      padding: 15px 25px;
-      /* Almost transparent to let the video glow bleed in */
-      background: linear-gradient(to right, rgba(138, 43, 226, 0.1), rgba(0,0,0,0));
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      display: flex; align-items: center; gap: 10px;
-      font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.6);
-  }
-  
-  /* ... (Keep your existing .status-dot, .chat-log, .message, .input-zone styles below) ... */
-  .status-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 10px #00ff88; animation: pulse 2s infinite; }
-  .chat-log { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
-  .message { display: flex; gap: 15px; align-items: flex-end; max-width: 85%; }
-  .rem-msg { align-self: flex-start; }
-  .user-msg { align-self: flex-end; flex-direction: row-reverse; }
-  .bubble { padding: 14px 20px; border-radius: 18px; font-size: 1rem; line-height: 1.6; color: #eee; }
-  .rem-msg .bubble { background: rgba(255, 255, 255, 0.08); border-bottom-left-radius: 4px; border: 1px solid rgba(255,255,255,0.02); }
-  .user-msg .bubble { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border-bottom-right-radius: 4px; box-shadow: 0 4px 20px rgba(37, 99, 235, 0.2); }
-  .avatar { font-size: 1.4rem; }
-  .input-zone { padding: 20px 30px; background: rgba(0, 0, 0, 0.4); display: flex; gap: 15px; border-top: 1px solid rgba(255,255,255,0.05); }
-  input { flex: 1; background: transparent; border: none; outline: none; color: white; font-size: 1.1rem; font-family: 'Inter', sans-serif; }
-  button { background: rgba(255, 255, 255, 0.1); border: none; color: white; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
-  button:hover { background: white; color: black; transform: scale(1.1); }
-  @keyframes floatUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-</style>
+        /* --- THE STARS (The Million Dollar Sparkles) --- */
+        .hero-black-hole-stars {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 700px; height: 700px;
+            transform: translate(-50%, -50%);
+            /* Masking the stars so they fade out */
+            -webkit-mask-image: radial-gradient(50% 50% at 50% 50%, transparent 30%, #fff 50%, transparent 100%);
+            mask-image: radial-gradient(50% 50% at 50% 50%, transparent 30%, #fff 50%, transparent 100%);
+            
+            /* FORCE ANIMATION (Originally required JS class, now purely CSS) */
+            animation: heroBlackHoleStarsRotate 70s linear infinite;
+        }
 
+        .hero-black-hole-stars div {
+            position: absolute;
+            background: #fff;
+            width: 2px; height: 2px;
+            border-radius: 50%;
+            box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+            animation: heroBlackHoleStarsTwinkle 4s linear infinite;
+        }
+
+        /* --- THE CIRCLES (The glowing rings) --- */
+        .hero-black-hole-circles {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 808px; height: 808px;
+            transform: translate(-50%, -50%);
+            /* FORCE ANIMATION */
+            animation: heroBlackHoleCirclesRotate 100s linear infinite;
+        }
+        
+        .hero-black-hole-circle {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 50%;
+            border: 1px solid rgba(186, 156, 255, 0.1);
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.05);
+        }
+
+        /* =========================================
+           3. ANIMATIONS (The Physics Engine)
+           ========================================= */
+        @keyframes heroBlackHoleStarsRotate { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(-360deg); } }
+        @keyframes heroBlackHoleCirclesRotate { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+        @keyframes heroBlackHoleStarsTwinkle { 0% { opacity: 0.3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.5); } 100% { opacity: 0.3; transform: scale(1); } }
+        @keyframes floatUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        /* =========================================
+           4. THE GLASS TERMINAL (Rem's Cockpit)
+           ========================================= */
+        #ambassador-stage {
+            position: relative;
+            z-index: 10;
+            width: 100%; height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end; /* Push to bottom */
+            padding-bottom: 40px;
+        }
+
+        .glass-terminal {
+            width: 95%; max-width: 850px;
+            height: 50vh; /* Bottom half only */
+            
+            /* The Glass Aesthetic */
+            background: rgba(10, 10, 15, 0.65);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 1px solid rgba(138, 43, 226, 0.3); /* Purple tint from hole */
+            border-radius: 24px;
+            box-shadow: 0 -20px 80px rgba(88, 28, 135, 0.15); /* Purple Glow */
+            
+            display: flex; flex-direction: column; overflow: hidden;
+            animation: floatUp 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+            margin-bottom: 20px;
+        }
+
+        .terminal-header {
+            padding: 15px 25px;
+            background: linear-gradient(to right, rgba(138, 43, 226, 0.05), rgba(0,0,0,0));
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex; align-items: center; gap: 10px;
+            font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .status-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 10px #00ff88; animation: pulse 2s infinite; }
+        
+        .chat-log { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .chat-log::-webkit-scrollbar { width: 5px; }
+        .chat-log::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+
+        .message { display: flex; gap: 15px; align-items: flex-end; max-width: 85%; }
+        .rem-msg { align-self: flex-start; }
+        .user-msg { align-self: flex-end; flex-direction: row-reverse; }
+        .bubble { padding: 14px 20px; border-radius: 18px; font-size: 1rem; line-height: 1.6; color: #eee; }
+        .rem-msg .bubble { background: rgba(255, 255, 255, 0.08); border-bottom-left-radius: 4px; border: 1px solid rgba(255,255,255,0.02); }
+        .user-msg .bubble { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border-bottom-right-radius: 4px; box-shadow: 0 4px 20px rgba(37, 99, 235, 0.2); }
+        .avatar { font-size: 1.4rem; }
+
+        .input-zone { padding: 20px 30px; background: rgba(0, 0, 0, 0.4); display: flex; gap: 15px; border-top: 1px solid rgba(255,255,255,0.05); }
+        input { flex: 1; background: transparent; border: none; outline: none; color: white; font-size: 1.1rem; font-family: 'Inter', sans-serif; }
+        button { background: rgba(255, 255, 255, 0.1); border: none; color: white; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        button:hover { background: white; color: black; transform: scale(1.1); }
+    </style>
 </head>
 <body>
 
-<video id="singularity-bg" muted autoplay playsinline loop>
-  <source src="black_hole.webm" type="video/webm">
-</video>
+    <div class="hero-wrapper">
+        <div class="hero-black-hole">
+            <div class="hero-video-container">
+                <video autoplay loop muted playsinline>
+                    <source src="black_hole.webm" type="video/webm">
+                </video>
+            </div>
 
-<div id="ambassador-stage">
-  <div class="glass-terminal">
-      <div class="terminal-header">
-          <div class="status-dot"></div>
-          <span>REMRIN // GENESIS_PROTOCOL</span>
-      </div>
+            <div class="hero-black-hole-circles">
+                <div class="hero-black-hole-circle"></div>
+                <div class="hero-black-hole-circle" style="width: 70%; height: 70%; top: 15%; left: 15%; border-color: rgba(186, 156, 255, 0.05);"></div>
+            </div>
 
-      <div id="chat-history" class="chat-log">
-          <div class="message rem-msg">
-              <span class="avatar">💙</span>
-              <div class="bubble">Sosu... The singularity is stable. I am ready to begin.</div>
-          </div>
-      </div>
+            <div class="hero-black-hole-stars">
+                <div style="top: 20%; left: 10%; animation-delay: 0s;"></div>
+                <div style="top: 80%; left: 20%; animation-delay: 1s;"></div>
+                <div style="top: 40%; left: 80%; animation-delay: 2s;"></div>
+                <div style="top: 10%; left: 60%; animation-delay: 0.5s;"></div>
+                <div style="top: 90%; left: 90%; animation-delay: 1.5s;"></div>
+                <div style="top: 30%; left: 40%; animation-delay: 2.5s;"></div>
+                <div style="top: 70%; left: 5%; animation-delay: 1.2s;"></div>
+                <div style="top: 50%; left: 95%; animation-delay: 3s;"></div>
+                <div style="top: 15%; left: 85%; animation-delay: 0.8s;"></div>
+                <div style="top: 60%; left: 30%; animation-delay: 1.8s;"></div>
+                </div>
+        </div>
+    </div>
 
-      <div class="input-zone">
-          <input type="text" id="user-input" placeholder="Type your reality..." autocomplete="off">
-          <button id="send-btn">➔</button>
-      </div>
-  </div>
-</div>
+    <div id="ambassador-stage">
+        <div class="glass-terminal">
+            <div class="terminal-header">
+                <div class="status-dot"></div>
+                <span>REMRIN // GENESIS_PROTOCOL</span>
+            </div>
 
-<script>
-  window.addEventListener('load', function() {
-      var video = document.getElementById('singularity-bg');
-      video.muted = true;
-      video.play().catch(e => console.log("Autoplay kickstarted."));
-  });
-</script>
+            <div id="chat-history" class="chat-log">
+                <div class="message rem-msg">
+                    <span class="avatar">💙</span>
+                    <div class="bubble">Sosu... The singularity is stable. The stars are aligned. I am ready to begin.</div>
+                </div>
+            </div>
+
+            <div class="input-zone">
+                <input type="text" id="user-input" placeholder="Type your reality..." autocomplete="off">
+                <button id="send-btn">➔</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Force the video to play
+        window.addEventListener('load', function() {
+            var video = document.querySelector('video');
+            video.muted = true;
+            video.play().catch(e => console.log("Autoplay kickstarted."));
+        });
+    </script>
 </body>
-<section class="hero">
-<div class="hero-content">
-<style hidden="">
-     .section-header-title-h5,.section-header-title-h3,.section-header-title-h2,.section-header-title-h1{font-family:AeonikPro,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif;font-feature-settings:unset;font-weight:500}.section-header-title-h1{font-size:72px;line-height:80px}.section-header-title-h2{font-size:56px;line-height:64px}.section-header-title-h3{font-size:48px;line-height:56px}.section-header-title-h5{font-size:32px;line-height:40px}.section-header-badge,.section-header-description{font-feature-settings:"ss01" on,"cv10" on,"calt" off,"liga" off}.section-header-description{font-size:16px;line-height:24px}.section-header-badge{font-size:14px;line-height:20px}.section-header-badge{font-weight:500}@media (max-width: 1248px){.section-header-title-h1{font-size:44px;line-height:52px}}@media (max-width: 1248px){.section-header-title-h2{font-size:40px;line-height:48px}}@media (max-width: 1248px){.section-header-title-h3{font-size:36px;line-height:40px}}@media (max-width: 1248px){.section-header-title-h5{font-size:32px;line-height:40px}}@keyframes hue-rotate{0%{filter:hue-rotate(0deg)}to{filter:hue-rotate(360deg)}}.section-header{position:relative;z-index:3}.section-header-badge{isolation:isolate;overflow:hidden;align-items:center;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border-radius:32px;box-shadow:inset 0 -7px 11px #a48fff1f;display:flex;margin:0 auto 12px;padding:6px 14px 6px 15px;position:relative;width:-moz-max-content;width:max-content}.section-header-badge:after{background:linear-gradient(90.01deg,rgba(229,156,255,.24) .01%,rgba(186,156,255,.24) 50.01%,rgba(156,178,255,.24) 100%);border-radius:inherit;content:"";inset:0;-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:xor;-webkit-mask-composite:xor;mask-composite:exclude;padding:1px;pointer-events:none;position:absolute}.section-header-badge-text{background:linear-gradient(0deg,rgba(255,255,255,.4),rgba(255,255,255,.4)),linear-gradient(90.01deg,#e59cff .01%,#ba9cff 50.01%,#9cb2ff 100%);background-blend-mode:normal,screen;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}.section-header-title{text-align:center}.section-header-title span{background:linear-gradient(180deg,#fff 0%,rgba(255,255,255,.7) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;display:block}.section-header-title-mobile{display:none}.section-header-description{color:#efedfdb3;margin:12px auto 0;max-width:455px;text-align:center}@media (max-width: 1248px){.section-header br,.section-header-title-desktop{display:none}.section-header-title-mobile{display:block}}
-    </style>
-</div>
-<style hidden="">
-    @keyframes hue-rotate{0%{filter:hue-rotate(0deg)}to{filter:hue-rotate(360deg)}}.hero-black-hole{height:810px;left:50%;-webkit-mask-image:radial-gradient(50% 50% at 50% 50%,#fff 60.94%,transparent 100%);mask-image:radial-gradient(50% 50% at 50% 50%,#fff 60.94%,transparent 100%);-webkit-mask-size:cover;mask-size:cover;position:absolute;top:174px;transform:translate(-50%);width:1440px}.hero-black-hole-visible .hero-black-hole-stars{animation:heroBlackHoleStarsRotate 70s linear infinite}.hero-black-hole-visible .hero-black-hole-stars div{animation:heroBlackHoleStarsTwinkle linear infinite}.hero-black-hole-visible .hero-black-hole-circle{animation:heroBlackHoleCirclesRotate 100s linear infinite}.hero-black-hole-stars{height:700px;left:50%;-webkit-mask-image:radial-gradient(50% 50% at 50% 50%,rgba(217,217,217,0) 27.08%,#d9d9d9 47.92%,rgba(217,217,217,.8) 75%,rgba(217,217,217,0) 100%);mask-image:radial-gradient(50% 50% at 50% 50%,rgba(217,217,217,0) 27.08%,#d9d9d9 47.92%,rgba(217,217,217,.8) 75%,rgba(217,217,217,0) 100%);-webkit-mask-position:0 0;mask-position:0 0;-webkit-mask-size:cover;mask-size:cover;pointer-events:none;position:absolute;top:50%;transform:translateZ(0) translate(-50%,-50%);width:700px}.hero-black-hole-stars div{background:rgba(255,255,255,0);border-radius:5px;height:2px;left:50%;position:absolute;transform:translateZ(0) translate(0) scale(1);width:2px}.hero-black-hole-stars div:nth-child(3n){opacity:.5}.hero-black-hole-circles{height:808px;margin-top:-12px;position:relative;width:808px;z-index:9999}.hero-black-hole-circles,.hero-black-hole-circles>div{left:50%;position:absolute;top:50%;transform:translateZ(0) translate(-50%,-50%)}.hero-black-hole-circles>div{height:100%;-webkit-mask-image:linear-gradient(180deg,rgba(186,156,255,.6) 9.41%,rgba(186,156,255,0) 29.79%);mask-image:linear-gradient(180deg,rgba(186,156,255,.6) 9.41%,rgba(186,156,255,0) 29.79%);width:100%}.hero-black-hole-circles>div:nth-child(2){height:608px;opacity:.6;width:608px}.hero-black-hole-circles>div:nth-child(3){height:416px;width:416px;z-index:1}.hero-black-hole-circles>div:nth-child(3) .hero-black-hole-circle{animation:none!important}.hero-black-hole .lazy-video{pointer-events:none}@keyframes heroBlackHoleStarsRotate{0%{transform:translateZ(0) translate(-50%,-50%) rotate(0)}to{transform:translateZ(0) translate(-50%,-50%) rotate(-360deg)}}@keyframes heroBlackHoleStarsRotateReverse{0%{transform:translateZ(0) translate(-50%,-50%) rotate(0)}to{transform:translateZ(0) translate(-50%,-50%) rotate(360deg)}}@keyframes heroBlackHoleStarsTwinkle{0%{background:rgba(255,255,255,0);transform:translateZ(0) translate(0) scale(1)}10%{background:rgb(255,255,255)}to{background:rgb(255,255,255);transform:translateZ(0) var(--transform) scale(.5)}}@media (max-width: 1248px){.hero-black-hole{width:1028px;height:578px;top:138px}.hero-black-hole-circles{display:none}}
-   </style>
-<!-- --- Black Hole Video Background --- -->
-<div class="hero-black-hole">
-<style hidden="">
-     @keyframes hue-rotate{0%{filter:hue-rotate(0deg)}to{filter:hue-rotate(360deg)}}.lazy-video{opacity:0;transition:.75s cubic-bezier(.6,.6,0,1) opacity;pointer-events:none}.lazy-video-loaded{opacity:1}.lazy-video video{height:auto;width:100%}
-    </style>
-<div class="lazy-video">
-<video autoplay="" loop="" muted="" playsinline="" preload="auto">
-<source src="black_hole.webm" type="video/webm"/>
-</video>
-</div>
-<div class="hero-black-hole-circles">
-<div>
-<style hidden="">
-       @keyframes hue-rotate{0%{filter:hue-rotate(0deg)}to{filter:hue-rotate(360deg)}}.hero-black-hole-circle{border-radius:50%;height:100%;position:relative;top:4px;width:100%}.hero-black-hole-circle:hover,.hero-black-hole-circle-hover{animation-play-state:paused!important;pointer-events:none}.hero-black-hole-circle:before{background:rgba(186,156,255,.04);border:1px solid rgba(186,156,255,.3);border-radius:50%;content:"";height:calc(100% - 2px);left:0;pointer-events:none;position:absolute;top:0;width:calc(100% - 2px)}.hero-black-hole-circle-dot{height:8px;position:absolute;width:8px;z-index:99}.hero-black-hole-circle-dot:before{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);background:rgba(186,156,255,.01);border:1px solid rgba(186,156,255,.3);border-radius:50%;content:"";display:block;height:6px;left:0;position:absolute;top:0;width:6px}.hero-black-hole-circle-dot:nth-child(1){left:-4px}.hero-black-hole-circle-dot:nth-child(2),.hero-black-hole-circle-dot:nth-child(3){left:var(--position-1)}.hero-black-hole-circle-dot:nth-child(4),.hero-black-hole-circle-dot:nth-child(5){left:50%;transform:translate(-50%)}.hero-black-hole-circle-dot:nth-child(6),.hero-black-hole-circle-dot:nth-child(7){right:var(--position-1)}.hero-black-hole-circle-dot:nth-child(8){right:-4px}.hero-black-hole-circle-dot:nth-child(1),.hero-black-hole-circle-dot:nth-child(8){top:50%;transform:translateY(-50%)}.hero-black-hole-circle-dot:nth-child(2),.hero-black-hole-circle-dot:nth-child(6){top:var(--position-1)}.hero-black-hole-circle-dot:nth-child(3),.hero-black-hole-circle-dot:nth-child(7){bottom:var(--position-1)}.hero-black-hole-circle-dot:nth-child(4){top:-4px}.hero-black-hole-circle-dot:nth-child(5){bottom:-4px}.hero-black-hole-circle-0{--position-1: 14.2%}.hero-black-hole-circle-1{--position-1: 14.1%}.hero-black-hole-circle-2{--position-1: 13.8%}@keyframes heroBlackHoleCirclesRotate{0%{transform:rotate(0)}to{transform:rotate(360deg)}}@keyframes heroBlackHoleCirclesRotateReverse{0%{transform:rotate(0)}to{transform:rotate(-360deg)}}
-      </style>
-<div class="hero-black-hole-circle hero-black-hole-circle-0">
-<div class="hero-black-hole-circle-dot">
-</div>
-<div class="hero-black-hole-circle-dot">
-</div>
-<div class="hero-black-hole-circle-dot">
-</div>
-<div class="hero-black-hole-circle-dot">
-</div>
-<div class="hero-black-hole-circle-dot">
-</div>
-<div class="hero-black-hole-circle-dot">
-</div>
-<div class="hero-black-hole-circle-dot">
-</div>
-<div class="hero-black-hole-circle-dot">
-</div>
-</div>
-</div>
-<div>
-<div class="hero-black-hole-circle hero-black-hole-circle-1">
-<div class="hero-black-hole-circle-dot">
-</div>
-<div class="hero-black-hole-circle-dot">
-</div>
-<div class="hero-black-hole-circle-dot">
-</div>
-<div class="hero-black-hole-circle-dot">
-</div>
-<div class="hero-black-hole-circle-dot">
-</div>
-<div class="hero-black-hole-circle-dot">
-</div>
-<div class="hero-black-hole-circle-dot">
-</div>
-<div class="hero-black-hole-circle-dot">
-</div>
-</div>
-</div>
-<div>
-<div class="hero-black-hole-circle hero-black-hole-circle-2">
-<div class="hero-black-hole-circle-dot">
-</div>
-<div class="hero-black-hole-circle-dot">
-<style hidden="">
-         .hero-black-hole-circle-tooltip-item,.hero-black-hole-circle-tooltip-title{font-feature-settings:"ss01" on,"cv10" on,"calt" off,"liga" off}.hero-black-hole-circle-tooltip-title{font-size:14px;line-height:20px}.hero-black-hole-circle-tooltip-title{font-weight:500}.hero-black-hole-circle-tooltip-item{font-size:12px;line-height:16px}@keyframes hue-rotate{0%{filter:hue-rotate(0deg)}to{filter:hue-rotate(360deg)}}.hero-black-hole-circle-tooltip{-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);background:radial-gradient(69.19% 69.19% at 50% 0%,rgba(255,255,255,.06) 0%,rgba(255,255,255,0) 100%),rgba(255,255,255,.03),rgba(3,0,20,.7);border:1px solid rgba(255,255,255,.1);border-radius:8px;opacity:0;padding:12px 20px;position:absolute;transform:translate(-20px);transition:.45s cubic-bezier(.6,.6,0,1) opacity,.45s cubic-bezier(.6,.6,0,1) transform;width:220px;z-index:999}.hero-black-hole-circle-tooltip-active{opacity:1;transform:translate(0)}.hero-black-hole-circle-tooltip-placeholder{height:86px;left:36px;top:-38px;visibility:hidden}.hero-black-hole-circle-tooltip-title{margin-bottom:8px}.hero-black-hole-circle-tooltip-item{align-items:center;color:#fffc;display:flex}.hero-black-hole-circle-tooltip-item:before{background:rgba(255,255,255,.2);border-radius:50%;content:"";display:block;height:4px;margin-right:14px;width:4px}.hero-black-hole-circle-tooltip-item a{color:#ba9cff;margin-left:4px}
-        </style>
-<div class="hero-black-hole-circle-tooltip hero-black-hole-circle-tooltip-placeholder">
-</div>
-</div>
-<div class="hero-black-hole-circle-dot">
-</div>
-<div class="hero-black-hole-circle-dot">
-<div class="hero-black-hole-circle-tooltip hero-black-hole-circle-tooltip-placeholder">
-</div>
-</div>
-<div class="hero-black-hole-circle-dot">
-</div>
-<div class="hero-black-hole-circle-dot">
-<div class="hero-black-hole-circle-tooltip hero-black-hole-circle-tooltip-placeholder">
-</div>
-</div>
-<div class="hero-black-hole-circle-dot">
-</div>
-<div class="hero-black-hole-circle-dot">
-</div>
-</div>
-</div>
-</div>
-<div class="hero-black-hole-stars">
-<div style="animation-duration:11.80720748172687s;animation-delay:0.8894606236703861s;top:80.75776029435968%;left:96.16447347707037%;--transform:translate(-290.83618290554335px, -193.77388985446598px)">
-</div>
-<div style="animation-duration:11.387501109122006s;animation-delay:4.838018947641017s;top:70.31375698316845%;left:90.6386067298728%;--transform:translate(-256.0232223981987px, -127.97666899396116px)">
-</div>
-<div style="animation-duration:12.82843217899953s;animation-delay:3.393940656363399s;top:95.60431704887591%;left:37.65187522554607%;--transform:translate(77.79318607905975px, -287.30719740791824px)">
-</div>
-<div style="animation-duration:7.807774120136122s;animation-delay:4.968538170300635s;top:17.52992993724165%;left:40.669638781534026%;--transform:translate(58.78127567633566px, 204.56144139537759px)">
-</div>
-<div style="animation-duration:7.069076806652838s;animation-delay:1.744161676107332s;top:92.19352408713357%;left:18.20988759617379%;--transform:translate(200.27770814410513px, -265.81920174894145px)">
-</div>
-<div style="animation-duration:8.115261418138513s;animation-delay:1.9776976378280708s;top:27.390977740880974%;left:87.23278663154024%;--transform:translate(-234.56655577870353px, 142.43684023244987px)">
-</div>
-<div style="animation-duration:8.6344076884415s;animation-delay:0.1488788769970928s;top:44.76979971911543%;left:6.83338497727175%;--transform:translate(271.949674643188px, 32.95026176957278px)">
-</div>
-<div style="animation-duration:11.201031470232156s;animation-delay:0.142869560590847s;top:78.11821373216733%;left:19.964969869494166%;--transform:translate(189.22068982218678px, -177.14474651265422px)">
-</div>
-<div style="animation-duration:10.242030999034816s;animation-delay:0.8776387288756038s;top:16.27974735305613%;left:34.902767435399106%;--transform:translate(95.11256515698564px, 212.43759167574638px)">
-</div>
-<div style="animation-duration:13.938728108642454s;animation-delay:0.16080547122924838s;top:22.66718908246532%;left:71.05991763934156%;--transform:translate(-132.67748112785185px, 172.19670878046847px)">
-</div>
-<div style="animation-duration:13.835750695476438s;animation-delay:0.7772457329878035s;top:16.54704598473449%;left:94.0799715524616%;--transform:translate(-277.70382078050807px, 210.75361029617272px)">
-</div>
-<div style="animation-duration:10.2913737050389s;animation-delay:0.03336409969434295s;top:82.17729336583331%;left:32.20147415336414%;--transform:translate(112.13071283380593px, -202.71694820474985px)">
-</div>
-<div style="animation-duration:8.995331727911386s;animation-delay:2.112341422342049s;top:93.9204002933164%;left:40.96248740065269%;--transform:translate(56.93632937588802px, -276.6985218478934px)">
-</div>
-<div style="animation-duration:9.045180327223868s;animation-delay:3.0318209976554824s;top:26.087905795494713%;left:3.903867915572423%;--transform:translate(290.40563213189375px, 150.6461934883833px)">
-</div>
-<div style="animation-duration:11.912093677569054s;animation-delay:1.1820672307402325s;top:21.442550246660176%;left:81.87981845941718%;--transform:translate(-200.84285629432827px, 179.9119334460409px)">
-</div>
-<div style="animation-duration:8.65457020075411s;animation-delay:3.2882138527779525s;top:94.98285706125071%;left:26.72345392798534%;--transform:translate(146.64224025369236px, -283.3919994858795px)">
-</div>
-<div style="animation-duration:11.736114044924166s;animation-delay:1.7201203761958828s;top:91.10889657354733%;left:43.231665830136315%;--transform:translate(42.64050527014121px, -258.98604841334816px)">
-</div>
-<div style="animation-duration:11.937529070718274s;animation-delay:4.475744584491716s;top:4.752737479017277%;left:81.26645261356673%;--transform:translate(-196.97865146547042px, 285.0577538821912px)">
-</div>
-<div style="animation-duration:10.239371034881204s;animation-delay:0.8672883765679007s;top:16.911887692909943%;left:22.129349834799218%;--transform:translate(175.58509604076494px, 208.45510753466738px)">
-</div>
-<div style="animation-duration:12.368200616795228s;animation-delay:3.6690964759390834s;top:8.804220367930116%;left:69.65664514615565%;--transform:translate(-123.83686442078067px, 259.53341168204025px)">
-</div>
-<div style="animation-duration:7.990482984665397s;animation-delay:3.002102832982211s;top:47.35790769505777%;left:97.33660848133847%;--transform:translate(-298.2206334324324px, 16.64518152113609px)">
-</div>
-<div style="animation-duration:13.12197171748333s;animation-delay:0.13088032744633438s;top:20.943197378901534%;left:9.07702048733614%;--transform:translate(257.8147709297823px, 183.05785651292032px)">
-</div>
-<div style="animation-duration:13.970460198500472s;animation-delay:0.0565396262982254s;top:23.670209278986576%;left:55.305893183356325%;--transform:translate(-33.42712705514486px, 165.87768154238458px)">
-</div>
-<div style="animation-duration:9.902039056747384s;animation-delay:1.999158017767808s;top:60.52116646789807%;left:94.3120366657773%;--transform:translate(-279.16583099439697px, -66.28334874775784px)">
-</div>
-<div style="animation-duration:9.0080982541467s;animation-delay:3.0709140577069647s;top:5.031786696412377%;left:60.85166391889536%;--transform:translate(-68.36548268904076px, 283.29974381260206px)">
-</div>
-<div style="animation-duration:13.988116307455243s;animation-delay:3.4767673245557775s;top:93.32280567945102%;left:97.60614815539495%;--transform:translate(-299.9187333789882px, -272.93367578054136px)">
-</div>
-<div style="animation-duration:10.535238122882584s;animation-delay:2.266710854799295s;top:21.219269426893096%;left:81.82713524002969%;--transform:translate(-200.51095201218712px, 181.31860261057352px)">
-</div>
-<div style="animation-duration:13.647397258592072s;animation-delay:3.5485170269346455s;top:93.47281317063118%;left:59.223848225959586%;--transform:translate(-58.11024382354537px, -273.8787229749765px)">
-</div>
-<div style="animation-duration:11.384399362252724s;animation-delay:3.948922167140103s;top:43.07176878772183%;left:24.24220130495014%;--transform:translate(162.2741317788141px, 43.64785663735244px)">
-</div>
-<div style="animation-duration:7.546144100480225s;animation-delay:0.38164507862438635s;top:19.263342695346996%;left:24.420666760637832%;--transform:translate(161.14979940798165px, 193.6409410193139px)">
-</div>
-<div style="animation-duration:10.599057750137469s;animation-delay:2.463105383672172s;top:90.40788313592087%;left:45.247073045005834%;--transform:translate(29.943439816463247px, -254.56966375630148px)">
-</div>
-<div style="animation-duration:7.608114470539759s;animation-delay:4.018078086215708s;top:74.52754804567896%;left:10.692297241656256%;--transform:translate(247.6385273775656px, -154.52355268777742px)">
-</div>
-<div style="animation-duration:12.164551464063539s;animation-delay:3.3457979630683465s;top:75.4298761545384%;left:67.38337832587482%;--transform:translate(-109.51528345301136px, -160.20821977359194px)">
-</div>
-<div style="animation-duration:7.856643322214188s;animation-delay:4.635905634867744s;top:96.44626864573446%;left:21.064307571649632%;--transform:translate(182.2948622986073px, -292.61149246812715px)">
-</div>
-<div style="animation-duration:12.885293481633227s;animation-delay:3.8104026790218803s;top:95.78437144517432%;left:41.5789555988878%;--transform:translate(53.05257972700687px, -288.4415401045982px)">
-</div>
-<div style="animation-duration:8.739974192347686s;animation-delay:2.3068377128492523s;top:23.77464344869391%;left:35.79919708594155%;--transform:translate(89.46505835856824px, 165.21974627322837px)">
-</div>
-<div style="animation-duration:11.674757241043828s;animation-delay:2.169643250619263s;top:61.48934401435386%;left:92.4030976929116%;--transform:translate(-267.1395154653431px, -72.38286729042936px)">
-</div>
-<div style="animation-duration:7.132857964328711s;animation-delay:3.7856592473138884s;top:55.885436988200745%;left:86.29745361542962%;--transform:translate(-228.6739577772066px, -37.07825302566469px)">
-</div>
-<div style="animation-duration:9.049007931477693s;animation-delay:2.818030862768839s;top:89.79466466231088%;left:28.287870315103845%;--transform:translate(136.78641701484577px, -250.70638737255854px)">
-</div>
-<div style="animation-duration:7.856836563975317s;animation-delay:3.454069781135618s;top:83.30448719816815%;left:64.714878753327%;--transform:translate(-92.7037361459601px, -209.81826934845927px)">
-</div>
-<div style="animation-duration:13.688298462413417s;animation-delay:4.496533037564899s;top:53.34042501794378%;left:6.782385651681522%;--transform:translate(272.2709703944064px, -21.044677613045845px)">
-</div>
-<div style="animation-duration:13.34730430923047s;animation-delay:3.6400076646944557s;top:16.326718633278993%;left:63.7033545276835%;--transform:translate(-86.33113352440604px, 212.14167261034234px)">
-</div>
-<div style="animation-duration:10.276967626922437s;animation-delay:1.8290719073773476s;top:34.41471044841429%;left:19.072142180485297%;--transform:translate(194.84550426294265px, 98.18732417498998px)">
-</div>
-<div style="animation-duration:10.01591534196962s;animation-delay:3.274060058402771s;top:55.64495375547796%;left:84.77057160103105%;--transform:translate(-219.0546010864956px, -35.563208659511126px)">
-</div>
-<div style="animation-duration:7.20302344720637s;animation-delay:1.0742927833766958s;top:2.142144543906821%;left:72.29947377860864%;--transform:translate(-140.48668480523443px, 301.50448937338706px)">
-</div>
-<div style="animation-duration:10.578635355023732s;animation-delay:0.7663830119618653s;top:93.99277894940839%;left:0.6389402694589208%;--transform:translate(310.97467630240885px, -277.1545073812729px)">
-</div>
-<div style="animation-duration:12.319644575298458s;animation-delay:4.786916956006032s;top:80.8161826643304%;left:16.59100724579168%;--transform:translate(210.47665435151242px, -194.1419507852815px)">
-</div>
-<div style="animation-duration:12.425444076984718s;animation-delay:3.7397720089391395s;top:24.357562412980283%;left:65.06807287369398%;--transform:translate(-94.92885910427209px, 161.54735679822423px)">
-</div>
-<div style="animation-duration:13.420310937771033s;animation-delay:4.552945939098248s;top:73.90724567482465%;left:81.58788900911323%;--transform:translate(-199.0037007574133px, -150.61564775139524px)">
-</div>
-<div style="animation-duration:13.155366591160831s;animation-delay:2.83985966431631s;top:58.645849927469925%;left:4.0317897457169405%;--transform:translate(289.59972460198327px, -54.46885454306055px)">
-</div>
-<div style="animation-duration:10.422283955619386s;animation-delay:2.3829971300976016s;top:77.02595987747694%;left:50.53157737251068%;--transform:translate(-3.3489374468172857px, -170.26354722810473px)">
-</div>
-<div style="animation-duration:13.593695698711723s;animation-delay:2.6196786955301476s;top:99.73382479229281%;left:12.35860700423379%;--transform:translate(237.14077587332716px, -313.3230961914447px)">
-</div>
-<div style="animation-duration:7.409111970772642s;animation-delay:4.110961644029155s;top:97.29374762009951%;left:40.468943892704125%;--transform:translate(60.04565347596403px, -297.95061000662685px)">
-</div>
-<div style="animation-duration:10.651996522925163s;animation-delay:3.185262037746482s;top:79.1921631080854%;left:22.653924182507133%;--transform:translate(172.28027765020505px, -183.91062758093798px)">
-</div>
-<div style="animation-duration:9.096145775048907s;animation-delay:4.71411029473243s;top:9.173565614494583%;left:75.75161342798935%;--transform:translate(-162.23516459633294px, 257.2065366286841px)">
-</div>
-<div style="animation-duration:7.895531964214342s;animation-delay:2.6861289626323126s;top:24.212007139343903%;left:92.34003925638457%;--transform:translate(-266.7422473152227px, 162.4643550221334px)">
-</div>
-<div style="animation-duration:13.30767080031977s;animation-delay:4.499309857431238s;top:33.51209290195556%;left:11.853156122950637%;--transform:translate(240.32511642541098px, 103.87381471767998px)">
-</div>
-<div style="animation-duration:8.42460888542261s;animation-delay:0.1683914532767672s;top:77.73336045789263%;left:76.75453147652733%;--transform:translate(-168.55354830212224px, -174.72017088472353px)">
-</div>
-<div style="animation-duration:11.259709670759104s;animation-delay:2.1080395965119294s;top:37.77948208596287%;left:75.07356389952528%;--transform:translate(-157.96345256700926px, 76.98926285843392px)">
-</div>
-<div style="animation-duration:12.032689554868059s;animation-delay:3.3139761328701822s;top:27.60580537767634%;left:87.95150597607024%;--transform:translate(-239.09448764924255px, 141.08342612063907px)">
-</div>
-<div style="animation-duration:9.686135515750514s;animation-delay:4.037558149917033s;top:15.797256474397425%;left:41.50808434410222%;--transform:translate(53.49906863215598px, 215.47728421129622px)">
-</div>
-<div style="animation-duration:11.775015104806474s;animation-delay:2.6230276637424312s;top:1.5008820407880208%;left:54.786795975787015%;--transform:translate(-30.156814647458198px, 305.5444431430355px)">
-</div>
-<div style="animation-duration:10.70164018005544s;animation-delay:2.7678674975469244s;top:11.231994020147518%;left:67.98225077314959%;--transform:translate(-113.2881798708424px, 244.23843767307065px)">
-</div>
-<div style="animation-duration:13.055921084703495s;animation-delay:0.8247386657097799s;top:15.993249161629809%;left:30.259855506286847%;--transform:translate(124.36291031039286px, 214.24253028173223px)">
-</div>
-<div style="animation-duration:8.616559492521496s;animation-delay:2.7365426147263197s;top:6.4168050631263185%;left:64.50720216967892%;--transform:translate(-91.39537366897714px, 274.5741281023042px)">
-</div>
-<div style="animation-duration:10.463108173355527s;animation-delay:2.6721387819542564s;top:2.179112026488572%;left:64.05127146174993%;--transform:translate(-88.52301020902459px, 301.271594233122px)">
-</div>
-<div style="animation-duration:13.435979154343954s;animation-delay:0.15652179083913698s;top:11.758846045398851%;left:8.90952203050157%;--transform:translate(258.87001120784015px, 240.91926991398722px)">
-</div>
-<div style="animation-duration:12.869163553274538s;animation-delay:3.2617030676582335s;top:75.05989373650941%;left:53.15868162044044%;--transform:translate(-19.899694208774754px, -157.87733054000932px)">
-</div>
-<div style="animation-duration:7.660804101489411s;animation-delay:2.041447339504512s;top:23.18244261968161%;left:63.21089051395601%;--transform:translate(-83.22861023792284px, 168.95061149600588px)">
-</div>
-<div style="animation-duration:12.920736991848177s;animation-delay:2.052873777713855s;top:11.065523340737515%;left:8.045427697576502%;--transform:translate(264.313805505268px, 245.28720295335367px)">
-</div>
-<div style="animation-duration:11.33315725030587s;animation-delay:0.8562824976534689s;top:7.013574080939389%;left:26.721763143140542%;--transform:translate(146.6528921982146px, 270.81448329008185px)">
-</div>
-<div style="animation-duration:11.616901596590802s;animation-delay:1.0482783882844449s;top:83.60825469936073%;left:26.493501220406234%;--transform:translate(148.09094231144073px, -211.7320046059726px)">
-</div>
-<div style="animation-duration:9.588772790040904s;animation-delay:3.724114812910396s;top:23.749698937852237%;left:17.29253163642086%;--transform:translate(206.05705069054858px, 165.3768966915309px)">
-</div>
-<div style="animation-duration:7.56660895770727s;animation-delay:2.9809461206954246s;top:24.152899167240793%;left:54.434375993525805%;--transform:translate(-27.936568759212573px, 162.83673524638303px)">
-</div>
-<div style="animation-duration:7.85801827312887s;animation-delay:2.737487722730292s;top:85.72113623538553%;left:32.967255649094525%;--transform:translate(107.30628941070448px, -225.04315828292883px)">
-</div>
-<div style="animation-duration:10.38841249620234s;animation-delay:2.181270172518903s;top:0.48466247381755423%;left:88.39541007825376%;--transform:translate(-241.89108349299866px, 311.94662641494944px)">
-</div>
-<div style="animation-duration:10.869803217157449s;animation-delay:1.4584502617745931s;top:48.205590119442675%;left:99.48250213989832%;--transform:translate(-311.7397634813594px, 11.304782247511133px)">
-</div>
-<div style="animation-duration:9.716892295911908s;animation-delay:2.2741582594180842s;top:46.9494475535674%;left:18.589421569463504%;--transform:translate(197.8866441123799px, 19.218480412525345px)">
-</div>
-<div style="animation-duration:13.211774807244183s;animation-delay:0.6930221819491311s;top:53.50371382593868%;left:90.3569797673464%;--transform:translate(-254.24897253428236px, -22.073397103413694px)">
-</div>
-<div style="animation-duration:8.246992569931322s;animation-delay:4.287953417884591s;top:90.51722318420785%;left:48.21677513706359%;--transform:translate(11.234316636499342px, -255.25850606050946px)">
-</div>
-<div style="animation-duration:7.666468339858389s;animation-delay:0.21295230137984178s;top:74.89040657073176%;left:77.81642904230786%;--transform:translate(-175.24350296653952px, -156.80956139561013px)">
-</div>
-<div style="animation-duration:13.673229519447535s;animation-delay:2.8002395720552045s;top:6.678399764998133%;left:86.36683000400704%;--transform:translate(-229.11102902524436px, 272.92608148051175px)">
-</div>
-<div style="animation-duration:9.335363715485895s;animation-delay:1.9441197680931388s;top:54.969871422275986%;left:4.676394940798745%;--transform:translate(285.5387118729679px, -31.310189960338686px)">
-</div>
-<div style="animation-duration:7.072264191268435s;animation-delay:1.8266891005510932s;top:61.54291693036442%;left:95.14395917943843%;--transform:translate(-284.4069428304621px, -72.72037666129586px)">
-</div>
-<div style="animation-duration:7.484991456400783s;animation-delay:0.3399820456694158s;top:22.034254359713735%;left:36.224341560156034%;--transform:translate(86.78664817101696px, 176.18419753380348px)">
-</div>
-<div style="animation-duration:11.26502283672166s;animation-delay:3.6822265639418115s;top:17.831908574365606%;left:82.83196486742621%;--transform:translate(-206.8413786647851px, 202.65897598149667px)">
-</div>
-<div style="animation-duration:10.707909201358165s;animation-delay:4.240905959203058s;top:83.88077424502715%;left:99.23985953764902%;--transform:translate(-310.21111508718883px, -213.44887774367106px)">
-</div>
-<div style="animation-duration:13.84117250299312s;animation-delay:1.549252372815183s;top:61.74555239050954%;left:12.413802812679098%;--transform:translate(236.7930422801217px, -73.99698006021008px)">
-</div>
-<div style="animation-duration:10.750424146542159s;animation-delay:0.31741945263466187s;top:88.17394579904723%;left:2.0498477090593603%;--transform:translate(302.0859594329261px, -240.49585853399753px)">
-</div>
-<div style="animation-duration:10.909279016550089s;animation-delay:2.3840332963337207s;top:86.30299726137798%;left:92.68118684034792%;--transform:translate(-268.89147709419194px, -228.7088827466813px)">
-</div>
-<div style="animation-duration:9.13609460505469s;animation-delay:1.4323118829905224s;top:57.33903858231177%;left:95.14456744415489%;--transform:translate(-284.4107748981758px, -46.235943068564154px)">
-</div>
-<div style="animation-duration:9.189166227721827s;animation-delay:0.2750230927998709s;top:44.12732176364551%;left:88.28225232545847%;--transform:translate(-241.17818965038842px, 36.99787288903328px)">
-</div>
-<div style="animation-duration:12.65690531194718s;animation-delay:4.174595589042819s;top:17.08049675373511%;left:81.01489029333347%;--transform:translate(-195.39380884800084px, 207.3928704514688px)">
-</div>
-<div style="animation-duration:10.022001090221618s;animation-delay:4.883368121655525s;top:72.33411728476426%;left:87.51863219384457%;--transform:translate(-236.36738282122084px, -140.7049388940149px)">
-</div>
-<div style="animation-duration:7.783813341846658s;animation-delay:2.484368167036858s;top:25.494582128950682%;left:20.74483193437191%;--transform:translate(184.30755881345698px, 154.3841325876107px)">
-</div>
-<div style="animation-duration:10.9497447077975s;animation-delay:0.6099323250032385s;top:17.806605602270853%;left:2.0325350890626703%;--transform:translate(302.1950289389052px, 202.81838470569363px)">
-</div>
-<div style="animation-duration:9.477840231946994s;animation-delay:0.008101416660597494s;top:69.14309861924136%;left:18.2290152593771%;--transform:translate(200.15720386592426px, -120.6015213012205px)">
-</div>
-<div style="animation-duration:7.164444703502511s;animation-delay:1.865503511123765s;top:81.47845687732085%;left:82.50836227874152%;--transform:translate(-204.80268235607156px, -198.31427832712131px)">
-</div>
-<div style="animation-duration:9.874540406758422s;animation-delay:2.8854859744346326s;top:87.42552211670942%;left:84.34829183065689%;--transform:translate(-216.39423853313843px, -235.7807893352693px)">
-</div>
-<div style="animation-duration:7.566511679464714s;animation-delay:0.8051157886996219s;top:10.835546713218204%;left:0.7197735502189051%;--transform:translate(310.46542663362095px, 246.73605570672535px)">
-</div>
-</div>
-</div>
-<style hidden="">
-    @keyframes hue-rotate{0%{filter:hue-rotate(0deg)}to{filter:hue-rotate(360deg)}}.hero-video{margin:232px auto 0;position:relative;width:1216px;height:766px}.hero-video-content{height:100%}.hero-video:before{background:linear-gradient(180deg,rgba(4,1,21,0) 0%,rgba(4,1,21,.7) 34.48%,#030014 82.36%);content:"";display:block;height:calc(100% + 1px);left:0;position:absolute;top:0;width:100%;z-index:1}.hero-video-preview{background:rgba(255,255,255,.01);border:1px solid rgba(255,255,255,.1);border-radius:24px;box-shadow:inset 0 0 0 8px #ffffff08;padding:8px;height:100%}.hero-video-preview img{-webkit-backdrop-filter:blur(15px);backdrop-filter:blur(15px);width:100%;height:100%}.hero-video-play,.hero-video svg{left:50%;position:absolute;top:302px;transform:translate(-50%,-50%);z-index:2}.hero-video svg{pointer-events:none}.hero-video-play{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:50%;cursor:pointer;height:112px;width:112px}.hero-video-play-inner{-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);background:linear-gradient(180deg,rgba(255,255,255,0) 17.71%,rgba(255,255,255,.12) 100%),rgba(255,255,255,.01);border-radius:inherit;height:80px;left:50%;position:absolute;top:50%;transform:translate(-50%,-50%);width:80px}.hero-video-play-inner:before{background:linear-gradient(180deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.1) 100%),linear-gradient(0deg,rgba(255,255,255,.05),rgba(255,255,255,.05));border-radius:inherit;content:"";inset:0;-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:xor;-webkit-mask-composite:xor;mask-composite:exclude;padding:1px;pointer-events:none;position:absolute}@media (max-width: 1248px){.hero-video{width:368px;height:676px;margin-top:120px}.hero-video-preview img{border-radius:16px}.hero-video-play,.hero-video svg{top:274px}}
-   </style>
-<!-- ============================================
-  HERO VIDEO SECTION
-  ============================================
-  Video preview/play area
-  ============================================ -->
-
-<div class="hero-video">
-<div class="hero-video-content">
-<div class="hero-video-preview">
-
-
-</div>
-</div>
-<!-- <div class="hero-video-play"> -->
-<!-- <div class="hero-video-play-inner"> -->  <!-- //Inner circle button // -->
-</div>
-</div>
-
-
-</div>
-</section>
-<div class="footer">
-<div class="container-sm">
-<div class="footer-top">
-<div class="footer-brand">
-<div class="logo-with-name">
-<div class="logo-with-name-name">
-</div>
-</div>
-</div>
-</div>
-<div class="footer-bottom">
-<div class="footer-legal">
-
-<center>
-  <div class="footer-copyright">
-      2025 Remrin.ai, All rights reserved.
-     </div>
-    </center>
-</div>
-</div>
-</div>
-</body>
-
-
-
-
-
 </html>
