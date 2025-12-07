@@ -23,29 +23,25 @@
             background: #000; /* Keep it pure black for deep contrast */
         }
 
-        /* 2. THE PHANTOM CROWN (Dropped & Faded) */
+        /* 2. THE PHANTOM CROWN (Double Faded) */
         #singularity-bg {
+            /* ... keep your existing position/size settings ... */
             position: absolute;
-            
-            /* --- THE DROP (Gravity) --- */
-            /* adjusting this % moves the whole video down/up */
-            /* Try 15% to start. If you want it lower, try 25% */
-            top: 10%; 
-            
+            top: 15%; /* Or whatever top value you settled on */
             left: 0;
             width: 100%;
-            height: 85%;
-            
-            object-fit: cover; 
-            /* CHANGE: Center it perfectly inside the dropped frame */
-            object-position: center center; 
-            
+            height: 65%;
+            object-fit: contain; 
+            object-position: center center;
             z-index: 0;
             opacity: 1;
-            
-            /* The Magic Fade (Keep this!) */
-            mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+
+            /* --- THE DOUBLE FADE SPELL --- */
+            /* 0% to 15%: Fade IN from top */
+            /* 15% to 85%: Fully Visible Middle */
+            /* 85% to 100%: Fade OUT at bottom */
+            mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
         }
 
         /* 3. THE STAGE */
