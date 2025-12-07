@@ -6,67 +6,75 @@
     <title>Remrin.ai | The Soul Layer</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remrin.ai | The Soul Layer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
     <style>
-        /* 1. THE STAGE (Move from Center -> Bottom) */
-#ambassador-stage {
-    position: relative;
-    z-index: 2;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    /* CHANGE: Align to bottom instead of center */
-    align-items: flex-end; 
-    /* CHANGE: Add padding so it doesn't touch the floor */
-    padding-bottom: 40px; 
-}
-
-/* 2. THE GLASS TERMINAL (Shrink Height) */
-.glass-terminal {
-    width: 100%;
-    max-width: 600px;
-    /* CHANGE: Reduce height from 80vh to 60vh to reveal the hole */
-    height: 60vh; 
-    background: rgba(20, 20, 20, 0.6);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 24px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    animation: floatUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-/* 3. (OPTIONAL) THE VIDEO POSITION */
-/* If the black hole is still too low, add this to #singularity-bg */
-#singularity-bg {
-    /* ... existing styles ... */
-    /* This shifts the video image UP or DOWN inside the frame */
-    /* Try 'center 30%' or 'center 40%' to perfectly frame the hole */
-    object-position: center 40%; 
-}
-
-        /* 4. THE STAGE (Centers the Chat Box) */
-        #ambassador-stage {
-            position: relative;
-            z-index: 2; /* Sits on top */
-            height: 100vh;
-            display: flex; justify-content: center; align-items: center;
-            padding: 20px;
+        /* 1. THE VIEWPORT LOCK (Critical Fix) */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body, html { 
+            width: 100%; 
+            height: 100%; 
+            overflow: hidden; /* <--- KILLS THE SCROLL BARS */
+            font-family: 'Inter', sans-serif; 
+            background: #000;
         }
 
-        /* 5. THE GLASS TERMINAL (The Chat UI) */
+        /* 2. THE EVENT HORIZON (Video Background) */
+        #singularity-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Forces video to fit the screen, not stretch it */
+            /* ALIGNMENT TWEAK: This moves the hole UP so it sits above the chat */
+            object-position: center 30%; 
+            z-index: 0;
+            opacity: 0.8;
+        }
+
+        /* 3. THE STAGE (Layout Manager) */
+        #ambassador-stage {
+            position: absolute; /* Locks it to the screen */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            display: flex;
+            
+            /* THIS CENTERS IT HORIZONTALLY */
+            justify-content: center; 
+            
+            /* THIS PUSHES IT TO THE BOTTOM (Hero Layout) */
+            align-items: flex-end; 
+            
+            padding-bottom: 50px; /* Lift it off the floor slightly */
+        }
+
+        /* 4. THE GLASS TERMINAL (The UI) */
         .glass-terminal {
-            width: 100%; max-width: 600px; height: 80vh;
-            /* This is the Glass Effect */
-            background: rgba(20, 20, 20, 0.6); 
-            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); 
+            width: 90%; /* Mobile Friendly width */
+            max-width: 550px; /* Desktop Max width */
+            height: 55vh; /* Takes up bottom half only */
+            
+            background: rgba(20, 20, 20, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 24px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-            /* Layout Rules */
-            display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
             animation: floatUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
@@ -77,51 +85,28 @@
             display: flex; align-items: center; gap: 10px;
             font-size: 0.75rem; letter-spacing: 1.5px; text-transform: uppercase;
             color: rgba(255, 255, 255, 0.4);
+            background: rgba(0,0,0,0.2);
         }
-        .status-dot {
-            width: 6px; height: 6px; background: #00ff88;
-            border-radius: 50%; box-shadow: 0 0 8px #00ff88;
-            animation: pulse 2s infinite;
-        }
+        .status-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 8px #00ff88; animation: pulse 2s infinite; }
 
         /* CHAT LOG */
-        .chat-log {
-            flex: 1; padding: 20px; overflow-y: auto;
-            display: flex; flex-direction: column; gap: 15px;
-        }
-
+        .chat-log { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        
         /* BUBBLES */
         .message { display: flex; gap: 12px; align-items: flex-end; max-width: 90%; }
         .rem-msg { align-self: flex-start; }
-        /* Placeholder for User Msg if needed later */
-        
+        .user-msg { align-self: flex-end; flex-direction: row-reverse; }
+        .bubble { padding: 12px 16px; border-radius: 18px; font-size: 0.95rem; line-height: 1.5; color: #eee; }
+        .rem-msg .bubble { background: rgba(255, 255, 255, 0.08); border-bottom-left-radius: 4px; }
+        .user-msg .bubble { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border-bottom-right-radius: 4px; }
         .avatar { font-size: 1.2rem; }
-        .bubble {
-            padding: 12px 16px; border-radius: 18px; font-size: 0.95rem; line-height: 1.5;
-            color: #eee;
-        }
-        .rem-msg .bubble {
-            background: rgba(255, 255, 255, 0.08); 
-            border-bottom-left-radius: 4px;
-        }
 
         /* INPUT ZONE */
-        .input-zone {
-            padding: 20px; background: rgba(0, 0, 0, 0.3);
-            display: flex; gap: 10px; border-top: 1px solid rgba(255,255,255,0.05);
-        }
-        input {
-            flex: 1; background: transparent; border: none; outline: none;
-            color: white; font-size: 1rem; font-family: 'Inter', sans-serif;
-        }
-        button {
-            background: rgba(255, 255, 255, 0.1); border: none; color: white;
-            width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
-            transition: all 0.2s;
-        }
+        .input-zone { padding: 20px; background: rgba(0, 0, 0, 0.3); display: flex; gap: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
+        input { flex: 1; background: transparent; border: none; outline: none; color: white; font-size: 1rem; font-family: 'Inter', sans-serif; }
+        button { background: rgba(255, 255, 255, 0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: all 0.2s; }
         button:hover { background: white; color: black; transform: scale(1.1); }
 
-        /* ANIMATIONS */
         @keyframes floatUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
@@ -131,8 +116,6 @@
     <video id="singularity-bg" muted autoplay playsinline loop>
         <source src="black_hole.webm" type="video/webm">
     </video>
-
-    <div class="tint-overlay"></div>
 
     <div id="ambassador-stage">
         <div class="glass-terminal">
@@ -144,38 +127,24 @@
             <div id="chat-history" class="chat-log">
                 <div class="message rem-msg">
                     <span class="avatar">💙</span>
-                    <div class="bubble">Sosu... The void is quiet tonight. Shall we wake up a new soul?</div>
+                    <div class="bubble">Sosu... The singularity is stable. I am ready to begin.</div>
                 </div>
             </div>
 
             <div class="input-zone">
-                <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off">
+                <input type="text" id="user-input" placeholder="Type your reality..." autocomplete="off">
                 <button id="send-btn">➔</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Force the video to play immediately on load
         window.addEventListener('load', function() {
             var video = document.getElementById('singularity-bg');
-            video.muted = true; // Crucial for autoplay
-            var playPromise = video.play();
-
-            if (playPromise !== undefined) {
-                playPromise.then(_ => {
-                    console.log("Singularity Activated.");
-                })
-                .catch(error => {
-                    console.log("Autoplay blocked. Attempting force kick.");
-                    // Fallback: Try playing on first interaction if blocked
-                    document.body.addEventListener('click', function() {
-                        video.play();
-                    }, { once: true });
-                });
-            }
+            video.muted = true;
+            video.play().catch(e => console.log("Autoplay kickstarted."));
         });
     </script>
-
 </body>
+</html>
 </html>
