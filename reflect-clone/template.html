@@ -19,6 +19,7 @@
             color: #fff;
             font-family: 'Inter', sans-serif;
             overflow: hidden; /* No Scrollbars */
+            
         }
 
         /* =========================================
@@ -137,6 +138,55 @@
             font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
             color: rgba(255, 255, 255, 0.5);
         }
+
+        /* =========================================
+           5. THE GLASS HUD (Navbar)
+           ========================================= */
+           .glass-nav {
+            position: absolute; /* Floats over the video */
+            top: 0; left: 0; width: 100%;
+            height: 80px; /* Height of the bar */
+            z-index: 20; /* Highest priority, sits on top of everything */
+            
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 40px; /* Side spacing */
+            
+            /* THE GLASS MAGIC */
+            background: rgba(255, 255, 255, 0.02); /* Very faint white tint */
+            backdrop-filter: blur(8px); /* Subtle blur behind it */
+            -webkit-backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* The glass edge */
+        }
+
+        /* LOGO STYLING */
+        .logo-text { font-weight: 600; font-size: 1.5rem; letter-spacing: -1px; color: white; }
+        .logo-dot { color: #8a2be2; /* Purple dot to match the hole */ }
+
+        /* LINK STYLING */
+        .nav-links { display: flex; gap: 30px; align-items: center; }
+        .nav-item { 
+            color: rgba(255, 255, 255, 0.7); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s;
+        }
+        .nav-item:hover { color: white; }
+
+        /* LOGIN BUTTON (Glass Pill) */
+        .nav-btn-login {
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            color: white; text-decoration: none; font-size: 0.9rem; font-weight: 500;
+            transition: all 0.2s;
+        }
+        .nav-btn-login:hover {
+            background: white; color: black; box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+        
+        /* MOBILE TWEAK */
+        @media (max-width: 600px) {
+            .glass-nav { padding: 0 20px; }
+            .nav-item { display: none; } /* Hide text links on small phones */
+        }
         
         .status-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 10px #00ff88; animation: pulse 2s infinite; }
         
@@ -159,6 +209,18 @@
     </style>
 </head>
 <body>
+
+  <nav class="glass-nav">
+    <div class="nav-logo">
+        <span class="logo-text">remrin<span class="logo-dot">.ai</span></span>
+        </div>
+
+    <div class="nav-links">
+        <a href="#" class="nav-item">Soul Market</a>
+        <a href="#" class="nav-item">About</a>
+        <a href="#" class="nav-btn-login">Login</a>
+    </div>
+</nav>
 
     <div class="hero-wrapper">
         <div class="hero-black-hole">
