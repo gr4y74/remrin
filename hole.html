@@ -157,6 +157,7 @@
 <body>
 
     <video id="singularity-bg" autoplay loop muted playsinline>
+        <source src="https://raw.githubusercontent.com/gr4y74/remrin/main/content/assets/backgrounds/black_hole.webm" type="video/webm">
         <source src="content/assets/backgrounds/black_hole.webm" type="video/webm">
     </video>
 
@@ -182,6 +183,27 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Video loading error handling
+        const video = document.getElementById('singularity-bg');
+        
+        video.addEventListener('error', function(e) {
+            console.error('Video loading error:', e);
+            console.error('Video error details:', video.error);
+        });
+        
+        video.addEventListener('loadeddata', function() {
+            console.log('Video loaded successfully');
+        });
+        
+        // Ensure video plays
+        video.addEventListener('canplay', function() {
+            video.play().catch(function(error) {
+                console.error('Video play error:', error);
+            });
+        });
+    </script>
 
 </body>
 </html>
