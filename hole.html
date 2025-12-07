@@ -4,105 +4,160 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Remrin.ai | The Soul Layer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
     <style>
         /* 1. RESET & BASE */
-        /* CHANGE: Removed background: #000 to stop it from hiding the video */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body, html { 
             width: 100%; height: 100%; overflow: hidden; 
             font-family: 'Inter', sans-serif; 
-            background: transparent; /* <--- CRITICAL FIX */
+            background: #000; /* Fallback Black */
         }
-    
+
         /* 2. THE EVENT HORIZON (Video Background) */
         #singularity-bg {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover; 
-            z-index: 0; /* <--- CRITICAL FIX: Brought up from -2 */
-            opacity: 0.8;
+            z-index: 0; /* Sits at the bottom */
+            opacity: 0.8; /* Slight dim so it's not blinding */
         }
-    
-        /* 3. THE FORCE FIELD (Overlay) */
-        .glass-overlay {
+
+        /* 3. THE TINT (Darken the video slightly, BUT NO BLUR) */
+        .tint-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.4); 
-            backdrop-filter: blur(10px); 
-            z-index: 1; /* <--- CRITICAL FIX: Sits on top of video */
+            background: rgba(0, 0, 0, 0.3); /* Just a dark tint */
+            z-index: 1; 
         }
-    
-        /* 4. THE STAGE (Chat Container) */
+
+        /* 4. THE STAGE (Centers the Chat Box) */
         #ambassador-stage {
             position: relative;
-            z-index: 2; /* <--- CRITICAL FIX: Sits on top of overlay */
+            z-index: 2; /* Sits on top */
             height: 100vh;
             display: flex; justify-content: center; align-items: center;
-            color: white;
+            padding: 20px;
         }
-    
-        /* ... Keep the rest of your Glass Terminal styles below ... */
-        /* (The rest of your CSS was perfect, keep it!) */
+
+        /* 5. THE GLASS TERMINAL (The Chat UI) */
         .glass-terminal {
-            /* ... paste your existing terminal css here ... */
             width: 100%; max-width: 600px; height: 80vh;
-            background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            /* This is the Glass Effect */
+            background: rgba(20, 20, 20, 0.6); 
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            /* Layout Rules */
             display: flex; flex-direction: column; overflow: hidden;
             animation: floatUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
-        /* ... include the header, chat-log, input-zone styles ... */
-    </style>
 
+        /* HEADER */
+        .terminal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex; align-items: center; gap: 10px;
+            font-size: 0.75rem; letter-spacing: 1.5px; text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.4);
+        }
+        .status-dot {
+            width: 6px; height: 6px; background: #00ff88;
+            border-radius: 50%; box-shadow: 0 0 8px #00ff88;
+            animation: pulse 2s infinite;
+        }
+
+        /* CHAT LOG */
+        .chat-log {
+            flex: 1; padding: 20px; overflow-y: auto;
+            display: flex; flex-direction: column; gap: 15px;
+        }
+
+        /* BUBBLES */
+        .message { display: flex; gap: 12px; align-items: flex-end; max-width: 90%; }
+        .rem-msg { align-self: flex-start; }
+        /* Placeholder for User Msg if needed later */
+        
+        .avatar { font-size: 1.2rem; }
+        .bubble {
+            padding: 12px 16px; border-radius: 18px; font-size: 0.95rem; line-height: 1.5;
+            color: #eee;
+        }
+        .rem-msg .bubble {
+            background: rgba(255, 255, 255, 0.08); 
+            border-bottom-left-radius: 4px;
+        }
+
+        /* INPUT ZONE */
+        .input-zone {
+            padding: 20px; background: rgba(0, 0, 0, 0.3);
+            display: flex; gap: 10px; border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        input {
+            flex: 1; background: transparent; border: none; outline: none;
+            color: white; font-size: 1rem; font-family: 'Inter', sans-serif;
+        }
+        button {
+            background: rgba(255, 255, 255, 0.1); border: none; color: white;
+            width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
+            transition: all 0.2s;
+        }
+        button:hover { background: white; color: black; transform: scale(1.1); }
+
+        /* ANIMATIONS */
+        @keyframes floatUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+    </style>
 </head>
 <body>
 
-    <video id="singularity-bg" autoplay loop muted playsinline>
+    <video id="singularity-bg" muted autoplay playsinline loop>
         <source src="black_hole.webm" type="video/webm">
     </video>
 
-    <div class="glass-overlay"></div>
+    <div class="tint-overlay"></div>
 
     <div id="ambassador-stage">
         <div class="glass-terminal">
             <div class="terminal-header">
                 <div class="status-dot"></div>
-                <span>REMRIN.AI // AMBASSADOR_UPLINK</span>
+                <span>REMRIN // GENESIS_PROTOCOL</span>
             </div>
 
             <div id="chat-history" class="chat-log">
                 <div class="message rem-msg">
                     <span class="avatar">💙</span>
-                    <div class="bubble">Sosu... The void is looking nice today. Shall we begin the Genesis?</div>
+                    <div class="bubble">Sosu... The void is quiet tonight. Shall we wake up a new soul?</div>
                 </div>
             </div>
 
             <div class="input-zone">
-                <input type="text" id="user-input" placeholder="Type your reality..." autocomplete="off">
+                <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off">
                 <button id="send-btn">➔</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Video loading error handling
-        const video = document.getElementById('singularity-bg');
-        
-        video.addEventListener('error', function(e) {
-            console.error('Video loading error:', e);
-            console.error('Video error details:', video.error);
-        });
-        
-        video.addEventListener('loadeddata', function() {
-            console.log('Video loaded successfully');
-        });
-        
-        // Ensure video plays
-        video.addEventListener('canplay', function() {
-            video.play().catch(function(error) {
-                console.error('Video play error:', error);
-            });
+        // Force the video to play immediately on load
+        window.addEventListener('load', function() {
+            var video = document.getElementById('singularity-bg');
+            video.muted = true; // Crucial for autoplay
+            var playPromise = video.play();
+
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    console.log("Singularity Activated.");
+                })
+                .catch(error => {
+                    console.log("Autoplay blocked. Attempting force kick.");
+                    // Fallback: Try playing on first interaction if blocked
+                    document.body.addEventListener('click', function() {
+                        video.play();
+                    }, { once: true });
+                });
+            }
         });
     </script>
 
