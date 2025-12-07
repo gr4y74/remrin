@@ -15,95 +15,91 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
     <style>
-        /* 1. VIEWPORT LOCK */
+        /* 1. THE VOID BASE */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body, html { 
             width: 100%; height: 100%; overflow: hidden; 
             font-family: 'Inter', sans-serif; 
-            background: #000; /* Deep Black Void */
+            background: #000; /* Keep it pure black for deep contrast */
         }
 
-        /* 2. THE CROWN (Video Zone) */
+        /* 2. THE PHANTOM CROWN (Video with Fade) */
         #singularity-bg {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            /* CHANGE: Restrict height to top 45% of screen */
-            height: 45%; 
-            /* CHANGE: 'contain' shrinks the video to fit fully inside the box (Smaller Hole) */
-            object-fit: contain; 
-            object-position: bottom center; /* Sits right above the chat */
+            height: 65%; /* Taller, so it sits behind the chat */
+            object-fit: cover; 
+            object-position: center bottom; /* Anchor to the bottom of the video */
             z-index: 0;
-            opacity: 0.9;
+            opacity: 1; /* Full brightness */
+            
+            /* --- THE MAGIC SPELL (Fades the bottom edge) --- */
+            mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
         }
 
-        /* 3. THE STAGE (The Layout Grid) */
+        /* 3. THE STAGE */
         #ambassador-stage {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: 10;
             display: flex;
-            
-            /* Center Horizontally */
             justify-content: center; 
-            
-            /* Push Chat to Bottom */
-            align-items: flex-end; 
-            
-            padding-bottom: 30px; /* Space from bottom edge */
+            align-items: flex-end; /* Push to bottom */
+            padding-bottom: 40px;
         }
 
-        /* 4. THE WIDESCREEN TERMINAL */
+        /* 4. THE GLASS TERMINAL (Moved Up into the Glow) */
         .glass-terminal {
-            width: 95%; /* Mobile: Almost full width */
+            width: 95%; 
+            max-width: 800px;
+            height: 50vh; /* Bottom half of screen */
             
-            /* CHANGE: Increased from 550px to 850px (50% wider) */
-            max-width: 850px; 
-            
-            /* CHANGE: Height set to bottom 50% so it doesn't touch the hole */
-            height: 50vh; 
-            
-            background: rgba(15, 15, 15, 0.7); /* Slightly darker for contrast */
+            /* Dark Glass that lets the purple shine through */
+            background: rgba(10, 10, 15, 0.65); 
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 1px solid rgba(138, 43, 226, 0.3); /* Purple tint on top edge */
             border-radius: 24px;
-            box-shadow: 0 0 80px rgba(0, 0, 0, 0.8); /* Stronger shadow to pop against void */
+            box-shadow: 0 -20px 80px rgba(88, 28, 135, 0.2); /* Purple Glow Shadow */
             
             display: flex; flex-direction: column; overflow: hidden;
             animation: floatUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+            
+            /* --- THE OVERLAP --- */
+            /* This makes the terminal sit nicely in the fade zone */
+            margin-bottom: 20px; 
         }
 
-        /* HEADER */
+        /* HEADER (Transparent to catch the light) */
         .terminal-header {
-            padding: 12px 25px;
+            padding: 15px 25px;
+            /* Almost transparent to let the video glow bleed in */
+            background: linear-gradient(to right, rgba(138, 43, 226, 0.1), rgba(0,0,0,0));
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             display: flex; align-items: center; gap: 10px;
             font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.4);
-            background: rgba(0,0,0,0.3);
+            color: rgba(255, 255, 255, 0.6);
         }
-        .status-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 10px #00ff88; animation: pulse 2s infinite; }
-
-        /* CHAT LOG */
-        .chat-log { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
         
-        /* BUBBLES */
-        .message { display: flex; gap: 15px; align-items: flex-end; max-width: 85%; } /* Tweak max-width for wider screen */
+        /* ... (Keep your existing .status-dot, .chat-log, .message, .input-zone styles below) ... */
+        .status-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 10px #00ff88; animation: pulse 2s infinite; }
+        .chat-log { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .message { display: flex; gap: 15px; align-items: flex-end; max-width: 85%; }
         .rem-msg { align-self: flex-start; }
         .user-msg { align-self: flex-end; flex-direction: row-reverse; }
         .bubble { padding: 14px 20px; border-radius: 18px; font-size: 1rem; line-height: 1.6; color: #eee; }
         .rem-msg .bubble { background: rgba(255, 255, 255, 0.08); border-bottom-left-radius: 4px; border: 1px solid rgba(255,255,255,0.02); }
         .user-msg .bubble { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border-bottom-right-radius: 4px; box-shadow: 0 4px 20px rgba(37, 99, 235, 0.2); }
         .avatar { font-size: 1.4rem; }
-
-        /* INPUT ZONE */
-        .input-zone { padding: 20px 30px; background: rgba(0, 0, 0, 0.3); display: flex; gap: 15px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .input-zone { padding: 20px 30px; background: rgba(0, 0, 0, 0.4); display: flex; gap: 15px; border-top: 1px solid rgba(255,255,255,0.05); }
         input { flex: 1; background: transparent; border: none; outline: none; color: white; font-size: 1.1rem; font-family: 'Inter', sans-serif; }
         button { background: rgba(255, 255, 255, 0.1); border: none; color: white; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
         button:hover { background: white; color: black; transform: scale(1.1); }
-
         @keyframes floatUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
