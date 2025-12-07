@@ -43,47 +43,139 @@
      </style>
 <div class="header-toggle">
 </div>
-<body class="bg-[#0f111a] text-white h-screen overflow-hidden flex flex-col">
+<style>
+  /* 1. THE VOID BASE */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body, html { 
+      width: 100%; height: 100%; overflow: hidden; 
+      font-family: 'Inter', sans-serif; 
+      background: #000; /* Keep it pure black for deep contrast */
+  }
 
-  <div id="bg-layer" class="fixed inset-0 z-0">
-      <div class="absolute inset-0 bg-[url('https://raw.githubusercontent.com/gr4y74/remrin/main/content/assets/backgrounds/orbs.png')] bg-cover opacity-80"></div>
-      <div class="absolute inset-0 bg-gradient-to-t from-[#0f111a] via-transparent to-transparent"></div>
-  </div>
-
-  <main class="relative z-10 flex-1 flex flex-col items-center justify-center p-4">
+  /* 2. THE PHANTOM CROWN (Cinema Scope) */
+  #singularity-bg {
+      position: absolute;
       
-      <div id="hero-container" class="relative w-48 h-48 md:w-64 md:h-64 animate-soul">
-          <div class="absolute inset-0 rounded-full bg-purple-500 blur-[80px] opacity-40 animate-pulse-glow"></div>
-          <img src="content/assets/heroes/orb.gif" alt="Soul" class="w-full h-full object-cover rounded-full">
+      /* --- YOUR PERFECT COORDINATES --- */
+      top: 10%; 
+      height: 75%;
+      
+      left: 0;
+      width: 100%;
+      
+      /* --- THE FIX: 'cover' fills the width --- */
+      object-fit: cover; 
+      
+      /* Keep it centered so the zoom happens evenly */
+      object-position: center center;
+      
+      z-index: 0;
+      opacity: 1;
+
+      /* The Double Fade Spell (Keep this!) */
+      mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+  }
+
+  /* 3. THE STAGE */
+  #ambassador-stage {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 10;
+      display: flex;
+      justify-content: center; 
+      align-items: flex-end; /* Push to bottom */
+      padding-bottom: 40px;
+  }
+
+  /* 4. THE GLASS TERMINAL (Moved Up into the Glow) */
+  .glass-terminal {
+      width: 95%; 
+      max-width: 800px;
+      height: 50vh; /* Bottom half of screen */
+      
+      /* Dark Glass that lets the purple shine through */
+      background: rgba(10, 10, 15, 0.65); 
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 1px solid rgba(138, 43, 226, 0.3); /* Purple tint on top edge */
+      border-radius: 24px;
+      box-shadow: 0 -20px 80px rgba(88, 28, 135, 0.2); /* Purple Glow Shadow */
+      
+      display: flex; flex-direction: column; overflow: hidden;
+      animation: floatUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+      
+      /* --- THE OVERLAP --- */
+      /* This makes the terminal sit nicely in the fade zone */
+      margin-bottom: 20px; 
+  }
+
+  /* HEADER (Transparent to catch the light) */
+  .terminal-header {
+      padding: 15px 25px;
+      /* Almost transparent to let the video glow bleed in */
+      background: linear-gradient(to right, rgba(138, 43, 226, 0.1), rgba(0,0,0,0));
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.6);
+  }
+  
+  /* ... (Keep your existing .status-dot, .chat-log, .message, .input-zone styles below) ... */
+  .status-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 10px #00ff88; animation: pulse 2s infinite; }
+  .chat-log { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+  .message { display: flex; gap: 15px; align-items: flex-end; max-width: 85%; }
+  .rem-msg { align-self: flex-start; }
+  .user-msg { align-self: flex-end; flex-direction: row-reverse; }
+  .bubble { padding: 14px 20px; border-radius: 18px; font-size: 1rem; line-height: 1.6; color: #eee; }
+  .rem-msg .bubble { background: rgba(255, 255, 255, 0.08); border-bottom-left-radius: 4px; border: 1px solid rgba(255,255,255,0.02); }
+  .user-msg .bubble { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border-bottom-right-radius: 4px; box-shadow: 0 4px 20px rgba(37, 99, 235, 0.2); }
+  .avatar { font-size: 1.4rem; }
+  .input-zone { padding: 20px 30px; background: rgba(0, 0, 0, 0.4); display: flex; gap: 15px; border-top: 1px solid rgba(255,255,255,0.05); }
+  input { flex: 1; background: transparent; border: none; outline: none; color: white; font-size: 1.1rem; font-family: 'Inter', sans-serif; }
+  button { background: rgba(255, 255, 255, 0.1); border: none; color: white; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+  button:hover { background: white; color: black; transform: scale(1.1); }
+  @keyframes floatUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+</style>
+
+</head>
+<body>
+
+<video id="singularity-bg" muted autoplay playsinline loop>
+  <source src="black_hole.webm" type="video/webm">
+</video>
+
+<div id="ambassador-stage">
+  <div class="glass-terminal">
+      <div class="terminal-header">
+          <div class="status-dot"></div>
+          <span>REMRIN // GENESIS_PROTOCOL</span>
       </div>
 
-      <div id="chat-box" class="w-full max-w-2xl bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl h-[60vh] overflow-y-auto scrollbar-hide">
-          
-          <div class="space-y-4" id="messages-container">
-              <div class="flex items-start gap-3 fade-in">
-                  <div class="text-cyan-400 font-bold font-cinzel">R.E.M:</div>
-                  <div class="text-gray-200 leading-relaxed">
-                      Welcome Wonderer, to the Soul Layer! <br>
-                      I am R.E.M, the Ambassador. Are you ready to build something alive?
-                  </div>
-              </div>
+      <div id="chat-history" class="chat-log">
+          <div class="message rem-msg">
+              <span class="avatar">💙</span>
+              <div class="bubble">Sosu... The singularity is stable. I am ready to begin.</div>
           </div>
-
       </div>
 
-      <div class="w-full max-w-2xl mt-4 relative">
-          <input type="text" id="user-input" 
-              class="w-full bg-black/50 border border-white/20 rounded-xl px-4 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all"
-              placeholder="Talk to Rem..." autocomplete="off">
-          
-          <button id="send-btn" class="absolute right-2 top-2 bottom-2 px-4 bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-200 rounded-lg transition-colors font-cinzel text-sm">
-              SEND
-          </button>
+      <div class="input-zone">
+          <input type="text" id="user-input" placeholder="Type your reality..." autocomplete="off">
+          <button id="send-btn">➔</button>
       </div>
+  </div>
+</div>
 
-  </main>
-
-  <script src="script.js"></script>
+<script>
+  window.addEventListener('load', function() {
+      var video = document.getElementById('singularity-bg');
+      video.muted = true;
+      video.play().catch(e => console.log("Autoplay kickstarted."));
+  });
+</script>
 </body>
 <section class="hero">
 <div class="hero-content">
