@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <title>
-   Remrin.ai
+   
   </title>
 <meta charset="utf-8"/>
 <meta content="width=device-width" name="viewport"/>
@@ -42,22 +42,49 @@
       @keyframes hue-rotate{0%{filter:hue-rotate(0deg)}to{filter:hue-rotate(360deg)}}.header-toggle{margin-left:18px;padding:5px;cursor:pointer}.header-toggle div{width:20px;height:1.5px;background-color:#fff;border-radius:500px;transition:all .3s ease-in-out}.header-toggle div:not(:last-child){margin-bottom:5px}.header-toggle-active div:nth-child(1){transform:rotate(45deg) translate(5px,5px)}.header-toggle-active div:nth-child(2){opacity:0}.header-toggle-active div:nth-child(3){transform:rotate(-45deg) translate(4px,-5px)}@media (min-width: 1248px){.header-toggle{display:none}}
      </style>
 <div class="header-toggle">
-<div>
 </div>
-<div>
-</div>
-<div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<!-- ============================================
-  HERO SECTION
-  ============================================
-  Main landing area - currently empty, ready for Ambassador Terminal
-  Contains: Black hole video background, animated circles, stars
-  ============================================ -->
+<body class="bg-[#0f111a] text-white h-screen overflow-hidden flex flex-col">
+
+  <div id="bg-layer" class="fixed inset-0 z-0">
+      <div class="absolute inset-0 bg-[url('https://raw.githubusercontent.com/gr4y74/remrin/main/content/assets/backgrounds/orbs.png')] bg-cover opacity-80"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-[#0f111a] via-transparent to-transparent"></div>
+  </div>
+
+  <main class="relative z-10 flex-1 flex flex-col items-center justify-center p-4">
+      
+      <div id="hero-container" class="relative w-48 h-48 md:w-64 md:h-64 animate-soul">
+          <div class="absolute inset-0 rounded-full bg-purple-500 blur-[80px] opacity-40 animate-pulse-glow"></div>
+          <img src="content/assets/heroes/orb.gif" alt="Soul" class="w-full h-full object-cover rounded-full">
+      </div>
+
+      <div id="chat-box" class="w-full max-w-2xl bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl h-[60vh] overflow-y-auto scrollbar-hide">
+          
+          <div class="space-y-4" id="messages-container">
+              <div class="flex items-start gap-3 fade-in">
+                  <div class="text-cyan-400 font-bold font-cinzel">R.E.M:</div>
+                  <div class="text-gray-200 leading-relaxed">
+                      Welcome Wonderer, to the Soul Layer! <br>
+                      I am R.E.M, the Ambassador. Are you ready to build something alive?
+                  </div>
+              </div>
+          </div>
+
+      </div>
+
+      <div class="w-full max-w-2xl mt-4 relative">
+          <input type="text" id="user-input" 
+              class="w-full bg-black/50 border border-white/20 rounded-xl px-4 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all"
+              placeholder="Talk to Rem..." autocomplete="off">
+          
+          <button id="send-btn" class="absolute right-2 top-2 bottom-2 px-4 bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-200 rounded-lg transition-colors font-cinzel text-sm">
+              SEND
+          </button>
+      </div>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
 <section class="hero">
 <div class="hero-content">
 <style hidden="">
@@ -383,7 +410,6 @@
 <div class="footer-top">
 <div class="footer-brand">
 <div class="logo-with-name">
-<img alt="Logo" class="logo-with-name-logo" src="favicon.png"/>
 <div class="logo-with-name-name">
 </div>
 </div>
