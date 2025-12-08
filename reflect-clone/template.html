@@ -95,41 +95,60 @@
             pointer-events: none;
         }
 
-       /* TEST MODE: HIGH VISIBILITY */
+       /* 4. THE ATMOSPHERE ENGINE (Restored & Tuned) */
        .fog-layer {
             position: absolute;
             width: 150vw; height: 150vw;
             border-radius: 50%;
             
-            /* 1. LOWER BLUR (So you can see the shape) */
-            filter: blur(20px); 
+            /* High Blur for Softness */
+            filter: blur(80px); 
             
-            /* 2. MAX OPACITY (No transparency) */
-            opacity: 1; 
+            /* Visibility Tuned: 0.6 is visible but not solid */
+            opacity: 0.6; 
             
-            /* 3. DEBUG BORDER (Shows you exactly where the div is) */
-            border: 5px solid yellow; 
+            /* This makes the colors glow against the black background */
+            mix-blend-mode: screen; 
 
-            animation: rotateFog 20s linear infinite; /* Speed up to see movement */
+            animation: rotateFog 60s linear infinite;
         }
 
         .fog-pink {
             top: -30%; left: -20%;
-            /* BRIGHT RED for testing */
-            background: radial-gradient(circle, red 50%, transparent 80%);
+            /* Back to Beautiful Pink */
+            background: radial-gradient(circle, rgba(255, 0, 150, 0.6) 0%, transparent 60%);
+            animation-duration: 45s;
         }
 
         .fog-blue {
             bottom: -30%; right: -20%;
-            /* NEON GREEN for testing */
-            background: radial-gradient(circle, lime 50%, transparent 80%);
+            /* Back to Deep Rem Blue */
+            background: radial-gradient(circle, rgba(0, 100, 255, 0.6) 0%, transparent 60%);
+            animation-duration: 55s;
+            animation-direction: reverse;
         }
 
         /* D. LAYER 2: THE STARS */
         .stars-wrapper {
+            
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 3; /* Sits on top of fog */
             pointer-events: none;
+
+        <div class="star" style="top: 5%; left: 15%; width: 1px; height: 1px; animation-delay: 0.2s;"></div>
+        <div class="star" style="top: 12%; left: 85%; width: 1px; height: 1px; animation-delay: 3.5s;"></div>
+        <div class="star" style="top: 35%; left: 45%; width: 1px; height: 1px; animation-delay: 1.1s;"></div>
+        <div class="star" style="top: 65%; left: 10%; width: 1px; height: 1px; animation-delay: 4.0s;"></div>
+        <div class="star" style="top: 85%; left: 90%; width: 1px; height: 1px; animation-delay: 2.2s;"></div>
+        <div class="star" style="top: 95%; left: 30%; width: 1px; height: 1px; animation-delay: 0.5s;"></div>
+        
+        <div class="star" style="top: 18%; left: 60%; width: 2px; height: 2px; animation-delay: 1.8s;"></div>
+        <div class="star" style="top: 42%; left: 95%; width: 2px; height: 2px; animation-delay: 2.9s;"></div>
+        <div class="star" style="top: 55%; left: 5%; width: 2px; height: 2px; animation-delay: 0.7s;"></div>
+        <div class="star" style="top: 72%; left: 75%; width: 2px; height: 2px; animation-delay: 3.1s;"></div>
+        
+        <div class="star" style="top: 8%; left: 40%; width: 3px; height: 3px; animation-delay: 1.5s; box-shadow: 0 0 10px white;"></div>
+        <div class="star" style="top: 88%; left: 20%; width: 3px; height: 3px; animation-delay: 0.3s; box-shadow: 0 0 10px white;"></div>
         }
 
         .star {
