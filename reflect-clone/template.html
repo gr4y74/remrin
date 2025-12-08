@@ -210,6 +210,21 @@
             .nav-item { display: none; }
             .terminal-wrapper { height: 60vh; width: 100%; border-radius: 0; border-left: none; border-right: none; }
             .glass-terminal { border-radius: 24px 24px 0 0; }
+
+            /* LOGO IMAGE SIZING */
+        .logo-img {
+            height: 40px; /* Perfect size for an 80px header */
+            width: auto;  /* Keep the aspect ratio perfect */
+            
+            /* OPTIONAL: Add a Remrin Purple Glow to the white logo */
+            filter: drop-shadow(0 0 8px rgba(138, 43, 226, 0.5));
+            transition: transform 0.3s ease;
+        }
+
+        .logo-img:hover {
+            transform: scale(1.05) rotate(5deg); /* Little interaction pop */
+            filter: drop-shadow(0 0 12px rgba(138, 43, 226, 0.8));
+        }
         }
     </style>
 </head>
@@ -218,7 +233,7 @@
     <nav class="glass-nav">
         <div class="nav-logo">
             <a href="index.html">
-                <img src="reflect-clone/logo_white_ds.png" alt="Remrin" class="logo-img">
+                <img src="logo_white_ds.png" alt="Remrin Logo" class="logo-img">
             </a>
         </div>
         <div class="nav-links">
