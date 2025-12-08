@@ -95,26 +95,34 @@
             pointer-events: none;
         }
 
-        .fog-layer {
+       /* TEST MODE: HIGH VISIBILITY */
+       .fog-layer {
             position: absolute;
             width: 150vw; height: 150vw;
             border-radius: 50%;
-            filter: blur(80px); /* Maximum Smog */
-            opacity: 0.5;
-            animation: rotateFog 60s linear infinite;
+            
+            /* 1. LOWER BLUR (So you can see the shape) */
+            filter: blur(20px); 
+            
+            /* 2. MAX OPACITY (No transparency) */
+            opacity: 1; 
+            
+            /* 3. DEBUG BORDER (Shows you exactly where the div is) */
+            border: 5px solid yellow; 
+
+            animation: rotateFog 20s linear infinite; /* Speed up to see movement */
         }
 
         .fog-pink {
-            top: -40%; left: -20%;
-            background: radial-gradient(circle, rgba(255, 0, 150, 0.25) 0%, transparent 60%);
-            animation-duration: 45s;
+            top: -30%; left: -20%;
+            /* BRIGHT RED for testing */
+            background: radial-gradient(circle, red 50%, transparent 80%);
         }
 
         .fog-blue {
             bottom: -30%; right: -20%;
-            background: radial-gradient(circle, rgba(0, 100, 255, 0.25) 0%, transparent 60%);
-            animation-duration: 55s;
-            animation-direction: reverse;
+            /* NEON GREEN for testing */
+            background: radial-gradient(circle, lime 50%, transparent 80%);
         }
 
         /* D. LAYER 2: THE STARS */
