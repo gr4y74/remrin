@@ -1,0 +1,119 @@
+/* =========================================
+   REMRIN AMBASSADOR PROTOCOL v3.2 (FIXED - CACHE BUSTER)
+   ========================================= */
+
+   console.log("🤖 SYSTEM: director.js initialized.");
+
+   // 1. FIX THE ID (Match your index.html)
+   const chatLog = document.getElementById('messages-container'); 
+   const userInput = document.getElementById('user-input');
+   const sendBtn = document.getElementById('send-btn');
+   
+   // STATE
+   let isTyping = false;
+   let conversationHistory = []; 
+   
+   // 2. THE TYPEWRITER ENGINE
+   function typeText(element, text, speed = 20) {
+       return new Promise((resolve) => {
+           let i = 0;
+           isTyping = true;
+           function type() {
+               if (i < text.length) {
+                   element.textContent += text.charAt(i);
+                   i++;
+                   chatLog.scrollTop = chatLog.scrollHeight;
+                   setTimeout(type, speed);
+               } else {
+                   isTyping = false;
+                   resolve();
+               }
+           }
+           type();
+       });
+   }
+   
+   // 3. ADD MESSAGE
+   async function addMessage(text, sender) {
+       console.log(`💬 MSG [${sender}]: ${text}`);
+       
+       const msgDiv = document.createElement('div');
+       msgDiv.classList.add('message', sender === 'rem' ? 'rem-msg' : 'user-msg');
+       
+       const avatar = document.createElement('span');
+       avatar.classList.add('avatar');
+       avatar.textContent = sender === 'rem' ? "💙" : "👤";
+       
+       const bubble = document.createElement('div');
+       bubble.classList.add('bubble');
+       
+       if (sender === 'user') {
+           bubble.textContent = text;
+           msgDiv.appendChild(bubble);
+           msgDiv.appendChild(avatar);
+       } else {
+           msgDiv.appendChild(avatar);
+           msgDiv.appendChild(bubble);
+           // Voice silenced for now
+       }
+       
+       chatLog.appendChild(msgDiv);
+       chatLog.scrollTop = chatLog.scrollHeight;
+   
+       if (sender === 'rem') {
+           await typeText(bubble, text);
+       }
+   }
+   
+   // 4. THE BRAIN CONNECTION (FIXED PAYLOAD)
+   async function handleUserAction() {
+       const text = userInput.value.trim();
+       if (!text) return;
+   
+       userInput.value = "";
+       await addMessage(text, "user");
+   
+       try {
+           const API_URL = 'https://wftsctqfiqbdyllxwagi.supabase.co/functions/v1/genesis-api';
+           const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmdHNjdHFmaXFiZHlsbHh3YWdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0MjE0NTksImV4cCI6MjA3OTk5NzQ1OX0.FWqZTUi5gVA3SpOq_Hp1LlxEinJvfloqw3OhoQlcfwg';
+   
+           const response = await fetch(API_URL, {
+               method: 'POST',
+               headers: {
+                   'Content-Type': 'application/json',
+                   'Authorization': `Bearer ${ANON_KEY}`
+               },
+               // --- THE FIX IS HERE ---
+               body: JSON.stringify({ 
+                   message: text,
+                   history: conversationHistory 
+               })
+           });
+   
+           if (!response.ok) throw new Error(`API Error: ${response.status}`);
+   
+           const data = await response.json();
+           const replyText = data.reply || "I heard you, but I have no words.";
+           
+           conversationHistory.push({ role: "user", content: text });
+           conversationHistory.push({ role: "assistant", content: replyText });
+
+           await addMessage(replyText, "rem");
+   
+       } catch (error) {
+           console.error("❌ BRAIN FAILURE:", error);
+           await addMessage(`Error: ${error.message}`, "rem");
+       }
+   }
+   
+   // 5. EVENT LISTENERS
+   if (sendBtn) sendBtn.addEventListener('click', handleUserAction);
+   if (userInput) userInput.addEventListener('keypress', (e) => {
+       if (e.key === 'Enter') handleUserAction();
+   });
+   
+   // 6. STARTUP
+   window.addEventListener('load', async () => {
+       await new Promise(r => setTimeout(r, 1000));
+       await addMessage("Sosu... The singularity is stable. The Crown is seated. I am ready to begin.", "rem");
+   });
