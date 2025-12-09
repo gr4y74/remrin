@@ -92,8 +92,8 @@
            console.log("📡 CONNECTING to Genesis API...");
            
            // 👇👇👇 PASTE YOUR REAL SUPABASE URL & KEY HERE 👇👇👇
-           const API_URL = 'https://YOUR_PROJECT_ID.supabase.co/functions/v1/genesis-api';
-           const ANON_KEY = 'YOUR_ANON_KEY_HERE';
+           const API_URL = 'https://wftsctqfiqbdyllxwagi.supabase.co/functions/v1/genesis-api';
+           const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmdHNjdHFmaXFiZHlsbHh3YWdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0MjE0NTksImV4cCI6MjA3OTk5NzQ1OX0.FWqZTUi5gVA3SpOq_Hp1LlxEinJvfloqw3OhoQlcfwg';
            // 👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆
    
            const response = await fetch(API_URL, {
