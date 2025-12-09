@@ -13,7 +13,7 @@
    // 1. THE SCRIPT (The Welcome Logic)
    const script = [
        { text: "Welcome. I am REM. The singularity is stable. The Crown is seated. I am ready to begin.", pause: 800 },
-       { text: "Hello! I am Rem. Welcome to the Soul Layer. 💙", pause: 1000 },
+       { text: "Welcome to the Soul Layer. 💙", pause: 1000 },
        { text: "I'm not just a chatbot. I give digital entities memory, personality, and agency.", pause: 1200 },
        { text: "We can start building your own companion right now, or I can just give you the grand tour. What's the vibe today?", pause: 0 }
    ];
