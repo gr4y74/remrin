@@ -91,10 +91,16 @@
         /* =========================================
            3. THE UNIFIED HERO ENGINE
            ========================================= */
-        .hero-stage {
+           .hero-stage {
             position: relative;
-            width: 100vw; height: 100vh;
-            display: flex; justify-content: center; align-items: flex-end;
+            width: 100vw; 
+            height: 100vh;
+            
+            display: flex;
+            flex-direction: column; /* <--- CRITICAL: Stacks items vertically */
+            justify-content: flex-end; /* <--- Pushes the stack to the bottom */
+            align-items: center; /* <--- Centers the stack horizontally */
+            
             padding-bottom: 40px;
             overflow: hidden;
             z-index: 1;
@@ -217,10 +223,18 @@
 
 
         /* CENTER WELCOME TEXT */
-        .hero-instructions {
+/* CENTER WELCOME TEXT (Satellite Mode) */
+.hero-instructions {
+            position: absolute; /* Detach from gravity */
+            top: 20%; /* Sits 35% down from the top (Visual Center of the void) */
+            left: 50%;
+            transform: translateX(-50%); /* Perfectly centers it horizontally */
+            
             text-align: center;
-            margin-bottom: 30px; /* Space above chat box */
+            width: 100%;
+            padding: 0 20px;
             z-index: 10;
+            
             animation: fadeIn 2s ease-in-out;
         }
 
@@ -306,9 +320,6 @@
             <div class="star" style="top: 80%; left: 15%; width: 1px; height: 1px; animation-delay: 2s;"></div>
         </div>
 
-
-        <body>
-
             <div class="hero-stage">
                 
                 <video id="orb-video-bg" ...></video>
@@ -321,11 +332,6 @@
                 </div>
                 <div class="terminal-wrapper">
                     </div>
-        
-            </div>
-        
-            </body>
-
 
         <div class="terminal-wrapper">
             <div class="glass-terminal">
