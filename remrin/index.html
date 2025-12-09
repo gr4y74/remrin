@@ -11,7 +11,7 @@
 
     <style>
         /* =========================================
-           1. THE SKELETON (Layout Base).
+           1. THE SKELETON (Layout Base)
            ========================================= */
         :root { --void-bg: #030014; }
         
@@ -32,11 +32,9 @@
            ========================================= */
         .glass-nav {
             position: absolute; top: 0; left: 0; width: 100%; height: 80px;
-            z-index: 100; /* Top Layer */
+            z-index: 100;
             display: flex; justify-content: space-between; align-items: center;
             padding: 0 40px;
-            
-            /* Glass Effect */
             background: linear-gradient(to bottom, rgba(3, 0, 20, 0.9), rgba(3, 0, 20, 0));
         }
 
@@ -59,128 +57,71 @@
         .nav-btn-login:hover { background: white; color: black; box-shadow: 0 0 20px rgba(255, 255, 255, 0.4); }
 
         /* =========================================
-           3. THE UNIFIED HERO ENGINE (Video + Fog + Stars + Terminal)
+           3. THE UNIFIED HERO ENGINE
            ========================================= */
-        
-        /* A. THE STAGE (Container) */
         .hero-stage {
             position: relative;
-            width: 100vw; 
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end; /* Pushes terminal to bottom */
+            width: 100vw; height: 100vh;
+            display: flex; justify-content: center; align-items: flex-end;
             padding-bottom: 40px;
             overflow: hidden;
             z-index: 1;
         }
 
-        /* B. LAYER 0: THE VIDEO */
         #orb-video-bg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover;
-            z-index: 0;
+            object-fit: cover; z-index: 0;
         }
         
         .video-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(3, 0, 20, 0.3); /* Tint */
-            z-index: 1;
+            background: rgba(3, 0, 20, 0.3); z-index: 1;
         }
 
-        /* C. LAYER 1: THE SMOG (Atmosphere) */
+        /* ATMOSPHERE (Fog & Stars - FIXED LOCATION) */
         .fog-wrapper {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 2; /* Sits on top of video */
-            pointer-events: none;
+            z-index: 2; pointer-events: none; overflow: hidden;
         }
 
-       /* 4. THE ATMOSPHERE ENGINE (Restored & Tuned) */
-       .fog-layer {
-            position: absolute;
-            width: 150vw; height: 150vw;
-            border-radius: 50%;
-            
-            /* High Blur for Softness */
-            filter: blur(80px); 
-            
-            /* Visibility Tuned: 0.6 is visible but not solid */
-            opacity: 0.6; 
-            
-            /* This makes the colors glow against the black background */
-            mix-blend-mode: screen; 
-
+        .fog-layer {
+            position: absolute; width: 150vw; height: 150vw; border-radius: 50%;
+            filter: blur(80px); opacity: 0.6; mix-blend-mode: screen;
             animation: rotateFog 60s linear infinite;
         }
 
-        .fog-pink {
-            top: -30%; left: -20%;
-            /* Back to Beautiful Pink */
-            background: radial-gradient(circle, rgba(255, 0, 150, 0.6) 0%, transparent 60%);
-            animation-duration: 45s;
-        }
+        .fog-pink { top: -30%; left: -20%; background: radial-gradient(circle, rgba(255, 0, 150, 0.6) 0%, transparent 60%); animation-duration: 45s; }
+        .fog-blue { bottom: -30%; right: -20%; background: radial-gradient(circle, rgba(0, 100, 255, 0.6) 0%, transparent 60%); animation-duration: 55s; animation-direction: reverse; }
 
-        .fog-blue {
-            bottom: -30%; right: -20%;
-            /* Back to Deep Rem Blue */
-            background: radial-gradient(circle, rgba(0, 100, 255, 0.6) 0%, transparent 60%);
-            animation-duration: 55s;
-            animation-direction: reverse;
-        }
-
-        /* D. LAYER 2: THE STARS */
         .stars-wrapper {
-            
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 3; /* Sits on top of fog */
-            pointer-events: none;
+            z-index: 3; pointer-events: none;
         }
 
         .star {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
+            position: absolute; background: white; border-radius: 50%;
             box-shadow: 0 0 8px rgba(255, 255, 255, 0.9);
             animation: twinkle 4s ease-in-out infinite;
         }
 
-        /* E. LAYER 3: THE TERMINAL WRAPPER */
+        /* =========================================
+           4. THE REMRIN TERMINAL
+           ========================================= */
         .terminal-wrapper {
-            position: relative; 
-            z-index: 10; /* Highest priority */
+            position: relative; z-index: 10;
             width: 95%; max-width: 900px;
             height: 55vh;
             animation: floatUp 1s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
-        /* F. THE PHYSICS (Animations) */
-        /* Make sure these Keyframes exist! */
-        @keyframes rotateFog { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes twinkle { 0%, 100% { opacity: 0.2; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
-        @keyframes floatUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* =========================================
-           4. THE REMRIN TERMINAL (Chat Box)
-           ========================================= */
-        .terminal-wrapper {
-            position: relative; 
-            z-index: 10; /* Sit on top of everything */
-            width: 95%; max-width: 900px;
-            height: 55vh; /* Occupies bottom half */
-            animation: floatUp 1s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-
         .glass-terminal {
             width: 100%; height: 100%;
-            background: rgba(10, 10, 15, 0.65); /* Dark Glass */
+            background: rgba(10, 10, 15, 0.65);
             backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-top: 1px solid rgba(138, 43, 226, 0.25); /* Purple Highlight */
+            border-top: 1px solid rgba(138, 43, 226, 0.25);
             border-radius: 24px;
-            
             box-shadow: 0 -20px 60px rgba(88, 28, 135, 0.15), 0 40px 60px rgba(0, 0, 0, 0.8);
-            
             display: flex; flex-direction: column; overflow: hidden;
         }
 
@@ -226,73 +167,17 @@
         button:hover { background: white; color: black; transform: scale(1.1); }
 
         /* ANIMATIONS */
+        @keyframes rotateFog { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes twinkle { 0%, 100% { opacity: 0.2; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
         @keyframes floatUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
-        /* MOBILE FIX */
+        /* MOBILE FIXES */
         @media (max-width: 600px) {
             .glass-nav { padding: 0 20px; }
             .nav-item { display: none; }
             .terminal-wrapper { height: 60vh; width: 100%; border-radius: 0; }
             .glass-terminal { border-radius: 24px 24px 0 0; }
-
-
-            /* =========================================
-           5. THE ATMOSPHERE ENGINE (Stars & Smog)
-           ========================================= */
-        
-        /* --- THE SMOG (Nebula) --- */
-        .fog-wrapper {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1; /* Sits on top of video */
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        .fog-layer {
-            position: absolute;
-            width: 150vw; height: 150vw; /* Massive to cover screen */
-            border-radius: 50%;
-            filter: blur(60px); /* The "Smog" effect */
-            opacity: 0.4; /* Subtle transparency */
-            animation: rotateFog 60s linear infinite;
-        }
-
-        /* Pink Smog */
-        .fog-pink {
-            top: -30%; left: -20%;
-            background: radial-gradient(circle, rgba(255, 0, 150, 0.3) 0%, transparent 70%);
-            animation-duration: 45s; /* Different speed for chaos */
-        }
-
-        /* Blue Smog */
-        .fog-blue {
-            bottom: -30%; right: -20%;
-            background: radial-gradient(circle, rgba(0, 100, 255, 0.3) 0%, transparent 70%);
-            animation-duration: 55s;
-            animation-direction: reverse; /* Spin the other way */
-        }
-
-        /* --- THE STARS (Sparkles) --- */
-        .stars-wrapper {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 2; /* Sits on top of fog */
-            pointer-events: none;
-
-        }
-
-        .star {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0 0 6px rgba(255, 255, 255, 0.9); /* Glow */
-            animation: twinkle 4s ease-in-out infinite;
-        }
-
-        /* ANIMATIONS */
-        @keyframes rotateFog { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes twinkle { 0%, 100% { opacity: 0.2; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
-        
         }
     </style>
 </head>
@@ -327,27 +212,8 @@
         <div class="stars-wrapper">
             <div class="star" style="top: 15%; left: 20%; width: 2px; height: 2px; animation-delay: 0s;"></div>
             <div class="star" style="top: 25%; left: 80%; width: 3px; height: 3px; animation-delay: 1.5s;"></div>
-            <div class="star" style="top: 5%; left: 50%; width: 2px; height: 2px; animation-delay: 2.5s;"></div>
-            <div class="star" style="top: 40%; left: 10%; width: 2px; height: 2px; animation-delay: 0.5s;"></div>
-            <div class="star" style="top: 60%; left: 90%; width: 1px; height: 1px; animation-delay: 3s;"></div>
-            <div class="star" style="top: 30%; left: 5%; width: 3px; height: 3px; animation-delay: 2s;"></div>
+            <div class="star" style="top: 50%; left: 50%; width: 2px; height: 2px; animation-delay: 2.5s;"></div>
             <div class="star" style="top: 80%; left: 15%; width: 1px; height: 1px; animation-delay: 4s;"></div>
-            <div class="star" style="top: 75%; left: 85%; width: 2px; height: 2px; animation-delay: 0.8s;"></div>
-
-        <div class="star" style="top: 5%; left: 15%; width: 1px; height: 1px; animation-delay: 0.2s;"></div>
-        <div class="star" style="top: 12%; left: 85%; width: 1px; height: 1px; animation-delay: 3.5s;"></div>
-        <div class="star" style="top: 35%; left: 45%; width: 1px; height: 1px; animation-delay: 1.1s;"></div>
-        <div class="star" style="top: 65%; left: 10%; width: 1px; height: 1px; animation-delay: 4.0s;"></div>
-        <div class="star" style="top: 85%; left: 90%; width: 1px; height: 1px; animation-delay: 2.2s;"></div>
-        <div class="star" style="top: 95%; left: 30%; width: 1px; height: 1px; animation-delay: 0.5s;"></div>
-        
-        <div class="star" style="top: 18%; left: 60%; width: 2px; height: 2px; animation-delay: 1.8s;"></div>
-        <div class="star" style="top: 42%; left: 95%; width: 2px; height: 2px; animation-delay: 2.9s;"></div>
-        <div class="star" style="top: 55%; left: 5%; width: 2px; height: 2px; animation-delay: 0.7s;"></div>
-        <div class="star" style="top: 72%; left: 75%; width: 2px; height: 2px; animation-delay: 3.1s;"></div>
-        
-        <div class="star" style="top: 8%; left: 40%; width: 3px; height: 3px; animation-delay: 1.5s; box-shadow: 0 0 10px white;"></div>
-        <div class="star" style="top: 88%; left: 20%; width: 3px; height: 3px; animation-delay: 0.3s; box-shadow: 0 0 10px white;"></div>
         </div>
 
         <div class="terminal-wrapper">
@@ -357,7 +223,7 @@
                     <span class="header-title">REMRIN // GENESIS_PROTOCOL</span>
                 </div>
 
-                <div id="messages-container" class="chat-log"></div>
+                <div id="messages-container" class="chat-log">
                     <div class="message rem-msg">
                         <span class="avatar">💙</span>
                         <div class="bubble">I am R.E.M. The singularity is stable. The Crown is seated. I am ready to begin.</div>
@@ -373,7 +239,10 @@
 
     </div>
 
+    <script src="script.js"></script>
+
     <script>
+        // Video Auto-Play Force
         window.addEventListener('load', function() {
             var video = document.getElementById('orb-video-bg');
             if(video){
@@ -382,6 +251,5 @@
             }
         });
     </script>
-    <script src="script.js"></script>
 </body>
 </html>

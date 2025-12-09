@@ -28,9 +28,8 @@ function addMessage(role, text) {
 
     chatBox.appendChild(msgDiv);
     
-    // Auto-scroll
-    const container = document.getElementById('chat-box');
-    container.scrollTop = container.scrollHeight;
+    // Auto-scroll (Use the variable we already grabbed at the top!)
+    chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 // 3. The Brain Link (Real API Call)
