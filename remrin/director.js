@@ -5,10 +5,16 @@
    console.log("🤖 SYSTEM: director.js initialized.");
 
    // 1. FIX THE ID (Match your index.html)
-   const chatLog = document.getElementById('messages-container');
+   const chatLog = document.getElementById('chat-history') || document.getElementById('messages-container');
    const userInput = document.getElementById('user-input');
    const sendBtn = document.getElementById('send-btn');
    
+// --- CRITICAL SAFETY CHECK ---
+if (!chatLog) {
+    console.error("❌ FATAL ERROR: Chat Log container not found! Check index.html ID.");
+    return; // Stop the script from running and crashing
+}
+
    // STATE
    let isTyping = false;
    let conversationHistory = []; 
