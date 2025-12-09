@@ -5,7 +5,7 @@
    console.log("🤖 SYSTEM: director.js initialized.");
 
    // 1. FIX THE ID (Match your index.html)
-   const chatLog = document.getElementById('messages-container'); 
+   const chatLog = document.getElementById('messages-container');
    const userInput = document.getElementById('user-input');
    const sendBtn = document.getElementById('send-btn');
    
