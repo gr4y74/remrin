@@ -93,20 +93,88 @@
        }
    });
    
-   // 5. INPUT HANDLING
-   async function handleUserAction() {
-       const text = userInput.value.trim();
-       if (!text || isTyping) return; // Don't interrupt Rem!
-   
-       userInput.value = "";
-       addMessage(text, "user");
-   
-       // Placeholder logic for now
-       await new Promise(r => setTimeout(r, 1000));
-       // This is where we will hook up the "Am I creating a soul?" logic later
-   }
-   
-   sendBtn.addEventListener('click', handleUserAction);
-   userInput.addEventListener('keypress', (e) => {
-       if (e.key === 'Enter') handleUserAction();
-   });
+ /* =========================================
+   5. THE REAL BRAIN CONNECTION (Restored)
+   ========================================= */
+
+// Keep track of the conversation so Rem remembers context
+let conversationHistory = [
+    { role: "system", content: "You are Rem. You are conducting the Soul Genesis interview..." } 
+    // ^ SOSU: Ensure this matches the system prompt logic you liked!
+];
+
+async function handleUserAction() {
+    const text = userInput.value.trim();
+    if (!text || isTyping) return; 
+
+    // 1. Show User Text
+    userInput.value = "";
+    await addMessage(text, "user");
+    
+    // Add to history
+    conversationHistory.push({ role: "user", content: text });
+
+    // 2. Show "Thinking" State (Optional visual cue)
+    // (You can add a loading dots animation here later)
+
+    try {
+        // 3. CALL THE GENESIS API (The Real Brain)
+        const response = await fetch('https://wftsctqfiqbdyllxwagi.supabase.co/functions/v1/genesis-api', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmdHNjdHFmaXFiZHlsbHh3YWdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0MjE0NTksImV4cCI6MjA3OTk5NzQ1OX0.FWqZTUi5gVA3SpOq_Hp1LlxEinJvfloqw3OhoQlcfwg' 
+            },
+            body: JSON.stringify({ 
+                messages: conversationHistory,
+                // Add any other params your API expects (like 'userId' or 'mode')
+            })
+        });
+
+        if (!response.ok) throw new Error('Brain Freeze');
+
+        const data = await response.json();
+        const replyText = data.reply; // Or whatever your API returns
+        const imageUrl = data.image;  // If your API returns an image URL
+
+        // 4. Update History
+        conversationHistory.push({ role: "assistant", content: replyText });
+
+        // 5. Rem Speaks (Typewriter)
+        await addMessage(replyText, "rem");
+
+        // 6. VISION CHECK (Did she paint something?)
+        if (imageUrl) {
+            await addImageMessage(imageUrl); // We need to add this helper below!
+        }
+
+    } catch (error) {
+        console.error(error);
+        await addMessage("Sosu... the connection to the Soul Forge is flickering. (Check Console)", "rem");
+    }
+}
+
+// HELPER: Display Images
+async function addImageMessage(url) {
+    const msgDiv = document.createElement('div');
+    msgDiv.classList.add('message', 'rem-msg');
+    
+    const avatar = document.createElement('span');
+    avatar.classList.add('avatar');
+    avatar.textContent = "🎨"; // Art Icon
+    
+    const bubble = document.createElement('div');
+    bubble.classList.add('bubble');
+    
+    const img = document.createElement('img');
+    img.src = url;
+    img.style.maxWidth = "100%";
+    img.style.borderRadius = "10px";
+    img.style.marginTop = "10px";
+    
+    bubble.appendChild(img);
+    msgDiv.appendChild(avatar);
+    msgDiv.appendChild(bubble);
+    chatLog.appendChild(msgDiv);
+    chatLog.scrollTop = chatLog.scrollHeight;
+};
