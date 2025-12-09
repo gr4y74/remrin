@@ -105,7 +105,7 @@ let conversationHistory = [
 
 async function handleUserAction() {
     const text = userInput.value.trim();
-    if (!text || isTyping) return; 
+    if (!text) return;
 
     // 1. Show User Text
     userInput.value = "";
