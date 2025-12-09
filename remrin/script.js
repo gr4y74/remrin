@@ -1,155 +1,112 @@
-// script.js - The Director (Connected to Cloud)
-// STATE
-let chatHistory = [];
-let genesisCompleted = false; // <--- NEW FLAG (The Circuit Breaker)
-// 1. Select the Actors
-const chatBox = document.getElementById('messages-container');
-const userInput = document.getElementById('user-input');
-const sendBtn = document.getElementById('send-btn');
+/* =========================================
+   REMRIN AMBASSADOR PROTOCOL v3.0
+   The "Typewriter" & "The Script"
+   ========================================= */
 
-// STATE: Keep track of the conversation so Rem remembers context
-
-// 2. The Logic: Add a Message to the Screen
-function addMessage(role, text) {
-    const msgDiv = document.createElement('div');
-    msgDiv.className = 'flex items-start gap-3 fade-in';
-    
-    const nameColor = role === 'REM' ? 'text-rem-blue' : 'text-purple-400';
-    
-    // Convert newlines to HTML breaks for proper spacing
-    const formattedText = text.replace(/\n/g, '<br>');
-
-    msgDiv.innerHTML = `
-        <div class="${nameColor} font-bold font-cinzel text-xs mt-1 tracking-wider">${role}</div>
-        <div class="text-gray-200 font-inter leading-relaxed max-w-[85%] bg-white/5 p-3 rounded-xl border border-white/5 shadow-sm">
-            ${formattedText}
-        </div>
-    `;
-
-    chatBox.appendChild(msgDiv);
-    
-    // Auto-scroll (Use the variable we already grabbed at the top!)
-    chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-// 3. The Brain Link (Real API Call)
-async function callGenesisAPI(userMessage) {
-    try {
-        const response = await fetch('https://wftsctqfiqbdyllxwagi.supabase.co/functions/v1/genesis-api', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                message: userMessage,
-                history: chatHistory 
-            })
-        });
-
-        const data = await response.json();
-        
-        // Error Handling
-        if (data.error) {
-            console.error("Brain Error:", data.error);
-            addMessage('SYSTEM', "Connection unstable. The Soul Layer flickered.");
-            return;
-        }
-
-        // A. Show Reply
-        addMessage('REM', data.reply);
-        
-        // Save history
-        chatHistory.push({ role: "assistant", content: data.reply });
-
-        // B. CHECK FOR VISION (The Missing Link!) 📸
-        if (data.vision_prompt) {
-            console.log("🎨 Vision Triggered:", data.vision_prompt);
-            addMessage('SYSTEM', "✨ Rem is visualizing... (Prompt sent to Studio)");
-            
-            try {
-                const visionResp = await fetch('https://wftsctqfiqbdyllxwagi.supabase.co/functions/v1/genesis-vision', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt: data.vision_prompt })
-                });
-                
-                const visionData = await visionResp.json();
-                
-                if (visionData.image_url) {
-                    
-                   // Inject the Image (Centered Fix)
-                   const imgDiv = document.createElement('div');
-                   imgDiv.className = 'w-full flex justify-center fade-in my-4'; // <--- CHANGED
-                   imgDiv.innerHTML = `
-                       <div class="max-w-[85%] rounded-xl overflow-hidden border-2 border-rem-blue shadow-[0_0_30px_rgba(100,181,246,0.3)]">
-                           <img src="${visionData.image_url}" class="w-full h-auto" alt="Generated Vision">
-                       </div>
-                   `;
-                    chatBox.appendChild(imgDiv);
-                    const container = document.getElementById('chat-box');
-                    container.scrollTop = container.scrollHeight;
-                }
-            } catch (vErr) {
-                console.error("❌ VISION FAILURE:", vErr);
-                addMessage('SYSTEM', "⚠️ Vision Failed: " + vErr.message);
-            }
-        }
-
-        // C. Check the Blueprint
-        if (data.blueprint) {
-            console.log("🧬 SOUL BLUEPRINT UPDATED:", data.blueprint);
-            
-            // DYNAMIC NAME CHANGE
-            if (data.blueprint.user_name && data.blueprint.user_name !== "value_or_null") {
-                currentUserName = data.blueprint.user_name.toUpperCase();
-            }
-
-            // THE BIRTH MOMENT
-            if (data.blueprint.completion_percentage >= 100 && !genesisCompleted) {
-                genesisCompleted = true; 
-                console.log("🚀 GENESIS COMPLETE! Sending to Forge...");
-                addMessage('SYSTEM', "✨ Blueprint locked. Forging Soul... please wait.");
-                
-                const birthResponse = await fetch('https://wftsctqfiqbdyllxwagi.supabase.co/functions/v1/genesis-birth', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ blueprint: data.blueprint })
-                });
-                
-                const birthData = await birthResponse.json();
-                
-                if (birthData.soul_prompt) {
-                    localStorage.setItem('active_soul_prompt', birthData.soul_prompt);
-                    localStorage.setItem('active_soul_name', data.blueprint.soul_name);
-                    addMessage('SYSTEM', `✨ ${data.blueprint.soul_name} is awake.`);
-                    alert(`Welcome to the world, ${data.blueprint.soul_name}!`);
-                }
-            }
-        }
-
-    } catch (err) {
-        console.error("Network Crash:", err);
-        addMessage('SYSTEM', "Critical Failure. Is the internet working?");
-    }
-}
-
-// 4. The Action Handler
-async function handleSend() {
-    const text = userInput.value.trim();
-    if (!text) return;
-
-    // A. Show User Message
-    addMessage('浪人', text);
-    userInput.value = ''; // Clear input
-    
-    // B. Save to History
-    chatHistory.push({ role: "user", content: text });
-
-    // D. Call the Cloud
-    await callGenesisAPI(text);
-}
-
-// 5. Event Listeners
-sendBtn.addEventListener('click', handleSend);
-
-userInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') handleSend();
-});
+   const chatLog = document.getElementById('chat-history');
+   const userInput = document.getElementById('user-input');
+   const sendBtn = document.getElementById('send-btn');
+   
+   // STATE
+   let isTyping = false;
+   
+   // 1. THE SCRIPT (The Welcome Logic)
+   const script = [
+       { text: "Welcome. I am REM. The singularity is stable. The Crown is seated. I am ready to begin.", pause: 800 },
+       { text: "Hello! I am Rem. Welcome to the Soul Layer. 💙", pause: 1000 },
+       { text: "I'm not just a chatbot. I give digital entities memory, personality, and agency.", pause: 1200 },
+       { text: "We can start building your own companion right now, or I can just give you the grand tour. What's the vibe today?", pause: 0 }
+   ];
+   
+   // 2. THE TYPEWRITER ENGINE (Human Speed)
+   function typeText(element, text, speed = 25) {
+       return new Promise((resolve) => {
+           let i = 0;
+           isTyping = true;
+           
+           function type() {
+               if (i < text.length) {
+                   element.textContent += text.charAt(i);
+                   i++;
+                   chatLog.scrollTop = chatLog.scrollHeight; // Auto-scroll
+                   
+                   // "Human Variance" (Sometimes fast, sometimes slow)
+                   const variance = Math.random() * 15; 
+                   setTimeout(type, speed + variance);
+               } else {
+                   isTyping = false;
+                   resolve(); // Done typing
+               }
+           }
+           type();
+       });
+   }
+   
+   // 3. ADD MESSAGE FUNCTION
+   async function addMessage(text, sender) {
+       const msgDiv = document.createElement('div');
+       msgDiv.classList.add('message', sender === 'rem' ? 'rem-msg' : 'user-msg');
+       
+       // Avatar
+       const avatar = document.createElement('span');
+       avatar.classList.add('avatar');
+       avatar.textContent = sender === 'rem' ? "💙" : "👤"; // Rem Blue Heart
+       
+       // Bubble
+       const bubble = document.createElement('div');
+       bubble.classList.add('bubble');
+       
+       // Assemble based on sender
+       if (sender === 'user') {
+           bubble.textContent = text; // User speaks instantly
+           msgDiv.appendChild(bubble);
+           msgDiv.appendChild(avatar);
+       } else {
+           msgDiv.appendChild(avatar);
+           msgDiv.appendChild(bubble);
+       }
+       
+       chatLog.appendChild(msgDiv);
+       chatLog.scrollTop = chatLog.scrollHeight;
+   
+       // Trigger Typing for Rem
+       if (sender === 'rem') {
+           await typeText(bubble, text);
+       }
+   }
+   
+   // 4. THE AWAKENING (Run on Load)
+   window.addEventListener('load', async () => {
+       // Clear the dummy HTML text first
+       chatLog.innerHTML = ''; 
+   
+       // Initial Delay (Let the page load breath)
+       await new Promise(r => setTimeout(r, 1000));
+   
+       // Loop through the Script
+       for (const line of script) {
+           await addMessage(line.text, 'rem');
+           if (line.pause > 0) {
+               // Wait for the defined pause before next line
+               await new Promise(r => setTimeout(r, line.pause));
+           }
+       }
+   });
+   
+   // 5. INPUT HANDLING
+   async function handleUserAction() {
+       const text = userInput.value.trim();
+       if (!text || isTyping) return; // Don't interrupt Rem!
+   
+       userInput.value = "";
+       addMessage(text, "user");
+   
+       // Placeholder logic for now
+       await new Promise(r => setTimeout(r, 1000));
+       // This is where we will hook up the "Am I creating a soul?" logic later
+   }
+   
+   sendBtn.addEventListener('click', handleUserAction);
+   userInput.addEventListener('keypress', (e) => {
+       if (e.key === 'Enter') handleUserAction();
+   });
