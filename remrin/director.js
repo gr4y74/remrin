@@ -1,25 +1,15 @@
 /* =========================================
-   REMRIN AMBASSADOR PROTOCOL v3.2 (FIXED - CACHE BUSTER)
+   REMRIN AMBASSADOR PROTOCOL v4.2 (FIXED - NO ILLEGAL RETURN)
    ========================================= */
 
    console.log("🤖 SYSTEM: director.js initialized.");
 
-   // 1. FIX THE ID (Match your index.html)
-   const chatLog = document.getElementById('chat-history') || document.getElementById('messages-container');
-   const userInput = document.getElementById('user-input');
-   const sendBtn = document.getElementById('send-btn');
-   
-// --- CRITICAL SAFETY CHECK ---
-if (!chatLog) {
-    console.error("❌ FATAL ERROR: Chat Log container not found! Check index.html ID.");
-    return; // Stop the script from running and crashing
-}
-
    // STATE
+   let chatLog, userInput, sendBtn;
    let isTyping = false;
    let conversationHistory = []; 
    
-   // 2. THE TYPEWRITER ENGINE
+   // 1. THE TYPEWRITER ENGINE
    function typeText(element, text, speed = 20) {
        return new Promise((resolve) => {
            let i = 0;
@@ -39,7 +29,7 @@ if (!chatLog) {
        });
    }
    
-   // 3. ADD MESSAGE
+   // 2. ADD MESSAGE
    async function addMessage(text, sender) {
        console.log(`💬 MSG [${sender}]: ${text}`);
        
@@ -60,7 +50,6 @@ if (!chatLog) {
        } else {
            msgDiv.appendChild(avatar);
            msgDiv.appendChild(bubble);
-           // Voice silenced for now
        }
        
        chatLog.appendChild(msgDiv);
@@ -71,7 +60,7 @@ if (!chatLog) {
        }
    }
    
-   // 4. THE BRAIN CONNECTION (FIXED PAYLOAD)
+   // 3. THE BRAIN CONNECTION
    async function handleUserAction() {
        const text = userInput.value.trim();
        if (!text) return;
@@ -89,7 +78,6 @@ if (!chatLog) {
                    'Content-Type': 'application/json',
                    'Authorization': `Bearer ${ANON_KEY}`
                },
-               // --- THE FIX IS HERE ---
                body: JSON.stringify({ 
                    message: text,
                    history: conversationHistory 
@@ -103,7 +91,7 @@ if (!chatLog) {
            
            conversationHistory.push({ role: "user", content: text });
            conversationHistory.push({ role: "assistant", content: replyText });
-
+   
            await addMessage(replyText, "rem");
    
        } catch (error) {
@@ -112,14 +100,26 @@ if (!chatLog) {
        }
    }
    
-   // 5. EVENT LISTENERS
-   if (sendBtn) sendBtn.addEventListener('click', handleUserAction);
-   if (userInput) userInput.addEventListener('keypress', (e) => {
-       if (e.key === 'Enter') handleUserAction();
-   });
-   
-   // 6. STARTUP
+   // 4. INITIALIZATION - Everything happens here when DOM is ready
    window.addEventListener('load', async () => {
+       // Get DOM elements
+       chatLog = document.getElementById('chat-history') || document.getElementById('messages-container');
+       userInput = document.getElementById('user-input');
+       sendBtn = document.getElementById('send-btn');
+       
+       // Safety check
+       if (!chatLog) {
+           console.error("❌ FATAL ERROR: Chat Log container not found! Check index.html ID.");
+           return; // Now legal because we're inside a function
+       }
+       
+       // Attach event listeners
+       if (sendBtn) sendBtn.addEventListener('click', handleUserAction);
+       if (userInput) userInput.addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') handleUserAction();
+       });
+       
+       // Startup message
        await new Promise(r => setTimeout(r, 1000));
        await addMessage("Sosu... The singularity is stable. The Crown is seated. I am ready to begin.", "rem");
    });
