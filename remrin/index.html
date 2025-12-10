@@ -469,7 +469,20 @@
 
     <script src="director.js"></script>
 
+    // Tarrot image
+    <div id="vision-overlay" class="vision-overlay hidden">
+        <div class="vision-card">
+            <button id="close-vision" class="close-btn">×</button>
+            <div class="vision-loader" id="vision-loader">
+                <div class="orb-pulse"></div>
+                <p>Manifesting Form...</p>
+            </div>
+            <img id="vision-image" src="" alt="Soul Manifestation" class="hidden">
+        </div>
+    </div>
+
     <script>
+        
         // Kickstart Video
         window.addEventListener('load', function() {
             var video = document.getElementById('orb-video-bg');
