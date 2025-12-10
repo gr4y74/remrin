@@ -148,12 +148,17 @@ h1, h2, h3, .brand-font { font-family: 'Outfit', sans-serif; }
     transition: all 0.3s ease;
 }
 
-/* The "Hush" State */
+/* FORCE the color change with !important so nothing overrides it */
 .status-dot.muted {
-    background: #555; /* Grey/Red (Hush) */
-    box-shadow: none;
-    animation: none;
-    border: 1px solid rgba(255,255,255,0.2);
+    background: #ff4444 !important; /* Bright Red for Muted */
+    box-shadow: 0 0 5px #ff4444 !important;
+    animation: none !important;
+}
+
+/* Ensure the pointer cursor is always there */
+.status-dot {
+    cursor: pointer !important; 
+    z-index: 9999; /* Make sure it's on top */
 }
 
 .status-dot:hover { transform: scale(1.5); }
