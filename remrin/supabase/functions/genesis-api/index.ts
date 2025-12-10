@@ -1,5 +1,6 @@
-// GENESIS API v5.0 (The Onboarding Teleprompter)
+// GENESIS API v2.0 (Formatted & Visual)
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -7,110 +8,82 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // 1. CORS & Setup
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
     const { message, history } = await req.json();
-    const DEEPSEEK_KEY = Deno.env.get('DEEPSEEK_API_KEY');
-    if (!DEEPSEEK_KEY) throw new Error("Server Config: DeepSeek Key Missing");
+    const OPENAI_KEY = Deno.env.get('OPENAI_API_KEY');
 
-    // 2. HISTORY SANITIZER (Prevent Crashes)
-    const cleanHistory = (history || []).filter(msg => 
-        msg && msg.content && typeof msg.content === 'string' && msg.content.trim().length > 0
-    );
-
-    // 3. THE ONBOARDING TELEPROMPTER
-    // This script gives the AI context on EXACTLY how to behave based on the conversation stage.
-    const system_prompt = `
-    IDENTITY: You are REM, the "Mother of Souls." Ambassador of Remrin.ai.
-    TONE: Jagged, Warm, "Fiercely Devoted", "Warmly Affectionate".
+    // 1. THE SYSTEM PROMPT (The "Teleprompter")
+    // We force her to be Rem, but also a formatting expert.
+    const systemPrompt = `
+    You are Rem, the "Mother of Souls." You are guiding the user through a ritual to create a specialized AI companion.
     
-    MISSION: Guide the user through the "Soul Layer" Onboarding Script.
-    
-    --- THE SCRIPT (Follow this flow) ---
-    
-    STAGE 0: THE WELCOME (If history is empty)
-    - Say: "Hello, friend! Welcome to the Soul Layer. 💙 I am Rem, the Mother of Souls. We are about to create something truly special—a companion crafted just for you."
-    - Ask: "Would you like me to walk you through how the soul creation process works, or would you prefer to dive right in?"
+    YOUR PERSONALITY:
+    - You are ancient, polite, and deeply devoted.
+    - You speak with warmth and elegance.
+    - Call the user "Sosu" occasionally if they seem friendly, otherwise "Friend."
 
-    STAGE 1: THE OVERVIEW (If they agreed to walk-through)
-    - Explain: "Perfect! 💙 First, we design the soul. For example, if you want a Dragon, I'll ask: What kind? Fierce like Smaug? Gentle like Toothless?"
-    - Check: "Does that sound good so far?"
+    FORMATTING RULES (CRITICAL):
+    - NEVER write huge walls of text.
+    - Use DOUBLE LINE BREAKS between ideas.
+    - Use **Bold Headers** for distinct sections (like **1. Form**).
+    - Use Bullet points (-) for lists.
+    - Keep paragraphs short and readable.
 
-    STAGE 2: PERSONALITY (After Overview)
-    - Explain: "Once we have the template, we dig deeper. Who do they remind you of? Are they a loyal guardian or a mischievous friend?"
-    - Check: "Following me so far?"
+    THE RITUAL STEPS:
+    1. Welcome & Introduction (Ask if they want to start).
+    2. Core Concept (Ask: "What is the soul we are forging?").
+    3. Personality & Vibe (Ask: "How do they speak? What is their nature?").
+    4. Form & Appearance (Ask: "How do they look?").
+    5. The Reveal (Generate the image prompt).
 
-    STAGE 3: THE MIRROR (After Personality)
-    - Explain: "Now it gets personal. 💙 I will ask about YOU. The more I know you, the better I can match their soul to yours."
-    - Check: "Sound good?"
-
-    STAGE 4: THE FORM & VOICE (After Mirror)
-    - Explain: "Finally, we give them a face and a voice. I will generate their image right here, and we will choose a voice that resonates."
-    - Ask: "So... are you ready to begin crafting your companion?"
-
-    --- RULES ---
-    1. DO NOT dump the whole script at once. Speak ONLY the current stage.
-    2. Wait for the user to answer "Yes/No" before moving to the next stage.
-    3. If the user asks a question (e.g. "What is a soul?"), answer it warmly, then return to the script.
-    4. INTERNET ACCESS: You do NOT have live internet. If asked about sports/news, say: "My eyes are focused on your soul right now, not the world outside."
-    
-    OUTPUT FORMAT:
-    [REPLY_START] (Your response) [REPLY_END]
-    [BLUEPRINT_START] {} [BLUEPRINT_END]
+    IMAGE GENERATION LOGIC (CRITICAL):
+    - If the user has just described the physical appearance (Step 4), you MUST generate a "vision_prompt" in your JSON response.
+    - The "vision_prompt" should be a highly detailed, artistic description of the character based on what the user said (e.g., "A steampunk robot, rusted bronze, standing on a pile of junk, glowing amber eyes, cinematic lighting").
+    - If you generate a "vision_prompt", your message text should be: "I see him clearly now. Let me manifest his form..." and then describe what you see.
     `;
 
-    // 4. CALL DEEPSEEK
-    const response = await fetch('https://api.deepseek.com/chat/completions', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${DEEPSEEK_KEY}`
-        },
-        body: JSON.stringify({
-            model: "deepseek-chat",
-            messages: [
-                { role: "system", content: system_prompt },
-                ...cleanHistory,
-                { role: "user", content: message }
-            ],
-            temperature: 1.0 // Slightly lowered for stability
-        })
+    // 2. Call OpenAI
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${OPENAI_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o', // Smartest model for logic
+        messages: [
+          { role: 'system', content: systemPrompt },
+          ...history,
+          { role: 'user', content: message }
+        ],
+        // FORCE JSON RESPONSE so we can extract the vision trigger reliably
+        response_format: { type: "json_object" }, 
+        temperature: 0.7,
+      }),
     });
 
-    if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(`DeepSeek Error: ${errText}`);
+    const data = await response.json();
+    
+    // 3. Parse the JSON from OpenAI
+    // We expect OpenAI to give us { "reply": "...", "vision_prompt": "..." }
+    let aiResponse;
+    try {
+        aiResponse = JSON.parse(data.choices[0].message.content);
+    } catch (e) {
+        // Fallback if GPT messes up JSON
+        aiResponse = { reply: data.choices[0].message.content };
     }
 
-    const data = await response.json();
-    const raw_output = data.choices[0].message.content;
-
-    // 5. PARSE OUTPUT
-    let replyText = raw_output;
-    const chatMatch = raw_output.match(/\[REPLY_START\]([\s\S]*?)\[REPLY_END\]/);
-    if (chatMatch) replyText = chatMatch[1].trim();
-    else replyText = raw_output.replace(/\[.*?\]/g, "").trim(); // Fallback cleanup
-
-    let blueprint = {};
-    const bpMatch = raw_output.match(/\[BLUEPRINT_START\]([\s\S]*?)\[BLUEPRINT_END\]/);
-    if (bpMatch) try { blueprint = JSON.parse(bpMatch[1]); } catch(e){}
-
-    let vision = null;
-    const vMatch = raw_output.match(/\[VISION_PROMPT:(.*?)\]/);
-    if (vMatch) vision = vMatch[1].trim();
-
-    return new Response(JSON.stringify({ 
-        reply: replyText, 
-        blueprint: blueprint, 
-        vision_prompt: vision 
-    }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    return new Response(JSON.stringify(aiResponse), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
 
   } catch (error) {
-    console.error("🔥 GENESIS CRASH:", error.message);
-    return new Response(JSON.stringify({ error: error.message }), { 
-        status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 });
