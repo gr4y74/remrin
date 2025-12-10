@@ -16,7 +16,7 @@ serve(async (req) => {
     const ELEVEN_LABS_KEY = Deno.env.get('ELEVEN_LABS_API_KEY');
     
     // REPLACE THIS WITH YOUR NEW "MOTHER" VOICE ID IF YOU GENERATED ONE
-    const VOICE_ID = "COjLEgrmZdIQ28VOyOCx"; 
+    const VOICE_ID = "1AGbVsXnwF8OhJ92I4Nn"; 
 
     if (!ELEVEN_LABS_KEY) {
       throw new Error("Server Config: ElevenLabs Key Missing");
