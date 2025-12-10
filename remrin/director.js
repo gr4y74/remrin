@@ -201,22 +201,24 @@
        if (!chatLog) { console.error("❌ FATAL: Chat Log not found!"); return; }
        
        // TOGGLE LOGIC (HUSH / LISTEN)
-       if (statusDot) {
-           statusDot.addEventListener('click', () => {
-               isMuted = !isMuted;
-               
-               // Visual Update
-               if (isMuted) {
-                   statusDot.classList.add('muted');
-                   statusDot.title = "Hush (Voice Muted)";
-                   console.log("🔇 Mode: HUSH");
-               } else {
-                   statusDot.classList.remove('muted');
-                   statusDot.title = "Listen (Voice Active)";
-                   console.log("🔊 Mode: LISTEN");
-               }
-           });
-       }
+    if (statusDot) {
+        statusDot.addEventListener('click', () => {
+            isMuted = !isMuted;
+            
+            // Visual Update (Direct Style Injection)
+            if (isMuted) {
+                statusDot.style.background = "#ff4444"; // FORCE RED
+                statusDot.style.boxShadow = "0 0 8px #ff4444";
+                statusDot.title = "Hush (Voice Muted)";
+                console.log("🔇 Mode: HUSH");
+            } else {
+                statusDot.style.background = "#00ff88"; // FORCE GREEN
+                statusDot.style.boxShadow = "0 0 8px #00ff88";
+                statusDot.title = "Listen (Voice Active)";
+                console.log("🔊 Mode: LISTEN");
+            }
+        });
+    }
    
        // EVENT LISTENERS
        if (sendBtn) sendBtn.addEventListener('click', handleUserAction);
