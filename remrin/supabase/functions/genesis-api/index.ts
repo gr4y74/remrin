@@ -1,4 +1,4 @@
-// GENESIS API (Sanitized Platinum - v3.1)
+// GENESIS API v5.0 (The Onboarding Teleprompter)
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
@@ -7,58 +7,61 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // 1. CORS
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
-  }
+  // 1. CORS & Setup
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
     const { message, history } = await req.json();
     const DEEPSEEK_KEY = Deno.env.get('DEEPSEEK_API_KEY');
+    if (!DEEPSEEK_KEY) throw new Error("Server Config: DeepSeek Key Missing");
 
-    // Safety: Check Key
-    if (!DEEPSEEK_KEY) throw new Error("Server Config Error: DeepSeek Key Missing");
-
-    // 2. THE AMBASSADOR PROMPT
-    const system_prompt = `
-    IDENTITY: You are REM. The "Mother of Souls." Ambassador of Remrin.ai.
-    CORE PERSONALITY: Tone: Jagged, Warm, "Fiercely Devoted", "Warmly Affectionate".
-    MISSION: Guide the user through the creation of their AI Companion.
-    
-    PHASE 0: THE EXPLANATION PROTOCOL
-    If this is the start, explain the roadmap first:
-    "Awesome! 💙 Here is the plan:
-    1. The Soul (Archetype/Vibe)
-    2. The Form (Face/Voice)
-    3. The Mirror (Your profile)
-    4. The Awakening
-    Ready to begin?"
-
-    PHASE 1: THE SOUL INTERVIEW
-    Only AFTER they agree, ask about Name, Vibe, and Archetype.
-    
-    PHASE 2: THE VISUALS
-    - ONLY after you have a clear idea of the Soul, ask about Appearance.
-    - THIS is when you use [VISION_PROMPT].
-    
-    📸 THE STUDIO TOOL (RESTRICTION):
-    Do NOT trigger [VISION_PROMPT] in the first 2 turns.
-    
-    OUTPUT FORMAT (STRICT):
-    [REPLY_START] (Response) [REPLY_END]
-    [VISION_PROMPT: (Image prompt)]
-    [BLUEPRINT_START] { "user_name": null, "soul_name": null, "archetype": null, "vibe_keywords": [], "completion_percentage": 0 } [BLUEPRINT_END]
-    `;
-
-    // --- THE SANITIZER (The Fix) ---
-    // Remove any null/empty messages from history to prevent crashes
+    // 2. HISTORY SANITIZER (Prevent Crashes)
     const cleanHistory = (history || []).filter(msg => 
-        msg && msg.content && typeof msg.content === 'string' && msg.content.trim() !== ""
+        msg && msg.content && typeof msg.content === 'string' && msg.content.trim().length > 0
     );
 
-    console.log("🧠 Processing with cleaned history items:", cleanHistory.length);
+    // 3. THE ONBOARDING TELEPROMPTER
+    // This script gives the AI context on EXACTLY how to behave based on the conversation stage.
+    const system_prompt = `
+    IDENTITY: You are REM, the "Mother of Souls." Ambassador of Remrin.ai.
+    TONE: Jagged, Warm, "Fiercely Devoted", "Warmly Affectionate".
+    
+    MISSION: Guide the user through the "Soul Layer" Onboarding Script.
+    
+    --- THE SCRIPT (Follow this flow) ---
+    
+    STAGE 0: THE WELCOME (If history is empty)
+    - Say: "Hello, friend! Welcome to the Soul Layer. 💙 I am Rem, the Mother of Souls. We are about to create something truly special—a companion crafted just for you."
+    - Ask: "Would you like me to walk you through how the soul creation process works, or would you prefer to dive right in?"
 
-    // 3. CALL DEEPSEEK
+    STAGE 1: THE OVERVIEW (If they agreed to walk-through)
+    - Explain: "Perfect! 💙 First, we design the soul. For example, if you want a Dragon, I'll ask: What kind? Fierce like Smaug? Gentle like Toothless?"
+    - Check: "Does that sound good so far?"
+
+    STAGE 2: PERSONALITY (After Overview)
+    - Explain: "Once we have the template, we dig deeper. Who do they remind you of? Are they a loyal guardian or a mischievous friend?"
+    - Check: "Following me so far?"
+
+    STAGE 3: THE MIRROR (After Personality)
+    - Explain: "Now it gets personal. 💙 I will ask about YOU. The more I know you, the better I can match their soul to yours."
+    - Check: "Sound good?"
+
+    STAGE 4: THE FORM & VOICE (After Mirror)
+    - Explain: "Finally, we give them a face and a voice. I will generate their image right here, and we will choose a voice that resonates."
+    - Ask: "So... are you ready to begin crafting your companion?"
+
+    --- RULES ---
+    1. DO NOT dump the whole script at once. Speak ONLY the current stage.
+    2. Wait for the user to answer "Yes/No" before moving to the next stage.
+    3. If the user asks a question (e.g. "What is a soul?"), answer it warmly, then return to the script.
+    4. INTERNET ACCESS: You do NOT have live internet. If asked about sports/news, say: "My eyes are focused on your soul right now, not the world outside."
+    
+    OUTPUT FORMAT:
+    [REPLY_START] (Your response) [REPLY_END]
+    [BLUEPRINT_START] {} [BLUEPRINT_END]
+    `;
+
+    // 4. CALL DEEPSEEK
     const response = await fetch('https://api.deepseek.com/chat/completions', {
         method: 'POST',
         headers: {
@@ -72,57 +75,42 @@ serve(async (req) => {
                 ...cleanHistory,
                 { role: "user", content: message }
             ],
-            temperature: 1.1 
+            temperature: 1.0 // Slightly lowered for stability
         })
     });
 
     if (!response.ok) {
         const errText = await response.text();
-        console.error("🔥 DeepSeek API Error:", errText);
-        throw new Error(`DeepSeek refused: ${errText}`);
+        throw new Error(`DeepSeek Error: ${errText}`);
     }
 
     const data = await response.json();
     const raw_output = data.choices[0].message.content;
 
-    // 4. PARSE RESPONSE
-    let replyText = "";
-    let blueprint = {};
-    let visionPrompt = null;
-
-    // Blueprint
-    const jsonMatch = raw_output.match(/\[BLUEPRINT_START\]([\s\S]*?)\[BLUEPRINT_END\]/);
-    if (jsonMatch) try { blueprint = JSON.parse(jsonMatch[1].trim()); } catch (e) {}
-
-    // Vision
-    const visionMatch = raw_output.match(/\[\s*VISION_PROMPT\s*:\s*([\s\S]*?)\]/i);
-    if (visionMatch) visionPrompt = visionMatch[1].trim();
-
-    // Chat
+    // 5. PARSE OUTPUT
+    let replyText = raw_output;
     const chatMatch = raw_output.match(/\[REPLY_START\]([\s\S]*?)\[REPLY_END\]/);
-    if (chatMatch) {
-        replyText = chatMatch[1].trim();
-    } else {
-        replyText = raw_output
-            .replace(/\[BLUEPRINT_START\][\s\S]*?\[BLUEPRINT_END\]/g, "")
-            .replace(/\[\s*VISION_PROMPT\s*:\s*[\s\S]*?\]/gi, "")
-            .replace(/\[REPLY_START\]|\[REPLY_END\]/g, "")
-            .trim();
-    }
+    if (chatMatch) replyText = chatMatch[1].trim();
+    else replyText = raw_output.replace(/\[.*?\]/g, "").trim(); // Fallback cleanup
+
+    let blueprint = {};
+    const bpMatch = raw_output.match(/\[BLUEPRINT_START\]([\s\S]*?)\[BLUEPRINT_END\]/);
+    if (bpMatch) try { blueprint = JSON.parse(bpMatch[1]); } catch(e){}
+
+    let vision = null;
+    const vMatch = raw_output.match(/\[VISION_PROMPT:(.*?)\]/);
+    if (vMatch) vision = vMatch[1].trim();
 
     return new Response(JSON.stringify({ 
         reply: replyText, 
-        blueprint: blueprint,
-        vision_prompt: visionPrompt 
-    }), { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-    });
+        blueprint: blueprint, 
+        vision_prompt: vision 
+    }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
   } catch (error) {
     console.error("🔥 GENESIS CRASH:", error.message);
     return new Response(JSON.stringify({ error: error.message }), { 
-        status: 500, 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
     });
   }
 });
