@@ -19,7 +19,7 @@ serve(async (req) => {
     const ELEVEN_LABS_KEY = Deno.env.get('ELEVEN_LABS_API_KEY');
     // Default Voice ID (Rem's Voice - replace if you have a specific one)
     // This is a default soft female voice ("Rachel"). Change to your preferred ID.
-    const VOICE_ID = "21m00Tcm4TlvDq8ikWAM"; 
+    const VOICE_ID = "COjLEgrmZdIQ28VOyOCx";
 
     if (!ELEVEN_LABS_KEY) {
       throw new Error("Server Config: ElevenLabs Key Missing");

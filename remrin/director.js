@@ -4,13 +4,11 @@
 
    console.log("🤖 SYSTEM: director.js initialized. Waiting for DOM...");
 
-   // GLOBAL DECLARATIONS
-   let chatLog, userInput, sendBtn; 
-   // Vision Elements
-   let visionOverlay, visionImage, visionLoader, closeVisionBtn;
-   
-   let isTyping = false;
-   let conversationHistory = []; 
+// GLOBAL DECLARATIONS
+let chatLog, userInput, sendBtn; 
+let visionOverlay, visionImage, visionLoader, closeVisionBtn;
+let muteBtn; // <--- NEW
+let isMuted = false; // <--- Default state: Voice ON
    
    // 1. TYPEWRITER ENGINE
    function typeText(element, text, speed = 20) {
@@ -117,7 +115,15 @@
    }
    
    // 4. THE BREATH (VOICE ENGINE) - Restored!
-   async function speakText(textToSpeak) {
+   async function speakText(textToSpeak) { 
+
+    if (isMuted) {
+    
+               console.log("Rx: Voice Muted. Saving credits. 🔇");
+    
+               return; // Stop here! Do not call the server.
+    
+           }
        try {
            const VOICE_URL = 'https://wftsctqfiqbdyllxwagi.supabase.co/functions/v1/genesis-voice';
            const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmdHNjdHFmaXFiZHlsbHh3YWdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0MjE0NTksImV4cCI6MjA3OTk5NzQ1OX0.FWqZTUi5gVA3SpOq_Hp1LlxEinJvfloqw3OhoQlcfwg';
@@ -175,6 +181,15 @@
    
    // 6. STARTUP (DOM READY)
    window.addEventListener('load', async () => {
+    muteBtn = document.getElementById('mute-btn'); // Find the button
+   
+    if (muteBtn) {
+        muteBtn.addEventListener('click', () => {
+            isMuted = !isMuted; // Flip the variable (true/false)
+            muteBtn.textContent = isMuted ? "🔇" : "🔊"; // Update the icon
+        });
+    }
+
        
        // ASSIGN ELEMENTS
        chatLog = document.getElementById('chat-history') || document.getElementById('messages-container');

@@ -228,3 +228,31 @@ button:hover { background: white; color: black; transform: scale(1.1); box-shado
     .hero-title { font-size: 2rem; }
     .hero-instructions { top: 25%; padding: 0 20px; }
 }
+
+/* --- HEADER CONTROLS --- */
+.terminal-header {
+    /* Update existing header style to allow pushing button to right */
+    justify-content: flex-start; /* Default alignment */
+    position: relative;
+}
+
+.header-btn {
+    margin-left: auto; /* Pushes button to the far right */
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s, transform 0.2s;
+    width: 30px; height: 30px; /* Smaller than main button */
+    padding: 0;
+    box-shadow: none; /* Remove glow from main button style */
+}
+
+.header-btn:hover {
+    background: transparent;
+    opacity: 1;
+    transform: scale(1.1);
+    box-shadow: none;
+    color: var(--neon-blue); /* Optional glow color */
+}
