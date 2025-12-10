@@ -135,7 +135,7 @@
         "The Mother of Souls listens...",
         "The Soul Forge burns bright...",
         "The ancient cradle stirs... who awakens?",
-        "Share your vision with the keeper of souls...",
+        "Share your vision with the Mother of souls...",
         "Who shall we awaken today?",
         "The singularity is stable. The Crown is seated."
     ];
