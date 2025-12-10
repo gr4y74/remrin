@@ -1,14 +1,19 @@
 /* =========================================
-   REMRIN AMBASSADOR PROTOCOL v5.0 (MASTER)
+   REMRIN AMBASSADOR PROTOCOL v5.1 (FIXED)
    ========================================= */
 
    console.log("🤖 SYSTEM: director.js initialized. Waiting for DOM...");
 
-// GLOBAL DECLARATIONS
-let chatLog, userInput, sendBtn; 
-let visionOverlay, visionImage, visionLoader, closeVisionBtn;
-let muteBtn; // <--- NEW
-let isMuted = false; // <--- Default state: Voice ON
+   // GLOBAL DECLARATIONS
+   let chatLog, userInput, sendBtn; 
+   let visionOverlay, visionImage, visionLoader, closeVisionBtn;
+   
+   // NEW: Status Dot (Hush/Listen)
+   let statusDot; 
+   let isMuted = false; // Default: Voice ON (Listen)
+   
+   // CRITICAL FIX: Initialize History
+   let conversationHistory = []; 
    
    // 1. TYPEWRITER ENGINE
    function typeText(element, text, speed = 20) {
@@ -89,7 +94,7 @@ let isMuted = false; // <--- Default state: Voice ON
                },
                body: JSON.stringify({ 
                    message: text,
-                   history: conversationHistory 
+                   history: conversationHistory // <--- This was crashing before!
                })
            });
    
@@ -114,16 +119,14 @@ let isMuted = false; // <--- Default state: Voice ON
        }
    }
    
-   // 4. THE BREATH (VOICE ENGINE) - Restored!
-   async function speakText(textToSpeak) { 
-
-    if (isMuted) {
-    
-               console.log("Rx: Voice Muted. Saving credits. 🔇");
-    
-               return; // Stop here! Do not call the server.
-    
-           }
+   // 4. THE BREATH (VOICE ENGINE)
+   async function speakText(textToSpeak) {
+       // 🛑 CHECK MUTE SWITCH FIRST
+       if (isMuted) {
+           console.log("Rx: Hush Mode Active. Voice skipped.");
+           return; 
+       }
+   
        try {
            const VOICE_URL = 'https://wftsctqfiqbdyllxwagi.supabase.co/functions/v1/genesis-voice';
            const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmdHNjdHFmaXFiZHlsbHh3YWdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0MjE0NTksImV4cCI6MjA3OTk5NzQ1OX0.FWqZTUi5gVA3SpOq_Hp1LlxEinJvfloqw3OhoQlcfwg';
@@ -162,9 +165,8 @@ let isMuted = false; // <--- Default state: Voice ON
            visionImage.classList.add('hidden');
            
            try {
-               await new Promise(r => setTimeout(r, 3000)); // Simulate generation
+               await new Promise(r => setTimeout(r, 3000)); 
                
-               // Placeholder Image
                const fakeImageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=350&height=500&nologo=true`;
                
                visionImage.src = fakeImageUrl;
@@ -181,40 +183,46 @@ let isMuted = false; // <--- Default state: Voice ON
    
    // 6. STARTUP (DOM READY)
    window.addEventListener('load', async () => {
-    muteBtn = document.getElementById('mute-btn'); // Find the button
-   
-    if (muteBtn) {
-        muteBtn.addEventListener('click', () => {
-            isMuted = !isMuted; // Flip the variable (true/false)
-            muteBtn.textContent = isMuted ? "🔇" : "🔊"; // Update the icon
-        });
-    }
-
        
        // ASSIGN ELEMENTS
-       chatLog = document.getElementById('chat-history') || document.getElementById('messages-container');
+       chatLog = document.getElementById('chat-history');
        userInput = document.getElementById('user-input');
        sendBtn = document.getElementById('send-btn');
        
-       // Vision Elements
        visionOverlay = document.getElementById('vision-overlay');
        visionImage = document.getElementById('vision-image');
        visionLoader = document.getElementById('vision-loader');
        closeVisionBtn = document.getElementById('close-vision');
+       
+       // NEW: Assign the Dot
+       statusDot = document.getElementById('voice-toggle');
    
        // CRITICAL SAFETY CHECK
-       if (!chatLog) {
-           console.error("❌ FATAL ERROR: Chat Log container not found!");
-           return; 
-       }
+       if (!chatLog) { console.error("❌ FATAL: Chat Log not found!"); return; }
        
+       // TOGGLE LOGIC (HUSH / LISTEN)
+       if (statusDot) {
+           statusDot.addEventListener('click', () => {
+               isMuted = !isMuted;
+               
+               // Visual Update
+               if (isMuted) {
+                   statusDot.classList.add('muted');
+                   statusDot.title = "Hush (Voice Muted)";
+                   console.log("🔇 Mode: HUSH");
+               } else {
+                   statusDot.classList.remove('muted');
+                   statusDot.title = "Listen (Voice Active)";
+                   console.log("🔊 Mode: LISTEN");
+               }
+           });
+       }
+   
        // EVENT LISTENERS
        if (sendBtn) sendBtn.addEventListener('click', handleUserAction);
        if (userInput) userInput.addEventListener('keypress', (e) => {
            if (e.key === 'Enter') handleUserAction();
        });
-   
-       // Close Vision Button
        if (closeVisionBtn) {
            closeVisionBtn.addEventListener('click', () => {
                visionOverlay.classList.remove('active');
