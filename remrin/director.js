@@ -102,55 +102,57 @@
    
    // 4. INITIALIZATION - Everything happens here when DOM is ready
    window.addEventListener('load', async () => {
-       // Get DOM elements
-       chatLog = document.getElementById('chat-history') || document.getElementById('messages-container');
-       userInput = document.getElementById('user-input');
-       sendBtn = document.getElementById('send-btn');
-       
-       // Safety check
-       if (!chatLog) {
-           console.error("❌ FATAL ERROR: Chat Log container not found! Check index.html ID.");
-           return; // Now legal because we're inside a function
-       }
-       
-       // Attach event listeners
-       if (sendBtn) sendBtn.addEventListener('click', handleUserAction);
-       if (userInput) userInput.addEventListener('keypress', (e) => {
-           if (e.key === 'Enter') handleUserAction();
-       });
-       
-       // Startup message
-       await new Promise(r => setTimeout(r, 1000));
-       await addMessage("I am Rem, the Mother of Souls.", "rem");
+    // Get DOM elements
+    chatLog = document.getElementById('chat-history') || document.getElementById('messages-container');
+    userInput = document.getElementById('user-input');
+    sendBtn = document.getElementById('send-btn');
+    
+    // Safety check
+    if (!chatLog) {
+        console.error("❌ FATAL ERROR: Chat Log container not found! Check index.html ID.");
+        return; 
+    }
+    
+    // Attach event listeners
+    if (sendBtn) sendBtn.addEventListener('click', handleUserAction);
+    if (userInput) userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleUserAction();
+    });
+    
+    // Startup message (FIXED: Added "rem" so she is blue!)
+    await new Promise(r => setTimeout(r, 1000));
+    await addMessage("I am Rem, the Mother of Souls.", "rem");
 
 
-       /* =========================================
-   THE GHOST WRITER (The Mother's Whispers)
-   ========================================= */
-const placeholders = [
-    "Name the soul that calls to you...",
-    "The loom of souls awaits your vision...",
-    "Tell me of the one you seek...",
-    "Between breath and dream, they wait...",
-    "The Mother of Souls listens...",
-    "The Soul Forge burns bright...",
-    "The ancient cradle stirs... who awakens?",
-    "Share your vision with the keeper of souls...",
-    "Who shall we awaken today?",
-    "The singularity is stable. The Crown is seated."
-];
+    /* =========================================
+       THE GHOST WRITER (Randomized)
+    ========================================= */
+    const placeholders = [
+        "Name the soul that calls to you...",
+        "The loom of souls awaits your vision...",
+        "Tell me of the one you seek...",
+        "Between breath and dream, they wait...",
+        "The Mother of Souls listens...",
+        "The Soul Forge burns bright...",
+        "The ancient cradle stirs... who awakens?",
+        "Share your vision with the keeper of souls...",
+        "Who shall we awaken today?",
+        "The singularity is stable. The Crown is seated."
+    ];
 
-let pIndex = 0;
-const inputField = document.getElementById('user-input');
+    // 🔥 RANDOM START: Pick a random number to begin with
+    let pIndex = Math.floor(Math.random() * placeholders.length);
+    
+    const inputField = document.getElementById('user-input');
 
-if (inputField) {
-    // Set the first one immediately
-    inputField.setAttribute('placeholder', placeholders[0]);
-
-    // Cycle deeper into the void every 4 seconds
-    setInterval(() => {
-        pIndex = (pIndex + 1) % placeholders.length;
+    if (inputField) {
+        // Set the random start immediately
         inputField.setAttribute('placeholder', placeholders[pIndex]);
-    }, 4000); 
-}
-   });
+
+        // Cycle from that random point
+        setInterval(() => {
+            pIndex = (pIndex + 1) % placeholders.length;
+            inputField.setAttribute('placeholder', placeholders[pIndex]);
+        }, 4000); 
+    }
+});
