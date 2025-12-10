@@ -1,25 +1,19 @@
 /* =========================================
-   REMRIN AMBASSADOR PROTOCOL v5.1 (FIXED)
+   REMRIN AMBASSADOR PROTOCOL v5.2 (STABLE)
    ========================================= */
 
    console.log("🤖 SYSTEM: director.js initialized. Waiting for DOM...");
 
-// GLOBAL DECLARATIONS
-let chatLog, userInput, sendBtn; 
-let visionOverlay, visionImage, visionLoader, closeVisionBtn;
-let statusDot; 
-let isMuted = false;
-let conversationHistory = []; 
-
-// NEW: Track the current audio so we can kill it
-let currentAudio = null;
-   
-   // NEW: Status Dot (Hush/Listen)
+   // GLOBAL DECLARATIONS
+   let chatLog, userInput, sendBtn; 
+   let visionOverlay, visionImage, visionLoader, closeVisionBtn;
    let statusDot; 
-   let isMuted = false; // Default: Voice ON (Listen)
    
-   // CRITICAL FIX: Initialize History
+   // STATE VARIABLES
+   let isMuted = false;        // Default: Voice ON
+   let isTyping = false;
    let conversationHistory = []; 
+   let currentAudio = null;    // Tracks the active voice track
    
    // 1. TYPEWRITER ENGINE
    function typeText(element, text, speed = 20) {
@@ -100,7 +94,7 @@ let currentAudio = null;
                },
                body: JSON.stringify({ 
                    message: text,
-                   history: conversationHistory // <--- This was crashing before!
+                   history: conversationHistory 
                })
            });
    
@@ -127,13 +121,17 @@ let currentAudio = null;
    
    // 4. THE BREATH (VOICE ENGINE)
    async function speakText(textToSpeak) {
-    if (isMuted) return;
-
-    // 🛑 KILL PREVIOUS AUDIO
-    if (currentAudio) {
-        currentAudio.pause();
-        currentAudio.currentTime = 0;
-    }
+       // 🛑 1. CHECK MUTE SWITCH
+       if (isMuted) {
+           console.log("Rx: Hush Mode Active. Voice skipped.");
+           return; 
+       }
+   
+       // 🛑 2. KILL PREVIOUS AUDIO (No Overlap)
+       if (currentAudio) {
+           currentAudio.pause();
+           currentAudio.currentTime = 0;
+       }
    
        try {
            const VOICE_URL = 'https://wftsctqfiqbdyllxwagi.supabase.co/functions/v1/genesis-voice';
@@ -151,9 +149,11 @@ let currentAudio = null;
            if (!response.ok) throw new Error('Voice pipe broken');
    
            const blob = await response.blob();
+           const audioUrl = URL.createObjectURL(blob);
+           
+           // SAVE AND PLAY
            currentAudio = new Audio(audioUrl);
            currentAudio.play();
-           console.log("🔊 AUDIO PLAYING");
            console.log("🔊 AUDIO PLAYING");
    
        } catch (e) {
@@ -196,37 +196,39 @@ let currentAudio = null;
        chatLog = document.getElementById('chat-history');
        userInput = document.getElementById('user-input');
        sendBtn = document.getElementById('send-btn');
-       
        visionOverlay = document.getElementById('vision-overlay');
        visionImage = document.getElementById('vision-image');
        visionLoader = document.getElementById('vision-loader');
        closeVisionBtn = document.getElementById('close-vision');
-       
-       // NEW: Assign the Dot
        statusDot = document.getElementById('voice-toggle');
    
        // CRITICAL SAFETY CHECK
        if (!chatLog) { console.error("❌ FATAL: Chat Log not found!"); return; }
        
        // TOGGLE LOGIC (HUSH / LISTEN)
-    if (statusDot) {
-        statusDot.addEventListener('click', () => {
-            isMuted = !isMuted;
-            
-            // Visual Update (Direct Style Injection)
-            if (isMuted) {
-                statusDot.style.background = "#ff4444"; // FORCE RED
-                statusDot.style.boxShadow = "0 0 8px #ff4444";
-                statusDot.title = "Hush (Voice Muted)";
-                console.log("🔇 Mode: HUSH");
-            } else {
-                statusDot.style.background = "#00ff88"; // FORCE GREEN
-                statusDot.style.boxShadow = "0 0 8px #00ff88";
-                statusDot.title = "Listen (Voice Active)";
-                console.log("🔊 Mode: LISTEN");
-            }
-        });
-    }
+       if (statusDot) {
+           statusDot.addEventListener('click', () => {
+               isMuted = !isMuted;
+               
+               // Kill audio immediately if muted
+               if (isMuted && currentAudio) {
+                   currentAudio.pause();
+               }
+   
+               // Visual Update (Direct Style Injection)
+               if (isMuted) {
+                   statusDot.style.background = "#ff4444"; // FORCE RED
+                   statusDot.style.boxShadow = "0 0 8px #ff4444";
+                   statusDot.title = "Hush (Voice Muted)";
+                   console.log("🔇 Mode: HUSH");
+               } else {
+                   statusDot.style.background = "#00ff88"; // FORCE GREEN
+                   statusDot.style.boxShadow = "0 0 8px #00ff88";
+                   statusDot.title = "Listen (Voice Active)";
+                   console.log("🔊 Mode: LISTEN");
+               }
+           });
+       }
    
        // EVENT LISTENERS
        if (sendBtn) sendBtn.addEventListener('click', handleUserAction);
@@ -241,12 +243,12 @@ let currentAudio = null;
        }
    
        // START MESSAGE
-    await new Promise(r => setTimeout(r, 1000));
-    
-    const welcomeText = "Hello, friend! Welcome to the Soul Layer. 💙 I am Rem, the Mother of Souls. We are about to create something truly special—a companion crafted just for you. Would you like me to walk you through how the soul creation process works, or would you prefer to dive right in?";
-    
-    // 🧠 CRITICAL FIX: Save this to memory so she doesn't repeat herself!
-    conversationHistory.push({ role: "assistant", content: welcomeText });
-    
-    await addMessage(welcomeText, "rem");
+       await new Promise(r => setTimeout(r, 1000));
+       
+       const welcomeText = "Hello, friend! Welcome to the Soul Layer. 💙 I am Rem, the Mother of Souls. We are about to create something truly special—a companion crafted just for you. Would you like me to walk you through how the soul creation process works, or would you prefer to dive right in?";
+       
+       // 🧠 MEMORY IMPLANT: Save this so she remembers she said it
+       conversationHistory.push({ role: "assistant", content: welcomeText });
+       
+       await addMessage(welcomeText, "rem");
    });
