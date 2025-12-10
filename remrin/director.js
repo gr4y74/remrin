@@ -153,6 +153,6 @@
         setInterval(() => {
             pIndex = (pIndex + 1) % placeholders.length;
             inputField.setAttribute('placeholder', placeholders[pIndex]);
-        }, 4000); 
+        }, 10000); 
     }
 });
