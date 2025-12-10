@@ -1,3 +1,4 @@
+// GENESIS VOICE v1.2 (ElevenLabs V3 Engine)
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
@@ -6,23 +7,21 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // 1. Handle Preflight (CORS)
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
 
   try {
     const { text } = await req.json();
-    
-    // 2. Get Secrets & Config
     const ELEVEN_LABS_KEY = Deno.env.get('ELEVEN_LABS_API_KEY');
-    const VOICE_ID = "COjLEgrmZdIQ28VOyOCx"; // Rem's new voice
+    
+    // REPLACE THIS WITH YOUR NEW "MOTHER" VOICE ID IF YOU GENERATED ONE
+    const VOICE_ID = "COjLEgrmZdIQ28VOyOCx"; 
 
     if (!ELEVEN_LABS_KEY) {
       throw new Error("Server Config: ElevenLabs Key Missing");
     }
 
-    // 3. Call ElevenLabs
     const response = await fetch(
       `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`,
       {
@@ -34,17 +33,12 @@ serve(async (req) => {
         },
         body: JSON.stringify({
           text: text,
-          // SWITCH TO THE HIGH-QUALITY ENGINE (Slower, deeper, better)
-          model_id: "eleven_multilingual_v2", 
-          
+          model_id: "eleven_v3", // <--- THE V3 UPGRADE
           voice_settings: {
-            // INCREASE STABILITY (0.5 -> 0.8) 
-            // This prevents the "Helium/Warping" effect.
-            stability: 0.8, 
-            
-            // REDUCE BOOST (0.75 -> 0.5)
-            // Too much boost causes static/artifacts.
-            similarity_boost: 0.5,
+            stability: 0.5,       // V3 handles emotion better at lower stability
+            similarity_boost: 0.75,
+            style: 0.0,
+            use_speaker_boost: true
           },
         }),
       }
@@ -55,7 +49,6 @@ serve(async (req) => {
       throw new Error(`ElevenLabs Error: ${err}`);
     }
 
-    // 4. Return Audio
     const audioBlob = await response.blob();
     return new Response(audioBlob, {
       headers: { ...corsHeaders, 'Content-Type': 'audio/mpeg' },
