@@ -34,7 +34,7 @@ serve(async (req) => {
         },
         body: JSON.stringify({
           text: text,
-          model_id: "eleven_monolingual_v2",
+          model_id: "eleven_turbo_v2_5", // <--- THE FASTEST ENGI
           voice_settings: {
             stability: 0.5,
             similarity_boost: 0.75,
