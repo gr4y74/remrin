@@ -1,7 +1,3 @@
-// GENESIS VOICE v1.0 (The Larynx)
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
-// GENESIS VOICE v1.1 (Syntax Fixed)
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
@@ -10,19 +6,23 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  // 1. Handle Preflight (CORS)
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
 
   try {
     const { text } = await req.json();
+    
+    // 2. Get Secrets & Config
     const ELEVEN_LABS_KEY = Deno.env.get('ELEVEN_LABS_API_KEY');
-    const VOICE_ID = "COjLEgrmZdIQ28VOyOCx"; // Your New Rem ID
+    const VOICE_ID = "COjLEgrmZdIQ28VOyOCx"; // Rem's new voice
 
     if (!ELEVEN_LABS_KEY) {
       throw new Error("Server Config: ElevenLabs Key Missing");
     }
 
+    // 3. Call ElevenLabs
     const response = await fetch(
       `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`,
       {
@@ -34,8 +34,11 @@ serve(async (req) => {
         },
         body: JSON.stringify({
           text: text,
-          model_id: "eleven_monolingual_v1", // Standard Model
-          voice_settings: { stability: 0.5, similarity_boost: 0.75 },
+          model_id: "eleven_monolingual_v1",
+          voice_settings: {
+            stability: 0.5,
+            similarity_boost: 0.75,
+          },
         }),
       }
     );
@@ -45,6 +48,7 @@ serve(async (req) => {
       throw new Error(`ElevenLabs Error: ${err}`);
     }
 
+    // 4. Return Audio
     const audioBlob = await response.blob();
     return new Response(audioBlob, {
       headers: { ...corsHeaders, 'Content-Type': 'audio/mpeg' },
@@ -53,7 +57,8 @@ serve(async (req) => {
   } catch (error) {
     console.error("🔥 VOICE CRASH:", error.message);
     return new Response(JSON.stringify({ error: error.message }), {
-      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 });
