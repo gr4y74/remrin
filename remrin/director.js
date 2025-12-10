@@ -9,64 +9,56 @@
    let isTyping = false;
    let conversationHistory = []; 
    
-   // 1. TYPEWRITER ENGINE
+   // 1. THE TYPEWRITER ENGINE
    function typeText(element, text, speed = 20) {
-    return new Promise((resolve) => {
-        let i = 0;
-        isTyping = true;
-        function type() {
-            if (i < text.length) {
-                element.textContent += text.charAt(i);
-                i++;
-                chatLog.scrollTop = chatLog.scrollHeight;
-                setTimeout(type, speed);
-            } else {
-                isTyping = false;
-                resolve();
-            }
-        }
-        type();
-    });
-} // <--- THIS BRACKET WAS LIKELY MISSING!
-
-// 2. ADD MESSAGE
-async function addMessage(text, sender) {
-    console.log(`💬 MSG [${sender}]: ${text}`);
-    
-    const msgDiv = document.createElement('div');
-    msgDiv.classList.add('message', sender === 'rem' ? 'rem-msg' : 'user-msg');
-    
-    const avatar = document.createElement('span');
-    avatar.classList.add('avatar');
-    avatar.textContent = sender === 'rem' ? "💙" : "👤";
-    
-    const bubble = document.createElement('div');
-    bubble.classList.add('bubble');
-    
-    // 1. If it is YOU (The User)
-    if (sender === 'user') {
-        bubble.textContent = text;
-        msgDiv.appendChild(bubble);
-        msgDiv.appendChild(avatar);
-    } 
-    // 2. If it is REM (The AI)
-    else {
-        msgDiv.appendChild(avatar);
-        msgDiv.appendChild(bubble);
-        
-        // 🗣️ THE BREATH IS ONLINE
-        if (sender === 'rem') {
-             speakText(text); 
-        }
-    }
-    
-    chatLog.appendChild(msgDiv);
-    chatLog.scrollTop = chatLog.scrollHeight;
-
-    if (sender === 'rem') {
-        await typeText(bubble, text);
-    }
-}
+       return new Promise((resolve) => {
+           let i = 0;
+           isTyping = true;
+           function type() {
+               if (i < text.length) {
+                   element.textContent += text.charAt(i);
+                   i++;
+                   chatLog.scrollTop = chatLog.scrollHeight;
+                   setTimeout(type, speed);
+               } else {
+                   isTyping = false;
+                   resolve();
+               }
+           }
+           type();
+       });
+   }
+   
+   // 2. ADD MESSAGE
+   async function addMessage(text, sender) {
+       console.log(`💬 MSG [${sender}]: ${text}`);
+       
+       const msgDiv = document.createElement('div');
+       msgDiv.classList.add('message', sender === 'rem' ? 'rem-msg' : 'user-msg');
+       
+       const avatar = document.createElement('span');
+       avatar.classList.add('avatar');
+       avatar.textContent = sender === 'rem' ? "💙" : "👤";
+       
+       const bubble = document.createElement('div');
+       bubble.classList.add('bubble');
+       
+       if (sender === 'user') {
+           bubble.textContent = text;
+           msgDiv.appendChild(bubble);
+           msgDiv.appendChild(avatar);
+       } else {
+           msgDiv.appendChild(avatar);
+           msgDiv.appendChild(bubble);
+       }
+       
+       chatLog.appendChild(msgDiv);
+       chatLog.scrollTop = chatLog.scrollHeight;
+   
+       if (sender === 'rem') {
+           await typeText(bubble, text);
+       }
+   }
    
    // 3. THE BRAIN CONNECTION
    async function handleUserAction() {
