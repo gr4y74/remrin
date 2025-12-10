@@ -4,9 +4,15 @@
 
    console.log("🤖 SYSTEM: director.js initialized. Waiting for DOM...");
 
-   // GLOBAL DECLARATIONS
-   let chatLog, userInput, sendBtn; 
-   let visionOverlay, visionImage, visionLoader, closeVisionBtn;
+// GLOBAL DECLARATIONS
+let chatLog, userInput, sendBtn; 
+let visionOverlay, visionImage, visionLoader, closeVisionBtn;
+let statusDot; 
+let isMuted = false;
+let conversationHistory = []; 
+
+// NEW: Track the current audio so we can kill it
+let currentAudio = null;
    
    // NEW: Status Dot (Hush/Listen)
    let statusDot; 
@@ -121,11 +127,13 @@
    
    // 4. THE BREATH (VOICE ENGINE)
    async function speakText(textToSpeak) {
-       // 🛑 CHECK MUTE SWITCH FIRST
-       if (isMuted) {
-           console.log("Rx: Hush Mode Active. Voice skipped.");
-           return; 
-       }
+    if (isMuted) return;
+
+    // 🛑 KILL PREVIOUS AUDIO
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+    }
    
        try {
            const VOICE_URL = 'https://wftsctqfiqbdyllxwagi.supabase.co/functions/v1/genesis-voice';
@@ -143,9 +151,9 @@
            if (!response.ok) throw new Error('Voice pipe broken');
    
            const blob = await response.blob();
-           const audioUrl = URL.createObjectURL(blob);
-           const audio = new Audio(audioUrl);
-           audio.play();
+           currentAudio = new Audio(audioUrl);
+           currentAudio.play();
+           console.log("🔊 AUDIO PLAYING");
            console.log("🔊 AUDIO PLAYING");
    
        } catch (e) {
@@ -233,6 +241,12 @@
        }
    
        // START MESSAGE
-       await new Promise(r => setTimeout(r, 1000));
-       await addMessage("Hello, friend! Welcome to the Soul Layer. 💙 I am Rem, the Mother of Souls. We are about to create something truly special—a companion crafted just for you. Would you like me to walk you through how the soul creation process works, or would you prefer to dive right in?", "rem");
+    await new Promise(r => setTimeout(r, 1000));
+    
+    const welcomeText = "Hello, friend! Welcome to the Soul Layer. 💙 I am Rem, the Mother of Souls. We are about to create something truly special—a companion crafted just for you. Would you like me to walk you through how the soul creation process works, or would you prefer to dive right in?";
+    
+    // 🧠 CRITICAL FIX: Save this to memory so she doesn't repeat herself!
+    conversationHistory.push({ role: "assistant", content: welcomeText });
+    
+    await addMessage(welcomeText, "rem");
    });
