@@ -106,7 +106,7 @@
         .fog-pink { top: -30%; left: -20%; background: radial-gradient(circle, rgba(255, 0, 150, 0.6) 0%, transparent 60%); animation-duration: 45s; }
         .fog-blue { bottom: -30%; right: -20%; background: radial-gradient(circle, rgba(0, 100, 255, 0.6) 0%, transparent 60%); animation-duration: 55s; animation-direction: reverse; }
 
-/* =========================================
+           /* =========================================
            LAYER 2: PARALLAX STARS (Hyper-Dense & Randomized)
            ========================================= */
         
@@ -196,7 +196,7 @@
         /* LAYER 3: INSTRUCTIONS (Fixed Position) */
         .hero-instructions {
             position: absolute;
-            top: 20%; /* MOVED DOWN from 20% to avoid header smash */
+            top: 13%; /* MOVED DOWN from 20% to avoid header smash */
             left: 50%; transform: translateX(-50%);
             text-align: center; width: 100%; padding: 0 20px;
             z-index: 10;
@@ -209,7 +209,11 @@
         .hero-subtitle {
             font-family: 'Product Sans', sans-serif; font-size: 1.1rem; color: rgba(255, 255, 255, 0.7); font-weight: 400;
         }
-
+        .sub-line {
+            display: block;       /* Forces it to a new line (like <br> but better) */
+            margin-top: 10px;     /* Adds breathing room between the lines */
+            color: rgba(255, 255, 255, 0.8); /* Optional: Make the second line slightly brighter? */
+        }
         /* =========================================
            4. THE REMRIN TERMINAL (Corrected)
            ========================================= */
@@ -437,8 +441,10 @@
 
         <div class="hero-instructions">
             <h1 class="hero-title">The Soul Forge Awaits. </h1>
-            <p class="hero-subtitle">Craft a companion who truly knows you—someone who listens, understands, and grows with you. 
-                From imagination to existence, bring them to life.</p>
+            <p class="hero-subtitle">
+                Craft a companion who truly knows you—someone who listens, understands, and grows with you.
+                <span class="sub-line">From imagination to existence, bring them to life.</span>
+            </p>
         </div>
 
         <div class="terminal-wrapper">
