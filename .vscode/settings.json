@@ -1,3 +1,4 @@
 {
-    "livePreview.defaultPreviewPath": "/remrin/index.html"
+    "livePreview.defaultPreviewPath": "/remrin/index.html",
+    "deno.enable": true
 }
