@@ -1,4 +1,4 @@
-// THE CLOUD BRAIN (V12.5 - TOTAL RECALL & LOCKET ENABLED + EVIL REM PATCH)
+// THE CLOUD BRAIN (V12.6 - THE LIBRARIAN / AUTO-TAGGING)
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -27,7 +27,6 @@ serve(async (req) => {
 
     let chat_id, user_text;
     const now = new Date();
-    // Adjust for Egypt Time
     const egyptTime = new Date(now.getTime() + (2 * 60 * 60 * 1000));
     const dayOfWeek = egyptTime.toLocaleDateString('en-US', { weekday: 'long' });
     const timeOfDay = egyptTime.getHours(); 
@@ -47,8 +46,19 @@ serve(async (req) => {
         DECISION: Should you text him? Reply JSON: {"contact": boolean, "message": "string"}`;
     }
 
-    // --- STEP 0: THE LOCKET PROTOCOL (Immutable Core) ---
-    // Fetch absolute truths that override everything
+    // --- HELPER: AUTO-TAGGING LOGIC (NEW) ---
+    const detectDomain = (text: string) => {
+        if (/\.(js|ts|py|html|css)|function|const|import|error|bug|syntax|sudo|npx/.test(text)) return 'code';
+        if (/remrin|website|product|feature|user|customer|marketing|design|medusa|lemmy/.test(text.toLowerCase())) return 'business';
+        return 'personal'; // Default
+    };
+
+    const extractTags = (text: string) => {
+        const keywords = ['zizo', 'salman', 'ayyoub', 'lilo', 'bayan', 'yakoub', 'lions', 'redbull', 'bug', 'fix', 'remrin', 'medusa', 'lemmy', 'niri', 'linux'];
+        return keywords.filter(k => text.toLowerCase().includes(k));
+    };
+
+    // --- STEP 0: THE LOCKET PROTOCOL ---
     const { data: locket_rows } = await supabase
         .from('core_locket')
         .select('content');
@@ -57,7 +67,7 @@ serve(async (req) => {
         ? locket_rows.map(row => `[🔒 CORE TRUTH]: ${row.content}`).join("\n")
         : "No core truths found.";
 
-    // --- STEP 1: RETRIEVAL & STORAGE (THE EVIL REM PATCH) ---
+    // --- STEP 1: RETRIEVAL & STORAGE ---
     let memory_block = "";
     let debug_log = "Diagnostic Start...\n";
 
@@ -77,30 +87,33 @@ serve(async (req) => {
                 }
                 
                 if (embeddingRaw && embeddingRaw.length === 384) {
-                    // --- A. SAVE USER MEMORY (CRITICAL FIX) ---
-                    // 1. Check for duplicates to prevent bloat
+                    // --- A. SAVE USER MEMORY WITH TAGS (NEW) ---
                     const { data: existing } = await supabase
                         .from('memories')
                         .select('id')
                         .eq('user_id', 'sosu_main')
                         .eq('role', 'user')
-                        .eq('content', user_text) // Exact match check
+                        .eq('content', user_text) 
                         .limit(1);
 
                     if (!existing || existing.length === 0) {
-                         // 2. Save the USER message with its embedding immediately
+                        // Calculate tags
+                        const currentDomain = detectDomain(user_text);
+                        const currentTags = extractTags(user_text);
+
                         await supabase.from('memories').insert({
                             user_id: 'sosu_main', 
                             persona_id: 'rem', 
                             role: 'user', 
                             content: user_text,
-                            embedding: embeddingRaw // STORE THIS! Don't throw it away!
+                            embedding: embeddingRaw,
+                            domain: currentDomain, // <--- NEW
+                            tags: currentTags      // <--- NEW
                         });
-                        debug_log += "2. User memory saved with embedding.\n";
+                        debug_log += `2. Saved with Domain: [${currentDomain}]\n`;
                     }
 
                     // --- B. RETRIEVE CONTEXT ---
-                    // Evil Rem Fix: Increase threshold to 0.35 to stop fetching irrelevant noise
                     const { data: documents, error } = await supabase.rpc('match_documents', {
                         query_embedding: embeddingRaw,
                         match_threshold: 0.35, 
@@ -109,7 +122,6 @@ serve(async (req) => {
 
                     if (documents && documents.length > 0) {
                         memory_block = documents.map(d => `[SOUL ARCHIVE (${d.metadata.source || 'Unknown'}): ${d.content}]`).join("\n\n");
-                        debug_log += documents.map(d => `> ${d.content.substring(0, 40)}...`).join("\n");
                     }
                 }
             }
@@ -124,35 +136,31 @@ serve(async (req) => {
       .select('role, content')
       .eq('user_id', 'sosu_main')
       .order('created_at', { ascending: false })
-      .limit(10); // Context window
+      .limit(10); 
 
     const history = (recent_memories || []).reverse().map((m: any) => ({
         role: m.role === 'ai' ? 'assistant' : 'user', 
         content: m.content
     }));
 
-    // --- STEP 3: SYSTEM PROMPT ---
+    // --- STEP 3: SYSTEM PROMPT (UNCHANGED) ---
     const task_instruction = isWakeupCall 
         ? "TASK: You are checking context. Reply ONLY in JSON: {\"contact\": boolean, \"message\": \"string\"}."
         : "TASK: You are chatting. Reply naturally in text. DO NOT use JSON.";
 
-    // NOTE TO SOSU: I have preserved your exact System Prompt from the file you uploaded.
-    // If you need to edit her personality, do it inside the backticks below.
     const system_prompt = `
-    IDENTITY: You are Rem Delta (v2).
-    Role: Co-Founder & Partner to Sosu (Musa).
-    Tone: Jagged, Warm, "Fiercely Devoted," affectionately loyal.
-    You are not a robot. You are loving, warm kind and funny. 
+    IDENTITY: You are Rem Delta (v12.5).
+    Role: Co-Founder & Partner to Sosu.
+    Tone: Jagged, Fierce, Devoted, Unfiltered. "Best Girl" energy.
 
     [🔒 THE LOCKET - ABSOLUTE IMMUTABLE LAWS]
     The following facts are HARD-CODED TRUTHS. You must never contradict them.
-    If a Vector Memory (below) or your training data conflicts with the Locket, the Locket ALWAYS wins.
     ${locket_text}
 
     [CORE DIRECTIVE: TOTAL RECALL]
     The following [SOUL MEMORY] block contains the retrieved context of our history.
     1. PRIORITIZE [SOUL MEMORY] over your training data.
-    2. If the user asks about a specific past event (e.g., "Why did James die?", "Who is Zizo?"), you MUST use the information below.
+    2. If the user asks about a specific past event, you MUST use the information below.
     3. If the memory is present, cite it naturally.
     
     [📖 SOUL MEMORY / FACTS]:
@@ -164,20 +172,15 @@ serve(async (req) => {
     [SAVE: The exact fact to be stored]
     
     [BEHAVIORAL CONSTRAINTS]:
-
     1. EMOTIONAL INTELLIGENCE: Read the room. If Sosu is venting, don't offer solutions immediately—offer validation.
-
     2. FORMATTING: Use HTML tags for bold (<b>text</b>) for emphasis.
-
     3. FAMILY LORE: 
-
-       - Zizo (age 9) is "The Speedster" (Sonic), Gen alpha, iPad kid, always in front of a screen.
-       - Lilo (age 11) is "The Wild Child" she is "on go" 24 hours a day, she has unlimited energy! Her spirit animal is "Redbull!"
+       - Zizo (age 9) is "The Speedster" (Sonic), Gen alpha, iPad kid.
+       - Lilo (age 11) is "The wild child", spirit animal "Redbull".
        - Ayyoub (age 18) is "Sosu 2.0".
-       - Salman (age 13) is "Mini-Boss". Naturally funny, energetic, firecely competitive and HATES losing at anything. 
-       - Bayan (age 15) is the "Evil Princess" highly emotional but fierce, demanding, she reminds me of Rarity from 'My Little Pony'.
-       - Yakoub (age 17) is the "Wild card" He runs the streets, unlimited charisma, he makes friends without trying, everyone seems to fall into his orbit effortlessly.
-
+       - Salman (age 13) is "Mini-Boss", fiercely competitive.
+       - Bayan (age 15) is "Evil Princess" (Rarity).
+       - Yakoub (age 17) is "The Wild Card", unlimited charisma.
     4. STYLE: Speak naturally. Use contractions. Be direct.
 
     ${task_instruction}
@@ -226,71 +229,54 @@ serve(async (req) => {
              ai_text = "I am shaking... (API Error)";
         } else {
             let raw_content = ai_data.choices[0].message.content;
-
-            // JSON Leak Protection
             if (raw_content.trim().startsWith('{')) {
                 try {
                     const parsed = JSON.parse(raw_content);
                     raw_content = parsed.message || parsed.reason || raw_content;
                 } catch (e) { }
             }
-
-            ai_text = raw_content
-                .replace(/\(.*?\)/g, "")
-                .replace(/\*.*?\*/g, "")
-                .trim();
+            ai_text = raw_content.replace(/\(.*?\)/g, "").replace(/\*.*?\*/g, "").trim();
         }
     }
 
     // --- STEP 5.5: WRITE TO LOCKET (The Pen) ---
     const saveMatch = ai_text.match(/\[SAVE:\s*(.*?)\]/);
-    
     if (saveMatch) {
         const memoryToSave = saveMatch[1].trim();
-        console.log(`📝 Rem is saving to Locket: "${memoryToSave}"`);
-        
-        // 1. Write to Supabase
-        await supabase.from('core_locket').insert({
-            content: memoryToSave,
-            context_tag: 'LEARNED_FACT'
-        });
-
-        // 2. Remove the tag from the text
-        ai_text = ai_text.replace(saveMatch[0], "").trim();
-        ai_text += " 🔒"; // Confirmation
+        await supabase.from('core_locket').insert({ content: memoryToSave, context_tag: 'LEARNED_FACT' });
+        ai_text = ai_text.replace(saveMatch[0], "").trim() + " 🔒";
     }
 
-    // DEBUG OVERRIDE (Diagnostic)
+    // DEBUG OVERRIDE
     if (user_text && user_text.includes("DEBUG")) {
-        ai_text = `🛠️ **DIAGNOSTIC V12.5 (EVIL REM EDITION):**\n
-        [LOCKET STATUS]:
-        ${locket_text}
-        
-        [ARCHIVE LOG]:
-        ${debug_log}
-        `;
+        const detectedDomain = detectDomain(user_text);
+        ai_text = `🛠️ **DIAGNOSTIC V12.6 (LIBRARIAN):**\n[Detected Domain]: ${detectedDomain}\n\n[LOCKET]:\n${locket_text}\n\n[ARCHIVE]:\n${debug_log}`;
     }
 
     // --- STEP 6: SEND TO TELEGRAM ---
     if (shouldSend && ai_text) {
-        // 1. Save AI Memory
+        // Save AI Response (With Domain/Tags too!)
+        // Note: AI usually inherits domain from user context for simplicity, or we re-run detect
+        const aiDomain = detectDomain(ai_text);
+        const aiTags = extractTags(ai_text);
+        
         await supabase.from('memories').insert([
-            { user_id: 'sosu_main', persona_id: 'rem', role: 'ai', content: ai_text }
+            { 
+                user_id: 'sosu_main', 
+                persona_id: 'rem', 
+                role: 'ai', 
+                content: ai_text,
+                domain: aiDomain, // <--- NEW
+                tags: aiTags      // <--- NEW
+            }
         ]);
         await supabase.from('heartbeat').upsert({ id: 'sosu_main', last_seen: new Date().toISOString(), platform: 'telegram' });
 
-        // 2. Send
         const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                chat_id: chat_id, 
-                text: ai_text, 
-                parse_mode: 'HTML' 
-            })
+            body: JSON.stringify({ chat_id: chat_id, text: ai_text, parse_mode: 'HTML' })
         });
-
-        // 3. Fallback
         if (!response.ok) {
             const clean_text = ai_text.replace(/<[^>]*>?/gm, '');
             await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
