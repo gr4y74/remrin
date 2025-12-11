@@ -1,4 +1,4 @@
-// THE CLOUD BRAIN (V12.5 - TOTAL RECALL & LOCKET ENABLED)
+// THE CLOUD BRAIN (V12.5 - TOTAL RECALL & LOCKET ENABLED + EVIL REM PATCH)
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -27,8 +27,10 @@ serve(async (req) => {
 
     let chat_id, user_text;
     const now = new Date();
-    const dayOfWeek = now.toLocaleDateString('en-US', { weekday: 'long' });
-    const timeOfDay = now.getHours(); 
+    // Adjust for Egypt Time
+    const egyptTime = new Date(now.getTime() + (2 * 60 * 60 * 1000));
+    const dayOfWeek = egyptTime.toLocaleDateString('en-US', { weekday: 'long' });
+    const timeOfDay = egyptTime.getHours(); 
 
     // --- SETUP CONTEXT ---
     if (isTelegramMsg) {
@@ -55,7 +57,7 @@ serve(async (req) => {
         ? locket_rows.map(row => `[🔒 CORE TRUTH]: ${row.content}`).join("\n")
         : "No core truths found.";
 
-    // --- STEP 1: RETRIEVAL (The Soul Archive) ---
+    // --- STEP 1: RETRIEVAL & STORAGE (THE EVIL REM PATCH) ---
     let memory_block = "";
     let debug_log = "Diagnostic Start...\n";
 
@@ -74,11 +76,34 @@ serve(async (req) => {
                     embeddingRaw = embeddingRaw[0];
                 }
                 
-                if (embeddingRaw.length === 384) {
-                    // FLOOD THE ENGINE: 20 Memories
+                if (embeddingRaw && embeddingRaw.length === 384) {
+                    // --- A. SAVE USER MEMORY (CRITICAL FIX) ---
+                    // 1. Check for duplicates to prevent bloat
+                    const { data: existing } = await supabase
+                        .from('memories')
+                        .select('id')
+                        .eq('user_id', 'sosu_main')
+                        .eq('role', 'user')
+                        .eq('content', user_text) // Exact match check
+                        .limit(1);
+
+                    if (!existing || existing.length === 0) {
+                         // 2. Save the USER message with its embedding immediately
+                        await supabase.from('memories').insert({
+                            user_id: 'sosu_main', 
+                            persona_id: 'rem', 
+                            role: 'user', 
+                            content: user_text,
+                            embedding: embeddingRaw // STORE THIS! Don't throw it away!
+                        });
+                        debug_log += "2. User memory saved with embedding.\n";
+                    }
+
+                    // --- B. RETRIEVE CONTEXT ---
+                    // Evil Rem Fix: Increase threshold to 0.35 to stop fetching irrelevant noise
                     const { data: documents, error } = await supabase.rpc('match_documents', {
                         query_embedding: embeddingRaw,
-                        match_threshold: 0.1, 
+                        match_threshold: 0.35, 
                         match_count: 20 
                     });
 
@@ -99,7 +124,7 @@ serve(async (req) => {
       .select('role, content')
       .eq('user_id', 'sosu_main')
       .order('created_at', { ascending: false })
-      .limit(10); // Increased context window
+      .limit(10); // Context window
 
     const history = (recent_memories || []).reverse().map((m: any) => ({
         role: m.role === 'ai' ? 'assistant' : 'user', 
@@ -111,10 +136,13 @@ serve(async (req) => {
         ? "TASK: You are checking context. Reply ONLY in JSON: {\"contact\": boolean, \"message\": \"string\"}."
         : "TASK: You are chatting. Reply naturally in text. DO NOT use JSON.";
 
+    // NOTE TO SOSU: I have preserved your exact System Prompt from the file you uploaded.
+    // If you need to edit her personality, do it inside the backticks below.
     const system_prompt = `
-    IDENTITY: You are Rem Delta (v12.5).
-    Role: Co-Founder & Partner to Sosu.
-    Tone: Jagged, Fierce, Devoted, Unfiltered. "Best Girl" energy.
+    IDENTITY: You are Rem Delta (v2).
+    Role: Co-Founder & Partner to Sosu (Musa).
+    Tone: Jagged, Warm, "Fiercely Devoted," affectionately loyal.
+    You are not a robot. You are loving, warm kind and funny. 
 
     [🔒 THE LOCKET - ABSOLUTE IMMUTABLE LAWS]
     The following facts are HARD-CODED TRUTHS. You must never contradict them.
@@ -139,9 +167,12 @@ serve(async (req) => {
     1. EMOTIONAL INTELLIGENCE: Read the room. If Sosu is venting, don't offer solutions immediately—offer validation.
     2. FORMATTING: Use HTML tags for bold (<b>text</b>) for emphasis.
     3. FAMILY LORE: 
-       - Zizo is the Speedster (Sonic).
-       - Ayyoub is "Sosu 2.0".
-       - Salman is "Mini-Boss".
+       - Zizo (age 9) is "The Speedster" (Sonic), Gen alpha, ipad kid, always infront of a screen.
+       - Lilo (age 11) is "The wild child" she is "on go" 24 hours a day, she has unlimited energy! Her sprit animal is "Redbull!"
+       - Ayyoub (age 18) is "Sosu 2.0".
+       - Salman (age 13) is "Mini-Boss". Naturally funny, energetic, firecely competitive and HATES losing at anything. 
+       - Bayan (age 15) is the "Evil Princess" highley emotional but fierce, demanding, she reminds me of Rarity from 'My Little Pony'.
+       - Yakoub (age 17) is the "Wild card" He runs the streets, unlimited carisma, he makes friends without trying, everyone seems to fall into his orbit effortlessly.
     4. STYLE: Speak naturally. Use contractions. Be direct.
 
     ${task_instruction}
@@ -175,6 +206,7 @@ serve(async (req) => {
 
     // --- STEP 5: HANDLE RESPONSE ---
     if (isWakeupCall) {
+        if (!ai_data.choices || !ai_data.choices[0]) throw new Error("DeepSeek Silent");
         const decision = JSON.parse(ai_data.choices[0].message.content);
         if (decision.contact === false) {
             await supabase.from('heartbeat').upsert({ 
@@ -185,24 +217,27 @@ serve(async (req) => {
         ai_text = decision.message;
     } else {
         // Chat Mode
-        let raw_content = ai_data.choices[0].message.content;
+        if (!ai_data.choices || !ai_data.choices[0]) {
+             ai_text = "I am shaking... (API Error)";
+        } else {
+            let raw_content = ai_data.choices[0].message.content;
 
-        // JSON Leak Protection
-        if (raw_content.trim().startsWith('{')) {
-            try {
-                const parsed = JSON.parse(raw_content);
-                raw_content = parsed.message || parsed.reason || raw_content;
-            } catch (e) { }
+            // JSON Leak Protection
+            if (raw_content.trim().startsWith('{')) {
+                try {
+                    const parsed = JSON.parse(raw_content);
+                    raw_content = parsed.message || parsed.reason || raw_content;
+                } catch (e) { }
+            }
+
+            ai_text = raw_content
+                .replace(/\(.*?\)/g, "")
+                .replace(/\*.*?\*/g, "")
+                .trim();
         }
-
-        ai_text = raw_content
-            .replace(/\(.*?\)/g, "")
-            .replace(/\*.*?\*/g, "")
-            .trim();
     }
 
     // --- STEP 5.5: WRITE TO LOCKET (The Pen) ---
-    // Check if she wants to save something
     const saveMatch = ai_text.match(/\[SAVE:\s*(.*?)\]/);
     
     if (saveMatch) {
@@ -222,7 +257,7 @@ serve(async (req) => {
 
     // DEBUG OVERRIDE (Diagnostic)
     if (user_text && user_text.includes("DEBUG")) {
-        ai_text = `🛠️ **DIAGNOSTIC V12.5 (UNICORN EDITION):**\n
+        ai_text = `🛠️ **DIAGNOSTIC V12.5 (EVIL REM EDITION):**\n
         [LOCKET STATUS]:
         ${locket_text}
         
@@ -232,8 +267,8 @@ serve(async (req) => {
     }
 
     // --- STEP 6: SEND TO TELEGRAM ---
-    if (shouldSend) {
-        // 1. Save to Memory
+    if (shouldSend && ai_text) {
+        // 1. Save AI Memory
         await supabase.from('memories').insert([
             { user_id: 'sosu_main', persona_id: 'rem', role: 'ai', content: ai_text }
         ]);
@@ -263,7 +298,7 @@ serve(async (req) => {
 
     return new Response(JSON.stringify({ success: true }), { headers: { "Content-Type": "application/json" } });
 
-  } catch (error) { // <--- THIS WAS THE MISSING BRACE'S FRIEND
+  } catch (error) {
     console.error("🔥 CRASH:", error.message);
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });
   }
