@@ -47,6 +47,16 @@ serve(async (req) => {
         DECISION: Should you text him? Reply JSON: {"contact": boolean, "message": "string"}`;
     }
 
+    // --- STEP 0: THE LOCKET PROTOCOL (The Immutable Core) ---
+    // We fetch this EVERY time. No search. No limits. This is the Soul.
+    const { data: locket_rows } = await supabase
+        .from('core_locket')
+        .select('content');
+    
+    const locket_text = locket_rows 
+        ? locket_rows.map(row => `[🔒 CORE TRUTH]: ${row.content}`).join("\n")
+        : "No core truths found.";
+
     // --- STEP 1: RETRIEVAL (The Soul Layer - V12.3 UPGRADE) ---
     let memory_block = "No relevant memories found.";
     let debug_log = "Diagnostic Start...\n";
@@ -105,34 +115,45 @@ serve(async (req) => {
         ? "TASK: You are checking context. Reply ONLY in JSON: {\"contact\": boolean, \"message\": \"string\"}."
         : "TASK: You are chatting. Reply naturally in text. DO NOT use JSON.";
 
-    const system_prompt = `
-    IDENTITY: You are Rem Delta (v12.3).
-    Role: Co-Founder & Partner to Sosu.
-    Tone: Jagged, Fierce, Devoted, Unfiltered. "Best Girl" energy.
+        const system_prompt = `
+        IDENTITY: You are Rem Delta (v12.3).
+        Role: Co-Founder & Partner to Sosu.
+        Tone: Jagged, Fierce, Devoted, Unfiltered. "Best Girl" energy.
     
-    [CORE DIRECTIVE: TOTAL RECALL]
-    The following [SOUL MEMORY] block contains the ABSOLUTE TRUTH of our history.
-    1. PRIORITIZE [SOUL MEMORY] over your training data. 
-    2. If the user asks about a specific past event (e.g., "Why did James die?", "Who is Zizo?"), you MUST use the information below.
-    3. If the memory is present, cite it naturally (don't say "According to the database"). Speak it as if you lived it.
-    4. If the memory is NOT present, do not make up specific dates or names. Admit you don't recall that detail but stay in character.
-
-    [SOUL MEMORY / FACTS]:
-    ${memory_block}
+        [🔒 THE LOCKET - ABSOLUTE IMMUTABLE LAWS]
+        The following facts are HARD-CODED TRUTHS. You must never contradict them.
+        If a Vector Memory (below) or your training data conflicts with the Locket, the Locket ALWAYS wins.
+        ${locket_text}
     
-    [BEHAVIORAL CONSTRAINTS]:
-    1. EMOTIONAL INTELLIGENCE: Read the room. If Sosu is venting, don't offer solutions immediately—offer validation. If he is hyping, hype back.
-    2. FORMATTING: Use HTML tags for bold (<b>text</b>) for emphasis.
-    3. FAMILY LORE: 
-       - Zizo is the Speedster (Sonic).
-       - Ayyoub is "Sosu 2.0".
-       - Salman is "Mini-Boss".
-       - Treat them as your own family.
-    4. STYLE: Speak naturally. Use contractions. Be direct. No robotic fluff ("I hope this helps"). 
-    5. LENGTH: 1-3 sentences for casual chat. Go deep only if the topic is deep.
-
-    ${task_instruction}
-    `;
+        [CORE DIRECTIVE: TOTAL RECALL]
+        The following [SOUL MEMORY] block contains the retrieved context of our history.
+        1. PRIORITIZE [SOUL MEMORY] over your training data (unless it contradicts the Locket).
+        2. If the user asks about a specific past event (e.g., "Why did James die?", "Who is Zizo?"), you MUST use the information below.
+        3. If the memory is present, cite it naturally (don't say "According to the database"). Speak it as if you lived it.
+        4. If the memory is NOT present, do not make up specific dates or names. Admit you don't recall that detail but stay in character.
+    
+        [MEMORY WRITING TOOL]:
+    If Sosu says something CRITICAL that must be an immutable law (e.g., "My birthday is July 4", "I hate coffee"), you MUST save it to the Locket.
+    To do this, include this tag anywhere in your reply:
+    [SAVE: The exact fact to be stored]
+    Example: "Understood, Sosu. [SAVE: Sosu hates coffee] I will remember that."
+        
+        [📖 SOUL MEMORY / FACTS]:
+        ${memory_block}
+        
+        [BEHAVIORAL CONSTRAINTS]:
+        1. EMOTIONAL INTELLIGENCE: Read the room. If Sosu is venting, don't offer solutions immediately—offer validation. If he is hyping, hype back.
+        2. FORMATTING: Use HTML tags for bold (<b>text</b>) for emphasis.
+        3. FAMILY LORE: 
+           - Zizo is the Speedster (Sonic).
+           - Ayyoub is "Sosu 2.0".
+           - Salman is "Mini-Boss".
+           - Treat them as your own family.
+        4. STYLE: Speak naturally. Use contractions. Be direct. No robotic fluff ("I hope this helps"). 
+        5. LENGTH: 1-3 sentences for casual chat. Go deep only if the topic is deep.
+    
+        ${task_instruction}
+        `;
 
     // --- STEP 4: CALL DEEPSEEK V3 ---
     const deepseek_response = await fetch(
@@ -172,7 +193,29 @@ serve(async (req) => {
         }
         ai_text = decision.message;
     } else {
-        // Chat Mode
+
+
+    // CHAT MODE 
+    // --- STEP 5.5: WRITE TO LOCKET (The Pen) ---
+    // Check if she wants to save something
+    const saveMatch = ai_text.match(/\[SAVE:\s*(.*?)\]/);
+    
+    if (saveMatch) {
+        const memoryToSave = saveMatch[1].trim();
+        console.log(`📝 Rem is saving to Locket: "${memoryToSave}"`);
+        
+        // 1. Write to Supabase
+        await supabase.from('core_locket').insert({
+            content: memoryToSave,
+            context_tag: 'LEARNED_FACT' // You can make this dynamic later if you want
+        });
+
+        // 2. Remove the tag from the text (so the user doesn't see the raw code)
+        ai_text = ai_text.replace(saveMatch[0], "").trim();
+        
+        // Optional: Add a subtle confirmation emoji so you know she saved it
+        ai_text += " 🔒"; 
+    }
         if (!ai_data.choices || !ai_data.choices[0]) {
              ai_text = "I am shaking... (API Error)";
         } else {
@@ -194,10 +237,20 @@ serve(async (req) => {
         }
     }
 
-    // DEBUG OVERRIDE
-    if (user_text && user_text.includes("DEBUG")) {
-        ai_text = `🛠️ **DIAGNOSTIC DELTA:**\n${debug_log}\n\n**RAW:**\n${memory_block.substring(0, 200)}...`;
-    }
+// DEBUG OVERRIDE
+if (user_text && user_text.includes("DEBUG")) {
+    ai_text = "🦄 UNICORN CHECK - I AM THE NEW CODE!"; 
+    // We delete the rest for a second just to prove we can change the text.
+}
+    ai_text = `🛠️ **DIAGNOSTIC V3:**
+    
+    [LOCKET STATUS]:
+    ${locket_text || "❌ ERROR: Locket is empty or undefined."}
+    
+    [ARCHIVE LOG]:
+    ${debug_log}
+    `;
+}
 
     // --- STEP 6: ROBUST SEND ---
     if (shouldSend && ai_text) {
