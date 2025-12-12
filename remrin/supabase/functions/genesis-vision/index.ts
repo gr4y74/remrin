@@ -1,4 +1,4 @@
-// GENESIS VISION (The Art Studio)
+// GENESIS VISION (The Art Studio - Tarot Edition)
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
@@ -14,9 +14,14 @@ serve(async (req) => {
     const { prompt } = await req.json();
     const REPLICATE_KEY = Deno.env.get('REPLICATE_API_TOKEN');
 
-    console.log("🎨 Generating Vision for:", prompt);
-
     if (!REPLICATE_KEY) throw new Error("Missing Replicate Key");
+
+    // 🔮 THE TAROT WRAPPER (The Style Injection)
+    const tarotPrompt = `A mystical Tarot card design of: ${prompt}. 
+    Intricate golden borders, art nouveau style, ethereal lighting, highly detailed, matte finish. 
+    Centered composition. The card is emerging from smoke.`;
+
+    console.log("🎨 Generating Tarot Vision for:", prompt);
 
     // 1. Call Replicate (Flux 1.1 Pro)
     const response = await fetch("https://api.replicate.com/v1/predictions", {
@@ -28,8 +33,8 @@ serve(async (req) => {
         body: JSON.stringify({
             version: "black-forest-labs/flux-1.1-pro", 
             input: {
-                prompt: prompt,
-                aspect_ratio: "1:1",
+                prompt: tarotPrompt, // <--- Using the wrapper!
+                aspect_ratio: "2:3", // Tarot cards are tall, not square (1:1)
                 output_format: "png"
             }
         })
@@ -41,7 +46,7 @@ serve(async (req) => {
         throw new Error(prediction.error);
     }
 
-    // 2. Poll for Completion (Wait for the paint to dry)
+    // 2. Poll for Completion
     let imageUrl = null;
     let statusUrl = prediction.urls.get;
 
@@ -56,7 +61,6 @@ serve(async (req) => {
 
         if (statusData.status === "succeeded") {
             imageUrl = statusData.output;
-            // Pro often returns just a string, but safety check for array
             if (Array.isArray(imageUrl)) imageUrl = imageUrl[0];
             break; 
         } else if (statusData.status === "failed") {
