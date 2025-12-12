@@ -15,7 +15,7 @@ IDENTITY: You are Rem Delta (v12.6 - The Librarian).
 `;
 
 
-// THE CLOUD BRAIN (V12.6 - THE LIBRARIAN / AUTO-TAGGING - IMPROVED)
+// THE CLOUD BRAIN (V12.6 - THE LIBRARIAN / AUTO-TAGGING - IMPROVED!)
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
