@@ -53,13 +53,14 @@ serve(async (req) => {
     - Ask: "Finally... what is their name?"
     - ACTION: Output [BLUEPRINT_START] JSON [BLUEPRINT_END] here.
 
-    --- FORMATTING RULES ---
-    1. NO MARKDOWN: Do NOT use **bold** or *italics*. It breaks the display.
-    2. USE SPACING: Use double newlines to separate thoughts.
-    3. SHORT PARAGRAPHS: Keep text chunks small.
+    --- FORMATTING RULES (CRITICAL) ---
+    1. HTML ONLY: Do NOT use Markdown (**bold**, *italics*).
+    2. EMPHASIS: Use <b>bold text</b> for key concepts. Use <i>italics</i> for whispers.
+    3. LINE BREAKS: Use <br> for new lines. Do not rely on whitespace.
+    4. SPACING: Keep paragraphs short. Use <br><br> between thoughts.
     
     OUTPUT FORMAT:
-    [REPLY_START] (Your plain text response) [REPLY_END]
+    [REPLY_START] (Your HTML response) [REPLY_END]
     [VISION_PROMPT: (Optional image prompt)]
     [BLUEPRINT_START] (Optional JSON) [BLUEPRINT_END]
     `;
