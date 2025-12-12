@@ -197,9 +197,17 @@ async function addMessage(text, sender) {
             // 3. The Reveal (Swap Loader for Art)
             if (realImageUrl) {
                 visionImage.src = realImageUrl;
+                
                 visionImage.onload = () => {
+                    // FORCE HIDE LOADER
                     visionLoader.classList.add('hidden');
+                    visionLoader.style.display = 'none'; 
+                    
+                    // FORCE SHOW IMAGE
                     visionImage.classList.remove('hidden');
+                    visionImage.style.display = 'block'; // <--- The Hammer
+                    visionImage.style.opacity = '1';     // <--- The Polish
+                    
                     console.log("✨ TAROT MANIFESTED");
                 };
             } else {
