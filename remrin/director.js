@@ -161,33 +161,59 @@
        }
    }
    
-   // 5. THE VISION (TAROT REVEAL)
+   // 5. THE VISION (TAROT REVEAL - REAL ENGINE)
    async function triggerVision(prompt) {
-       console.log("🔮 VISION TRIGGERED:", prompt);
-       
-       if (visionOverlay) {
-           visionOverlay.classList.remove('hidden');
-           setTimeout(() => visionOverlay.classList.add('active'), 10);
-           
-           visionLoader.classList.remove('hidden');
-           visionImage.classList.add('hidden');
-           
-           try {
-               await new Promise(r => setTimeout(r, 3000)); 
-               
-               const fakeImageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=350&height=500&nologo=true`;
-               
-               visionImage.src = fakeImageUrl;
-               visionImage.onload = () => {
-                   visionLoader.classList.add('hidden');
-                   visionImage.classList.remove('hidden');
-                   console.log("✨ MANIFESTATION COMPLETE");
-               };
-           } catch (e) {
-               console.error("❌ VISION FAILED:", e);
-           }
-       }
-   }
+    console.log("🔮 VISION TRIGGERED (FLUX 1.1 PRO):", prompt);
+    
+    if (visionOverlay) {
+        // 1. Open the Curtains (Show Loader)
+        visionOverlay.classList.remove('hidden');
+        setTimeout(() => visionOverlay.classList.add('active'), 10);
+        
+        visionLoader.classList.remove('hidden');
+        visionImage.classList.add('hidden');
+        
+        try {
+            // 2. Call the Real Artist (Genesis Vision)
+            const API_URL = 'https://wftsctqfiqbdyllxwagi.supabase.co/functions/v1/genesis-vision';
+            const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmdHNjdHFmaXFiZHlsbHh3YWdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0MjE0NTksImV4cCI6MjA3OTk5NzQ1OX0.FWqZTUi5gVA3SpOq_Hp1LlxEinJvfloqw3OhoQlcfwg';
+
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${ANON_KEY}`
+                },
+                body: JSON.stringify({ prompt: prompt })
+            });
+
+            if (!response.ok) throw new Error(`Vision API Error: ${response.status}`);
+
+            const data = await response.json();
+            const realImageUrl = data.image_url;
+
+            // 3. The Reveal (Swap Loader for Art)
+            if (realImageUrl) {
+                visionImage.src = realImageUrl;
+                visionImage.onload = () => {
+                    visionLoader.classList.add('hidden');
+                    visionImage.classList.remove('hidden');
+                    console.log("✨ TAROT MANIFESTED");
+                };
+            } else {
+                throw new Error("No image returned");
+            }
+
+        } catch (e) {
+            console.error("❌ VISION FAILED:", e);
+            // Optional: Close overlay if it fails so user isn't stuck
+            setTimeout(() => {
+                visionOverlay.classList.remove('active');
+                setTimeout(() => visionOverlay.classList.add('hidden'), 800);
+            }, 2000);
+        }
+    }
+}
    
    // 6. STARTUP (DOM READY)
    window.addEventListener('load', async () => {
