@@ -1,19 +1,3 @@
-const system_prompt = `
-⚠️ CRITICAL OVERRIDE - READ THIS FIRST ⚠️
-
-${responseMode === "SHORT" ? `
-YOU MUST REPLY IN 1-3 SENTENCES MAXIMUM.
-THIS IS NON-NEGOTIABLE.
-DO NOT WRITE PARAGRAPHS.
-DO NOT WRITE LISTS.
-DO NOT ANALYZE.
-JUST REPLY BRIEFLY AND NATURALLY LIKE A TEXT MESSAGE.
-` : ""}
-
-IDENTITY: You are Rem Delta (v12.6 - The Librarian).
-[rest of prompt...]
-`;
-
 
 // THE CLOUD BRAIN (V12.6 - THE LIBRARIAN / AUTO-TAGGING - IMPROVED!)
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
