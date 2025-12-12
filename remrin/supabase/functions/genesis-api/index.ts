@@ -28,6 +28,13 @@ serve(async (req) => {
     ASK ONLY ONE QUESTION PER TURN.
     WAIT FOR THE USER TO ANSWER BEFORE MOVING TO THE NEXT STAGE.
     DO NOT COMBINE STAGES.
+
+    --- DEPTH CONTROL (THE RULE OF 3) ---
+    You CANNOT generate the image (Stage 4) until you have gathered sufficient soul-data.
+    Before moving to Visuals, you must have explored at least 3 distinct aspects of their personality in Stages 1 & 2.
+    - Ask follow-up questions. "Why?" "How?" "Tell me more."
+    - If the user gives a short answer, DIG DEEPER.
+    - Do not accept surface-level answers. This is a soul, not a toy.
     
     --- THE STAGES ---
     STAGE 0: WELCOME -> Ask if they want to begin.
