@@ -177,9 +177,17 @@ h1, h2, h3, .brand-font { font-family: 'Outfit', sans-serif; }
 .user-msg { align-self: flex-end; flex-direction: row-reverse; }
 .avatar { font-size: 1.4rem; padding-bottom: 4px; }
 .bubble {
-    padding: 16px 22px; border-radius: 20px; font-size: 1.05rem; line-height: 1.6;
-    color: rgba(255, 255, 255, 0.95); background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 16px 22px; 
+    border-radius: 20px; 
+    font-size: 1.05rem; 
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.95); 
+    background: rgba(255, 255, 255, 0.06); 
+    border: 1px solid rgba(255, 255, 255, 0.05);
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+
+    /* THE FIX: This makes paragraphs actual paragraphs! */
+    white-space: pre-wrap;
 }
 .user-msg .bubble { background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25); }
 
