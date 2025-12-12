@@ -212,47 +212,65 @@ button {
 }
 button:hover { background: white; color: black; transform: scale(1.1); box-shadow: 0 0 15px rgba(255, 255, 255, 0.4); }
 
-/* --- THE VISION MODAL (Tarot Reveal) --- */
-.vision-overlay {
+/* =========================================
+   5. THE TAROT OVERLAY (The Vision - PREMIUM FIX)
+   ========================================= */
+   .vision-overlay {
     position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.85); /* Darker for focus */
+    backdrop-filter: blur(12px);      /* Stronger blur */
+    z-index: 9999 !important;         /* NUCLEAR OPTION: Sit on top of God */
     display: flex; justify-content: center; align-items: center;
-    z-index: 1000; opacity: 0; transition: opacity 0.8s ease-in-out;
-    pointer-events: none;
+    opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
 }
+
 .vision-overlay.active { opacity: 1; pointer-events: all; }
 
 .vision-card {
-    width: 350px; height: 500px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 30px rgba(0, 150, 255, 0.3);
-    border-radius: 16px; position: relative;
-    display: flex; justify-content: center; align-items: center;
-    overflow: hidden; transform: translateY(20px);
-    transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    width: 350px; height: 500px; /* Tarot Ratio */
+    background: #1a1a2e;
+    border: 2px solid rgba(138, 43, 226, 0.5);
+    border-radius: 16px;
+    box-shadow: 0 0 50px rgba(138, 43, 226, 0.4); /* Purple Glow */
+    position: relative;
+    overflow: hidden;
+    transform: scale(0.9); 
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-.vision-overlay.active .vision-card { transform: translateY(0); }
 
-.vision-loader { text-align: center; color: rgba(255, 255, 255, 0.7); }
+.vision-overlay.active .vision-card { transform: scale(1); }
+
+/* The Loader (Crystal Ball) */
+.vision-loader {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    display: flex; flex-direction: column; align-items: center; gap: 15px;
+    color: rgba(255, 255, 255, 0.7); font-family: 'Outfit', sans-serif; letter-spacing: 2px;
+}
 .orb-pulse {
-    width: 40px; height: 40px;
-    background: radial-gradient(circle, #4aa3ff, transparent);
-    border-radius: 50%; margin: 0 auto 15px; animation: pulse 2s infinite;
+    width: 60px; height: 60px; 
+    background: radial-gradient(circle, #fff, #a855f7);
+    border-radius: 50%; box-shadow: 0 0 20px #a855f7;
+    animation: pulseOrb 1.5s infinite;
 }
-@keyframes pulse { 0% { transform: scale(0.8); opacity: 0.5; } 50% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(0.8); opacity: 0.5; } }
-@keyframes rotateFog { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-@keyframes floatUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes fadeIn { from { opacity: 0; transform: translateX(-50%) translateY(-20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
 
-#vision-image { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; animation: fadeIn 1.5s ease-in; }
-.close-btn {
-    position: absolute; top: 10px; right: 15px;
-    background: none; border: none; color: rgba(255, 255, 255, 0.5);
-    font-size: 24px; cursor: pointer; z-index: 10;
+/* The Image */
+#vision-image {
+    width: 100%; height: 100%; object-fit: cover;
+    display: block; /* Ensure it takes space */
 }
-.close-btn:hover { color: white; }
+
+.close-btn {
+    position: absolute; top: 10px; right: 10px;
+    width: 30px; height: 30px; 
+    background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2);
+    color: white; border-radius: 50%; cursor: pointer; z-index: 10;
+}
+.close-btn:hover { background: #ff4444; border-color: #ff4444; }
+
+/* UTILITY */
 .hidden { display: none !important; }
+
+@keyframes pulseOrb { 0% { transform: scale(0.8); opacity: 0.7; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(0.8); opacity: 0.7; } }
 
 /* MOBILE FIXES */
 @media (max-width: 600px) {
