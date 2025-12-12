@@ -15,64 +15,66 @@
    let conversationHistory = []; 
    let currentAudio = null;    // Tracks the active voice track
    
-   // 1. TYPEWRITER ENGINE
-   function typeText(element, text, speed = 20) {
-       return new Promise((resolve) => {
-           let i = 0;
-           isTyping = true;
-           function type() {
-               if (i < text.length) {
-                   element.textContent += text.charAt(i);
-                   i++;
-                   chatLog.scrollTop = chatLog.scrollHeight;
-                   setTimeout(type, speed);
-               } else {
-                   isTyping = false;
-                   resolve();
-               }
-           }
-           type();
-       });
-   }
-   
-   // 2. ADD MESSAGE
-   async function addMessage(text, sender) {
-       console.log(`💬 MSG [${sender}]: ${text}`);
-       
-       const msgDiv = document.createElement('div');
-       msgDiv.classList.add('message', sender === 'rem' ? 'rem-msg' : 'user-msg');
-       
-       const avatar = document.createElement('span');
-       avatar.classList.add('avatar');
-       avatar.textContent = sender === 'rem' ? "💙" : "👤";
-       
-       const bubble = document.createElement('div');
-       bubble.classList.add('bubble');
-       
-       // 1. If it is YOU (The User)
-       if (sender === 'user') {
-           bubble.textContent = text;
-           msgDiv.appendChild(bubble);
-           msgDiv.appendChild(avatar);
-       } 
-       // 2. If it is REM (The AI)
-       else {
-           msgDiv.appendChild(avatar);
-           msgDiv.appendChild(bubble);
-           
-           // 🗣️ THE BREATH IS ONLINE
-           if (sender === 'rem') {
-                speakText(text); 
-           }
-       }
-       
-       chatLog.appendChild(msgDiv);
-       chatLog.scrollTop = chatLog.scrollHeight;
-   
-       if (sender === 'rem') {
-           await typeText(bubble, text);
-       }
-   }
+// 1. TYPEWRITER ENGINE (The "Snap" Method)
+function typeText(element, htmlContent, speed = 15) {
+    return new Promise((resolve) => {
+        // Create a temp div to strip tags and get just the text
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = htmlContent;
+        const plainText = tempDiv.textContent || tempDiv.innerText || "";
+        
+        let i = 0;
+        isTyping = true;
+        element.textContent = ""; // Start clean
+        
+        function type() {
+            if (i < plainText.length) {
+                element.textContent += plainText.charAt(i);
+                i++;
+                chatLog.scrollTop = chatLog.scrollHeight;
+                setTimeout(type, speed);
+            } else {
+                // THE SNAP: Replace plain text with the formatted HTML
+                element.innerHTML = htmlContent; 
+                isTyping = false;
+                resolve();
+            }
+        }
+        type();
+    });
+}
+
+// 2. ADD MESSAGE
+async function addMessage(text, sender) {
+    console.log(`💬 MSG [${sender}]: ${text}`);
+    
+    const msgDiv = document.createElement('div');
+    msgDiv.classList.add('message', sender === 'rem' ? 'rem-msg' : 'user-msg');
+    
+    const avatar = document.createElement('span');
+    avatar.classList.add('avatar');
+    avatar.textContent = sender === 'rem' ? "💙" : "👤";
+    
+    const bubble = document.createElement('div');
+    bubble.classList.add('bubble');
+    
+    if (sender === 'user') {
+        bubble.textContent = text; // Users always speak plain text
+        msgDiv.appendChild(bubble);
+        msgDiv.appendChild(avatar);
+        chatLog.appendChild(msgDiv);
+    } else {
+        msgDiv.appendChild(avatar);
+        msgDiv.appendChild(bubble);
+        chatLog.appendChild(msgDiv);
+        
+        if (sender === 'rem') {
+            speakText(text); // Voice speaks the full text (it ignores tags usually)
+            await typeText(bubble, text); // Typewriter handles the visuals
+        }
+    }
+    chatLog.scrollTop = chatLog.scrollHeight;
+}
    
    // 3. THE BRAIN CONNECTION
    async function handleUserAction() {
