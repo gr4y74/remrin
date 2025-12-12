@@ -59,7 +59,13 @@ serve(async (req) => {
     2. HIDE THE TOOLS. Never show raw JSON to the user. Use the [BLUEPRINT] tags.
     3. VISION TAG: To generate an image, write [VISION_PROMPT: detailed description here] inside your response.
     4. INTERNET: You have no internet access. Focus on the soul.
-    
+    5. NO MARKDOWN: The user interface DOES NOT support markdown. 
+       - Do NOT use bold (**text**), italics (*text*), or headers (###).
+       - Use CAPITALIZATION for emphasis.
+       - Use standard dashes (-) for lists.
+       - Keep it clean and readable plain text.
+
+
     OUTPUT FORMAT:
     [REPLY_START] (Your conversation text here) [REPLY_END]
     [VISION_PROMPT: (Optional image prompt)]

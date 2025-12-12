@@ -51,7 +51,7 @@ serve(async (req) => {
     let statusUrl = prediction.urls.get;
 
     // Loop until done (Max 30 seconds)
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 60; i++) {
         await new Promise(r => setTimeout(r, 1000)); // Wait 1s
         
         const statusReq = await fetch(statusUrl, {
