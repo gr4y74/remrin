@@ -271,31 +271,69 @@
                triggerVision(data.vision_prompt);
            }
    
-           // === STAGE 7: THE FINAL COMPILATION ===
-           if (data.stage === 7) {
-               await addMessage(replyText, "rem", 7, 0); 
-               playAnchorVoice();
-               
-               // COMPILE THE DATA
-               const cartridge = compileCartridge();
-               console.log("✅ CARTRIDGE READY FOR INSERT:", cartridge);
-   
-               // TODO: Here is where we will pop the Signup Modal and Save to DB
-               // showSignupModal(cartridge); 
-               
-               setTimeout(() => {
-                   console.log("📝 TRIGGER SIGNUP MODAL NOW");
-               }, 12000);
-           } 
-           else {
-               await addMessage(replyText, "rem", data.stage, data.substage);
-           }
-   
-       } catch (error) {
-           console.error("❌ BRAIN FAILURE:", error);
-           await addMessage(`Error: ${error.message}`, "rem");
-       }
-   }
+           // === STAGE 7: THE FINAL COMPILATION & SAVE ===
+        if (data.stage === 7) {
+            await addMessage(replyText, "rem", 7, 0); 
+            playAnchorVoice();
+            
+            // 1. COMPILE THE CARTRIDGE
+            const cartridge = compileCartridge();
+            console.log("🔥 CARTRIDGE MINTED:", cartridge);
+            
+            // 2. SAVE TO CONSOLE (THE FORGE ACTION)
+            try {
+                const API_URL = 'https://wftsctqfiqbdyllxwagi.supabase.co/functions/v1/genesis-api';
+                const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmdHNjdHFmaXFiZHlsbHh3YWdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0MjE0NTksImV4cCI6MjA3OTk5NzQ1OX0.FWqZTUi5gVA3SpOq_Hp1LlxEinJvfloqw3OhoQlcfwg';
+                
+                // Add the detailed blueprint to the payload
+                cartridge.blueprint = soulBlueprint; 
+
+                console.log("🚀 SENDING TO FORGE...", cartridge);
+
+                const saveResp = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${ANON_KEY}`
+                    },
+                    body: JSON.stringify({ 
+                        action: 'create_companion', // <--- This triggers the v15 backend logic
+                        cartridge: cartridge 
+                    })
+                });
+
+                const saveResult = await saveResp.json();
+                
+                if (saveResult.success) {
+                    console.log("✅ SOUL SAVED TO DATABASE! ID:", saveResult.companion_id);
+                    
+                    // OPTIONAL: Add a visual confirmation in the chat
+                    const systemNote = document.createElement('div');
+                    systemNote.style.textAlign = "center";
+                    systemNote.style.color = "#00ff88"; // Green for success
+                    systemNote.style.fontSize = "12px";
+                    systemNote.style.marginTop = "20px";
+                    systemNote.style.fontFamily = "monospace";
+                    systemNote.textContent = `[ SOUL ARCHIVED: ${saveResult.companion_id} ]`;
+                    chatLog.appendChild(systemNote);
+
+                } else {
+                    console.error("❌ SAVE FAILED:", saveResult);
+                }
+
+            } catch (err) {
+                console.error("❌ SAVE ERROR:", err);
+            }
+            
+            // Keep the modal trigger for later when we build the UI
+            setTimeout(() => {
+                console.log("📝 (Optional) Trigger Signup Modal Here");
+            }, 12000);
+        } 
+        else {
+            // NORMAL CHAT FLOW
+            await addMessage(replyText, "rem", data.stage, data.substage);
+        }
    
    // ==========================================
    // 7. THE VISION (TAROT REVEAL)
