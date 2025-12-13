@@ -337,7 +337,7 @@
        
        // HTML FOR CURTAIN (Add your logo.png to assets folder!)
        curtain.innerHTML = `
-           <img src="logo_white_ds.png" style="width: 120px; margin-bottom: 20px; opacity: 0.9;" onerror="this.style.display='none'">
+           <img src="remrin/assets/logo_white_ds.png" style="width: 120px; margin-bottom: 20px; opacity: 0.9;" onerror="this.style.display='none'">
            <h1 style="color:white; font-family:sans-serif; letter-spacing:6px; font-weight:300; font-size: 24px;">THE SOUL LAYER</h1>
            <div style="margin-top:20px; padding: 10px 20px; border: 1px solid #333; color:#888; font-family:monospace; font-size: 12px; letter-spacing: 2px;">
                [ CLICK TO ENTER ]
