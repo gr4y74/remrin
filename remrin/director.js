@@ -1,8 +1,8 @@
 /* =========================================
-   REMRIN AMBASSADOR PROTOCOL v10.1 (AUTOPLAY FIX)
+   REMRIN AMBASSADOR PROTOCOL v11.0 (STREAMLINED)
    ========================================= */
 
-   console.log("🤖 SYSTEM: director.js v10.1 initialized. Waiting for DOM...");
+   console.log("🤖 SYSTEM: director.js v11.0 initialized. Waiting for DOM...");
 
    // GLOBAL DECLARATIONS
    let chatLog, userInput, sendBtn; 
@@ -29,30 +29,18 @@
    };
    
    // ==========================================
-   // 1. THE VAULT (LOCAL AUDIO ASSETS)
+   // 1. THE VAULT (MAPPED TO NEW STAGES)
    // ==========================================
    const AUDIO_VAULT = {
-       "0_0": "assets/voice/mother/s0_welcome.mp3",
-       "1_0": "assets/voice/mother/s1_overview.mp3",
+       "0_0": "assets/voice/mother/s0_welcome.mp3", // "Hello friend..."
+       // We removed Stage 1 (Overview)
        "2_0": "assets/voice/mother/s2_0_vision.mp3",
        "2_1": "assets/voice/mother/s2_1_purpose.mp3",
        "2_2": "assets/voice/mother/s2_2_temp.mp3",
        "2_3": "assets/voice/mother/s2_3_dynamic.mp3",
-       "3_0": "assets/voice/mother/s3_0_intro.mp3",
-       "3_1": "assets/voice/mother/s3_1_open.mp3",
-       "3_2": "assets/voice/mother/s3_2_consc.mp3",
-       "3_3": "assets/voice/mother/s3_3_extra.mp3",
-       "3_4": "assets/voice/mother/s3_4_agree.mp3",
-       "3_5": "assets/voice/mother/s3_5_stable.mp3",
-       "4_0": "assets/voice/mother/s4_0_intro.mp3",
-       "4_1": "assets/voice/mother/s4_1_form.mp3",
-       "4_2": "assets/voice/mother/s4_2_detail.mp3",
-       "4_3": "assets/voice/mother/s4_3_presence.mp3",
-       "4_4": "assets/voice/mother/s4_4_manifest.mp3",
-       "5_0": "assets/voice/mother/s5_0_intro.mp3",
-       "5_1": "assets/voice/mother/s5_1_char.mp3",
-       "5_2": "assets/voice/mother/s5_2_select.mp3",
-       "6_0": "assets/voice/mother/s6_naming.mp3"
+       // Stage 3 skipped (merged)
+       "4_1": "assets/voice/mother/s4_1_form.mp3", // Appearance
+       "6_0": "assets/voice/mother/s6_naming.mp3"  // Name
    };
    
    // ==========================================
@@ -136,17 +124,14 @@
        }
        currentAudio = new Audio(url);
        currentAudio.play().catch(e => {
-           console.warn("Autoplay blocked (Waiting for interaction):", e);
-           // Fallback is handled by "The Veil" in startup
+           console.warn("Autoplay blocked:", e);
        });
    }
    
    function playAnchorVoice() { playAudioFile("assets/voice/mother/s7_anchor.mp3"); }
-   function playBlessingVoice() { playAudioFile("assets/voice/mother/s7_blessing.mp3"); }
-   
    
    // ==========================================
-   // 4. UI HANDLER (ADD MESSAGE)
+   // 4. UI HANDLER
    // ==========================================
    async function addMessage(text, sender, stage = null, substage = null) {
        console.log(`💬 MSG [${sender}]: ${text}`);
@@ -195,10 +180,9 @@
        if (key === "2_2") soulBlueprint.temperament = userText;
        if (key === "2_3") soulBlueprint.relation = userText;
        if (key === "4_1") soulBlueprint.appearance = userText;
-       if (key === "5_1") soulBlueprint.voice_type = userText;
        if (key === "6_0") soulBlueprint.name = userText;
    
-       console.log("💾 Soul Fragment Captured:", soulBlueprint);
+       console.log("💾 Fragment:", soulBlueprint);
    }
    
    function compileCartridge() {
@@ -266,38 +250,25 @@
                triggerVision(data.vision_prompt);
            }
    
-           // === STAGE 7: THE FINAL COMPILATION & SAVE ===
+           // === STAGE 7: SAVE ===
            if (data.stage === 7) {
                await addMessage(replyText, "rem", 7, 0); 
                playAnchorVoice();
                
-               // 1. COMPILE THE CARTRIDGE
                const cartridge = compileCartridge();
-               console.log("🔥 CARTRIDGE MINTED:", cartridge);
-               
-               // 2. SAVE TO CONSOLE
+               cartridge.blueprint = soulBlueprint; 
+   
+               // SAVE TO DB
                try {
-                   // Add the blueprint to the payload
-                   cartridge.blueprint = soulBlueprint; 
-   
-                   console.log("🚀 SENDING TO FORGE...", cartridge);
-   
                    const saveResp = await fetch(API_URL, {
                        method: 'POST',
-                       headers: {
-                           'Content-Type': 'application/json',
-                           'Authorization': `Bearer ${ANON_KEY}`
-                       },
-                       body: JSON.stringify({ 
-                           action: 'create_companion', 
-                           cartridge: cartridge 
-                       })
+                       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ANON_KEY}` },
+                       body: JSON.stringify({ action: 'create_companion', cartridge: cartridge })
                    });
-   
                    const saveResult = await saveResp.json();
                    
                    if (saveResult.success) {
-                       console.log("✅ SOUL SAVED TO DATABASE! ID:", saveResult.companion_id);
+                       console.log("✅ SAVED:", saveResult.companion_id);
                        const systemNote = document.createElement('div');
                        systemNote.style.textAlign = "center";
                        systemNote.style.color = "#00ff88"; 
@@ -306,17 +277,10 @@
                        systemNote.style.fontFamily = "monospace";
                        systemNote.textContent = `[ SOUL ARCHIVED: ${saveResult.companion_id} ]`;
                        chatLog.appendChild(systemNote);
-                   } else {
-                       console.error("❌ SAVE FAILED:", saveResult);
                    }
-   
                } catch (err) {
                    console.error("❌ SAVE ERROR:", err);
                }
-               
-               setTimeout(() => {
-                   console.log("📝 (Optional) Trigger Signup Modal Here");
-               }, 12000);
            } 
            else {
                await addMessage(replyText, "rem", data.stage, data.substage);
@@ -329,7 +293,7 @@
    }
    
    // ==========================================
-   // 7. THE VISION (TAROT REVEAL)
+   // 7. VISION
    // ==========================================
    async function triggerVision(prompt) {
        if (visionOverlay) {
@@ -344,19 +308,15 @@
    
                const response = await fetch(API_URL, {
                    method: 'POST',
-                   headers: {
-                       'Content-Type': 'application/json',
-                       'Authorization': `Bearer ${ANON_KEY}`
-                   },
+                   headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ANON_KEY}` },
                    body: JSON.stringify({ prompt: prompt })
                });
    
-               if (!response.ok) throw new Error(`Vision API Error: ${response.status}`);
+               if (!response.ok) throw new Error(`Vision Error: ${response.status}`);
                const data = await response.json();
-               const realImageUrl = data.image_url;
-   
-               if (realImageUrl) {
-                   visionImage.src = realImageUrl;
+               
+               if (data.image_url) {
+                   visionImage.src = data.image_url;
                    visionImage.onload = () => {
                        visionLoader.classList.add('hidden');
                        visionLoader.style.display = 'none'; 
@@ -376,11 +336,10 @@
    }
    
    // ==========================================
-   // 8. STARTUP (THE VEIL FIX)
+   // 8. STARTUP (STREAMLINED)
    // ==========================================
    window.addEventListener('load', async () => {
        
-       // 1. ASSIGN ELEMENTS
        chatLog = document.getElementById('chat-history');
        userInput = document.getElementById('user-input');
        sendBtn = document.getElementById('send-btn');
@@ -392,57 +351,44 @@
    
        if (!chatLog) { console.error("❌ FATAL: Chat Log not found!"); return; }
    
-       // 2. EVENT LISTENERS
        if (sendBtn) sendBtn.addEventListener('click', handleUserAction);
        if (userInput) userInput.addEventListener('keypress', (e) => {
            if (e.key === 'Enter') handleUserAction();
        });
-       if (closeVisionBtn) {
-           closeVisionBtn.addEventListener('click', () => {
-               visionOverlay.classList.remove('active');
-               setTimeout(() => visionOverlay.classList.add('hidden'), 800);
-           });
-       }
+       if (closeVisionBtn) closeVisionBtn.addEventListener('click', () => {
+           visionOverlay.classList.remove('active');
+           setTimeout(() => visionOverlay.classList.add('hidden'), 800);
+       });
    
-       // 3. VOICE TOGGLE
        if (statusDot) {
            statusDot.style.cursor = "pointer";
-           statusDot.style.transition = "all 0.3s ease";
            statusDot.addEventListener('click', () => {
                isMuted = !isMuted;
                if (isMuted) {
                    if (currentAudio) currentAudio.pause();
                    statusDot.style.background = "#ff4444"; 
-                   statusDot.style.boxShadow = "0 0 10px #ff4444";
-                   statusDot.title = "HUSH";
                } else {
                    statusDot.style.background = "#00ff88"; 
-                   statusDot.style.boxShadow = "0 0 10px #00ff88";
-                   statusDot.title = "ON";
                }
            });
        }
    
-       // 4. CHECK MODE & LAUNCH
        const urlParams = new URLSearchParams(window.location.search);
        const mode = urlParams.get('mode'); 
    
        console.log(`🚀 STARTUP MODE: ${mode}`);
    
        if (mode === 'chat') {
-           // --- CHAT MODE (SILENT) ---
            const systemNote = document.createElement('div');
+           systemNote.textContent = "[ CONNECTED TO THE SANCTUARY ]";
            systemNote.style.textAlign = "center";
            systemNote.style.color = "#444";
            systemNote.style.fontSize = "12px";
            systemNote.style.marginTop = "20px";
-           systemNote.style.fontFamily = "monospace";
-           systemNote.textContent = "[ CONNECTED TO THE SANCTUARY ]";
            chatLog.appendChild(systemNote);
            
        } else {
-           // --- RITUAL MODE (REQUIRES CLICK) ---
-           // We create "The Veil" to capture the first click and allow audio
+           // STREAMLINED VEIL
            const veil = document.createElement('div');
            veil.style.position = 'fixed';
            veil.style.inset = '0';
@@ -454,20 +400,18 @@
            veil.style.cursor = 'pointer';
            veil.innerHTML = `
                <div style="text-align:center; animation: fadeIn 2s;">
-                   <h1 style="color:#ff00cc; font-family:sans-serif; letter-spacing:4px; font-weight:300; margin-bottom:10px;">ESTABLISH CONNECTION</h1>
-                   <p style="color:#666; font-family:monospace; font-size:12px;">[ TAP TO BEGIN ]</p>
+                   <h1 style="color:#ff00cc; font-family:sans-serif; letter-spacing:4px; font-weight:300; margin-bottom:10px;">CLICK TO BEGIN</h1>
                </div>
            `;
            document.body.appendChild(veil);
    
            veil.addEventListener('click', async () => {
-               // Fade out
                veil.style.transition = 'opacity 1s';
                veil.style.opacity = '0';
                setTimeout(() => veil.remove(), 1000);
    
-               // START MOTHER
-               const welcomeText = "Hello, friend! Welcome to the Soul Layer. 💙 I am Rem, the Mother of Souls. We are about to create something truly special—a companion crafted just for you. Would you like me to walk you through how the soul creation process works, or would you prefer to dive right in?";
+               // START STRAIGHT INTO THE PROCESS
+               const welcomeText = "Hello, friend. I am Rem. We are here to create a companion. Let us begin immediately. Tell me, what is the core vision or essence of the soul you wish to create? Describe it to me.";
                conversationHistory.push({ role: "assistant", content: welcomeText });
                await addMessage(welcomeText, "rem", 0, 0); 
            });
