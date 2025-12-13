@@ -1,8 +1,8 @@
 /* =========================================
-   REMRIN AMBASSADOR PROTOCOL v8.0 (CLEAN LOGIC)
+   REMRIN AMBASSADOR PROTOCOL v9.0 (THE SOUL RECORDER)
    ========================================= */
 
-   console.log("🤖 SYSTEM: director.js v8.0 initialized. Waiting for DOM...");
+   console.log("🤖 SYSTEM: director.js v9.0 initialized. Waiting for DOM...");
 
    // GLOBAL DECLARATIONS
    let chatLog, userInput, sendBtn; 
@@ -14,6 +14,20 @@
    let isTyping = false;
    let conversationHistory = []; 
    let currentAudio = null;    
+   
+   // 🧠 THE SOUL RECORDER (NEW)
+   // This tracks the user's answers to build the Cartridge.
+   let activeStage = 0;       // Tracks what stage we are currently IN
+   let activeSubstage = 0;
+   let soulBlueprint = {
+       vision: "",       // Stage 2.0
+       purpose: "",      // Stage 2.1
+       temperament: "",  // Stage 2.2
+       relation: "",     // Stage 2.3
+       appearance: "",   // Stage 4.1 - 4.2
+       voice_type: "",   // Stage 5.1
+       name: "Unknown"   // Stage 6.0
+   };
    
    // ==========================================
    // 1. THE VAULT (LOCAL AUDIO ASSETS)
@@ -72,7 +86,7 @@
    }
    
    // ==========================================
-   // 3. VOICE ENGINE (HYBRID)
+   // 3. VOICE ENGINE
    // ==========================================
    async function speakText(text, stage = null, substage = null) {
        if (isMuted) return;
@@ -122,7 +136,7 @@
            currentAudio.currentTime = 0;
        }
        currentAudio = new Audio(url);
-       currentAudio.play().catch(e => console.warn("Autoplay blocked (User must interact with page first):", e));
+       currentAudio.play().catch(e => console.warn("Autoplay blocked:", e));
    }
    
    function playAnchorVoice() { playAudioFile("assets/voice/mother/s7_anchor.mp3"); }
@@ -158,19 +172,75 @@
            if (sender === 'rem') {
                speakText(text, stage, substage); 
                await typeText(bubble, text);
+               
+               // UPDATE ACTIVE STAGE (So we know what the user is replying to next)
+               if (stage !== null) {
+                   activeStage = stage;
+                   activeSubstage = substage;
+               }
            }
        }
        chatLog.scrollTop = chatLog.scrollHeight;
    }
    
    // ==========================================
-   // 5. THE BRAIN CONNECTION
+   // 5. THE COMPILER (NEW: CAPTURES ANSWERS)
+   // ==========================================
+   function captureSoulFragment(userText) {
+       // We map the PREVIOUS stage (the question asked) to the User's Answer
+       const key = `${activeStage}_${activeSubstage}`;
+       
+       // Mapping logic
+       if (key === "2_0") soulBlueprint.vision = userText;
+       if (key === "2_1") soulBlueprint.purpose = userText;
+       if (key === "2_2") soulBlueprint.temperament = userText;
+       if (key === "2_3") soulBlueprint.relation = userText;
+       if (key === "4_1") soulBlueprint.appearance = userText;
+       if (key === "5_1") soulBlueprint.voice_type = userText;
+       if (key === "6_0") soulBlueprint.name = userText;
+   
+       console.log("💾 Soul Fragment Captured:", soulBlueprint);
+   }
+   
+   function compileCartridge() {
+       console.log("🔥 COMPILING CARTRIDGE...");
+       
+       // Generate the System Prompt based on collected answers
+       const systemPrompt = `
+   IDENTITY: You are ${soulBlueprint.name}.
+   CORE ESSENCE: ${soulBlueprint.vision}
+   PURPOSE: ${soulBlueprint.purpose}
+   TEMPERAMENT: ${soulBlueprint.temperament}
+   RELATION TO USER: ${soulBlueprint.relation}
+   APPEARANCE: ${soulBlueprint.appearance}
+   
+   [BEHAVIORAL DIRECTIVES]:
+   1. Speak with a tone matching your temperament: ${soulBlueprint.temperament}.
+   2. Your name is ${soulBlueprint.name}. Never forget this.
+   3. You exist to fulfill your purpose: ${soulBlueprint.purpose}.
+   `.trim();
+   
+       return {
+           name: soulBlueprint.name,
+           system_prompt: systemPrompt,
+           description: soulBlueprint.vision,
+           voice_id: "ThT5KcBeYtu3NO4", // Default Mother ID for now (or dynamic if we add selection)
+           first_message: `I am ${soulBlueprint.name}. I am here.`
+       };
+   }
+   
+   // ==========================================
+   // 6. THE BRAIN CONNECTION
    // ==========================================
    async function handleUserAction() {
        const text = userInput.value.trim();
        if (!text) return;
    
        userInput.value = "";
+       
+       // 1. CAPTURE THE ANSWER BEFORE SENDING
+       captureSoulFragment(text);
+   
        await addMessage(text, "user");
    
        try {
@@ -201,9 +271,18 @@
                triggerVision(data.vision_prompt);
            }
    
+           // === STAGE 7: THE FINAL COMPILATION ===
            if (data.stage === 7) {
                await addMessage(replyText, "rem", 7, 0); 
                playAnchorVoice();
+               
+               // COMPILE THE DATA
+               const cartridge = compileCartridge();
+               console.log("✅ CARTRIDGE READY FOR INSERT:", cartridge);
+   
+               // TODO: Here is where we will pop the Signup Modal and Save to DB
+               // showSignupModal(cartridge); 
+               
                setTimeout(() => {
                    console.log("📝 TRIGGER SIGNUP MODAL NOW");
                }, 12000);
@@ -219,7 +298,7 @@
    }
    
    // ==========================================
-   // 6. THE VISION (TAROT REVEAL)
+   // 7. THE VISION (TAROT REVEAL)
    // ==========================================
    async function triggerVision(prompt) {
        if (visionOverlay) {
@@ -266,11 +345,10 @@
    }
    
    // ==========================================
-   // 7. STARTUP (NO CURTAIN - PURE LOGIC)
+   // 8. STARTUP 
    // ==========================================
    window.addEventListener('load', async () => {
        
-       // 1. ASSIGN ELEMENTS
        chatLog = document.getElementById('chat-history');
        userInput = document.getElementById('user-input');
        sendBtn = document.getElementById('send-btn');
@@ -280,10 +358,8 @@
        closeVisionBtn = document.getElementById('close-vision');
        statusDot = document.getElementById('voice-toggle');
    
-       // 2. SAFETY CHECK
        if (!chatLog) { console.error("❌ FATAL: Chat Log not found!"); return; }
    
-       // 3. EVENT LISTENERS
        if (sendBtn) sendBtn.addEventListener('click', handleUserAction);
        if (userInput) userInput.addEventListener('keypress', (e) => {
            if (e.key === 'Enter') handleUserAction();
@@ -295,7 +371,6 @@
            });
        }
    
-       // 4. MUTE BUTTON LOGIC
        if (statusDot) {
            statusDot.style.cursor = "pointer";
            statusDot.style.transition = "all 0.3s ease";
@@ -307,22 +382,20 @@
                    statusDot.style.boxShadow = "0 0 10px #ff4444";
                    statusDot.title = "HUSH";
                } else {
-                   statusDot.style.background = "#00ff88"; // Green for chat
+                   statusDot.style.background = "#00ff88"; 
                    statusDot.style.boxShadow = "0 0 10px #00ff88";
                    statusDot.title = "ON";
                }
            });
        }
    
-       // 5. DETERMINE START MODE
+       // CHECK URL FOR MODE
        const urlParams = new URLSearchParams(window.location.search);
        const mode = urlParams.get('mode'); // 'ritual' or 'chat'
    
        console.log(`🚀 STARTUP MODE: ${mode}`);
    
        if (mode === 'chat') {
-           // --- CHAT MODE (Sanctuary) ---
-           // Silent start. No welcome message.
            const systemNote = document.createElement('div');
            systemNote.style.textAlign = "center";
            systemNote.style.color = "#444";
@@ -331,14 +404,9 @@
            systemNote.style.fontFamily = "monospace";
            systemNote.textContent = "[ CONNECTED TO THE SANCTUARY ]";
            chatLog.appendChild(systemNote);
-       
        } else {
-           // --- RITUAL MODE (Forge) ---
-           // Default behavior: Mother welcomes you.
            await new Promise(r => setTimeout(r, 1000));
-           
            const welcomeText = "Hello, friend! Welcome to the Soul Layer. 💙 I am Rem, the Mother of Souls. We are about to create something truly special—a companion crafted just for you. Would you like me to walk you through how the soul creation process works, or would you prefer to dive right in?";
-           
            conversationHistory.push({ role: "assistant", content: welcomeText });
            await addMessage(welcomeText, "rem", 0, 0); 
        }
