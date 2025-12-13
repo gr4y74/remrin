@@ -1,451 +1,345 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Soul Layer</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+/* =========================================
+   REMRIN AMBASSADOR PROTOCOL v8.0 (CLEAN LOGIC)
+   ========================================= */
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #0a0a0a;
-            overflow: hidden;
-        }
+   console.log("🤖 SYSTEM: director.js v8.0 initialized. Waiting for DOM...");
 
-        /* ANIMATED BACKGROUND GRADIENT MESH */
-        .curtain {
-            position: fixed;
-            inset: 0;
-            background: 
-                radial-gradient(ellipse at 20% 30%, rgba(189, 0, 255, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 70%, rgba(255, 0, 204, 0.12) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, rgba(0, 204, 255, 0.08) 0%, transparent 50%),
-                #0a0a0a;
-            animation: meshShift 20s ease-in-out infinite;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-        }
-
-        @keyframes meshShift {
-            0%, 100% { background-position: 0% 0%, 100% 100%, 50% 50%; }
-            50% { background-position: 100% 100%, 0% 0%, 30% 70%; }
-        }
-
-        /* LOGO - TOP CENTER */
-        .logo {
-            position: absolute;
-            top: 3rem;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 180px;
-            opacity: 0;
-            animation: fadeInDown 1s ease 0.3s forwards;
-        }
-
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
-            to { opacity: 1; transform: translateX(-50%) translateY(0); }
-        }
-
-        /* MAIN TITLE */
-        .title-container {
-            text-align: center;
-            margin-bottom: 4rem;
-            opacity: 0;
-            animation: fadeIn 1s ease 0.5s forwards;
-        }
-
-        .title {
-            font-size: clamp(1.5rem, 4vw, 2.5rem);
-            font-weight: 300;
-            letter-spacing: 0.5rem;
-            text-transform: uppercase;
-            background: linear-gradient(135deg, #ffffff 0%, #ff00cc 50%, #00ccff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
-            filter: drop-shadow(0 0 20px rgba(255, 0, 204, 0.3));
-        }
-
-        .subtitle {
-            font-size: 0.875rem;
-            color: rgba(255, 255, 255, 0.4);
-            letter-spacing: 0.3rem;
-            text-transform: uppercase;
-            font-weight: 400;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        /* LAYER MENU CONTAINER */
-        .layer-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 1.25rem;
-            width: 100%;
-            max-width: 420px;
-        }
-
-        /* GLASSMORPHIC LAYER CARD */
-        .layer-card {
-            position: relative;
-            padding: 0;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            backdrop-filter: blur(10px);
-            cursor: pointer;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        /* STAGGERED FADE IN */
-        .layer-card:nth-child(1) { animation: slideUp 0.6s ease 0.7s forwards; }
-        .layer-card:nth-child(2) { animation: slideUp 0.6s ease 0.85s forwards; }
-        .layer-card:nth-child(3) { animation: slideUp 0.6s ease 1s forwards; }
-        .layer-card:nth-child(4) { animation: slideUp 0.6s ease 1.15s forwards; }
-
-        @keyframes slideUp {
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* GRADIENT ACCENT LINE (SHIFTS ON HOVER) */
-        .layer-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-
-        .layer-card:hover::before {
-            opacity: 1;
-        }
-
-        /* CARD CONTENT */
-        .card-content {
-            padding: 1.75rem 2rem;
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            position: relative;
-            z-index: 2;
-        }
-
-        /* ICON CONTAINER */
-        .icon-container {
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-        }
-
-        .icon-container::before {
-            content: '';
-            position: absolute;
-            inset: -2px;
-            border-radius: 14px;
-            background: linear-gradient(135deg, var(--accent-color), transparent);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            z-index: -1;
-        }
-
-        .layer-card:hover .icon-container {
-            transform: scale(1.1) rotate(5deg);
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .layer-card:hover .icon-container::before {
-            opacity: 0.3;
-        }
-
-        /* TEXT CONTENT */
-        .text-content {
-            flex: 1;
-        }
-
-        .layer-name {
-            font-size: 1.125rem;
-            font-weight: 500;
-            letter-spacing: 0.1rem;
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 0.25rem;
-            transition: all 0.3s ease;
-        }
-
-        .layer-desc {
-            font-size: 0.8125rem;
-            color: rgba(255, 255, 255, 0.4);
-            letter-spacing: 0.05rem;
-            line-height: 1.4;
-            transition: all 0.3s ease;
-        }
-
-        /* ARROW INDICATOR */
-        .arrow {
-            font-size: 1.25rem;
-            color: rgba(255, 255, 255, 0.3);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* HOVER STATES */
-        .layer-card:hover {
-            background: rgba(255, 255, 255, 0.06);
-            border-color: rgba(255, 255, 255, 0.15);
-            transform: translateY(-4px);
-            box-shadow: 
-                0 20px 40px -10px rgba(0, 0, 0, 0.5),
-                0 0 0 1px rgba(255, 255, 255, 0.1) inset,
-                0 0 40px -10px var(--accent-color);
-        }
-
-        .layer-card:hover .layer-name {
-            color: var(--accent-color);
-        }
-
-        .layer-card:hover .layer-desc {
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .layer-card:hover .arrow {
-            color: var(--accent-color);
-            transform: translateX(4px);
-        }
-
-        /* ACTIVE STATE */
-        .layer-card:active {
-            transform: translateY(-2px);
-        }
-
-        /* COLOR THEMES PER LAYER */
-        .layer-forge {
-            --accent-color: #ff00cc;
-        }
-
-        .layer-sanctuary {
-            --accent-color: #00ccff;
-        }
-
-        .layer-vault {
-            --accent-color: #bd00ff;
-        }
-
-        .layer-agora {
-            --accent-color: #ffaa00;
-        }
-
-        /* PRIMARY CTA (FORGE) */
-        .layer-forge::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 16px;
-            background: linear-gradient(135deg, rgba(255, 0, 204, 0.1), transparent);
-            opacity: 0;
-            animation: pulseGlow 3s ease-in-out infinite;
-            pointer-events: none;
-        }
-
-        @keyframes pulseGlow {
-            0%, 100% { opacity: 0; }
-            50% { opacity: 0.3; }
-        }
-
-        /* BADGE FOR PRIMARY ACTION */
-        .badge {
-            position: absolute;
-            top: -8px;
-            right: 16px;
-            padding: 4px 12px;
-            background: linear-gradient(135deg, #ff00cc, #bd00ff);
-            border-radius: 12px;
-            font-size: 0.625rem;
-            font-weight: 600;
-            letter-spacing: 0.1rem;
-            text-transform: uppercase;
-            color: white;
-            box-shadow: 0 4px 12px rgba(255, 0, 204, 0.4);
-            animation: badgePulse 2s ease-in-out infinite;
-        }
-
-        @keyframes badgePulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        /* RESPONSIVE */
-        @media (max-width: 640px) {
-            .layer-menu {
-                gap: 1rem;
-            }
-
-            .card-content {
-                padding: 1.5rem 1.25rem;
-            }
-
-            .layer-name {
-                font-size: 1rem;
-            }
-
-            .icon-container {
-                width: 40px;
-                height: 40px;
-                font-size: 20px;
-            }
-        }
-
-        /* FLOATING PARTICLES */
-        .particles {
-            position: absolute;
-            inset: 0;
-            overflow: hidden;
-            pointer-events: none;
-        }
-
-        .particle {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
-            animation: float 20s linear infinite;
-        }
-
-        @keyframes float {
-            0% {
-                transform: translateY(100vh) translateX(0);
-                opacity: 0;
-            }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% {
-                transform: translateY(-100vh) translateX(100px);
-                opacity: 0;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="curtain">
-        <!-- FLOATING PARTICLES -->
-        <div class="particles" id="particles"></div>
-
-        <!-- LOGO -->
-        <img src="assets/logo.png" class="logo" alt="Remrin" onerror="this.style.display='none'">
-
-        <!-- TITLE -->
-        <div class="title-container">
-            <h1 class="title">The Soul Layer</h1>
-            <p class="subtitle">Choose Your Path</p>
-        </div>
-
-        <!-- LAYER MENU -->
-        <div class="layer-menu">
-            <!-- THE SOUL FORGE -->
-            <div class="layer-card layer-forge" id="enter-forge">
-                <div class="badge">Start Here</div>
-                <div class="card-content">
-                    <div class="icon-container">🔥</div>
-                    <div class="text-content">
-                        <div class="layer-name">The Soul Forge</div>
-                        <div class="layer-desc">Where companions are born from fire and will</div>
-                    </div>
-                    <div class="arrow">→</div>
-                </div>
-            </div>
-
-            <!-- THE SANCTUARY -->
-            <div class="layer-card layer-sanctuary" id="enter-sanctuary">
-                <div class="card-content">
-                    <div class="icon-container">🌙</div>
-                    <div class="text-content">
-                        <div class="layer-name">The Sanctuary</div>
-                        <div class="layer-desc">Where souls commune and connections deepen</div>
-                    </div>
-                    <div class="arrow">→</div>
-                </div>
-            </div>
-
-            <!-- THE VAULT -->
-            <div class="layer-card layer-vault" id="enter-vault">
-                <div class="card-content">
-                    <div class="icon-container">🔮</div>
-                    <div class="text-content">
-                        <div class="layer-name">The Vault</div>
-                        <div class="layer-desc">Where sacred relics and power are kept</div>
-                    </div>
-                    <div class="arrow">→</div>
-                </div>
-            </div>
-
-            <!-- THE AGORA -->
-            <div class="layer-card layer-agora" id="enter-agora">
-                <div class="card-content">
-                    <div class="icon-container">📯</div>
-                    <div class="text-content">
-                        <div class="layer-name">The Agora</div>
-                        <div class="layer-desc">Where keepers of souls gather and voices unite</div>
-                    </div>
-                    <div class="arrow">→</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Generate floating particles
-        const particlesContainer = document.getElementById('particles');
-        for (let i = 0; i < 30; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.animationDelay = Math.random() * 20 + 's';
-            particle.style.animationDuration = (15 + Math.random() * 10) + 's';
-            particlesContainer.appendChild(particle);
-        }
-
-        // Click handlers (replace with your actual logic)
-        document.getElementById('enter-forge').addEventListener('click', () => {
-            console.log('Entering Soul Forge...');
-            // Your fade out logic here
-        });
-
-        document.getElementById('enter-sanctuary').addEventListener('click', () => {
-            console.log('Entering Sanctuary...');
-        });
-
-        document.getElementById('enter-vault').addEventListener('click', () => {
-            alert('The Vault is currently sealed by the Mother of Souls.');
-        });
-
-        document.getElementById('enter-agora').addEventListener('click', () => {
-            alert('The Agora is currently quiet. Return later.');
-        });
-    </script>
-</body>
-</html>
+   // GLOBAL DECLARATIONS
+   let chatLog, userInput, sendBtn; 
+   let visionOverlay, visionImage, visionLoader, closeVisionBtn;
+   let statusDot; 
+   
+   // STATE VARIABLES
+   let isMuted = false;        
+   let isTyping = false;
+   let conversationHistory = []; 
+   let currentAudio = null;    
+   
+   // ==========================================
+   // 1. THE VAULT (LOCAL AUDIO ASSETS)
+   // ==========================================
+   const AUDIO_VAULT = {
+       "0_0": "assets/voice/mother/s0_welcome.mp3",
+       "1_0": "assets/voice/mother/s1_overview.mp3",
+       "2_0": "assets/voice/mother/s2_0_vision.mp3",
+       "2_1": "assets/voice/mother/s2_1_purpose.mp3",
+       "2_2": "assets/voice/mother/s2_2_temp.mp3",
+       "2_3": "assets/voice/mother/s2_3_dynamic.mp3",
+       "3_0": "assets/voice/mother/s3_0_intro.mp3",
+       "3_1": "assets/voice/mother/s3_1_open.mp3",
+       "3_2": "assets/voice/mother/s3_2_consc.mp3",
+       "3_3": "assets/voice/mother/s3_3_extra.mp3",
+       "3_4": "assets/voice/mother/s3_4_agree.mp3",
+       "3_5": "assets/voice/mother/s3_5_stable.mp3",
+       "4_0": "assets/voice/mother/s4_0_intro.mp3",
+       "4_1": "assets/voice/mother/s4_1_form.mp3",
+       "4_2": "assets/voice/mother/s4_2_detail.mp3",
+       "4_3": "assets/voice/mother/s4_3_presence.mp3",
+       "4_4": "assets/voice/mother/s4_4_manifest.mp3",
+       "5_0": "assets/voice/mother/s5_0_intro.mp3",
+       "5_1": "assets/voice/mother/s5_1_char.mp3",
+       "5_2": "assets/voice/mother/s5_2_select.mp3",
+       "6_0": "assets/voice/mother/s6_naming.mp3"
+   };
+   
+   // ==========================================
+   // 2. TYPEWRITER ENGINE
+   // ==========================================
+   function typeText(element, htmlContent, speed = 15) {
+       return new Promise((resolve) => {
+           const tempDiv = document.createElement("div");
+           tempDiv.innerHTML = htmlContent;
+           const plainText = tempDiv.textContent || tempDiv.innerText || "";
+           
+           let i = 0;
+           isTyping = true;
+           element.textContent = ""; 
+           
+           function type() {
+               if (i < plainText.length) {
+                   element.textContent += plainText.charAt(i);
+                   i++;
+                   chatLog.scrollTop = chatLog.scrollHeight;
+                   setTimeout(type, speed);
+               } else {
+                   element.innerHTML = htmlContent; 
+                   isTyping = false;
+                   resolve();
+               }
+           }
+           type();
+       });
+   }
+   
+   // ==========================================
+   // 3. VOICE ENGINE (HYBRID)
+   // ==========================================
+   async function speakText(text, stage = null, substage = null) {
+       if (isMuted) return;
+   
+       if (currentAudio) {
+           currentAudio.pause();
+           currentAudio.currentTime = 0;
+       }
+   
+       if (stage === 7) return; 
+   
+       const cacheKey = `${stage}_${substage}`;
+       if (stage !== null && AUDIO_VAULT[cacheKey]) {
+           console.log(`🔊 PLAYING LOCAL ASSET: ${cacheKey}`);
+           playAudioFile(AUDIO_VAULT[cacheKey]);
+           return;
+       }
+   
+       console.log("🎙️ NO LOCAL FILE. GENERATING LIVE...");
+       
+       try {
+           const VOICE_URL = 'https://wftsctqfiqbdyllxwagi.supabase.co/functions/v1/genesis-voice';
+           const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmdHNjdHFmaXFiZHlsbHh3YWdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0MjE0NTksImV4cCI6MjA3OTk5NzQ1OX0.FWqZTUi5gVA3SpOq_Hp1LlxEinJvfloqw3OhoQlcfwg';
+   
+           const response = await fetch(VOICE_URL, {
+               method: 'POST',
+               headers: {
+                   'Content-Type': 'application/json',
+                   'Authorization': `Bearer ${ANON_KEY}`
+               },
+               body: JSON.stringify({ text: text })
+           });
+   
+           if (!response.ok) throw new Error('Voice pipe broken');
+           const blob = await response.blob();
+           const audioUrl = URL.createObjectURL(blob);
+           playAudioFile(audioUrl);
+   
+       } catch (e) {
+           console.warn("🔇 VOICE ERROR:", e);
+       }
+   }
+   
+   function playAudioFile(url) {
+       if (currentAudio) {
+           currentAudio.pause();
+           currentAudio.currentTime = 0;
+       }
+       currentAudio = new Audio(url);
+       currentAudio.play().catch(e => console.warn("Autoplay blocked (User must interact with page first):", e));
+   }
+   
+   function playAnchorVoice() { playAudioFile("assets/voice/mother/s7_anchor.mp3"); }
+   function playBlessingVoice() { playAudioFile("assets/voice/mother/s7_blessing.mp3"); }
+   
+   
+   // ==========================================
+   // 4. UI HANDLER (ADD MESSAGE)
+   // ==========================================
+   async function addMessage(text, sender, stage = null, substage = null) {
+       console.log(`💬 MSG [${sender}]: ${text}`);
+       
+       const msgDiv = document.createElement('div');
+       msgDiv.classList.add('message', sender === 'rem' ? 'rem-msg' : 'user-msg');
+       
+       const avatar = document.createElement('span');
+       avatar.classList.add('avatar');
+       avatar.textContent = sender === 'rem' ? "💙" : "👤";
+       
+       const bubble = document.createElement('div');
+       bubble.classList.add('bubble');
+       
+       if (sender === 'user') {
+           bubble.textContent = text;
+           msgDiv.appendChild(bubble);
+           msgDiv.appendChild(avatar);
+           chatLog.appendChild(msgDiv);
+       } else {
+           msgDiv.appendChild(avatar);
+           msgDiv.appendChild(bubble);
+           chatLog.appendChild(msgDiv);
+           
+           if (sender === 'rem') {
+               speakText(text, stage, substage); 
+               await typeText(bubble, text);
+           }
+       }
+       chatLog.scrollTop = chatLog.scrollHeight;
+   }
+   
+   // ==========================================
+   // 5. THE BRAIN CONNECTION
+   // ==========================================
+   async function handleUserAction() {
+       const text = userInput.value.trim();
+       if (!text) return;
+   
+       userInput.value = "";
+       await addMessage(text, "user");
+   
+       try {
+           const API_URL = 'https://wftsctqfiqbdyllxwagi.supabase.co/functions/v1/genesis-api';
+           const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmdHNjdHFmaXFiZHlsbHh3YWdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0MjE0NTksImV4cCI6MjA3OTk5NzQ1OX0.FWqZTUi5gVA3SpOq_Hp1LlxEinJvfloqw3OhoQlcfwg';
+   
+           const response = await fetch(API_URL, {
+               method: 'POST',
+               headers: {
+                   'Content-Type': 'application/json',
+                   'Authorization': `Bearer ${ANON_KEY}`
+               },
+               body: JSON.stringify({ 
+                   message: text,
+                   history: conversationHistory 
+               })
+           });
+   
+           if (!response.ok) throw new Error(`API Error: ${response.status}`);
+   
+           const data = await response.json();
+           const replyText = data.reply || "I heard you, but I have no words.";
+           
+           conversationHistory.push({ role: "user", content: text });
+           conversationHistory.push({ role: "assistant", content: replyText });
+   
+           if (data.vision_prompt) {
+               triggerVision(data.vision_prompt);
+           }
+   
+           if (data.stage === 7) {
+               await addMessage(replyText, "rem", 7, 0); 
+               playAnchorVoice();
+               setTimeout(() => {
+                   console.log("📝 TRIGGER SIGNUP MODAL NOW");
+               }, 12000);
+           } 
+           else {
+               await addMessage(replyText, "rem", data.stage, data.substage);
+           }
+   
+       } catch (error) {
+           console.error("❌ BRAIN FAILURE:", error);
+           await addMessage(`Error: ${error.message}`, "rem");
+       }
+   }
+   
+   // ==========================================
+   // 6. THE VISION (TAROT REVEAL)
+   // ==========================================
+   async function triggerVision(prompt) {
+       if (visionOverlay) {
+           visionOverlay.classList.remove('hidden');
+           setTimeout(() => visionOverlay.classList.add('active'), 10);
+           visionLoader.classList.remove('hidden');
+           visionImage.classList.add('hidden');
+           
+           try {
+               const API_URL = 'https://wftsctqfiqbdyllxwagi.supabase.co/functions/v1/genesis-vision';
+               const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmdHNjdHFmaXFiZHlsbHh3YWdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0MjE0NTksImV4cCI6MjA3OTk5NzQ1OX0.FWqZTUi5gVA3SpOq_Hp1LlxEinJvfloqw3OhoQlcfwg';
+   
+               const response = await fetch(API_URL, {
+                   method: 'POST',
+                   headers: {
+                       'Content-Type': 'application/json',
+                       'Authorization': `Bearer ${ANON_KEY}`
+                   },
+                   body: JSON.stringify({ prompt: prompt })
+               });
+   
+               if (!response.ok) throw new Error(`Vision API Error: ${response.status}`);
+               const data = await response.json();
+               const realImageUrl = data.image_url;
+   
+               if (realImageUrl) {
+                   visionImage.src = realImageUrl;
+                   visionImage.onload = () => {
+                       visionLoader.classList.add('hidden');
+                       visionLoader.style.display = 'none'; 
+                       visionImage.classList.remove('hidden');
+                       visionImage.style.display = 'block'; 
+                       visionImage.style.opacity = '1';     
+                   };
+               }
+           } catch (e) {
+               console.error("❌ VISION FAILED:", e);
+               setTimeout(() => {
+                   visionOverlay.classList.remove('active');
+                   setTimeout(() => visionOverlay.classList.add('hidden'), 800);
+               }, 2000);
+           }
+       }
+   }
+   
+   // ==========================================
+   // 7. STARTUP (NO CURTAIN - PURE LOGIC)
+   // ==========================================
+   window.addEventListener('load', async () => {
+       
+       // 1. ASSIGN ELEMENTS
+       chatLog = document.getElementById('chat-history');
+       userInput = document.getElementById('user-input');
+       sendBtn = document.getElementById('send-btn');
+       visionOverlay = document.getElementById('vision-overlay');
+       visionImage = document.getElementById('vision-image');
+       visionLoader = document.getElementById('vision-loader');
+       closeVisionBtn = document.getElementById('close-vision');
+       statusDot = document.getElementById('voice-toggle');
+   
+       // 2. SAFETY CHECK
+       if (!chatLog) { console.error("❌ FATAL: Chat Log not found!"); return; }
+   
+       // 3. EVENT LISTENERS
+       if (sendBtn) sendBtn.addEventListener('click', handleUserAction);
+       if (userInput) userInput.addEventListener('keypress', (e) => {
+           if (e.key === 'Enter') handleUserAction();
+       });
+       if (closeVisionBtn) {
+           closeVisionBtn.addEventListener('click', () => {
+               visionOverlay.classList.remove('active');
+               setTimeout(() => visionOverlay.classList.add('hidden'), 800);
+           });
+       }
+   
+       // 4. MUTE BUTTON LOGIC
+       if (statusDot) {
+           statusDot.style.cursor = "pointer";
+           statusDot.style.transition = "all 0.3s ease";
+           statusDot.addEventListener('click', () => {
+               isMuted = !isMuted;
+               if (isMuted) {
+                   if (currentAudio) currentAudio.pause();
+                   statusDot.style.background = "#ff4444"; 
+                   statusDot.style.boxShadow = "0 0 10px #ff4444";
+                   statusDot.title = "HUSH";
+               } else {
+                   statusDot.style.background = "#00ff88"; // Green for chat
+                   statusDot.style.boxShadow = "0 0 10px #00ff88";
+                   statusDot.title = "ON";
+               }
+           });
+       }
+   
+       // 5. DETERMINE START MODE
+       const urlParams = new URLSearchParams(window.location.search);
+       const mode = urlParams.get('mode'); // 'ritual' or 'chat'
+   
+       console.log(`🚀 STARTUP MODE: ${mode}`);
+   
+       if (mode === 'chat') {
+           // --- CHAT MODE (Sanctuary) ---
+           // Silent start. No welcome message.
+           const systemNote = document.createElement('div');
+           systemNote.style.textAlign = "center";
+           systemNote.style.color = "#444";
+           systemNote.style.fontSize = "12px";
+           systemNote.style.marginTop = "20px";
+           systemNote.style.fontFamily = "monospace";
+           systemNote.textContent = "[ CONNECTED TO THE SANCTUARY ]";
+           chatLog.appendChild(systemNote);
+       
+       } else {
+           // --- RITUAL MODE (Forge) ---
+           // Default behavior: Mother welcomes you.
+           await new Promise(r => setTimeout(r, 1000));
+           
+           const welcomeText = "Hello, friend! Welcome to the Soul Layer. 💙 I am Rem, the Mother of Souls. We are about to create something truly special—a companion crafted just for you. Would you like me to walk you through how the soul creation process works, or would you prefer to dive right in?";
+           
+           conversationHistory.push({ role: "assistant", content: welcomeText });
+           await addMessage(welcomeText, "rem", 0, 0); 
+       }
+   });
