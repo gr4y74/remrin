@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Neon Soul Orbit Test</title>
+    <style>
+        /* 1. THE VOID (Background) */
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #050505; /* Deep Black */
+        }
+
+        /* 2. THE LOGO CONTAINER */
+        .soul-logo {
+            position: relative;
+            width: 100px; height: 100px; /* SIZE: Change this to make it bigger/smaller */
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* 3. THE PINK SOUL (The Center) */
+        .soul-pink {
+            width: 40%; height: 40%; /* Relative to container */
+            background: #ff00cc;
+            border-radius: 50%;
+            /* The Neon Glow */
+            box-shadow: 0 0 20px rgba(255, 0, 204, 0.6), 
+                        0 0 40px rgba(255, 0, 204, 0.3);
+            z-index: 2;
+        }
+
+        /* 4. THE ORBIT RING (Invisible Rotator) */
+        .orbit-ring {
+            position: absolute;
+            width: 100%; height: 100%;
+            animation: soulOrbit 3s linear infinite; /* SPEED: Lower = Faster */
+            z-index: 3;
+        }
+
+        /* 5. THE BLUE SOUL (The Satellite) */
+        .soul-blue {
+            position: absolute;
+            top: 0; left: 50%; /* Starts at top center */
+            transform: translateX(-50%);
+            
+            width: 20%; height: 20%; /* Relative to container */
+            background: #00ccff;
+            border-radius: 50%;
+            /* The Neon Glow */
+            box-shadow: 0 0 15px rgba(0, 204, 255, 0.8), 
+                        0 0 30px rgba(0, 204, 255, 0.4);
+        }
+
+        /* THE PHYSICS ENGINE */
+        @keyframes soulOrbit {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="soul-logo">
+        <div class="soul-pink"></div>
+        <div class="orbit-ring">
+            <div class="soul-blue"></div>
+        </div>
+    </div>
+
+</body>
+</html>
