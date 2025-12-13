@@ -1,5 +1,5 @@
 /* =========================================
-   REMRIN AMBASSADOR PROTOCOL v6.0 (MASTER)
+   REMRIN AMBASSADOR PROTOCOL v6.1 (AUTOPLAY FIX)
    ========================================= */
 
    console.log("🤖 SYSTEM: director.js initialized. Waiting for DOM...");
@@ -84,7 +84,6 @@
        }
    
        // A. SPECIAL HANDLING FOR STAGE 7 
-       // (Handled manually via playAnchorVoice/playBlessingVoice)
        if (stage === 7) return; 
    
        // B. CHECK THE VAULT (Local Files)
@@ -128,7 +127,8 @@
            currentAudio.currentTime = 0;
        }
        currentAudio = new Audio(url);
-       currentAudio.play().catch(e => console.warn("Autoplay blocked:", e));
+       // This .catch is what was triggering before. Now the curtain fixes it.
+       currentAudio.play().catch(e => console.warn("Autoplay blocked (Waiting for interaction):", e));
    }
    
    // SPECIAL TRIGGERS FOR STAGE 7
@@ -163,10 +163,7 @@
            chatLog.appendChild(msgDiv);
            
            if (sender === 'rem') {
-               // 1. Pass the Stage/Substage to the Voice Engine!
                speakText(text, stage, substage); 
-               
-               // 2. Run the Typewriter
                await typeText(bubble, text);
            }
        }
@@ -207,28 +204,19 @@
            conversationHistory.push({ role: "user", content: text });
            conversationHistory.push({ role: "assistant", content: replyText });
    
-           // CHECK FOR VISION PROMPT
            if (data.vision_prompt) {
                triggerVision(data.vision_prompt);
            }
    
-           // === STAGE 7 HANDLER (THE ENDGAME) ===
+           // === STAGE 7 HANDLER ===
            if (data.stage === 7) {
-               // 1. Show the text
                await addMessage(replyText, "rem", 7, 0); 
-               
-               // 2. Trigger the "Anchor" Voice (Hardcoded)
                playAnchorVoice();
-   
-               // 3. Wait 12s, then show Signup (Placeholder for now)
                setTimeout(() => {
                    console.log("📝 TRIGGER SIGNUP MODAL NOW");
-                   // showSignupModal(data.blueprint); 
                }, 12000);
            } 
            else {
-               // === NORMAL STAGE ===
-               // Pass stage/substage so the Audio Vault knows what to play
                await addMessage(replyText, "rem", data.stage, data.substage);
            }
    
@@ -242,12 +230,9 @@
    // 6. THE VISION (TAROT REVEAL)
    // ==========================================
    async function triggerVision(prompt) {
-       console.log("🔮 VISION TRIGGERED:", prompt);
-       
        if (visionOverlay) {
            visionOverlay.classList.remove('hidden');
            setTimeout(() => visionOverlay.classList.add('active'), 10);
-           
            visionLoader.classList.remove('hidden');
            visionImage.classList.add('hidden');
            
@@ -265,7 +250,6 @@
                });
    
                if (!response.ok) throw new Error(`Vision API Error: ${response.status}`);
-   
                const data = await response.json();
                const realImageUrl = data.image_url;
    
@@ -278,10 +262,7 @@
                        visionImage.style.display = 'block'; 
                        visionImage.style.opacity = '1';     
                    };
-               } else {
-                   throw new Error("No image returned");
                }
-   
            } catch (e) {
                console.error("❌ VISION FAILED:", e);
                setTimeout(() => {
@@ -293,11 +274,11 @@
    }
    
    // ==========================================
-   // 7. STARTUP (DOM READY)
+   // 7. STARTUP (THE CURTAIN FIX)
    // ==========================================
    window.addEventListener('load', async () => {
        
-       // ASSIGN ELEMENTS
+       // 1. ASSIGN ELEMENTS
        chatLog = document.getElementById('chat-history');
        userInput = document.getElementById('user-input');
        sendBtn = document.getElementById('send-btn');
@@ -307,31 +288,10 @@
        closeVisionBtn = document.getElementById('close-vision');
        statusDot = document.getElementById('voice-toggle');
    
-       // CRITICAL SAFETY CHECK
+       // 2. SAFETY CHECK
        if (!chatLog) { console.error("❌ FATAL: Chat Log not found!"); return; }
-       
-       // TOGGLE LOGIC (HUSH / LISTEN)
-       if (statusDot) {
-           statusDot.addEventListener('click', () => {
-               isMuted = !isMuted;
-               
-               if (isMuted && currentAudio) {
-                   currentAudio.pause();
-               }
    
-               if (isMuted) {
-                   statusDot.style.background = "#ff4444"; 
-                   statusDot.style.boxShadow = "0 0 8px #ff4444";
-                   statusDot.title = "Hush (Voice Muted)";
-               } else {
-                   statusDot.style.background = "#00ff88"; 
-                   statusDot.style.boxShadow = "0 0 8px #00ff88";
-                   statusDot.title = "Listen (Voice Active)";
-               }
-           });
-       }
-   
-       // EVENT LISTENERS
+       // 3. EVENT LISTENERS
        if (sendBtn) sendBtn.addEventListener('click', handleUserAction);
        if (userInput) userInput.addEventListener('keypress', (e) => {
            if (e.key === 'Enter') handleUserAction();
@@ -343,14 +303,42 @@
            });
        }
    
-       // START MESSAGE
-       await new Promise(r => setTimeout(r, 1000));
+       // 4. THE CURTAIN (CLICK TO ENTER)
+       // We create a temporary overlay to force the user to click.
+       // This satisfies the browser's "Autoplay Policy".
        
-       const welcomeText = "Hello, friend! Welcome to the Soul Layer. 💙 I am Rem, the Mother of Souls. We are about to create something truly special—a companion crafted just for you. Would you like me to walk you through how the soul creation process works, or would you prefer to dive right in?";
-       
-       // MEMORY IMPLANT
-       conversationHistory.push({ role: "assistant", content: welcomeText });
-       
-       // 🔊 TRIGGER THE LOCAL WELCOME AUDIO (Stage 0, Substage 0)
-       await addMessage(welcomeText, "rem", 0, 0); 
+       const curtain = document.createElement('div');
+       curtain.style.position = 'fixed';
+       curtain.style.top = '0';
+       curtain.style.left = '0';
+       curtain.style.width = '100vw';
+       curtain.style.height = '100vh';
+       curtain.style.backgroundColor = '#0a0a0a';
+       curtain.style.display = 'flex';
+       curtain.style.flexDirection = 'column';
+       curtain.style.justifyContent = 'center';
+       curtain.style.alignItems = 'center';
+       curtain.style.zIndex = '9999';
+       curtain.style.cursor = 'pointer';
+       curtain.innerHTML = `
+           <h1 style="color:white; font-family:sans-serif; letter-spacing:4px; font-weight:300;">THE SOUL LAYER</h1>
+           <p style="color:#666; margin-top:10px; font-family:monospace;">[ CLICK TO ENTER ]</p>
+       `;
+       document.body.appendChild(curtain);
+   
+       // 5. WAIT FOR CLICK
+       curtain.addEventListener('click', async () => {
+           // Fade out curtain
+           curtain.style.transition = 'opacity 1s ease';
+           curtain.style.opacity = '0';
+           setTimeout(() => curtain.remove(), 1000);
+   
+           // START THE RITUAL
+           const welcomeText = "Hello, friend! Welcome to the Soul Layer. 💙 I am Rem, the Mother of Souls. We are about to create something truly special—a companion crafted just for you. Would you like me to walk you through how the soul creation process works, or would you prefer to dive right in?";
+           
+           conversationHistory.push({ role: "assistant", content: welcomeText });
+           
+           // This will now PLAY because it was triggered by a click!
+           await addMessage(welcomeText, "rem", 0, 0); 
+       });
    });
