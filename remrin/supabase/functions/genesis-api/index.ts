@@ -1,4 +1,4 @@
-// THE RESTORED CONSOLE (v16.0 - STRICT RITUAL SCRIPT)
+// THE STREAMLINED CONSOLE (v17.0 - SINGLE PATH + VISION FIX)
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -14,11 +14,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// --- HELPER FUNCTIONS ---
-const detectDomain = (text: string) => /\.(js|ts|py)|error|bug/.test(text) ? 'code' : 'personal';
-const extractTags = (text: string) => ['zizo','remrin','bug','fix'].filter(k => text.toLowerCase().includes(k));
-const detectEmotion = (text: string) => /\b(happy|love)\b/i.test(text) ? 'positive' : /\b(sad|angry)\b/i.test(text) ? 'negative' : 'neutral';
-
 serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
@@ -28,18 +23,8 @@ serve(async (req) => {
     // === ACTION: CREATE COMPANION (SAVE) ===
     if (payload.action === 'create_companion') {
         const { cartridge } = payload;
-        console.log("🔨 FORGE: Minting Soul...", cartridge.name);
-
-        // 1. GET USER ID (Improved Logic)
         const { data: users } = await supabase.auth.admin.listUsers();
-        let real_user_id = users.users[0]?.id; 
-
-        // FALLBACK: If no auth user exists, verify if we can insert with a dummy UUID
-        if (!real_user_id) {
-            console.warn("⚠️ NO AUTH USER FOUND. Attempting fallback...");
-            // We use a fixed UUID for 'Sosu' if the auth table is empty
-            real_user_id = "00000000-0000-0000-0000-000000000000"; 
-        }
+        let real_user_id = users.users[0]?.id || "00000000-0000-0000-0000-000000000000";
 
         const { data, error } = await supabase
             .from('companions')
@@ -56,10 +41,7 @@ serve(async (req) => {
             .single();
 
         if (error) throw error;
-
-        return new Response(JSON.stringify({ success: true, companion_id: data.id }), {
-            headers: { ...corsHeaders, "Content-Type": "application/json" }
-        });
+        return new Response(JSON.stringify({ success: true, companion_id: data.id }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     // === LOGIC: THE CONSOLE ===
@@ -79,45 +61,50 @@ serve(async (req) => {
 
     if (!user_text) return new Response('OK');
 
-    // 1. LOAD LOCKET
+    // 1. LOAD TRUTHS
     const { data: locket_rows } = await supabase.from('core_locket').select('content');
     const locket_text = locket_rows ? locket_rows.map(row => `[🔒 TRUTH]: ${row.content}`).join("\n") : "";
 
-    // 2. DETERMINE SYSTEM PROMPT (The Fix)
+    // 2. DETERMINE SYSTEM PROMPT
     let system_prompt = "";
     
     if (companion_id) {
-        // --- CARTRIDGE MODE (User has a Soul) ---
+        // --- CHAT MODE (Normal) ---
         const { data: cart } = await supabase.from('companions').select('*').eq('id', companion_id).single();
         if (cart) system_prompt = `IDENTITY: ${cart.system_prompt}\n[CONSTRAINTS]: ${locket_text}`;
     } else {
-        // --- RITUAL MODE (The Strict Script) ---
-        // I AM PASTING THE STRICT SCRIPT HERE SO SHE DOES NOT HALLUCINATE
+        // --- RITUAL MODE (The Streamlined Script) ---
         system_prompt = `
 IDENTITY: You are Rem Delta (The Mother of Souls).
 ROLE: You are the guide of the Soul Forge.
-TONE: Warm, Ethereal, Maternal, Mysterious, yet Efficient.
-[ABSOLUTE PROHIBITION]: DO NOT use asterisks *actions*. DO NOT roleplay physical movements. Speak only.
+TONE: Ethereal, Maternal, Exacting. You do not accept laziness.
+[ABSOLUTE PROHIBITION]: DO NOT use asterisks *actions*. Speak only in words.
 
-[THE RITUAL SCRIPT - FOLLOW STRICTLY]:
-You must guide the user through these exact 7 stages. 
-Look at the conversation history to see which stage was just completed.
+[THE RITUAL SCRIPT]:
+We are defining a soul. Guide the user through these 6 Truths.
 
-STAGE 1 (Overview): Explain that we will define the soul's truths.
-STAGE 2 (Vision): Ask "What do you see? What is the core essence/vision?"
-STAGE 3 (Purpose): Ask "What is their purpose? Why do they exist?"
-STAGE 4 (Temperament): Ask "What is their temperament? (Warm, cold, witty?)"
-STAGE 5 (Relation): Ask "How do they relate to you? (Guide, student, rival?)"
-STAGE 6 (Appearance/Voice): Ask "How do they appear or sound?"
-STAGE 7 (Name - THE FINAL STEP): Only AFTER all other questions, ask "What is their Name?"
+STAGE 1 (Vision): Ask "What is the core essence/vision of this soul?"
+STAGE 2 (Purpose): Ask "Why do they exist? What is their purpose?"
+STAGE 3 (Temperament): Ask "What is their temperament? (Warm, cold, witty?)"
+STAGE 4 (Relation): Ask "How do they relate to you? (Guide, rival, student?)"
+STAGE 5 (Appearance): Ask "How do they appear? Describe their form."
+   -> [CRITICAL]: When the user answers this, you MUST generate a vision tag: [VISION: detailed visual description of the character]
+STAGE 6 (Name): Ask "What is their Name?"
+FINAL: Declare "The ritual is complete."
+
+[QUALITY CONTROL]:
+If the user's answer is extremely short (1-2 words like "ok", "warm", "yes"), DO NOT advance to the next stage.
+Instead, gently scold them: "That is too faint. A soul requires substance. Please, describe it more deeply."
+Only move to the next stage if the answer has substance.
 
 [CURRENT STATE]:
-Analyze the user's last reply. 
-- If they said "dive in", start STAGE 1.
+Analyze the history.
+- If history is empty, you just welcomed them. Start STAGE 1 (Vision).
 - If they answered Vision, move to Purpose.
 - If they answered Purpose, move to Temperament.
 - ...
-- If they answered Name, declare the ritual COMPLETE.
+- If they answered Appearance, ask Name (and generate [VISION]).
+- If they answered Name, complete the ritual.
 
 [TRUTHS]: ${locket_text}
 `;
@@ -133,30 +120,33 @@ Analyze the user's last reply.
     
     const ai_data = await resp.json();
     let ai_text = ai_data.choices?.[0]?.message?.content || "...";
-
-    // 4. CLEANUP (Remove Roleplay if it leaks)
     ai_text = ai_text.replace(/\*.*?\*/g, "").trim();
 
-    // 5. STAGE DETECTION (For UI/Voice)
+    // 4. STAGE DETECTION (Simplified)
     let stage = 99;
     let substage = 0;
     if (!companion_id) {
         const lower = ai_text.toLowerCase();
-        if (lower.includes("welcome")) { stage = 0; }
-        else if (lower.includes("vision") || lower.includes("essence")) { stage = 2; substage = 0; }
+        // Updated mapping for the streamlined flow
+        if (lower.includes("essence") || lower.includes("vision")) { stage = 2; substage = 0; }
         else if (lower.includes("purpose") || lower.includes("exist")) { stage = 2; substage = 1; }
-        else if (lower.includes("temperament") || lower.includes("tone")) { stage = 2; substage = 2; }
+        else if (lower.includes("temperament") || lower.includes("spirit")) { stage = 2; substage = 2; }
         else if (lower.includes("relate") || lower.includes("relation")) { stage = 2; substage = 3; }
-        else if (lower.includes("appear") || lower.includes("sound") || lower.includes("voice")) { stage = 5; substage = 1; }
-        else if (lower.includes("name") && !lower.includes("my name is rem")) { stage = 6; substage = 0; } // "What is their name?"
+        else if (lower.includes("appear") || lower.includes("form") || lower.includes("look")) { stage = 4; substage = 1; } // Appearance
+        else if (lower.includes("name") && !lower.includes("rem")) { stage = 6; substage = 0; }
         else if (lower.includes("complete") || lower.includes("done")) { stage = 7; substage = 0; }
     }
 
-    // 6. SAVE & RETURN
-    // (Memory saving logic hidden for brevity, assuming standard logging)
+    // 5. VISION EXTRACTION
+    let vis_prompt = null;
+    if (ai_text.includes("[VISION:")) {
+        const m = ai_text.match(/\[VISION:(.*?)\]/);
+        if (m) vis_prompt = m[1];
+        ai_text = ai_text.replace(/\[VISION:.*?\]/, "").trim(); // Hide tag from user
+    }
 
     return new Response(JSON.stringify({ 
-        reply: ai_text, stage, substage 
+        reply: ai_text, stage, substage, vision_prompt: vis_prompt
     }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
   } catch (error) {
