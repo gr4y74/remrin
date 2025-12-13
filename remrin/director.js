@@ -1,8 +1,8 @@
 /* =========================================
-   REMRIN AMBASSADOR PROTOCOL v9.0 (THE SOUL RECORDER)
+   REMRIN AMBASSADOR PROTOCOL v10.0 (THE CONSOLE FIX)
    ========================================= */
 
-   console.log("🤖 SYSTEM: director.js v9.0 initialized. Waiting for DOM...");
+   console.log("🤖 SYSTEM: director.js v10.0 initialized. Waiting for DOM...");
 
    // GLOBAL DECLARATIONS
    let chatLog, userInput, sendBtn; 
@@ -15,18 +15,17 @@
    let conversationHistory = []; 
    let currentAudio = null;    
    
-   // 🧠 THE SOUL RECORDER (NEW)
-   // This tracks the user's answers to build the Cartridge.
-   let activeStage = 0;       // Tracks what stage we are currently IN
+   // 🧠 THE SOUL RECORDER
+   let activeStage = 0;       
    let activeSubstage = 0;
    let soulBlueprint = {
-       vision: "",       // Stage 2.0
-       purpose: "",      // Stage 2.1
-       temperament: "",  // Stage 2.2
-       relation: "",     // Stage 2.3
-       appearance: "",   // Stage 4.1 - 4.2
-       voice_type: "",   // Stage 5.1
-       name: "Unknown"   // Stage 6.0
+       vision: "",       
+       purpose: "",      
+       temperament: "",  
+       relation: "",     
+       appearance: "",   
+       voice_type: "",   
+       name: "Unknown"   
    };
    
    // ==========================================
@@ -173,7 +172,6 @@
                speakText(text, stage, substage); 
                await typeText(bubble, text);
                
-               // UPDATE ACTIVE STAGE (So we know what the user is replying to next)
                if (stage !== null) {
                    activeStage = stage;
                    activeSubstage = substage;
@@ -184,13 +182,11 @@
    }
    
    // ==========================================
-   // 5. THE COMPILER (NEW: CAPTURES ANSWERS)
+   // 5. THE COMPILER
    // ==========================================
    function captureSoulFragment(userText) {
-       // We map the PREVIOUS stage (the question asked) to the User's Answer
        const key = `${activeStage}_${activeSubstage}`;
        
-       // Mapping logic
        if (key === "2_0") soulBlueprint.vision = userText;
        if (key === "2_1") soulBlueprint.purpose = userText;
        if (key === "2_2") soulBlueprint.temperament = userText;
@@ -205,7 +201,6 @@
    function compileCartridge() {
        console.log("🔥 COMPILING CARTRIDGE...");
        
-       // Generate the System Prompt based on collected answers
        const systemPrompt = `
    IDENTITY: You are ${soulBlueprint.name}.
    CORE ESSENCE: ${soulBlueprint.vision}
@@ -224,7 +219,7 @@
            name: soulBlueprint.name,
            system_prompt: systemPrompt,
            description: soulBlueprint.vision,
-           voice_id: "ThT5KcBeYtu3NO4", // Default Mother ID for now (or dynamic if we add selection)
+           voice_id: "ThT5KcBeYtu3NO4", 
            first_message: `I am ${soulBlueprint.name}. I am here.`
        };
    }
@@ -237,10 +232,7 @@
        if (!text) return;
    
        userInput.value = "";
-       
-       // 1. CAPTURE THE ANSWER BEFORE SENDING
        captureSoulFragment(text);
-   
        await addMessage(text, "user");
    
        try {
@@ -272,68 +264,66 @@
            }
    
            // === STAGE 7: THE FINAL COMPILATION & SAVE ===
-        if (data.stage === 7) {
-            await addMessage(replyText, "rem", 7, 0); 
-            playAnchorVoice();
-            
-            // 1. COMPILE THE CARTRIDGE
-            const cartridge = compileCartridge();
-            console.log("🔥 CARTRIDGE MINTED:", cartridge);
-            
-            // 2. SAVE TO CONSOLE (THE FORGE ACTION)
-            try {
-                const API_URL = 'https://wftsctqfiqbdyllxwagi.supabase.co/functions/v1/genesis-api';
-                const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmdHNjdHFmaXFiZHlsbHh3YWdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0MjE0NTksImV4cCI6MjA3OTk5NzQ1OX0.FWqZTUi5gVA3SpOq_Hp1LlxEinJvfloqw3OhoQlcfwg';
-                
-                // Add the detailed blueprint to the payload
-                cartridge.blueprint = soulBlueprint; 
-
-                console.log("🚀 SENDING TO FORGE...", cartridge);
-
-                const saveResp = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${ANON_KEY}`
-                    },
-                    body: JSON.stringify({ 
-                        action: 'create_companion', // <--- This triggers the v15 backend logic
-                        cartridge: cartridge 
-                    })
-                });
-
-                const saveResult = await saveResp.json();
-                
-                if (saveResult.success) {
-                    console.log("✅ SOUL SAVED TO DATABASE! ID:", saveResult.companion_id);
-                    
-                    // OPTIONAL: Add a visual confirmation in the chat
-                    const systemNote = document.createElement('div');
-                    systemNote.style.textAlign = "center";
-                    systemNote.style.color = "#00ff88"; // Green for success
-                    systemNote.style.fontSize = "12px";
-                    systemNote.style.marginTop = "20px";
-                    systemNote.style.fontFamily = "monospace";
-                    systemNote.textContent = `[ SOUL ARCHIVED: ${saveResult.companion_id} ]`;
-                    chatLog.appendChild(systemNote);
-
-                } else {
-                    console.error("❌ SAVE FAILED:", saveResult);
-                }
-
-            } catch (err) {
-                console.error("❌ SAVE ERROR:", err);
-            }
-            
-            // Keep the modal trigger for later when we build the UI
-            setTimeout(() => {
-                console.log("📝 (Optional) Trigger Signup Modal Here");
-            }, 12000);
-        } 
-        else {
-            // NORMAL CHAT FLOW
-            await addMessage(replyText, "rem", data.stage, data.substage);
-        }
+           if (data.stage === 7) {
+               await addMessage(replyText, "rem", 7, 0); 
+               playAnchorVoice();
+               
+               // 1. COMPILE THE CARTRIDGE
+               const cartridge = compileCartridge();
+               console.log("🔥 CARTRIDGE MINTED:", cartridge);
+               
+               // 2. SAVE TO CONSOLE
+               try {
+                   // Add the blueprint to the payload
+                   cartridge.blueprint = soulBlueprint; 
+   
+                   console.log("🚀 SENDING TO FORGE...", cartridge);
+   
+                   const saveResp = await fetch(API_URL, {
+                       method: 'POST',
+                       headers: {
+                           'Content-Type': 'application/json',
+                           'Authorization': `Bearer ${ANON_KEY}`
+                       },
+                       body: JSON.stringify({ 
+                           action: 'create_companion', 
+                           cartridge: cartridge 
+                       })
+                   });
+   
+                   const saveResult = await saveResp.json();
+                   
+                   if (saveResult.success) {
+                       console.log("✅ SOUL SAVED TO DATABASE! ID:", saveResult.companion_id);
+                       const systemNote = document.createElement('div');
+                       systemNote.style.textAlign = "center";
+                       systemNote.style.color = "#00ff88"; 
+                       systemNote.style.fontSize = "12px";
+                       systemNote.style.marginTop = "20px";
+                       systemNote.style.fontFamily = "monospace";
+                       systemNote.textContent = `[ SOUL ARCHIVED: ${saveResult.companion_id} ]`;
+                       chatLog.appendChild(systemNote);
+                   } else {
+                       console.error("❌ SAVE FAILED:", saveResult);
+                   }
+   
+               } catch (err) {
+                   console.error("❌ SAVE ERROR:", err);
+               }
+               
+               setTimeout(() => {
+                   console.log("📝 (Optional) Trigger Signup Modal Here");
+               }, 12000);
+           } 
+           else {
+               await addMessage(replyText, "rem", data.stage, data.substage);
+           }
+   
+       } catch (error) {
+           console.error("❌ BRAIN FAILURE:", error);
+           await addMessage(`Error: ${error.message}`, "rem");
+       }
+   }
    
    // ==========================================
    // 7. THE VISION (TAROT REVEAL)
@@ -429,7 +419,7 @@
    
        // CHECK URL FOR MODE
        const urlParams = new URLSearchParams(window.location.search);
-       const mode = urlParams.get('mode'); // 'ritual' or 'chat'
+       const mode = urlParams.get('mode'); 
    
        console.log(`🚀 STARTUP MODE: ${mode}`);
    
