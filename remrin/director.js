@@ -360,5 +360,7 @@ window.addEventListener('load', async () => {
        // 🧠 MEMORY IMPLANT: Save this so she remembers she said it
        conversationHistory.push({ role: "assistant", content: welcomeText });
        
-       await addMessage(welcomeText, "rem");
-   });
+       window.addEventListener('load', async () => { // <--- "async" is critical!
+        // ...
+        await addMessage(welcomeText, "rem", 0, 0); 
+    });
