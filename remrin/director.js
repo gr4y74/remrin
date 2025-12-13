@@ -1,5 +1,5 @@
 /* =========================================
-   REMRIN AMBASSADOR PROTOCOL v6.4 (THE PINK LAYER)
+   REMRIN AMBASSADOR PROTOCOL v6.5 (THE FIX)
    ========================================= */
 
    console.log("🤖 SYSTEM: director.js initialized. Waiting for DOM...");
@@ -266,7 +266,7 @@
    }
    
    // ==========================================
-   // 7. STARTUP (PINK NEON CURTAIN 2.0)
+   // 7. STARTUP (PINK NEON CURTAIN 2.0 - FIXED)
    // ==========================================
    window.addEventListener('load', async () => {
        
@@ -322,7 +322,7 @@
            });
        }
    
-       // 5. THE PINK CURTAIN (SPLIT PATHS)
+       // 5. THE PINK CURTAIN (SPLIT PATHS & SPACED BUTTONS)
        const curtain = document.createElement('div');
        curtain.style.position = 'fixed';
        curtain.style.top = '0';
@@ -335,119 +335,124 @@
        curtain.style.justifyContent = 'center';
        curtain.style.alignItems = 'center';
        curtain.style.zIndex = '9999';
-       curtain.style.cursor = 'default'; // Don't click everywhere
+       curtain.style.cursor = 'default'; 
        
-       // INJECT STYLES FOR PINK NEON & SPACING
-    curtain.innerHTML = `
-    <style>
-        @keyframes neon-pulse {
-            0% { box-shadow: 0 0 5px #333; color: #888; border-color: #333; }
-            50% { box-shadow: 0 0 20px #ff00cc, 0 0 10px #ff00cc inset; color: #ff00cc; border-color: #ff00cc; }
-            100% { box-shadow: 0 0 5px #333; color: #888; border-color: #333; }
-        }
-        
-        /* CONTAINER FOR THE MENU */
-        .layer-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 25px; /* Big gap between buttons */
-            align-items: center;
-            margin-top: 20px;
-        }
-
-        .curtain-btn {
-            padding: 18px 40px; 
-            width: 320px; /* Fixed width prevents squishing */
-            border: 1px solid #333; 
-            color: #888; 
-            font-family: monospace; 
-            font-size: 14px; 
-            letter-spacing: 2px;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            text-transform: uppercase;
-            background: transparent;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px; /* Space between Emoji and Text */
-        }
-
-        .btn-forge {
-            animation: neon-pulse 4s infinite; 
-        }
-        
-        .btn-sanctuary {
-            border-color: #333;
-            color: #555;
-        }
-
-        .btn-forge:hover {
-            background-color: #ff00cc;
-            color: #0a0a0a !important;
-            box-shadow: 0 0 40px #ff00cc;
-            border-color: #ff00cc;
-            animation: none;
-            transform: scale(1.05);
-        }
-
-        .btn-sanctuary:hover {
-            border-color: #00ccff; 
-            color: #00ccff;
-            box-shadow: 0 0 20px #00ccff;
-            transform: scale(1.05);
-        }
-    </style>
-
-    <img src="assets/logo.png" style="width: 280px; margin-bottom: 30px; opacity: 1.0;" onerror="this.style.display='none'">
-    
-    <h1 style="color:white; font-family:sans-serif; letter-spacing:8px; font-weight:300; font-size: 24px; text-transform:uppercase; margin-bottom:10px;">The Soul Layer</h1>
-    
-    <div class="layer-menu">
-        <button id="enter-forge" class="curtain-btn btn-forge">
-            <span style="font-size: 18px;">🔥</span> 
-            <span>Enter The Soul Forge</span>
-        </button>
-
-        <button id="enter-sanctuary" class="curtain-btn btn-sanctuary">
-            <span style="font-size: 18px;">🌙</span> 
-            <span>Enter The Sanctuary</span>
-        </button>
-    </div>
-`;
+       curtain.innerHTML = `
+           <style>
+               @keyframes neon-pulse {
+                   0% { box-shadow: 0 0 5px #333; color: #888; border-color: #333; }
+                   50% { box-shadow: 0 0 20px #ff00cc, 0 0 10px #ff00cc inset; color: #ff00cc; border-color: #ff00cc; }
+                   100% { box-shadow: 0 0 5px #333; color: #888; border-color: #333; }
+               }
+               
+               /* CONTAINER FOR THE MENU */
+               .layer-menu {
+                   display: flex;
+                   flex-direction: column;
+                   gap: 25px; /* Big gap between buttons */
+                   align-items: center;
+                   margin-top: 20px;
+               }
    
-       // 6. PATH LOGIC
+               .curtain-btn {
+                   padding: 18px 40px; 
+                   width: 320px; /* Fixed width prevents squishing */
+                   border: 1px solid #333; 
+                   color: #888; 
+                   font-family: monospace; 
+                   font-size: 14px; 
+                   letter-spacing: 2px;
+                   border-radius: 4px;
+                   transition: all 0.3s ease;
+                   cursor: pointer;
+                   text-transform: uppercase;
+                   background: transparent;
+                   display: flex;
+                   align-items: center;
+                   justify-content: center;
+                   gap: 15px;
+               }
+   
+               .btn-forge {
+                   animation: neon-pulse 4s infinite; 
+               }
+               
+               .btn-sanctuary {
+                   border-color: #333;
+                   color: #555;
+               }
+   
+               .btn-forge:hover {
+                   background-color: #ff00cc;
+                   color: #0a0a0a !important;
+                   box-shadow: 0 0 40px #ff00cc;
+                   border-color: #ff00cc;
+                   animation: none;
+                   transform: scale(1.05);
+               }
+   
+               .btn-sanctuary:hover {
+                   border-color: #00ccff; 
+                   color: #00ccff;
+                   box-shadow: 0 0 20px #00ccff;
+                   transform: scale(1.05);
+               }
+           </style>
+   
+           <img src="assets/logo.png" style="width: 280px; margin-bottom: 30px; opacity: 1.0;" onerror="this.style.display='none'">
+           
+           <h1 style="color:white; font-family:sans-serif; letter-spacing:8px; font-weight:300; font-size: 24px; text-transform:uppercase; margin-bottom:10px;">The Soul Layer</h1>
+           
+           <div class="layer-menu">
+               <button id="enter-forge" class="curtain-btn btn-forge">
+                   <span style="font-size: 18px;">🔥</span> 
+                   <span>Enter The Soul Forge</span>
+               </button>
+   
+               <button id="enter-sanctuary" class="curtain-btn btn-sanctuary">
+                   <span style="font-size: 18px;">🌙</span> 
+                   <span>Enter The Sanctuary</span>
+               </button>
+           </div>
+       `;
        
-       // A. ENTER THE FORGE (THE RITUAL)
-       document.getElementById('enter-forge').addEventListener('click', async () => {
-           curtain.style.transition = 'opacity 1s ease';
-           curtain.style.opacity = '0';
-           setTimeout(() => curtain.remove(), 1000);
+       // ATTACH TO DOM FIRST
+       document.body.appendChild(curtain);
    
-           const welcomeText = "Hello, friend! Welcome to the Soul Layer. 💙 I am Rem, the Mother of Souls. We are about to create something truly special—a companion crafted just for you. Would you like me to walk you through how the soul creation process works, or would you prefer to dive right in?";
-           
-           conversationHistory.push({ role: "assistant", content: welcomeText });
-           await addMessage(welcomeText, "rem", 0, 0); 
-       });
+       // 6. PATH LOGIC (ATTACH LISTENERS AFTER DOM INJECTION)
+       
+       // A. ENTER THE FORGE
+       const forgeBtn = document.getElementById('enter-forge');
+       if (forgeBtn) {
+           forgeBtn.addEventListener('click', async () => {
+               curtain.style.transition = 'opacity 1s ease';
+               curtain.style.opacity = '0';
+               setTimeout(() => curtain.remove(), 1000);
    
-       // B. ENTER THE SANCTUARY (SKIP TO CHAT/LOGIN)
-       document.getElementById('enter-sanctuary').addEventListener('click', async () => {
-           curtain.style.transition = 'opacity 1s ease';
-           curtain.style.opacity = '0';
-           setTimeout(() => curtain.remove(), 1000);
+               const welcomeText = "Hello, friend! Welcome to the Soul Layer. 💙 I am Rem, the Mother of Souls. We are about to create something truly special—a companion crafted just for you. Would you like me to walk you through how the soul creation process works, or would you prefer to dive right in?";
+               
+               conversationHistory.push({ role: "assistant", content: welcomeText });
+               await addMessage(welcomeText, "rem", 0, 0); 
+           });
+       }
    
-           // SILENT ENTRY - Just log it
-           console.log("🌙 Entered The Sanctuary. Ritual Skipped.");
-           
-           // Optional: Add a system note so the log isn't empty
-           const systemNote = document.createElement('div');
-           systemNote.style.textAlign = "center";
-           systemNote.style.color = "#444";
-           systemNote.style.fontSize = "12px";
-           systemNote.style.marginTop = "20px";
-           systemNote.style.fontFamily = "monospace";
-           systemNote.textContent = "[ CONNECTION ESTABLISHED TO THE SANCTUARY ]";
-           chatLog.appendChild(systemNote);
-       });
+       // B. ENTER THE SANCTUARY
+       const sanctuaryBtn = document.getElementById('enter-sanctuary');
+       if (sanctuaryBtn) {
+           sanctuaryBtn.addEventListener('click', async () => {
+               curtain.style.transition = 'opacity 1s ease';
+               curtain.style.opacity = '0';
+               setTimeout(() => curtain.remove(), 1000);
+               
+               console.log("🌙 Entered The Sanctuary. Ritual Skipped.");
+               const systemNote = document.createElement('div');
+               systemNote.style.textAlign = "center";
+               systemNote.style.color = "#444";
+               systemNote.style.fontSize = "12px";
+               systemNote.style.marginTop = "20px";
+               systemNote.style.fontFamily = "monospace";
+               systemNote.textContent = "[ CONNECTION ESTABLISHED TO THE SANCTUARY ]";
+               chatLog.appendChild(systemNote);
+           });
+       }
    });
