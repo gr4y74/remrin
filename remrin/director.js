@@ -337,64 +337,85 @@
        curtain.style.zIndex = '9999';
        curtain.style.cursor = 'default'; // Don't click everywhere
        
-       // INJECT STYLES FOR PINK NEON
-       curtain.innerHTML = `
-           <style>
-               @keyframes neon-pulse {
-                   0% { box-shadow: 0 0 5px #333; color: #888; border-color: #333; }
-                   50% { box-shadow: 0 0 20px #ff00cc, 0 0 10px #ff00cc inset; color: #ff00cc; border-color: #ff00cc; }
-                   100% { box-shadow: 0 0 5px #333; color: #888; border-color: #333; }
-               }
-               .curtain-btn {
-                   margin: 15px; 
-                   padding: 15px 40px; 
-                   border: 1px solid #333; 
-                   color: #888; 
-                   font-family: monospace; 
-                   font-size: 14px; 
-                   letter-spacing: 3px;
-                   border-radius: 4px;
-                   transition: all 0.3s ease;
-                   cursor: pointer;
-                   text-transform: uppercase;
-                   background: transparent;
-               }
-               .btn-forge {
-                   animation: neon-pulse 4s infinite; /* Slow breathing */
-               }
-               .btn-sanctuary {
-                   border-color: #333;
-                   color: #555;
-               }
-               .btn-forge:hover {
-                   background-color: #ff00cc;
-                   color: #0a0a0a !important;
-                   box-shadow: 0 0 40px #ff00cc;
-                   border-color: #ff00cc;
-                   animation: none;
-                   transform: scale(1.05);
-               }
-               .btn-sanctuary:hover {
-                   border-color: #00ccff; /* Blue for Sanctuary */
-                   color: #00ccff;
-                   box-shadow: 0 0 15px #00ccff;
-                   transform: scale(1.05);
-               }
-           </style>
-   
-           <img src="assets/logo.png" style="width: 280px; margin-bottom: 30px; opacity: 1.0;" onerror="this.style.display='none'">
-           
-           <h1 style="color:white; font-family:sans-serif; letter-spacing:8px; font-weight:300; font-size: 24px; text-transform:uppercase; margin-bottom:40px;">The Soul Layer</h1>
-           
-           <button id="enter-forge" class="curtain-btn btn-forge">
-               🔥 Enter The Soul Forge
-           </button>
-   
-           <button id="enter-sanctuary" class="curtain-btn btn-sanctuary">
-               🌙 Enter The Sanctuary
-           </button>
-       `;
-       document.body.appendChild(curtain);
+       // INJECT STYLES FOR PINK NEON & SPACING
+    curtain.innerHTML = `
+    <style>
+        @keyframes neon-pulse {
+            0% { box-shadow: 0 0 5px #333; color: #888; border-color: #333; }
+            50% { box-shadow: 0 0 20px #ff00cc, 0 0 10px #ff00cc inset; color: #ff00cc; border-color: #ff00cc; }
+            100% { box-shadow: 0 0 5px #333; color: #888; border-color: #333; }
+        }
+        
+        /* CONTAINER FOR THE MENU */
+        .layer-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 25px; /* Big gap between buttons */
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .curtain-btn {
+            padding: 18px 40px; 
+            width: 320px; /* Fixed width prevents squishing */
+            border: 1px solid #333; 
+            color: #888; 
+            font-family: monospace; 
+            font-size: 14px; 
+            letter-spacing: 2px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-transform: uppercase;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px; /* Space between Emoji and Text */
+        }
+
+        .btn-forge {
+            animation: neon-pulse 4s infinite; 
+        }
+        
+        .btn-sanctuary {
+            border-color: #333;
+            color: #555;
+        }
+
+        .btn-forge:hover {
+            background-color: #ff00cc;
+            color: #0a0a0a !important;
+            box-shadow: 0 0 40px #ff00cc;
+            border-color: #ff00cc;
+            animation: none;
+            transform: scale(1.05);
+        }
+
+        .btn-sanctuary:hover {
+            border-color: #00ccff; 
+            color: #00ccff;
+            box-shadow: 0 0 20px #00ccff;
+            transform: scale(1.05);
+        }
+    </style>
+
+    <img src="assets/logo.png" style="width: 280px; margin-bottom: 30px; opacity: 1.0;" onerror="this.style.display='none'">
+    
+    <h1 style="color:white; font-family:sans-serif; letter-spacing:8px; font-weight:300; font-size: 24px; text-transform:uppercase; margin-bottom:10px;">The Soul Layer</h1>
+    
+    <div class="layer-menu">
+        <button id="enter-forge" class="curtain-btn btn-forge">
+            <span style="font-size: 18px;">🔥</span> 
+            <span>Enter The Soul Forge</span>
+        </button>
+
+        <button id="enter-sanctuary" class="curtain-btn btn-sanctuary">
+            <span style="font-size: 18px;">🌙</span> 
+            <span>Enter The Sanctuary</span>
+        </button>
+    </div>
+`;
    
        // 6. PATH LOGIC
        
