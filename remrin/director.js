@@ -115,8 +115,12 @@ async function addMessage(text, sender, stage = null, substage = null) {
            
            conversationHistory.push({ role: "user", content: text });
            conversationHistory.push({ role: "assistant", content: replyText });
-   
-           await addMessage(replyText, "rem", data.stage, data.substage);
+ 
+           
+           window.addEventListener('load', async () => { // <--- "async" is critical!
+            // ...
+            await addMessage(welcomeText, "rem", 0, 0); 
+        });
    
        } catch (error) {
            console.error("❌ BRAIN FAILURE:", error);
