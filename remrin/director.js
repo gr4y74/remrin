@@ -44,8 +44,8 @@ function typeText(element, htmlContent, speed = 15) {
     });
 }
 
-// 2. ADD MESSAGE
-async function addMessage(text, sender) {
+// UPDATED ADD MESSAGE (Now accepts Stage info)
+async function addMessage(text, sender, stage = null, substage = null) {
     console.log(`💬 MSG [${sender}]: ${text}`);
     
     const msgDiv = document.createElement('div');
@@ -59,7 +59,7 @@ async function addMessage(text, sender) {
     bubble.classList.add('bubble');
     
     if (sender === 'user') {
-        bubble.textContent = text; // Users always speak plain text
+        bubble.textContent = text;
         msgDiv.appendChild(bubble);
         msgDiv.appendChild(avatar);
         chatLog.appendChild(msgDiv);
@@ -69,8 +69,11 @@ async function addMessage(text, sender) {
         chatLog.appendChild(msgDiv);
         
         if (sender === 'rem') {
-            speakText(text); // Voice speaks the full text (it ignores tags usually)
-            await typeText(bubble, text); // Typewriter handles the visuals
+            // 1. Pass the Stage/Substage to the Voice Engine!
+            speakText(text, stage, substage); 
+            
+            // 2. Run the Typewriter
+            await typeText(bubble, text);
         }
     }
     chatLog.scrollTop = chatLog.scrollHeight;
@@ -113,7 +116,7 @@ async function addMessage(text, sender) {
            conversationHistory.push({ role: "user", content: text });
            conversationHistory.push({ role: "assistant", content: replyText });
    
-           await addMessage(replyText, "rem");
+           await addMessage(replyText, "rem", data.stage, data.substage);
    
        } catch (error) {
            console.error("❌ BRAIN FAILURE:", error);
@@ -121,47 +124,94 @@ async function addMessage(text, sender) {
        }
    }
    
-   // 4. THE BREATH (VOICE ENGINE)
-   async function speakText(textToSpeak) {
-       // 🛑 1. CHECK MUTE SWITCH
-       if (isMuted) {
-           console.log("Rx: Hush Mode Active. Voice skipped.");
-           return; 
-       }
-   
-       // 🛑 2. KILL PREVIOUS AUDIO (No Overlap)
-       if (currentAudio) {
-           currentAudio.pause();
-           currentAudio.currentTime = 0;
-       }
-   
-       try {
-           const VOICE_URL = 'https://wftsctqfiqbdyllxwagi.supabase.co/functions/v1/genesis-voice';
-           const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmdHNjdHFmaXFiZHlsbHh3YWdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0MjE0NTksImV4cCI6MjA3OTk5NzQ1OX0.FWqZTUi5gVA3SpOq_Hp1LlxEinJvfloqw3OhoQlcfwg';
-   
-           const response = await fetch(VOICE_URL, {
-               method: 'POST',
-               headers: {
-                   'Content-Type': 'application/json',
-                   'Authorization': `Bearer ${ANON_KEY}`
-               },
-               body: JSON.stringify({ text: textToSpeak })
-           });
-   
-           if (!response.ok) throw new Error('Voice pipe broken');
-   
-           const blob = await response.blob();
-           const audioUrl = URL.createObjectURL(blob);
-           
-           // SAVE AND PLAY
-           currentAudio = new Audio(audioUrl);
-           currentAudio.play();
-           console.log("🔊 AUDIO PLAYING");
-   
-       } catch (e) {
-           console.warn("🔇 VOICE ERROR:", e);
-       }
-   }
+// ==========================================
+// 4. THE BREATH (VOICE ENGINE - HYBRID)
+// ==========================================
+const AUDIO_VAULT = {
+    "0_0": "assets/voice/mother/s0_welcome.mp3",
+    "1_0": "assets/voice/mother/s1_overview.mp3",
+    "2_0": "assets/voice/mother/s2_0_vision.mp3",
+    "2_1": "assets/voice/mother/s2_1_purpose.mp3",
+    "2_2": "assets/voice/mother/s2_2_temp.mp3",
+    "2_3": "assets/voice/mother/s2_3_dynamic.mp3",
+    "3_0": "assets/voice/mother/s3_0_intro.mp3",
+    "3_1": "assets/voice/mother/s3_1_open.mp3",
+    "3_2": "assets/voice/mother/s3_2_consc.mp3",
+    "3_3": "assets/voice/mother/s3_3_extra.mp3",
+    "3_4": "assets/voice/mother/s3_4_agree.mp3",
+    "3_5": "assets/voice/mother/s3_5_stable.mp3",
+    "4_0": "assets/voice/mother/s4_0_intro.mp3",
+    "4_1": "assets/voice/mother/s4_1_form.mp3",
+    "4_2": "assets/voice/mother/s4_2_detail.mp3",
+    "4_3": "assets/voice/mother/s4_3_presence.mp3",
+    "4_4": "assets/voice/mother/s4_4_manifest.mp3",
+    "5_0": "assets/voice/mother/s5_0_intro.mp3",
+    "5_1": "assets/voice/mother/s5_1_char.mp3",
+    "5_2": "assets/voice/mother/s5_2_select.mp3",
+    "6_0": "assets/voice/mother/s6_naming.mp3"
+};
+
+async function speakText(text, stage = null, substage = null) {
+    if (isMuted) return;
+
+    // A. SPECIAL HANDLING FOR STAGE 7 (The Split)
+    if (stage === 7) {
+        return; // Handled by playAnchorVoice() and playBlessingVoice()
+    }
+
+    // B. CHECK THE VAULT (Local Files)
+    const cacheKey = `${stage}_${substage}`;
+    if (stage !== null && AUDIO_VAULT[cacheKey]) {
+        console.log(`🔊 PLAYING LOCAL ASSET: ${cacheKey}`);
+        playAudioFile(AUDIO_VAULT[cacheKey]);
+        return;
+    }
+
+    // C. FALLBACK TO API (Only if no local file found)
+    console.log("🎙️ NO LOCAL FILE. GENERATING LIVE...");
+    
+    // STOP PREVIOUS AUDIO
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+    }
+
+    try {
+        const VOICE_URL = 'https://wftsctqfiqbdyllxwagi.supabase.co/functions/v1/genesis-voice';
+        const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmdHNjdHFmaXFiZHlsbHh3YWdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0MjE0NTksImV4cCI6MjA3OTk5NzQ1OX0.FWqZTUi5gVA3SpOq_Hp1LlxEinJvfloqw3OhoQlcfwg';
+
+        const response = await fetch(VOICE_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${ANON_KEY}`
+            },
+            body: JSON.stringify({ text: text })
+        });
+
+        if (!response.ok) throw new Error('Voice pipe broken');
+
+        const blob = await response.blob();
+        const audioUrl = URL.createObjectURL(blob);
+        playAudioFile(audioUrl);
+
+    } catch (e) {
+        console.warn("🔇 VOICE ERROR:", e);
+    }
+}
+
+function playAudioFile(url) {
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+    }
+    currentAudio = new Audio(url);
+    currentAudio.play().catch(e => console.warn("Autoplay blocked:", e));
+}
+
+// SPECIAL TRIGGERS FOR STAGE 7
+function playAnchorVoice() { playAudioFile("assets/voice/mother/s7_anchor.mp3"); }
+function playBlessingVoice() { playAudioFile("assets/voice/mother/s7_blessing.mp3"); }
    
    // 5. THE VISION (TAROT REVEAL - REAL ENGINE)
    async function triggerVision(prompt) {
@@ -226,45 +276,65 @@ async function addMessage(text, sender) {
 }
    
    // 6. STARTUP (DOM READY)
-   window.addEventListener('load', async () => {
-       
-       // ASSIGN ELEMENTS
-       chatLog = document.getElementById('chat-history');
-       userInput = document.getElementById('user-input');
-       sendBtn = document.getElementById('send-btn');
-       visionOverlay = document.getElementById('vision-overlay');
-       visionImage = document.getElementById('vision-image');
-       visionLoader = document.getElementById('vision-loader');
-       closeVisionBtn = document.getElementById('close-vision');
-       statusDot = document.getElementById('voice-toggle');
-   
-       // CRITICAL SAFETY CHECK
-       if (!chatLog) { console.error("❌ FATAL: Chat Log not found!"); return; }
-       
-       // TOGGLE LOGIC (HUSH / LISTEN)
-       if (statusDot) {
-           statusDot.addEventListener('click', () => {
-               isMuted = !isMuted;
-               
-               // Kill audio immediately if muted
-               if (isMuted && currentAudio) {
-                   currentAudio.pause();
-               }
-   
-               // Visual Update (Direct Style Injection)
-               if (isMuted) {
-                   statusDot.style.background = "#ff4444"; // FORCE RED
-                   statusDot.style.boxShadow = "0 0 8px #ff4444";
-                   statusDot.title = "Hush (Voice Muted)";
-                   console.log("🔇 Mode: HUSH");
-               } else {
-                   statusDot.style.background = "#00ff88"; // FORCE GREEN
-                   statusDot.style.boxShadow = "0 0 8px #00ff88";
-                   statusDot.title = "Listen (Voice Active)";
-                   console.log("🔊 Mode: LISTEN");
-               }
-           });
-       }
+window.addEventListener('load', async () => {
+    
+    // ASSIGN ELEMENTS
+    chatLog = document.getElementById('chat-history');
+    userInput = document.getElementById('user-input');
+    sendBtn = document.getElementById('send-btn');
+    visionOverlay = document.getElementById('vision-overlay');
+    visionImage = document.getElementById('vision-image');
+    visionLoader = document.getElementById('vision-loader');
+    closeVisionBtn = document.getElementById('close-vision');
+    statusDot = document.getElementById('voice-toggle');
+
+    // CRITICAL SAFETY CHECK
+    if (!chatLog) { console.error("❌ FATAL: Chat Log not found!"); return; }
+    
+    // TOGGLE LOGIC (HUSH / LISTEN)
+    if (statusDot) {
+        statusDot.addEventListener('click', () => {
+            isMuted = !isMuted;
+            
+            if (isMuted && currentAudio) {
+                currentAudio.pause();
+            }
+
+            if (isMuted) {
+                statusDot.style.background = "#ff4444"; 
+                statusDot.style.boxShadow = "0 0 8px #ff4444";
+                statusDot.title = "Hush (Voice Muted)";
+            } else {
+                statusDot.style.background = "#00ff88"; 
+                statusDot.style.boxShadow = "0 0 8px #00ff88";
+                statusDot.title = "Listen (Voice Active)";
+            }
+        });
+    }
+
+    // EVENT LISTENERS
+    if (sendBtn) sendBtn.addEventListener('click', handleUserAction);
+    if (userInput) userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleUserAction();
+    });
+    if (closeVisionBtn) {
+        closeVisionBtn.addEventListener('click', () => {
+            visionOverlay.classList.remove('active');
+            setTimeout(() => visionOverlay.classList.add('hidden'), 800);
+        });
+    }
+
+    // START MESSAGE
+    await new Promise(r => setTimeout(r, 1000));
+    
+    const welcomeText = "Hello, friend! Welcome to the Soul Layer. 💙 I am Rem, the Mother of Souls. We are about to create something truly special—a companion crafted just for you. Would you like me to walk you through how the soul creation process works, or would you prefer to dive right in?";
+    
+    // 🧠 MEMORY IMPLANT
+    conversationHistory.push({ role: "assistant", content: welcomeText });
+    
+    // 🔊 TRIGGER THE AUDIO (Stage 0, Substage 0)
+    await addMessage(welcomeText, "rem", 0, 0); 
+});
    
        // EVENT LISTENERS
        if (sendBtn) sendBtn.addEventListener('click', handleUserAction);
