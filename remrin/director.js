@@ -1,5 +1,5 @@
 /* =========================================
-   REMRIN AMBASSADOR PROTOCOL v6.2 (FINAL POLISH)
+   REMRIN AMBASSADOR PROTOCOL v6.3 (NEON CURTAIN)
    ========================================= */
 
    console.log("🤖 SYSTEM: director.js initialized. Waiting for DOM...");
@@ -266,7 +266,7 @@
    }
    
    // ==========================================
-   // 7. STARTUP (THE CURTAIN & MUTE FIX)
+   // 7. STARTUP (CURTAIN WITH LOGO & GLOW)
    // ==========================================
    window.addEventListener('load', async () => {
        
@@ -295,12 +295,16 @@
            });
        }
    
-       // 4. MUTE BUTTON LOGIC (FORCE UI UPDATE)
+       // 4. MUTE BUTTON LOGIC (BIGGER & CLEARER)
        if (statusDot) {
-           // Force the look of the button immediately
            statusDot.style.cursor = "pointer";
            statusDot.style.transition = "all 0.3s ease";
-           statusDot.innerHTML = '<span style="font-size:12px; font-weight:bold; color:#0a0a0a;">ON</span>';
+           statusDot.style.width = "60px"; // Make it wider
+           statusDot.style.borderRadius = "30px"; // Pill shape
+           statusDot.style.display = "flex";
+           statusDot.style.alignItems = "center";
+           statusDot.style.justifyContent = "center";
+           statusDot.innerHTML = '<span style="font-size:11px; font-weight:bold; color:#0a0a0a; letter-spacing:1px;">ON</span>';
            
            statusDot.addEventListener('click', () => {
                isMuted = !isMuted;
@@ -309,18 +313,16 @@
                    if (currentAudio) currentAudio.pause();
                    statusDot.style.background = "#ff4444"; 
                    statusDot.style.boxShadow = "0 0 10px #ff4444";
-                   statusDot.innerHTML = '<span style="font-size:10px; font-weight:bold; color:white;">HUSH</span>';
-                   console.log("🔇 Mode: HUSH");
+                   statusDot.innerHTML = '<span style="font-size:10px; font-weight:bold; color:white; letter-spacing:1px;">HUSH</span>';
                } else {
                    statusDot.style.background = "#00ff88"; 
                    statusDot.style.boxShadow = "0 0 10px #00ff88";
-                   statusDot.innerHTML = '<span style="font-size:12px; font-weight:bold; color:#0a0a0a;">ON</span>';
-                   console.log("🔊 Mode: LISTEN");
+                   statusDot.innerHTML = '<span style="font-size:11px; font-weight:bold; color:#0a0a0a; letter-spacing:1px;">ON</span>';
                }
            });
        }
    
-       // 5. THE CURTAIN (WITH LOGO)
+       // 5. THE CURTAIN (WITH BIG LOGO & PULSE)
        const curtain = document.createElement('div');
        curtain.style.position = 'fixed';
        curtain.style.top = '0';
@@ -335,11 +337,41 @@
        curtain.style.zIndex = '9999';
        curtain.style.cursor = 'pointer';
        
-       // HTML FOR CURTAIN (Add your logo.png to assets folder!)
+       // INJECT STYLES FOR ANIMATION
        curtain.innerHTML = `
-           <img src="remrin/assets/logo_white_ds.png" style="width: 120px; margin-bottom: 20px; opacity: 0.9;" onerror="this.style.display='none'">
-           <h1 style="color:white; font-family:sans-serif; letter-spacing:6px; font-weight:300; font-size: 24px;">THE SOUL LAYER</h1>
-           <div style="margin-top:20px; padding: 10px 20px; border: 1px solid #333; color:#888; font-family:monospace; font-size: 12px; letter-spacing: 2px;">
+           <style>
+               @keyframes soul-pulse {
+                   0% { box-shadow: 0 0 5px #333; color: #888; border-color: #333; }
+                   50% { box-shadow: 0 0 15px #00ff88, 0 0 5px #00ff88 inset; color: #00ff88; border-color: #00ff88; }
+                   100% { box-shadow: 0 0 5px #333; color: #888; border-color: #333; }
+               }
+               .enter-btn {
+                   margin-top: 30px; 
+                   padding: 12px 30px; 
+                   border: 1px solid #333; 
+                   color: #888; 
+                   font-family: monospace; 
+                   font-size: 14px; 
+                   letter-spacing: 3px;
+                   border-radius: 4px;
+                   transition: all 0.3s ease;
+                   animation: soul-pulse 3s infinite;
+               }
+               .enter-btn:hover {
+                   background-color: #00ff88;
+                   color: #0a0a0a !important;
+                   box-shadow: 0 0 30px #00ff88;
+                   border-color: #00ff88;
+                   animation: none; /* Stop pulsing on hover, go solid */
+                   transform: scale(1.05);
+               }
+           </style>
+   
+           <img src="assets/logo.png" style="width: 280px; margin-bottom: 20px; opacity: 1.0;" onerror="this.style.display='none'">
+           
+           <h1 style="color:white; font-family:sans-serif; letter-spacing:8px; font-weight:300; font-size: 24px; text-transform:uppercase; margin-bottom:10px;">The Soul Layer</h1>
+           
+           <div class="enter-btn">
                [ CLICK TO ENTER ]
            </div>
        `;
