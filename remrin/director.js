@@ -1,5 +1,5 @@
 /* =========================================
-   REMRIN AMBASSADOR PROTOCOL v6.3 (NEON CURTAIN)
+   REMRIN AMBASSADOR PROTOCOL v6.4 (THE PINK LAYER)
    ========================================= */
 
    console.log("🤖 SYSTEM: director.js initialized. Waiting for DOM...");
@@ -10,10 +10,10 @@
    let statusDot; 
    
    // STATE VARIABLES
-   let isMuted = false;        // Default: Voice ON
+   let isMuted = false;        
    let isTyping = false;
    let conversationHistory = []; 
-   let currentAudio = null;    // Tracks the active voice track
+   let currentAudio = null;    
    
    // ==========================================
    // 1. THE VAULT (LOCAL AUDIO ASSETS)
@@ -266,7 +266,7 @@
    }
    
    // ==========================================
-   // 7. STARTUP (CURTAIN WITH LOGO & GLOW)
+   // 7. STARTUP (PINK NEON CURTAIN 2.0)
    // ==========================================
    window.addEventListener('load', async () => {
        
@@ -295,12 +295,12 @@
            });
        }
    
-       // 4. MUTE BUTTON LOGIC (BIGGER & CLEARER)
+       // 4. MUTE BUTTON LOGIC (Pink Style)
        if (statusDot) {
            statusDot.style.cursor = "pointer";
            statusDot.style.transition = "all 0.3s ease";
-           statusDot.style.width = "60px"; // Make it wider
-           statusDot.style.borderRadius = "30px"; // Pill shape
+           statusDot.style.width = "60px";
+           statusDot.style.borderRadius = "30px";
            statusDot.style.display = "flex";
            statusDot.style.alignItems = "center";
            statusDot.style.justifyContent = "center";
@@ -315,14 +315,14 @@
                    statusDot.style.boxShadow = "0 0 10px #ff4444";
                    statusDot.innerHTML = '<span style="font-size:10px; font-weight:bold; color:white; letter-spacing:1px;">HUSH</span>';
                } else {
-                   statusDot.style.background = "#00ff88"; 
-                   statusDot.style.boxShadow = "0 0 10px #00ff88";
+                   statusDot.style.background = "#ff00cc"; // PINK
+                   statusDot.style.boxShadow = "0 0 10px #ff00cc";
                    statusDot.innerHTML = '<span style="font-size:11px; font-weight:bold; color:#0a0a0a; letter-spacing:1px;">ON</span>';
                }
            });
        }
    
-       // 5. THE CURTAIN (WITH BIG LOGO & PULSE)
+       // 5. THE PINK CURTAIN (SPLIT PATHS)
        const curtain = document.createElement('div');
        curtain.style.position = 'fixed';
        curtain.style.top = '0';
@@ -335,19 +335,19 @@
        curtain.style.justifyContent = 'center';
        curtain.style.alignItems = 'center';
        curtain.style.zIndex = '9999';
-       curtain.style.cursor = 'pointer';
+       curtain.style.cursor = 'default'; // Don't click everywhere
        
-       // INJECT STYLES FOR ANIMATION
+       // INJECT STYLES FOR PINK NEON
        curtain.innerHTML = `
            <style>
-               @keyframes soul-pulse {
+               @keyframes neon-pulse {
                    0% { box-shadow: 0 0 5px #333; color: #888; border-color: #333; }
-                   50% { box-shadow: 0 0 15px #00ff88, 0 0 5px #00ff88 inset; color: #00ff88; border-color: #00ff88; }
+                   50% { box-shadow: 0 0 20px #ff00cc, 0 0 10px #ff00cc inset; color: #ff00cc; border-color: #ff00cc; }
                    100% { box-shadow: 0 0 5px #333; color: #888; border-color: #333; }
                }
-               .enter-btn {
-                   margin-top: 30px; 
-                   padding: 12px 30px; 
+               .curtain-btn {
+                   margin: 15px; 
+                   padding: 15px 40px; 
                    border: 1px solid #333; 
                    color: #888; 
                    font-family: monospace; 
@@ -355,30 +355,51 @@
                    letter-spacing: 3px;
                    border-radius: 4px;
                    transition: all 0.3s ease;
-                   animation: soul-pulse 3s infinite;
+                   cursor: pointer;
+                   text-transform: uppercase;
+                   background: transparent;
                }
-               .enter-btn:hover {
-                   background-color: #00ff88;
+               .btn-forge {
+                   animation: neon-pulse 4s infinite; /* Slow breathing */
+               }
+               .btn-sanctuary {
+                   border-color: #333;
+                   color: #555;
+               }
+               .btn-forge:hover {
+                   background-color: #ff00cc;
                    color: #0a0a0a !important;
-                   box-shadow: 0 0 30px #00ff88;
-                   border-color: #00ff88;
-                   animation: none; /* Stop pulsing on hover, go solid */
+                   box-shadow: 0 0 40px #ff00cc;
+                   border-color: #ff00cc;
+                   animation: none;
+                   transform: scale(1.05);
+               }
+               .btn-sanctuary:hover {
+                   border-color: #00ccff; /* Blue for Sanctuary */
+                   color: #00ccff;
+                   box-shadow: 0 0 15px #00ccff;
                    transform: scale(1.05);
                }
            </style>
    
-           <img src="assets/logo.png" style="width: 280px; margin-bottom: 20px; opacity: 1.0;" onerror="this.style.display='none'">
+           <img src="assets/logo.png" style="width: 280px; margin-bottom: 30px; opacity: 1.0;" onerror="this.style.display='none'">
            
-           <h1 style="color:white; font-family:sans-serif; letter-spacing:8px; font-weight:300; font-size: 24px; text-transform:uppercase; margin-bottom:10px;">The Soul Layer</h1>
+           <h1 style="color:white; font-family:sans-serif; letter-spacing:8px; font-weight:300; font-size: 24px; text-transform:uppercase; margin-bottom:40px;">The Soul Layer</h1>
            
-           <div class="enter-btn">
-               [ CLICK TO ENTER ]
-           </div>
+           <button id="enter-forge" class="curtain-btn btn-forge">
+               🔥 Enter The Soul Forge
+           </button>
+   
+           <button id="enter-sanctuary" class="curtain-btn btn-sanctuary">
+               🌙 Enter The Sanctuary
+           </button>
        `;
        document.body.appendChild(curtain);
    
-       // 6. WAIT FOR CLICK
-       curtain.addEventListener('click', async () => {
+       // 6. PATH LOGIC
+       
+       // A. ENTER THE FORGE (THE RITUAL)
+       document.getElementById('enter-forge').addEventListener('click', async () => {
            curtain.style.transition = 'opacity 1s ease';
            curtain.style.opacity = '0';
            setTimeout(() => curtain.remove(), 1000);
@@ -387,5 +408,25 @@
            
            conversationHistory.push({ role: "assistant", content: welcomeText });
            await addMessage(welcomeText, "rem", 0, 0); 
+       });
+   
+       // B. ENTER THE SANCTUARY (SKIP TO CHAT/LOGIN)
+       document.getElementById('enter-sanctuary').addEventListener('click', async () => {
+           curtain.style.transition = 'opacity 1s ease';
+           curtain.style.opacity = '0';
+           setTimeout(() => curtain.remove(), 1000);
+   
+           // SILENT ENTRY - Just log it
+           console.log("🌙 Entered The Sanctuary. Ritual Skipped.");
+           
+           // Optional: Add a system note so the log isn't empty
+           const systemNote = document.createElement('div');
+           systemNote.style.textAlign = "center";
+           systemNote.style.color = "#444";
+           systemNote.style.fontSize = "12px";
+           systemNote.style.marginTop = "20px";
+           systemNote.style.fontFamily = "monospace";
+           systemNote.textContent = "[ CONNECTION ESTABLISHED TO THE SANCTUARY ]";
+           chatLog.appendChild(systemNote);
        });
    });
