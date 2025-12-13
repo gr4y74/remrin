@@ -1,5 +1,5 @@
 /* =========================================
-   REMRIN AMBASSADOR PROTOCOL v6.5 (THE FIX)
+   REMRIN AMBASSADOR PROTOCOL v6.6 (FULL LAYER MENU)
    ========================================= */
 
    console.log("🤖 SYSTEM: director.js initialized. Waiting for DOM...");
@@ -266,7 +266,7 @@
    }
    
    // ==========================================
-   // 7. STARTUP (PINK NEON CURTAIN 2.0 - FIXED)
+   // 7. STARTUP (THE CURTAIN 4-LAYER MENU)
    // ==========================================
    window.addEventListener('load', async () => {
        
@@ -295,7 +295,7 @@
            });
        }
    
-       // 4. MUTE BUTTON LOGIC (Pink Style)
+       // 4. MUTE BUTTON LOGIC
        if (statusDot) {
            statusDot.style.cursor = "pointer";
            statusDot.style.transition = "all 0.3s ease";
@@ -308,21 +308,20 @@
            
            statusDot.addEventListener('click', () => {
                isMuted = !isMuted;
-               
                if (isMuted) {
                    if (currentAudio) currentAudio.pause();
                    statusDot.style.background = "#ff4444"; 
                    statusDot.style.boxShadow = "0 0 10px #ff4444";
                    statusDot.innerHTML = '<span style="font-size:10px; font-weight:bold; color:white; letter-spacing:1px;">HUSH</span>';
                } else {
-                   statusDot.style.background = "#ff00cc"; // PINK
+                   statusDot.style.background = "#ff00cc";
                    statusDot.style.boxShadow = "0 0 10px #ff00cc";
                    statusDot.innerHTML = '<span style="font-size:11px; font-weight:bold; color:#0a0a0a; letter-spacing:1px;">ON</span>';
                }
            });
        }
    
-       // 5. THE PINK CURTAIN (SPLIT PATHS & SPACED BUTTONS)
+       // 5. THE CURTAIN (TOP-LEFT LOGO & 4 BUTTONS)
        const curtain = document.createElement('div');
        curtain.style.position = 'fixed';
        curtain.style.top = '0';
@@ -345,18 +344,17 @@
                    100% { box-shadow: 0 0 5px #333; color: #888; border-color: #333; }
                }
                
-               /* CONTAINER FOR THE MENU */
                .layer-menu {
                    display: flex;
                    flex-direction: column;
-                   gap: 25px; /* Big gap between buttons */
+                   gap: 20px;
                    align-items: center;
-                   margin-top: 20px;
+                   margin-top: 40px; /* Space from title */
                }
    
                .curtain-btn {
                    padding: 18px 40px; 
-                   width: 320px; /* Fixed width prevents squishing */
+                   width: 320px;
                    border: 1px solid #333; 
                    color: #888; 
                    font-family: monospace; 
@@ -373,55 +371,61 @@
                    gap: 15px;
                }
    
-               .btn-forge {
-                   animation: neon-pulse 4s infinite; 
-               }
-               
-               .btn-sanctuary {
-                   border-color: #333;
-                   color: #555;
-               }
-   
+               /* 1. FORGE (PINK) */
+               .btn-forge { animation: neon-pulse 4s infinite; }
                .btn-forge:hover {
-                   background-color: #ff00cc;
-                   color: #0a0a0a !important;
-                   box-shadow: 0 0 40px #ff00cc;
-                   border-color: #ff00cc;
-                   animation: none;
-                   transform: scale(1.05);
+                   background-color: #ff00cc; color: #0a0a0a !important;
+                   box-shadow: 0 0 40px #ff00cc; border-color: #ff00cc;
+                   animation: none; transform: scale(1.05);
                }
    
+               /* 2. SANCTUARY (CYAN) */
                .btn-sanctuary:hover {
-                   border-color: #00ccff; 
-                   color: #00ccff;
-                   box-shadow: 0 0 20px #00ccff;
-                   transform: scale(1.05);
+                   border-color: #00ccff; color: #00ccff;
+                   box-shadow: 0 0 20px #00ccff; transform: scale(1.05);
+               }
+   
+               /* 3. VAULT (PURPLE) */
+               .btn-vault:hover {
+                   border-color: #bd00ff; color: #bd00ff;
+                   box-shadow: 0 0 20px #bd00ff; transform: scale(1.05);
+               }
+   
+               /* 4. AGORA (GOLD) */
+               .btn-agora:hover {
+                   border-color: #ffaa00; color: #ffaa00;
+                   box-shadow: 0 0 20px #ffaa00; transform: scale(1.05);
                }
            </style>
    
-           <img src="assets/logo.png" style="width: 280px; margin-bottom: 30px; opacity: 1.0;" onerror="this.style.display='none'">
+           <img src="assets/logo.png" style="position: absolute; top: 40px; left: 40px; width: 160px; opacity: 1.0;" onerror="this.style.display='none'">
            
            <h1 style="color:white; font-family:sans-serif; letter-spacing:8px; font-weight:300; font-size: 24px; text-transform:uppercase; margin-bottom:10px;">The Soul Layer</h1>
            
            <div class="layer-menu">
                <button id="enter-forge" class="curtain-btn btn-forge">
-                   <span style="font-size: 18px;">🔥</span> 
-                   <span>Enter The Soul Forge</span>
+                   <span style="font-size: 18px;">🔥</span> <span>The Soul Forge</span>
                </button>
    
                <button id="enter-sanctuary" class="curtain-btn btn-sanctuary">
-                   <span style="font-size: 18px;">🌙</span> 
-                   <span>Enter The Sanctuary</span>
+                   <span style="font-size: 18px;">🌙</span> <span>The Sanctuary</span>
+               </button>
+   
+               <button id="enter-vault" class="curtain-btn btn-vault">
+                   <span style="font-size: 18px;">🔮</span> <span>The Vault</span>
+               </button>
+   
+               <button id="enter-agora" class="curtain-btn btn-agora">
+                   <span style="font-size: 18px;">📯</span> <span>The Agora</span>
                </button>
            </div>
        `;
        
-       // ATTACH TO DOM FIRST
        document.body.appendChild(curtain);
    
-       // 6. PATH LOGIC (ATTACH LISTENERS AFTER DOM INJECTION)
+       // 6. PATH LOGIC
        
-       // A. ENTER THE FORGE
+       // A. FORGE (START RITUAL)
        const forgeBtn = document.getElementById('enter-forge');
        if (forgeBtn) {
            forgeBtn.addEventListener('click', async () => {
@@ -430,13 +434,12 @@
                setTimeout(() => curtain.remove(), 1000);
    
                const welcomeText = "Hello, friend! Welcome to the Soul Layer. 💙 I am Rem, the Mother of Souls. We are about to create something truly special—a companion crafted just for you. Would you like me to walk you through how the soul creation process works, or would you prefer to dive right in?";
-               
                conversationHistory.push({ role: "assistant", content: welcomeText });
                await addMessage(welcomeText, "rem", 0, 0); 
            });
        }
    
-       // B. ENTER THE SANCTUARY
+       // B. SANCTUARY (SKIP TO CHAT)
        const sanctuaryBtn = document.getElementById('enter-sanctuary');
        if (sanctuaryBtn) {
            sanctuaryBtn.addEventListener('click', async () => {
@@ -444,7 +447,7 @@
                curtain.style.opacity = '0';
                setTimeout(() => curtain.remove(), 1000);
                
-               console.log("🌙 Entered The Sanctuary. Ritual Skipped.");
+               console.log("🌙 Entered The Sanctuary.");
                const systemNote = document.createElement('div');
                systemNote.style.textAlign = "center";
                systemNote.style.color = "#444";
@@ -453,6 +456,24 @@
                systemNote.style.fontFamily = "monospace";
                systemNote.textContent = "[ CONNECTION ESTABLISHED TO THE SANCTUARY ]";
                chatLog.appendChild(systemNote);
+           });
+       }
+   
+       // C. VAULT (STORE - Placeholder)
+       const vaultBtn = document.getElementById('enter-vault');
+       if (vaultBtn) {
+           vaultBtn.addEventListener('click', async () => {
+               console.log("🔮 The Vault is sealed.");
+               alert("The Vault is currently sealed by the Mother of Souls.");
+           });
+       }
+   
+       // D. AGORA (COMMUNITY - Placeholder)
+       const agoraBtn = document.getElementById('enter-agora');
+       if (agoraBtn) {
+           agoraBtn.addEventListener('click', async () => {
+               console.log("📯 The Agora is quiet.");
+               alert("The Agora is currently quiet. Return later.");
            });
        }
    });
