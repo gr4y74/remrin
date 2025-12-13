@@ -1,8 +1,8 @@
 /* =========================================
-   REMRIN AMBASSADOR PROTOCOL v10.0 (THE CONSOLE FIX)
+   REMRIN AMBASSADOR PROTOCOL v10.1 (AUTOPLAY FIX)
    ========================================= */
 
-   console.log("🤖 SYSTEM: director.js v10.0 initialized. Waiting for DOM...");
+   console.log("🤖 SYSTEM: director.js v10.1 initialized. Waiting for DOM...");
 
    // GLOBAL DECLARATIONS
    let chatLog, userInput, sendBtn; 
@@ -135,7 +135,10 @@
            currentAudio.currentTime = 0;
        }
        currentAudio = new Audio(url);
-       currentAudio.play().catch(e => console.warn("Autoplay blocked:", e));
+       currentAudio.play().catch(e => {
+           console.warn("Autoplay blocked (Waiting for interaction):", e);
+           // Fallback is handled by "The Veil" in startup
+       });
    }
    
    function playAnchorVoice() { playAudioFile("assets/voice/mother/s7_anchor.mp3"); }
@@ -373,10 +376,11 @@
    }
    
    // ==========================================
-   // 8. STARTUP 
+   // 8. STARTUP (THE VEIL FIX)
    // ==========================================
    window.addEventListener('load', async () => {
        
+       // 1. ASSIGN ELEMENTS
        chatLog = document.getElementById('chat-history');
        userInput = document.getElementById('user-input');
        sendBtn = document.getElementById('send-btn');
@@ -388,6 +392,7 @@
    
        if (!chatLog) { console.error("❌ FATAL: Chat Log not found!"); return; }
    
+       // 2. EVENT LISTENERS
        if (sendBtn) sendBtn.addEventListener('click', handleUserAction);
        if (userInput) userInput.addEventListener('keypress', (e) => {
            if (e.key === 'Enter') handleUserAction();
@@ -399,6 +404,7 @@
            });
        }
    
+       // 3. VOICE TOGGLE
        if (statusDot) {
            statusDot.style.cursor = "pointer";
            statusDot.style.transition = "all 0.3s ease";
@@ -417,13 +423,14 @@
            });
        }
    
-       // CHECK URL FOR MODE
+       // 4. CHECK MODE & LAUNCH
        const urlParams = new URLSearchParams(window.location.search);
        const mode = urlParams.get('mode'); 
    
        console.log(`🚀 STARTUP MODE: ${mode}`);
    
        if (mode === 'chat') {
+           // --- CHAT MODE (SILENT) ---
            const systemNote = document.createElement('div');
            systemNote.style.textAlign = "center";
            systemNote.style.color = "#444";
@@ -432,10 +439,37 @@
            systemNote.style.fontFamily = "monospace";
            systemNote.textContent = "[ CONNECTED TO THE SANCTUARY ]";
            chatLog.appendChild(systemNote);
+           
        } else {
-           await new Promise(r => setTimeout(r, 1000));
-           const welcomeText = "Hello, friend! Welcome to the Soul Layer. 💙 I am Rem, the Mother of Souls. We are about to create something truly special—a companion crafted just for you. Would you like me to walk you through how the soul creation process works, or would you prefer to dive right in?";
-           conversationHistory.push({ role: "assistant", content: welcomeText });
-           await addMessage(welcomeText, "rem", 0, 0); 
+           // --- RITUAL MODE (REQUIRES CLICK) ---
+           // We create "The Veil" to capture the first click and allow audio
+           const veil = document.createElement('div');
+           veil.style.position = 'fixed';
+           veil.style.inset = '0';
+           veil.style.background = 'black';
+           veil.style.zIndex = '10000';
+           veil.style.display = 'flex';
+           veil.style.alignItems = 'center';
+           veil.style.justifyContent = 'center';
+           veil.style.cursor = 'pointer';
+           veil.innerHTML = `
+               <div style="text-align:center; animation: fadeIn 2s;">
+                   <h1 style="color:#ff00cc; font-family:sans-serif; letter-spacing:4px; font-weight:300; margin-bottom:10px;">ESTABLISH CONNECTION</h1>
+                   <p style="color:#666; font-family:monospace; font-size:12px;">[ TAP TO BEGIN ]</p>
+               </div>
+           `;
+           document.body.appendChild(veil);
+   
+           veil.addEventListener('click', async () => {
+               // Fade out
+               veil.style.transition = 'opacity 1s';
+               veil.style.opacity = '0';
+               setTimeout(() => veil.remove(), 1000);
+   
+               // START MOTHER
+               const welcomeText = "Hello, friend! Welcome to the Soul Layer. 💙 I am Rem, the Mother of Souls. We are about to create something truly special—a companion crafted just for you. Would you like me to walk you through how the soul creation process works, or would you prefer to dive right in?";
+               conversationHistory.push({ role: "assistant", content: welcomeText });
+               await addMessage(welcomeText, "rem", 0, 0); 
+           });
        }
    });
