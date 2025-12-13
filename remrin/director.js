@@ -1,5 +1,5 @@
 /* =========================================
-   REMRIN AMBASSADOR PROTOCOL v6.1 (AUTOPLAY FIX)
+   REMRIN AMBASSADOR PROTOCOL v6.2 (FINAL POLISH)
    ========================================= */
 
    console.log("🤖 SYSTEM: director.js initialized. Waiting for DOM...");
@@ -77,16 +77,13 @@
    async function speakText(text, stage = null, substage = null) {
        if (isMuted) return;
    
-       // STOP PREVIOUS AUDIO
        if (currentAudio) {
            currentAudio.pause();
            currentAudio.currentTime = 0;
        }
    
-       // A. SPECIAL HANDLING FOR STAGE 7 
        if (stage === 7) return; 
    
-       // B. CHECK THE VAULT (Local Files)
        const cacheKey = `${stage}_${substage}`;
        if (stage !== null && AUDIO_VAULT[cacheKey]) {
            console.log(`🔊 PLAYING LOCAL ASSET: ${cacheKey}`);
@@ -94,7 +91,6 @@
            return;
        }
    
-       // C. FALLBACK TO API (Only if no local file found)
        console.log("🎙️ NO LOCAL FILE. GENERATING LIVE...");
        
        try {
@@ -111,7 +107,6 @@
            });
    
            if (!response.ok) throw new Error('Voice pipe broken');
-   
            const blob = await response.blob();
            const audioUrl = URL.createObjectURL(blob);
            playAudioFile(audioUrl);
@@ -127,11 +122,9 @@
            currentAudio.currentTime = 0;
        }
        currentAudio = new Audio(url);
-       // This .catch is what was triggering before. Now the curtain fixes it.
-       currentAudio.play().catch(e => console.warn("Autoplay blocked (Waiting for interaction):", e));
+       currentAudio.play().catch(e => console.warn("Autoplay blocked:", e));
    }
    
-   // SPECIAL TRIGGERS FOR STAGE 7
    function playAnchorVoice() { playAudioFile("assets/voice/mother/s7_anchor.mp3"); }
    function playBlessingVoice() { playAudioFile("assets/voice/mother/s7_blessing.mp3"); }
    
@@ -208,7 +201,6 @@
                triggerVision(data.vision_prompt);
            }
    
-           // === STAGE 7 HANDLER ===
            if (data.stage === 7) {
                await addMessage(replyText, "rem", 7, 0); 
                playAnchorVoice();
@@ -274,7 +266,7 @@
    }
    
    // ==========================================
-   // 7. STARTUP (THE CURTAIN FIX)
+   // 7. STARTUP (THE CURTAIN & MUTE FIX)
    // ==========================================
    window.addEventListener('load', async () => {
        
@@ -303,10 +295,32 @@
            });
        }
    
-       // 4. THE CURTAIN (CLICK TO ENTER)
-       // We create a temporary overlay to force the user to click.
-       // This satisfies the browser's "Autoplay Policy".
-       
+       // 4. MUTE BUTTON LOGIC (FORCE UI UPDATE)
+       if (statusDot) {
+           // Force the look of the button immediately
+           statusDot.style.cursor = "pointer";
+           statusDot.style.transition = "all 0.3s ease";
+           statusDot.innerHTML = '<span style="font-size:12px; font-weight:bold; color:#0a0a0a;">ON</span>';
+           
+           statusDot.addEventListener('click', () => {
+               isMuted = !isMuted;
+               
+               if (isMuted) {
+                   if (currentAudio) currentAudio.pause();
+                   statusDot.style.background = "#ff4444"; 
+                   statusDot.style.boxShadow = "0 0 10px #ff4444";
+                   statusDot.innerHTML = '<span style="font-size:10px; font-weight:bold; color:white;">HUSH</span>';
+                   console.log("🔇 Mode: HUSH");
+               } else {
+                   statusDot.style.background = "#00ff88"; 
+                   statusDot.style.boxShadow = "0 0 10px #00ff88";
+                   statusDot.innerHTML = '<span style="font-size:12px; font-weight:bold; color:#0a0a0a;">ON</span>';
+                   console.log("🔊 Mode: LISTEN");
+               }
+           });
+       }
+   
+       // 5. THE CURTAIN (WITH LOGO)
        const curtain = document.createElement('div');
        curtain.style.position = 'fixed';
        curtain.style.top = '0';
@@ -320,25 +334,26 @@
        curtain.style.alignItems = 'center';
        curtain.style.zIndex = '9999';
        curtain.style.cursor = 'pointer';
+       
+       // HTML FOR CURTAIN (Add your logo.png to assets folder!)
        curtain.innerHTML = `
-           <h1 style="color:white; font-family:sans-serif; letter-spacing:4px; font-weight:300;">THE SOUL LAYER</h1>
-           <p style="color:#666; margin-top:10px; font-family:monospace;">[ CLICK TO ENTER ]</p>
+           <img src="remrin/logo_white_ds.png" style="width: 120px; margin-bottom: 20px; opacity: 0.9;" onerror="this.style.display='none'">
+           <h1 style="color:white; font-family:sans-serif; letter-spacing:6px; font-weight:300; font-size: 24px;">THE SOUL LAYER</h1>
+           <div style="margin-top:20px; padding: 10px 20px; border: 1px solid #333; color:#888; font-family:monospace; font-size: 12px; letter-spacing: 2px;">
+               [ CLICK TO ENTER ]
+           </div>
        `;
        document.body.appendChild(curtain);
    
-       // 5. WAIT FOR CLICK
+       // 6. WAIT FOR CLICK
        curtain.addEventListener('click', async () => {
-           // Fade out curtain
            curtain.style.transition = 'opacity 1s ease';
            curtain.style.opacity = '0';
            setTimeout(() => curtain.remove(), 1000);
    
-           // START THE RITUAL
            const welcomeText = "Hello, friend! Welcome to the Soul Layer. 💙 I am Rem, the Mother of Souls. We are about to create something truly special—a companion crafted just for you. Would you like me to walk you through how the soul creation process works, or would you prefer to dive right in?";
            
            conversationHistory.push({ role: "assistant", content: welcomeText });
-           
-           // This will now PLAY because it was triggered by a click!
            await addMessage(welcomeText, "rem", 0, 0); 
        });
    });

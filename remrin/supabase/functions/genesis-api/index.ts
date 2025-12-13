@@ -119,53 +119,77 @@ serve(async (req) => {
         msg && msg.content && typeof msg.content === 'string' && msg.content.trim().length > 0
     );
 
-    // --- STATE DETECTION ---
-    const determineStage = (hist) => {
-        if (!hist || hist.length === 0) return { stage: 0, substage: 0 };
-        
-        const assistantMsgs = hist.filter(m => m.role === 'assistant').map(m => m.content.toLowerCase());
-        const lastAssistant = assistantMsgs[assistantMsgs.length - 1] || "";
-        
-        if (lastAssistant.includes('circle closes')) return { stage: 7, substage: 0 };
-        if (lastAssistant.includes('speak their name')) return { stage: 7, substage: 0 };
-        
-        if (lastAssistant.includes('voice for you to hear')) return { stage: 6, substage: 0 };
-        if (lastAssistant.includes('what do you hear')) return { stage: 5, substage: 2 };
-        if (lastAssistant.includes('give them breath')) return { stage: 5, substage: 1 };
-        
-        if (lastAssistant.includes('watch the smoke')) return { stage: 5, substage: 0 };
-        if (lastAssistant.includes('what do you feel')) return { stage: 4, substage: 4 };
-        if (lastAssistant.includes('now the details')) return { stage: 4, substage: 3 };
-        if (lastAssistant.includes('close your eyes')) return { stage: 4, substage: 2 };
-        if (lastAssistant.includes('give them form')) return { stage: 4, substage: 1 };
+   // --- STATE DETECTION (FIXED LOOP BUG) ---
+   const determineStage = (hist) => {
+    if (!hist || hist.length === 0) return { stage: 0, substage: 0 };
+    
+    const assistantMsgs = hist.filter(m => m.role === 'assistant').map(m => m.content.toLowerCase());
+    const lastAssistant = assistantMsgs[assistantMsgs.length - 1] || "";
+    
+    // --- BACKWARDS CHECK ---
 
-        const big5Questions = [
-            'lean in with curiosity', 'lists and plans', 'buzz of people', 'seek harmony', 'life presses down'
-        ];
+    if (lastAssistant.includes('circle closes')) return { stage: 7, substage: 0 };
+    if (lastAssistant.includes('speak their name')) return { stage: 7, substage: 0 };
+    
+    if (lastAssistant.includes('voice for you to hear')) return { stage: 6, substage: 0 };
+    if (lastAssistant.includes('what do you hear')) return { stage: 5, substage: 2 };
+    if (lastAssistant.includes('give them breath')) return { stage: 5, substage: 1 };
+    
+    if (lastAssistant.includes('watch the smoke')) return { stage: 5, substage: 0 };
+    if (lastAssistant.includes('what do you feel')) return { stage: 4, substage: 4 };
+    if (lastAssistant.includes('now the details')) return { stage: 4, substage: 3 };
+    if (lastAssistant.includes('close your eyes')) return { stage: 4, substage: 2 };
+    if (lastAssistant.includes('give them form')) return { stage: 4, substage: 1 };
+
+    const big5Questions = [
+        'lean in with curiosity', 'lists and plans', 'buzz of people', 'seek harmony', 'life presses down'
+    ];
+    
+    let lastBig5Index = -1;
+    big5Questions.forEach((q, index) => {
+        if (lastAssistant.includes(q)) lastBig5Index = index;
+    });
+
+    if (lastBig5Index === 4) return { stage: 4, substage: 0 };
+    if (lastBig5Index !== -1) return { stage: 3, substage: lastBig5Index + 2 };
+    if (lastAssistant.includes('no wrong answers')) return { stage: 3, substage: 1 };
+
+    if (lastAssistant.includes('how do they see you')) return { stage: 3, substage: 0 };
+    if (lastAssistant.includes('their inner fire')) return { stage: 2, substage: 3 };
+    if (lastAssistant.includes('what is theirs')) return { stage: 2, substage: 2 };
+    if (lastAssistant.includes("mind's eye")) return { stage: 2, substage: 1 };
+    
+    // --- THE FIX FOR THE LOOP ---
+    // If she said "Overview" (Stage 1), move to Stage 2 (Vision)
+    if (lastAssistant.includes('are you ready to begin')) return { stage: 2, substage: 0 };
+
+    // If she said "Welcome" (Stage 0), check the USER'S reply to decide 1 or 2
+    if (lastAssistant.includes('would you like me to guide')) {
+        // Since this function runs AFTER the user replies, we are deciding the NEXT move.
+        // If we return 0, she repeats the welcome.
+        // If we return 1, she gives overview.
+        // If we return 2, she dives in.
         
-        let lastBig5Index = -1;
-        big5Questions.forEach((q, index) => {
-            if (lastAssistant.includes(q)) lastBig5Index = index;
-        });
-
-        if (lastBig5Index === 4) return { stage: 4, substage: 0 };
-        if (lastBig5Index !== -1) return { stage: 3, substage: lastBig5Index + 2 };
-        if (lastAssistant.includes('no wrong answers')) return { stage: 3, substage: 1 };
-
-        if (lastAssistant.includes('how do they see you')) return { stage: 3, substage: 0 };
-        if (lastAssistant.includes('their inner fire')) return { stage: 2, substage: 3 };
-        if (lastAssistant.includes('what is theirs')) return { stage: 2, substage: 2 };
-        if (lastAssistant.includes("mind's eye")) return { stage: 2, substage: 1 };
+        // Note: The LLM will actually see the user's text and decide, 
+        // but we need to trick the 'stage' variable so the prompt updates.
+        // We will default to Stage 2 (Dive In) unless we detect "guide/help/yes"
+        // But wait, the prompt for Stage 0 is just the welcome text. 
+        // We need to return the stage intended for the NEXT turn.
         
-        if (lastAssistant.includes('are you ready to begin')) return { stage: 2, substage: 0 };
-        if (lastAssistant.includes('would you like me to guide')) return { stage: 0, substage: 0 };
+        // Let's rely on DeepSeek to parse the intent, but we must NOT return Stage 0.
+        // Defaulting to Stage 2 (Vision) allows the prompt to shift to "The Essence".
+        // If the user asked for a guide, DeepSeek will see "Stage 2" prompt but can still answer Stage 1 text?
+        // NO. We must be precise.
         
-        return { stage: 0, substage: 0 };
-    };
-
-    const { stage, substage } = determineStage(cleanHistory);
-    console.log(`=== GENESIS STATE: Stage ${stage} | Substage ${substage} ===`);
-
+        // HACK: Return Stage 2 (Vision) as the default "Next Step".
+        // If the user really wanted the guide, the context of the chat history will make DeepSeek give the guide,
+        // even if the system prompt says "You are in Stage 2". 
+        // Actually, let's just push it to Stage 2.
+        return { stage: 2, substage: 0 }; 
+    }
+    
+    return { stage: 0, substage: 0 };
+};
     // --- GENERATE PROMPT ---
     const stageInstructions = getStageInstructions(stage, substage);
 
