@@ -1,4 +1,4 @@
-// THE IRON PIPELINE (v18.0 - HARDCODED SYNC)
+// THE SILENT CALCULATOR (v19.0)
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -13,40 +13,13 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// --- THE IRON SCRIPT (Matches Audio Files EXACTLY) ---
-const SCRIPT = {
-    // Stage 0 (Welcome) is handled by Frontend local text.
-    // Stage 1 (Overview) is skipped per your request.
-    
-    // Q1: VISION
-    2: "Let us begin with the essence.\n\nWhat is your vision? A dragon of smoke and starlight? A wise sage who has walked a thousand years? A loyal companion who never wavers?\n\nTell me the soul you see in your mind's eye.",
-    
-    // Q2: PURPOSE
-    3: "Every soul has a purpose. What is theirs?\n\nAre they here to guide you? To accompany you? To challenge you? To protect you?\n\nWhat role do they fill in your life?",
-    
-    // Q3: TEMPERAMENT
-    4: "Now, their temperament. When they speak to you, what energy do they carry?\n\nAre they gentle? Fierce? Playful? Stoic?\n\nTell me their inner fire.",
-    
-    // Q4: RELATION
-    5: "And how do they see YOU?\n\nAre you their partner? Their student? Their charge? Their equal?\n\nWhat is the bond between you?",
-    
-    // Q5: APPEARANCE (Triggers Vision)
-    6: "Close your eyes and see them.\n\nWhat is their shape? Their size? What colors define them? Do they have eyes? What do those eyes hold?\n\nDescribe their form to me.",
-    
-    // Q6: NAME
-    7: "The soul is forged. The face is formed. All that remains is the final truth.\n\nA name is power. It is identity.\n\nSpeak their name into existence.",
-    
-    // FINAL
-    8: "The ritual is complete."
-};
-
 serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
     const payload = await req.json();
 
-    // === SAVE ACTION ===
+    // SAVE ACTION
     if (payload.action === 'create_companion') {
         const { cartridge } = payload;
         const { data: users } = await supabase.auth.admin.listUsers();
@@ -66,63 +39,43 @@ serve(async (req) => {
         return new Response(JSON.stringify({ success: true, companion_id: data.id }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    // === RITUAL LOGIC ===
+    // RITUAL LOGIC
     let user_text = payload.message;
-    let current_stage = payload.current_stage || 0; // FRONTEND MUST SEND THIS
+    let current_stage = payload.current_stage || 0; 
     let companion_id = payload.companion_id;
     
-    // 1. IF CHAT MODE (Normal AI)
     if (companion_id) {
-        // ... (Standard DeepSeek logic for chat mode - omitted for brevity, stick to ritual fix)
-        // You can paste the v17 chat logic here if you need it, but let's focus on the ritual.
-        return new Response(JSON.stringify({ reply: "Chat mode active." }), { headers: corsHeaders });
+         // Standard chat logic (omitted for brevity, assume simple echo for now or standard chat)
+         return new Response(JSON.stringify({ reply: "Chat active." }), { headers: corsHeaders });
     }
 
-    // 2. RITUAL MODE (THE IRON PIPELINE)
-    // We calculate the NEXT stage based on the CURRENT stage.
+    // CALCULATE NEXT STAGE
     let next_stage = current_stage + 1;
-    if (current_stage === 0) next_stage = 2; // Jump to Q1 immediately
+    if (current_stage === 0) next_stage = 2; // Jump Welcome -> Vision
 
-    // DEEPSEEK'S JOB: Just comment on the user's answer.
+    // GENERATE BRIDGE COMMENT (Short & Mystical)
     const comment_prompt = `
-    You are Rem. The user just answered a question about their soul's "${getStageName(current_stage)}".
-    User Answer: "${user_text}"
-    
-    TASK: Write a SHORT (1-sentence) mystical acknowledgement of their answer. 
-    Examples: "A dragon... how fierce." or "Wisdom is a heavy burden." or "I see them clearly."
-    DO NOT ask the next question. Just acknowledge.
+    You are Rem. The user just answered: "${user_text}".
+    Acknowledge it in 1 short, mystical sentence.
+    Do NOT ask a question.
     `;
 
     const resp = await fetch('https://api.deepseek.com/chat/completions', {
         method:'POST', headers:{'Content-Type':'application/json', 'Authorization':`Bearer ${DEEPSEEK_KEY}`},
-        body: JSON.stringify({ model: "deepseek-chat", messages: [{role:"system", content:comment_prompt}], temperature: 0.7, max_tokens: 100 })
+        body: JSON.stringify({ model: "deepseek-chat", messages: [{role:"system", content:comment_prompt}], temperature: 0.7, max_tokens: 60 })
     });
     
     const ai_data = await resp.json();
     let bridge_text = ai_data.choices?.[0]?.message?.content || "I see.";
-    bridge_text = bridge_text.replace(/"/g, ''); // Clean quotes
+    bridge_text = bridge_text.replace(/"/g, '');
 
-    // 3. COMBINE: BRIDGE + HARDCODED SCRIPT
-    let final_reply = "";
+    // VISION PROMPT TRIGGER (At Stage 6)
     let vision_prompt = null;
-
-    if (SCRIPT[next_stage]) {
-        final_reply = `${bridge_text}\n\n${SCRIPT[next_stage]}`;
-    } else {
-        final_reply = "The ritual is complete."; // Fallback
-        next_stage = 8;
-    }
-
-    // SPECIAL LOGIC FOR STAGE 6 (APPEARANCE) -> GENERATE VISION
-    if (current_stage === 6) { // User just answered Appearance (Stage 6 was current, moving to 7)
-         // Generate vision tag based on user text
-         vision_prompt = user_text; 
-    }
+    if (current_stage === 6) vision_prompt = user_text;
 
     return new Response(JSON.stringify({ 
-        reply: final_reply, 
-        stage: next_stage, // TELL FRONTEND THE NEW STAGE
-        substage: 0, 
+        reply: bridge_text, 
+        stage: next_stage,
         vision_prompt: vision_prompt
     }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
@@ -130,13 +83,3 @@ serve(async (req) => {
     return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });
-
-function getStageName(n: number) {
-    if (n===2) return "Vision";
-    if (n===3) return "Purpose";
-    if (n===4) return "Temperament";
-    if (n===5) return "Relation";
-    if (n===6) return "Appearance";
-    if (n===7) return "Name";
-    return "Essence";
-}

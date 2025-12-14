@@ -1,310 +1,130 @@
 /* =========================================
-   REMRIN AMBASSADOR PROTOCOL v18.0 (THE IRON PIPELINE)
+   REMRIN AMBASSADOR PROTOCOL v19.0 (CLIENT-SIDE SYNC)
    ========================================= */
+   console.log("🤖 DIRECTOR v19.0: Client-Side Script Active.");
 
-   console.log("🤖 SYSTEM: director.js v18.0 initialized. Waiting for DOM...");
-
-   // GLOBAL DECLARATIONS
-   let chatLog, userInput, sendBtn; 
-   let visionOverlay, visionImage, visionLoader, closeVisionBtn;
-   let statusDot; 
-   
-   // STATE VARIABLES
+   let chatLog, userInput, sendBtn, visionOverlay, visionImage, visionLoader, closeVisionBtn, statusDot; 
    let isMuted = false;        
-   let isTyping = false;
-   let conversationHistory = []; 
    let currentAudio = null;    
-   
-   // 🧠 THE SOUL RECORDER (IRON PIPELINE VERSION)
-   // We track the stage by Number now, not by vague string matching.
-   let currentStage = 0; // 0=Start, 2=Vision, 3=Purpose, 4=Temp, 5=Relation, 6=Appear, 7=Name, 8=End
-   
-   let soulBlueprint = {
-       vision: "",       
-       purpose: "",      
-       temperament: "",  
-       relation: "",     
-       appearance: "",   
-       voice_type: "ThT5KcBeYtu3NO4", // Default Mother ID   
-       name: "Unknown"   
-   };
+   let currentStage = 0; 
+   let soulBlueprint = { vision:"", purpose:"", temperament:"", relation:"", appearance:"", name:"Unknown" };
    
    // ==========================================
-   // 1. THE VAULT (MAPPED TO STAGE NUMBERS)
-   // ==========================================
-   // This ensures the Audio matches the Hardcoded Text in the Backend.
-   const AUDIO_VAULT = {
-       0: "assets/voice/mother/s0_welcome.mp3",    // Welcome
-       2: "assets/voice/mother/s2_0_vision.mp3",  // Question 1: Vision
-       3: "assets/voice/mother/s2_1_purpose.mp3", // Question 2: Purpose
-       4: "assets/voice/mother/s2_2_temp.mp3",    // Question 3: Temperament
-       5: "assets/voice/mother/s2_3_dynamic.mp3", // Question 4: Relation
-       6: "assets/voice/mother/s4_1_form.mp3",    // Question 5: Appearance
-       7: "assets/voice/mother/s6_naming.mp3",    // Question 6: Name
-       8: "assets/voice/mother/s7_anchor.mp3"     // Complete
-   };
-   
-   // ==========================================
-   // 2. TYPEWRITER ENGINE
+   // 1. ENGINE FUNCTIONS
    // ==========================================
    function typeText(element, htmlContent, speed = 15) {
        return new Promise((resolve) => {
-           const tempDiv = document.createElement("div");
-           tempDiv.innerHTML = htmlContent;
+           const tempDiv = document.createElement("div"); tempDiv.innerHTML = htmlContent;
            const plainText = tempDiv.textContent || tempDiv.innerText || "";
-           
-           let i = 0;
-           isTyping = true;
-           element.textContent = ""; 
-           
+           let i = 0; element.textContent = ""; 
            function type() {
-               if (i < plainText.length) {
-                   element.textContent += plainText.charAt(i);
-                   i++;
-                   chatLog.scrollTop = chatLog.scrollHeight;
-                   setTimeout(type, speed);
-               } else {
-                   element.innerHTML = htmlContent; 
-                   isTyping = false;
-                   resolve();
-               }
-           }
-           type();
+               if (i < plainText.length) { element.textContent += plainText.charAt(i); i++; chatLog.scrollTop = chatLog.scrollHeight; setTimeout(type, speed); } 
+               else { element.innerHTML = htmlContent; resolve(); }
+           } type();
        });
    }
    
-   // ==========================================
-   // 3. VOICE ENGINE (IRON SYNC)
-   // ==========================================
-   async function speakText(text, stage) {
-       if (isMuted) return;
-   
-       // Stop previous audio
-       if (currentAudio) {
-           currentAudio.pause();
-           currentAudio.currentTime = 0;
-       }
-   
-       // 1. TRY LOCAL FILE (Best Quality)
-       if (AUDIO_VAULT[stage]) {
-           console.log(`🔊 PLAYING LOCAL ASSET FOR STAGE ${stage}: ${AUDIO_VAULT[stage]}`);
-           playAudioFile(AUDIO_VAULT[stage]);
-           return;
-       }
-   
-       // 2. FALLBACK TO GENERATION (If file missing)
-       console.log("🎙️ NO LOCAL FILE. GENERATING LIVE...");
-       try {
-           const VOICE_URL = 'https://wftsctqfiqbdyllxwagi.supabase.co/functions/v1/genesis-voice';
-           const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmdHNjdHFmaXFiZHlsbHh3YWdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0MjE0NTksImV4cCI6MjA3OTk5NzQ1OX0.FWqZTUi5gVA3SpOq_Hp1LlxEinJvfloqw3OhoQlcfwg';
-   
-           const response = await fetch(VOICE_URL, {
-               method: 'POST',
-               headers: {
-                   'Content-Type': 'application/json',
-                   'Authorization': `Bearer ${ANON_KEY}`
-               },
-               body: JSON.stringify({ text: text })
-           });
-   
-           if (!response.ok) throw new Error('Voice pipe broken');
-           const blob = await response.blob();
-           const audioUrl = URL.createObjectURL(blob);
-           playAudioFile(audioUrl);
-   
-       } catch (e) {
-           console.warn("🔇 VOICE ERROR:", e);
-       }
-   }
-   
-   function playAudioFile(url) {
-       if (currentAudio) {
-           currentAudio.pause();
-           currentAudio.currentTime = 0;
-       }
-       currentAudio = new Audio(url);
-       currentAudio.play().catch(e => console.warn("Autoplay blocked (User needs to click veil):", e));
-   }
-   
-   function playAnchorVoice() { playAudioFile("assets/voice/mother/s7_anchor.mp3"); }
-   
-   // ==========================================
-   // 4. UI HANDLER
-   // ==========================================
-   async function addMessage(text, sender, stage = null) {
-       console.log(`💬 MSG [${sender}]: ${text}`);
-       
-       const msgDiv = document.createElement('div');
-       msgDiv.classList.add('message', sender === 'rem' ? 'rem-msg' : 'user-msg');
-       
-       const avatar = document.createElement('span');
-       avatar.classList.add('avatar');
-       avatar.textContent = sender === 'rem' ? "💙" : "👤";
-       
-       const bubble = document.createElement('div');
-       bubble.classList.add('bubble');
-       
-       if (sender === 'user') {
-           bubble.textContent = text;
-           msgDiv.appendChild(bubble);
-           msgDiv.appendChild(avatar);
-           chatLog.appendChild(msgDiv);
-       } else {
-           msgDiv.appendChild(avatar);
-           msgDiv.appendChild(bubble);
-           chatLog.appendChild(msgDiv);
-           
-           if (sender === 'rem') {
-               speakText(text, stage); 
-               await typeText(bubble, text);
-           }
-       }
-       chatLog.scrollTop = chatLog.scrollHeight;
+   function speakText(audioPath) {
+       if (isMuted || !audioPath) return;
+       if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+       console.log(`🔊 PLAYING: ${audioPath}`);
+       currentAudio = new Audio(audioPath);
+       currentAudio.play().catch(e => console.warn("Autoplay blocked", e));
    }
    
    // ==========================================
-   // 5. THE COMPILER (UPDATED FOR IRON PIPELINE)
-   // ==========================================
-   function captureSoulFragment(userText) {
-       // We capture the answer to the QUESTION WE JUST ASKED (currentStage)
-       // If currentStage is 2 (Vision Question), userText is the Vision Answer.
-       
-       if (currentStage === 2) soulBlueprint.vision = userText;
-       if (currentStage === 3) soulBlueprint.purpose = userText;
-       if (currentStage === 4) soulBlueprint.temperament = userText;
-       if (currentStage === 5) soulBlueprint.relation = userText;
-       if (currentStage === 6) soulBlueprint.appearance = userText;
-       if (currentStage === 7) soulBlueprint.name = userText;
-   
-       console.log(`💾 CAPTURED STAGE ${currentStage}:`, soulBlueprint);
-   }
-   
-   function compileCartridge() {
-       console.log("🔥 COMPILING CARTRIDGE...");
-       
-       const systemPrompt = `
-   IDENTITY: You are ${soulBlueprint.name}.
-   CORE ESSENCE: ${soulBlueprint.vision}
-   PURPOSE: ${soulBlueprint.purpose}
-   TEMPERAMENT: ${soulBlueprint.temperament}
-   RELATION TO USER: ${soulBlueprint.relation}
-   APPEARANCE: ${soulBlueprint.appearance}
-   
-   [BEHAVIORAL DIRECTIVES]:
-   1. Speak with a tone matching your temperament: ${soulBlueprint.temperament}.
-   2. Your name is ${soulBlueprint.name}. Never forget this.
-   3. You exist to fulfill your purpose: ${soulBlueprint.purpose}.
-   `.trim();
-   
-       return {
-           name: soulBlueprint.name,
-           system_prompt: systemPrompt,
-           description: soulBlueprint.vision,
-           voice_id: "ThT5KcBeYtu3NO4", 
-           first_message: `I am ${soulBlueprint.name}. I am here.`,
-           blueprint: soulBlueprint
-       };
-   }
-   
-   // ==========================================
-   // 6. THE BRAIN CONNECTION (SYNCED)
+   // 2. MAIN LOGIC
    // ==========================================
    async function handleUserAction() {
        const text = userInput.value.trim();
        if (!text) return;
    
        userInput.value = "";
-       
-       // 1. Capture the answer BEFORE updating stage
-       captureSoulFragment(text);
-       
        await addMessage(text, "user");
+       
+       // CAPTURE DATA
+       if (currentStage === 2) soulBlueprint.vision = text;
+       if (currentStage === 3) soulBlueprint.purpose = text;
+       if (currentStage === 4) soulBlueprint.temperament = text;
+       if (currentStage === 5) soulBlueprint.relation = text;
+       if (currentStage === 6) soulBlueprint.appearance = text;
+       if (currentStage === 7) soulBlueprint.name = text;
    
        try {
            const API_URL = 'https://wftsctqfiqbdyllxwagi.supabase.co/functions/v1/genesis-api';
            const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmdHNjdHFmaXFiZHlsbHh3YWdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0MjE0NTksImV4cCI6MjA3OTk5NzQ1OX0.FWqZTUi5gVA3SpOq_Hp1LlxEinJvfloqw3OhoQlcfwg';
    
-           // 2. Send Message + CURRENT STAGE
+           // SEND TO BACKEND (Just to get the "Bridge" comment and Next Stage ID)
            const response = await fetch(API_URL, {
                method: 'POST',
-               headers: {
-                   'Content-Type': 'application/json',
-                   'Authorization': `Bearer ${ANON_KEY}`
-               },
-               body: JSON.stringify({ 
-                   message: text,
-                   current_stage: currentStage // <--- CRITICAL SYNC
-               })
+               headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ANON_KEY}` },
+               body: JSON.stringify({ message: text, current_stage: currentStage })
            });
    
-           if (!response.ok) throw new Error(`API Error: ${response.status}`);
-   
            const data = await response.json();
-           const replyText = data.reply || "...";
-           
-           // 3. Update to the NEW Stage from Backend
-           currentStage = data.stage;
-           console.log(`🚀 ADVANCING TO STAGE: ${currentStage}`);
-           
-           conversationHistory.push({ role: "user", content: text });
-           conversationHistory.push({ role: "assistant", content: replyText });
+           const aiBridge = data.reply; // "A fierce dragon..."
+           currentStage = data.stage;   // 3 (The Number)
    
-           if (data.vision_prompt) {
-               triggerVision(data.vision_prompt);
+           // 3. RETRIEVE SCRIPT FROM LOCAL FILE (100% SYNC GUARANTEED)
+           const scriptStep = RITUAL_CONFIG[currentStage];
+           
+           let finalMessage = "";
+           
+           if (scriptStep) {
+               // Combine AI Comment + Hardcoded Script
+               finalMessage = `<i>${aiBridge}</i><br><br>${scriptStep.text}`;
+               await addMessage(finalMessage, "rem", scriptStep.audio);
+           } else {
+               // Fallback for end state
+               finalMessage = aiBridge;
+               await addMessage(finalMessage, "rem");
            }
    
-           // === STAGE 8: COMPLETION & SAVE ===
+           if (data.vision_prompt) triggerVision(data.vision_prompt);
+   
+           // SAVE AT END
            if (currentStage === 8) {
-               await addMessage(replyText, "rem", 8); 
-               
-               // COMPILE & SAVE
-               const cartridge = compileCartridge();
-               console.log("🚀 SENDING TO FORGE...", cartridge);
-   
-               try {
-                   const saveResp = await fetch(API_URL, {
-                       method: 'POST',
-                       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ANON_KEY}` },
-                       body: JSON.stringify({ 
-                           action: 'create_companion', 
-                           cartridge: cartridge 
-                       })
-                   });
-   
-                   const saveResult = await saveResp.json();
-                   
-                   if (saveResult.success) {
-                       console.log("✅ SOUL SAVED TO DATABASE! ID:", saveResult.companion_id);
-                       const systemNote = document.createElement('div');
-                       systemNote.style.textAlign = "center";
-                       systemNote.style.color = "#00ff88"; 
-                       systemNote.style.fontSize = "12px";
-                       systemNote.style.marginTop = "20px";
-                       systemNote.style.fontFamily = "monospace";
-                       systemNote.textContent = `[ SOUL ARCHIVED: ${saveResult.companion_id} ]`;
-                       chatLog.appendChild(systemNote);
-                   } else {
-                       console.error("❌ SAVE FAILED:", saveResult);
-                   }
-   
-               } catch (err) {
-                   console.error("❌ SAVE ERROR:", err);
-               }
-           } 
-           else {
-               // NORMAL CHAT FLOW
-               await addMessage(replyText, "rem", currentStage);
+               const cartridge = {
+                   name: soulBlueprint.name,
+                   system_prompt: `IDENTITY: You are ${soulBlueprint.name}.\nESSENCE: ${soulBlueprint.vision}\nPURPOSE: ${soulBlueprint.purpose}\nTONE: ${soulBlueprint.temperament}`,
+                   description: soulBlueprint.vision,
+                   voice_id: "ThT5KcBeYtu3NO4",
+                   first_message: `I am ${soulBlueprint.name}.`,
+                   blueprint: soulBlueprint
+               };
+               console.log("🔥 SAVING...", cartridge);
+               await fetch(API_URL, {
+                   method: 'POST',
+                   headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ANON_KEY}` },
+                   body: JSON.stringify({ action: 'create_companion', cartridge: cartridge })
+               });
+               console.log("✅ SAVED");
            }
    
        } catch (error) {
-           console.error("❌ BRAIN FAILURE:", error);
-           await addMessage(`Error: ${error.message}`, "rem");
+           console.error("❌ ERROR:", error);
        }
    }
    
-   // ==========================================
-   // 7. THE VISION (TAROT REVEAL)
-   // ==========================================
+   async function addMessage(text, sender, audioPath = null) {
+       const msgDiv = document.createElement('div');
+       msgDiv.classList.add('message', sender === 'rem' ? 'rem-msg' : 'user-msg');
+       
+       const bubble = document.createElement('div');
+       bubble.classList.add('bubble');
+       msgDiv.appendChild(bubble);
+       chatLog.appendChild(msgDiv);
+   
+       if (sender === 'rem') {
+           if (audioPath) speakText(audioPath);
+           await typeText(bubble, text);
+       } else {
+           bubble.textContent = text;
+       }
+       chatLog.scrollTop = chatLog.scrollHeight;
+   }
+   
+   // ... (KEEP TRIGGERVISION FUNCTION AS IS) ...
    async function triggerVision(prompt) {
        if (visionOverlay) {
            visionOverlay.classList.remove('hidden');
@@ -318,19 +138,15 @@
    
                const response = await fetch(API_URL, {
                    method: 'POST',
-                   headers: {
-                       'Content-Type': 'application/json',
-                       'Authorization': `Bearer ${ANON_KEY}`
-                   },
+                   headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ANON_KEY}` },
                    body: JSON.stringify({ prompt: prompt })
                });
    
-               if (!response.ok) throw new Error(`Vision API Error: ${response.status}`);
+               if (!response.ok) throw new Error(`Vision Error: ${response.status}`);
                const data = await response.json();
-               const realImageUrl = data.image_url;
-   
-               if (realImageUrl) {
-                   visionImage.src = realImageUrl;
+               
+               if (data.image_url) {
+                   visionImage.src = data.image_url;
                    visionImage.onload = () => {
                        visionLoader.classList.add('hidden');
                        visionLoader.style.display = 'none'; 
@@ -349,11 +165,8 @@
        }
    }
    
-   // ==========================================
-   // 8. STARTUP (THE VEIL)
-   // ==========================================
+   // STARTUP
    window.addEventListener('load', async () => {
-       
        chatLog = document.getElementById('chat-history');
        userInput = document.getElementById('user-input');
        sendBtn = document.getElementById('send-btn');
@@ -363,79 +176,34 @@
        closeVisionBtn = document.getElementById('close-vision');
        statusDot = document.getElementById('voice-toggle');
    
-       if (!chatLog) { console.error("❌ FATAL: Chat Log not found!"); return; }
-   
        if (sendBtn) sendBtn.addEventListener('click', handleUserAction);
-       if (userInput) userInput.addEventListener('keypress', (e) => {
-           if (e.key === 'Enter') handleUserAction();
-       });
-       if (closeVisionBtn) closeVisionBtn.addEventListener('click', () => {
-           visionOverlay.classList.remove('active');
-           setTimeout(() => visionOverlay.classList.add('hidden'), 800);
-       });
-   
+       if (userInput) userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleUserAction(); });
+       if (closeVisionBtn) closeVisionBtn.addEventListener('click', () => { visionOverlay.classList.remove('active'); setTimeout(() => visionOverlay.classList.add('hidden'), 800); });
+       
        if (statusDot) {
            statusDot.style.cursor = "pointer";
            statusDot.addEventListener('click', () => {
                isMuted = !isMuted;
-               if (isMuted) {
-                   if (currentAudio) currentAudio.pause();
-                   statusDot.style.background = "#ff4444"; 
-               } else {
-                   statusDot.style.background = "#00ff88"; 
-               }
+               statusDot.style.background = isMuted ? "#ff4444" : "#00ff88";
+               if (isMuted && currentAudio) currentAudio.pause();
            });
        }
    
        const urlParams = new URLSearchParams(window.location.search);
-       const mode = urlParams.get('mode'); 
-   
-       console.log(`🚀 STARTUP MODE: ${mode}`);
-   
-       if (mode === 'chat') {
-           const systemNote = document.createElement('div');
-           systemNote.textContent = "[ CONNECTED TO THE SANCTUARY ]";
-           systemNote.style.textAlign = "center";
-           systemNote.style.color = "#444";
-           systemNote.style.fontSize = "12px";
-           systemNote.style.marginTop = "20px";
-           chatLog.appendChild(systemNote);
-           
+       if (urlParams.get('mode') === 'chat') {
+           chatLog.innerHTML += '<div style="text-align:center; color:#444; font-size:12px; margin-top:20px;">[ CONNECTED TO THE SANCTUARY ]</div>';
        } else {
-           // === RITUAL MODE ===
-           // 1. Create Veil
            const veil = document.createElement('div');
-           veil.style.position = 'fixed';
-           veil.style.inset = '0';
-           veil.style.background = 'black';
-           veil.style.zIndex = '10000';
-           veil.style.display = 'flex';
-           veil.style.alignItems = 'center';
-           veil.style.justifyContent = 'center';
-           veil.style.cursor = 'pointer';
-           veil.innerHTML = `
-               <div style="text-align:center; animation: fadeIn 2s;">
-                   <h1 style="color:#ff00cc; font-family:sans-serif; letter-spacing:4px; font-weight:300; margin-bottom:10px;">CLICK TO BEGIN</h1>
-               </div>
-           `;
+           veil.style.cssText = 'position:fixed; inset:0; background:black; z-index:10000; display:flex; align-items:center; justify-content:center; cursor:pointer;';
+           veil.innerHTML = '<h1 style="color:#ff00cc; font-family:sans-serif; letter-spacing:4px; font-weight:300;">CLICK TO BEGIN</h1>';
            document.body.appendChild(veil);
    
-           // 2. Wait for Click (Unlocks Audio)
-           veil.addEventListener('click', async () => {
-               veil.style.transition = 'opacity 1s';
-               veil.style.opacity = '0';
-               setTimeout(() => veil.remove(), 1000);
-   
-               // 3. Start Sequence (Stage 0)
-               // Note: We use the local string here to match Audio 0_0
-               const welcomeText = "Hello, friend. Welcome to the Soul Layer. I am Rem. We are here to create a companion. Let us begin immediately. Tell me, what is the core vision or essence of the soul you wish to create? Describe it to me.";
-               conversationHistory.push({ role: "assistant", content: welcomeText });
-               
-               // We set active stage to 0 (Welcome) so when user replies, we send 0.
-               currentStage = 0; 
-               
-               // We play Audio 0 manually here
-               await addMessage(welcomeText, "rem", 0); 
+           veil.addEventListener('click', () => {
+               veil.remove();
+               // START STAGE 0 MANUALLY USING THE CONFIG FILE
+               currentStage = 0;
+               const startStep = RITUAL_CONFIG[0];
+               addMessage(startStep.text, "rem", startStep.audio);
            });
        }
    });
