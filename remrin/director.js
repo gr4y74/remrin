@@ -173,7 +173,7 @@ window.addEventListener('load', async () => {
         // 2. Change the Text Label (The Mobile Fix)
         const statusText = document.getElementById('voice-status-text');
         if (statusText) {
-            statusText.innerText = isMuted ? "VOICE: MUTED" : "VOICE: ONLINE";
+            statusText.innerText = isMuted ? "VOICE: HUSH" : "VOICE: ONLINE";
             statusText.style.color = isMuted ? "#ff4444" : "#00ff88"; // Text changes color too!
         }
 
