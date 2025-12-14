@@ -198,7 +198,25 @@
    
            const selBtn = document.createElement('button');
            selBtn.innerHTML = "SELECT";
-           selBtn.style.cssText = `background: #00ff88; color: #000; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 10px; letter-spacing: 1px;`;
+           selBtn.style.cssText = `
+            background: #00ff88; 
+            color: #000; 
+            border: none;
+            padding: 0 20px;       /* More breathing room */
+            height: 32px;          /* Fixed height */
+            border-radius: 6px; 
+            cursor: pointer;
+            font-weight: 800;      /* Extra bold */
+            font-family: sans-serif;
+            font-size: 11px; 
+            letter-spacing: 1px;
+            white-space: nowrap;   /* Never wrap text */
+            min-width: 80px;       /* STOP SQUASHING */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,255,136,0.2);
+        `;
            selBtn.onclick = () => {
                soulBlueprint.voice_id = v.id;
                console.log("🎤 Voice Selected:", v.id);
