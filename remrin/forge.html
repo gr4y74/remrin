@@ -395,6 +395,39 @@
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateX(-50%) translateY(-20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
 
+        /* 1. THE CONTAINER (Centering Logic) */
+.footer-info { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 4px; /* Space between logo and text */
+    
+    /* This centers the logo relative to the text below it */
+    align-items: center; 
+    
+    /* Optional: If you want the text centered too */
+    text-align: center; 
+}
+
+/* 2. THE LOGO (Size Boost) */
+.remrin-brand {
+    /* Increased from 20px -> 30px (+50% size boost) */
+    height: 30px; 
+    width: auto; 
+    max-width: 120px;
+    
+    object-fit: contain; 
+    opacity: 1; /* Made fully opaque for clarity */
+    margin-bottom: 2px; /* Tiny breathing room before the ID */
+}
+
+/* 3. THE ID TEXT (Optional Polish) */
+.set-id { 
+    font-family: 'JetBrains Mono', monospace; 
+    font-size: 0.55rem; /* Slightly smaller to let logo pop */
+    color: #666; 
+    letter-spacing: 0.5px;
+}
+
         /* MOBILE FIXES - CLEANED! */
         @media (max-width: 600px) {
             .glass-nav { padding: 0 20px; }
