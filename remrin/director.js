@@ -232,46 +232,42 @@
    }
    
    /* =========================================
-   THE CARD REVEAL ENGINE (FINAL V2)
-   Includes: Real QR, Dynamic Bio, Smart Traits
+   THE CARD REVEAL ENGINE (FINAL V3 - FIXED)
    ========================================= */
 function showCardReveal() {
+    console.log("🃏 REVEALING CARD...");
     const overlay = document.getElementById('card-overlay');
     const card = document.getElementById('final-soul-card');
     
     // --- 1. GENERATE UNIQUE ID ---
-    // If we haven't saved yet, generate a session UUID for the card display
     const sessionID = soulBlueprint.id || 'GEN-' + Math.random().toString(36).substr(2, 9).toUpperCase();
     
-    // --- 2. INJECT BASIC DATA ---
-    document.getElementById('card-name').innerText = soulBlueprint.name || "UNKNOWN SOUL";
+    // --- 2. INJECT DATA ---
+    document.getElementById('card-name').innerText = (soulBlueprint.name || "UNKNOWN SOUL").toUpperCase();
     
-    // Calculate Sync based on how much they wrote (Text Length Analysis)
+    // Sync Score
     const inputLength = (soulBlueprint.vision?.length || 0) + (soulBlueprint.purpose?.length || 0);
     const syncScore = Math.min(Math.floor(80 + (inputLength / 20)), 99); 
     document.getElementById('card-sync').innerText = syncScore + "%";
 
-    // Set Image
+    // Image (With Zoom Fix)
     const imgEl = document.getElementById('card-image');
     if (soulBlueprint.temp_image_url) {
         imgEl.src = soulBlueprint.temp_image_url;
+        imgEl.crossOrigin = "anonymous"; // CRITICAL FOR DOWNLOAD
     } else {
         imgEl.src = "assets/default_card.png"; 
     }
 
-    // Set Type
-    // Tries to grab the first few words of their "Vision"
+    // Type
     const archetype = soulBlueprint.vision ? soulBlueprint.vision.split(' ').slice(0, 3).join(' ') : "Ethereal Spirit";
     document.getElementById('card-type').innerText = "Companion • " + archetype;
 
-    // --- 3. DYNAMIC BIO GENERATOR ---
-    const bioText = generateBio(soulBlueprint);
-    document.getElementById('card-bio').innerText = `"${bioText}"`;
+    // --- 3. BIO & TRAITS ---
+    document.getElementById('card-bio').innerText = `"${generateBio(soulBlueprint)}"`;
 
-    // --- 4. SMART TRAIT EXTRACTION ---
     const traitsContainer = document.getElementById('card-traits');
-    traitsContainer.innerHTML = ""; // Clear old
-    
+    traitsContainer.innerHTML = ""; 
     const traits = extractTraits(soulBlueprint);
     traits.forEach(t => {
         const span = document.createElement('span');
@@ -280,58 +276,82 @@ function showCardReveal() {
         traitsContainer.appendChild(span);
     });
 
-    // --- 5. GENERATE REAL QR CODE ---
+    // --- 4. QR CODE (THE FIX) ---
     const qrContainer = document.querySelector('.qr-chip');
-    qrContainer.innerHTML = ""; // Clear the SVG
+    qrContainer.innerHTML = ""; // Clear placeholder SVG
     
-    // The URL this soul will live at (Future Proofing)
-    const soulURL = `https://remrin.ai/soul/${sessionID}`;
-    
-    new QRCode(qrContainer, {
-        text: soulURL,
-        width: 45,
-        height: 45,
-        colorDark : "#000000",
-        colorLight : "#ffffff",
-        correctLevel : QRCode.CorrectLevel.L
-    });
+    // Create the QR Code
+    // We wrap it in a try/catch in case the library is missing
+    try {
+        new QRCode(qrContainer, {
+            text: `https://remrin.ai/soul/${sessionID}`,
+            width: 45,
+            height: 45,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.L
+        });
+        // Force the generated image to fit
+        setTimeout(() => {
+            const qrImg = qrContainer.querySelector('img');
+            if(qrImg) {
+                qrImg.style.width = '100%';
+                qrImg.style.height = '100%';
+                qrImg.style.display = 'block';
+            }
+        }, 100);
+    } catch(e) {
+        console.error("QR Error:", e);
+        qrContainer.innerHTML = '<div style="font-size:8px; color:black;">QR ERR</div>';
+    }
 
-    // --- 6. SHOW OVERLAY ---
+    // --- 5. SHOW OVERLAY ---
     overlay.classList.remove('hidden');
-    setTimeout(() => overlay.classList.add('active'), 10);
+    // Tiny delay to allow CSS transition to catch the opacity change
+    setTimeout(() => overlay.classList.add('active'), 50);
 
-    // --- 7. 3D TILT FX ---
-    overlay.addEventListener('mousemove', (e) => {
+    // --- 6. 3D TILT FX (THE FIX) ---
+    // We attach the listener to the WINDOW, not the overlay, to ensure it catches movement
+    // checking if overlay is active to save performance
+    window.addEventListener('mousemove', (e) => {
+        if(!overlay.classList.contains('active')) return;
+        
         const x = (window.innerWidth / 2 - e.pageX) / 25;
         const y = (window.innerHeight / 2 - e.pageY) / 25;
         card.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
     });
 
-    // --- 8. BUTTON ACTIONS ---
-    document.getElementById('confirm-card-btn').onclick = () => {
+    // --- 7. BUTTON ACTIONS ---
+    const confirmBtn = document.getElementById('confirm-card-btn');
+    // Remove old listeners to prevent double-clicks
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+    
+    newConfirmBtn.onclick = () => {
         overlay.classList.remove('active');
         setTimeout(() => overlay.classList.add('hidden'), 800);
         userInput.value = "Yes, they are perfect.";
         handleUserAction();
     };
 
-    document.getElementById('download-card-btn').onclick = () => {
-        const btn = document.getElementById('download-card-btn');
-        const oldText = btn.innerText;
-        btn.innerText = "CAPTURING...";
-        
-        // Hide buttons for clean screenshot? (Optional, usually we want the card only)
-        // html2canvas captures the specific #final-soul-card element, so buttons outside won't show!
+    const dlBtn = document.getElementById('download-card-btn');
+    const newDlBtn = dlBtn.cloneNode(true);
+    dlBtn.parentNode.replaceChild(newDlBtn, dlBtn);
+
+    newDlBtn.onclick = () => {
+        const oldText = newDlBtn.innerText;
+        newDlBtn.innerText = "CAPTURING...";
         
         html2canvas(document.querySelector("#final-soul-card"), {
             backgroundColor: null, 
-            scale: 3 // Ultra High Res
+            scale: 3,
+            useCORS: true // CRITICAL FOR DOWNLOAD
         }).then(canvas => {
             const link = document.createElement('a');
             link.download = `${soulBlueprint.name || 'Soul'}_Card.png`;
             link.href = canvas.toDataURL("image/png");
             link.click();
-            btn.innerText = oldText;
+            newDlBtn.innerText = oldText;
         });
     };
 }
