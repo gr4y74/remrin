@@ -76,6 +76,23 @@
    
            if (data.vision_prompt) triggerVision(data.vision_prompt);
    
+           // SPECIAL: STAGE 9 CARD REVEAL
+        if (currentStage === 9) {
+            // 1. Play the audio/text first
+            const scriptStep = RITUAL_CONFIG[9];
+            await addMessage(scriptStep.text, "rem", scriptStep.audio);
+            
+            // 2. Wait a moment, then show the card
+            setTimeout(() => {
+                showCardReveal();
+            }, 3000); // 3 second dramatic pause
+        } 
+        else if (scriptStep) {
+            // Normal behavior for other stages
+            finalMessage = scriptStep.text ? `<i>${bridge}</i><br><br>${scriptStep.text}` : bridge;
+            await addMessage(finalMessage, "rem", scriptStep.audio);
+        }
+           
            // SAVE AT END
            if (currentStage === 11) {
                console.log("🔥 PREPARING SAVE...");
@@ -272,3 +289,83 @@ window.addEventListener('load', async () => {
         });
     }
 });
+
+/* =========================================
+   THE CARD REVEAL ENGINE
+   ========================================= */
+   function showCardReveal() {
+    const overlay = document.getElementById('card-overlay');
+    const card = document.getElementById('final-soul-card');
+    
+    // 1. INJECT DATA
+    document.getElementById('card-name').innerText = soulBlueprint.name || "UNKNOWN SOUL";
+    document.getElementById('card-sync').innerText = Math.floor(Math.random() * (99 - 85) + 85) + "%"; // Random Sync 85-99%
+    
+    // Image (Use the Temp URL from Replicate)
+    const imgEl = document.getElementById('card-image');
+    if (soulBlueprint.temp_image_url) {
+        imgEl.src = soulBlueprint.temp_image_url;
+    } else {
+        imgEl.src = "assets/default_card.png"; // Fallback
+    }
+
+    // Type & Bio
+    document.getElementById('card-type').innerText = "Companion • " + (soulBlueprint.vision ? soulBlueprint.vision.substring(0, 20) + "..." : "Mystery");
+    document.getElementById('card-bio').innerText = `"${soulBlueprint.purpose || 'A loyal companion forged in starlight.'}"`;
+
+    // Traits (Generate from inputs)
+    const traitsContainer = document.getElementById('card-traits');
+    traitsContainer.innerHTML = ""; // Clear
+    const traits = [
+        soulBlueprint.temperament ? soulBlueprint.temperament.split(' ')[0] : "Loyal",
+        "Genesis V1",
+        "AI Soul"
+    ];
+    traits.forEach(t => {
+        const span = document.createElement('span');
+        span.className = 'trait-pill';
+        span.innerText = t.toUpperCase();
+        traitsContainer.appendChild(span);
+    });
+
+    // 2. SHOW OVERLAY
+    overlay.classList.remove('hidden');
+    setTimeout(() => overlay.classList.add('active'), 10);
+
+    // 3. ACTIVATE 3D TILT
+    overlay.addEventListener('mousemove', (e) => {
+        const x = (window.innerWidth / 2 - e.pageX) / 25;
+        const y = (window.innerHeight / 2 - e.pageY) / 25;
+        card.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+    });
+
+    // 4. BUTTON LOGIC
+    document.getElementById('confirm-card-btn').onclick = () => {
+        // Fade out
+        overlay.classList.remove('active');
+        setTimeout(() => overlay.classList.add('hidden'), 800);
+        
+        // Progress the chat
+        // Simulate user typing "Yes" to move to next stage
+        userInput.value = "Yes, they are perfect.";
+        handleUserAction();
+    };
+
+    document.getElementById('download-card-btn').onclick = () => {
+        const btn = document.getElementById('download-card-btn');
+        const oldText = btn.innerText;
+        btn.innerText = "CAPTURING...";
+        
+        // Use html2canvas to screenshot the card div
+        html2canvas(document.querySelector("#final-soul-card"), {
+            backgroundColor: null, // Transparent bg
+            scale: 2 // High res
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `${soulBlueprint.name}_SoulCard.png`;
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+            btn.innerText = oldText;
+        });
+    };
+}

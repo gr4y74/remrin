@@ -482,7 +482,72 @@
             <img id="vision-image" src="" alt="Soul Manifestation" class="hidden">
         </div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
+    <div id="card-overlay" class="hidden">
+        <div class="fog-wrapper">
+            <div class="fog-layer fog-pink"></div>
+            <div class="fog-layer fog-blue"></div>
+        </div>
+        <div class="stars-wrapper">
+            <div id="stars"></div>
+            <div id="stars2"></div>
+            <div id="stars3"></div>
+        </div>
+    
+        <div class="card-stage">
+            <div class="trading-card" data-rarity="legendary" id="final-soul-card">
+                <div class="holo-foil"></div>
+                <div class="card-inner">
+                    
+                    <div class="card-header">
+                        <div class="soul-name" id="card-name">SOUL_NAME</div>
+                        <div class="creativity-badge">
+                            <span class="hp-label">SYNC</span><span id="card-sync">99%</span>
+                        </div>
+                    </div>
+    
+                    <div class="art-box">
+                        <img id="card-image" class="art-img" src="" crossorigin="anonymous" alt="Soul Avatar">
+                        <div class="type-strip" id="card-type">Archetype • Origin</div>
+                    </div>
+    
+                    <div class="card-body">
+                        <div class="traits-row" id="card-traits">
+                            </div>
+                        <div class="bio-text" id="card-bio">
+                            Bio description goes here...
+                        </div>
+                        <div class="stats-container">
+                            <div class="stat-row">
+                                <span class="stat-label">Power</span>
+                                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 85%"></div></div>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Bond</span>
+                                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 100%"></div></div>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="card-footer">
+                        <div class="footer-info">
+                            <div class="set-id">#GENESIS-V1 • 2025</div>
+                            <div style="font-size:10px; opacity:0.7; letter-spacing:1px;">REMRIN.AI</div>
+                        </div>
+                        <div class="qr-chip">
+                            <svg viewBox="0 0 100 100" fill="none" style="width:100%; height:100%;"><rect width="100" height="100" fill="white"/><path d="M10 10h30v30h-30zM60 10h30v30h-30zM10 60h30v30h-30z" fill="black"/></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="actions">
+            <button class="btn-download" id="download-card-btn">SAVE CARD 📥</button>
+            <button class="btn-confirm" id="confirm-card-btn">CONFIRM SOUL ✅</button>
+        </div>
+    </div>
     <script>
         
         // Kickstart Video
