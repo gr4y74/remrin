@@ -493,24 +493,22 @@ button:hover { background: white; color: black; transform: scale(1.1); box-shado
 
 /* 1. THE CAGE (Fixes the Giant QR Code) */
 .qr-chip {
-    width: 45px !important;        /* Force Width */
-    height: 45px !important;       /* Force Height */
-    flex: 0 0 45px !important;     /* Do not let it grow */
+    width: 45px !important; 
+    height: 45px !important;
     background: white;
     padding: 2px;
     border-radius: 4px;
-    display: flex;
-    align-items: center;
+    /* Ensure flex doesn't squash the canvas */
+    display: flex; 
+    align-items: center; 
     justify-content: center;
-    overflow: hidden;              /* Cut off anything sticking out */
 }
 
-/* Tame the SVG inside */
-.qr-chip svg, .qr-chip img {
-    width: 100% !important;
+.qr-chip img, .qr-chip canvas {
+    /* Force the library's output to fit */
+    width: 100% !important; 
     height: 100% !important;
-    display: block;
-    object-fit: contain;
+    display: block; 
 }
 
 /* 2. CARD FOOTER LAYOUT */
