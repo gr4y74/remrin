@@ -143,8 +143,8 @@
        }
    }
    
-   // ==========================================
-// 8. STARTUP (THE GLASS VEIL)
+// ==========================================
+// 8. STARTUP (THE GLASS VEIL - POLISHED)
 // ==========================================
 window.addEventListener('load', async () => {
     chatLog = document.getElementById('chat-history');
@@ -178,23 +178,17 @@ window.addEventListener('load', async () => {
     } 
     // === RITUAL MODE (Onboarding) ===
     else {
-        // 1. Target the Chat Container (to localize the veil)
         const chatContainer = document.querySelector('.chat-container') || document.body;
-        
-        // Ensure container can hold the absolute veil
-        if (chatContainer !== document.body) {
-            chatContainer.style.position = 'relative';
-        }
+        if (chatContainer !== document.body) chatContainer.style.position = 'relative';
 
-        // 2. Create the Localized Glass Veil
         const veil = document.createElement('div');
         veil.id = 'ritual-veil';
         veil.style.cssText = `
             position: absolute;
             inset: 0;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             z-index: 100;
             display: flex;
             flex-direction: column;
@@ -203,55 +197,58 @@ window.addEventListener('load', async () => {
             border-radius: inherit;
         `;
 
-        // 3. The "Initialize" Button
         veil.innerHTML = `
-            <div style="text-align:center; animation: fadeIn 1s ease-out;">
-                <div style="font-family: 'Outfit', sans-serif; color: rgba(255,255,255,0.8); letter-spacing: 2px; font-size: 12px; margin-bottom: 15px;">
-                    SOUL FORGE DETECTED
+            <div style="text-align:center; animation: fadeIn 1s ease-out; display: flex; flex-direction: column; align-items: center;">
+                <div style="
+                    font-family: sans-serif; 
+                    color: rgba(255,255,255,0.7); 
+                    letter-spacing: 3px; 
+                    font-size: 11px; 
+                    margin-bottom: 25px; 
+                    text-transform: uppercase;
+                ">
+                    Soul Forge Detected
                 </div>
                 <button id="start-btn" style="
                     background: transparent;
                     border: 1px solid #ff00cc;
                     color: #ff00cc;
-                    padding: 12px 30px;
-                    font-family: 'Outfit', sans-serif;
+                    padding: 14px 40px;
+                    font-family: sans-serif;
                     text-transform: uppercase;
                     letter-spacing: 3px;
                     font-size: 14px;
+                    font-weight: 600;
                     cursor: pointer;
                     transition: all 0.3s ease;
-                    box-shadow: 0 0 15px rgba(255, 0, 204, 0.2);
+                    box-shadow: 0 0 20px rgba(255, 0, 204, 0.15);
                     border-radius: 4px;
+                    white-space: nowrap;
+                    min-width: 180px;
                 ">
                     INITIALIZE
                 </button>
             </div>
         `;
         
-        // Append to the chat window, NOT the body
         chatContainer.appendChild(veil);
 
-        // Hover Effect
         const btn = veil.querySelector('#start-btn');
         btn.onmouseover = () => {
-            btn.style.background = '#ff00cc';
-            btn.style.color = '#fff';
-            btn.style.boxShadow = '0 0 25px rgba(255, 0, 204, 0.6)';
+            btn.style.background = 'rgba(255, 0, 204, 0.1)';
+            btn.style.boxShadow = '0 0 30px rgba(255, 0, 204, 0.4)';
+            btn.style.transform = 'translateY(-1px)';
         };
         btn.onmouseout = () => {
             btn.style.background = 'transparent';
-            btn.style.color = '#ff00cc';
-            btn.style.boxShadow = '0 0 15px rgba(255, 0, 204, 0.2)';
+            btn.style.boxShadow = '0 0 20px rgba(255, 0, 204, 0.15)';
+            btn.style.transform = 'translateY(0)';
         };
 
-        // 4. Click Handler
         btn.addEventListener('click', () => {
-            // Fade out
-            veil.style.transition = 'opacity 0.5s ease';
+            veil.style.transition = 'opacity 0.6s ease';
             veil.style.opacity = '0';
-            setTimeout(() => veil.remove(), 500);
-
-            // Start Logic
+            setTimeout(() => veil.remove(), 600);
             currentStage = 0; 
             const startStep = RITUAL_CONFIG[0];
             addMessage(startStep.text, "rem", startStep.audio);
