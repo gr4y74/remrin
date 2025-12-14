@@ -309,3 +309,40 @@ button:hover { background: white; color: black; transform: scale(1.1); box-shado
     box-shadow: none;
     color: var(--neon-blue); /* Optional glow color */
 }
+
+/* THE MUTE TOOLTIP */
+#voice-toggle {
+    position: relative; /* Anchor for the tooltip */
+    cursor: pointer;    /* Shows hand cursor */
+}
+
+/* The Label that appears on hover */
+#voice-toggle:hover::after {
+    content: "TOGGLE VOICE";
+    position: absolute;
+    top: -30px;         /* Floats above the dot */
+    left: 50%;
+    transform: translateX(-50%);
+    
+    /* Cyberpunk Style */
+    background: rgba(0, 0, 0, 0.9);
+    border: 1px solid #00ff88; /* Matches the green dot */
+    color: #00ff88;
+    
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 4px 8px;
+    white-space: nowrap;
+    border-radius: 2px;
+    pointer-events: none; /* Let clicks pass through */
+    animation: fadeIn 0.2s ease-out;
+    z-index: 1000;
+}
+
+/* Optional: Make the dot pulse faster on hover to invite clicking */
+#voice-toggle:hover {
+    box-shadow: 0 0 15px #00ff88;
+    transform: scale(1.1);
+    transition: all 0.2s ease;
+}

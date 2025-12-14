@@ -160,15 +160,32 @@ window.addEventListener('load', async () => {
     if (userInput) userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleUserAction(); });
     if (closeVisionBtn) closeVisionBtn.addEventListener('click', () => { visionOverlay.classList.remove('active'); setTimeout(() => visionOverlay.classList.add('hidden'), 800); });
     
-    // Voice Toggle
-    if (statusDot) {
-        statusDot.style.cursor = "pointer";
-        statusDot.addEventListener('click', () => {
-            isMuted = !isMuted;
-            statusDot.style.background = isMuted ? "#ff4444" : "#00ff88";
-            if (isMuted && currentAudio) currentAudio.pause();
-        });
+   // Voice Toggle Logic (Updated)
+   if (statusDot) {
+    statusDot.style.cursor = "pointer";
+    statusDot.addEventListener('click', () => {
+        isMuted = !isMuted;
+        
+        // 1. Change the Dot Color
+        statusDot.style.background = isMuted ? "#ff4444" : "#00ff88"; // Red = Muted, Green = On
+        statusDot.style.boxShadow = isMuted ? "0 0 10px #ff4444" : "0 0 10px #00ff88";
+        
+        // 2. Change the Text Label (The Mobile Fix)
+        const statusText = document.getElementById('voice-status-text');
+        if (statusText) {
+            statusText.innerText = isMuted ? "VOICE: MUTED" : "VOICE: ONLINE";
+            statusText.style.color = isMuted ? "#ff4444" : "#00ff88"; // Text changes color too!
+        }
+
+        if (isMuted && currentAudio) currentAudio.pause();
+    });
+    
+    // OPTIONAL: Make clicking the text also toggle the voice (Better for fat fingers on mobile)
+    const statusText = document.getElementById('voice-status-text');
+    if (statusText) {
+        statusText.addEventListener('click', () => statusDot.click());
     }
+}
 
     const urlParams = new URLSearchParams(window.location.search);
     
