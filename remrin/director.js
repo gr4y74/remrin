@@ -1,8 +1,8 @@
 /* =========================================
-   REMRIN AMBASSADOR PROTOCOL v24.0 (MASTER BUILD)
-   Includes: Image Persistence, Voice Widget, Card Reveal, Hush Toggle
+   REMRIN AMBASSADOR PROTOCOL v25.0 (MASTER FIX)
+   Includes: V3 Card Reveal, QR Fix, 3D Tilt, Voice Widget
    ========================================= */
-   console.log("🤖 DIRECTOR v24.0: Master Protocol Active.");
+   console.log("🤖 DIRECTOR v25.0: Systems Online.");
 
    let chatLog, userInput, sendBtn, visionOverlay, visionImage, visionLoader, closeVisionBtn, statusDot; 
    let isMuted = false;        
@@ -13,7 +13,8 @@
        vision:"", purpose:"", temperament:"", relation:"", 
        user_psychology:"", appearance:"", name:"Unknown Soul", email:"",
        voice_id: null,
-       temp_image_url: null 
+       temp_image_url: null,
+       id: null 
    };
    
    // =========================================
@@ -60,7 +61,7 @@
                
                if (data.image_url) { 
                    visionImage.src = data.image_url; 
-                   soulBlueprint.temp_image_url = data.image_url; // Store URL
+                   soulBlueprint.temp_image_url = data.image_url; 
                    console.log("📸 IMAGE URL CAPTURED:", data.image_url);
                    visionImage.onload = () => { visionLoader.classList.add('hidden'); visionImage.classList.remove('hidden'); }; 
                }
@@ -162,7 +163,7 @@
    }
    
    // =========================================
-   // 3. UI WIDGETS (Voice & Card)
+   // 3. UI WIDGETS
    // =========================================
    
    function renderVoiceChoices() {
@@ -174,12 +175,7 @@
    
        const container = document.createElement('div');
        container.className = 'voice-widget';
-       container.style.cssText = `
-           background: rgba(0, 255, 136, 0.05);
-           border: 1px solid rgba(0, 255, 136, 0.2);
-           border-radius: 12px; padding: 15px; margin-top: 10px;
-           display: flex; flex-direction: column; gap: 10px; animation: fadeIn 0.5s ease;
-       `;
+       container.style.cssText = `background: rgba(0, 255, 136, 0.05); border: 1px solid rgba(0, 255, 136, 0.2); border-radius: 12px; padding: 15px; margin-top: 10px; display: flex; flex-direction: column; gap: 10px; animation: fadeIn 0.5s ease;`;
    
        voiceOptions.forEach(v => {
            const row = document.createElement('div');
@@ -191,32 +187,14 @@
            playBtn.onclick = () => {
                document.querySelectorAll('audio').forEach(a => a.pause());
                const audio = new Audio(v.sample);
-               audio.play().catch(e => console.log("Sample missing (expected)"));
+               audio.play().catch(e => console.log("Sample missing"));
                playBtn.style.borderColor = "#00ff88"; playBtn.style.color = "#00ff88";
                setTimeout(() => { playBtn.style.borderColor = "#333"; playBtn.style.color = "#fff"; }, 2000);
            };
    
            const selBtn = document.createElement('button');
            selBtn.innerHTML = "SELECT";
-           selBtn.style.cssText = `
-            background: #00ff88; 
-            color: #000; 
-            border: none;
-            padding: 0 20px;       /* More breathing room */
-            height: 32px;          /* Fixed height */
-            border-radius: 6px; 
-            cursor: pointer;
-            font-weight: 800;      /* Extra bold */
-            font-family: sans-serif;
-            font-size: 11px; 
-            letter-spacing: 1px;
-            white-space: nowrap;   /* Never wrap text */
-            min-width: 80px;       /* STOP SQUASHING */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 10px rgba(0,255,136,0.2);
-        `;
+           selBtn.style.cssText = `background: #00ff88; color: #000; border: none; padding: 0 20px; height: 32px; border-radius: 6px; cursor: pointer; font-weight: 800; font-family: sans-serif; font-size: 11px; letter-spacing: 1px; white-space: nowrap; min-width: 80px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,255,136,0.2);`;
            selBtn.onclick = () => {
                soulBlueprint.voice_id = v.id;
                console.log("🎤 Voice Selected:", v.id);
@@ -232,214 +210,129 @@
    }
    
    /* =========================================
-   THE CARD REVEAL ENGINE (FINAL V3 - FIXED)
-   ========================================= */
-/* =========================================
-   THE CARD REVEAL ENGINE (FINAL V3 - SURGICAL FIX)
-   ========================================= */
+      THE CARD REVEAL ENGINE (FINAL V3 - FIXED)
+      ========================================= */
    function showCardReveal() {
-    console.log("🃏 REVEALING CARD...");
-    const overlay = document.getElementById('card-overlay');
-    const card = document.getElementById('final-soul-card');
-    
-    // --- STEP 1: UNHIDE THE OVERLAY FIRST (Crucial for QR) ---
-    // We remove 'hidden' so the div has physical size, but keep opacity low for a moment.
-    overlay.classList.remove('hidden'); 
-    
-    // --- STEP 2: GENERATE DATA ---
-    const sessionID = soulBlueprint.id || 'GEN-' + Math.random().toString(36).substr(2, 9).toUpperCase();
-    
-    document.getElementById('card-name').innerText = (soulBlueprint.name || "UNKNOWN SOUL").toUpperCase();
-    
-    // Sync Score
-    const inputLength = (soulBlueprint.vision?.length || 0) + (soulBlueprint.purpose?.length || 0);
-    const syncScore = Math.min(Math.floor(80 + (inputLength / 20)), 99); 
-    document.getElementById('card-sync').innerText = syncScore + "%";
-
-    // Image
-    const imgEl = document.getElementById('card-image');
-    if (soulBlueprint.temp_image_url) {
-        imgEl.src = soulBlueprint.temp_image_url;
-        imgEl.crossOrigin = "anonymous"; 
-    } else {
-        imgEl.src = "assets/default_card.png"; 
-    }
-
-    // Type
-    const archetype = soulBlueprint.vision ? soulBlueprint.vision.split(' ').slice(0, 3).join(' ') : "Ethereal Spirit";
-    document.getElementById('card-type').innerText = "Companion • " + archetype;
-
-    // Bio & Traits
-    document.getElementById('card-bio').innerText = `"${generateBio(soulBlueprint)}"`;
-
-    const traitsContainer = document.getElementById('card-traits');
-    traitsContainer.innerHTML = ""; 
-    const traits = extractTraits(soulBlueprint);
-    traits.forEach(t => {
-        const span = document.createElement('span');
-        span.className = 'trait-pill';
-        span.innerText = t.toUpperCase();
-        traitsContainer.appendChild(span);
-    });
-
-    // --- STEP 3: GENERATE QR CODE (Now that box is visible) ---
-    const qrContainer = document.querySelector('.qr-chip');
-    qrContainer.innerHTML = ""; // Clear placeholder
-    
-    try {
-        new QRCode(qrContainer, {
-            text: `https://remrin.ai/soul/${sessionID}`,
-            width: 45,
-            height: 45,
-            colorDark : "#000000",
-            colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.L
-        });
-    } catch(e) {
-        console.error("QR Error:", e);
-    }
-
-    // --- STEP 4: FADE IN ---
-    // Now that QR is drawn, we fade the whole thing in visually.
-    setTimeout(() => overlay.classList.add('active'), 50);
-
-    // --- STEP 5: ACTIVATE 3D TILT ---
-    // We add the listener to the whole document to catch all movement
-    document.addEventListener('mousemove', (e) => {
-        // Only tilt if the card is actually visible
-        if (!overlay.classList.contains('active')) return;
-
-        const x = (window.innerWidth / 2 - e.pageX) / 20; // Increased sensitivity (25 -> 20)
-        const y = (window.innerHeight / 2 - e.pageY) / 20;
-        
-        // Apply rotation
-        card.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
-    });
-
-    // --- STEP 6: BUTTON ACTIONS ---
-    const confirmBtn = document.getElementById('confirm-card-btn');
-    const newConfirmBtn = confirmBtn.cloneNode(true); // Reset listeners
-    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-    
-    newConfirmBtn.onclick = () => {
-        overlay.classList.remove('active');
-        setTimeout(() => overlay.classList.add('hidden'), 800);
-        userInput.value = "Yes, they are perfect.";
-        handleUserAction();
-    };
-
-    const dlBtn = document.getElementById('download-card-btn');
-    const newDlBtn = dlBtn.cloneNode(true);
-    dlBtn.parentNode.replaceChild(newDlBtn, dlBtn);
-
-    newDlBtn.onclick = () => {
-        const oldText = newDlBtn.innerText;
-        newDlBtn.innerText = "CAPTURING...";
-        
-        html2canvas(document.querySelector("#final-soul-card"), {
-            backgroundColor: null, 
-            scale: 3,
-            useCORS: true 
-        }).then(canvas => {
-            const link = document.createElement('a');
-            link.download = `${soulBlueprint.name || 'Soul'}_Card.png`;
-            link.href = canvas.toDataURL("image/png");
-            link.click();
-            newDlBtn.innerText = oldText;
-        });
-    };
-}
-
-    // --- 5. SHOW OVERLAY ---
-    overlay.classList.remove('hidden');
-    // Tiny delay to allow CSS transition to catch the opacity change
-    setTimeout(() => overlay.classList.add('active'), 50);
-
-    // --- 6. 3D TILT FX (THE FIX) ---
-    // We attach the listener to the WINDOW, not the overlay, to ensure it catches movement
-    // checking if overlay is active to save performance
-    window.addEventListener('mousemove', (e) => {
-        if(!overlay.classList.contains('active')) return;
-        
-        const x = (window.innerWidth / 2 - e.pageX) / 25;
-        const y = (window.innerHeight / 2 - e.pageY) / 25;
-        card.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
-    });
-
-    // --- 7. BUTTON ACTIONS ---
-    const confirmBtn = document.getElementById('confirm-card-btn');
-    // Remove old listeners to prevent double-clicks
-    const newConfirmBtn = confirmBtn.cloneNode(true);
-    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-    
-    newConfirmBtn.onclick = () => {
-        overlay.classList.remove('active');
-        setTimeout(() => overlay.classList.add('hidden'), 800);
-        userInput.value = "Yes, they are perfect.";
-        handleUserAction();
-    };
-
-    const dlBtn = document.getElementById('download-card-btn');
-    const newDlBtn = dlBtn.cloneNode(true);
-    dlBtn.parentNode.replaceChild(newDlBtn, dlBtn);
-
-    newDlBtn.onclick = () => {
-        const oldText = newDlBtn.innerText;
-        newDlBtn.innerText = "CAPTURING...";
-        
-        html2canvas(document.querySelector("#final-soul-card"), {
-            backgroundColor: null, 
-            scale: 3,
-            useCORS: true // CRITICAL FOR DOWNLOAD
-        }).then(canvas => {
-            const link = document.createElement('a');
-            link.download = `${soulBlueprint.name || 'Soul'}_Card.png`;
-            link.href = canvas.toDataURL("image/png");
-            link.click();
-            newDlBtn.innerText = oldText;
-        });
-    };
-}
-
-// =========================================
-// HELPER FUNCTIONS (The Brains)
-// =========================================
-
-function generateBio(data) {
-    // A simple sentence builder
-    const vision = data.vision || "mysterious entity";
-    const purpose = data.purpose || "exist";
-    const relation = data.relation || "guide";
-    
-    // "A [vision] forged to [purpose] as your [relation]."
-    // Truncate vision if it's too long for a bio
-    let shortVision = vision.length > 50 ? "Spirit" : vision;
-    
-    return `A ${shortVision} forged to ${purpose}. Serves as a ${relation}.`;
-}
-
-function extractTraits(data) {
-    let traits = ["GENESIS V1"]; // Default trait
-    
-    // Analyze Text for Keywords
-    const combinedText = (data.temperament + " " + data.vision).toLowerCase();
-    
-    if (combinedText.includes("protect") || combinedText.includes("guard")) traits.push("Guardian");
-    if (combinedText.includes("love") || combinedText.includes("kind")) traits.push("Gentle");
-    if (combinedText.includes("fight") || combinedText.includes("strong")) traits.push("Fierce");
-    if (combinedText.includes("smart") || combinedText.includes("wise")) traits.push("Wise");
-    if (combinedText.includes("fast") || combinedText.includes("speed")) traits.push("Fast");
-    if (combinedText.includes("dark")) traits.push("Shadow");
-    if (combinedText.includes("light")) traits.push("Radiant");
-    
-    // Add the specific temperament user typed
-    if (data.temperament) {
-        traits.push(data.temperament.split(' ')[0]); // First word only
-    }
-    
-    // Cap at 4 traits
-    return traits.slice(0, 4);
-}
+       console.log("🃏 REVEALING CARD...");
+       const overlay = document.getElementById('card-overlay');
+       const card = document.getElementById('final-soul-card');
+       
+       // --- STEP 1: UNHIDE THE OVERLAY FIRST (Crucial for QR) ---
+       overlay.classList.remove('hidden'); 
+       
+       // --- STEP 2: GENERATE DATA ---
+       const sessionID = soulBlueprint.id || 'GEN-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+       
+       document.getElementById('card-name').innerText = (soulBlueprint.name || "UNKNOWN SOUL").toUpperCase();
+       
+       const inputLength = (soulBlueprint.vision?.length || 0) + (soulBlueprint.purpose?.length || 0);
+       const syncScore = Math.min(Math.floor(80 + (inputLength / 20)), 99); 
+       document.getElementById('card-sync').innerText = syncScore + "%";
+   
+       const imgEl = document.getElementById('card-image');
+       if (soulBlueprint.temp_image_url) {
+           imgEl.src = soulBlueprint.temp_image_url;
+           imgEl.crossOrigin = "anonymous"; 
+       } else {
+           imgEl.src = "assets/default_card.png"; 
+       }
+   
+       const archetype = soulBlueprint.vision ? soulBlueprint.vision.split(' ').slice(0, 3).join(' ') : "Ethereal Spirit";
+       document.getElementById('card-type').innerText = "Companion • " + archetype;
+   
+       document.getElementById('card-bio').innerText = `"${generateBio(soulBlueprint)}"`;
+   
+       const traitsContainer = document.getElementById('card-traits');
+       traitsContainer.innerHTML = ""; 
+       const traits = extractTraits(soulBlueprint);
+       traits.forEach(t => {
+           const span = document.createElement('span');
+           span.className = 'trait-pill';
+           span.innerText = t.toUpperCase();
+           traitsContainer.appendChild(span);
+       });
+   
+       // --- STEP 3: GENERATE QR CODE ---
+       const qrContainer = document.querySelector('.qr-chip');
+       qrContainer.innerHTML = ""; 
+       
+       try {
+           new QRCode(qrContainer, {
+               text: `https://remrin.ai/soul/${sessionID}`,
+               width: 45,
+               height: 45,
+               colorDark : "#000000",
+               colorLight : "#ffffff",
+               correctLevel : QRCode.CorrectLevel.L
+           });
+       } catch(e) { console.error("QR Error:", e); }
+   
+       // --- STEP 4: FADE IN ---
+       setTimeout(() => overlay.classList.add('active'), 50);
+   
+       // --- STEP 5: ACTIVATE 3D TILT ---
+       document.addEventListener('mousemove', (e) => {
+           if (!overlay.classList.contains('active')) return;
+           const x = (window.innerWidth / 2 - e.pageX) / 20;
+           const y = (window.innerHeight / 2 - e.pageY) / 20;
+           card.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+       });
+   
+       // --- STEP 6: BUTTON ACTIONS ---
+       const confirmBtn = document.getElementById('confirm-card-btn');
+       const newConfirmBtn = confirmBtn.cloneNode(true);
+       confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+       
+       newConfirmBtn.onclick = () => {
+           overlay.classList.remove('active');
+           setTimeout(() => overlay.classList.add('hidden'), 800);
+           userInput.value = "Yes, they are perfect.";
+           handleUserAction();
+       };
+   
+       const dlBtn = document.getElementById('download-card-btn');
+       const newDlBtn = dlBtn.cloneNode(true);
+       dlBtn.parentNode.replaceChild(newDlBtn, dlBtn);
+   
+       newDlBtn.onclick = () => {
+           const oldText = newDlBtn.innerText;
+           newDlBtn.innerText = "CAPTURING...";
+           html2canvas(document.querySelector("#final-soul-card"), {
+               backgroundColor: null, scale: 3, useCORS: true 
+           }).then(canvas => {
+               const link = document.createElement('a');
+               link.download = `${soulBlueprint.name || 'Soul'}_Card.png`;
+               link.href = canvas.toDataURL("image/png");
+               link.click();
+               newDlBtn.innerText = oldText;
+           });
+       };
+   }
+   
+   // =========================================
+   // HELPER FUNCTIONS (The Brains)
+   // =========================================
+   function generateBio(data) {
+       const vision = data.vision || "mysterious entity";
+       const purpose = data.purpose || "exist";
+       const relation = data.relation || "guide";
+       let shortVision = vision.length > 50 ? "Spirit" : vision;
+       return `A ${shortVision} forged to ${purpose}. Serves as a ${relation}.`;
+   }
+   
+   function extractTraits(data) {
+       let traits = ["GENESIS V1"];
+       const combinedText = (data.temperament + " " + data.vision).toLowerCase();
+       if (combinedText.includes("protect") || combinedText.includes("guard")) traits.push("Guardian");
+       if (combinedText.includes("love") || combinedText.includes("kind")) traits.push("Gentle");
+       if (combinedText.includes("fight") || combinedText.includes("strong")) traits.push("Fierce");
+       if (combinedText.includes("smart") || combinedText.includes("wise")) traits.push("Wise");
+       if (combinedText.includes("fast") || combinedText.includes("speed")) traits.push("Fast");
+       if (combinedText.includes("dark")) traits.push("Shadow");
+       if (combinedText.includes("light")) traits.push("Radiant");
+       if (data.temperament) traits.push(data.temperament.split(' ')[0]);
+       return traits.slice(0, 4);
+   }
    
    // =========================================
    // 4. STARTUP (Glass Veil & Listeners)
@@ -458,14 +351,12 @@ function extractTraits(data) {
        if (userInput) userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleUserAction(); });
        if (closeVisionBtn) closeVisionBtn.addEventListener('click', () => { visionOverlay.classList.remove('active'); setTimeout(() => visionOverlay.classList.add('hidden'), 800); });
        
-       // Voice Toggle Logic (HUSH)
        if (statusDot) {
            statusDot.style.cursor = "pointer";
            statusDot.addEventListener('click', () => {
                isMuted = !isMuted;
                statusDot.style.background = isMuted ? "#ff4444" : "#00ff88"; 
                statusDot.style.boxShadow = isMuted ? "0 0 10px #ff4444" : "0 0 10px #00ff88";
-               
                const statusText = document.getElementById('voice-status-text');
                if (statusText) {
                    statusText.innerText = isMuted ? "VOICE: HUSH" : "VOICE: ONLINE";
