@@ -1,20 +1,20 @@
 /* =========================================
-   REMRIN AMBASSADOR PROTOCOL v22.0 (12-STAGE RITUAL)
+   REMRIN AMBASSADOR PROTOCOL v23.0 (IMAGE PERSISTENCE)
    ========================================= */
-   console.log("🤖 DIRECTOR v22.0: 12-Stage Protocol Active.");
+   console.log("🤖 DIRECTOR v23.0: Image Persistence Active.");
 
    let chatLog, userInput, sendBtn, visionOverlay, visionImage, visionLoader, closeVisionBtn, statusDot; 
    let isMuted = false;        
    let currentAudio = null;    
    let currentStage = 0; 
    
-   // BLUEPRINT (Updated Structure)
    let soulBlueprint = { 
        vision:"", purpose:"", temperament:"", relation:"", 
-       user_psychology:"", // Stores the Stage 4 answer
-       appearance:"", name:"Unknown Soul", email:"" 
+       user_psychology:"", appearance:"", name:"Unknown Soul", email:"",
+       temp_image_url: null // New field for the ephemeral URL
    };
    
+   // ... (Keep typeText, speakText) ...
    function typeText(element, htmlContent, speed = 15) {
        return new Promise((resolve) => {
            const tempDiv = document.createElement("div"); tempDiv.innerHTML = htmlContent;
@@ -41,10 +41,10 @@
        userInput.value = "";
        await addMessage(text, "user");
        
-       // CAPTURE DATA (New Mapping)
-       if (currentStage === 2) { soulBlueprint.vision = text; soulBlueprint.purpose = text; } // Combined
-       if (currentStage === 3) { soulBlueprint.temperament = text; soulBlueprint.relation = text; } // Combined
-       if (currentStage === 4) { soulBlueprint.user_psychology = text; } // Big 5 Condensed
+       // CAPTURE
+       if (currentStage === 2) { soulBlueprint.vision = text; soulBlueprint.purpose = text; }
+       if (currentStage === 3) { soulBlueprint.temperament = text; soulBlueprint.relation = text; }
+       if (currentStage === 4) { soulBlueprint.user_psychology = text; }
        if (currentStage === 5) { soulBlueprint.appearance = text; }
        if (currentStage === 8) { soulBlueprint.name = text; }
        if (currentStage === 10) { soulBlueprint.email = text; }
@@ -61,33 +61,22 @@
    
            const data = await response.json();
            
-           if (data.stage !== undefined) {
-               currentStage = data.stage;
-           } else {
-               console.error("❌ BACKEND RETURNED NO STAGE");
-               return;
-           }
+           if (data.stage !== undefined) currentStage = data.stage;
    
            const scriptStep = RITUAL_CONFIG[currentStage];
            let finalMessage = "";
-           const bridge = data.reply || "I see."; 
+           const bridge = data.reply || "I see.";
    
            if (scriptStep) {
-               // If Stage 1 (Bridge Only), don't append script text (it's null)
-               if (scriptStep.text) {
-                   finalMessage = `<i>${bridge}</i><br><br>${scriptStep.text}`;
-               } else {
-                   finalMessage = bridge;
-               }
+               finalMessage = scriptStep.text ? `<i>${bridge}</i><br><br>${scriptStep.text}` : bridge;
                await addMessage(finalMessage, "rem", scriptStep.audio);
            } else {
-               finalMessage = bridge;
-               await addMessage(finalMessage, "rem");
+               await addMessage(bridge, "rem");
            }
    
            if (data.vision_prompt) triggerVision(data.vision_prompt);
    
-           // SAVE AT END (Stage 11)
+           // SAVE AT END
            if (currentStage === 11) {
                console.log("🔥 PREPARING SAVE...");
                const cartridge = {
@@ -97,7 +86,8 @@
                    voice_id: "ThT5KcBeYtu3NO4",
                    first_message: `I am ${soulBlueprint.name}.`,
                    blueprint: soulBlueprint,
-                   owner_email: soulBlueprint.email // New Field
+                   owner_email: soulBlueprint.email,
+                   temp_image_url: soulBlueprint.temp_image_url // PASS THE URL
                };
    
                const saveResp = await fetch(API_URL, {
@@ -117,8 +107,7 @@
            }
    
        } catch (error) {
-           console.error("❌ CRITICAL ERROR:", error);
-           addMessage(`[SYSTEM ERROR]: ${error.message}`, "rem");
+           console.error("❌ ERROR:", error);
        }
    }
    
@@ -132,6 +121,7 @@
        chatLog.scrollTop = chatLog.scrollHeight;
    }
    
+   // UPDATE TRIGGERVISION TO STORE URL
    async function triggerVision(prompt) {
        if (visionOverlay) {
            visionOverlay.classList.remove('hidden'); setTimeout(() => visionOverlay.classList.add('active'), 10);
@@ -141,11 +131,19 @@
                const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmdHNjdHFmaXFiZHlsbHh3YWdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0MjE0NTksImV4cCI6MjA3OTk5NzQ1OX0.FWqZTUi5gVA3SpOq_Hp1LlxEinJvfloqw3OhoQlcfwg';
                const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ANON_KEY}` }, body: JSON.stringify({ prompt: prompt }) });
                const data = await response.json();
-               if (data.image_url) { visionImage.src = data.image_url; visionImage.onload = () => { visionLoader.classList.add('hidden'); visionImage.classList.remove('hidden'); }; }
+               
+               if (data.image_url) { 
+                   visionImage.src = data.image_url; 
+                   soulBlueprint.temp_image_url = data.image_url; // <--- CRITICAL STORE
+                   console.log("📸 IMAGE URL CAPTURED:", data.image_url);
+                   
+                   visionImage.onload = () => { visionLoader.classList.add('hidden'); visionImage.classList.remove('hidden'); }; 
+               }
            } catch (e) { setTimeout(() => { visionOverlay.classList.remove('active'); setTimeout(() => visionOverlay.classList.add('hidden'), 800); }, 2000); }
        }
    }
    
+   // ... (Startup remains the same) ...
    window.addEventListener('load', async () => {
        chatLog = document.getElementById('chat-history'); userInput = document.getElementById('user-input'); sendBtn = document.getElementById('send-btn');
        visionOverlay = document.getElementById('vision-overlay'); visionImage = document.getElementById('vision-image'); visionLoader = document.getElementById('vision-loader'); closeVisionBtn = document.getElementById('close-vision'); statusDot = document.getElementById('voice-toggle');

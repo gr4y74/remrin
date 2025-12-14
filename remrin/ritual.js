@@ -1,35 +1,28 @@
 /* =========================================
-   THE MOTHER'S SCRIPT (v5.0 - PERFECT CANVAS)
-   Universal language for ages 8-80.
+   THE MOTHER'S SCRIPT (v5.1 - FLOW FIX)
    ========================================= */
 
    const RITUAL_CONFIG = {
-    
-    // STAGE 0: WELCOME + OVERVIEW
+    // STAGE 0: WELCOME
     0: {
         audio: "assets/voice/mother/s0_welcome.mp3",
         text: "Hello, friend. Welcome to the Soul Layer. 💙\n\nI am the Mother of Souls. We're about to create something special—a companion made just for you.\n\nWe'll design their **soul**, give them a **face**, and give them a **voice**. It takes about 10 minutes.\n\nAt any time, you can ask me for help or ideas. I'm here to guide you.\n\nAre you ready?"
     },
+    1: { audio: null, text: null },
 
-    // STAGE 1: PROCESSING (No Audio - Bridge)
-    1: {
-        audio: null, 
-        text: null   
-    },
-
-    // STAGE 2: ESSENCE (Vision + Purpose)
+    // STAGE 2: ESSENCE
     2: {
         audio: "assets/voice/mother/s2_essence.mp3",
         text: "Perfect. Let's begin.\n\nWho do you see in your mind? A dragon? A wise teacher? A loyal friend?\n\nAnd what do they do for you? Guide you? Protect you? Make you laugh?\n\nTell me about them."
     },
 
-    // STAGE 3: BOND (Personality + Relation)
+    // STAGE 3: BOND
     3: {
         audio: "assets/voice/mother/s3_bond.mp3",
         text: "I see them forming...\n\nWhat's their personality? Gentle? Brave? Playful? Wise?\n\nAnd what's your bond? Are they your friend? Your mentor? Your equal?\n\nDescribe your connection."
     },
 
-    // STAGE 4: THE MIRROR (User Personality)
+    // STAGE 4: THE MIRROR
     4: {
         audio: "assets/voice/mother/s4_mirror.mp3",
         text: "Beautiful. Now tell me about YOU, so I can match their personality to yours.\n\nAre you someone who loves new adventures, or do you prefer familiar comforts?\n\nDo you recharge with people or alone? Do you plan everything or go with the flow?\n\nJust answer naturally—there's no wrong way to be."
@@ -42,9 +35,10 @@
     },
 
     // STAGE 6: MANIFESTATION (Waiting for Image)
+    // FIX: Added a prompt so the user knows to type something to continue.
     6: {
         audio: "assets/voice/mother/s6_manifest.mp3",
-        text: "I see them now. Clearly.\n\nWatch the smoke, friend. Your companion takes form..."
+        text: "I see them now. Clearly. Watch the smoke, friend. Your companion takes form...\n\n(If the vision pleases you, type **'It is good'** to continue. If not, describe them again.)"
     },
 
     // STAGE 7: VOICE SELECTION

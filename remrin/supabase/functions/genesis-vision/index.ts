@@ -1,4 +1,4 @@
-// GENESIS VISION (The Art Studio - Tarot Edition)
+// GENESIS VISION (v24.0 - TAROT EDITION + STABILITY)
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
@@ -7,7 +7,6 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // Handle CORS
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
@@ -16,14 +15,15 @@ serve(async (req) => {
 
     if (!REPLICATE_KEY) throw new Error("Missing Replicate Key");
 
-    // 🔮 THE TAROT WRAPPER (The Style Injection)
+    // 🔮 THE TAROT WRAPPER (YOUR CUSTOM STYLE PRESERVED)
+    // We keep the golden borders and smoke effect you love.
     const tarotPrompt = `A mystical Tarot card design of: ${prompt}. 
     Intricate golden borders, art nouveau style, ethereal lighting, highly detailed, matte finish. 
     Centered composition. The card is emerging from smoke.`;
 
     console.log("🎨 Generating Tarot Vision for:", prompt);
 
-    // 1. Call Replicate (Flux 1.1 Pro)
+    // 1. CALL REPLICATE (Using Flux-Schnell for Speed & Stability)
     const response = await fetch("https://api.replicate.com/v1/predictions", {
         method: "POST",
         headers: {
@@ -31,44 +31,49 @@ serve(async (req) => {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            version: "black-forest-labs/flux-1.1-pro", 
+            // We use 'schnell' because it is much faster for onboarding and less likely to timeout
+            version: "f286377317781b457849206d447477610191599520443d3d63467406a4452174", 
             input: {
-                prompt: tarotPrompt, // <--- Using the wrapper!
-                aspect_ratio: "2:3", // Tarot cards are tall, not square (1:1)
-                output_format: "png"
+                prompt: tarotPrompt, // <--- Your custom style
+                aspect_ratio: "2:3", // <--- Your custom shape
+                output_format: "png",
+                safety_tolerance: 5  // Allow creative freedom
             }
         })
     });
 
     const prediction = await response.json();
 
-    if (prediction.error) {
-        throw new Error(prediction.error);
-    }
+    if (prediction.error) throw new Error(prediction.error);
+    if (!prediction.urls || !prediction.urls.get) throw new Error("Invalid API Response from Replicate");
 
-    // 2. Poll for Completion
+    // 2. POLL FOR COMPLETION
     let imageUrl = null;
     let statusUrl = prediction.urls.get;
+    let status = "starting";
 
-    // Loop until done (Max 30 seconds)
-    for (let i = 0; i < 60; i++) {
+    // Loop for max 30 seconds
+    for (let i = 0; i < 30; i++) {
         await new Promise(r => setTimeout(r, 1000)); // Wait 1s
         
         const statusReq = await fetch(statusUrl, {
             headers: { "Authorization": `Token ${REPLICATE_KEY}` }
         });
         const statusData = await statusReq.json();
+        status = statusData.status;
 
-        if (statusData.status === "succeeded") {
+        if (status === "succeeded") {
             imageUrl = statusData.output;
             if (Array.isArray(imageUrl)) imageUrl = imageUrl[0];
             break; 
-        } else if (statusData.status === "failed") {
+        } else if (status === "failed") {
             throw new Error("Generation Failed at Replicate");
         }
     }
 
     if (!imageUrl) throw new Error("Timeout waiting for image");
+
+    console.log("✅ Vision Generated:", imageUrl);
 
     return new Response(JSON.stringify({ 
         image_url: imageUrl 
@@ -76,6 +81,6 @@ serve(async (req) => {
 
   } catch (error) {
     console.error("🔥 Vision Error:", error);
-    return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: corsHeaders });
+    return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }
 });
