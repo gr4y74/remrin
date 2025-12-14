@@ -231,61 +231,150 @@
        chatLog.appendChild(container); chatLog.scrollTop = chatLog.scrollHeight;
    }
    
-   function showCardReveal() {
-       const overlay = document.getElementById('card-overlay');
-       const card = document.getElementById('final-soul-card');
-       
-       // INJECT DATA
-       document.getElementById('card-name').innerText = soulBlueprint.name || "UNKNOWN SOUL";
-       document.getElementById('card-sync').innerText = Math.floor(Math.random() * (99 - 85) + 85) + "%";
-       
-       const imgEl = document.getElementById('card-image');
-       if (soulBlueprint.temp_image_url) { imgEl.src = soulBlueprint.temp_image_url; } 
-       else { imgEl.src = "assets/default_card.png"; }
-   
-       document.getElementById('card-type').innerText = "Companion • " + (soulBlueprint.vision ? soulBlueprint.vision.substring(0, 20) + "..." : "Mystery");
-       document.getElementById('card-bio').innerText = `"${soulBlueprint.purpose || 'A loyal companion forged in starlight.'}"`;
-   
-       const traitsContainer = document.getElementById('card-traits');
-       traitsContainer.innerHTML = "";
-       const traits = [ soulBlueprint.temperament ? soulBlueprint.temperament.split(' ')[0] : "Loyal", "Genesis V1", "AI Soul" ];
-       traits.forEach(t => {
-           const span = document.createElement('span'); span.className = 'trait-pill';
-           span.innerText = t.toUpperCase(); traitsContainer.appendChild(span);
-       });
-   
-       // SHOW OVERLAY
-       overlay.classList.remove('hidden');
-       setTimeout(() => overlay.classList.add('active'), 10);
-   
-       // 3D TILT
-       overlay.addEventListener('mousemove', (e) => {
-           const x = (window.innerWidth / 2 - e.pageX) / 25;
-           const y = (window.innerHeight / 2 - e.pageY) / 25;
-           card.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
-       });
-   
-       // BUTTONS
-       document.getElementById('confirm-card-btn').onclick = () => {
-           overlay.classList.remove('active');
-           setTimeout(() => overlay.classList.add('hidden'), 800);
-           userInput.value = "Yes, they are perfect.";
-           handleUserAction();
-       };
-   
-       document.getElementById('download-card-btn').onclick = () => {
-           const btn = document.getElementById('download-card-btn');
-           const oldText = btn.innerText;
-           btn.innerText = "CAPTURING...";
-           html2canvas(document.querySelector("#final-soul-card"), { backgroundColor: null, scale: 2 }).then(canvas => {
-               const link = document.createElement('a');
-               link.download = `${soulBlueprint.name}_SoulCard.png`;
-               link.href = canvas.toDataURL("image/png");
-               link.click();
-               btn.innerText = oldText;
-           });
-       };
-   }
+   /* =========================================
+   THE CARD REVEAL ENGINE (FINAL V2)
+   Includes: Real QR, Dynamic Bio, Smart Traits
+   ========================================= */
+function showCardReveal() {
+    const overlay = document.getElementById('card-overlay');
+    const card = document.getElementById('final-soul-card');
+    
+    // --- 1. GENERATE UNIQUE ID ---
+    // If we haven't saved yet, generate a session UUID for the card display
+    const sessionID = soulBlueprint.id || 'GEN-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+    
+    // --- 2. INJECT BASIC DATA ---
+    document.getElementById('card-name').innerText = soulBlueprint.name || "UNKNOWN SOUL";
+    
+    // Calculate Sync based on how much they wrote (Text Length Analysis)
+    const inputLength = (soulBlueprint.vision?.length || 0) + (soulBlueprint.purpose?.length || 0);
+    const syncScore = Math.min(Math.floor(80 + (inputLength / 20)), 99); 
+    document.getElementById('card-sync').innerText = syncScore + "%";
+
+    // Set Image
+    const imgEl = document.getElementById('card-image');
+    if (soulBlueprint.temp_image_url) {
+        imgEl.src = soulBlueprint.temp_image_url;
+    } else {
+        imgEl.src = "assets/default_card.png"; 
+    }
+
+    // Set Type
+    // Tries to grab the first few words of their "Vision"
+    const archetype = soulBlueprint.vision ? soulBlueprint.vision.split(' ').slice(0, 3).join(' ') : "Ethereal Spirit";
+    document.getElementById('card-type').innerText = "Companion • " + archetype;
+
+    // --- 3. DYNAMIC BIO GENERATOR ---
+    const bioText = generateBio(soulBlueprint);
+    document.getElementById('card-bio').innerText = `"${bioText}"`;
+
+    // --- 4. SMART TRAIT EXTRACTION ---
+    const traitsContainer = document.getElementById('card-traits');
+    traitsContainer.innerHTML = ""; // Clear old
+    
+    const traits = extractTraits(soulBlueprint);
+    traits.forEach(t => {
+        const span = document.createElement('span');
+        span.className = 'trait-pill';
+        span.innerText = t.toUpperCase();
+        traitsContainer.appendChild(span);
+    });
+
+    // --- 5. GENERATE REAL QR CODE ---
+    const qrContainer = document.querySelector('.qr-chip');
+    qrContainer.innerHTML = ""; // Clear the SVG
+    
+    // The URL this soul will live at (Future Proofing)
+    const soulURL = `https://remrin.ai/soul/${sessionID}`;
+    
+    new QRCode(qrContainer, {
+        text: soulURL,
+        width: 45,
+        height: 45,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.L
+    });
+
+    // --- 6. SHOW OVERLAY ---
+    overlay.classList.remove('hidden');
+    setTimeout(() => overlay.classList.add('active'), 10);
+
+    // --- 7. 3D TILT FX ---
+    overlay.addEventListener('mousemove', (e) => {
+        const x = (window.innerWidth / 2 - e.pageX) / 25;
+        const y = (window.innerHeight / 2 - e.pageY) / 25;
+        card.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+    });
+
+    // --- 8. BUTTON ACTIONS ---
+    document.getElementById('confirm-card-btn').onclick = () => {
+        overlay.classList.remove('active');
+        setTimeout(() => overlay.classList.add('hidden'), 800);
+        userInput.value = "Yes, they are perfect.";
+        handleUserAction();
+    };
+
+    document.getElementById('download-card-btn').onclick = () => {
+        const btn = document.getElementById('download-card-btn');
+        const oldText = btn.innerText;
+        btn.innerText = "CAPTURING...";
+        
+        // Hide buttons for clean screenshot? (Optional, usually we want the card only)
+        // html2canvas captures the specific #final-soul-card element, so buttons outside won't show!
+        
+        html2canvas(document.querySelector("#final-soul-card"), {
+            backgroundColor: null, 
+            scale: 3 // Ultra High Res
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `${soulBlueprint.name || 'Soul'}_Card.png`;
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+            btn.innerText = oldText;
+        });
+    };
+}
+
+// =========================================
+// HELPER FUNCTIONS (The Brains)
+// =========================================
+
+function generateBio(data) {
+    // A simple sentence builder
+    const vision = data.vision || "mysterious entity";
+    const purpose = data.purpose || "exist";
+    const relation = data.relation || "guide";
+    
+    // "A [vision] forged to [purpose] as your [relation]."
+    // Truncate vision if it's too long for a bio
+    let shortVision = vision.length > 50 ? "Spirit" : vision;
+    
+    return `A ${shortVision} forged to ${purpose}. Serves as a ${relation}.`;
+}
+
+function extractTraits(data) {
+    let traits = ["GENESIS V1"]; // Default trait
+    
+    // Analyze Text for Keywords
+    const combinedText = (data.temperament + " " + data.vision).toLowerCase();
+    
+    if (combinedText.includes("protect") || combinedText.includes("guard")) traits.push("Guardian");
+    if (combinedText.includes("love") || combinedText.includes("kind")) traits.push("Gentle");
+    if (combinedText.includes("fight") || combinedText.includes("strong")) traits.push("Fierce");
+    if (combinedText.includes("smart") || combinedText.includes("wise")) traits.push("Wise");
+    if (combinedText.includes("fast") || combinedText.includes("speed")) traits.push("Fast");
+    if (combinedText.includes("dark")) traits.push("Shadow");
+    if (combinedText.includes("light")) traits.push("Radiant");
+    
+    // Add the specific temperament user typed
+    if (data.temperament) {
+        traits.push(data.temperament.split(' ')[0]); // First word only
+    }
+    
+    // Cap at 4 traits
+    return traits.slice(0, 4);
+}
    
    // =========================================
    // 4. STARTUP (Glass Veil & Listeners)
