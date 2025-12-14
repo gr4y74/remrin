@@ -485,7 +485,15 @@ button:hover { background: white; color: black; transform: scale(1.1); box-shado
 
 /* TRAIT PILLS */
 .traits-row { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 8px; }
-.trait-pill { background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-size: 10px; color: #ccc; }
+.trait-pill {
+    /* Basic shape only - Colors handled by JS now */
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    border: 1px solid rgba(255,255,255,0.2); /* Fallback */
+}
 
 /* =========================================
    SOUL CARD STYLES (The Missing Piece)
