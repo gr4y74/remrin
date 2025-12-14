@@ -76,6 +76,106 @@
    
            if (data.vision_prompt) triggerVision(data.vision_prompt);
    
+// SPECIAL: STAGE 7 VOICE SELECTION
+if (currentStage === 7) {
+    // 1. Play the intro text
+    const scriptStep = RITUAL_CONFIG[7];
+    await addMessage(scriptStep.text, "rem", scriptStep.audio);
+    
+    // 2. Show the Voice Widget
+    setTimeout(() => {
+        renderVoiceChoices();
+    }, 1000);
+}
+// SPECIAL: STAGE 9 CARD REVEAL (Keep your existing card code here!)
+else if (currentStage === 9) {
+     // ... (Keep your card logic) ...
+}
+else if (scriptStep) {
+     // ... (Normal logic) ...
+}
+
+// ... END of handleUserAction ...
+
+// =========================================
+// NEW FUNCTION: VOICE WIDGET
+// =========================================
+function renderVoiceChoices() {
+const voiceOptions = [
+{ id: 'ThT5KcBeYtu3NO4', label: 'Ethereal', sample: 'assets/voice/samples/ethereal.mp3' },
+{ id: 'MF3mGyEYCl7XYWbV9V6O', label: 'Warm', sample: 'assets/voice/samples/warm.mp3' },
+{ id: 'AZnzlk1XvdvUeBnXmlld', label: 'Deep', sample: 'assets/voice/samples/deep.mp3' }
+];
+
+const container = document.createElement('div');
+container.className = 'voice-widget';
+container.style.cssText = `
+background: rgba(0, 255, 136, 0.05);
+border: 1px solid rgba(0, 255, 136, 0.2);
+border-radius: 12px;
+padding: 15px;
+margin-top: 10px;
+display: flex;
+flex-direction: column;
+gap: 10px;
+animation: fadeIn 0.5s ease;
+`;
+
+voiceOptions.forEach(v => {
+const row = document.createElement('div');
+row.style.cssText = "display: flex; align-items: center; justify-content: space-between; gap: 10px;";
+
+// Play Button
+const playBtn = document.createElement('button');
+playBtn.innerHTML = "▶ " + v.label;
+playBtn.style.cssText = `
+    flex: 1; background: #111; border: 1px solid #333; color: #fff;
+    padding: 8px; border-radius: 6px; cursor: pointer; text-align: left;
+    font-family: monospace; font-size: 12px; transition: all 0.2s;
+`;
+playBtn.onclick = () => {
+    // Stop others
+    document.querySelectorAll('audio').forEach(a => a.pause());
+    // Play this sample (Assumes you have sample files, or use a placeholder sound)
+    const audio = new Audio(v.sample);
+    audio.play().catch(e => console.log("Sample audio missing (expected for now)"));
+    
+    // Visual feedback
+    playBtn.style.borderColor = "#00ff88";
+    playBtn.style.color = "#00ff88";
+    setTimeout(() => { playBtn.style.borderColor = "#333"; playBtn.style.color = "#fff"; }, 2000);
+};
+
+// Select Button
+const selBtn = document.createElement('button');
+selBtn.innerHTML = "SELECT";
+selBtn.style.cssText = `
+    background: #00ff88; color: #000; border: none;
+    padding: 8px 12px; border-radius: 6px; cursor: pointer;
+    font-weight: bold; font-size: 10px; letter-spacing: 1px;
+`;
+selBtn.onclick = () => {
+    // Lock it in
+    soulBlueprint.voice_id = v.id;
+    console.log("🎤 Voice Selected:", v.id);
+    
+    // Remove widget to clean up chat
+    container.remove();
+    
+    // Auto-reply for the user
+    userInput.value = `I choose the ${v.label} voice.`;
+    handleUserAction();
+};
+
+row.appendChild(playBtn);
+row.appendChild(selBtn);
+container.appendChild(row);
+});
+
+chatLog.appendChild(container);
+chatLog.scrollTop = chatLog.scrollHeight;
+}
+
            // SPECIAL: STAGE 9 CARD REVEAL
         if (currentStage === 9) {
             // 1. Play the audio/text first
@@ -100,7 +200,7 @@
                    name: soulBlueprint.name,
                    system_prompt: `IDENTITY: You are ${soulBlueprint.name}.\nESSENCE: ${soulBlueprint.vision}\nPSYCHOLOGY_MATCH: ${soulBlueprint.user_psychology}`,
                    description: soulBlueprint.vision,
-                   voice_id: "ThT5KcBeYtu3NO4",
+                   voice_id: soulBlueprint.voice_id || "ThT5KcBeYtu3NO4",
                    first_message: `I am ${soulBlueprint.name}.`,
                    blueprint: soulBlueprint,
                    owner_email: soulBlueprint.email,
