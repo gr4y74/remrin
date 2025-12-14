@@ -143,26 +143,118 @@
        }
    }
    
-   // ... (Startup remains the same) ...
-   window.addEventListener('load', async () => {
-       chatLog = document.getElementById('chat-history'); userInput = document.getElementById('user-input'); sendBtn = document.getElementById('send-btn');
-       visionOverlay = document.getElementById('vision-overlay'); visionImage = document.getElementById('vision-image'); visionLoader = document.getElementById('vision-loader'); closeVisionBtn = document.getElementById('close-vision'); statusDot = document.getElementById('voice-toggle');
-       if (sendBtn) sendBtn.addEventListener('click', handleUserAction);
-       if (userInput) userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleUserAction(); });
-       if (closeVisionBtn) closeVisionBtn.addEventListener('click', () => { visionOverlay.classList.remove('active'); setTimeout(() => visionOverlay.classList.add('hidden'), 800); });
-       
-       const urlParams = new URLSearchParams(window.location.search);
-       if (urlParams.get('mode') === 'chat') { chatLog.innerHTML += '<div style="text-align:center;">[ CONNECTED ]</div>'; } 
-       else {
-           const veil = document.createElement('div');
-           veil.style.cssText = 'position:fixed; inset:0; background:black; z-index:10000; display:flex; align-items:center; justify-content:center; cursor:pointer;';
-           veil.innerHTML = '<h1 style="color:#ff00cc; font-family:sans-serif; letter-spacing:4px;">CLICK TO BEGIN</h1>';
-           document.body.appendChild(veil);
-           veil.addEventListener('click', () => {
-               veil.remove();
-               currentStage = 0; 
-               const startStep = RITUAL_CONFIG[0];
-               addMessage(startStep.text, "rem", startStep.audio);
-           });
-       }
-   });
+   // ==========================================
+// 8. STARTUP (THE GLASS VEIL)
+// ==========================================
+window.addEventListener('load', async () => {
+    chatLog = document.getElementById('chat-history');
+    userInput = document.getElementById('user-input');
+    sendBtn = document.getElementById('send-btn');
+    visionOverlay = document.getElementById('vision-overlay');
+    visionImage = document.getElementById('vision-image');
+    visionLoader = document.getElementById('vision-loader');
+    closeVisionBtn = document.getElementById('close-vision');
+    statusDot = document.getElementById('voice-toggle');
+
+    if (sendBtn) sendBtn.addEventListener('click', handleUserAction);
+    if (userInput) userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleUserAction(); });
+    if (closeVisionBtn) closeVisionBtn.addEventListener('click', () => { visionOverlay.classList.remove('active'); setTimeout(() => visionOverlay.classList.add('hidden'), 800); });
+    
+    // Voice Toggle
+    if (statusDot) {
+        statusDot.style.cursor = "pointer";
+        statusDot.addEventListener('click', () => {
+            isMuted = !isMuted;
+            statusDot.style.background = isMuted ? "#ff4444" : "#00ff88";
+            if (isMuted && currentAudio) currentAudio.pause();
+        });
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // === CHAT MODE (Normal) ===
+    if (urlParams.get('mode') === 'chat') { 
+        chatLog.innerHTML += '<div style="text-align:center; color:#666; font-size:12px; margin-top:20px; font-family:monospace;">[ SECURE CONNECTION ESTABLISHED ]</div>'; 
+    } 
+    // === RITUAL MODE (Onboarding) ===
+    else {
+        // 1. Target the Chat Container (to localize the veil)
+        const chatContainer = document.querySelector('.chat-container') || document.body;
+        
+        // Ensure container can hold the absolute veil
+        if (chatContainer !== document.body) {
+            chatContainer.style.position = 'relative';
+        }
+
+        // 2. Create the Localized Glass Veil
+        const veil = document.createElement('div');
+        veil.id = 'ritual-veil';
+        veil.style.cssText = `
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: inherit;
+        `;
+
+        // 3. The "Initialize" Button
+        veil.innerHTML = `
+            <div style="text-align:center; animation: fadeIn 1s ease-out;">
+                <div style="font-family: 'Outfit', sans-serif; color: rgba(255,255,255,0.8); letter-spacing: 2px; font-size: 12px; margin-bottom: 15px;">
+                    SOUL FORGE DETECTED
+                </div>
+                <button id="start-btn" style="
+                    background: transparent;
+                    border: 1px solid #ff00cc;
+                    color: #ff00cc;
+                    padding: 12px 30px;
+                    font-family: 'Outfit', sans-serif;
+                    text-transform: uppercase;
+                    letter-spacing: 3px;
+                    font-size: 14px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 0 15px rgba(255, 0, 204, 0.2);
+                    border-radius: 4px;
+                ">
+                    INITIALIZE
+                </button>
+            </div>
+        `;
+        
+        // Append to the chat window, NOT the body
+        chatContainer.appendChild(veil);
+
+        // Hover Effect
+        const btn = veil.querySelector('#start-btn');
+        btn.onmouseover = () => {
+            btn.style.background = '#ff00cc';
+            btn.style.color = '#fff';
+            btn.style.boxShadow = '0 0 25px rgba(255, 0, 204, 0.6)';
+        };
+        btn.onmouseout = () => {
+            btn.style.background = 'transparent';
+            btn.style.color = '#ff00cc';
+            btn.style.boxShadow = '0 0 15px rgba(255, 0, 204, 0.2)';
+        };
+
+        // 4. Click Handler
+        btn.addEventListener('click', () => {
+            // Fade out
+            veil.style.transition = 'opacity 0.5s ease';
+            veil.style.opacity = '0';
+            setTimeout(() => veil.remove(), 500);
+
+            // Start Logic
+            currentStage = 0; 
+            const startStep = RITUAL_CONFIG[0];
+            addMessage(startStep.text, "rem", startStep.audio);
+        });
+    }
+});
