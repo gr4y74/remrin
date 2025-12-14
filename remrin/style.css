@@ -456,9 +456,22 @@ button:hover { background: white; color: black; transform: scale(1.1); box-shado
     transition: transform 0.1s ease-out; /* Smooth tilt */
 }
 /* Ensure the image fits the Tarot aspect ratio better */
-.art-box { height: 240px; border-bottom: 2px solid #f59e0b; overflow: hidden; position: relative; }
-.art-img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.art-box {
+    height: 240px;
+    border-bottom: 4px solid #f59e0b; /* The Card's actual border */
+    overflow: hidden; /* Cuts off the excess */
+    position: relative;
+}
 
+.art-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    
+    /* 🪄 THE MAGIC TRICK: Zoom in 10% to hide the baked-in border */
+    transform: scale(1.1); 
+}
 /* BUTTONS */
 .actions { display: flex; gap: 20px; z-index: 100; }
 .btn-download, .btn-confirm {
@@ -512,15 +525,30 @@ button:hover { background: white; color: black; transform: scale(1.1); box-shado
     margin-top: auto; /* Push to bottom */
 }
 
-/* 3. ENSURE DARK BACKGROUND */
+/* 1. THE SHARED STRUCTURE */
 .trading-card {
-    background: #111 !important;
     border-radius: 20px;
-    overflow: hidden;
+    box-shadow: 0 0 50px rgba(0,0,0,0.8);
     position: relative;
-    display: flex;
-    flex-direction: column;
+    z-index: 10;
+    
+    /* CRITICAL: No default background here, or use transparent */
+    background: transparent; 
 }
+
+/* 2. THE RARITY SKINS (Separate Blocks) */
+.trading-card[data-rarity="common"] { 
+    background: linear-gradient(135deg, #444, #222); 
+}
+
+.trading-card[data-rarity="rare"] { 
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8); 
+}
+
+.trading-card[data-rarity="legendary"] { 
+    background: linear-gradient(135deg, #f59e0b, #d97706, #b91c1c); 
+}
+
 
 /* 4. CARD CONTENT AREA */
 .card-inner {
