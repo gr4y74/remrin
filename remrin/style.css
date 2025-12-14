@@ -556,3 +556,62 @@ button:hover { background: white; color: black; transform: scale(1.1); box-shado
 }
 .btn-download { background: #222; color: white; border: 1px solid #444; }
 .btn-confirm { background: #00ff88; color: black; box-shadow: 0 0 20px rgba(0,255,136,0.3); }
+
+/* =========================================
+   FINAL BUTTON FIX (The Anti-Squish)
+   ========================================= */
+
+/* 1. The Container */
+.actions {
+    display: flex; 
+    gap: 20px; 
+    z-index: 100;
+    margin-top: 25px;
+    width: 100%;             /* Occupy full width */
+    justify-content: center; /* Center the buttons */
+    flex-wrap: wrap;         /* Allow wrapping on tiny screens */
+}
+
+/* 2. The Buttons (Force Width & Shape) */
+.btn-download, .btn-confirm {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* CRITICAL SIZING RULES */
+    width: auto !important;       /* Let it grow with text */
+    min-width: 180px !important;  /* Force them to be wide pills */
+    height: 50px !important;      /* Tall and clickable */
+    padding: 0 30px !important;   /* Breathing room inside */
+    white-space: nowrap !important; /* Force text to stay on one line */
+    
+    /* VISUALS */
+    border-radius: 25px !important; 
+    font-weight: 800 !important;
+    font-family: 'Outfit', sans-serif !important; 
+    text-transform: uppercase;
+    font-size: 13px !important;
+    letter-spacing: 1.5px !important;
+    cursor: pointer; 
+    transition: all 0.2s ease;
+    border: none;
+}
+
+/* 3. Colors */
+.btn-download { 
+    background: #111; 
+    color: white; 
+    border: 1px solid #333 !important; 
+}
+
+.btn-confirm { 
+    background: #00ff88; 
+    color: black; 
+    box-shadow: 0 0 20px rgba(0,255,136,0.4); 
+}
+
+/* 4. Hover Effects */
+.btn-download:hover, .btn-confirm:hover { 
+    transform: translateY(-3px); 
+    filter: brightness(1.2);
+}
