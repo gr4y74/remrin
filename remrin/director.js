@@ -1,21 +1,20 @@
 /* =========================================
-   REMRIN AMBASSADOR PROTOCOL v20.0 (14-STEP RITUAL)
+   REMRIN AMBASSADOR PROTOCOL v22.0 (12-STAGE RITUAL)
    ========================================= */
-   console.log("🤖 DIRECTOR v20.0: 14-Step Protocol Active.");
+   console.log("🤖 DIRECTOR v22.0: 12-Stage Protocol Active.");
 
    let chatLog, userInput, sendBtn, visionOverlay, visionImage, visionLoader, closeVisionBtn, statusDot; 
    let isMuted = false;        
    let currentAudio = null;    
    let currentStage = 0; 
    
-   // Updated Blueprint to hold Big 5
+   // BLUEPRINT (Updated Structure)
    let soulBlueprint = { 
-       vision:"", purpose:"", temperament:"", 
-       openness:"", conscientiousness:"", extraversion:"", agreeableness:"", neuroticism:"",
-       relation:"", appearance:"", name:"Unknown" 
+       vision:"", purpose:"", temperament:"", relation:"", 
+       user_psychology:"", // Stores the Stage 4 answer
+       appearance:"", name:"Unknown Soul", email:"" 
    };
    
-   // ... (KEEP typeText, speakText, playAudioFile as is) ...
    function typeText(element, htmlContent, speed = 15) {
        return new Promise((resolve) => {
            const tempDiv = document.createElement("div"); tempDiv.innerHTML = htmlContent;
@@ -42,22 +41,13 @@
        userInput.value = "";
        await addMessage(text, "user");
        
-       // CAPTURE DATA (Updated for 14 Steps)
-       if (currentStage === 2) soulBlueprint.vision = text;
-       if (currentStage === 3) soulBlueprint.purpose = text;
-       if (currentStage === 4) soulBlueprint.temperament = text;
-       
-       // BIG 5 CAPTURE
-       if (currentStage === 5) soulBlueprint.openness = text;
-       if (currentStage === 6) soulBlueprint.conscientiousness = text;
-       if (currentStage === 7) soulBlueprint.extraversion = text;
-       if (currentStage === 8) soulBlueprint.agreeableness = text;
-       if (currentStage === 9) soulBlueprint.neuroticism = text;
-   
-       if (currentStage === 10) soulBlueprint.relation = text;
-       if (currentStage === 11) soulBlueprint.appearance = text;
-       // Stage 12 is Voice (Skipped capture for now as it's conversational)
-       if (currentStage === 13) soulBlueprint.name = text;
+       // CAPTURE DATA (New Mapping)
+       if (currentStage === 2) { soulBlueprint.vision = text; soulBlueprint.purpose = text; } // Combined
+       if (currentStage === 3) { soulBlueprint.temperament = text; soulBlueprint.relation = text; } // Combined
+       if (currentStage === 4) { soulBlueprint.user_psychology = text; } // Big 5 Condensed
+       if (currentStage === 5) { soulBlueprint.appearance = text; }
+       if (currentStage === 8) { soulBlueprint.name = text; }
+       if (currentStage === 10) { soulBlueprint.email = text; }
    
        try {
            const API_URL = 'https://wftsctqfiqbdyllxwagi.supabase.co/functions/v1/genesis-api';
@@ -70,43 +60,65 @@
            });
    
            const data = await response.json();
-           currentStage = data.stage; // Update Stage Number
+           
+           if (data.stage !== undefined) {
+               currentStage = data.stage;
+           } else {
+               console.error("❌ BACKEND RETURNED NO STAGE");
+               return;
+           }
    
-           // RETRIEVE SCRIPT
            const scriptStep = RITUAL_CONFIG[currentStage];
            let finalMessage = "";
-           
+           const bridge = data.reply || "I see."; 
+   
            if (scriptStep) {
-               finalMessage = `<i>${data.reply}</i><br><br>${scriptStep.text}`;
+               // If Stage 1 (Bridge Only), don't append script text (it's null)
+               if (scriptStep.text) {
+                   finalMessage = `<i>${bridge}</i><br><br>${scriptStep.text}`;
+               } else {
+                   finalMessage = bridge;
+               }
                await addMessage(finalMessage, "rem", scriptStep.audio);
            } else {
-               finalMessage = data.reply;
+               finalMessage = bridge;
                await addMessage(finalMessage, "rem");
            }
    
            if (data.vision_prompt) triggerVision(data.vision_prompt);
    
-           // SAVE AT END (Stage 14)
-           if (currentStage === 14) {
+           // SAVE AT END (Stage 11)
+           if (currentStage === 11) {
+               console.log("🔥 PREPARING SAVE...");
                const cartridge = {
                    name: soulBlueprint.name,
-                   system_prompt: `IDENTITY: You are ${soulBlueprint.name}.\nESSENCE: ${soulBlueprint.vision}\nPURPOSE: ${soulBlueprint.purpose}\nTONE: ${soulBlueprint.temperament}\nPSYCHOLOGY: Openness(${soulBlueprint.openness}), Conscientiousness(${soulBlueprint.conscientiousness}), Extraversion(${soulBlueprint.extraversion}), Agreeableness(${soulBlueprint.agreeableness}), Neuroticism(${soulBlueprint.neuroticism})`,
+                   system_prompt: `IDENTITY: You are ${soulBlueprint.name}.\nESSENCE: ${soulBlueprint.vision}\nPSYCHOLOGY_MATCH: ${soulBlueprint.user_psychology}`,
                    description: soulBlueprint.vision,
                    voice_id: "ThT5KcBeYtu3NO4",
                    first_message: `I am ${soulBlueprint.name}.`,
-                   blueprint: soulBlueprint
+                   blueprint: soulBlueprint,
+                   owner_email: soulBlueprint.email // New Field
                };
-               console.log("🔥 SAVING...", cartridge);
-               await fetch(API_URL, {
+   
+               const saveResp = await fetch(API_URL, {
                    method: 'POST',
                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ANON_KEY}` },
                    body: JSON.stringify({ action: 'create_companion', cartridge: cartridge })
                });
-               console.log("✅ SAVED");
+   
+               if (saveResp.ok) {
+                   const saveResult = await saveResp.json();
+                   console.log("✅ SOUL SAVED:", saveResult.companion_id);
+                   const note = document.createElement('div');
+                   note.innerHTML = `<span style="color:#00ff88; font-family:monospace;">[ SOUL SAVED: ${saveResult.companion_id} ]</span>`;
+                   note.style.textAlign = 'center';
+                   chatLog.appendChild(note);
+               }
            }
    
        } catch (error) {
-           console.error("❌ ERROR:", error);
+           console.error("❌ CRITICAL ERROR:", error);
+           addMessage(`[SYSTEM ERROR]: ${error.message}`, "rem");
        }
    }
    
@@ -120,7 +132,6 @@
        chatLog.scrollTop = chatLog.scrollHeight;
    }
    
-   // ... (KEEP TRIGGERVISION) ...
    async function triggerVision(prompt) {
        if (visionOverlay) {
            visionOverlay.classList.remove('hidden'); setTimeout(() => visionOverlay.classList.add('active'), 10);
@@ -135,7 +146,6 @@
        }
    }
    
-   // STARTUP
    window.addEventListener('load', async () => {
        chatLog = document.getElementById('chat-history'); userInput = document.getElementById('user-input'); sendBtn = document.getElementById('send-btn');
        visionOverlay = document.getElementById('vision-overlay'); visionImage = document.getElementById('vision-image'); visionLoader = document.getElementById('vision-loader'); closeVisionBtn = document.getElementById('close-vision'); statusDot = document.getElementById('voice-toggle');
@@ -152,7 +162,7 @@
            document.body.appendChild(veil);
            veil.addEventListener('click', () => {
                veil.remove();
-               currentStage = 0; // START ORIENTATION
+               currentStage = 0; 
                const startStep = RITUAL_CONFIG[0];
                addMessage(startStep.text, "rem", startStep.audio);
            });
