@@ -3,6 +3,12 @@
    Includes: Markdown Parser, Download Flattener, Bio Logic V2, 6 Voices
    ========================================= */
 import { RITUAL_CONFIG } from './ritual.js';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+    import.meta.env.VITE_SUPABASE_URL,
+    import.meta.env.VITE_SUPABASE_ANON_KEY
+);
 
 console.log("🤖 DIRECTOR v26.0: Investor Protocol Active.");
 
@@ -456,11 +462,62 @@ function showCardReveal() {
     const confirmBtn = document.getElementById('confirm-card-btn');
     const newConfirmBtn = confirmBtn.cloneNode(true);
     confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-    newConfirmBtn.onclick = () => {
-        overlay.classList.remove('active');
-        setTimeout(() => overlay.classList.add('hidden'), 800);
-        userInput.value = "Yes, perfect.";
-        handleUserAction();
+    newConfirmBtn.onclick = async () => {
+        const oldText = newConfirmBtn.innerText;
+        newConfirmBtn.innerText = "CONNECTING...";
+        newConfirmBtn.disabled = true;
+
+        try {
+            console.log("🔌 WIRING STARTED...");
+
+            // 1. UPLOAD IMAGE
+            const imageUrl = soulBlueprint.temp_image_url;
+            if (!imageUrl) throw new Error("No image generated.");
+
+            // Fetch the blob from the URL
+            const res = await fetch(imageUrl);
+            const blob = await res.blob();
+
+            // Upload to Supabase Storage
+            const fileName = `souls/${Date.now()}_${soulBlueprint.name.replace(/\s+/g, '')}.png`;
+            const { data: uploadData, error: uploadError } = await supabase.storage
+                .from('soul_forge')
+                .upload(fileName, blob);
+
+            if (uploadError) throw new Error("Upload Failed: " + uploadError.message);
+
+            // Get Public URL
+            const { data: publicUrlData } = supabase.storage
+                .from('soul_forge')
+                .getPublicUrl(fileName);
+
+            const finalPublicUrl = publicUrlData.publicUrl;
+            console.log("✅ IMAGE UPLOADED:", finalPublicUrl);
+
+            // 2. INSERT ROW
+            const { error: insertError } = await supabase
+                .from('pending_souls')
+                .insert({
+                    email: soulBlueprint.email,
+                    soul_name: soulBlueprint.name,
+                    soul_prompt: generateBio(soulBlueprint), // Using the generated bio as the prompt
+                    image_url: finalPublicUrl
+                });
+
+            if (insertError) throw new Error("DB Insert Failed: " + insertError.message);
+            console.log("✅ DB RECORD INSERTED");
+
+            // 3. REDIRECT
+            const redirectUrl = `http://localhost:3000/login?email=${encodeURIComponent(soulBlueprint.email)}`;
+            console.log("🚀 REDIRECTING:", redirectUrl);
+            window.location.href = redirectUrl;
+
+        } catch (e) {
+            console.error("❌ ACCEPT ERROR:", e);
+            alert("Connection Failed: " + e.message);
+            newConfirmBtn.innerText = oldText;
+            newConfirmBtn.disabled = false;
+        }
     };
 }
 
