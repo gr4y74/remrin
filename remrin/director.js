@@ -211,19 +211,19 @@ function renderVoiceChoices() {
     // 9 VOICES (3 Female, 3 Male, 3 Creature/Other)
     const voiceOptions = [
         // FEMININE
-        { id: 'F_Ethereal', label: 'Ethereal (F)', sample: 'assets/voice/samples/ethereal.mp3', type: 'FEM' },
-        { id: 'F_Warm',     label: 'Warm (F)',     sample: 'assets/voice/samples/warm.mp3',     type: 'FEM' },
-        { id: 'F_Mystic',   label: 'Mystic (F)',   sample: 'assets/voice/samples/mystic.mp3',   type: 'FEM' },
+        { id: 'F_Emma',       label: 'Emma (F)',     sample: 'assets/voice/samples/emma.mp3',     type: 'FEM' },
+        { id: 'F_Blonde',     label: 'Blonde (F)',   sample: 'assets/voice/samples/blonde.mp3',   type: 'FEM' },
+        { id: 'F_Mystic',     label: 'Mystic (F)',   sample: 'assets/voice/samples/mystic.mp3',   type: 'FEM' },
         
         // MASCULINE
-        { id: 'M_Deep',     label: 'Deep (M)',     sample: 'assets/voice/samples/deep.mp3',     type: 'MASC' },
-        { id: 'M_Scholar',  label: 'Scholar (M)',  sample: 'assets/voice/samples/scholar.mp3',  type: 'MASC' },
-        { id: 'M_Rogue',    label: 'Rogue (M)',    sample: 'assets/voice/samples/rogue.mp3',    type: 'MASC' },
+        { id: 'M_Deep',       label: 'Deep (F)',     sample: 'assets/voice/samples/deep.mp3',     type: 'MASC' },
+        { id: 'M_Scholar',    label: 'Scholar (M)',  sample: 'assets/voice/samples/scholar.mp3',  type: 'MASC' },
+        { id: 'M_Rogue',      label: 'Rogue (M)',    sample: 'assets/voice/samples/rogue.mp3',    type: 'MASC' },
         
         // XEN (OTHER)
-        { id: 'O_Whimsy',   label: 'Whimsy (X)',   sample: 'assets/voice/samples/whimsy.mp3',   type: 'XEN' },
-        { id: 'O_Pixel',    label: 'Pixel (X)',    sample: 'assets/voice/samples/pixel.mp3',    type: 'XEN' },
-        { id: 'O_Ancient',  label: 'Ancient (X)',  sample: 'assets/voice/samples/ancient.mp3',  type: 'XEN' }
+        { id: 'O_Old',        label: 'Old Man (M)',  sample: 'assets/voice/samples/old.mp3',      type: 'MASC' },
+        { id: 'O_Frog',       label: 'Frog (X)',     sample: 'assets/voice/samples/frog.mp3',     type: 'XEN'  },
+        { id: 'O_Ancient',    label: 'Ancient (M)',  sample: 'assets/voice/samples/ancient.mp3',  type: 'MASC' },
     ];
 
     const container = document.createElement('div');
