@@ -551,33 +551,48 @@ window.addEventListener('load', async () => {
             recognition.lang = 'en-US';
             recognition.interimResults = false;
 
+            let isListening = false;
+
             micBtn.onclick = () => {
+                if (isListening) return; // Prevent double trigger
                 try {
                     recognition.start();
-                    micBtn.style.color = '#ff0000'; // Visual cue: Red means recording
+                    isListening = true;
+                    micBtn.style.color = '#ff0000';
                     micBtn.style.borderColor = '#ff0000';
                     userInput.placeholder = "Listening...";
                 } catch (e) {
                     console.error("Mic Error:", e);
+                    isListening = false;
                 }
             };
 
             recognition.onresult = (event) => {
                 const transcript = event.results[0][0].transcript;
                 userInput.value = transcript;
-                userInput.placeholder = "Initializing..."; // Reset placeholder
+                userInput.placeholder = "Initializing...";
             };
 
             recognition.onend = () => {
-                micBtn.style.color = 'white'; // Reset color
+                isListening = false;
+                micBtn.style.color = 'white';
                 micBtn.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                userInput.focus(); // Focus back to input
+                userInput.focus();
             };
 
             recognition.onerror = (event) => {
+                isListening = false;
                 console.error("Speech Error:", event.error);
                 micBtn.style.color = 'white';
-                userInput.placeholder = "Error. Try again.";
+
+                if (event.error === 'network') {
+                    userInput.placeholder = "Browser not supported (Network Error)";
+                    alert("Voice Input Error: Your browser (likely Chromium Flatpak) is missing Google API keys required for speech recognition. Please use official Chrome or Edge.");
+                } else if (event.error === 'not-allowed') {
+                    userInput.placeholder = "Mic blocked. Check settings.";
+                } else {
+                    userInput.placeholder = "Error. Try again.";
+                }
             }
 
         } else {
