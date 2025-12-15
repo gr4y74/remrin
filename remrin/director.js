@@ -203,58 +203,122 @@
    // 3. UI WIDGETS
    // =========================================
    
-   function renderVoiceChoices() {
-       // UPDATED: 6 VOICES (3 Female, 3 Male)
-       // Note: Ensure these files exist in assets/voice/samples/ or update paths!
-       const voiceOptions = [
-           { id: 'F_Ethereal', label: 'Ethereal (F)', sample: 'assets/voice/samples/ethereal.mp3', gender: 'F' },
-           { id: 'F_Warm',     label: 'Warm (F)',     sample: 'assets/voice/samples/warm.mp3',     gender: 'F' },
-           { id: 'F_Mystic',   label: 'Mystic (F)',   sample: 'assets/voice/samples/mystic.mp3',   gender: 'F' },
-           { id: 'M_Deep',     label: 'Deep (M)',     sample: 'assets/voice/samples/deep.mp3',     gender: 'M' },
-           { id: 'M_Scholar',  label: 'Scholar (M)',  sample: 'assets/voice/samples/scholar.mp3',  gender: 'M' },
-           { id: 'M_Rogue',    label: 'Rogue (M)',    sample: 'assets/voice/samples/rogue.mp3',    gender: 'M' }
-       ];
-   
-       const container = document.createElement('div');
-       container.className = 'voice-widget';
-       container.style.cssText = `background: rgba(0, 255, 136, 0.05); border: 1px solid rgba(0, 255, 136, 0.2); border-radius: 12px; padding: 15px; margin-top: 10px; display: flex; flex-direction: column; gap: 8px; animation: fadeIn 0.5s ease;`;
-   
-       // Add a label
-       const label = document.createElement('div');
-       label.innerText = "SELECT A VOICE FREQUENCY:";
-       label.style.cssText = "font-size: 10px; color: #00ff88; letter-spacing: 2px; margin-bottom: 5px;";
-       container.appendChild(label);
-   
-       voiceOptions.forEach(v => {
-           const row = document.createElement('div');
-           row.style.cssText = "display: flex; align-items: center; justify-content: space-between; gap: 10px;";
-           
-           const playBtn = document.createElement('button');
-           playBtn.innerHTML = `▶ ${v.label}`;
-           playBtn.style.cssText = `flex: 1; background: #111; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 6px; cursor: pointer; text-align: left; font-family: monospace; font-size: 12px; transition: all 0.2s;`;
-           playBtn.onclick = () => {
-               document.querySelectorAll('audio').forEach(a => a.pause());
-               const audio = new Audio(v.sample);
-               audio.play().catch(e => console.log("Sample missing - Upload audio files to assets/voice/samples/"));
-               playBtn.style.borderColor = "#00ff88"; playBtn.style.color = "#00ff88";
-               setTimeout(() => { playBtn.style.borderColor = "#333"; playBtn.style.color = "#fff"; }, 2000);
-           };
-   
-           const selBtn = document.createElement('button');
-           selBtn.innerHTML = "SELECT";
-           selBtn.style.cssText = `background: #00ff88; color: #000; border: none; padding: 0 15px; height: 30px; border-radius: 6px; cursor: pointer; font-weight: 800; font-size: 10px; min-width: 60px;`;
-           selBtn.onclick = () => {
-               soulBlueprint.voice_id = v.id;
-               container.remove();
-               userInput.value = `I choose the ${v.label} voice.`;
-               handleUserAction();
-           };
-   
-           row.appendChild(playBtn); row.appendChild(selBtn);
-           container.appendChild(row);
-       });
-       chatLog.appendChild(container); chatLog.scrollTop = chatLog.scrollHeight;
-   }
+  // =========================================
+// 3. UI WIDGETS (UPDATED: 9 VOICES)
+// =========================================
+
+function renderVoiceChoices() {
+    // 9 VOICES (3 Female, 3 Male, 3 Creature/Other)
+    const voiceOptions = [
+        // FEMININE
+        { id: 'F_Ethereal', label: 'Ethereal (F)', sample: 'assets/voice/samples/ethereal.mp3', type: 'FEM' },
+        { id: 'F_Warm',     label: 'Warm (F)',     sample: 'assets/voice/samples/warm.mp3',     type: 'FEM' },
+        { id: 'F_Mystic',   label: 'Mystic (F)',   sample: 'assets/voice/samples/mystic.mp3',   type: 'FEM' },
+        
+        // MASCULINE
+        { id: 'M_Deep',     label: 'Deep (M)',     sample: 'assets/voice/samples/deep.mp3',     type: 'MASC' },
+        { id: 'M_Scholar',  label: 'Scholar (M)',  sample: 'assets/voice/samples/scholar.mp3',  type: 'MASC' },
+        { id: 'M_Rogue',    label: 'Rogue (M)',    sample: 'assets/voice/samples/rogue.mp3',    type: 'MASC' },
+        
+        // XEN (OTHER)
+        { id: 'O_Whimsy',   label: 'Whimsy (X)',   sample: 'assets/voice/samples/whimsy.mp3',   type: 'XEN' },
+        { id: 'O_Pixel',    label: 'Pixel (X)',    sample: 'assets/voice/samples/pixel.mp3',    type: 'XEN' },
+        { id: 'O_Ancient',  label: 'Ancient (X)',  sample: 'assets/voice/samples/ancient.mp3',  type: 'XEN' }
+    ];
+
+    const container = document.createElement('div');
+    container.className = 'voice-widget';
+    // Increased height slightly to fit 9 items nicely
+    container.style.cssText = `
+        background: rgba(0, 255, 136, 0.05); 
+        border: 1px solid rgba(0, 255, 136, 0.2); 
+        border-radius: 12px; 
+        padding: 15px; 
+        margin-top: 10px; 
+        display: flex; 
+        flex-direction: column; 
+        gap: 6px; 
+        animation: fadeIn 0.5s ease;
+        max-height: 300px;
+        overflow-y: auto; /* Scroll if screen is tiny */
+    `;
+
+    // Add a label
+    const label = document.createElement('div');
+    label.innerText = "SELECT VOICE FREQUENCY:";
+    label.style.cssText = "font-size: 10px; color: #00ff88; letter-spacing: 2px; margin-bottom: 5px; font-weight: bold;";
+    container.appendChild(label);
+
+    voiceOptions.forEach(v => {
+        const row = document.createElement('div');
+        row.style.cssText = "display: flex; align-items: center; justify-content: space-between; gap: 8px;";
+        
+        // Color code the buttons based on type
+        let badgeColor = "#888"; // Gray default
+        if (v.type === 'FEM') badgeColor = "#ec4899"; // Pink
+        if (v.type === 'MASC') badgeColor = "#3b82f6"; // Blue
+        if (v.type === 'XEN') badgeColor = "#f59e0b"; // Orange/Gold
+
+        const playBtn = document.createElement('button');
+        // Added a tiny colored dot to show gender/type visually
+        playBtn.innerHTML = `<span style="color:${badgeColor}; margin-right:6px;">●</span> ${v.label}`;
+        playBtn.style.cssText = `
+            flex: 1; 
+            background: #111; 
+            border: 1px solid #333; 
+            color: #fff; 
+            padding: 8px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            text-align: left; 
+            font-family: monospace; 
+            font-size: 11px; 
+            transition: all 0.2s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        `;
+        
+        playBtn.onclick = () => {
+            document.querySelectorAll('audio').forEach(a => a.pause());
+            const audio = new Audio(v.sample);
+            audio.play().catch(e => console.log("Sample missing:", v.sample));
+            
+            // Highlight effect
+            playBtn.style.borderColor = badgeColor;
+            playBtn.style.color = badgeColor;
+            setTimeout(() => { playBtn.style.borderColor = "#333"; playBtn.style.color = "#fff"; }, 2000);
+        };
+
+        const selBtn = document.createElement('button');
+        selBtn.innerHTML = "PICK";
+        selBtn.style.cssText = `
+            background: ${badgeColor}; 
+            color: #000; 
+            border: none; 
+            padding: 0 10px; 
+            height: 30px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-weight: 800; 
+            font-size: 9px; 
+            min-width: 50px;
+        `;
+        
+        selBtn.onclick = () => {
+            soulBlueprint.voice_id = v.id;
+            container.remove();
+            userInput.value = `I choose the ${v.label} voice.`;
+            handleUserAction();
+        };
+
+        row.appendChild(playBtn); row.appendChild(selBtn);
+        container.appendChild(row);
+    });
+    
+    chatLog.appendChild(container); 
+    chatLog.scrollTop = chatLog.scrollHeight;
+}
    
    /* =========================================
       THE CARD REVEAL ENGINE (FINAL V4 - DOWNLOAD FIX)
