@@ -651,3 +651,8 @@ window.addEventListener('load', async () => {
         });
     }
 });
+
+// --- DEBUGGING EXPORTS ---
+// Allow console access for manual testing
+window.soulBlueprint = soulBlueprint;
+window.showCardReveal = showCardReveal;
