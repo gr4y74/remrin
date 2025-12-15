@@ -2,7 +2,7 @@
    THE MOTHER'S SCRIPT (v5.1 - FLOW FIX)
    ========================================= */
 
-   const RITUAL_CONFIG = {
+   export const RITUAL_CONFIG = {
     // STAGE 0: WELCOME
     0: {
         audio: "assets/voice/mother/s0_welcome.mp3",

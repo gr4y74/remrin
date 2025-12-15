@@ -1,133 +1,262 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="assets/favicon.png">
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Remrin.ai | The Soul Layer</title>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;700&display=swap"
+        rel="stylesheet">
 
     <style>
         /* =========================================
            0. CUSTOM FONTS
            ========================================= */
-        @font-face { font-family: 'Product Sans'; src: url('assets/fonts/product-sans/Product_Sans_Regular.ttf') format('truetype'); font-weight: 400; font-style: normal; }
-        @font-face { font-family: 'Product Sans'; src: url('assets/fonts/product-sans/Product_Sans_Bold.ttf') format('truetype'); font-weight: 700; font-style: normal; }
-        @font-face { font-family: 'Product Sans'; src: url('assets/fonts/product-sans/Product_Sans_Italic.ttf') format('truetype'); font-weight: 400; font-style: italic; }
+        @font-face {
+            font-family: 'Product Sans';
+            src: url('assets/fonts/product-sans/Product_Sans_Regular.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'Product Sans';
+            src: url('assets/fonts/product-sans/Product_Sans_Bold.ttf') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'Product Sans';
+            src: url('assets/fonts/product-sans/Product_Sans_Italic.ttf') format('truetype');
+            font-weight: 400;
+            font-style: italic;
+        }
 
         /* =========================================
            1. THE SKELETON
            ========================================= */
-        :root { --void-bg: #030014; }
-        * { box-sizing: border-box; outline: none; }
-        
-     /* 1. BASE SETTINGS */
-     body, html { 
-            margin: 0; 
-            width: 100%; 
-            /* CHANGED: 100% -> 100dvh (Fixes mobile scroll bug) */
-            height: 100dvh; 
-            
-            background-color: var(--void-bg); 
-            color: #fff; 
-            font-family: 'Product Sans', 'Inter', sans-serif; 
-            overflow: hidden; 
+        :root {
+            --void-bg: #030014;
         }
 
-        h1, h2, h3, .brand-font { font-family: 'Outfit', sans-serif; }
+        * {
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        /* 1. BASE SETTINGS */
+        body,
+        html {
+            margin: 0;
+            width: 100%;
+            /* CHANGED: 100% -> 100dvh (Fixes mobile scroll bug) */
+            height: 100dvh;
+
+            background-color: var(--void-bg);
+            color: #fff;
+            font-family: 'Product Sans', 'Inter', sans-serif;
+            overflow: hidden;
+        }
+
+        h1,
+        h2,
+        h3,
+        .brand-font {
+            font-family: 'Outfit', sans-serif;
+        }
 
         /* =========================================
            2. THE HUD
            ========================================= */
         .glass-nav {
-            position: absolute; top: 0; left: 0; width: 100%; height: 80px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
             z-index: 100;
-            display: flex; justify-content: space-between; align-items: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             padding: 0 40px;
             background: linear-gradient(to bottom, rgba(3, 0, 20, 0.9), rgba(3, 0, 20, 0));
         }
-        .nav-logo a { display: block; height: 100%; display: flex; align-items: center; }
-        .logo-img { height: 32px; width: auto; filter: drop-shadow(0 0 10px rgba(138, 43, 226, 0.6)); transition: transform 0.3s; }
-        .logo-img:hover { transform: scale(1.05) rotate(5deg); }
-        .nav-links { display: flex; gap: 30px; align-items: center; }
-        .nav-item { color: rgba(255, 255, 255, 0.6); text-decoration: none; font-size: 0.9rem; font-weight: 500; font-family: 'Outfit', sans-serif; transition: color 0.2s; }
-        .nav-item:hover { color: white; }
+
+        .nav-logo a {
+            display: block;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 32px;
+            width: auto;
+            filter: drop-shadow(0 0 10px rgba(138, 43, 226, 0.6));
+            transition: transform 0.3s;
+        }
+
+        .logo-img:hover {
+            transform: scale(1.05) rotate(5deg);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-item {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            font-family: 'Outfit', sans-serif;
+            transition: color 0.2s;
+        }
+
+        .nav-item:hover {
+            color: white;
+        }
+
         .nav-btn-login {
             padding: 8px 24px;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 100px;
-            color: white; text-decoration: none; font-size: 0.85rem; font-weight: 600; font-family: 'Outfit', sans-serif;
+            color: white;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
             transition: all 0.2s;
         }
-        .nav-btn-login:hover { background: white; color: black; box-shadow: 0 0 20px rgba(255, 255, 255, 0.4); }
+
+        .nav-btn-login:hover {
+            background: white;
+            color: black;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+        }
 
         /* =========================================
            3. THE HERO STAGE (Layout Engine)
            ========================================= */
-           .hero-stage { 
-            position: relative; 
-            width: 100vw; 
+        .hero-stage {
+            position: relative;
+            width: 100vw;
             /* CHANGED: 100vh -> 100dvh */
-            height: 100dvh; 
-            
-            display: flex; 
-            flex-direction: column; 
-            justify-content: flex-end; 
-            align-items: center; 
-            padding-bottom: 40px; 
-            overflow: hidden; 
-            z-index: 1; 
+            height: 100dvh;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 40px;
+            overflow: hidden;
+            z-index: 1;
         }
 
         /* LAYER 0: VIDEO */
         #orb-video-bg {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover; z-index: 0; opacity: 1;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            opacity: 1;
         }
+
         .video-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(3, 0, 20, 0.3); z-index: 1;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(3, 0, 20, 0.3);
+            z-index: 1;
         }
 
         /* LAYER 1: ATMOSPHERE */
         .fog-wrapper {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 2; pointer-events: none; overflow: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+            overflow: hidden;
         }
+
         .fog-layer {
-            position: absolute; width: 150vw; height: 150vw; border-radius: 50%;
-            filter: blur(80px); opacity: 0.6; mix-blend-mode: screen;
+            position: absolute;
+            width: 150vw;
+            height: 150vw;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.6;
+            mix-blend-mode: screen;
             animation: rotateFog 60s linear infinite;
         }
-        .fog-pink { top: -30%; left: -20%; background: radial-gradient(circle, rgba(255, 0, 150, 0.6) 0%, transparent 60%); animation-duration: 45s; }
-        .fog-blue { bottom: -30%; right: -20%; background: radial-gradient(circle, rgba(0, 100, 255, 0.6) 0%, transparent 60%); animation-duration: 55s; animation-direction: reverse; }
 
-           /* =========================================
+        .fog-pink {
+            top: -30%;
+            left: -20%;
+            background: radial-gradient(circle, rgba(255, 0, 150, 0.6) 0%, transparent 60%);
+            animation-duration: 45s;
+        }
+
+        .fog-blue {
+            bottom: -30%;
+            right: -20%;
+            background: radial-gradient(circle, rgba(0, 100, 255, 0.6) 0%, transparent 60%);
+            animation-duration: 55s;
+            animation-direction: reverse;
+        }
+
+        /* =========================================
            LAYER 2: PARALLAX STARS (Hyper-Dense & Randomized)
            ========================================= */
-        
-           .stars-wrapper {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1; /* Behind fog */
-            overflow: hidden; pointer-events: none;
+
+        .stars-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            /* Behind fog */
+            overflow: hidden;
+            pointer-events: none;
         }
 
         @keyframes animStar {
-            from { transform: translateY(0px); }
-            to { transform: translateY(-2000px); }
+            from {
+                transform: translateY(0px);
+            }
+
+            to {
+                transform: translateY(-2000px);
+            }
         }
 
         /* 1. SMALL STARS (The Dust - 400+ Stars) */
         #stars {
-            width: 1px; height: 1px; background: transparent;
+            width: 1px;
+            height: 1px;
+            background: transparent;
             animation: animStar 100s linear infinite;
-            
-            box-shadow: 
+
+            box-shadow:
                 1742px 142px #FFF, 421px 520px #FFF, 200px 900px #FFF, 1432px 1400px #FFF,
                 600px 1200px #FFF, 1900px 1800px #FFF, 1050px 500px #FFF, 1500px 1100px #FFF,
                 1300px 600px #FFF, 110px 1500px #FFF, 700px 400px #FFF, 1200px 1200px #FFF,
@@ -152,17 +281,25 @@
                 1800px 300px #FFF, 400px 1900px #FFF, 1500px 1700px #FFF, 100px 900px #FFF,
                 950px 1650px #FFF, 250px 1150px #FFF, 1850px 1850px #FFF, 1350px 1350px #FFF;
         }
+
         #stars::after {
-            content: " "; position: absolute; top: 2000px;
-            width: 1px; height: 1px; background: transparent; box-shadow: inherit;
+            content: " ";
+            position: absolute;
+            top: 2000px;
+            width: 1px;
+            height: 1px;
+            background: transparent;
+            box-shadow: inherit;
         }
 
         /* 2. MEDIUM STARS (The Glimmer - 100+ Stars) */
         #stars2 {
-            width: 2px; height: 2px; background: transparent;
+            width: 2px;
+            height: 2px;
+            background: transparent;
             animation: animStar 75s linear infinite;
-            
-            box-shadow: 
+
+            box-shadow:
                 400px 500px #FFF, 1200px 1600px #FFF, 1700px 200px #FFF, 200px 900px #FFF,
                 800px 1300px #FFF, 1500px 600px #FFF, 100px 1800px #FFF, 600px 100px #FFF,
                 1100px 800px #FFF, 1400px 1400px #FFF, 300px 300px #FFF, 900px 1100px #FFF,
@@ -174,271 +311,543 @@
                 900px 1500px #FFF, 100px 100px #FFF, 1050px 500px #FFF, 500px 1100px #FFF,
                 1700px 600px #FFF, 110px 1500px #FFF, 1700px 1400px #FFF, 200px 1200px #FFF;
         }
+
         #stars2::after {
-            content: " "; position: absolute; top: 2000px;
-            width: 2px; height: 2px; background: transparent; box-shadow: inherit;
+            content: " ";
+            position: absolute;
+            top: 2000px;
+            width: 2px;
+            height: 2px;
+            background: transparent;
+            box-shadow: inherit;
         }
 
         /* 3. BIG STARS (The Bright Ones - 30+ Stars) */
         #stars3 {
-            width: 3px; height: 3px; background: transparent;
+            width: 3px;
+            height: 3px;
+            background: transparent;
             animation: animStar 50s linear infinite;
-            
-            box-shadow: 
+
+            box-shadow:
                 600px 800px #FFF, 1300px 200px #FFF, 200px 1500px #FFF, 1600px 500px #FFF,
                 900px 1200px #FFF, 100px 400px #FFF, 1800px 1700px #FFF, 500px 900px #FFF,
                 1500px 1400px #FFF, 300px 100px #FFF, 1100px 1900px #FFF, 1900px 1100px #FFF,
                 150px 650px #FFF, 750px 1350px #FFF, 1250px 450px #FFF, 1750px 1850px #FFF;
         }
+
         #stars3::after {
-            content: " "; position: absolute; top: 2000px;
-            width: 3px; height: 3px; background: transparent; box-shadow: inherit;
+            content: " ";
+            position: absolute;
+            top: 2000px;
+            width: 3px;
+            height: 3px;
+            background: transparent;
+            box-shadow: inherit;
         }
+
         /* LAYER 3: INSTRUCTIONS (Fixed Position) */
         .hero-instructions {
             position: absolute;
-            top: 13%; /* MOVED DOWN from 20% to avoid header smash */
-            left: 50%; transform: translateX(-50%);
-            text-align: center; width: 100%; padding: 0 20px;
+            top: 13%;
+            /* MOVED DOWN from 20% to avoid header smash */
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            width: 100%;
+            padding: 0 20px;
             z-index: 10;
             animation: fadeIn 2s ease-in-out;
         }
+
         .hero-title {
-            font-family: 'Product Sans', sans-serif; font-size: 3rem; font-weight: 700; letter-spacing: -1px; margin-bottom: 10px;
-            background: linear-gradient(to right, #fff, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-family: 'Product Sans', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #fff, #a5b4fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
+
         .hero-subtitle {
-            font-family: 'Product Sans', sans-serif; font-size: 1.1rem; color: rgba(255, 255, 255, 0.7); font-weight: 400;
+            font-family: 'Product Sans', sans-serif;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 400;
         }
+
         .sub-line {
-            display: block;       /* Forces it to a new line (like <br> but better) */
-            margin-top: 10px;     /* Adds breathing room between the lines */
-            color: rgba(255, 255, 255, 0.8); /* Optional: Make the second line slightly brighter? */
+            display: block;
+            /* Forces it to a new line (like <br> but better) */
+            margin-top: 10px;
+            /* Adds breathing room between the lines */
+            color: rgba(255, 255, 255, 0.8);
+            /* Optional: Make the second line slightly brighter? */
         }
+
         /* =========================================
            4. THE REMRIN TERMINAL (Corrected)
            ========================================= */
-        
-           .terminal-wrapper {
+
+        .terminal-wrapper {
             position: relative;
-            z-index: 999; 
-            width: 95%; max-width: 900px;
-            height: 55vh; /* Fixed height for the glass box */
+            z-index: 999;
+            width: 95%;
+            max-width: 900px;
+            height: 55vh;
+            /* Fixed height for the glass box */
             animation: floatUp 1s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
         .glass-terminal {
-            width: 100%; height: 100%;
+            width: 100%;
+            height: 100%;
             background: rgba(10, 10, 15, 0.65);
-            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-top: 1px solid rgba(138, 43, 226, 0.25);
             border-radius: 24px;
-            
-            display: flex; 
-            flex-direction: column; /* Stacks Header -> Log -> Input */
-            overflow: hidden; 
+
+            display: flex;
+            flex-direction: column;
+            /* Stacks Header -> Log -> Input */
+            overflow: hidden;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
         }
 
         /* HEADER */
         .terminal-header {
-            height: 50px; padding: 0 25px;
-            display: flex; align-items: center; gap: 12px;
+            height: 50px;
+            padding: 0 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
             background: linear-gradient(90deg, rgba(138, 43, 226, 0.05) 0%, transparent 100%);
-            flex-shrink: 0; /* Never shrink the header */
+            flex-shrink: 0;
+            /* Never shrink the header */
         }
-        .status-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 8px #00ff88; animation: pulse 2s infinite; }
-        .header-title { font-size: 0.7rem; letter-spacing: 2px; color: rgba(255, 255, 255, 0.4); text-transform: uppercase; font-weight: 500; }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: #00ff88;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #00ff88;
+            animation: pulse 2s infinite;
+        }
+
+        .header-title {
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            font-weight: 500;
+        }
 
         /* CHAT LOG (Takes all available space) */
-        .chat-log { 
-            flex: 1; 
-            padding: 30px; 
-            overflow-y: auto; 
-            display: flex; flex-direction: column; gap: 20px;
-            
+        .chat-log {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+
             /* Hide Scrollbar */
-            scrollbar-width: none; -ms-overflow-style: none;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
         }
-        .chat-log::-webkit-scrollbar { display: none; }
-        
+
+        .chat-log::-webkit-scrollbar {
+            display: none;
+        }
+
         /* MESSAGES */
-        .message { display: flex; gap: 16px; align-items: flex-end; max-width: 85%; }
-        .rem-msg { align-self: flex-start; }
-        .user-msg { align-self: flex-end; flex-direction: row-reverse; }
-        .avatar { font-size: 1.4rem; padding-bottom: 4px; }
-        .bubble { padding: 16px 22px; border-radius: 20px; font-size: 1.05rem; line-height: 1.6; color: rgba(255, 255, 255, 0.95); background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .user-msg .bubble { background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25); }
+        .message {
+            display: flex;
+            gap: 16px;
+            align-items: flex-end;
+            max-width: 85%;
+        }
+
+        .rem-msg {
+            align-self: flex-start;
+        }
+
+        .user-msg {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .avatar {
+            font-size: 1.4rem;
+            padding-bottom: 4px;
+        }
+
+        .bubble {
+            padding: 16px 22px;
+            border-radius: 20px;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .user-msg .bubble {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border: none;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+        }
 
         /* INPUT ZONE (Footer - Fixed at bottom) */
-        .input-zone { 
-            padding: 20px 30px; 
-            border-top: 1px solid rgba(255, 255, 255, 0.05); 
-            display: flex; gap: 15px; 
-            background: rgba(0, 0, 0, 0.2); 
+        .input-zone {
+            padding: 20px 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            gap: 15px;
+            background: rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
-            flex-shrink: 0; /* Never collapse this area */
+            flex-shrink: 0;
+            /* Never collapse this area */
         }
 
         .input-zone:focus-within {
-            background: rgba(20, 20, 30, 0.4); 
+            background: rgba(20, 20, 30, 0.4);
             border-top: 1px solid rgba(168, 85, 247, 0.5);
             box-shadow: 0 -5px 20px rgba(138, 43, 226, 0.15);
         }
 
-        input { 
-            flex: 1; background: transparent; border: none; outline: none; 
-            font-size: 1.1rem; color: rgba(255, 255, 255, 0.9); font-weight: 300; font-family: 'Product Sans', sans-serif;
+        input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 300;
+            font-family: 'Product Sans', sans-serif;
         }
-        input::placeholder { color: rgba(255, 255, 255, 0.3); font-style: italic; }
 
-        button { 
-            width: 44px; height: 44px; border-radius: 50%; border: none; 
-            background: rgba(255, 255, 255, 0.1); color: white; cursor: pointer; transition: all 0.3s ease; 
-            display: flex; align-items: center; justify-content: center;
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+            font-style: italic;
         }
-        button:hover { background: white; color: black; transform: scale(1.1); box-shadow: 0 0 15px rgba(255, 255, 255, 0.4); }
+
+        button {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button:hover {
+            background: white;
+            color: black;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+        }
 
         /* CHAT COMPONENTS */
         .terminal-header {
-            height: 50px; padding: 0 25px; display: flex; align-items: center; gap: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04); background: linear-gradient(90deg, rgba(138, 43, 226, 0.05) 0%, transparent 100%);
+            height: 50px;
+            padding: 0 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            background: linear-gradient(90deg, rgba(138, 43, 226, 0.05) 0%, transparent 100%);
         }
-        .status-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 8px #00ff88; animation: pulse 2s infinite; }
-        .header-title { font-size: 0.7rem; letter-spacing: 2px; color: rgba(255, 255, 255, 0.4); text-transform: uppercase; font-weight: 500; }
-        
-        .chat-log { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: #00ff88;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #00ff88;
+            animation: pulse 2s infinite;
+        }
+
+        .header-title {
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .chat-log {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
 
         /* HIDE SCROLLBAR (Chrome, Safari, Opera) */
-         .chat-log::-webkit-scrollbar {
+        .chat-log::-webkit-scrollbar {
             display: none;
         }
 
         /* HIDE SCROLLBAR (Firefox, IE, Edge) */
         .chat-log {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+            -ms-overflow-style: none;
+            /* IE and Edge */
+            scrollbar-width: none;
+            /* Firefox */
         }
 
-        
-        .message { display: flex; gap: 16px; align-items: flex-end; max-width: 85%; position: relative; z-index: 300; }
-        .rem-msg { align-self: flex-start; }
-        .user-msg { align-self: flex-end; flex-direction: row-reverse; }
-        .avatar { font-size: 1.4rem; padding-bottom: 4px; }
-        
+
+        .message {
+            display: flex;
+            gap: 16px;
+            align-items: flex-end;
+            max-width: 85%;
+            position: relative;
+            z-index: 300;
+        }
+
+        .rem-msg {
+            align-self: flex-start;
+        }
+
+        .user-msg {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .avatar {
+            font-size: 1.4rem;
+            padding-bottom: 4px;
+        }
+
         .bubble {
-            padding: 16px 22px; border-radius: 20px; font-size: 1.05rem; line-height: 1.6;
-            color: rgba(255, 255, 255, 0.95); font-weight: 400; letter-spacing: 0.3px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            padding: 16px 22px;
+            border-radius: 20px;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 400;
+            letter-spacing: 0.3px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
-        .rem-msg .bubble { background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.05); border-bottom-left-radius: 4px; }
-        .user-msg .bubble { background: linear-gradient(135deg, #3b82f6, #2563eb); border-bottom-right-radius: 4px; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25); }
 
-       /* THE INPUT ZONE (Footer Container) */
-       .input-zone { 
-            padding: 20px 30px; 
-            border-top: 1px solid rgba(255, 255, 255, 0.05); 
-            display: flex; gap: 15px; 
-            background: rgba(0, 0, 0, 0.2); 
-            transition: all 0.3s ease; 
+        .rem-msg .bubble {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom-left-radius: 4px;
+        }
+
+        .user-msg .bubble {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+        }
+
+        /* THE INPUT ZONE (Footer Container) */
+        .input-zone {
+            padding: 20px 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            gap: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
         }
 
         /* THE PULSE (When user clicks inside) */
         .input-zone:focus-within {
-            background: rgba(20, 20, 30, 0.4); 
-            border-top: 1px solid rgba(168, 85, 247, 0.5); /* Bright Purple */
-            box-shadow: 0 -5px 20px rgba(138, 43, 226, 0.15); /* Purple Glow */
+            background: rgba(20, 20, 30, 0.4);
+            border-top: 1px solid rgba(168, 85, 247, 0.5);
+            /* Bright Purple */
+            box-shadow: 0 -5px 20px rgba(138, 43, 226, 0.15);
+            /* Purple Glow */
         }
 
         /* INPUT FIELD (Stealth Mode - No White Box!) */
-        input { 
-            flex: 1; 
-            background: transparent; 
-            border: none; 
-            outline: none; /* <--- CRITICAL: Kills the white outline */
-            
-            font-size: 1.1rem; 
-            color: rgba(255, 255, 255, 0.9); 
+        input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            /* <--- CRITICAL: Kills the white outline */
+
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
             font-weight: 300;
             font-family: 'Product Sans', sans-serif;
         }
 
-        input::placeholder { 
-            color: rgba(255, 255, 255, 0.3); 
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
             font-style: italic;
         }
 
         /* SEND BUTTON */
-        button { 
-            width: 44px; height: 44px; 
-            border-radius: 50%; 
-            border: none; 
-            background: rgba(255, 255, 255, 0.1); 
-            color: white; 
-            cursor: pointer; 
-            transition: all 0.3s ease; 
-            display: flex; align-items: center; justify-content: center;
+        button {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        
-        button:hover { 
-            background: white; 
-            color: black; 
-            transform: scale(1.1); 
+
+        button:hover {
+            background: white;
+            color: black;
+            transform: scale(1.1);
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
         }
+
         /* ANIMATIONS */
-        @keyframes rotateFog { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes twinkle { 0%, 100% { opacity: 0.4; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.3); } }
-        @keyframes floatUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateX(-50%) translateY(-20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+        @keyframes rotateFog {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: 0.4;
+                transform: scale(0.8);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.3);
+            }
+        }
+
+        @keyframes floatUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
 
         /* 1. THE CONTAINER (Centering Logic) */
-.footer-info { 
-    display: flex; 
-    flex-direction: column; 
-    gap: 4px; /* Space between logo and text */
-    
-    /* This centers the logo relative to the text below it */
-    align-items: center; 
-    
-    /* Optional: If you want the text centered too */
-    text-align: center; 
-}
+        .footer-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            /* Space between logo and text */
 
-/* 2. THE LOGO (Size Boost) */
-.remrin-brand {
-    /* Increased from 20px -> 30px (+50% size boost) */
-    height: 30px; 
-    width: auto; 
-    max-width: 120px;
-    
-    object-fit: contain; 
-    opacity: 1; /* Made fully opaque for clarity */
-    margin-bottom: 2px; /* Tiny breathing room before the ID */
-}
+            /* This centers the logo relative to the text below it */
+            align-items: center;
 
-/* 3. THE ID TEXT (Optional Polish) */
-.set-id { 
-    font-family: 'JetBrains Mono', monospace; 
-    font-size: 0.55rem; /* Slightly smaller to let logo pop */
-    color: #666; 
-    letter-spacing: 0.5px;
-}
+            /* Optional: If you want the text centered too */
+            text-align: center;
+        }
+
+        /* 2. THE LOGO (Size Boost) */
+        .remrin-brand {
+            /* Increased from 20px -> 30px (+50% size boost) */
+            height: 30px;
+            width: auto;
+            max-width: 120px;
+
+            object-fit: contain;
+            opacity: 1;
+            /* Made fully opaque for clarity */
+            margin-bottom: 2px;
+            /* Tiny breathing room before the ID */
+        }
+
+        /* 3. THE ID TEXT (Optional Polish) */
+        .set-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.55rem;
+            /* Slightly smaller to let logo pop */
+            color: #666;
+            letter-spacing: 0.5px;
+        }
 
         /* MOBILE FIXES - CLEANED! */
         @media (max-width: 600px) {
-            .glass-nav { padding: 0 20px; }
-            .nav-item { display: none; }
-            .terminal-wrapper { height: 60vh; width: 100%; border-radius: 0; }
-            .glass-terminal { border-radius: 24px 24px 0 0; }
-            .hero-title { font-size: 2rem; }
-            .hero-instructions { top: 25%; padding: 0 20px; }
+            .glass-nav {
+                padding: 0 20px;
+            }
+
+            .nav-item {
+                display: none;
+            }
+
+            .terminal-wrapper {
+                height: 60vh;
+                width: 100%;
+                border-radius: 0;
+            }
+
+            .glass-terminal {
+                border-radius: 24px 24px 0 0;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-instructions {
+                top: 25%;
+                padding: 0 20px;
+            }
         }
     </style>
 </head>
+
 <body>
 
     <nav class="glass-nav">
@@ -455,7 +864,7 @@
     </nav>
 
     <div class="hero-stage">
-        
+
         <video id="orb-video-bg" autoplay loop muted playsinline>
             <source src="orbs.webm" type="video/webm">
         </video>
@@ -483,11 +892,13 @@
 
         <div class="terminal-wrapper">
             <div class="glass-terminal">
-                
+
                 <div class="terminal-header">
                     <div id="voice-toggle" class="status-dot"></div>
-                    <span id="voice-status-text" style="margin-left: 10px; font-family: monospace; color: #00ff88; cursor: pointer;">VOICE: ONLINE</span>
-                    </div>
+                    <span id="voice-status-text"
+                        style="margin-left: 10px; font-family: monospace; color: #00ff88; cursor: pointer;">VOICE:
+                        ONLINE</span>
+                </div>
 
                 <div id="chat-history" class="chat-log"></div>
 
@@ -501,8 +912,8 @@
 
     </div>
 
-    <script src="ritual.js"></script> 
-    <script src="director.js"></script>
+    <script type="module" src="ritual.js"></script>
+    <script type="module" src="director.js"></script>
 
 
     <div id="vision-overlay" class="vision-overlay hidden">
@@ -527,70 +938,78 @@
             <div id="stars2"></div>
             <div id="stars3"></div>
         </div>
-    
+
         <div class="card-stage">
             <div class="trading-card" data-rarity="legendary" id="final-soul-card">
                 <div class="holo-foil"></div>
                 <div class="card-inner">
-                    
+
                     <div class="card-header">
                         <div class="soul-name" id="card-name">SOUL_NAME</div>
                         <div class="creativity-badge">
                             <span class="hp-label">SYNC</span><span id="card-sync">99%</span>
                         </div>
                     </div>
-    
+
                     <div class="art-box">
                         <img id="card-image" class="art-img" src="" crossorigin="anonymous" alt="Soul Avatar">
                         <div class="type-strip" id="card-type">Archetype • Origin</div>
                     </div>
-    
+
                     <div class="card-body">
                         <div class="traits-row" id="card-traits">
-                            </div>
+                        </div>
                         <div class="bio-text" id="card-bio">
                             Bio description goes here...
                         </div>
                         <div class="stats-container">
                             <div class="stat-row">
                                 <span class="stat-label">Power</span>
-                                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 85%"></div></div>
+                                <div class="stat-bar-bg">
+                                    <div class="stat-bar-fill" style="width: 85%"></div>
+                                </div>
                             </div>
                             <div class="stat-row">
                                 <span class="stat-label">Bond</span>
-                                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 100%"></div></div>
+                                <div class="stat-bar-bg">
+                                    <div class="stat-bar-fill" style="width: 100%"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
-    
+
                     <div class="card-footer">
                         <div class="footer-info">
                             <img src="logo.svg" class="remrin-brand" alt="Remrin.ai">
                             <div class="set-id">#GENESIS-V1 • 2025</div>
                         </div>
                         <div class="qr-chip">
-                            <svg viewBox="0 0 100 100" fill="none" style="width:100%; height:100%;"><rect width="100" height="100" fill="white"/><path d="M10 10h30v30h-30zM60 10h30v30h-30zM10 60h30v30h-30z" fill="black"/></svg>
+                            <svg viewBox="0 0 100 100" fill="none" style="width:100%; height:100%;">
+                                <rect width="100" height="100" fill="white" />
+                                <path d="M10 10h30v30h-30zM60 10h30v30h-30zM10 60h30v30h-30z" fill="black" />
+                            </svg>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    
+
         <div class="actions">
             <button class="btn-download" id="download-card-btn">SAVE CARD 📥</button>
             <button class="btn-confirm" id="confirm-card-btn">CONFIRM SOUL ✅</button>
         </div>
     </div>
     <script>
-        
+
         // Kickstart Video
-        window.addEventListener('load', function() {
+        window.addEventListener('load', function () {
             var video = document.getElementById('orb-video-bg');
-            if(video){
+            if (video) {
                 video.muted = true;
                 video.play().catch(e => console.log("Kickstart failed:", e));
             }
         });
     </script>
 </body>
+
 </html>
