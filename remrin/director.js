@@ -381,27 +381,28 @@ function showCardReveal() {
     // Traits (Colorful Pills)
     const traitsContainer = document.getElementById('card-traits');
     traitsContainer.innerHTML = "";
-    const traits = extractTraits(soulBlueprint);
-    const pillColors = ['#f59e0b', '#3b82f6', '#ec4899', '#10b981', '#8b5cf6'];
+    traitsContainer.innerHTML = ""; // Clear old
+    if (soulBlueprint.temperament) {
+        const traits = soulBlueprint.temperament.split(' ');
+        traits.forEach(trait => {
+            const span = document.createElement('span');
+            span.className = 'trait-pill';
+            span.innerText = trait;
+            traitsContainer.appendChild(span);
+        });
+    }
 
-    traits.forEach((t, index) => {
-        const span = document.createElement('span');
-        span.className = 'trait-pill';
-        span.innerText = t.toUpperCase();
-        // Dynamic Coloring
-        span.style.borderColor = pillColors[index % pillColors.length];
-        span.style.color = pillColors[index % pillColors.length];
-        span.style.background = "rgba(0,0,0,0.3)";
-        traitsContainer.appendChild(span);
-    });
+    // DESCRIPTION / BIO & SYNC RATE
+    document.getElementById('card-bio').innerText = `"${soulBlueprint.vision || 'A new soul emerges...'}"`;
+    document.getElementById('card-sync').innerText = Math.floor(Math.random() * (99 - 85) + 85) + "%"; // Random Sync 85-99%
 
-    // 3. QR CODE
-    const qrContainer = document.querySelector('.qr-chip');
+    // QR CODE
+    const qrContainer = document.getElementById('qrcode-container');
     qrContainer.innerHTML = "";
     try {
         new QRCode(qrContainer, {
             text: `https://remrin.ai/soul/${sessionID}`,
-            width: 45, height: 45,
+            width: 38, height: 38, // Slightly smaller to fit chip
             colorDark: "#000000", colorLight: "#ffffff",
             correctLevel: QRCode.CorrectLevel.L
         });
@@ -412,8 +413,8 @@ function showCardReveal() {
 
     document.addEventListener('mousemove', (e) => {
         if (!overlay.classList.contains('active')) return;
-        const x = (window.innerWidth / 2 - e.pageX) / 20;
-        const y = (window.innerHeight / 2 - e.pageY) / 20;
+        const x = (window.innerWidth / 2 - e.pageX) / 25; // Smoother tilt
+        const y = (window.innerHeight / 2 - e.pageY) / 25;
         card.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
     });
 

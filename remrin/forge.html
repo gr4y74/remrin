@@ -847,6 +847,258 @@
                 padding: 0 20px;
             }
         }
+
+        /* =========================================
+           CARD STYLES (Ported from volt.html)
+           ========================================= */
+        /* 2. THE CARD CHASSIS */
+        .trading-card {
+            width: 340px;
+            height: 520px;
+            /* Standard TCG Aspect Ratio */
+            position: relative;
+            z-index: 10;
+            /* Above Stars */
+            border-radius: 20px;
+            padding: 12px;
+            background: #1a1a1a;
+            box-shadow:
+                0 0 40px rgba(0, 0, 0, 0.5),
+                0 20px 50px rgba(0, 0, 0, 0.5);
+            transition: transform 0.1s ease;
+            user-select: none;
+        }
+
+        /* RARITY THEMES (Border Colors) */
+        .trading-card[data-rarity="common"] {
+            background: linear-gradient(135deg, #444, #222);
+        }
+
+        .trading-card[data-rarity="rare"] {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        }
+
+        .trading-card[data-rarity="legendary"] {
+            background: linear-gradient(135deg, #f59e0b, #d97706, #b91c1c);
+        }
+
+        /* THE HOLOGRAPHIC FOIL OVERLAY */
+        .holo-foil {
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            background: linear-gradient(115deg,
+                    transparent 20%,
+                    rgba(255, 255, 255, 0.1) 25%,
+                    rgba(255, 0, 204, 0.1) 30%,
+                    rgba(0, 204, 255, 0.1) 35%,
+                    transparent 40%);
+            background-size: 200% 200%;
+            opacity: 0.6;
+            pointer-events: none;
+            mix-blend-mode: overlay;
+            z-index: 10;
+            animation: holoShift 4s linear infinite;
+        }
+
+        @keyframes holoShift {
+            0% {
+                background-position: 150% 0%;
+            }
+
+            100% {
+                background-position: -50% 0%;
+            }
+        }
+
+        /* THE INNER FRAME (The Content Area) */
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 15, 0.95);
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* HEADER (Name & Rank) */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .soul-name {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .creativity-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #f59e0b;
+            /* Legendary Gold */
+        }
+
+        .hp-label {
+            font-size: 0.5rem;
+            color: #666;
+            margin-right: 2px;
+        }
+
+        /* ARTWORK (The Hero) */
+        .art-box {
+            width: 100%;
+            height: 200px;
+            position: relative;
+            border-bottom: 4px solid #f59e0b;
+            /* Rarity Color Line */
+            overflow: hidden;
+        }
+
+        /* HERO IMAGE: Added object-position top to focus on face */
+        .art-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top;
+        }
+
+        .type-strip {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+            padding: 20px 14px 6px 14px;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-style: italic;
+        }
+
+        /* CARD BODY (Stats & Bio) */
+        .card-body {
+            padding: 14px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .traits-row {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .trait-pill {
+            font-size: 0.6rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .bio-text {
+            font-size: 0.8rem;
+            line-height: 1.4;
+            color: #ccc;
+            border-left: 2px solid #333;
+            padding-left: 8px;
+            font-style: italic;
+        }
+
+        .stats-container {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: auto;
+        }
+
+        .stat-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.7rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-label {
+            width: 60px;
+            color: #666;
+        }
+
+        .stat-bar-bg {
+            flex: 1;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .stat-bar-fill {
+            height: 100%;
+            background: #f59e0b;
+            width: 0%;
+            transition: width 1s ease;
+        }
+
+        /* FOOTER (QR & Logo) */
+        .card-footer {
+            background: #111;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* 1. THE CONTAINER (Centering Logic) */
+        .footer-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            /* Space between logo and text */
+
+            /* This centers the logo relative to the text below it */
+            align-items: center;
+
+            /* Optional: If you want the text centered too */
+            text-align: center;
+        }
+
+        /* 2. THE LOGO (Size Boost) */
+        .remrin-brand {
+            /* Increased from 20px -> 30px (+50% size boost) */
+            height: 30px;
+            width: auto;
+            max-width: 120px;
+
+            object-fit: contain;
+            opacity: 1;
+            /* Made fully opaque for clarity */
+            margin-bottom: 2px;
+            /* Tiny breathing room before the ID */
+        }
+
+        .qr-chip {
+            width: 42px;
+            height: 42px;
+            background: white;
+            padding: 2px;
+            border-radius: 4px;
+        }
     </style>
 </head>
 
@@ -961,6 +1213,7 @@
 
                     <div class="card-body">
                         <div class="traits-row" id="card-traits">
+                            <!-- Pills will be injected here -->
                         </div>
                         <div class="bio-text" id="card-bio">
                             Bio description goes here...
@@ -986,11 +1239,8 @@
                             <img src="logo.svg" class="remrin-brand" alt="Remrin.ai">
                             <div class="set-id">#GENESIS-V1 • 2025</div>
                         </div>
-                        <div class="qr-chip">
-                            <svg viewBox="0 0 100 100" fill="none" style="width:100%; height:100%;">
-                                <rect width="100" height="100" fill="white" />
-                                <path d="M10 10h30v30h-30zM60 10h30v30h-30zM10 60h30v30h-30z" fill="black" />
-                            </svg>
+                        <div class="qr-chip" id="qrcode-container">
+                            <!-- QR Code injected here -->
                         </div>
                     </div>
                 </div>
