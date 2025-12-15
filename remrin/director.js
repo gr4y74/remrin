@@ -6,7 +6,7 @@ import { RITUAL_CONFIG } from './ritual.js';
 
 console.log("🤖 DIRECTOR v26.0: Investor Protocol Active.");
 
-let chatLog, userInput, sendBtn, visionOverlay, visionImage, visionLoader, closeVisionBtn, statusDot;
+let chatLog, userInput, sendBtn, micBtn, visionOverlay, visionImage, visionLoader, closeVisionBtn, statusDot;
 let isMuted = false;
 let currentAudio = null;
 let currentStage = 0;
@@ -540,6 +540,52 @@ window.addEventListener('load', async () => {
         console.warn("⚠️ Mute Button ID 'voice-toggle' not found in HTML.");
     }
     // --- MUTE BUTTON FIX END ---
+
+    // --- VOICE INPUT LOGIC START ---
+    micBtn = document.getElementById('mic-btn');
+    if (micBtn) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+
+            micBtn.onclick = () => {
+                try {
+                    recognition.start();
+                    micBtn.style.color = '#ff0000'; // Visual cue: Red means recording
+                    micBtn.style.borderColor = '#ff0000';
+                    userInput.placeholder = "Listening...";
+                } catch (e) {
+                    console.error("Mic Error:", e);
+                }
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                userInput.value = transcript;
+                userInput.placeholder = "Initializing..."; // Reset placeholder
+            };
+
+            recognition.onend = () => {
+                micBtn.style.color = 'white'; // Reset color
+                micBtn.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                userInput.focus(); // Focus back to input
+            };
+
+            recognition.onerror = (event) => {
+                console.error("Speech Error:", event.error);
+                micBtn.style.color = 'white';
+                userInput.placeholder = "Error. Try again.";
+            }
+
+        } else {
+            micBtn.style.display = 'none'; // Hide if not supported
+            console.warn("Speech Recognition API not supported in this browser.");
+        }
+    }
+    // --- VOICE INPUT LOGIC END ---
 
     if (sendBtn) sendBtn.addEventListener('click', handleUserAction);
     if (userInput) userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleUserAction(); });
