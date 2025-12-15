@@ -208,7 +208,7 @@
 // =========================================
 
 function renderVoiceChoices() {
-    // 9 VOICES (3 Female, 3 Male, 3 Creature/Other)
+    // UPDATED: CUSTOM VOICE ROSTER
     const voiceOptions = [
         // FEMININE
         { id: 'F_Emma',       label: 'Emma (F)',     sample: 'assets/voice/samples/emma.mp3',     type: 'FEM' },
@@ -216,11 +216,11 @@ function renderVoiceChoices() {
         { id: 'F_Mystic',     label: 'Mystic (F)',   sample: 'assets/voice/samples/mystic.mp3',   type: 'FEM' },
         
         // MASCULINE
-        { id: 'M_Deep',       label: 'Deep (F)',     sample: 'assets/voice/samples/deep.mp3',     type: 'MASC' },
+        { id: 'M_Deep',       label: 'Deep (M)',     sample: 'assets/voice/samples/deep.mp3',     type: 'MASC' },
         { id: 'M_Scholar',    label: 'Scholar (M)',  sample: 'assets/voice/samples/scholar.mp3',  type: 'MASC' },
         { id: 'M_Rogue',      label: 'Rogue (M)',    sample: 'assets/voice/samples/rogue.mp3',    type: 'MASC' },
         
-        // XEN (OTHER)
+        // XEN / OTHER
         { id: 'O_Old',        label: 'Old Man (M)',  sample: 'assets/voice/samples/old.mp3',      type: 'MASC' },
         { id: 'O_Frog',       label: 'Frog (X)',     sample: 'assets/voice/samples/frog.mp3',     type: 'XEN'  },
         { id: 'O_Ancient',    label: 'Ancient (M)',  sample: 'assets/voice/samples/ancient.mp3',  type: 'MASC' },
@@ -228,7 +228,6 @@ function renderVoiceChoices() {
 
     const container = document.createElement('div');
     container.className = 'voice-widget';
-    // FIX: Removed max-height and overflow. Added height: auto to prevent crushing.
     container.style.cssText = `
         background: rgba(0, 255, 136, 0.05); 
         border: 1px solid rgba(0, 255, 136, 0.2); 
@@ -239,7 +238,7 @@ function renderVoiceChoices() {
         flex-direction: column; 
         gap: 8px; 
         animation: fadeIn 0.5s ease;
-        height: auto; /* Let it grow! */
+        height: auto; 
         width: 100%;
     `;
 
@@ -255,9 +254,9 @@ function renderVoiceChoices() {
         
         // Color code
         let badgeColor = "#888"; 
-        if (v.type === 'FEM') badgeColor = "#ec4899"; 
-        if (v.type === 'MASC') badgeColor = "#3b82f6"; 
-        if (v.type === 'XEN') badgeColor = "#f59e0b"; 
+        if (v.type === 'FEM') badgeColor = "#ec4899"; // Pink
+        if (v.type === 'MASC') badgeColor = "#3b82f6"; // Blue
+        if (v.type === 'XEN') badgeColor = "#f59e0b"; // Orange/Gold
 
         const playBtn = document.createElement('button');
         playBtn.innerHTML = `<span style="color:${badgeColor}; margin-right:6px;">●</span> ${v.label}`;
@@ -266,7 +265,7 @@ function renderVoiceChoices() {
             background: #111; 
             border: 1px solid #333; 
             color: #fff; 
-            padding: 10px; /* Bigger touch target */
+            padding: 10px; 
             border-radius: 6px; 
             cursor: pointer; 
             text-align: left; 
@@ -277,10 +276,17 @@ function renderVoiceChoices() {
         `;
         
         playBtn.onclick = () => {
-            document.querySelectorAll('audio').forEach(a => a.pause());
-            const audio = new Audio(v.sample);
-            audio.play().catch(e => console.log("Sample missing:", v.sample));
+            // 1. Kill the currently playing audio
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+
+            // 2. Play new sample
+            currentAudio = new Audio(v.sample);
+            currentAudio.play().catch(e => console.log("Sample missing:", v.sample));
             
+            // Visual feedback
             playBtn.style.borderColor = badgeColor;
             playBtn.style.color = badgeColor;
             setTimeout(() => { playBtn.style.borderColor = "#333"; playBtn.style.color = "#fff"; }, 2000);
@@ -293,7 +299,7 @@ function renderVoiceChoices() {
             color: #000; 
             border: none; 
             padding: 0 12px; 
-            height: 36px; /* Taller button */
+            height: 36px; 
             border-radius: 6px; 
             cursor: pointer; 
             font-weight: 800; 
@@ -302,6 +308,8 @@ function renderVoiceChoices() {
         `;
         
         selBtn.onclick = () => {
+            if (currentAudio) currentAudio.pause();
+            
             soulBlueprint.voice_id = v.id;
             container.remove();
             userInput.value = `I choose the ${v.label} voice.`;
