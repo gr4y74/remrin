@@ -654,7 +654,6 @@ window.addEventListener('load', async () => {
 
             addMessage(startStep.text, 'rem', startStep.audio);
             currentStage = 0;
-            updateStatusDot(true);
         });
     }
 });
