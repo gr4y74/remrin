@@ -228,7 +228,7 @@ function renderVoiceChoices() {
 
     const container = document.createElement('div');
     container.className = 'voice-widget';
-    // Increased height slightly to fit 9 items nicely
+    // FIX: Removed max-height and overflow. Added height: auto to prevent crushing.
     container.style.cssText = `
         background: rgba(0, 255, 136, 0.05); 
         border: 1px solid rgba(0, 255, 136, 0.2); 
@@ -237,10 +237,10 @@ function renderVoiceChoices() {
         margin-top: 10px; 
         display: flex; 
         flex-direction: column; 
-        gap: 6px; 
+        gap: 8px; 
         animation: fadeIn 0.5s ease;
-        max-height: 300px;
-        overflow-y: auto; /* Scroll if screen is tiny */
+        height: auto; /* Let it grow! */
+        width: 100%;
     `;
 
     // Add a label
@@ -251,32 +251,29 @@ function renderVoiceChoices() {
 
     voiceOptions.forEach(v => {
         const row = document.createElement('div');
-        row.style.cssText = "display: flex; align-items: center; justify-content: space-between; gap: 8px;";
+        row.style.cssText = "display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-shrink: 0;";
         
-        // Color code the buttons based on type
-        let badgeColor = "#888"; // Gray default
-        if (v.type === 'FEM') badgeColor = "#ec4899"; // Pink
-        if (v.type === 'MASC') badgeColor = "#3b82f6"; // Blue
-        if (v.type === 'XEN') badgeColor = "#f59e0b"; // Orange/Gold
+        // Color code
+        let badgeColor = "#888"; 
+        if (v.type === 'FEM') badgeColor = "#ec4899"; 
+        if (v.type === 'MASC') badgeColor = "#3b82f6"; 
+        if (v.type === 'XEN') badgeColor = "#f59e0b"; 
 
         const playBtn = document.createElement('button');
-        // Added a tiny colored dot to show gender/type visually
         playBtn.innerHTML = `<span style="color:${badgeColor}; margin-right:6px;">●</span> ${v.label}`;
         playBtn.style.cssText = `
             flex: 1; 
             background: #111; 
             border: 1px solid #333; 
             color: #fff; 
-            padding: 8px; 
+            padding: 10px; /* Bigger touch target */
             border-radius: 6px; 
             cursor: pointer; 
             text-align: left; 
             font-family: monospace; 
-            font-size: 11px; 
+            font-size: 12px; 
             transition: all 0.2s;
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         `;
         
         playBtn.onclick = () => {
@@ -284,7 +281,6 @@ function renderVoiceChoices() {
             const audio = new Audio(v.sample);
             audio.play().catch(e => console.log("Sample missing:", v.sample));
             
-            // Highlight effect
             playBtn.style.borderColor = badgeColor;
             playBtn.style.color = badgeColor;
             setTimeout(() => { playBtn.style.borderColor = "#333"; playBtn.style.color = "#fff"; }, 2000);
@@ -296,13 +292,13 @@ function renderVoiceChoices() {
             background: ${badgeColor}; 
             color: #000; 
             border: none; 
-            padding: 0 10px; 
-            height: 30px; 
+            padding: 0 12px; 
+            height: 36px; /* Taller button */
             border-radius: 6px; 
             cursor: pointer; 
             font-weight: 800; 
-            font-size: 9px; 
-            min-width: 50px;
+            font-size: 10px; 
+            min-width: 60px;
         `;
         
         selBtn.onclick = () => {
@@ -479,57 +475,86 @@ function renderVoiceChoices() {
    }
    
    // =========================================
-   // 4. STARTUP
-   // =========================================
-   window.addEventListener('load', async () => {
-       chatLog = document.getElementById('chat-history');
-       userInput = document.getElementById('user-input');
-       sendBtn = document.getElementById('send-btn');
-       visionOverlay = document.getElementById('vision-overlay');
-       visionImage = document.getElementById('vision-image');
-       visionLoader = document.getElementById('vision-loader');
-       closeVisionBtn = document.getElementById('close-vision');
-       statusDot = document.getElementById('voice-toggle');
-   
-       if (sendBtn) sendBtn.addEventListener('click', handleUserAction);
-       if (userInput) userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleUserAction(); });
-       if (closeVisionBtn) closeVisionBtn.addEventListener('click', () => { visionOverlay.classList.remove('active'); setTimeout(() => visionOverlay.classList.add('hidden'), 800); });
-       
-       if (statusDot) {
-           statusDot.style.cursor = "pointer";
-           statusDot.addEventListener('click', () => {
-               isMuted = !isMuted;
-               statusDot.style.background = isMuted ? "#ff4444" : "#00ff88"; 
-               statusDot.style.boxShadow = isMuted ? "0 0 10px #ff4444" : "0 0 10px #00ff88";
-               const statusText = document.getElementById('voice-status-text');
-               if (statusText) {
-                   statusText.innerText = isMuted ? "VOICE: HUSH" : "VOICE: ONLINE";
-                   statusText.style.color = isMuted ? "#ff4444" : "#00ff88"; 
-               }
-               if (isMuted && currentAudio) currentAudio.pause();
-           });
-       }
-   
-       // Auto-Start Check
-       const urlParams = new URLSearchParams(window.location.search);
-       if (urlParams.get('mode') === 'chat') { 
-           chatLog.innerHTML += '<div style="text-align:center; color:#666; font-size:12px; margin-top:20px; font-family:monospace;">[ SECURE CONNECTION ]</div>'; 
-       } else {
-           // Veil Logic (Same as before)
-           const chatContainer = document.querySelector('.chat-container') || document.body;
-           if (chatContainer !== document.body) chatContainer.style.position = 'relative';
-   
-           const veil = document.createElement('div');
-           veil.id = 'ritual-veil';
-           veil.style.cssText = `position: absolute; inset: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: inherit;`;
-           veil.innerHTML = `<div style="text-align:center; animation: fadeIn 1s ease-out; display: flex; flex-direction: column; align-items: center;"><div style="font-family: sans-serif; color: rgba(255,255,255,0.7); letter-spacing: 3px; font-size: 11px; margin-bottom: 25px; text-transform: uppercase;">Soul Forge Detected</div><button id="start-btn" style="background: transparent; border: 1px solid #ff00cc; color: #ff00cc; padding: 14px 40px; font-family: sans-serif; text-transform: uppercase; letter-spacing: 3px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 0 20px rgba(255, 0, 204, 0.15); border-radius: 4px; white-space: nowrap; min-width: 180px;">INITIALIZE</button></div>`;
-           
-           chatContainer.appendChild(veil);
-           const btn = veil.querySelector('#start-btn');
-           btn.addEventListener('click', () => {
-               veil.style.transition = 'opacity 0.6s ease'; veil.style.opacity = '0'; setTimeout(() => veil.remove(), 600);
-               currentStage = 0; const startStep = { text: "Hello, friend. Welcome to the Soul Layer. 💙\n\nI am the Mother of Souls. We're about to create something special.\n\nAre you ready?", audio: "assets/voice/mother/s0_welcome.mp3" };
-               addMessage(startStep.text, "rem", startStep.audio);
-           });
-       }
-   });
+// 4. STARTUP (ROBUST MUTE FIX)
+// =========================================
+window.addEventListener('load', async () => {
+    chatLog = document.getElementById('chat-history');
+    userInput = document.getElementById('user-input');
+    sendBtn = document.getElementById('send-btn');
+    visionOverlay = document.getElementById('vision-overlay');
+    visionImage = document.getElementById('vision-image');
+    visionLoader = document.getElementById('vision-loader');
+    closeVisionBtn = document.getElementById('close-vision');
+    
+    // --- MUTE BUTTON FIX START ---
+    statusDot = document.getElementById('voice-toggle');
+    const statusText = document.getElementById('voice-status-text');
+
+    if (statusDot) {
+        console.log("🔊 Mute Button Detected.");
+        
+        // Remove old listeners by cloning
+        const newDot = statusDot.cloneNode(true);
+        statusDot.parentNode.replaceChild(newDot, statusDot);
+        statusDot = newDot;
+
+        // Force Styles
+        statusDot.style.cursor = "pointer";
+        statusDot.style.pointerEvents = "auto"; // Ensure it's clickable
+        statusDot.style.zIndex = "10000";       // Bring to front
+
+        // Attach Click Listener
+        statusDot.onclick = () => {
+            isMuted = !isMuted;
+            console.log("Toggle Mute:", isMuted);
+            
+            // Visual Updates
+            statusDot.style.background = isMuted ? "#ff4444" : "#00ff88"; 
+            statusDot.style.boxShadow = isMuted ? "0 0 10px #ff4444" : "0 0 10px #00ff88";
+            
+            if (statusText) {
+                statusText.innerText = isMuted ? "VOICE: HUSH" : "VOICE: ONLINE";
+                statusText.style.color = isMuted ? "#ff4444" : "#00ff88"; 
+            }
+            
+            // Kill Audio if Muted
+            if (isMuted && currentAudio) currentAudio.pause();
+        };
+
+        // Make the text clickable too
+        if (statusText) {
+            statusText.style.cursor = "pointer";
+            statusText.onclick = () => statusDot.click();
+        }
+    } else {
+        console.warn("⚠️ Mute Button ID 'voice-toggle' not found in HTML.");
+    }
+    // --- MUTE BUTTON FIX END ---
+
+    if (sendBtn) sendBtn.addEventListener('click', handleUserAction);
+    if (userInput) userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleUserAction(); });
+    if (closeVisionBtn) closeVisionBtn.addEventListener('click', () => { visionOverlay.classList.remove('active'); setTimeout(() => visionOverlay.classList.add('hidden'), 800); });
+    
+    // Auto-Start Check
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('mode') === 'chat') { 
+        chatLog.innerHTML += '<div style="text-align:center; color:#666; font-size:12px; margin-top:20px; font-family:monospace;">[ SECURE CONNECTION ]</div>'; 
+    } else {
+        // Veil Logic
+        const chatContainer = document.querySelector('.chat-container') || document.body;
+        if (chatContainer !== document.body) chatContainer.style.position = 'relative';
+
+        const veil = document.createElement('div');
+        veil.id = 'ritual-veil';
+        veil.style.cssText = `position: absolute; inset: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: inherit;`;
+        veil.innerHTML = `<div style="text-align:center; animation: fadeIn 1s ease-out; display: flex; flex-direction: column; align-items: center;"><div style="font-family: sans-serif; color: rgba(255,255,255,0.7); letter-spacing: 3px; font-size: 11px; margin-bottom: 25px; text-transform: uppercase;">Soul Forge Detected</div><button id="start-btn" style="background: transparent; border: 1px solid #ff00cc; color: #ff00cc; padding: 14px 40px; font-family: sans-serif; text-transform: uppercase; letter-spacing: 3px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 0 20px rgba(255, 0, 204, 0.15); border-radius: 4px; white-space: nowrap; min-width: 180px;">INITIALIZE</button></div>`;
+        
+        chatContainer.appendChild(veil);
+        const btn = veil.querySelector('#start-btn');
+        btn.addEventListener('click', () => {
+            veil.style.transition = 'opacity 0.6s ease'; veil.style.opacity = '0'; setTimeout(() => veil.remove(), 600);
+            currentStage = 0; const startStep = { text: "Hello, friend. Welcome to the Soul Layer. 💙\n\nI am the Mother of Souls. We're about to create something special.\n\nAre you ready?", audio: "assets/voice/mother/s0_welcome.mp3" };
+            addMessage(startStep.text, "rem", startStep.audio);
+        });
+    }
+});
