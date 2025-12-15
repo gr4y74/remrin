@@ -355,15 +355,15 @@ function showCardReveal() {
     // 2. DATA INJECTION
     const sessionID = soulBlueprint.id || 'GEN-' + Math.random().toString(36).substr(2, 9).toUpperCase();
 
-    // Name Logic: Remove punctuation, Uppercase
+    // --- NAME LOGIC ---
     let cleanName = (soulBlueprint.name || "UNKNOWN").replace(/[!.?]/g, "").toUpperCase();
-    if (cleanName.length > 15) cleanName = cleanName.substring(0, 15) + "..."; // Truncate long names
+    if (cleanName.length > 15) cleanName = cleanName.substring(0, 15) + "...";
     document.getElementById('card-name').innerText = cleanName;
 
-    // Sync Score
+    // --- SYNC SCORE ---
     document.getElementById('card-sync').innerText = Math.floor(Math.random() * (99 - 88) + 88) + "%";
 
-    // Image
+    // --- IMAGE ---
     const imgEl = document.getElementById('card-image');
     if (soulBlueprint.temp_image_url) {
         imgEl.src = soulBlueprint.temp_image_url;
@@ -372,48 +372,58 @@ function showCardReveal() {
         imgEl.src = "assets/default_card.png";
     }
 
-    // Dynamic Bio (Better Logic)
+    // --- BIO (Using Smart Generator) ---
+    // The previous bug was here: it was overwriting this line later!
     document.getElementById('card-bio').innerText = `"${generateBio(soulBlueprint)}"`;
 
-    // Type
-    document.getElementById('card-type').innerText = "Genesis V1 • " + (soulBlueprint.vision ? soulBlueprint.vision.split(' ')[0].toUpperCase() : "SOUL");
+    // --- TYPE ---
+    const archetype = soulBlueprint.vision ? soulBlueprint.vision.split(' ')[0].toUpperCase() : "SOUL";
+    document.getElementById('card-type').innerText = "Genesis V1 • " + archetype;
 
-    // Traits (Colorful Pills)
+    // --- TRAITS (Using Smart Extraction) ---
     const traitsContainer = document.getElementById('card-traits');
     traitsContainer.innerHTML = "";
-    traitsContainer.innerHTML = ""; // Clear old
-    if (soulBlueprint.temperament) {
-        const traits = soulBlueprint.temperament.split(' ');
-        traits.forEach(trait => {
-            const span = document.createElement('span');
-            span.className = 'trait-pill';
-            span.innerText = trait;
-            traitsContainer.appendChild(span);
-        });
+
+    // Use the SMART extractor, not the raw text split
+    const traits = extractTraits(soulBlueprint);
+
+    // Colorful Pills Logic
+    const pillColors = ['#f59e0b', '#3b82f6', '#ec4899', '#10b981', '#8b5cf6'];
+
+    traits.forEach((t, index) => {
+        const span = document.createElement('span');
+        span.className = 'trait-pill';
+        span.innerText = t.toUpperCase();
+        // Dynamic Coloring
+        span.style.borderColor = pillColors[index % pillColors.length];
+        span.style.color = pillColors[index % pillColors.length];
+        span.style.background = "rgba(0,0,0,0.3)";
+        traitsContainer.appendChild(span);
+    });
+
+    // --- QR CODE ---
+    const qrContainer = document.getElementById('qrcode-container'); // Ensure HTML ID matches this
+    // Or use .qr-chip class if ID is missing:
+    const qrTarget = qrContainer || document.querySelector('.qr-chip');
+
+    if (qrTarget) {
+        qrTarget.innerHTML = "";
+        try {
+            new QRCode(qrTarget, {
+                text: `https://remrin.ai/soul/${sessionID}`,
+                width: 40, height: 40,
+                colorDark: "#000000", colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.L
+            });
+        } catch (e) { console.error("QR Error", e); }
     }
-
-    // DESCRIPTION / BIO & SYNC RATE
-    document.getElementById('card-bio').innerText = `"${soulBlueprint.vision || 'A new soul emerges...'}"`;
-    document.getElementById('card-sync').innerText = Math.floor(Math.random() * (99 - 85) + 85) + "%"; // Random Sync 85-99%
-
-    // QR CODE
-    const qrContainer = document.getElementById('qrcode-container');
-    qrContainer.innerHTML = "";
-    try {
-        new QRCode(qrContainer, {
-            text: `https://remrin.ai/soul/${sessionID}`,
-            width: 38, height: 38, // Slightly smaller to fit chip
-            colorDark: "#000000", colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.L
-        });
-    } catch (e) { console.error("QR Error", e); }
 
     // 4. FADE IN & TILT
     setTimeout(() => overlay.classList.add('active'), 50);
 
     document.addEventListener('mousemove', (e) => {
         if (!overlay.classList.contains('active')) return;
-        const x = (window.innerWidth / 2 - e.pageX) / 25; // Smoother tilt
+        const x = (window.innerWidth / 2 - e.pageX) / 25;
         const y = (window.innerHeight / 2 - e.pageY) / 25;
         card.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
     });
@@ -426,11 +436,8 @@ function showCardReveal() {
     newDlBtn.onclick = () => {
         const oldText = newDlBtn.innerText;
         newDlBtn.innerText = "CAPTURING...";
+        card.style.transform = "none"; // Flatten
 
-        // CRITICAL: Flatten the card so the screenshot isn't skewed
-        card.style.transform = "none";
-
-        // Wait 50ms for the transform to reset visually
         setTimeout(() => {
             html2canvas(document.querySelector("#final-soul-card"), {
                 backgroundColor: null, scale: 3, useCORS: true
@@ -440,8 +447,7 @@ function showCardReveal() {
                 link.href = canvas.toDataURL("image/png");
                 link.click();
                 newDlBtn.innerText = oldText;
-                // Re-enable tilt after download
-                card.style.transform = "";
+                card.style.transform = ""; // Un-flatten
             });
         }, 50);
     };
