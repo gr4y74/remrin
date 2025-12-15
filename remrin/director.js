@@ -33,28 +33,43 @@ function parseMarkdown(text) {
     return html;
 }
 
+// HTML-AWARE TYPEWRITER: Types text content but renders tags instantly
 function typeText(element, rawText, speed = 15) {
     return new Promise((resolve) => {
-        // Parse markdown BEFORE typing
-        const htmlContent = parseMarkdown(rawText);
+        const html = parseMarkdown(rawText);
+        element.innerHTML = "";
 
-        // We type plain text but render HTML at the end to prevent tag glitching
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = htmlContent;
-        const plainText = tempDiv.textContent || tempDiv.innerText || "";
+        // Split HTML into tokens: tags (<...>) and text content
+        // Regex captures tags in group 1 to include them in the split result
+        const tokens = html.split(/(<[^>]+>)/g).filter(t => t !== "");
 
-        element.innerHTML = ""; // Clear
-        let i = 0;
+        let tokenIndex = 0;
+        let charIndex = 0;
 
         function type() {
-            if (i < plainText.length) {
-                element.textContent += plainText.charAt(i);
-                i++;
-                chatLog.scrollTop = chatLog.scrollHeight;
-                setTimeout(type, speed);
+            if (tokenIndex < tokens.length) {
+                const token = tokens[tokenIndex];
+
+                if (token.startsWith('<')) {
+                    // It's a tag: append instantly and move to next token
+                    element.innerHTML += token;
+                    tokenIndex++;
+                    type();
+                } else {
+                    // It's text: type one char
+                    if (charIndex < token.length) {
+                        element.innerHTML += token.charAt(charIndex);
+                        charIndex++;
+                        chatLog.scrollTop = chatLog.scrollHeight;
+                        setTimeout(type, speed);
+                    } else {
+                        // Finished this text node, move to next token
+                        charIndex = 0;
+                        tokenIndex++;
+                        type();
+                    }
+                }
             } else {
-                // Restore the HTML formatting at the end
-                element.innerHTML = htmlContent;
                 resolve();
             }
         }
@@ -623,9 +638,16 @@ window.addEventListener('load', async () => {
         chatContainer.appendChild(veil);
         const btn = veil.querySelector('#start-btn');
         btn.addEventListener('click', () => {
-            veil.style.transition = 'opacity 0.6s ease'; veil.style.opacity = '0'; setTimeout(() => veil.remove(), 600);
-            currentStage = 0; const startStep = { text: "Hello, friend. Welcome to the Soul Layer. 💙\n\nI am the Mother of Souls. We're about to create something special.\n\nAre you ready?", audio: "assets/voice/mother/s0_welcome.mp3" };
-            addMessage(startStep.text, "rem", startStep.audio);
+            veil.style.transition = 'opacity 0.8s ease';
+            veil.style.opacity = '0';
+            setTimeout(() => veil.remove(), 1000);
+
+            // Use the canonical script from config
+            const startStep = RITUAL_CONFIG[0];
+
+            addMessage(startStep.text, 'rem', startStep.audio);
+            currentStage = 0;
+            updateStatusDot(true);
         });
     }
 });
