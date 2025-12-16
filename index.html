@@ -1,105 +1,216 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="assets/favicon.png">
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Remrin.ai | The Genesis Layer</title>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@200..900&display=swap" rel="stylesheet">
 
     <style>
         /* =========================================
            0. CUSTOM FONTS (From Forge)
            ========================================= */
-        @font-face { font-family: 'Product Sans'; src: url('assets/fonts/product-sans/Product_Sans_Regular.ttf') format('truetype'); font-weight: 400; font-style: normal; }
-        @font-face { font-family: 'Product Sans'; src: url('assets/fonts/product-sans/Product_Sans_Bold.ttf') format('truetype'); font-weight: 700; font-style: normal; }
-        
-        :root { 
-            --void-bg: #030014; 
+        @font-face {
+            font-family: 'Product Sans';
+            src: url('assets/fonts/product-sans/Product_Sans_Regular.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'Product Sans';
+            src: url('assets/fonts/product-sans/Product_Sans_Bold.ttf') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        :root {
+            --void-bg: #030014;
             --accent-forge: #ff00cc;
             --accent-sanctuary: #00ccff;
             --accent-vault: #bd00ff;
             --accent-agora: #ffaa00;
         }
 
-        * { box-sizing: border-box; outline: none; margin: 0; padding: 0; }
-
-        body { 
-            width: 100%; height: 100dvh; 
-            background-color: var(--void-bg); 
-            color: #fff; 
-            font-family: 'Product Sans', 'Inter', sans-serif; 
-            overflow: hidden; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        * {
+            box-sizing: border-box;
+            outline: none;
+            margin: 0;
+            padding: 0;
         }
 
-        h1, h2, h3, .brand-font { font-family: 'Outfit', sans-serif; }
+        body {
+            width: 100%;
+            height: 100dvh;
+            background-color: var(--void-bg);
+            color: #fff;
+            font-family: 'Crimson Pro', serif;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        h1,
+        h2,
+        h3,
+        .brand-font {
+            font-family: 'Crimson Pro', serif;
+        }
 
         /* =========================================
            1. THE NAVIGATION BAR (From Forge)
            ========================================= */
         .glass-nav {
-            position: absolute; top: 0; left: 0; width: 100%; height: 80px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
             z-index: 100;
-            display: flex; justify-content: space-between; align-items: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             padding: 0 40px;
             background: linear-gradient(to bottom, rgba(3, 0, 20, 0.9), rgba(3, 0, 20, 0));
         }
-        .nav-logo a { display: block; height: 100%; display: flex; align-items: center; }
-        .logo-img { height: 32px; width: auto; filter: drop-shadow(0 0 10px rgba(138, 43, 226, 0.6)); transition: transform 0.3s; }
-        .logo-img:hover { transform: scale(1.05) rotate(5deg); }
-        
-        .nav-links { display: flex; gap: 30px; align-items: center; }
-        .nav-item { color: rgba(255, 255, 255, 0.6); text-decoration: none; font-size: 0.9rem; font-weight: 500; font-family: 'Outfit', sans-serif; transition: color 0.2s; }
-        .nav-item:hover { color: white; text-shadow: 0 0 8px rgba(255,255,255,0.5); }
-        
+
+        .nav-logo a {
+            display: block;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 32px;
+            width: auto;
+            filter: drop-shadow(0 0 10px rgba(138, 43, 226, 0.6));
+            transition: transform 0.3s;
+        }
+
+        .logo-img:hover {
+            transform: scale(1.05) rotate(5deg);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-item {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            font-family: 'Crimson Pro', serif;
+            transition: color 0.2s;
+        }
+
+        .nav-item:hover {
+            color: white;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+        }
+
         .nav-btn-login {
             padding: 8px 24px;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 100px;
-            color: white; text-decoration: none; font-size: 0.85rem; font-weight: 600; font-family: 'Outfit', sans-serif;
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'Crimson Pro', serif;
             transition: all 0.2s;
         }
-        .nav-btn-login:hover { background: white; color: black; box-shadow: 0 0 20px rgba(255, 255, 255, 0.4); }
+
+        .nav-btn-login:hover {
+            background: white;
+            color: black;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+        }
 
         /* =========================================
            2. ATMOSPHERE (Stars & Fog from Forge)
            ========================================= */
-        .fog-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: hidden; }
+        .fog-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
         .fog-layer {
-            position: absolute; width: 150vw; height: 150vw; border-radius: 50%;
-            filter: blur(80px); opacity: 0.4; mix-blend-mode: screen;
+            position: absolute;
+            width: 150vw;
+            height: 150vw;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            mix-blend-mode: screen;
             animation: rotateFog 60s linear infinite;
         }
-        .fog-pink { top: -30%; left: -20%; background: radial-gradient(circle, rgba(255, 0, 150, 0.4) 0%, transparent 60%); }
-        .fog-blue { bottom: -30%; right: -20%; background: radial-gradient(circle, rgba(0, 100, 255, 0.4) 0%, transparent 60%); animation-direction: reverse; }
+
+        .fog-pink {
+            top: -30%;
+            left: -20%;
+            background: radial-gradient(circle, rgba(255, 0, 150, 0.4) 0%, transparent 60%);
+        }
+
+        .fog-blue {
+            bottom: -30%;
+            right: -20%;
+            background: radial-gradient(circle, rgba(0, 100, 255, 0.4) 0%, transparent 60%);
+            animation-direction: reverse;
+        }
 
         /* =========================================
            2. PARALLAX STARS (Hyper-Dense)
            ========================================= */
-        
-           .stars-wrapper {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1; /* Behind fog */
-            overflow: hidden; pointer-events: none;
+
+        .stars-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            /* Behind fog */
+            overflow: hidden;
+            pointer-events: none;
         }
 
         @keyframes animStar {
-            from { transform: translateY(0px); }
-            to { transform: translateY(-2000px); }
+            from {
+                transform: translateY(0px);
+            }
+
+            to {
+                transform: translateY(-2000px);
+            }
         }
 
         /* 1. SMALL STARS (The Dust - 400+ Stars) */
         #stars {
-            width: 1px; height: 1px; background: transparent;
+            width: 1px;
+            height: 1px;
+            background: transparent;
             animation: animStar 100s linear infinite;
-            
-            box-shadow: 
+
+            box-shadow:
                 1742px 142px #FFF, 421px 520px #FFF, 200px 900px #FFF, 1432px 1400px #FFF,
                 600px 1200px #FFF, 1900px 1800px #FFF, 1050px 500px #FFF, 1500px 1100px #FFF,
                 1300px 600px #FFF, 110px 1500px #FFF, 700px 400px #FFF, 1200px 1200px #FFF,
@@ -124,17 +235,25 @@
                 1800px 300px #FFF, 400px 1900px #FFF, 1500px 1700px #FFF, 100px 900px #FFF,
                 950px 1650px #FFF, 250px 1150px #FFF, 1850px 1850px #FFF, 1350px 1350px #FFF;
         }
+
         #stars::after {
-            content: " "; position: absolute; top: 2000px;
-            width: 1px; height: 1px; background: transparent; box-shadow: inherit;
+            content: " ";
+            position: absolute;
+            top: 2000px;
+            width: 1px;
+            height: 1px;
+            background: transparent;
+            box-shadow: inherit;
         }
 
         /* 2. MEDIUM STARS (The Glimmer - 100+ Stars) */
         #stars2 {
-            width: 2px; height: 2px; background: transparent;
+            width: 2px;
+            height: 2px;
+            background: transparent;
             animation: animStar 75s linear infinite;
-            
-            box-shadow: 
+
+            box-shadow:
                 400px 500px #FFF, 1200px 1600px #FFF, 1700px 200px #FFF, 200px 900px #FFF,
                 800px 1300px #FFF, 1500px 600px #FFF, 100px 1800px #FFF, 600px 100px #FFF,
                 1100px 800px #FFF, 1400px 1400px #FFF, 300px 300px #FFF, 900px 1100px #FFF,
@@ -146,113 +265,244 @@
                 900px 1500px #FFF, 100px 100px #FFF, 1050px 500px #FFF, 500px 1100px #FFF,
                 1700px 600px #FFF, 110px 1500px #FFF, 1700px 1400px #FFF, 200px 1200px #FFF;
         }
+
         #stars2::after {
-            content: " "; position: absolute; top: 2000px;
-            width: 2px; height: 2px; background: transparent; box-shadow: inherit;
+            content: " ";
+            position: absolute;
+            top: 2000px;
+            width: 2px;
+            height: 2px;
+            background: transparent;
+            box-shadow: inherit;
         }
 
         /* 3. BIG STARS (The Bright Ones - 30+ Stars) */
         #stars3 {
-            width: 3px; height: 3px; background: transparent;
+            width: 3px;
+            height: 3px;
+            background: transparent;
             animation: animStar 50s linear infinite;
-            
-            box-shadow: 
+
+            box-shadow:
                 600px 800px #FFF, 1300px 200px #FFF, 200px 1500px #FFF, 1600px 500px #FFF,
                 900px 1200px #FFF, 100px 400px #FFF, 1800px 1700px #FFF, 500px 900px #FFF,
                 1500px 1400px #FFF, 300px 100px #FFF, 1100px 1900px #FFF, 1900px 1100px #FFF,
                 150px 650px #FFF, 750px 1350px #FFF, 1250px 450px #FFF, 1750px 1850px #FFF;
         }
+
         #stars3::after {
-            content: " "; position: absolute; top: 2000px;
-            width: 3px; height: 3px; background: transparent; box-shadow: inherit;
+            content: " ";
+            position: absolute;
+            top: 2000px;
+            width: 3px;
+            height: 3px;
+            background: transparent;
+            box-shadow: inherit;
         }
+
         /* =========================================
            3. MAIN MENU CONTENT (The Layers)
            ========================================= */
         .menu-container {
-            position: relative; z-index: 10;
-            display: flex; flex-direction: column; align-items: center; gap: 2rem;
-            width: 100%; max-width: 480px; padding: 20px;
-            opacity: 0; animation: fadeInUp 1s ease 0.5s forwards;
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            width: 100%;
+            max-width: 480px;
+            padding: 20px;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.5s forwards;
         }
 
-        .title-block { text-align: center; margin-bottom: 1rem; }
-        .main-title {
-            font-size: 2.5rem; font-weight: 700; letter-spacing: -1px; margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        .title-block {
+            text-align: center;
+            margin-bottom: 1rem;
         }
-        .sub-title { font-size: 0.9rem; color: rgba(255, 255, 255, 0.5); letter-spacing: 2px; text-transform: uppercase; }
+
+        .main-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sub-title {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
 
         /* THE CARDS */
-        .layer-menu { display: flex; flex-direction: column; gap: 1rem; width: 100%; }
+        .layer-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+        }
 
         .layer-card {
             position: relative;
             background: rgba(20, 20, 30, 0.4);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 16px;
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            cursor: pointer; overflow: hidden;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            cursor: pointer;
+            overflow: hidden;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             text-decoration: none;
         }
 
-        .card-content { padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 1.25rem; }
-        
-        .icon-box {
-            width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; border-radius: 10px;
-            background: rgba(255, 255, 255, 0.05); transition: transform 0.3s ease;
+        .card-content {
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
         }
 
-        .text-box { flex: 1; }
-        .layer-name { font-size: 1.05rem; font-weight: 600; color: rgba(255, 255, 255, 0.9); margin-bottom: 2px; transition: color 0.3s; }
-        .layer-desc { font-size: 0.8rem; color: rgba(255, 255, 255, 0.4); line-height: 1.3; }
-        
-        .arrow { font-size: 1.2rem; color: rgba(255, 255, 255, 0.2); transition: all 0.3s; }
+        .icon-box {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .text-box {
+            flex: 1;
+        }
+
+        .layer-name {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2px;
+            transition: color 0.3s;
+        }
+
+        .layer-desc {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.4);
+            line-height: 1.3;
+        }
+
+        .arrow {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+        }
 
         /* HOVER STATES */
         .layer-card:hover {
             background: rgba(255, 255, 255, 0.08);
             border-color: rgba(255, 255, 255, 0.15);
             transform: translateY(-2px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
         }
-        .layer-card:hover .icon-box { transform: scale(1.1) rotate(5deg); background: rgba(255, 255, 255, 0.1); }
-        .layer-card:hover .arrow { transform: translateX(5px); }
+
+        .layer-card:hover .icon-box {
+            transform: scale(1.1) rotate(5deg);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .layer-card:hover .arrow {
+            transform: translateX(5px);
+        }
 
         /* Color Themes */
-        .layer-forge:hover .layer-name, .layer-forge:hover .arrow { color: var(--accent-forge); }
-        .layer-forge:hover { border-left: 3px solid var(--accent-forge); }
+        .layer-forge:hover .layer-name,
+        .layer-forge:hover .arrow {
+            color: var(--accent-forge);
+        }
 
-        .layer-sanctuary:hover .layer-name, .layer-sanctuary:hover .arrow { color: var(--accent-sanctuary); }
-        .layer-sanctuary:hover { border-left: 3px solid var(--accent-sanctuary); }
+        .layer-forge:hover {
+            border-left: 3px solid var(--accent-forge);
+        }
 
-        .layer-vault:hover .layer-name, .layer-vault:hover .arrow { color: var(--accent-vault); }
-        .layer-vault:hover { border-left: 3px solid var(--accent-vault); }
+        .layer-sanctuary:hover .layer-name,
+        .layer-sanctuary:hover .arrow {
+            color: var(--accent-sanctuary);
+        }
 
-        .layer-agora:hover .layer-name, .layer-agora:hover .arrow { color: var(--accent-agora); }
-        .layer-agora:hover { border-left: 3px solid var(--accent-agora); }
+        .layer-sanctuary:hover {
+            border-left: 3px solid var(--accent-sanctuary);
+        }
+
+        .layer-vault:hover .layer-name,
+        .layer-vault:hover .arrow {
+            color: var(--accent-vault);
+        }
+
+        .layer-vault:hover {
+            border-left: 3px solid var(--accent-vault);
+        }
+
+        .layer-agora:hover .layer-name,
+        .layer-agora:hover .arrow {
+            color: var(--accent-agora);
+        }
+
+        .layer-agora:hover {
+            border-left: 3px solid var(--accent-agora);
+        }
 
         /* Badge */
         .badge {
-            position: absolute; top: 12px; right: 12px;
-            padding: 3px 8px; border-radius: 6px;
-            background: rgba(255, 0, 204, 0.2); border: 1px solid rgba(255, 0, 204, 0.4);
-            font-size: 0.6rem; font-weight: 700; color: #ff00cc; text-transform: uppercase;
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: rgba(255, 0, 204, 0.2);
+            border: 1px solid rgba(255, 0, 204, 0.4);
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: #ff00cc;
+            text-transform: uppercase;
             box-shadow: 0 0 10px rgba(255, 0, 204, 0.2);
         }
 
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
         /* MOBILE */
         @media (max-width: 600px) {
-            .glass-nav { padding: 0 20px; }
-            .nav-item { display: none; }
-            .menu-container { padding: 20px; width: 100%; }
+            .glass-nav {
+                padding: 0 20px;
+            }
+
+            .nav-item {
+                display: none;
+            }
+
+            .menu-container {
+                padding: 20px;
+                width: 100%;
+            }
         }
     </style>
 </head>
+
 <body>
 
     <nav class="glass-nav">
@@ -278,14 +528,14 @@
     </div>
 
     <div class="menu-container">
-        
+
         <div class="title-block">
             <h1 class="main-title">The Soul Layer</h1>
             <div class="sub-title">Choose Your Reality</div>
         </div>
 
         <div class="layer-menu">
-            
+
             <a href="forge.html?mode=ritual" class="layer-card layer-forge" id="enter-forge">
                 <div class="badge">Start</div>
                 <div class="card-content">
@@ -334,5 +584,6 @@
         </div>
     </div>
 
-    </body>
+</body>
+
 </html>
