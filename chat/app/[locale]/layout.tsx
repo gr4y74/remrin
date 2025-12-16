@@ -6,12 +6,13 @@ import initTranslations from "@/lib/i18n"
 import { Database } from "@/supabase/types"
 import { createServerClient } from "@supabase/ssr"
 import { Metadata, Viewport } from "next"
-import { Crimson_Pro } from "next/font/google"
+import { Crimson_Pro, Inter } from "next/font/google"
 import { cookies } from "next/headers"
 import { ReactNode } from "react"
 import "./globals.css"
 
 const crimson = Crimson_Pro({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 const APP_NAME = "Chatbot UI"
 const APP_DEFAULT_TITLE = "Chatbot UI"
 const APP_TITLE_TEMPLATE = "%s - Chatbot UI"
@@ -88,7 +89,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={crimson.className}>
+      <body className={`${crimson.className} ${inter.variable}`}>
         <Providers attribute="class" defaultTheme="dark">
           <TranslationsProvider
             namespaces={i18nNamespaces}
