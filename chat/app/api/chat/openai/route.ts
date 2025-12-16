@@ -17,10 +17,10 @@ export async function POST(request: Request) {
   try {
     const profile = await getServerProfile()
 
-    checkApiKey(profile.openai_api_key, "OpenAI")
+    // 1. DELETE or COMMENT OUT this line! We use the .env key now.
+    // checkApiKey(profile.openai_api_key, "OpenAI") 
 
     // DeepSeek Provider Configuration
-    // explicitly using environment variables as requested
     const deepseek = createOpenAI({
       baseURL: process.env.OPENAI_BASE_URL,
       apiKey: process.env.OPENAI_API_KEY,
@@ -28,13 +28,12 @@ export async function POST(request: Request) {
 
     const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY })
 
-    // Manual message conversion to avoid convertToCoreMessages issues with legacy format
+    // ... (Your message mapping logic stays the same) ...
     const initialMessages = messages.map((m: any) => {
       let content = m.content
       if (Array.isArray(m.content)) {
         content = m.content.map((c: any) => {
           if (c.type === 'image_url') {
-            // Convert OpenAI image_url to SDK image part
             return { type: 'image', image: c.image_url.url }
           }
           if (c.type === 'text') {
@@ -43,41 +42,42 @@ export async function POST(request: Request) {
           return c
         })
       }
-      // Ensure role is valid
       const role = (m.role === 'user' || m.role === 'assistant' || m.role === 'system') ? m.role : 'user';
       return { role, content }
     })
 
-    const result = await streamText({
+    const result = streamText({
       model: deepseek(chatSettings.model),
-      messages: initialMessages as any, // Cast to any to satisfy type checker for now
+      messages: initialMessages as any,
+      // 2. ADD THIS SYSTEM PROMPT TO FORCE SEARCH:
+      system: "You are a helpful assistant with access to the internet via the 'search' tool. You MUST use the search tool if the user asks about current events, news, or information you do not know. Do not say you cannot access the internet; just use the tool.",
       tools: {
         search: {
           description: 'A powerful search engine for finding up-to-date information on the web.',
-          parameters: z.object({
+          inputSchema: z.object({
             query: z.string().describe('The search query')
           }),
-          execute: async ({ query }) => {
-            console.log("Searching Tavily for:", query) // Debug log
+          execute: async ({ query }: { query: string }) => {
+            console.log("Searching Tavily for:", query)
             try {
               const searchResult = await tvly.search(query, {
                 includeAnswer: true,
                 maxResults: 5,
                 topic: "general"
               })
-              console.log("Search done");
-              return searchResult;
+              console.log("Search done")
+              return searchResult
             } catch (err: any) {
-              console.error("Tavily Search Error:", err);
-              return `Search failed: ${err.message}`;
+              console.error("Tavily Search Error:", err)
+              return `Search failed: ${err.message}`
             }
           }
         }
       },
-      maxSteps: 5
+      // maxSteps: 5
     })
 
-    return result.toDataStreamResponse()
+    return result.toTextStreamResponse()
   } catch (error: any) {
     console.error("CHAT ROUTE ERROR:", error); // Log the actual error to terminal
     let errorMessage = error.message || "An unexpected error occurred"
