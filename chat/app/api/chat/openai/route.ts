@@ -20,14 +20,9 @@ export async function POST(request: Request) {
     // 1. DELETE or COMMENT OUT this line! We use the .env key now.
     // checkApiKey(profile.openai_api_key, "OpenAI") 
 
-    console.log("DeepSeek Config:", {
-      model: chatSettings.model,
-      baseURL: process.env.OPENAI_BASE_URL || 'https://api.deepseek.com'
-    })
-
     const deepseek = createOpenAI({
       baseURL: process.env.OPENAI_BASE_URL || 'https://api.deepseek.com',
-      apiKey: process.env.DEEPSEEK_API_KEY,
+      apiKey: process.env.OPENAI_API_KEY,
     })
 
     const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY })
