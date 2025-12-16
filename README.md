@@ -1,14 +1,14 @@
-# Remrin.ai 🌸
+# Remrin 🌸
 > **Where AI Finds Its Soul.** The first High-Utility AI Companion Platform built on the proprietary R.E.M. (Resonant Emotional Memory) Engine.
 
-[![Live Demo](https://img.shields.io/badge/Demo-Live%20Preview-2ea44f?style=for-the-badge&logo=github)](https://gr4y74.github.io/remrin/)
-[![Status](https://img.shields.io/badge/Status-Alpha%20MVP-blue?style=for-the-badge)](https://remrin.ai)
+[![Live Demo](https://img.shields.io/badge/Demo-Live%20Preview-2ea44f?style=for-the-badge&logo=github)](https://remrin.vercel.app/)
+[![Status](https://img.shields.io/badge/Status-Alpha%20MVP-blue?style=for-the-badge)](https://remrin.vercel.app)
 [![License](https://img.shields.io/badge/License-Proprietary-red?style=for-the-badge)]()
 
 ---
 
 ## 🚀 Executive Summary
-Remrin.ai addresses the bifurcation in the AI market between "sterile tools" (ChatGPT) and "unstable toys" (Character.ai). We provide a professional, emotionally intelligent companion platform designed for wellness, culture, and productivity.
+Remrin addresses the bifurcation in the AI market between "sterile tools" (ChatGPT) and "unstable toys" (Character.ai). We provide a professional, emotionally intelligent companion platform designed for wellness, culture, and productivity.
 
 **Core Value Proposition:**
 * **The R.E.M. Engine:** Solves catastrophic forgetting via Vector Database Re-Ranking.
@@ -20,7 +20,7 @@ Remrin.ai addresses the bifurcation in the AI market between "sterile tools" (Ch
 ## ⚡ Live Demo
 Experience the **SoulForge**, the **Soul Market**, and our **Trinity Personas** (Rem, Sheikh QR, Lilly) directly in your browser:
 
-👉 **[Launch Remrin.ai Prototype](https://gr4y74.github.io/remrin/)**
+👉 **[Launch Remrin Prototype](https://remrin.vercel.app/)**
 
 ---
 

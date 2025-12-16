@@ -416,7 +416,7 @@ function showCardReveal() {
         qrTarget.innerHTML = "";
         try {
             new QRCode(qrTarget, {
-                text: `https://remrin.ai/soul/${sessionID}`,
+                text: `https://remrin.vercel.app/soul/${sessionID}`,
                 width: 40, height: 40,
                 colorDark: "#000000", colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.L
@@ -508,7 +508,7 @@ function showCardReveal() {
             console.log("✅ DB RECORD INSERTED");
 
             // 3. REDIRECT
-            const redirectUrl = `http://localhost:3000/login?email=${encodeURIComponent(soulBlueprint.email)}`;
+            const redirectUrl = `https://remrin-chat.vercel.app/login?email=${encodeURIComponent(soulBlueprint.email)}`;
             console.log("🚀 REDIRECTING:", redirectUrl);
             window.location.href = redirectUrl;
 
