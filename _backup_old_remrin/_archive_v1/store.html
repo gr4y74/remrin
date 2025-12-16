@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remrin - Soul Market</title>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #262a3a;
+            --card-bg: #1e212e;
+            --sidebar-width: 280px;
+            --sidebar-bg: rgba(30, 33, 46, 0.95);
+            --text-color: #e0e0e0;
+            --accent-color: #d95a94;
+            --price-green: #4caf50;
+            --gold: #ffc107;
+            --aether-blue: #00d2ff;
+        }
+
+        * { box-sizing: border-box; }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            font-family: 'Google Sans', sans-serif;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            overflow: hidden;
+        }
+
+        /* BACKGROUND LAYER */
+        #app-background {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/rem_bw.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-blend-mode: overlay;
+            background-color: var(--bg-color);
+            z-index: 0;
+            filter: blur(5px);
+        }
+
+        .main-container {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            display: flex;
+            z-index: 100; 
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: var(--sidebar-width);
+            min-width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(255,255,255,0.1);
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-area {
+            height: 60px;
+            min-height: 60px;
+            margin-bottom: 20px;
+            background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/logo_white_ds.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: left;
+            cursor: pointer;
+        }
+
+        .menu-item {
+            padding: 12px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 0.9rem; 
+            display: flex; 
+            align-items: center;
+            color: #aaa;
+            text-decoration: none;
+            margin-bottom: 5px;
+            transition: all 0.2s;
+        }
+        
+        .menu-item:hover { background: rgba(255,255,255,0.05); color: white; }
+        .menu-item.active { background: rgba(217, 90, 148, 0.2); color: white; border-left: 3px solid var(--accent-color); }
+
+        .nav-icon { margin-right: 10px; font-size: 1.2em; }
+
+        /* STORE INTERFACE */
+        .store-interface {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow-y: auto;
+            padding: 40px;
+            position: relative;
+        }
+
+        /* Store Header */
+        .store-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .store-title h1 { margin: 0; font-size: 2rem; font-weight: 500; }
+        .store-title p { margin: 5px 0 0; color: #aaa; }
+        
+        .balance-card {
+            background: rgba(0,0,0,0.3);
+            padding: 12px 25px;
+            border-radius: 20px;
+            display: flex;
+            gap: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .currency { font-weight: bold; display: flex; align-items: center; font-size: 0.95rem; }
+        .currency span { margin-right: 8px; font-size: 1.1rem; }
+        .currency.aether span { color: var(--aether-blue); }
+        .currency.echoes span { color: var(--gold); }
+
+        /* Tabs */
+        .tabs { display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
+        .tab { 
+            padding: 8px 16px; cursor: pointer; color: #aaa; border-radius: 20px; transition: all 0.3s; 
+            border: 1px solid transparent; font-size: 0.9rem;
+        }
+        .tab:hover { color: white; background: rgba(255,255,255,0.05); }
+        .tab.active { background: var(--accent-color); color: white; font-weight: bold; box-shadow: 0 4px 10px rgba(217, 90, 148, 0.3); }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); border-color: var(--accent-color); }
+
+        .card-image {
+            height: 180px;
+            background-size: cover;
+            background-position: top center;
+            position: relative;
+        }
+        
+        .badge {
+            position: absolute; top: 10px; right: 10px;
+            background: rgba(0,0,0,0.7);
+            padding: 4px 8px; border-radius: 4px;
+            font-size: 0.7rem; text-transform: uppercase; font-weight: bold;
+        }
+        .badge.official { background: var(--accent-color); }
+        .badge.community { background: #4285f4; }
+
+        .card-details { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; }
+        .card-title { font-weight: bold; font-size: 1.1rem; margin-bottom: 5px; }
+        .card-desc { color: #aaa; font-size: 0.85rem; margin-bottom: 15px; line-height: 1.4; flex-grow: 1; }
+        
+        .price-row { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+        .price { font-weight: bold; font-size: 1.1rem; }
+        
+        .btn-buy {
+            background: white; color: black; border: none;
+            padding: 8px 15px; border-radius: 20px;
+            cursor: pointer; font-weight: bold; font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .btn-buy:hover { background: #ddd; }
+        .btn-buy.owned { background: rgba(255,255,255,0.1); color: #aaa; cursor: default; }
+
+        .section { display: none; animation: fadeIn 0.4s ease; }
+        .section.active { display: grid; }
+
+        /* --- SOULFORGE FLOATING BUTTON --- */
+        .fab-create {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            background: linear-gradient(45deg, #d95a94, #4285f4);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(217, 90, 148, 0.4);
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+            z-index: 200;
+            animation: pulse 2s infinite;
+        }
+        .fab-create span { margin-right: 10px; font-size: 1.3rem; }
+        .fab-create:hover { transform: scale(1.05); }
+
+        /* --- SOULFORGE MODAL --- */
+        .forge-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(15px);
+            z-index: 999;
+            display: none; 
+            justify-content: center;
+            align-items: center;
+        }
+        .forge-modal.active { display: flex; }
+
+        .forge-window {
+            width: 600px;
+            height: 700px;
+            background: #1e212e;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+
+        .forge-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(90deg, rgba(217, 90, 148, 0.1), transparent);
+        }
+        .forge-header h2 { margin: 0; font-size: 1.2rem; display: flex; align-items: center; }
+        .forge-close { background: none; border: none; color: #aaa; font-size: 1.5rem; cursor: pointer; }
+        .forge-close:hover { color: white; }
+
+        .forge-chat {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .forge-msg {
+            max-width: 80%;
+            padding: 12px 18px;
+            border-radius: 15px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+        .forge-msg.ai { background: rgba(217, 90, 148, 0.2); align-self: flex-start; border-bottom-left-radius: 2px; }
+        .forge-msg.user { background: rgba(66, 133, 244, 0.2); align-self: flex-end; border-bottom-right-radius: 2px; text-align: right;}
+
+        .forge-input-area {
+            padding: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            gap: 10px;
+        }
+        .forge-input {
+            flex-grow: 1;
+            padding: 12px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 30px;
+            color: white;
+            outline: none;
+        }
+        .forge-send {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .soul-result {
+            background: #151720;
+            border: 1px solid var(--accent-color);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #88ff88;
+        }
+
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(217, 90, 148, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(217, 90, 148, 0); } 100% { box-shadow: 0 0 0 0 rgba(217, 90, 148, 0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    </style>
+</head>
+<body>
+
+    <div id="app-background"></div>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="logo-area" onclick="window.location.href='index.html'"></div>
+            <div style="flex-grow:1;">
+                <div style="color:#aaa; font-size:0.8rem; margin-bottom:10px; text-transform: uppercase; letter-spacing:1px;">Navigation</div>
+                <a href="index.html" class="menu-item">
+                    <span class="nav-icon">💬</span> Chat
+                </a>
+                <div class="menu-item active">
+                    <span class="nav-icon">🛍️</span> Soul Market
+                </div>
+                <div class="menu-item">
+                    <span class="nav-icon">⚙️</span> Settings
+                </div>
+            </div>
+            <div style="padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; margin-top: auto;">
+                <div style="font-size: 0.8rem; color: #aaa; margin-bottom: 5px;">Current Plan</div>
+                <div style="font-weight: bold; color: var(--accent-color);">Remrin Founder</div>
+            </div>
+        </div>
+
+        <div class="store-interface">
+            <div class="store-header">
+                <div class="store-title">
+                    <h1>Soul Market</h1>
+                    <p>Expand your world with new Souls and Fragments.</p>
+                </div>
+                <div class="balance-card">
+                    <div class="currency aether"><span>⚡</span> 12,500 Aether</div>
+                    <div class="currency echoes"><span>🎙️</span> 450 Echoes</div>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('official')">✨ Official SoulKrafts</div>
+                <div class="tab" onclick="showTab('sparks')">🔥 SoulSparks</div>
+                <div class="tab" onclick="showTab('fuel')">🔋 The Source</div>
+                <div class="tab" onclick="showTab('wardrobe')">🧩 Fragments</div>
+            </div>
+
+            <div id="official" class="section grid active">
+                <div class="card">
+                    <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/rem_hero%20.png'); background-position: top left;">
+                        <div class="badge official">Official</div>
+                    </div>
+                    <div class="card-details">
+                        <div class="card-title">Rem (Re:Zero)</div>
+                        <div class="card-desc">The devoted maid. Includes Hero Image, Rain Fragments, and "Devotion" SoulQR.</div>
+                        <div class="price-row">
+                            <div class="price">$9.99</div>
+                            <button class="btn-buy owned">Installed</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/SheikhQR.png');">
+                        <div class="badge official">Official</div>
+                    </div>
+                    <div class="card-details">
+                        <div class="card-title">Sheikh QR</div>
+                        <div class="card-desc">Wise Islamic Scholar. Includes Cultural Context Module and Prayer Bead Fragments.</div>
+                        <div class="price-row">
+                            <div class="price">$4.99</div>
+                            <button class="btn-buy" onclick="buyItem(this)">Buy Now</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/lilly.png'); background-size: contain; background-color: #000;">
+                        <div class="badge official">Official</div>
+                    </div>
+                    <div class="card-details">
+                        <div class="card-title">Lilly (Architect)</div>
+                        <div class="card-desc">High-EQ professional companion. Optimized for wellness and productivity.</div>
+                        <div class="price-row">
+                            <div class="price">$14.99</div>
+                            <button class="btn-buy" onclick="buyItem(this)">Buy Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="sparks" class="section grid">
+                <div class="card">
+                    <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/bear.png');">
+                        <div class="badge community">New!</div>
+                    </div>
+                    <div class="card-details">
+                        <div class="card-title">Big Blue Bear</div>
+                        <div class="card-desc">A gentle giant. Mix of Pooh, Baloo, and Sulley. Perfect for comfort.</div>
+                        <div class="price-row">
+                            <div class="price">Free</div>
+                            <button class="btn-buy" onclick="buyItem(this)">Install</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/hacker.png');">
+                        <div class="badge community">User Created</div>
+                    </div>
+                    <div class="card-details">
+                        <div class="card-title">Cyberpunk Hacker</div>
+                        <div class="card-desc">Gritty, tech-savvy persona with neon visuals. Created by @NeonZero.</div>
+                        <div class="price-row">
+                            <div class="price">Free</div>
+                            <button class="btn-buy" onclick="buyItem(this)">Install</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/bard.png');">
+                        <div class="badge community">User Created</div>
+                    </div>
+                    <div class="card-details">
+                        <div class="card-title">Fantasy Bard</div>
+                        <div class="card-desc">Speaks in rhyme and riddles. Great for D&D campaigns. Created by @DiceRoller.</div>
+                        <div class="price-row">
+                            <div class="price">$1.99</div>
+                            <button class="btn-buy" onclick="buyItem(this)">Buy Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="fuel" class="section grid">
+                <div class="card" style="border-color: var(--aether-blue);">
+                    <div class="card-details">
+                        <div class="card-title" style="color: var(--aether-blue);">Starter Aether</div>
+                        <div class="card-desc">50,000 Brain Tokens. Keeps the conversation flowing.</div>
+                        <div class="price-row">
+                            <div class="price">$5.00</div>
+                            <button class="btn-buy" onclick="buyItem(this)">Refill</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="border-color: var(--gold);">
+                    <div class="card-details">
+                        <div class="card-title" style="color: var(--gold);">Echoes Pack</div>
+                        <div class="card-desc">500 Voice Minutes. Let your SoulKraft speak.</div>
+                        <div class="price-row">
+                            <div class="price">$10.00</div>
+                            <button class="btn-buy" onclick="buyItem(this)">Add Echoes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="wardrobe" class="section grid">
+                <div class="card">
+                    <div class="card-image" style="background-image: url('https://raw.githubusercontent.com/gr4y74/remrin/main/zen_bg.jpg');"></div>
+                    <div class="card-details">
+                        <div class="card-title">Zen Garden Fragments</div>
+                        <div class="card-desc">3 Peaceful backgrounds + Ambient soundscape.</div>
+                        <div class="price-row">
+                            <div class="price">$2.99</div>
+                            <button class="btn-buy" onclick="buyItem(this)">Buy Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="fab-create" onclick="openForge()">
+            <span>🔥</span> Create New Soul
+        </button>
+        
+        <div class="forge-modal" id="forgeModal">
+            <div class="forge-window">
+                <div class="forge-header">
+                    <h2>🔥 SoulForge <span>&nbsp;| Creation Engine</span></h2>
+                    <button class="forge-close" onclick="closeForge()">×</button>
+                </div>
+                <div class="forge-chat" id="forgeChat">
+                    <div class="forge-msg ai">Hello! ✨ I am Lilly, your Creation Architect.<br>I'm here to help you weave a new SoulSpark.<br><br>Let's start: <strong>What shall we call your new friend?</strong></div>
+                </div>
+                <div class="forge-input-area">
+                    <input type="text" class="forge-input" id="forgeInput" placeholder="Type here..." autocomplete="off">
+                    <button class="forge-send" onclick="forgeSend()">Send</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function showTab(tabId) {
+            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            const tabs = ['official', 'sparks', 'fuel', 'wardrobe'];
+            const index = tabs.indexOf(tabId);
+            document.querySelectorAll('.tab')[index].classList.add('active');
+        }
+
+        function buyItem(btn) {
+            btn.innerText = "Processing...";
+            btn.style.background = "#aaa";
+            setTimeout(() => {
+                btn.innerText = "Equipped ✓";
+                btn.style.background = "rgba(255,255,255,0.1)";
+                btn.style.color = "#fff";
+                btn.style.cursor = "default";
+            }, 800);
+        }
+        
+        // SoulForge Logic
+        let forgeStep = 0;
+        function openForge() { document.getElementById('forgeModal').classList.add('active'); }
+        function closeForge() { document.getElementById('forgeModal').classList.remove('active'); }
+        
+        function forgeSend() {
+            const input = document.getElementById('forgeInput');
+            const text = input.value.trim();
+            if(!text) return;
+            addForgeMsg("user", text);
+            input.value = "";
+            setTimeout(() => { forgeAIResponse(text); }, 1000);
+        }
+        
+        function addForgeMsg(role, text) {
+            const chat = document.getElementById('forgeChat');
+            const div = document.createElement('div');
+            div.className = `forge-msg ${role}`;
+            div.innerHTML = text;
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+        }
+        
+        function forgeAIResponse(userText) {
+            let response = "";
+            forgeStep++;
+            if(forgeStep === 1) {
+                response = `I love that name! <strong>${userText}</strong> sounds wonderful. 🧸💙<br><br>Now, close your eyes. Imagine them walking into the room. Are they <strong>High Energy</strong> (bouncing around) or <strong>Low Energy</strong> (gentle/calm)?`;
+            } else if (forgeStep === 2) {
+                response = "Got it. A gentle energy. 🐢<br><br>Let's find their 'Soul Twins.' Which of these archetypes fits them best?<br>A. <strong>Winnie the Pooh</strong> (Sweet Philosopher)<br>B. <strong>Baymax</strong> (Helpful Robot)<br>C. <strong>Baloo</strong> (Chill Protector)";
+            } else if (forgeStep === 3) {
+                response = "Ooh, excellent choice. A mix of those personalities will be unique. ✨<br><br>Last step: <strong>The Voice Studio</strong> 🎙️<br>How should they sound? <br><strong>Rough/Gritty</strong>, <strong>Smooth/Warm</strong>, or <strong>Breathy/Whispery</strong>?";
+            } else if (forgeStep === 4) {
+                response = "Deep, smooth, and warm... like a grandfather. I am weaving the data now... ✨";
+                setTimeout(() => { finishForge(); }, 2000);
+            }
+            addForgeMsg("ai", response);
+        }
+        
+        function finishForge() {
+            const result = `
+                <strong>✅ SoulSpark Created: "Big Blue Bear"</strong><br>
+                <div class="soul-result">
+                [SYSTEM_PROMPT]<br>
+                Role: Big Blue Bear. Archetype: Pooh (40%) + Baloo (30%).<br>
+                Vibe: Comforting, Low Energy, Safe.<br>
+                Voice: Deep, Rumbly, Warm.<br>
+                Status: READY FOR DEPLOYMENT.
+                </div>
+                <br>
+                <em>Voice Prompt sent to 11Labs API... Generated ID: xb9-22A.</em>
+            `;
+            addForgeMsg("ai", result);
+        }
+
+        document.getElementById('forgeInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') forgeSend();
+        });
+    </script>
+</body>
+</html>

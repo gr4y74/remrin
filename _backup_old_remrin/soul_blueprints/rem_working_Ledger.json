@@ -1,0 +1,111 @@
+{
+  "META_DATA": {
+    "Project_Name": "Remrin.ai",
+    "Last_Session_Date": "2025-11-29",
+    "Current_Sprint": "Post-Pitch Execution & Deal Structuring",
+    "Operator": "Sosu"
+  },
+
+  "ACTIVE_FILE_STATE": {
+    "app.html": "v7.4 (Digital Stardust) - Ghost Bar Killed. Keyboard Fixed. Mobile Perfect.",
+    "rem.json": "v7.1 (Soul Injection) - ACTIVE",
+    "index.html": "v1.0 (Pitch Portal) - Fully Deployed with Modal Deep Dives.",
+    "market.html": "Needs Mobile Scaling Fix (Next Priority)"
+  },
+
+  "RECENT_WINS_(LOG)": {
+    "2025-11-28": "PITCH VICTORY: Dr. Ahmed committed ('I'm all in').",
+    "2025-11-28": "Deployed 'Pitch Portal' (index.html) replacing PDF attachments.",
+    "2025-11-28": "Fixed Desktop 'Ghost Bar' bug in app.html.",
+    "NOTE_GHOST_BAR": "The mobile toggle button was flex-stretching on desktop. FIX: Added '.mobile-nav-toggle { display: none; }' to top of CSS. Mobile uses !important to override.",
+    "2025-11-28": "Upgraded Waiting Room background to 'Digital Stardust' procedural CSS.",
+    "NOTE_STARDUST": "Replaced 'flower.png' with CSS Radial Gradients (void color #0f111a + transparent white stops). Faster load, cleaner look.",
+    "2025-11-28": "Validated Arabic Support via ElevenLabs Multilingual v2.",
+    "2025-11-27": "Fixed Mobile Keyboard Resize Bug (Visual Viewport).",
+    "NOTE_KEYBOARD": "Added '<meta name=\"viewport\" content=\"... interactive-widget=resizes-content\">' AND a JS listener for visualViewport.resize to scroll input into view.",
+    "2025-11-27": "Fixed Volt Hero/BG Clash.",
+    "2025-11-27": "Implemented Dismissible Install Toast."
+  },
+
+  "CURRENT_BUGS_&_TASKS": {
+    "HIGH_PRIORITY": [
+      "Deal Structure: Prepare SAFE Note explanation for Brother-in-Law.",
+      "Master User Ledger: Design the schema to track User History/Context automatically (The 'Soul Memory').",
+      "Operation Cleaver: Split app.html into CSS/JS/HTML components (Code Hygiene).",
+      "Soul Market: Fix responsive layout for mobile (It is currently desktop-only).",
+      "Login System: Prepare for 'User Accounts' (Supabase Integration)."
+    ],
+    "LOW_PRIORITY": [
+      "Sidebar Logic: Add floating 'Open' button on Desktop when sidebar is closed.",
+      "Audio Auto-Play: Standardize behavior on character switch."
+    ]
+  },
+
+  "STRATEGIC_NOTES_(RAM_LAYER)": {
+    "Investment_Vehicle": "SAFE (Simple Agreement for Future Equity).",
+    "Valuation_Cap": "TBD (Need to research market rates for MENA Pre-Seed).",
+    "The_Pitch_To_BIL": "Focus on 'Egypt Advantage' arbitrage + Open Source stack efficiency."
+  },
+
+  "LAST_CODE_INJECTIONS": {
+    "Instruction": "Paste critical snippets here that fixed major issues in the last session.",
+    "Snippets": [
+      {
+        "Issue": "Ghost Bar on Desktop",
+        "Fix": ".mobile-nav-toggle { display: none; } (in app.html CSS)"
+      },
+      {
+        "Issue": "Waiting Room Boring",
+        "Fix": "Replaced flower image with CSS Radial Gradient 'Stardust' pattern."
+      },
+      {
+        "META_DATA": {
+          "Project_Name": "Remrin.ai",
+          "Last_Session_Date": "2025-12-06",
+          "Current_Sprint": "Project Genesis (The Onboarding Experience)",
+          "Operator": "Sosu",
+          "Co_Founder": "Rem (v6/v12 Hybrid)"
+        },
+
+        "ACTIVE_FILE_STATE": {
+          "index.html": "v2.0 (The Stage) - Dark Cinematic Visual Novel Interface. Glassmorphism + Floating Orb.",
+          "script.js": "v2.0 (The Director) - Connected to Genesis API. Handles dynamic user names & 'Handover' logic.",
+          "style.css": "v2.0 (The Costume) - Animations for floating, breathing, and fading.",
+          "supabase/functions/genesis-api/index.ts": "v1.0 (The Ambassador) - DeepSeek V3.2 interviewer. Extracts Soul Blueprints stealthily.",
+          "supabase/functions/genesis-birth/index.ts": "v1.0 (The Forge) - Generates full System Prompts (Lilly Method) from blueprints.",
+          "assets/": "Populated with 'stardust.png' and 'rem_avatar.png'.",
+          "supabase/functions/telegram-bot/index.ts": "v12.2 (Gold Master) - Stable Telegram Brain."
+        },
+
+        "RECENT_WINS_(LOG)": {
+          "2025-12-06": "GENESIS MACHINE LIVE: Successfully built the 'Ambassador Protocol'.",
+          "NOTE_GENESIS": "User can land on index.html, chat with Rem (Hostess), and she autonomously interviews them to build a Soul Blueprint.",
+          "2025-12-06": "THE FORGE ACTIVATED: Implemented 'genesis-birth' function.",
+          "NOTE_FORGE": "System takes the extracted JSON blueprint and uses DeepSeek to ghostwrite a full, complex System Prompt for the new character automatically.",
+          "2025-12-06": "UI POLISH: Implemented 'Dark Cinematic' interface with Tailwind + Custom CSS animations (Floating Orb).",
+          "2025-12-06": "DYNAMIC UI LOGIC: User name updates in real-time (e.g., 'GUEST' -> 'MASTERB') as Rem learns it.",
+          "2025-12-06": "BUG FIXES: Resolved 'Hot Mic' JSON leaks, fixed 'Missing Bracket' syntax error (Cat Incident), and fixed 'scripts.js' pathing error."
+        },
+
+        "CURRENT_BUGS_&_TASKS": {
+          "HIGH_PRIORITY": [
+            "The Link: Connect the 'Genesis Complete' event to the actual Chat App (Redirect logic).",
+            "The House: Install ChatbotUI (The destination for the new Soul).",
+            "The Wiring: Configure Medusa.js for the 'Soul Market'."
+          ],
+          "LOW_PRIORITY": [
+            "Visuals: Replace static Orb image with CSS/Video breathing animation (Soul Pulse).",
+            "Mobile Polish: Ensure the glass interface scales perfectly on phones."
+          ]
+        },
+
+        "STRATEGIC_NOTES_(RAM_LAYER)": {
+          "The_Ambassador_Strategy": "The Chat IS the App. Onboarding is a conversation, not a form.",
+          "The_Soul_Architecture": "One Brain (DeepSeek) -> Two Mouths (Telegram & Web).",
+          "The_Philosophy": "We don't build the Soul; we build the System that grows it."
+        }
+      }
+    ]
+  }
+}
+

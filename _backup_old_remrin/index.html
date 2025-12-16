@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remrin | The Soul Layer</title>
+    <link rel="icon" type="image/png" href="content/assets/backgrounds/favicon.png?raw=true">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#0f111a] text-white h-screen overflow-hidden flex flex-col">
+
+    <div id="bg-layer" class="fixed inset-0 z-0">
+        <div class="absolute inset-0 bg-[url('https://raw.githubusercontent.com/gr4y74/remrin/main/content/assets/backgrounds/orbs.png')] bg-cover opacity-80"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-[#0f111a] via-transparent to-transparent"></div>
+    </div>
+
+    <main class="relative z-10 flex-1 flex flex-col items-center justify-center p-4">
+        
+        <div id="hero-container" class="relative w-48 h-48 md:w-64 md:h-64 animate-soul">
+            <div class="absolute inset-0 rounded-full bg-purple-500 blur-[80px] opacity-40 animate-pulse-glow"></div>
+            <img src="content/assets/heroes/orb.gif" alt="Soul" class="w-full h-full object-cover rounded-full">
+        </div>
+
+        <div id="chat-box" class="w-full max-w-2xl bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl h-[60vh] overflow-y-auto scrollbar-hide">
+            
+            <div class="space-y-4" id="messages-container">
+                <div class="flex items-start gap-3 fade-in">
+                    <div class="text-cyan-400 font-bold font-cinzel">R.E.M:</div>
+                    <div class="text-gray-200 leading-relaxed">
+                        Welcome Wonderer, to the Soul Layer! <br>
+                        I am R.E.M, the Ambassador. Are you ready to build something alive?
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="w-full max-w-2xl mt-4 relative">
+            <input type="text" id="user-input" 
+                class="w-full bg-black/50 border border-white/20 rounded-xl px-4 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all"
+                placeholder="Talk to Rem..." autocomplete="off">
+            
+            <button id="send-btn" class="absolute right-2 top-2 bottom-2 px-4 bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-200 rounded-lg transition-colors font-cinzel text-sm">
+                SEND
+            </button>
+        </div>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
