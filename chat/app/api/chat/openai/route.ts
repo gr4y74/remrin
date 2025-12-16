@@ -1,6 +1,6 @@
 import { checkApiKey, getServerProfile } from "@/lib/server/server-chat-helpers"
 import { ChatSettings } from "@/types"
-import { streamText, convertToCoreMessages } from "ai"
+import { streamText, convertToCoreMessages, stepCountIs } from "ai"
 import { createOpenAI } from "@ai-sdk/openai"
 import { tavily } from "@tavily/core"
 import { z } from "zod"
@@ -74,10 +74,10 @@ export async function POST(request: Request) {
           }
         }
       },
-      // maxSteps: 5
+      stopWhen: stepCountIs(5)
     })
 
-    return result.toTextStreamResponse()
+    return result.toUIMessageStreamResponse()
   } catch (error: any) {
     console.error("CHAT ROUTE ERROR:", error); // Log the actual error to terminal
     let errorMessage = error.message || "An unexpected error occurred"
