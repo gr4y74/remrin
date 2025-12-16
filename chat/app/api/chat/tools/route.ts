@@ -2,7 +2,8 @@ import { openapiToFunctions } from "@/lib/openapi-conversion"
 import { checkApiKey, getServerProfile } from "@/lib/server/server-chat-helpers"
 import { Tables } from "@/supabase/types"
 import { ChatSettings } from "@/types"
-import { OpenAIStream, StreamingTextResponse } from "ai"
+import { streamText } from "ai"
+import { createOpenAI } from "@ai-sdk/openai"
 import OpenAI from "openai"
 import { ChatCompletionCreateParamsBase } from "openai/resources/chat/completions.mjs"
 
@@ -198,15 +199,18 @@ export async function POST(request: Request) {
       }
     }
 
-    const secondResponse = await openai.chat.completions.create({
-      model: chatSettings.model as ChatCompletionCreateParamsBase["model"],
-      messages,
-      stream: true
+    const deepseek = createOpenAI({
+      baseURL: process.env.OPENAI_BASE_URL || 'https://api.deepseek.com',
+      apiKey: profile.openai_api_key || "",
+      organization: profile.openai_organization_id || undefined
     })
 
-    const stream = OpenAIStream(secondResponse)
+    const result = streamText({
+      model: deepseek(chatSettings.model),
+      messages: messages as any,
+    })
 
-    return new StreamingTextResponse(stream)
+    return result.toUIMessageStreamResponse()
   } catch (error: any) {
     console.error(error)
     const errorMessage = error.error?.message || "An unexpected error occurred"

@@ -22,8 +22,8 @@ export async function POST(request: Request) {
 
     // DeepSeek Provider Configuration
     const deepseek = createOpenAI({
-      baseURL: process.env.OPENAI_BASE_URL,
-      apiKey: process.env.OPENAI_API_KEY,
+      baseURL: process.env.OPENAI_BASE_URL || 'https://api.deepseek.com',
+      apiKey: process.env.DEEPSEEK_API_KEY,
     })
 
     const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY })
