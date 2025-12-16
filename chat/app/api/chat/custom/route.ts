@@ -1,18 +1,14 @@
-import { getServerProfile } from "@/lib/server/server-chat-helpers"
-import { streamText, convertToCoreMessages, stepCountIs } from "ai"
+import { streamText, convertToCoreMessages, tool } from "ai"
 import { createOpenAI } from "@ai-sdk/openai"
 import { tavily } from "@tavily/core"
 import { z } from "zod"
 
-export const maxDuration = 60 // Increased duration for search
+export const maxDuration = 60
 
 export async function POST(request: Request) {
   try {
     const json = await request.json()
     const { messages } = json as { messages: any[] }
-
-    // --- DEBUG LOGS ---
-    console.log("🚀 Starting Custom Route Request...")
 
     // 1. HARDCODED CONFIGURATION
     const deepseek = createOpenAI({
@@ -25,41 +21,40 @@ export async function POST(request: Request) {
     // 2. Convert messages
     const coreMessages = convertToCoreMessages(messages)
 
-    console.log("📞 Calling DeepSeek (Model: deepseek-chat)...")
+    console.log("📞 Calling DeepSeek...")
 
-    const result = streamText({ // removed 'await' here, streamText is synchronous in setup
+    const result = streamText({
       model: deepseek('deepseek-chat'),
       messages: coreMessages,
-      system: "You are a helpful assistant. You have access to the internet via the 'search' tool. You MUST use it for current events or unknown info.",
+      system: "You are a helpful assistant with access to the internet via the 'search' tool. You MUST use it for current events.",
       tools: {
-        search: {
+        search: tool({
           description: 'Search the web for current information.',
-          inputSchema: z.object({
+          parameters: z.object({
             query: z.string().describe('The search query')
           }),
-          execute: async ({ query }: { query: string }) => {
+          execute: async ({ query }) => {
             console.log("🔍 Searching Tavily for:", query)
             try {
               const searchResult = await tvly.search(query, {
                 includeAnswer: true,
                 maxResults: 5
               })
-              console.log("✅ Search success")
               return searchResult
             } catch (error: any) {
-              console.error("❌ Search failed:", error)
               return `Error searching: ${error.message}`
             }
           }
-        }
+        })
       },
-      stopWhen: stepCountIs(5),
+      maxSteps: 5,
     })
 
-    return result.toUIMessageStreamResponse()
+    // 3. Return the Data Stream (The Modern Way)
+    return result.toDataStreamResponse()
 
   } catch (error: any) {
     console.error("🚨 CRITICAL ERROR:", error)
-    return new Response(JSON.stringify({ error: error.message, stack: error.stack }), { status: 500 })
+    return new Response(JSON.stringify({ error: error.message }), { status: 500 })
   }
 }
