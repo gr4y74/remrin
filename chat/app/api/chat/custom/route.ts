@@ -1,5 +1,5 @@
 import { getServerProfile } from "@/lib/server/server-chat-helpers"
-import { streamText, convertToCoreMessages, tool } from "ai" // Added 'tool' import
+import { streamText, convertToCoreMessages, stepCountIs } from "ai"
 import { createOpenAI } from "@ai-sdk/openai"
 import { tavily } from "@tavily/core"
 import { z } from "zod"
@@ -32,13 +32,12 @@ export async function POST(request: Request) {
       messages: coreMessages,
       system: "You are a helpful assistant. You have access to the internet via the 'search' tool. You MUST use it for current events or unknown info.",
       tools: {
-        // We use the 'tool' helper to fix the 'parameters' error
-        search: tool({
+        search: {
           description: 'Search the web for current information.',
-          parameters: z.object({
+          inputSchema: z.object({
             query: z.string().describe('The search query')
           }),
-          execute: async ({ query }) => {
+          execute: async ({ query }: { query: string }) => {
             console.log("🔍 Searching Tavily for:", query)
             try {
               const searchResult = await tvly.search(query, {
@@ -52,13 +51,12 @@ export async function POST(request: Request) {
               return `Error searching: ${error.message}`
             }
           }
-        })
+        }
       },
-      maxSteps: 5,
+      stopWhen: stepCountIs(5),
     })
 
-    // 3. Return the Data Stream (This requires 'ai@latest')
-    return result.toDataStreamResponse()
+    return result.toUIMessageStreamResponse()
 
   } catch (error: any) {
     console.error("🚨 CRITICAL ERROR:", error)
