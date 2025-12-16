@@ -696,10 +696,22 @@ window.addEventListener('load', async () => {
         const veil = document.createElement('div');
         veil.id = 'ritual-veil';
         // Opaque void background for the curtain effect
-        veil.style.cssText = `position: fixed; inset: 0; background: #030014; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center;`;
+        veil.style.cssText = `position: fixed; inset: 0; background: #030014; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;`;
 
         veil.innerHTML = `
-            <div class="init-container" id="init-container">
+            <!-- BACKGROUND (Fog & Stars from index.html) -->
+            <div class="fog-wrapper" style="z-index: 1;">
+                <div class="fog-layer fog-pink"></div>
+                <div class="fog-layer fog-blue"></div>
+            </div>
+            <div class="stars-wrapper" style="z-index: 2;">
+                <div id="stars"></div>
+                <div id="stars2"></div>
+                <div id="stars3"></div>
+            </div>
+
+            <!-- FOREGROUND CONTENT -->
+            <div class="init-container" id="init-container" style="z-index: 10; width: 100%;">
                 <div class="soul-orb" id="soul-orb">
                     <div class="orb-glow"></div>
                     <div class="orb-ring"></div>
