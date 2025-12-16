@@ -5,6 +5,9 @@
 import { RITUAL_CONFIG } from './ritual.js';
 import { createClient } from '@supabase/supabase-js';
 
+console.log("DEBUG: SUPABASE URL:", import.meta.env.VITE_SUPABASE_URL);
+console.log("DEBUG: SUPABASE KEY:", import.meta.env.VITE_SUPABASE_ANON_KEY ? "Present" : "Missing");
+
 const supabase = createClient(
     import.meta.env.VITE_SUPABASE_URL,
     import.meta.env.VITE_SUPABASE_ANON_KEY
