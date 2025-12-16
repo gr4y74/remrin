@@ -28,9 +28,29 @@ export async function POST(request: Request) {
 
     const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY })
 
+    // Manual message conversion to avoid convertToCoreMessages issues with legacy format
+    const initialMessages = messages.map((m: any) => {
+      let content = m.content
+      if (Array.isArray(m.content)) {
+        content = m.content.map((c: any) => {
+          if (c.type === 'image_url') {
+            // Convert OpenAI image_url to SDK image part
+            return { type: 'image', image: c.image_url.url }
+          }
+          if (c.type === 'text') {
+            return { type: 'text', text: c.text }
+          }
+          return c
+        })
+      }
+      // Ensure role is valid
+      const role = (m.role === 'user' || m.role === 'assistant' || m.role === 'system') ? m.role : 'user';
+      return { role, content }
+    })
+
     const result = await streamText({
       model: deepseek(chatSettings.model),
-      messages: convertToCoreMessages(messages),
+      messages: initialMessages as any, // Cast to any to satisfy type checker for now
       tools: {
         search: {
           description: 'A powerful search engine for finding up-to-date information on the web.',
@@ -39,12 +59,18 @@ export async function POST(request: Request) {
           }),
           execute: async ({ query }) => {
             console.log("Searching Tavily for:", query) // Debug log
-            const result = await tvly.search(query, {
-              includeAnswer: true,
-              maxResults: 5,
-              topic: "general"
-            })
-            return result
+            try {
+              const searchResult = await tvly.search(query, {
+                includeAnswer: true,
+                maxResults: 5,
+                topic: "general"
+              })
+              console.log("Search done");
+              return searchResult;
+            } catch (err: any) {
+              console.error("Tavily Search Error:", err);
+              return `Search failed: ${err.message}`;
+            }
           }
         }
       },
@@ -53,6 +79,7 @@ export async function POST(request: Request) {
 
     return result.toDataStreamResponse()
   } catch (error: any) {
+    console.error("CHAT ROUTE ERROR:", error); // Log the actual error to terminal
     let errorMessage = error.message || "An unexpected error occurred"
     const errorCode = error.status || 500
 
