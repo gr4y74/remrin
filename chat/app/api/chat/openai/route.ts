@@ -20,7 +20,11 @@ export async function POST(request: Request) {
     // 1. DELETE or COMMENT OUT this line! We use the .env key now.
     // checkApiKey(profile.openai_api_key, "OpenAI") 
 
-    // DeepSeek Provider Configuration
+    console.log("DeepSeek Config:", {
+      model: chatSettings.model,
+      baseURL: process.env.OPENAI_BASE_URL || 'https://api.deepseek.com'
+    })
+
     const deepseek = createOpenAI({
       baseURL: process.env.OPENAI_BASE_URL || 'https://api.deepseek.com',
       apiKey: process.env.DEEPSEEK_API_KEY,
@@ -47,7 +51,7 @@ export async function POST(request: Request) {
     })
 
     const result = streamText({
-      model: deepseek(chatSettings.model),
+      model: deepseek("deepseek-chat"),
       messages: initialMessages as any,
       // 2. ADD THIS SYSTEM PROMPT TO FORCE SEARCH:
       system: "You are a helpful assistant with access to the internet via the 'search' tool. You MUST use the search tool if the user asks about current events, news, or information you do not know. Do not say you cannot access the internet; just use the tool.",

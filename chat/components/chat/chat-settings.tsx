@@ -8,9 +8,9 @@ import { Button } from "../ui/button"
 import { ChatSettingsForm } from "../ui/chat-settings-form"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 
-interface ChatSettingsProps {}
+interface ChatSettingsProps { }
 
-export const ChatSettings: FC<ChatSettingsProps> = ({}) => {
+export const ChatSettings: FC<ChatSettingsProps> = ({ }) => {
   useHotkey("i", () => handleClick())
 
   const {
@@ -66,7 +66,7 @@ export const ChatSettings: FC<ChatSettingsProps> = ({}) => {
 
   return (
     <Popover>
-      <PopoverTrigger>
+      <PopoverTrigger asChild>
         <Button
           ref={buttonRef}
           className="flex items-center space-x-2"
