@@ -248,7 +248,8 @@
         }
 
         /* 1. SMALL STARS (The Dust - 400+ Stars) */
-        #stars {
+        #stars,
+        #stars-curtain {
             width: 1px;
             height: 1px;
             background: transparent;
@@ -280,7 +281,8 @@
                 950px 1650px #FFF, 250px 1150px #FFF, 1850px 1850px #FFF, 1350px 1350px #FFF;
         }
 
-        #stars::after {
+        #stars::after,
+        #stars-curtain::after {
             content: " ";
             position: absolute;
             top: 2000px;
@@ -291,7 +293,8 @@
         }
 
         /* 2. MEDIUM STARS (The Glimmer - 100+ Stars) */
-        #stars2 {
+        #stars2,
+        #stars2-curtain {
             width: 2px;
             height: 2px;
             background: transparent;
@@ -320,8 +323,9 @@
             box-shadow: inherit;
         }
 
-        /* 3. BIG STARS (The Bright Ones - 30+ Stars) */
-        #stars3 {
+        /* 3. BIG STARS (The Beacons) */
+        #stars3,
+        #stars3-curtain {
             width: 3px;
             height: 3px;
             background: transparent;
@@ -334,7 +338,8 @@
                 150px 650px #FFF, 750px 1350px #FFF, 1250px 450px #FFF, 1750px 1850px #FFF;
         }
 
-        #stars3::after {
+        #stars3::after,
+        #stars3-curtain::after {
             content: " ";
             position: absolute;
             top: 2000px;
@@ -1114,6 +1119,8 @@
             gap: 3rem;
             animation: fadeIn 1.5s ease 0.5s forwards;
             pointer-events: auto;
+            width: 100%;
+            max-width: 100vw;
             /* Ensure clickable */
         }
 
@@ -1125,6 +1132,18 @@
             cursor: pointer;
             transition: transform 0.3s ease;
             z-index: 50;
+            margin: 0 auto;
+            /* Force centering if flex fails */
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         .soul-orb:hover {
