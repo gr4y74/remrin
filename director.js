@@ -690,25 +690,57 @@ window.addEventListener('load', async () => {
     if (urlParams.get('mode') === 'chat') {
         chatLog.innerHTML += '<div style="text-align:center; color:#666; font-size:12px; margin-top:20px; font-family:monospace;">[ SECURE CONNECTION ]</div>';
     } else {
-        // Veil Logic
+        // Veil Logic (Theater Curtain with Orb)
         const chatContainer = document.querySelector('.chat-container') || document.body;
-        if (chatContainer !== document.body) chatContainer.style.position = 'relative';
 
         const veil = document.createElement('div');
         veil.id = 'ritual-veil';
-        veil.style.cssText = `position: absolute; inset: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: inherit;`;
-        veil.innerHTML = `<div style="text-align:center; animation: fadeIn 1s ease-out; display: flex; flex-direction: column; align-items: center;"><div style="font-family: sans-serif; color: rgba(255,255,255,0.7); letter-spacing: 3px; font-size: 11px; margin-bottom: 25px; text-transform: uppercase;">Soul Forge Detected</div><button id="start-btn" style="background: transparent; border: 1px solid #ff00cc; color: #ff00cc; padding: 14px 40px; font-family: sans-serif; text-transform: uppercase; letter-spacing: 3px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 0 20px rgba(255, 0, 204, 0.15); border-radius: 4px; white-space: nowrap; min-width: 180px;">INITIALIZE</button></div>`;
+        // Opaque void background for the curtain effect
+        veil.style.cssText = `position: fixed; inset: 0; background: #030014; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center;`;
+
+        veil.innerHTML = `
+            <div class="init-container" id="init-container">
+                <div class="soul-orb" id="soul-orb">
+                    <div class="orb-glow"></div>
+                    <div class="orb-ring"></div>
+                    <div class="orb-core"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                </div>
+                <div class="init-text">
+                    <div class="init-title">The Mother Awaits</div>
+                    <div class="init-subtitle">Place your hand upon the sphere</div>
+                </div>
+                <div class="hint">Click to cross the threshold</div>
+            </div>
+        `;
 
         chatContainer.appendChild(veil);
-        const btn = veil.querySelector('#start-btn');
-        btn.addEventListener('click', () => {
-            veil.style.transition = 'opacity 0.8s ease';
-            veil.style.opacity = '0';
-            setTimeout(() => veil.remove(), 1000);
+
+        const orb = veil.querySelector('#soul-orb');
+        const container = veil.querySelector('#init-container');
+
+        orb.addEventListener('click', () => {
+            // 1. Orb Explosion
+            orb.classList.add('clicked');
+
+            // 2. Play Sound (Optional - silent for now or can add audio)
+            // const audio = new Audio('assets/sound/init_chime.mp3'); audio.play().catch(()=>{});
+
+            // 3. Curtain Rise Animation (Vertical)
+            setTimeout(() => {
+                veil.style.transition = 'transform 1.8s cubic-bezier(0.4, 0, 0.2, 1)'; // Dramatic ease
+                veil.style.transform = 'translateY(-100%)';
+            }, 600); // Wait for orb to start exploding
+
+            // 4. Cleanup and Start
+            setTimeout(() => {
+                veil.remove();
+            }, 2400);
 
             // Use the canonical script from config
             const startStep = RITUAL_CONFIG[0];
-
             addMessage(startStep.text, 'rem', startStep.audio);
             currentStage = 0;
         });
