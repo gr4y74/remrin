@@ -3,6 +3,7 @@ import { createOpenAI } from "@ai-sdk/openai"
 import { tavily } from "@tavily/core"
 import { z } from "zod"
 
+// Allow streaming responses up to 60 seconds
 export const maxDuration = 60
 
 export async function POST(request: Request) {
@@ -10,7 +11,7 @@ export async function POST(request: Request) {
     const json = await request.json()
     const { messages } = json as { messages: any[] }
 
-    // 1. Configuration
+    // 1. Setup DeepSeek (Hardcoded URL for safety)
     const deepseek = createOpenAI({
       baseURL: 'https://api.deepseek.com',
       apiKey: process.env.OPENAI_API_KEY,
@@ -18,11 +19,12 @@ export async function POST(request: Request) {
 
     const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY })
 
-    // 2. Convert messages
+    // 2. Convert messages to standard format
     const coreMessages = convertToCoreMessages(messages)
 
-    console.log("📞 Calling DeepSeek...")
+    console.log("📞 Calling DeepSeek Custom Route...")
 
+    // 3. The Stream
     const result = streamText({
       model: deepseek('deepseek-chat'),
       messages: coreMessages,
@@ -33,7 +35,8 @@ export async function POST(request: Request) {
           parameters: z.object({
             query: z.string().describe('The search query')
           }),
-          execute: async ({ query }) => {
+          // STRICT MODE FIX: Explicitly type the input argument
+          execute: async ({ query }: { query: string }) => {
             console.log("🔍 Searching Tavily for:", query)
             try {
               const searchResult = await tvly.search(query, {
@@ -50,7 +53,7 @@ export async function POST(request: Request) {
       maxSteps: 5,
     })
 
-    // 3. Return the Data Stream
+    // 4. Return the modern data stream
     return result.toDataStreamResponse()
 
   } catch (error: any) {
