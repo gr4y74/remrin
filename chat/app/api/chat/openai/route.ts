@@ -7,7 +7,7 @@ export const maxDuration = 60
 
 /**
  * REMRIN COMMERCIAL - DeepSeek + Tavily Hardcoded Route
- * 
+ *
  * This route IGNORES frontend model selection and forces:
  * - Engine: DeepSeek (via OPENAI_BASE_URL)
  * - Model: deepseek-chat
@@ -21,8 +21,8 @@ export async function POST(request: Request) {
 
     // HARDCODED: DeepSeek client
     const openai = new OpenAI({
-      baseURL: 'https://api.deepseek.com',
-      apiKey: process.env.OPENAI_API_KEY,
+      baseURL: "https://api.deepseek.com",
+      apiKey: process.env.OPENAI_API_KEY
     })
 
     // HARDCODED: Tavily for search
@@ -36,7 +36,8 @@ export async function POST(request: Request) {
         type: "function",
         function: {
           name: "search_web",
-          description: "Search the internet for current information. Use this for any questions about current events, prices, news, weather, or real-time data.",
+          description:
+            "Search the internet for current information. Use this for any questions about current events, prices, news, weather, or real-time data.",
           parameters: {
             type: "object",
             properties: {
@@ -54,14 +55,14 @@ export async function POST(request: Request) {
     // Force system message with search instructions
     const messagesWithSystem = [
       {
-        role: 'system',
+        role: "system",
         content: `You are Remrin, an intelligent AI assistant with access to the internet via the search_web function.
 
 IMPORTANT: When asked about current events, prices (stocks, crypto, commodities), news, weather, sports scores, or ANY real-time information, you MUST call the search_web function BEFORE answering. Never say you don't have access to real-time data - you DO have it via search.
 
 Be helpful, accurate, and cite your sources when using search results.`
       },
-      ...messages.filter((m: any) => m.role !== 'system') // Remove any user-provided system messages
+      ...messages.filter((m: any) => m.role !== "system") // Remove any user-provided system messages
     ]
 
     // HARDCODED model: deepseek-chat
@@ -81,7 +82,10 @@ Be helpful, accurate, and cite your sources when using search results.`
 
     // Check if the model wants to call a function
     if (assistantMessage.tool_calls && assistantMessage.tool_calls.length > 0) {
-      console.log("🔧 Function call requested:", assistantMessage.tool_calls[0].function.name)
+      console.log(
+        "🔧 Function call requested:",
+        assistantMessage.tool_calls[0].function.name
+      )
 
       const toolResults: any[] = []
 
@@ -116,11 +120,7 @@ Be helpful, accurate, and cite your sources when using search results.`
       // Second call with function results - stream this one
       const streamResponse = await openai.chat.completions.create({
         model: FORCED_MODEL,
-        messages: [
-          ...messagesWithSystem,
-          assistantMessage,
-          ...toolResults
-        ],
+        messages: [...messagesWithSystem, assistantMessage, ...toolResults],
         temperature: 0.7,
         stream: true
       })
@@ -139,9 +139,10 @@ Be helpful, accurate, and cite your sources when using search results.`
 
     const stream = OpenAIStream(streamResponse)
     return new StreamingTextResponse(stream)
-
   } catch (error: any) {
     console.error("🚨 CRITICAL ERROR:", error)
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 })
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500
+    })
   }
 }
