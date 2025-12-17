@@ -42,12 +42,10 @@ export const ChatSettingsForm: FC<ChatSettingsFormProps> = ({
       <div className="space-y-1">
         <Label>Model</Label>
 
-        <ModelSelect
-          selectedModelId={chatSettings.model}
-          onSelectModel={model => {
-            onChangeChatSettings({ ...chatSettings, model })
-          }}
-        />
+        {/* REMRIN: Model locked to DeepSeek V3 */}
+        <div className="flex items-center h-10 px-3 rounded-md border border-input bg-background text-sm">
+          <span className="text-muted-foreground">DeepSeek V3</span>
+        </div>
       </div>
 
       <div className="space-y-1">
@@ -157,7 +155,7 @@ const AdvancedContent: FC<AdvancedContentProps> = ({
           max={
             isCustomModel
               ? models.find(model => model.model_id === chatSettings.model)
-                  ?.context_length
+                ?.context_length
               : MODEL_LIMITS.MAX_CONTEXT_LENGTH
           }
           step={1}

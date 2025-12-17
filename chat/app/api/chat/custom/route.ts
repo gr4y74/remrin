@@ -1,64 +1,66 @@
-import { streamText, convertToCoreMessages, tool } from "ai"
-import { createOpenAI } from "@ai-sdk/openai"
-import { tavily } from "@tavily/core"
-import { z } from "zod"
+import { Database } from "@/supabase/types"
+import { ChatSettings } from "@/types"
+import { createClient } from "@supabase/supabase-js"
+import { OpenAIStream, StreamingTextResponse } from "ai"
+import { ServerRuntime } from "next"
+import OpenAI from "openai"
+import { ChatCompletionCreateParamsBase } from "openai/resources/chat/completions.mjs"
 
-// Allow streaming responses up to 60 seconds
-export const maxDuration = 60
+export const runtime: ServerRuntime = "edge"
 
 export async function POST(request: Request) {
+  const json = await request.json()
+  const { chatSettings, messages, customModelId } = json as {
+    chatSettings: ChatSettings
+    messages: any[]
+    customModelId: string
+  }
+
   try {
-    const json = await request.json()
-    const { messages } = json as { messages: any[] }
+    const supabaseAdmin = createClient<Database>(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
 
-    // 1. Setup DeepSeek (Hardcoded URL for safety)
-    const deepseek = createOpenAI({
-      baseURL: 'https://api.deepseek.com',
-      apiKey: process.env.OPENAI_API_KEY,
+    const { data: customModel, error } = await supabaseAdmin
+      .from("models")
+      .select("*")
+      .eq("id", customModelId)
+      .single()
+
+    if (!customModel) {
+      throw new Error(error.message)
+    }
+
+    const custom = new OpenAI({
+      apiKey: customModel.api_key || "",
+      baseURL: customModel.base_url
     })
 
-    // Setup Tavily
-    const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY })
-
-    // 2. Convert messages to standard format
-    const coreMessages = convertToCoreMessages(messages)
-
-    console.log("📞 Calling DeepSeek Custom Route...")
-
-    // 3. The Stream setup (Note: NO 'await' here, prevents the hang!)
-    const result = streamText({
-      model: deepseek('deepseek-chat'),
-      messages: coreMessages,
-      system: "You are a helpful assistant with access to the internet via the 'search' tool. You MUST use it for current events.",
-      tools: {
-        search: tool({
-          description: 'Search the web for current information.',
-          parameters: z.object({
-            query: z.string().describe('The search query')
-          }),
-          // FIXED: Explicitly typed input to silence the 'implicit any' red error
-          execute: async ({ query }: { query: string }) => {
-            console.log("🔍 Searching Tavily for:", query)
-            try {
-              const searchResult = await tvly.search(query, {
-                includeAnswer: true,
-                maxResults: 5
-              })
-              return searchResult
-            } catch (error: any) {
-              return `Error searching: ${error.message}`
-            }
-          }
-        })
-      },
-      maxSteps: 5,
+    const response = await custom.chat.completions.create({
+      model: chatSettings.model as ChatCompletionCreateParamsBase["model"],
+      messages: messages as ChatCompletionCreateParamsBase["messages"],
+      temperature: chatSettings.temperature,
+      stream: true
     })
 
-    // 4. Return the modern data stream
-    return result.toDataStreamResponse()
+    const stream = OpenAIStream(response)
 
+    return new StreamingTextResponse(stream)
   } catch (error: any) {
-    console.error("🚨 CRITICAL ERROR:", error)
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 })
+    let errorMessage = error.message || "An unexpected error occurred"
+    const errorCode = error.status || 500
+
+    if (errorMessage.toLowerCase().includes("api key not found")) {
+      errorMessage =
+        "Custom API Key not found. Please set it in your profile settings."
+    } else if (errorMessage.toLowerCase().includes("incorrect api key")) {
+      errorMessage =
+        "Custom API Key is incorrect. Please fix it in your profile settings."
+    }
+
+    return new Response(JSON.stringify({ message: errorMessage }), {
+      status: errorCode
+    })
   }
 }

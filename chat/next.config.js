@@ -1,22 +1,32 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        process: require.resolve('process/browser'), // <--- The package MUST exist for this to work
-      };
-    }
-    return config;
-  },
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**',
-      },
-    ],
-  },
-};
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true"
+})
 
-module.exports = nextConfig;
+const withPWA = require("next-pwa")({
+  dest: "public"
+})
+
+module.exports = withBundleAnalyzer(
+  withPWA({
+    reactStrictMode: true,
+    images: {
+      remotePatterns: [
+        {
+          protocol: "http",
+          hostname: "localhost"
+        },
+        {
+          protocol: "http",
+          hostname: "127.0.0.1"
+        },
+        {
+          protocol: "https",
+          hostname: "**"
+        }
+      ]
+    },
+    experimental: {
+      serverComponentsExternalPackages: ["sharp", "onnxruntime-node"]
+    }
+  })
+)

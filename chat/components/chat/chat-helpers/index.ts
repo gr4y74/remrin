@@ -208,7 +208,7 @@ export const handleHostedChat = async (
 
   let draftMessages = await buildFinalMessages(payload, profile, chatImages)
 
-  let formattedMessages: any[] = []
+  let formattedMessages : any[] = []
   if (provider === "google") {
     formattedMessages = await adaptMessagesForGoogleGemini(payload, draftMessages)
   } else {
@@ -299,39 +299,18 @@ export const processResponse = async (
 
         try {
           contentToAdd = isHosted
-            ? (() => {
-              // Parse Vercel AI SDK Data Stream Protocol
-              // Format: 0:"text content" \n
-              // We want to extract "text content"
-              const lines = chunk.split('\n');
-              let text = "";
-              for (const line of lines) {
-                if (line.startsWith('0:')) {
-                  try {
-                    const content = JSON.parse(line.substring(2));
-                    text += content;
-                  } catch (e) {
-                    // Ignore parse errors for partial chunks
-                  }
-                }
-              }
-              // If it's not following protocol (legacy), fallback to raw chunk
-              if (!text && !chunk.startsWith('0:')) {
-                return chunk;
-              }
-              return text;
-            })()
+            ? chunk
             : // Ollama's streaming endpoint returns new-line separated JSON
-            // objects. A chunk may have more than one of these objects, so we
-            // need to split the chunk by new-lines and handle each one
-            // separately.
-            chunk
-              .trimEnd()
-              .split("\n")
-              .reduce(
-                (acc, line) => acc + JSON.parse(line).message.content,
-                ""
-              )
+              // objects. A chunk may have more than one of these objects, so we
+              // need to split the chunk by new-lines and handle each one
+              // separately.
+              chunk
+                .trimEnd()
+                .split("\n")
+                .reduce(
+                  (acc, line) => acc + JSON.parse(line).message.content,
+                  ""
+                )
           fullText += contentToAdd
         } catch (error) {
           console.error("Error parsing JSON:", error)
@@ -469,8 +448,9 @@ export const handleCreateMessages = async (
     const uploadPromises = newMessageImages
       .filter(obj => obj.file !== null)
       .map(obj => {
-        let filePath = `${profile.user_id}/${currentChat.id}/${createdMessages[0].id
-          }/${uuidv4()}`
+        let filePath = `${profile.user_id}/${currentChat.id}/${
+          createdMessages[0].id
+        }/${uuidv4()}`
 
         return uploadMessageImage(filePath, obj.file as File).catch(error => {
           console.error(`Failed to upload image at ${filePath}:`, error)
