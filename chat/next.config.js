@@ -1,12 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   webpack: (config, { isServer }) => {
-    // Only apply polyfills on the client (browser) side
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
-        // If a library explicitly asks for 'process', give it this file:
-        process: require.resolve('process/browser'),
+        process: require.resolve('process/browser'), // <--- The package MUST exist for this to work
       };
     }
     return config;
