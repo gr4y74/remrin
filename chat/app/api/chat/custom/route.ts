@@ -10,7 +10,7 @@ export async function POST(request: Request) {
     const json = await request.json()
     const { messages } = json as { messages: any[] }
 
-    // 1. HARDCODED CONFIGURATION
+    // 1. Configuration
     const deepseek = createOpenAI({
       baseURL: 'https://api.deepseek.com',
       apiKey: process.env.OPENAI_API_KEY,
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
       maxSteps: 5,
     })
 
-    // 3. Return the Data Stream (The Modern Way)
+    // 3. Return the Data Stream
     return result.toDataStreamResponse()
 
   } catch (error: any) {
