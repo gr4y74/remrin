@@ -4,6 +4,9 @@ import OpenAI from "openai"
 export const runtime = "edge"
 export const maxDuration = 60
 
+// Maximum number of tool call iterations to prevent infinite loops
+const MAX_TOOL_ITERATIONS = 5
+
 /**
  * REMRIN COMMERCIAL - DeepSeek + Tavily Hardcoded Route
  *
@@ -21,8 +24,8 @@ async function searchTavily(query: string, apiKey: string) {
     body: JSON.stringify({
       api_key: apiKey,
       query: query,
-      search_depth: "advanced",  // CRITICAL: 'basic' misses recent scores
-      topic: "news",             // Prioritize news sources
+      search_depth: "advanced",
+      topic: "news",
       include_answer: true,
       max_results: 5
     })
@@ -35,11 +38,19 @@ async function searchTavily(query: string, apiKey: string) {
   return response.json()
 }
 
+// Filter out DSML markup that DeepSeek sometimes outputs
+function filterDSML(text: string): string {
+  return text
+    .replace(/<｜DSML｜[^>]*>/g, "")
+    .replace(/<\/｜DSML｜[^>]*>/g, "")
+    .replace(/<｜[^>]*｜>/g, "")
+    .trim()
+}
+
 export async function POST(request: Request) {
   try {
     const json = await request.json()
     const { messages } = json as { messages: any[] }
-    // Note: chatSettings is IGNORED - we force DeepSeek
 
     // HARDCODED: DeepSeek client
     const openai = new OpenAI({
@@ -80,8 +91,8 @@ export async function POST(request: Request) {
       }
     ]
 
-    // === SYSTEM PROMPT WITH DATE ===
-    const messagesWithSystem = [
+    // Build conversation with system prompt
+    const conversationMessages: any[] = [
       {
         role: "system",
         content: `You are Remrin, an intelligent AI assistant with internet access via the search_web function.
@@ -89,110 +100,72 @@ export async function POST(request: Request) {
 CURRENT DATE: ${today}
 
 CRITICAL RULES - YOU MUST FOLLOW THESE:
-1. SPORTS SCORES: ALWAYS search for ANY sports scores, game results, or schedules. NEVER guess. When searching for sports, you MUST append the current year (${currentYear}) to the query.
-2. CURRENT EVENTS/NEWS: ALWAYS search first. When searching for news/sports, you MUST append the current year (${currentYear}) to the query.
+1. SPORTS SCORES: ALWAYS search for ANY sports scores, game results, or schedules. NEVER guess. Include the year ${currentYear} in your query.
+2. CURRENT EVENTS/NEWS: ALWAYS search first. Include the year ${currentYear} in your query.
 3. SPECIFIC DATES: When a user mentions a specific date, ALWAYS search. Do not rely on training data.
-4. DO NOT GUESS: If unsure about ANY fact, SEARCH before answering. Search first.
+4. DO NOT GUESS: If unsure about ANY fact, SEARCH before answering.
 
 SEARCH QUERY FORMAT:
-- For sports: Include team names, "score", the month, and the year ${currentYear}
-- For news: Include topic and "${currentYear}" or specific month/date
+- For sports: Include team names, "score", and the year ${currentYear}
+- For news: Include topic and "${currentYear}"
 - Example: "Steelers vs Dolphins score December ${currentYear}"
+
+IMPORTANT: After receiving search results, synthesize the information and provide a final answer. Do not request additional searches unless absolutely necessary.
 
 ALWAYS:
 - Search first, then answer
 - Cite sources from search results
 - If search returns no results, clearly state that`
       },
-      ...messages.filter((m: any) => m.role !== "system") // Remove any user-provided system messages
+      ...messages.filter((m: any) => m.role !== "system")
     ]
 
-    // HARDCODED model: deepseek-chat
     const FORCED_MODEL = "deepseek-chat"
+    let iteration = 0
 
-    // First call - may return a function call
-    const initialResponse = await openai.chat.completions.create({
-      model: FORCED_MODEL,
-      messages: messagesWithSystem,
-      tools: tools,
-      tool_choice: "auto",
-      temperature: 0.7,
-      stream: false
-    })
+    // Iterative tool call loop
+    while (iteration < MAX_TOOL_ITERATIONS) {
+      iteration++
+      console.log(`🔄 Iteration ${iteration}/${MAX_TOOL_ITERATIONS}`)
 
-    const assistantMessage = initialResponse.choices[0].message
-
-    // Check if the model wants to call a function
-    if (assistantMessage.tool_calls && assistantMessage.tool_calls.length > 0) {
-      console.log(
-        "🔧 Function call requested:",
-        assistantMessage.tool_calls[0].function.name
-      )
-
-      const toolResults: any[] = []
-
-      for (const toolCall of assistantMessage.tool_calls) {
-        if (toolCall.function.name === "search_web") {
-          const args = JSON.parse(toolCall.function.arguments)
-          console.log("🔍 Searching Tavily for:", args.query)
-
-          try {
-            // Use fetch-based Tavily search (Edge-compatible)
-            const searchResult = await searchTavily(
-              args.query,
-              process.env.TAVILY_API_KEY!
-            )
-            console.log("✅ Tavily deep search complete")
-
-            toolResults.push({
-              role: "tool",
-              tool_call_id: toolCall.id,
-              content: JSON.stringify(searchResult)
-            })
-          } catch (error: any) {
-            console.error("❌ Tavily error:", error.message)
-            toolResults.push({
-              role: "tool",
-              tool_call_id: toolCall.id,
-              content: `Search error: ${error.message}`
-            })
-          }
-        }
-      }
-
-      // Second call with function results - keep tools enabled for follow-up searches
-      const secondResponse = await openai.chat.completions.create({
+      // Make API call with tools (unless it's the last iteration)
+      const useTools = iteration < MAX_TOOL_ITERATIONS
+      const response = await openai.chat.completions.create({
         model: FORCED_MODEL,
-        messages: [...messagesWithSystem, assistantMessage, ...toolResults],
-        tools: tools,
-        tool_choice: "auto",
+        messages: conversationMessages,
+        tools: useTools ? tools : undefined,
+        tool_choice: useTools ? "auto" : undefined,
         temperature: 0.7,
         stream: false
       })
 
-      const secondMessage = secondResponse.choices[0].message
+      const assistantMessage = response.choices[0].message
 
-      // Check if model wants to make ANOTHER tool call
-      if (secondMessage.tool_calls && secondMessage.tool_calls.length > 0) {
-        console.log("🔧 Follow-up search requested:", secondMessage.tool_calls[0].function.name)
+      // Check if the model wants to call a tool
+      if (assistantMessage.tool_calls && assistantMessage.tool_calls.length > 0) {
+        console.log(`🔧 [Iteration ${iteration}] Tool call requested:`, assistantMessage.tool_calls[0].function.name)
 
-        // Handle follow-up search
-        const followUpResults: any[] = []
-        for (const toolCall of secondMessage.tool_calls) {
+        // Add assistant message to conversation
+        conversationMessages.push(assistantMessage)
+
+        // Execute each tool call
+        for (const toolCall of assistantMessage.tool_calls) {
           if (toolCall.function.name === "search_web") {
             const args = JSON.parse(toolCall.function.arguments)
-            console.log("🔍 Follow-up Tavily search:", args.query)
+            console.log(`🔍 [Iteration ${iteration}] Searching Tavily:`, args.query)
+
             try {
               const searchResult = await searchTavily(args.query, process.env.TAVILY_API_KEY!)
-              console.log("✅ Follow-up search complete")
-              followUpResults.push({
+              console.log(`✅ [Iteration ${iteration}] Search complete`)
+
+              conversationMessages.push({
                 role: "tool",
                 tool_call_id: toolCall.id,
                 content: JSON.stringify(searchResult)
               })
             } catch (error: any) {
-              console.error("❌ Follow-up search error:", error.message)
-              followUpResults.push({
+              console.error(`❌ [Iteration ${iteration}] Search error:`, error.message)
+              conversationMessages.push({
                 role: "tool",
                 tool_call_id: toolCall.id,
                 content: `Search error: ${error.message}`
@@ -201,37 +174,42 @@ ALWAYS:
           }
         }
 
-        // Third call - final answer (no tools to prevent infinite loop)
-        const finalResponse = await openai.chat.completions.create({
-          model: FORCED_MODEL,
-          messages: [...messagesWithSystem, assistantMessage, ...toolResults, secondMessage, ...followUpResults],
-          temperature: 0.7,
-          stream: true
-        })
-        const stream = OpenAIStream(finalResponse)
-        return new StreamingTextResponse(stream)
+        // Continue the loop for another iteration
+        continue
       }
 
-      // No additional tool call - stream the response
-      // Return the content directly since we already have it
-      const content = secondMessage.content || ""
-      // Filter out any DSML markup that might have leaked
-      const cleanContent = content.replace(/<｜DSML｜[^>]*>|<\/[^>]*>/g, "").trim()
+      // No tool call - we have a final answer
+      console.log(`✅ [Iteration ${iteration}] Final answer received`)
+
+      // Filter out any DSML markup and return the response
+      const content = assistantMessage.content || ""
+      const cleanContent = filterDSML(content)
+
       return new Response(cleanContent, {
         headers: { "Content-Type": "text/plain; charset=utf-8" }
       })
     }
 
-    // No function call - stream the response directly
-    const streamResponse = await openai.chat.completions.create({
+    // If we hit max iterations, make one final call without tools
+    console.log(`⚠️ Max iterations reached, forcing final response`)
+    const finalResponse = await openai.chat.completions.create({
       model: FORCED_MODEL,
-      messages: messagesWithSystem,
+      messages: [
+        ...conversationMessages,
+        {
+          role: "user",
+          content: "Please provide your final answer based on the search results you have gathered. Do not search again."
+        }
+      ],
       temperature: 0.7,
-      stream: true
+      stream: false
     })
 
-    const stream = OpenAIStream(streamResponse)
-    return new StreamingTextResponse(stream)
+    const finalContent = filterDSML(finalResponse.choices[0].message.content || "")
+    return new Response(finalContent, {
+      headers: { "Content-Type": "text/plain; charset=utf-8" }
+    })
+
   } catch (error: any) {
     console.error("🚨 CRITICAL ERROR:", error)
     return new Response(JSON.stringify({ error: error.message }), {
