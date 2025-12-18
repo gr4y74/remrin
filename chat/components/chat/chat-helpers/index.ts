@@ -218,8 +218,10 @@ export const handleHostedChat = async (
     formattedMessages = draftMessages
   }
 
-  const apiEndpoint =
-    provider === "custom" ? "/api/chat/custom" : `/api/chat/${provider}`
+  // REMRIN COMMERCIAL: Force ALL requests to openai endpoint where DeepSeek + Tavily is configured
+  // This overrides the provider-based routing to ensure search is always available
+  const apiEndpoint = "/api/chat/openai"
+  // Original: provider === "custom" ? "/api/chat/custom" : `/api/chat/${provider}`
 
   const requestBody = {
     chatSettings: payload.chatSettings,
@@ -304,16 +306,16 @@ export const processResponse = async (
           contentToAdd = isHosted
             ? chunk
             : // Ollama's streaming endpoint returns new-line separated JSON
-              // objects. A chunk may have more than one of these objects, so we
-              // need to split the chunk by new-lines and handle each one
-              // separately.
-              chunk
-                .trimEnd()
-                .split("\n")
-                .reduce(
-                  (acc, line) => acc + JSON.parse(line).message.content,
-                  ""
-                )
+            // objects. A chunk may have more than one of these objects, so we
+            // need to split the chunk by new-lines and handle each one
+            // separately.
+            chunk
+              .trimEnd()
+              .split("\n")
+              .reduce(
+                (acc, line) => acc + JSON.parse(line).message.content,
+                ""
+              )
           fullText += contentToAdd
         } catch (error) {
           console.error("Error parsing JSON:", error)
@@ -451,9 +453,8 @@ export const handleCreateMessages = async (
     const uploadPromises = newMessageImages
       .filter(obj => obj.file !== null)
       .map(obj => {
-        let filePath = `${profile.user_id}/${currentChat.id}/${
-          createdMessages[0].id
-        }/${uuidv4()}`
+        let filePath = `${profile.user_id}/${currentChat.id}/${createdMessages[0].id
+          }/${uuidv4()}`
 
         return uploadMessageImage(filePath, obj.file as File).catch(error => {
           console.error(`Failed to upload image at ${filePath}:`, error)
