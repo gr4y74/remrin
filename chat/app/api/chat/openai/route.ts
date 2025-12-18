@@ -2,7 +2,7 @@ import { OpenAIStream, StreamingTextResponse } from "ai"
 import OpenAI from "openai"
 import { tavily } from "@tavily/core"
 
-export const runtime = "edge"
+export const runtime = "nodejs"  // Changed from "edge" - Tavily SDK requires Node.js
 export const maxDuration = 60
 
 /**
