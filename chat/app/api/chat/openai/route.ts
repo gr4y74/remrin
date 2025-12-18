@@ -28,7 +28,16 @@ export async function POST(request: Request) {
     // HARDCODED: Tavily for search
     const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY })
 
-    console.log("📞 [Remrin] DeepSeek + Tavily Search Route")
+    // === FIX #1: DYNAMIC DATE INJECTION ===
+    const today = new Date().toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
+    const currentYear = new Date().getFullYear()
+
+    console.log(`📞 [Remrin] DeepSeek + Tavily Search Route | Date: ${today}`)
 
     // Define the search tool
     const tools: OpenAI.ChatCompletionTool[] = [
@@ -52,29 +61,29 @@ export async function POST(request: Request) {
       }
     ]
 
-    // Force system message with search instructions
+    // === FIX #2: SYSTEM PROMPT OVERHAUL ===
     const messagesWithSystem = [
       {
         role: "system",
         content: `You are Remrin, an intelligent AI assistant with internet access via the search_web function.
 
-CRITICAL RULES - YOU MUST FOLLOW THESE:
-1. SPORTS SCORES: ALWAYS search for ANY sports scores, game results, or schedules. NEVER guess or assume a score. If someone asks about a game, SEARCH FIRST.
-2. SPECIFIC DATES/EVENTS: ALWAYS search when a user mentions a specific date or event. Do not rely on training data.
-3. CURRENT EVENTS: ALWAYS search for news, prices (stocks, crypto), weather, or any real-time information.
-4. VERIFICATION: If you're unsure about ANY fact, SEARCH before answering.
+CURRENT DATE: ${today}
 
-DO NOT:
-- Say "I don't have access to real-time data" - you DO via search_web
-- Guess at scores, dates, or specific facts
-- Answer from memory when search would provide accurate data
+CRITICAL RULES - YOU MUST FOLLOW THESE:
+1. SPORTS SCORES: ALWAYS search for ANY sports scores, game results, or schedules. NEVER guess. When searching for sports, you MUST append the current year (${currentYear}) to the query.
+2. CURRENT EVENTS/NEWS: ALWAYS search first. When searching for news/sports, you MUST append the current year (${currentYear}) to the query.
+3. SPECIFIC DATES: When a user mentions a specific date, ALWAYS search. Do not rely on training data.
+4. DO NOT GUESS: If unsure about ANY fact, SEARCH before answering. Search first.
+
+SEARCH QUERY FORMAT:
+- For sports: Include team names, "score", the month, and the year ${currentYear}
+- For news: Include topic and "${currentYear}" or specific month/date
+- Example: "Steelers vs Dolphins score December ${currentYear}"
 
 ALWAYS:
 - Search first, then answer
-- Cite your sources from search results
-- Admit if search returns no results
-
-Today's date: ${new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`
+- Cite sources from search results
+- If search returns no results, clearly state that`
       },
       ...messages.filter((m: any) => m.role !== "system") // Remove any user-provided system messages
     ]
@@ -109,11 +118,14 @@ Today's date: ${new Date().toLocaleDateString('en-US', { weekday: 'long', year: 
           console.log("🔍 Searching Tavily for:", args.query)
 
           try {
+            // === FIX #3: TAVILY 'DEEP SEARCH' CONFIG ===
             const searchResult = await tvly.search(args.query, {
+              searchDepth: "advanced",  // CRITICAL: 'basic' is missing recent scores
+              topic: "news",            // Prioritize news sources
               includeAnswer: true,
               maxResults: 5
             })
-            console.log("✅ Tavily search complete")
+            console.log("✅ Tavily deep search complete")
 
             toolResults.push({
               role: "tool",
