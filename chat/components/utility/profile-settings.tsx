@@ -43,9 +43,9 @@ import { TextareaAutosize } from "../ui/textarea-autosize"
 import { WithTooltip } from "../ui/with-tooltip"
 import { ThemeSwitcher } from "./theme-switcher"
 
-interface ProfileSettingsProps {}
+interface ProfileSettingsProps { }
 
-export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
+export const ProfileSettings: FC<ProfileSettingsProps> = ({ }) => {
   const {
     profile,
     setProfile,
@@ -119,10 +119,15 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
   )
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
+    // Sign out with global scope to clear all sessions
+    await supabase.auth.signOut({ scope: 'global' })
+    // Small delay to ensure cookies are cleared
+    await new Promise(resolve => setTimeout(resolve, 100))
+    // Clear any cached state
+    setProfile(null)
+    // Redirect to login
     router.push("/login")
     router.refresh()
-    return
   }
 
   const handleSave = async () => {
