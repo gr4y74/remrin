@@ -7,30 +7,10 @@ export type Json =
   | Json[]
 
 export type Database = {
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          operationName?: string
-          query?: string
-          variables?: Json
-          extensions?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "13.0.5"
   }
   public: {
     Tables: {
@@ -69,13 +49,6 @@ export type Database = {
             columns: ["collection_id"]
             isOneToOne: false
             referencedRelation: "collections"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "assistant_collections_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -117,13 +90,6 @@ export type Database = {
             referencedRelation: "files"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "assistant_files_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
         ]
       }
       assistant_tools: {
@@ -163,13 +129,6 @@ export type Database = {
             referencedRelation: "tools"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "assistant_tools_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
         ]
       }
       assistant_workspaces: {
@@ -200,13 +159,6 @@ export type Database = {
             columns: ["assistant_id"]
             isOneToOne: false
             referencedRelation: "assistants"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "assistant_workspaces_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
           {
@@ -281,13 +233,6 @@ export type Database = {
             referencedRelation: "folders"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "assistants_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
         ]
       }
       chat_files: {
@@ -325,13 +270,6 @@ export type Database = {
             columns: ["file_id"]
             isOneToOne: false
             referencedRelation: "files"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "chat_files_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -407,13 +345,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "chats_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "chats_workspace_id_fkey"
             columns: ["workspace_id"]
             isOneToOne: false
@@ -459,13 +390,6 @@ export type Database = {
             referencedRelation: "files"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "collection_files_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
         ]
       }
       collection_workspaces: {
@@ -496,13 +420,6 @@ export type Database = {
             columns: ["collection_id"]
             isOneToOne: false
             referencedRelation: "collections"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "collection_workspaces_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
           {
@@ -553,14 +470,91 @@ export type Database = {
             referencedRelation: "folders"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "collections_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
         ]
+      }
+      companions: {
+        Row: {
+          avatar_url: string | null
+          blueprint: Json | null
+          created_at: string | null
+          description: string | null
+          first_message: string | null
+          id: string
+          name: string
+          system_prompt: string
+          updated_at: string | null
+          user_id: string
+          voice_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          blueprint?: Json | null
+          created_at?: string | null
+          description?: string | null
+          first_message?: string | null
+          id?: string
+          name: string
+          system_prompt: string
+          updated_at?: string | null
+          user_id: string
+          voice_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          blueprint?: Json | null
+          created_at?: string | null
+          description?: string | null
+          first_message?: string | null
+          id?: string
+          name?: string
+          system_prompt?: string
+          updated_at?: string | null
+          user_id?: string
+          voice_id?: string
+        }
+        Relationships: []
+      }
+      core_locket: {
+        Row: {
+          content: string
+          context_tag: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          content: string
+          context_tag: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          content?: string
+          context_tag?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      documents: {
+        Row: {
+          content: string | null
+          embedding: string | null
+          id: number
+          metadata: Json | null
+        }
+        Insert: {
+          content?: string | null
+          embedding?: string | null
+          id?: number
+          metadata?: Json | null
+        }
+        Update: {
+          content?: string | null
+          embedding?: string | null
+          id?: number
+          metadata?: Json | null
+        }
+        Relationships: []
       }
       file_items: {
         Row: {
@@ -607,13 +601,6 @@ export type Database = {
             referencedRelation: "files"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "file_items_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
         ]
       }
       file_workspaces: {
@@ -644,13 +631,6 @@ export type Database = {
             columns: ["file_id"]
             isOneToOne: false
             referencedRelation: "files"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "file_workspaces_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
           {
@@ -713,13 +693,6 @@ export type Database = {
             referencedRelation: "folders"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "files_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
         ]
       }
       folders: {
@@ -755,13 +728,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "folders_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "folders_workspace_id_fkey"
             columns: ["workspace_id"]
             isOneToOne: false
@@ -769,6 +735,69 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      heartbeat: {
+        Row: {
+          id: string
+          last_seen: string | null
+          platform: string | null
+        }
+        Insert: {
+          id: string
+          last_seen?: string | null
+          platform?: string | null
+        }
+        Update: {
+          id?: string
+          last_seen?: string | null
+          platform?: string | null
+        }
+        Relationships: []
+      }
+      memories: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          domain: string | null
+          embedding: string | null
+          emotion: string | null
+          id: number
+          importance: number | null
+          metadata: Json | null
+          persona_id: string | null
+          role: string | null
+          tags: string[] | null
+          user_id: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          domain?: string | null
+          embedding?: string | null
+          emotion?: string | null
+          id?: number
+          importance?: number | null
+          metadata?: Json | null
+          persona_id?: string | null
+          role?: string | null
+          tags?: string[] | null
+          user_id?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          domain?: string | null
+          embedding?: string | null
+          emotion?: string | null
+          id?: number
+          importance?: number | null
+          metadata?: Json | null
+          persona_id?: string | null
+          role?: string | null
+          tags?: string[] | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       message_file_items: {
         Row: {
@@ -805,13 +834,6 @@ export type Database = {
             columns: ["message_id"]
             isOneToOne: false
             referencedRelation: "messages"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "message_file_items_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -871,13 +893,6 @@ export type Database = {
             referencedRelation: "chats"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "messages_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
         ]
       }
       model_workspaces: {
@@ -908,13 +923,6 @@ export type Database = {
             columns: ["model_id"]
             isOneToOne: false
             referencedRelation: "models"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "model_workspaces_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
           {
@@ -977,14 +985,134 @@ export type Database = {
             referencedRelation: "folders"
             referencedColumns: ["id"]
           },
+        ]
+      }
+      pending_souls: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          image_url: string | null
+          soul_name: string
+          soul_prompt: string
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          image_url?: string | null
+          soul_name: string
+          soul_prompt: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          image_url?: string | null
+          soul_name?: string
+          soul_prompt?: string
+        }
+        Relationships: []
+      }
+      persona_access: {
+        Row: {
+          access_level: string | null
+          granted_at: string | null
+          persona_id: string
+          user_id: string
+        }
+        Insert: {
+          access_level?: string | null
+          granted_at?: string | null
+          persona_id: string
+          user_id: string
+        }
+        Update: {
+          access_level?: string | null
+          granted_at?: string | null
+          persona_id?: string
+          user_id?: string
+        }
+        Relationships: [
           {
-            foreignKeyName: "models_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: "persona_access_persona_id_fkey"
+            columns: ["persona_id"]
             isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "personas"
             referencedColumns: ["id"]
           },
         ]
+      }
+      persona_lockets: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          persona_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          persona_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          persona_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "persona_lockets_persona_id_fkey"
+            columns: ["persona_id"]
+            isOneToOne: false
+            referencedRelation: "personas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      personas: {
+        Row: {
+          config: Json | null
+          created_at: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          name: string
+          owner_id: string | null
+          safety_level: string | null
+          system_prompt: string
+          visibility: string | null
+          voice_id: string | null
+        }
+        Insert: {
+          config?: Json | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          owner_id?: string | null
+          safety_level?: string | null
+          system_prompt: string
+          visibility?: string | null
+          voice_id?: string | null
+        }
+        Update: {
+          config?: Json | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          owner_id?: string | null
+          safety_level?: string | null
+          system_prompt?: string
+          visibility?: string | null
+          voice_id?: string | null
+        }
+        Relationships: []
       }
       preset_workspaces: {
         Row: {
@@ -1014,13 +1142,6 @@ export type Database = {
             columns: ["preset_id"]
             isOneToOne: false
             referencedRelation: "presets"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "preset_workspaces_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
           {
@@ -1092,13 +1213,6 @@ export type Database = {
             referencedRelation: "folders"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "presets_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
         ]
       }
       profiles: {
@@ -1127,7 +1241,7 @@ export type Database = {
           profile_context: string
           updated_at: string | null
           use_azure_openai: boolean
-          user_id: string
+          user_id: string | null
           username: string
         }
         Insert: {
@@ -1155,7 +1269,7 @@ export type Database = {
           profile_context: string
           updated_at?: string | null
           use_azure_openai: boolean
-          user_id: string
+          user_id?: string | null
           username: string
         }
         Update: {
@@ -1183,18 +1297,10 @@ export type Database = {
           profile_context?: string
           updated_at?: string | null
           use_azure_openai?: boolean
-          user_id?: string
+          user_id?: string | null
           username?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "profiles_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       prompt_workspaces: {
         Row: {
@@ -1224,13 +1330,6 @@ export type Database = {
             columns: ["prompt_id"]
             isOneToOne: false
             referencedRelation: "prompts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "prompt_workspaces_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
           {
@@ -1281,14 +1380,73 @@ export type Database = {
             referencedRelation: "folders"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "prompts_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
         ]
+      }
+      shared_facts: {
+        Row: {
+          content: string
+          created_at: string | null
+          fact_type: string
+          id: string
+          importance: number | null
+          shared_with_all: boolean | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          fact_type: string
+          id?: string
+          importance?: number | null
+          shared_with_all?: boolean | null
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          fact_type?: string
+          id?: string
+          importance?: number | null
+          shared_with_all?: boolean | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      souls: {
+        Row: {
+          archetype: string | null
+          blueprint: Json | null
+          created_at: string
+          id: string
+          image_url: string | null
+          name: string
+          system_prompt: string
+          user_id: string | null
+          vibe_keywords: string[] | null
+        }
+        Insert: {
+          archetype?: string | null
+          blueprint?: Json | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          name: string
+          system_prompt: string
+          user_id?: string | null
+          vibe_keywords?: string[] | null
+        }
+        Update: {
+          archetype?: string | null
+          blueprint?: Json | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          name?: string
+          system_prompt?: string
+          user_id?: string | null
+          vibe_keywords?: string[] | null
+        }
+        Relationships: []
       }
       tool_workspaces: {
         Row: {
@@ -1318,13 +1476,6 @@ export type Database = {
             columns: ["tool_id"]
             isOneToOne: false
             referencedRelation: "tools"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tool_workspaces_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
           {
@@ -1384,14 +1535,34 @@ export type Database = {
             referencedRelation: "folders"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "tools_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
         ]
+      }
+      user_limits: {
+        Row: {
+          created_at: string | null
+          is_premium: boolean | null
+          last_reset: string | null
+          max_requests_per_day: number | null
+          requests_today: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          is_premium?: boolean | null
+          last_reset?: string | null
+          max_requests_per_day?: number | null
+          requests_today?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          is_premium?: boolean | null
+          last_reset?: string | null
+          max_requests_per_day?: number | null
+          requests_today?: number | null
+          user_id?: string
+        }
+        Relationships: []
       }
       workspaces: {
         Row: {
@@ -1451,283 +1622,122 @@ export type Database = {
           updated_at?: string | null
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "workspaces_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      check_inactivity: { Args: never; Returns: undefined }
       create_duplicate_messages_for_new_chat: {
-        Args: {
-          old_chat_id: string
-          new_chat_id: string
-          new_user_id: string
-        }
+        Args: { new_chat_id: string; new_user_id: string; old_chat_id: string }
         Returns: undefined
       }
       delete_message_including_and_after: {
         Args: {
-          p_user_id: string
           p_chat_id: string
           p_sequence_number: number
+          p_user_id: string
         }
         Returns: undefined
       }
       delete_messages_including_and_after: {
         Args: {
-          p_user_id: string
           p_chat_id: string
           p_sequence_number: number
+          p_user_id: string
         }
         Returns: undefined
       }
       delete_storage_object: {
-        Args: {
-          bucket: string
-          object: string
-        }
+        Args: { bucket: string; object: string }
         Returns: Record<string, unknown>
       }
       delete_storage_object_from_bucket: {
-        Args: {
-          bucket_name: string
-          object_path: string
-        }
+        Args: { bucket_name: string; object_path: string }
         Returns: Record<string, unknown>
+      }
+      increment_user_requests: { Args: { uid: string }; Returns: undefined }
+      match_documents: {
+        Args: {
+          match_count: number
+          match_threshold: number
+          query_embedding: string
+        }
+        Returns: {
+          content: string
+          id: number
+          metadata: Json
+          similarity: number
+        }[]
       }
       match_file_items_local: {
         Args: {
-          query_embedding: string
-          match_count?: number
           file_ids?: string[]
+          match_count?: number
+          query_embedding: string
         }
         Returns: {
-          id: string
-          file_id: string
           content: string
-          tokens: number
+          file_id: string
+          id: string
           similarity: number
+          tokens: number
         }[]
       }
       match_file_items_openai: {
         Args: {
-          query_embedding: string
-          match_count?: number
           file_ids?: string[]
+          match_count?: number
+          query_embedding: string
         }
         Returns: {
-          id: string
-          file_id: string
           content: string
+          file_id: string
+          id: string
+          similarity: number
           tokens: number
+        }[]
+      }
+      match_memories: {
+        Args: {
+          match_count: number
+          match_threshold: number
+          query_embedding: string
+        }
+        Returns: {
+          content: string
+          id: number
+          role: string
+          similarity: number
+        }[]
+      }
+      match_memories_v2: {
+        Args: {
+          filter_persona: string
+          filter_user: string
+          match_count: number
+          match_threshold: number
+          query_embedding: string
+        }
+        Returns: {
+          adjusted_score: number
+          content: string
+          created_at: string
+          emotion: string
+          importance: number
           similarity: number
         }[]
       }
       non_private_assistant_exists: {
-        Args: {
-          p_name: string
-        }
+        Args: { p_name: string }
         Returns: boolean
       }
-      non_private_file_exists: {
-        Args: {
-          p_name: string
-        }
-        Returns: boolean
-      }
+      non_private_file_exists: { Args: { p_name: string }; Returns: boolean }
       non_private_workspace_exists: {
-        Args: {
-          p_name: string
-        }
+        Args: { p_name: string }
         Returns: boolean
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
-  storage: {
-    Tables: {
-      buckets: {
-        Row: {
-          allowed_mime_types: string[] | null
-          avif_autodetection: boolean | null
-          created_at: string | null
-          file_size_limit: number | null
-          id: string
-          name: string
-          owner: string | null
-          owner_id: string | null
-          public: boolean | null
-          updated_at: string | null
-        }
-        Insert: {
-          allowed_mime_types?: string[] | null
-          avif_autodetection?: boolean | null
-          created_at?: string | null
-          file_size_limit?: number | null
-          id: string
-          name: string
-          owner?: string | null
-          owner_id?: string | null
-          public?: boolean | null
-          updated_at?: string | null
-        }
-        Update: {
-          allowed_mime_types?: string[] | null
-          avif_autodetection?: boolean | null
-          created_at?: string | null
-          file_size_limit?: number | null
-          id?: string
-          name?: string
-          owner?: string | null
-          owner_id?: string | null
-          public?: boolean | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      migrations: {
-        Row: {
-          executed_at: string | null
-          hash: string
-          id: number
-          name: string
-        }
-        Insert: {
-          executed_at?: string | null
-          hash: string
-          id: number
-          name: string
-        }
-        Update: {
-          executed_at?: string | null
-          hash?: string
-          id?: number
-          name?: string
-        }
-        Relationships: []
-      }
-      objects: {
-        Row: {
-          bucket_id: string | null
-          created_at: string | null
-          id: string
-          last_accessed_at: string | null
-          metadata: Json | null
-          name: string | null
-          owner: string | null
-          owner_id: string | null
-          path_tokens: string[] | null
-          updated_at: string | null
-          version: string | null
-        }
-        Insert: {
-          bucket_id?: string | null
-          created_at?: string | null
-          id?: string
-          last_accessed_at?: string | null
-          metadata?: Json | null
-          name?: string | null
-          owner?: string | null
-          owner_id?: string | null
-          path_tokens?: string[] | null
-          updated_at?: string | null
-          version?: string | null
-        }
-        Update: {
-          bucket_id?: string | null
-          created_at?: string | null
-          id?: string
-          last_accessed_at?: string | null
-          metadata?: Json | null
-          name?: string | null
-          owner?: string | null
-          owner_id?: string | null
-          path_tokens?: string[] | null
-          updated_at?: string | null
-          version?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "objects_bucketId_fkey"
-            columns: ["bucket_id"]
-            isOneToOne: false
-            referencedRelation: "buckets"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      can_insert_object: {
-        Args: {
-          bucketid: string
-          name: string
-          owner: string
-          metadata: Json
-        }
-        Returns: undefined
-      }
-      extension: {
-        Args: {
-          name: string
-        }
-        Returns: string
-      }
-      filename: {
-        Args: {
-          name: string
-        }
-        Returns: string
-      }
-      foldername: {
-        Args: {
-          name: string
-        }
-        Returns: string[]
-      }
-      get_size_by_bucket: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          size: number
-          bucket_id: string
-        }[]
-      }
-      search: {
-        Args: {
-          prefix: string
-          bucketname: string
-          limits?: number
-          levels?: number
-          offsets?: number
-          search?: string
-          sortcolumn?: string
-          sortorder?: string
-        }
-        Returns: {
-          name: string
-          id: string
-          updated_at: string
-          created_at: string
-          last_accessed_at: string
-          metadata: Json
-        }[]
       }
     }
     Enums: {
@@ -1739,27 +1749,33 @@ export type Database = {
   }
 }
 
-type PublicSchema = Database[Extract<keyof Database, "public">]
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
-  PublicTableNameOrOptions extends
-    | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
-    | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-        Database[PublicTableNameOrOptions["schema"]]["Views"])
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
     : never
-  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
-        PublicSchema["Views"])
-    ? (PublicSchema["Tables"] &
-        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
         Row: infer R
       }
       ? R
@@ -1767,20 +1783,24 @@ export type Tables<
     : never
 
 export type TablesInsert<
-  PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
-    | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Insert: infer I
       }
       ? I
@@ -1788,20 +1808,24 @@ export type TablesInsert<
     : never
 
 export type TablesUpdate<
-  PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
-    | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Update: infer U
       }
       ? U
@@ -1809,15 +1833,41 @@ export type TablesUpdate<
     : never
 
 export type Enums<
-  PublicEnumNameOrOptions extends
-    | keyof PublicSchema["Enums"]
-    | { schema: keyof Database },
-  EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
-> = PublicEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
-    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
 
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
+
+export const Constants = {
+  public: {
+    Enums: {},
+  },
+} as const

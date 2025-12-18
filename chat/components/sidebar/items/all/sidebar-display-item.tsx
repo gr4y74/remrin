@@ -24,7 +24,7 @@ export const SidebarItem: FC<SidebarItemProps> = ({
   icon,
   isTyping
 }) => {
-  const { selectedWorkspace, setChats, setSelectedAssistant } =
+  const { selectedWorkspace, setChats, setSelectedAssistant, setSelectedPersona } =
     useContext(ChatbotUIContext)
 
   const router = useRouter()
@@ -34,11 +34,11 @@ export const SidebarItem: FC<SidebarItemProps> = ({
   const [isHovering, setIsHovering] = useState(false)
 
   const actionMap = {
-    chats: async (item: any) => {},
-    presets: async (item: any) => {},
-    prompts: async (item: any) => {},
-    files: async (item: any) => {},
-    collections: async (item: any) => {},
+    chats: async (item: any) => { },
+    presets: async (item: any) => { },
+    prompts: async (item: any) => { },
+    files: async (item: any) => { },
+    collections: async (item: any) => { },
     assistants: async (assistant: Tables<"assistants">) => {
       if (!selectedWorkspace) return
 
@@ -62,8 +62,30 @@ export const SidebarItem: FC<SidebarItemProps> = ({
 
       return router.push(`/${selectedWorkspace.id}/chat/${createdChat.id}`)
     },
-    tools: async (item: any) => {},
-    models: async (item: any) => {}
+    tools: async (item: any) => { },
+    models: async (item: any) => { },
+    personas: async (persona: Tables<"personas">) => {
+      if (!selectedWorkspace) return
+
+      // Create a chat with the persona's system prompt
+      const createdChat = await createChat({
+        user_id: persona.owner_id,
+        workspace_id: selectedWorkspace.id,
+        model: "deepseek-chat", // Default model for personas
+        name: `Chat with ${persona.name}`,
+        prompt: persona.system_prompt, // The persona's personality becomes the system prompt
+        temperature: 0.7,
+        context_length: 4096,
+        include_profile_context: true,
+        include_workspace_instructions: false,
+        embeddings_provider: "openai"
+      })
+
+      setChats(prevState => [createdChat, ...prevState])
+      setSelectedPersona(persona)
+
+      return router.push(`/${selectedWorkspace.id}/chat/${createdChat.id}`)
+    }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {

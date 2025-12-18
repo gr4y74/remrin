@@ -4,6 +4,7 @@
 
 import { ChatbotUIContext } from "@/context/context"
 import { getProfileByUserId } from "@/db/profile"
+import { getPersonasByOwnerId } from "@/db/personas"
 import { getWorkspaceImageFromStorage } from "@/db/storage/workspace-images"
 import { getWorkspacesByUserId } from "@/db/workspaces"
 import { convertBlobToBase64 } from "@/lib/blob-to-b64"
@@ -49,6 +50,7 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   const [prompts, setPrompts] = useState<Tables<"prompts">[]>([])
   const [tools, setTools] = useState<Tables<"tools">[]>([])
   const [workspaces, setWorkspaces] = useState<Tables<"workspaces">[]>([])
+  const [personas, setPersonas] = useState<Tables<"personas">[]>([])
 
   // MODELS STORE
   const [envKeyMap, setEnvKeyMap] = useState<Record<string, VALID_ENV_KEYS>>({})
@@ -72,6 +74,10 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
     useState<Tables<"assistants"> | null>(null)
   const [assistantImages, setAssistantImages] = useState<AssistantImage[]>([])
   const [openaiAssistants, setOpenaiAssistants] = useState<any[]>([])
+
+  // PERSONA STORE (Soul Forge)
+  const [selectedPersona, setSelectedPersona] =
+    useState<Tables<"personas"> | null>(null)
 
   // PASSIVE CHAT STORE
   const [userInput, setUserInput] = useState<string>("")
@@ -124,7 +130,7 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   const [toolInUse, setToolInUse] = useState<string>("none")
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       const profile = await fetchStartingData()
 
       if (profile) {
@@ -193,6 +199,10 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         }
       }
 
+      // Fetch Soul Forge personas owned by this user
+      const userPersonas = await getPersonasByOwnerId(user.id)
+      setPersonas(userPersonas)
+
       return profile
     }
   }
@@ -225,6 +235,8 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         setTools,
         workspaces,
         setWorkspaces,
+        personas,
+        setPersonas,
 
         // MODELS STORE
         envKeyMap,
@@ -253,6 +265,10 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         setAssistantImages,
         openaiAssistants,
         setOpenaiAssistants,
+
+        // PERSONA STORE (Soul Forge)
+        selectedPersona,
+        setSelectedPersona,
 
         // PASSIVE CHAT STORE
         userInput,
