@@ -1,8 +1,7 @@
 import { OpenAIStream, StreamingTextResponse } from "ai"
 import OpenAI from "openai"
-import { tavily } from "@tavily/core"
 
-export const runtime = "nodejs"  // Changed from "edge" - Tavily SDK requires Node.js
+export const runtime = "edge"
 export const maxDuration = 60
 
 /**
@@ -11,8 +10,31 @@ export const maxDuration = 60
  * This route IGNORES frontend model selection and forces:
  * - Engine: DeepSeek (via OPENAI_BASE_URL)
  * - Model: deepseek-chat
- * - Search: Tavily (always enabled)
+ * - Search: Tavily (via REST API - Edge compatible)
  */
+
+// Tavily search using fetch (Edge-compatible)
+async function searchTavily(query: string, apiKey: string) {
+  const response = await fetch("https://api.tavily.com/search", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      api_key: apiKey,
+      query: query,
+      search_depth: "advanced",  // CRITICAL: 'basic' misses recent scores
+      topic: "news",             // Prioritize news sources
+      include_answer: true,
+      max_results: 5
+    })
+  })
+
+  if (!response.ok) {
+    throw new Error(`Tavily API error: ${response.status}`)
+  }
+
+  return response.json()
+}
+
 export async function POST(request: Request) {
   try {
     const json = await request.json()
@@ -25,10 +47,7 @@ export async function POST(request: Request) {
       apiKey: process.env.OPENAI_API_KEY
     })
 
-    // HARDCODED: Tavily for search
-    const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY })
-
-    // === FIX #1: DYNAMIC DATE INJECTION ===
+    // === DYNAMIC DATE INJECTION ===
     const today = new Date().toLocaleDateString('en-US', {
       weekday: 'long',
       year: 'numeric',
@@ -61,7 +80,7 @@ export async function POST(request: Request) {
       }
     ]
 
-    // === FIX #2: SYSTEM PROMPT OVERHAUL ===
+    // === SYSTEM PROMPT WITH DATE ===
     const messagesWithSystem = [
       {
         role: "system",
@@ -118,13 +137,11 @@ ALWAYS:
           console.log("🔍 Searching Tavily for:", args.query)
 
           try {
-            // === FIX #3: TAVILY 'DEEP SEARCH' CONFIG ===
-            const searchResult = await tvly.search(args.query, {
-              searchDepth: "advanced",  // CRITICAL: 'basic' is missing recent scores
-              topic: "news",            // Prioritize news sources
-              includeAnswer: true,
-              maxResults: 5
-            })
+            // Use fetch-based Tavily search (Edge-compatible)
+            const searchResult = await searchTavily(
+              args.query,
+              process.env.TAVILY_API_KEY!
+            )
             console.log("✅ Tavily deep search complete")
 
             toolResults.push({
