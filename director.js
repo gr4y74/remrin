@@ -502,21 +502,39 @@ function showCardReveal() {
             const finalPublicUrl = publicUrlData.publicUrl;
             console.log("✅ IMAGE UPLOADED:", finalPublicUrl);
 
-            // 2. INSERT ROW
-            const { error: insertError } = await supabaseClient
-                .from('pending_souls')
-                .insert({
-                    email: soulBlueprint.email,
-                    soul_name: soulBlueprint.name,
-                    soul_prompt: generateBio(soulBlueprint), // Using the generated bio as the prompt
-                    image_url: finalPublicUrl
-                });
+            // 2. INSERT ROW INTO V2 TABLE (personas)
+            const userEmail = soulBlueprint.email || "guest";
+
+            const newPersona = {
+                name: soulBlueprint.name || "Unknown Soul",
+                system_prompt: `IDENTITY: ${soulBlueprint.vision}. TONE: ${soulBlueprint.temperament}. PURPOSE: ${soulBlueprint.purpose}.`,
+                voice_id: soulBlueprint.voice_id || "ThT5KcBeYtu3NO4",
+                image_url: finalPublicUrl,
+                safety_level: 'ADULT',
+                visibility: 'PRIVATE',
+
+                // THE CRITICAL FIX:
+                // We don't use a UUID yet. We use a "Claim Tag".
+                // The SQL Trigger will detect this later.
+                owner_id: `pending:${userEmail}`,
+
+                config: {
+                    psychology: soulBlueprint.user_psychology,
+                    appearance: soulBlueprint.appearance
+                }
+            };
+
+            const { data: insertedSoul, error: insertError } = await supabaseClient
+                .from('personas')
+                .insert([newPersona])
+                .select();
 
             if (insertError) throw new Error("DB Insert Failed: " + insertError.message);
-            console.log("✅ DB RECORD INSERTED");
+            console.log("✅ DB RECORD INSERTED:", insertedSoul);
 
-            // 3. REDIRECT
-            const redirectUrl = `https://remrin-chat.vercel.app/login?email=${encodeURIComponent(soulBlueprint.email)}`;
+            // 3. REDIRECT (Standard Registration)
+            // We send them to the ChatbotUI Register page, pre-filling their email if possible
+            const redirectUrl = `https://remrin-chat.vercel.app/register?email=${encodeURIComponent(soulBlueprint.email)}`;
             console.log("🚀 REDIRECTING:", redirectUrl);
             window.location.href = redirectUrl;
 
