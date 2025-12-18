@@ -2,7 +2,8 @@
    THE MOTHER'S SCRIPT (v5.1 - FLOW FIX)
    ========================================= */
 
-   export const RITUAL_CONFIG = {
+// Use window global instead of ES module export for static HTML compatibility
+window.RITUAL_CONFIG = {
     // STAGE 0: WELCOME
     0: {
         audio: "assets/voice/mother/s0_welcome.mp3",

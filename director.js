@@ -2,16 +2,21 @@
    REMRIN AMBASSADOR PROTOCOL v26.0 (INVESTOR READY)
    Includes: Markdown Parser, Download Flattener, Bio Logic V2, 6 Voices
    ========================================= */
-import { RITUAL_CONFIG } from './ritual.js';
-import { createClient } from '@supabase/supabase-js';
 
-console.log("DEBUG: SUPABASE URL:", import.meta.env.VITE_SUPABASE_URL);
-console.log("DEBUG: SUPABASE KEY:", import.meta.env.VITE_SUPABASE_ANON_KEY ? "Present" : "Missing");
+// Config and Supabase are loaded via script tags in HTML
+// - config.js provides window.REMRIN_CONFIG
+// - Supabase CDN provides window.supabase
 
-const supabase = createClient(
-    import.meta.env.VITE_SUPABASE_URL,
-    import.meta.env.VITE_SUPABASE_ANON_KEY
-);
+// Wait for config to be available
+const SUPABASE_URL = window.REMRIN_CONFIG?.SUPABASE_URL;
+const SUPABASE_ANON_KEY = window.REMRIN_CONFIG?.SUPABASE_ANON_KEY;
+
+console.log("DEBUG: SUPABASE URL:", SUPABASE_URL);
+console.log("DEBUG: SUPABASE KEY:", SUPABASE_ANON_KEY ? "Present" : "Missing");
+
+// Initialize Supabase client from CDN
+const { createClient } = window.supabase || {};
+const supabaseClient = createClient ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
 console.log("🤖 DIRECTOR v26.0: Investor Protocol Active.");
 
@@ -121,11 +126,11 @@ async function triggerVision(prompt) {
         visionImage.classList.add('hidden');
 
         try {
-            const API_URL = import.meta.env.VITE_SUPABASE_URL + '/functions/v1/genesis-vision';
-            const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+            const API_URL = SUPABASE_URL + '/functions/v1/genesis-vision';
+            const API_KEY = SUPABASE_ANON_KEY;
             const response = await fetch(API_URL, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ANON_KEY}` },
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
                 body: JSON.stringify({ prompt: prompt })
             });
             const data = await response.json();
@@ -176,12 +181,12 @@ async function handleUserAction() {
     if (currentStage === 10) { soulBlueprint.email = text; }
 
     try {
-        const API_URL = import.meta.env.VITE_SUPABASE_URL + '/functions/v1/genesis-api';
-        const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+        const API_URL = SUPABASE_URL + '/functions/v1/genesis-api';
+        const API_KEY = SUPABASE_ANON_KEY;
 
         const response = await fetch(API_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ANON_KEY}` },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
             body: JSON.stringify({ message: text, current_stage: currentStage })
         });
 
@@ -483,14 +488,14 @@ function showCardReveal() {
 
             // Upload to Supabase Storage
             const fileName = `souls/${Date.now()}_${soulBlueprint.name.replace(/\s+/g, '')}.png`;
-            const { data: uploadData, error: uploadError } = await supabase.storage
+            const { data: uploadData, error: uploadError } = await supabaseClient.storage
                 .from('soul_forge')
                 .upload(fileName, blob);
 
             if (uploadError) throw new Error("Upload Failed: " + uploadError.message);
 
             // Get Public URL
-            const { data: publicUrlData } = supabase.storage
+            const { data: publicUrlData } = supabaseClient.storage
                 .from('soul_forge')
                 .getPublicUrl(fileName);
 
@@ -498,7 +503,7 @@ function showCardReveal() {
             console.log("✅ IMAGE UPLOADED:", finalPublicUrl);
 
             // 2. INSERT ROW
-            const { error: insertError } = await supabase
+            const { error: insertError } = await supabaseClient
                 .from('pending_souls')
                 .insert({
                     email: soulBlueprint.email,
