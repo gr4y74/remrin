@@ -160,16 +160,66 @@ ALWAYS:
         }
       }
 
-      // Second call with function results - stream this one
-      const streamResponse = await openai.chat.completions.create({
+      // Second call with function results - keep tools enabled for follow-up searches
+      const secondResponse = await openai.chat.completions.create({
         model: FORCED_MODEL,
         messages: [...messagesWithSystem, assistantMessage, ...toolResults],
+        tools: tools,
+        tool_choice: "auto",
         temperature: 0.7,
-        stream: true
+        stream: false
       })
 
-      const stream = OpenAIStream(streamResponse)
-      return new StreamingTextResponse(stream)
+      const secondMessage = secondResponse.choices[0].message
+
+      // Check if model wants to make ANOTHER tool call
+      if (secondMessage.tool_calls && secondMessage.tool_calls.length > 0) {
+        console.log("🔧 Follow-up search requested:", secondMessage.tool_calls[0].function.name)
+
+        // Handle follow-up search
+        const followUpResults: any[] = []
+        for (const toolCall of secondMessage.tool_calls) {
+          if (toolCall.function.name === "search_web") {
+            const args = JSON.parse(toolCall.function.arguments)
+            console.log("🔍 Follow-up Tavily search:", args.query)
+            try {
+              const searchResult = await searchTavily(args.query, process.env.TAVILY_API_KEY!)
+              console.log("✅ Follow-up search complete")
+              followUpResults.push({
+                role: "tool",
+                tool_call_id: toolCall.id,
+                content: JSON.stringify(searchResult)
+              })
+            } catch (error: any) {
+              console.error("❌ Follow-up search error:", error.message)
+              followUpResults.push({
+                role: "tool",
+                tool_call_id: toolCall.id,
+                content: `Search error: ${error.message}`
+              })
+            }
+          }
+        }
+
+        // Third call - final answer (no tools to prevent infinite loop)
+        const finalResponse = await openai.chat.completions.create({
+          model: FORCED_MODEL,
+          messages: [...messagesWithSystem, assistantMessage, ...toolResults, secondMessage, ...followUpResults],
+          temperature: 0.7,
+          stream: true
+        })
+        const stream = OpenAIStream(finalResponse)
+        return new StreamingTextResponse(stream)
+      }
+
+      // No additional tool call - stream the response
+      // Return the content directly since we already have it
+      const content = secondMessage.content || ""
+      // Filter out any DSML markup that might have leaked
+      const cleanContent = content.replace(/<｜DSML｜[^>]*>|<\/[^>]*>/g, "").trim()
+      return new Response(cleanContent, {
+        headers: { "Content-Type": "text/plain; charset=utf-8" }
+      })
     }
 
     // No function call - stream the response directly
