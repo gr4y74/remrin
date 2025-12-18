@@ -30,7 +30,8 @@ let soulBlueprint = {
     user_psychology: "", appearance: "", name: "Unknown Soul", email: "",
     voice_id: null,
     temp_image_url: null,
-    id: null
+    id: null,
+    safety_level: null
 };
 
 // =========================================
@@ -204,8 +205,15 @@ async function handleUserAction() {
             setTimeout(() => { renderVoiceChoices(); }, 1000);
         }
         else if (currentStage === 9) {
-            await addMessage(scriptStep.text, "rem", scriptStep.audio);
-            setTimeout(() => { showCardReveal(); }, 3000);
+            // BEFORE CARD REVEAL -> SHOW SAFETY WIDGET (if not already set)
+            if (!soulBlueprint.safety_level) {
+                await addMessage("One final calibration. Who is this companion designed for?", "rem");
+                setTimeout(() => { renderSafetyWidget(); }, 1000);
+            } else {
+                // Safety already set (e.g., user came back), proceed to card
+                await addMessage(scriptStep.text, "rem", scriptStep.audio);
+                setTimeout(() => { showCardReveal(); }, 3000);
+            }
         }
         else if (scriptStep) {
             // Append the Mother's scripted text to the AI's bridge
@@ -349,6 +357,83 @@ function renderVoiceChoices() {
 
         row.appendChild(playBtn); row.appendChild(selBtn);
         container.appendChild(row);
+    });
+
+    chatLog.appendChild(container);
+    chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+// =========================================
+// SAFETY WIDGET (Age Rating Selection)
+// =========================================
+function renderSafetyWidget() {
+    const container = document.createElement('div');
+    container.className = 'safety-widget';
+    container.style.cssText = `
+        background: rgba(255, 50, 50, 0.1); 
+        border: 1px solid rgba(255, 50, 50, 0.3); 
+        border-radius: 12px; 
+        padding: 15px; 
+        margin-top: 15px; 
+        display: flex; 
+        flex-direction: column; 
+        gap: 10px; 
+        animation: fadeIn 0.5s ease;
+        width: 100%;
+    `;
+
+    const label = document.createElement('div');
+    label.innerText = "SAFETY PROTOCOL (REQUIRED):";
+    label.style.cssText = "font-size: 10px; color: #ff5555; letter-spacing: 2px; font-weight: bold;";
+    container.appendChild(label);
+
+    const levels = [
+        { id: 'CHILD', icon: '🧸', text: 'Child (Strict Safety)', color: '#00ff88' },
+        { id: 'TEEN', icon: '⚡', text: 'Teen (PG-13)', color: '#f59e0b' },
+        { id: 'ADULT', icon: '🔞', text: 'Adult (Unrestricted)', color: '#ff4444' }
+    ];
+
+    levels.forEach(lvl => {
+        const btn = document.createElement('button');
+        btn.innerHTML = `${lvl.icon} ${lvl.text}`;
+        btn.style.cssText = `
+            background: rgba(0,0,0,0.4); 
+            border: 1px solid #444; 
+            color: #ccc; 
+            padding: 12px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            text-align: left; 
+            font-family: monospace; 
+            font-size: 12px; 
+            transition: all 0.2s;
+            width: 100%;
+        `;
+
+        btn.onclick = () => {
+            // Set the Blueprint directly
+            soulBlueprint.safety_level = lvl.id;
+
+            // Visual Feedback
+            btn.style.borderColor = lvl.color;
+            btn.style.color = lvl.color;
+            btn.style.background = "rgba(255,255,255,0.1)";
+
+            // Remove widget after selection, then proceed to card reveal
+            setTimeout(() => {
+                container.remove();
+
+                // Add confirmation message
+                addMessage(`Safety set to ${lvl.text}. Preparing your soul card...`, "user");
+
+                // Get the stage 9 script and proceed to card reveal
+                const scriptStep = RITUAL_CONFIG[9];
+                addMessage(scriptStep.text, "rem", scriptStep.audio);
+                setTimeout(() => { showCardReveal(); }, 3000);
+            }, 500);
+        };
+
+        container.appendChild(btn);
     });
 
     chatLog.appendChild(container);
@@ -510,7 +595,7 @@ function showCardReveal() {
                 system_prompt: `IDENTITY: ${soulBlueprint.vision}. TONE: ${soulBlueprint.temperament}. PURPOSE: ${soulBlueprint.purpose}.`,
                 voice_id: soulBlueprint.voice_id || "ThT5KcBeYtu3NO4",
                 image_url: finalPublicUrl,
-                safety_level: 'ADULT',
+                safety_level: soulBlueprint.safety_level || 'ADULT', // Default to Adult if somehow skipped
                 visibility: 'PRIVATE',
 
                 // THE CRITICAL FIX:
@@ -790,3 +875,42 @@ window.addEventListener('load', async () => {
 // Allow console access for manual testing
 window.soulBlueprint = soulBlueprint;
 window.showCardReveal = showCardReveal;
+window.renderSafetyWidget = renderSafetyWidget;
+
+// DEBUG: Quick test function - call this in console to jump to safety widget
+window.testSafetyWidget = function () {
+    // Pre-fill the blueprint with test data
+    soulBlueprint.name = "TestSoul";
+    soulBlueprint.vision = "A wise dragon who guides lost travelers";
+    soulBlueprint.temperament = "Gentle, wise, protective";
+    soulBlueprint.purpose = "To guide and protect";
+    soulBlueprint.user_psychology = "Curious and adventurous";
+    soulBlueprint.appearance = "Blue scales, golden eyes, ethereal glow";
+    soulBlueprint.voice_id = "F_Mystic";
+    soulBlueprint.email = "test@example.com";
+    soulBlueprint.temp_image_url = "https://placehold.co/400x600/1a1a2e/00ff88?text=TEST";
+
+    console.log("🧪 TEST MODE: Blueprint pre-filled:", soulBlueprint);
+    console.log("🧪 Showing Safety Widget...");
+
+    addMessage("One final calibration. Who is this companion designed for?", "rem");
+    setTimeout(() => { renderSafetyWidget(); }, 500);
+};
+
+// DEBUG: Skip straight to card reveal with test data
+window.testCardReveal = function () {
+    soulBlueprint.name = "TestSoul";
+    soulBlueprint.vision = "A wise dragon who guides lost travelers";
+    soulBlueprint.temperament = "Gentle, wise, protective";
+    soulBlueprint.purpose = "To guide and protect";
+    soulBlueprint.user_psychology = "Curious and adventurous";
+    soulBlueprint.appearance = "Blue scales, golden eyes, ethereal glow";
+    soulBlueprint.voice_id = "F_Mystic";
+    soulBlueprint.email = "test@example.com";
+    soulBlueprint.safety_level = "TEEN";
+    soulBlueprint.temp_image_url = "https://placehold.co/400x600/1a1a2e/00ff88?text=TEST";
+
+    console.log("🧪 TEST MODE: Blueprint pre-filled:", soulBlueprint);
+    console.log("🧪 Showing Card Reveal...");
+    showCardReveal();
+};
