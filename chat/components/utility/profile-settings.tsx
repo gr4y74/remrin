@@ -119,15 +119,21 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ }) => {
   )
 
   const handleSignOut = async () => {
-    // Sign out with global scope to clear all sessions
-    await supabase.auth.signOut({ scope: 'global' })
-    // Small delay to ensure cookies are cleared
-    await new Promise(resolve => setTimeout(resolve, 100))
-    // Clear any cached state
-    setProfile(null)
-    // Redirect to login
-    router.push("/login")
-    router.refresh()
+    try {
+      // Call server-side signout API to properly clear cookies
+      await fetch('/api/auth/signout', { method: 'POST' })
+      // Also sign out client-side
+      await supabase.auth.signOut({ scope: 'global' })
+      // Clear cached state
+      setProfile(null)
+      // Use window.location for full page reload instead of router
+      // This ensures all cached state is cleared
+      window.location.href = '/login'
+    } catch (error) {
+      console.error('Sign out error:', error)
+      // Force redirect even on error
+      window.location.href = '/login'
+    }
   }
 
   const handleSave = async () => {
