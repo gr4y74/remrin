@@ -178,6 +178,8 @@ export const SidebarDataList: FC<SidebarDataListProps> = ({
       folder_id: folderId
     })
 
+    if (!updatedItem) return
+
     setStateFunction((items: any) =>
       items.map((item: any) =>
         item.id === updatedItem.id ? updatedItem : item
@@ -224,8 +226,8 @@ export const SidebarDataList: FC<SidebarDataListProps> = ({
     }
   }, [data])
 
-  const dataWithFolders = data.filter(item => item.folder_id)
-  const dataWithoutFolders = data.filter(item => item.folder_id === null)
+  const dataWithFolders = data.filter((item: any) => item.folder_id)
+  const dataWithoutFolders = data.filter((item: any) => item.folder_id === null)
 
   return (
     <>
@@ -255,7 +257,7 @@ export const SidebarDataList: FC<SidebarDataListProps> = ({
                 contentType={contentType}
               >
                 {dataWithFolders
-                  .filter(item => item.folder_id === folder.id)
+                  .filter((item: any) => item.folder_id === folder.id)
                   .map(item => (
                     <div
                       key={item.id}
