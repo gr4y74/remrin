@@ -30,3 +30,26 @@ export const getPersonaById = async (personaId: string) => {
 
     return persona
 }
+
+// Claim a persona using the RPC function (bypasses RLS)
+// The claim_persona function in Supabase handles ownership transfer
+export const claimPersona = async (soulId: string) => {
+    // Call the RPC function that has SECURITY DEFINER privileges
+    // Note: Using 'as any' because claim_persona is a custom RPC not in generated types
+    const { data, error } = await (supabase.rpc as any)('claim_persona', {
+        soul_id: soulId
+    })
+
+    if (error) {
+        console.error("Error claiming persona:", error.message)
+        throw new Error(error.message)
+    }
+
+    // If successful, fetch the full persona data to return
+    if (data) {
+        const persona = await getPersonaById(soulId)
+        return persona
+    }
+
+    return null
+}

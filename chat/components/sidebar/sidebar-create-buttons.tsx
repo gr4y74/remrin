@@ -2,7 +2,7 @@ import { useChatHandler } from "@/components/chat/chat-hooks/use-chat-handler"
 import { ChatbotUIContext } from "@/context/context"
 import { createFolder } from "@/db/folders"
 import { ContentType } from "@/types"
-import { IconFolderPlus, IconPlus } from "@tabler/icons-react"
+import { IconFolderPlus, IconPlus, IconLink } from "@tabler/icons-react"
 import { FC, useContext, useState } from "react"
 import { Button } from "../ui/button"
 import { CreateAssistant } from "./items/assistants/create-assistant"
@@ -12,6 +12,7 @@ import { CreateModel } from "./items/models/create-model"
 import { CreatePreset } from "./items/presets/create-preset"
 import { CreatePrompt } from "./items/prompts/create-prompt"
 import { CreateTool } from "./items/tools/create-tool"
+import { ClaimPersonaDialog } from "./items/personas/claim-persona-dialog"
 
 interface SidebarCreateButtonsProps {
   contentType: ContentType
@@ -33,6 +34,7 @@ export const SidebarCreateButtons: FC<SidebarCreateButtonsProps> = ({
   const [isCreatingAssistant, setIsCreatingAssistant] = useState(false)
   const [isCreatingTool, setIsCreatingTool] = useState(false)
   const [isCreatingModel, setIsCreatingModel] = useState(false)
+  const [isClaimingPersona, setIsClaimingPersona] = useState(false)
 
   const handleCreateFolder = async () => {
     if (!profile) return
@@ -90,21 +92,43 @@ export const SidebarCreateButtons: FC<SidebarCreateButtonsProps> = ({
           setIsCreatingModel(true)
         }
 
+      case "personas":
+        return async () => {
+          setIsClaimingPersona(true)
+        }
+
       default:
         break
     }
   }
 
-  return (
-    <div className="flex w-full space-x-2">
-      <Button className="flex h-[36px] grow" onClick={getCreateFunction()}>
+  // Custom button text and icon for personas
+  const getButtonContent = () => {
+    if (contentType === "personas") {
+      return (
+        <>
+          <IconLink className="mr-1" size={20} />
+          Link Soul
+        </>
+      )
+    }
+    return (
+      <>
         <IconPlus className="mr-1" size={20} />
         New{" "}
         {contentType.charAt(0).toUpperCase() +
           contentType.slice(1, contentType.length - 1)}
+      </>
+    )
+  }
+
+  return (
+    <div className="flex w-full space-x-2">
+      <Button className="flex h-[36px] grow" onClick={getCreateFunction()}>
+        {getButtonContent()}
       </Button>
 
-      {hasData && (
+      {hasData && contentType !== "personas" && (
         <Button className="size-[36px] p-1" onClick={handleCreateFolder}>
           <IconFolderPlus size={20} />
         </Button>
@@ -150,6 +174,13 @@ export const SidebarCreateButtons: FC<SidebarCreateButtonsProps> = ({
         <CreateModel
           isOpen={isCreatingModel}
           onOpenChange={setIsCreatingModel}
+        />
+      )}
+
+      {isClaimingPersona && (
+        <ClaimPersonaDialog
+          isOpen={isClaimingPersona}
+          onOpenChange={setIsClaimingPersona}
         />
       )}
     </div>
