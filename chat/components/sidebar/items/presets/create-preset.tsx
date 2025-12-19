@@ -43,7 +43,7 @@ export const CreatePreset: FC<CreatePresetProps> = ({
       onOpenChange={onOpenChange}
       createState={
         {
-          user_id: profile.user_id,
+          user_id: profile.user_id!,
           name,
           description,
           include_profile_context: presetChatSettings.includeProfileContext,

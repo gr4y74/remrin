@@ -33,7 +33,7 @@ export const CreateModel: FC<CreateModelProps> = ({ isOpen, onOpenChange }) => {
       onOpenChange={onOpenChange}
       createState={
         {
-          user_id: profile.user_id,
+          user_id: profile.user_id!,
           api_key: apiKey,
           base_url: baseUrl,
           description,

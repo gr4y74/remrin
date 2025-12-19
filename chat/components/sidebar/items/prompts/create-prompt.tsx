@@ -32,7 +32,7 @@ export const CreatePrompt: FC<CreatePromptProps> = ({
       onOpenChange={onOpenChange}
       createState={
         {
-          user_id: profile.user_id,
+          user_id: profile.user_id!,
           name,
           content
         } as TablesInsert<"prompts">

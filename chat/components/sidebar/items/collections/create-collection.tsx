@@ -49,11 +49,11 @@ export const CreateCollection: FC<CreateCollectionProps> = ({
       createState={
         {
           collectionFiles: selectedCollectionFiles.map(file => ({
-            user_id: profile.user_id,
+            user_id: profile.user_id!,
             collection_id: "",
             file_id: file.id
           })),
-          user_id: profile.user_id,
+          user_id: profile.user_id!,
           name,
           description
         } as TablesInsert<"collections">

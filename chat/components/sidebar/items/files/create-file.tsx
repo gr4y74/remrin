@@ -41,7 +41,7 @@ export const CreateFile: FC<CreateFileProps> = ({ isOpen, onOpenChange }) => {
       createState={
         {
           file: selectedFile,
-          user_id: profile.user_id,
+          user_id: profile.user_id!,
           name,
           description,
           file_path: "",

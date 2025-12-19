@@ -31,7 +31,7 @@ export const CreateTool: FC<CreateToolProps> = ({ isOpen, onOpenChange }) => {
       contentType="tools"
       createState={
         {
-          user_id: profile.user_id,
+          user_id: profile.user_id!,
           name,
           description,
           url,

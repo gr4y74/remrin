@@ -360,7 +360,7 @@ export const handleCreateChat = async (
   setChatFiles: React.Dispatch<React.SetStateAction<ChatFile[]>>
 ) => {
   const createdChat = await createChat({
-    user_id: profile.user_id,
+    user_id: profile.user_id!,
     workspace_id: selectedWorkspace.id,
     assistant_id: selectedAssistant?.id || null,
     context_length: chatSettings.contextLength,
@@ -378,7 +378,7 @@ export const handleCreateChat = async (
 
   await createChatFiles(
     newMessageFiles.map(file => ({
-      user_id: profile.user_id,
+      user_id: profile.user_id!,
       chat_id: createdChat.id,
       file_id: file.id
     }))
@@ -409,7 +409,7 @@ export const handleCreateMessages = async (
   const finalUserMessage: TablesInsert<"messages"> = {
     chat_id: currentChat.id,
     assistant_id: null,
-    user_id: profile.user_id,
+    user_id: profile.user_id!,
     content: messageContent,
     model: modelData.modelId,
     role: "user",
@@ -420,7 +420,7 @@ export const handleCreateMessages = async (
   const finalAssistantMessage: TablesInsert<"messages"> = {
     chat_id: currentChat.id,
     assistant_id: selectedAssistant?.id || null,
-    user_id: profile.user_id,
+    user_id: profile.user_id!,
     content: generatedText,
     model: modelData.modelId,
     role: "assistant",
@@ -483,7 +483,7 @@ export const handleCreateMessages = async (
     const createdMessageFileItems = await createMessageFileItems(
       retrievedFileItems.map(fileItem => {
         return {
-          user_id: profile.user_id,
+          user_id: profile.user_id!,
           message_id: createdMessages[1].id,
           file_item_id: fileItem.id
         }

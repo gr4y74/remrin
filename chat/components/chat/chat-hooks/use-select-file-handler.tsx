@@ -96,7 +96,7 @@ export const useSelectFileHandler = () => {
             result.value,
             file,
             {
-              user_id: profile.user_id,
+              user_id: profile.user_id!,
               description: "",
               file_path: "",
               name: file.name,
@@ -157,7 +157,7 @@ export const useSelectFileHandler = () => {
             const createdFile = await createFile(
               file,
               {
-                user_id: profile.user_id,
+                user_id: profile.user_id!,
                 description: "",
                 file_path: "",
                 name: file.name,
