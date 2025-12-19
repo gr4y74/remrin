@@ -395,7 +395,7 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
 
       for (const file of filesToAdd) {
         await createCollectionFile({
-          user_id: item.user_id,
+          user_id: (item as any).user_id,
           collection_id: collectionId,
           file_id: file.id
         })
@@ -442,7 +442,7 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
 
       for (const file of filesToAdd) {
         await createAssistantFile({
-          user_id: item.user_id,
+          user_id: (item as any).user_id,
           assistant_id: assistantId,
           file_id: file.id
         })
@@ -470,7 +470,7 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
 
       for (const collection of collectionsToAdd) {
         await createAssistantCollection({
-          user_id: item.user_id,
+          user_id: (item as any).user_id,
           assistant_id: assistantId,
           collection_id: collection.id
         })
@@ -495,7 +495,7 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
 
       for (const tool of toolsToAdd) {
         await createAssistantTool({
-          user_id: item.user_id,
+          user_id: (item as any).user_id,
           assistant_id: assistantId,
           tool_id: tool.id
         })
