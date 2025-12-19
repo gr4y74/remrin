@@ -2,10 +2,13 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true"
 })
 
-const withPWA = require("next-pwa")({
-  dest: "public",
-  disable: process.env.NODE_ENV === "production" // Disable PWA in production to avoid Edge Runtime issues
-})
+// Only load next-pwa in development to avoid Edge Runtime __dirname issues
+const withPWA =
+  process.env.NODE_ENV === "production"
+    ? (config) => config  // No-op wrapper in production
+    : require("next-pwa")({
+      dest: "public"
+    })
 
 module.exports = withBundleAnalyzer(
   withPWA({
