@@ -62,7 +62,7 @@ export default function SetupPage() {
   const [openrouterAPIKey, setOpenrouterAPIKey] = useState("")
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       const session = (await supabase.auth.getSession()).data.session
 
       if (!session) {
@@ -145,7 +145,7 @@ export default function SetupPage() {
     const updatedProfile = await updateProfile(profile.id, updateProfilePayload)
     setProfile(updatedProfile)
 
-    const workspaces = await getWorkspacesByUserId(profile.user_id)
+    const workspaces = await getWorkspacesByUserId(profile.user_id!)
     const homeWorkspace = workspaces.find(w => w.is_home)
 
     // There will always be a home workspace
