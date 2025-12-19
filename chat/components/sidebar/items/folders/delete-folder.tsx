@@ -50,7 +50,9 @@ export const DeleteFolder: FC<DeleteFolderProps> = ({
     collections: setCollections,
     assistants: setAssistants,
     tools: setTools,
-    models: setModels
+    models: setModels,
+    // Personas use separate state management
+    personas: () => { }
   }
 
   const handleDeleteFolderOnly = async () => {

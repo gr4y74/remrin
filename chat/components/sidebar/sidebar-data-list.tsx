@@ -146,7 +146,9 @@ export const SidebarDataList: FC<SidebarDataListProps> = ({
     collections: updateCollection,
     assistants: updateAssistant,
     tools: updateTool,
-    models: updateModel
+    models: updateModel,
+    // Personas don't use folder update flow
+    personas: async () => null
   }
 
   const stateUpdateFunctions = {
@@ -157,7 +159,9 @@ export const SidebarDataList: FC<SidebarDataListProps> = ({
     collections: setCollections,
     assistants: setAssistants,
     tools: setTools,
-    models: setModels
+    models: setModels,
+    // Personas use separate state management
+    personas: () => { }
   }
 
   const updateFolder = async (itemId: string, folderId: string | null) => {

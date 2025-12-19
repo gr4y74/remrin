@@ -74,7 +74,9 @@ export const SidebarDeleteItem: FC<SidebarDeleteItemProps> = ({
     },
     models: async (model: Tables<"models">) => {
       await deleteModel(model.id)
-    }
+    },
+    // Personas don't support delete - they're unclaimed instead
+    personas: async () => { }
   }
 
   const stateUpdateFunctions = {
@@ -85,7 +87,9 @@ export const SidebarDeleteItem: FC<SidebarDeleteItemProps> = ({
     collections: setCollections,
     assistants: setAssistants,
     tools: setTools,
-    models: setModels
+    models: setModels,
+    // Personas use separate state management
+    personas: () => { }
   }
 
   const handleDelete = async () => {

@@ -196,7 +196,8 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
       setSelectedAssistantTools
     },
     tools: null,
-    models: null
+    models: null,
+    personas: null
   }
 
   const fetchDataFunctions = {
@@ -226,7 +227,8 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
       setSelectedAssistantTools([])
     },
     tools: null,
-    models: null
+    models: null,
+    personas: null
   }
 
   const fetchWorkpaceFunctions = {
@@ -258,7 +260,8 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
     models: async (modelId: string) => {
       const item = await getModelWorkspacesByModelId(modelId)
       return item.workspaces
-    }
+    },
+    personas: null
   }
 
   const fetchSelectedWorkspaces = async () => {
@@ -568,7 +571,9 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
       )
 
       return updatedModel
-    }
+    },
+    // Personas don't use update flow
+    personas: async () => null
   }
 
   const stateUpdateFunctions = {
@@ -579,7 +584,9 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
     collections: setCollections,
     assistants: setAssistants,
     tools: setTools,
-    models: setModels
+    models: setModels,
+    // Personas use separate state management
+    personas: () => { }
   }
 
   const handleUpdate = async () => {
