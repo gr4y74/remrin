@@ -66,6 +66,7 @@ export const SidebarItem: FC<SidebarItemProps> = ({
     models: async (item: any) => { },
     personas: async (persona: Tables<"personas">) => {
       if (!selectedWorkspace) return
+      if (!persona.owner_id) return // Personas without owners can't start chats
 
       // Create a chat with the persona's system prompt
       const createdChat = await createChat({
