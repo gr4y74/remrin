@@ -1,7 +1,10 @@
 import "server-only"
-import { pipeline } from "@xenova/transformers"
 
+// Dynamic import to prevent static bundling with Edge Runtime
+// @xenova/transformers uses __dirname which is not available in Edge
 export async function generateLocalEmbedding(content: string) {
+  const { pipeline } = await import("@xenova/transformers")
+
   const generateEmbedding = await pipeline(
     "feature-extraction",
     "Xenova/all-MiniLM-L6-v2"
