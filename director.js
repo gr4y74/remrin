@@ -181,6 +181,21 @@ async function handleUserAction() {
     }
     if (currentStage === 10) { soulBlueprint.email = text; }
 
+    // STAGE 10: EMAIL HARD GATE -> CARD REVEAL
+    // This MUST happen before calling genesis-api
+    if (currentStage === 10) {
+        // Email is captured above, now validate and proceed
+        if (soulBlueprint.email && soulBlueprint.email.includes('@')) {
+            const scriptStep = RITUAL_CONFIG[11];
+            await addMessage(scriptStep.text, "rem", scriptStep.audio);
+            setTimeout(() => { showCardReveal(); }, 2000);
+            return; // Exit early, don't call genesis-api for email stage
+        } else {
+            await addMessage("Please enter a valid email address to claim your soul.", "rem");
+            return; // Stay on Stage 10
+        }
+    }
+
     try {
         const API_URL = SUPABASE_URL + '/functions/v1/genesis-api';
         const API_KEY = SUPABASE_ANON_KEY;
@@ -210,9 +225,10 @@ async function handleUserAction() {
                 await addMessage("One final calibration. Who is this companion designed for?", "rem");
                 setTimeout(() => { renderSafetyWidget(); }, 1000);
             } else {
-                // Safety already set (e.g., user came back), proceed to card
-                await addMessage(scriptStep.text, "rem", scriptStep.audio);
-                setTimeout(() => { showCardReveal(); }, 3000);
+                // Safety already set, but STILL need email -> Stage 10 HARD GATE
+                currentStage = 10;
+                const emailStep = RITUAL_CONFIG[10];
+                await addMessage(emailStep.text, "rem", emailStep.audio);
             }
         }
         else if (scriptStep) {
@@ -424,12 +440,12 @@ function renderSafetyWidget() {
                 container.remove();
 
                 // Add confirmation message
-                addMessage(`Safety set to ${lvl.text}. Preparing your soul card...`, "user");
+                addMessage(`Safety set to ${lvl.text}. Now we need your email...`, "user");
 
-                // Get the stage 9 script and proceed to card reveal
-                const scriptStep = RITUAL_CONFIG[9];
-                addMessage(scriptStep.text, "rem", scriptStep.audio);
-                setTimeout(() => { showCardReveal(); }, 3000);
+                // HARD GATE: Must go through Stage 10 for email
+                currentStage = 10;
+                const emailStep = RITUAL_CONFIG[10];
+                addMessage(emailStep.text, "rem", emailStep.audio);
             }, 500);
         };
 
@@ -444,6 +460,15 @@ function renderSafetyWidget() {
    THE CARD REVEAL ENGINE (FINAL V4 - DOWNLOAD FIX)
    ========================================= */
 function showCardReveal() {
+    // SAFETY GUARD: Abort if email missing or invalid
+    if (!soulBlueprint.email || soulBlueprint.email === "" || soulBlueprint.email === "guest") {
+        console.warn("⚠️ SAFETY GUARD: Email missing, forcing Stage 10");
+        currentStage = 10;
+        const emailStep = RITUAL_CONFIG[10];
+        addMessage(emailStep.text, "rem", emailStep.audio);
+        return; // Abort card reveal
+    }
+
     console.log("🃏 REVEALING CARD...");
     const overlay = document.getElementById('card-overlay');
     const card = document.getElementById('final-soul-card');
