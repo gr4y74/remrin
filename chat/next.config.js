@@ -22,6 +22,6 @@ module.exports = withBundleAnalyzer({
     ]
   },
   experimental: {
-    serverComponentsExternalPackages: ["sharp", "onnxruntime-node", "@xenova/transformers"]
+    serverComponentsExternalPackages: ["sharp", "onnxruntime-node"]
   }
 })

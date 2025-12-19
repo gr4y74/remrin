@@ -68,7 +68,6 @@
     "@tavily/core": "^0.6.3",
     "@vercel/analytics": "^1.1.1",
     "@vercel/edge-config": "^0.4.1",
-    "@xenova/transformers": "^2.13.4",
     "ai": "^2.2.37",
     "class-variance-authority": "^0.7.0",
     "cmdk": "^0.2.0",
