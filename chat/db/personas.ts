@@ -60,12 +60,7 @@ export const claimPersona = async (soulId: string) => {
     } catch (fetchError: any) {
         console.error("🔗 Failed to fetch persona after claim:", fetchError)
         // The claim might have succeeded but we can't fetch - 
-        // This could be an RLS issue. Return a minimal object so UI can at least show something
-        return {
-            id: soulId,
-            name: "Claimed Soul (refresh to see details)",
-            owner_id: "claimed",
-            created_at: new Date().toISOString()
-        }
+        // Return null and let user refresh the page
+        return null
     }
 }

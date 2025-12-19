@@ -49,7 +49,11 @@ export const ClaimPersonaDialog: FC<ClaimPersonaDialogProps> = ({
 
             if (claimedPersona) {
                 // Add the claimed persona to the list
-                setPersonas([claimedPersona, ...personas])
+                console.log("📋 Adding persona to list:", claimedPersona)
+                console.log("📋 Current personas count:", personas.length)
+                const newList = [claimedPersona, ...personas]
+                console.log("📋 New personas count:", newList.length)
+                setPersonas(newList)
                 toast.success(`Successfully claimed "${claimedPersona.name}"!`)
                 setSoulId("")
                 onOpenChange(false)
