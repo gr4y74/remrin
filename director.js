@@ -642,9 +642,8 @@ function showCardReveal() {
             if (insertError) throw new Error("DB Insert Failed: " + insertError.message);
             console.log("✅ DB RECORD INSERTED:", insertedSoul);
 
-            // 3. REDIRECT (Standard Registration)
-            // We send them to the ChatbotUI Register page, pre-filling their email if possible
-            const redirectUrl = `https://remrin-chat.vercel.app/register?email=${encodeURIComponent(soulBlueprint.email)}`;
+            // 3. REDIRECT (Login page handles both login and signup)
+            const redirectUrl = `https://remrin-chat.vercel.app/login?email=${encodeURIComponent(soulBlueprint.email)}`;
             console.log("🚀 REDIRECTING:", redirectUrl);
             window.location.href = redirectUrl;
 
@@ -826,73 +825,71 @@ window.addEventListener('load', async () => {
     if (urlParams.get('mode') === 'chat') {
         chatLog.innerHTML += '<div style="text-align:center; color:#666; font-size:12px; margin-top:20px; font-family:monospace;">[ SECURE CONNECTION ]</div>';
     } else {
-        // Veil Logic (Theater Curtain with Orb)
-        const chatContainer = document.querySelector('.chat-container') || document.body;
+        // =============================================
+        // NEW APPROACH: Click-to-Start Button (Cleaner UI)
+        // Shows welcome message first, then overlay on input bar
+        // Satisfies browser audio autoplay requirements
+        // =============================================
 
-        const veil = document.createElement('div');
-        veil.id = 'ritual-veil';
-        // Opaque void background for the curtain effect
-        veil.style.cssText = `position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #030014; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden;`;
+        // 1. Display the welcome message immediately
+        const startStep = RITUAL_CONFIG[0];
+        addMessage(startStep.text, 'rem'); // No audio until user clicks
 
-        veil.innerHTML = `
-            <!-- BACKGROUND (Fog & Stars from index.html) -->
-            <div class="fog-wrapper" style="z-index: 1;">
-                <div class="fog-layer fog-pink"></div>
-                <div class="fog-layer fog-blue"></div>
-            </div>
-            <div class="stars-wrapper" style="z-index: 2;">
-                <!-- Using curtain-specific IDs to avoid conflicts, handled by generic classes or duplicate CSS -->
-                <div id="stars-curtain"></div>
-                <div id="stars2-curtain"></div>
-                <div id="stars3-curtain"></div>
-            </div>
+        // 2. Create overlay button on input bar
+        const inputWrapper = document.querySelector('.input-bar') || document.querySelector('.input-zone');
+        if (inputWrapper) {
+            const overlay = document.createElement('div');
+            overlay.id = 'start-overlay';
+            overlay.style.cssText = `
+                position: absolute;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.8);
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+                border-radius: inherit;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                z-index: 100;
+                transition: all 0.4s ease;
+            `;
+            overlay.innerHTML = `
+                <span style="
+                    color: white;
+                    font-family: 'Crimson Pro', serif;
+                    font-size: 1.1rem;
+                    font-weight: 500;
+                    letter-spacing: 0.02em;
+                ">Click to Speak to the Mother of Souls</span>
+            `;
 
-            <!-- FOREGROUND CONTENT -->
-            <div class="init-container" id="init-container" style="z-index: 10; width: 100%;">
-                <div class="soul-orb" id="soul-orb">
-                    <div class="orb-glow"></div>
-                    <div class="orb-ring"></div>
-                    <div class="orb-core"></div>
-                    <div class="particle"></div>
-                    <div class="particle"></div>
-                    <div class="particle"></div>
-                </div>
-                <div class="init-text">
-                    <div class="init-title">The Mother Awaits</div>
-                    <div class="init-subtitle">Place your hand upon the sphere</div>
-                </div>
-                <div class="hint">Click to cross the threshold</div>
-            </div>
-        `;
+            // Make input wrapper relative for absolute positioning
+            inputWrapper.style.position = 'relative';
+            inputWrapper.appendChild(overlay);
 
-        chatContainer.appendChild(veil);
+            // 3. Handle click - enable audio and start interaction
+            overlay.addEventListener('click', () => {
+                // Fade out and remove overlay
+                overlay.style.opacity = '0';
+                overlay.style.pointerEvents = 'none';
+                setTimeout(() => overlay.remove(), 400);
 
-        const orb = veil.querySelector('#soul-orb');
-        const container = veil.querySelector('#init-container');
+                // Play the welcome audio now (browser allows it after user gesture)
+                if (startStep.audio) {
+                    speakText(startStep.audio);
+                }
 
-        orb.addEventListener('click', () => {
-            // 1. Orb Explosion
-            orb.classList.add('clicked');
+                // Enable input
+                if (userInput) {
+                    userInput.placeholder = "Speak, Traveler...";
+                    userInput.focus();
+                }
 
-            // 2. Play Sound (Optional - silent for now or can add audio)
-            // const audio = new Audio('assets/sound/init_chime.mp3'); audio.play().catch(()=>{});
-
-            // 3. Curtain Rise Animation (Vertical)
-            setTimeout(() => {
-                veil.style.transition = 'transform 1.8s cubic-bezier(0.4, 0, 0.2, 1)'; // Dramatic ease
-                veil.style.transform = 'translateY(-100%)';
-            }, 600); // Wait for orb to start exploding
-
-            // 4. Cleanup and Start
-            setTimeout(() => {
-                veil.remove();
-            }, 2400);
-
-            // Use the canonical script from config
-            const startStep = RITUAL_CONFIG[0];
-            addMessage(startStep.text, 'rem', startStep.audio);
-            currentStage = 0;
-        });
+                currentStage = 0;
+                console.log("🎭 Ritual started via click-to-speak button");
+            });
+        }
     }
 });
 

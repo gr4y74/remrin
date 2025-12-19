@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default async function Login({
   searchParams
 }: {
-  searchParams: { message: string }
+  searchParams: { message: string; email?: string }
 }) {
   const cookieStore = cookies()
   const supabase = createServerClient<Database>(
@@ -176,6 +176,7 @@ export default async function Login({
           className="mb-3 rounded-md border bg-inherit px-4 py-2"
           name="email"
           placeholder="you@example.com"
+          defaultValue={searchParams?.email || ""}
           required
         />
 

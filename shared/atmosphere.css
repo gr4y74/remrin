@@ -1,0 +1,256 @@
+/* =========================================
+   shared/atmosphere.css - Fog, Stars, Hero Stage
+   Shared by index.html and forge.html
+   ========================================= */
+
+/* HERO STAGE (Layout Engine) */
+.hero-stage {
+    position: relative;
+    width: 100vw;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding-bottom: 40px;
+    overflow: hidden;
+    z-index: 1;
+}
+
+/* LAYER 0: VIDEO */
+#orb-video-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    opacity: 1;
+}
+
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(3, 0, 20, 0.3);
+    z-index: 1;
+}
+
+/* LAYER 1: FOG */
+.fog-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.fog-layer {
+    position: absolute;
+    width: 150vw;
+    height: 150vw;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.6;
+    mix-blend-mode: screen;
+    animation: rotateFog 60s linear infinite;
+}
+
+.fog-pink {
+    top: -30%;
+    left: -20%;
+    background: radial-gradient(circle, rgba(255, 0, 150, 0.6) 0%, transparent 60%);
+    animation-duration: 45s;
+}
+
+.fog-blue {
+    bottom: -30%;
+    right: -20%;
+    background: radial-gradient(circle, rgba(0, 100, 255, 0.6) 0%, transparent 60%);
+    animation-duration: 55s;
+    animation-direction: reverse;
+}
+
+@keyframes rotateFog {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* LAYER 2: PARALLAX STARS */
+.stars-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+@keyframes animStar {
+    from {
+        transform: translateY(0px);
+    }
+
+    to {
+        transform: translateY(-2000px);
+    }
+}
+
+/* 1. SMALL STARS */
+#stars,
+#stars-curtain {
+    width: 1px;
+    height: 1px;
+    background: transparent;
+    animation: animStar 100s linear infinite;
+    box-shadow:
+        1742px 142px #FFF, 421px 520px #FFF, 200px 900px #FFF, 1432px 1400px #FFF,
+        600px 1200px #FFF, 1900px 1800px #FFF, 1050px 500px #FFF, 1500px 1100px #FFF,
+        1300px 600px #FFF, 110px 1500px #FFF, 700px 400px #FFF, 1200px 1200px #FFF,
+        50px 300px #FFF, 800px 900px #FFF, 500px 1700px #FFF, 100px 1900px #FFF,
+        950px 250px #FFF, 1250px 150px #FFF, 1850px 850px #FFF, 350px 1350px #FFF,
+        1600px 50px #FFF, 250px 1050px #FFF, 1400px 1650px #FFF, 900px 250px #FFF,
+        150px 800px #FFF, 1750px 1250px #FFF, 450px 150px #FFF, 1150px 1950px #FFF,
+        1950px 350px #FFF, 50px 1450px #FFF, 750px 650px #FFF, 1350px 450px #FFF,
+        1242px 1342px #FFF, 221px 120px #FFF, 800px 1800px #FFF, 1432px 400px #FFF,
+        300px 1200px #FFF, 1900px 200px #FFF, 50px 1500px #FFF, 1100px 100px #FFF,
+        600px 1600px #FFF, 1000px 500px #FFF, 1700px 1400px #FFF, 200px 200px #FFF,
+        1800px 1300px #FFF, 400px 1900px #FFF, 500px 700px #FFF, 1100px 1900px #FFF,
+        150px 650px #FFF, 1250px 1150px #FFF, 1850px 1850px #FFF, 1350px 350px #FFF,
+        92px 1842px #FFF, 1621px 420px #FFF, 400px 1200px #FFF, 832px 100px #FFF,
+        1600px 1900px #FFF, 300px 800px #FFF, 1250px 1500px #FFF, 900px 100px #FFF,
+        300px 100px #FFF, 1100px 600px #FFF, 700px 1300px #FFF, 1200px 900px #FFF,
+        542px 842px #FFF, 1821px 720px #FFF, 200px 100px #FFF, 1132px 1900px #FFF,
+        800px 200px #FFF, 100px 1800px #FFF, 1550px 500px #FFF, 500px 100px #FFF,
+        1300px 1600px #FFF, 10px 1500px #FFF, 1700px 1400px #FFF, 1900px 1200px #FFF,
+        1800px 300px #FFF, 400px 1900px #FFF, 1500px 1700px #FFF, 100px 900px #FFF,
+        950px 1650px #FFF, 250px 1150px #FFF, 1850px 1850px #FFF, 1350px 1350px #FFF;
+}
+
+#stars::after,
+#stars-curtain::after {
+    content: " ";
+    position: absolute;
+    top: 2000px;
+    width: 1px;
+    height: 1px;
+    background: transparent;
+    box-shadow: inherit;
+}
+
+/* 2. MEDIUM STARS */
+#stars2,
+#stars2-curtain {
+    width: 2px;
+    height: 2px;
+    background: transparent;
+    animation: animStar 75s linear infinite;
+    box-shadow:
+        400px 500px #FFF, 1200px 1600px #FFF, 1700px 200px #FFF, 200px 900px #FFF,
+        800px 1300px #FFF, 1500px 600px #FFF, 100px 1800px #FFF, 600px 100px #FFF,
+        1100px 800px #FFF, 1400px 1400px #FFF, 300px 300px #FFF, 900px 1100px #FFF,
+        1600px 400px #FFF, 150px 1200px #FFF, 1850px 1500px #FFF, 550px 850px #FFF,
+        1250px 50px #FFF, 50px 1950px #FFF, 750px 250px #FFF, 1350px 1750px #FFF,
+        1950px 950px #FFF, 450px 150px #FFF, 1050px 1050px #FFF, 1550px 650px #FFF,
+        242px 942px #FFF, 1421px 1120px #FFF, 100px 200px #FFF, 1632px 1900px #FFF,
+        900px 1500px #FFF, 100px 100px #FFF, 1050px 500px #FFF, 500px 1100px #FFF,
+        1700px 600px #FFF, 110px 1500px #FFF, 1700px 1400px #FFF, 200px 1200px #FFF;
+}
+
+#stars2::after,
+#stars2-curtain::after {
+    content: " ";
+    position: absolute;
+    top: 2000px;
+    width: 2px;
+    height: 2px;
+    background: transparent;
+    box-shadow: inherit;
+}
+
+/* 3. BIG STARS */
+#stars3,
+#stars3-curtain {
+    width: 3px;
+    height: 3px;
+    background: transparent;
+    animation: animStar 50s linear infinite;
+    box-shadow:
+        600px 800px #FFF, 1300px 200px #FFF, 200px 1500px #FFF, 1600px 500px #FFF,
+        900px 1200px #FFF, 100px 400px #FFF, 1800px 1700px #FFF, 500px 900px #FFF,
+        1500px 1400px #FFF, 300px 100px #FFF, 1100px 1900px #FFF, 1900px 1100px #FFF,
+        150px 650px #FFF, 750px 1350px #FFF, 1250px 450px #FFF, 1750px 1850px #FFF;
+}
+
+#stars3::after,
+#stars3-curtain::after {
+    content: " ";
+    position: absolute;
+    top: 2000px;
+    width: 3px;
+    height: 3px;
+    background: transparent;
+    box-shadow: inherit;
+}
+
+/* HERO INSTRUCTIONS */
+.hero-instructions {
+    position: absolute;
+    top: 13%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    width: 100%;
+    padding: 0 20px;
+    z-index: 10;
+    animation: fadeIn 2s ease-in-out;
+}
+
+.hero-title {
+    font-family: 'Crimson Pro', serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+    background: linear-gradient(to right, #fff, #a5b4fc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.125rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 400;
+    font-style: italic;
+}
+
+.sub-line {
+    display: block;
+    margin-top: 10px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

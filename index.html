@@ -8,9 +8,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Remrin | The Genesis Layer</title>
 
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        accent: '#ff00cc',
+                    }
+                }
+            }
+        }
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@200..900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@200..900&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
 
     <style>
         /* =========================================
@@ -97,7 +113,47 @@
         }
 
         .logo-img:hover {
-            transform: scale(1.05) rotate(5deg);
+            transform: scale(1.05) rotate(-5deg);
+        }
+
+        /* Video Layer (from forge.html) */
+        #orb-video-bg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            z-index: -3;
+            opacity: 0.5;
+            filter: contrast(1.1) saturate(1.2);
+        }
+
+        /* Vignette (from forge.html) */
+        .vignette {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, transparent 0%, #030014 85%);
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        /* Preline Floating Nav */
+        .nav-floating {
+            background: rgba(30, 30, 40, 0.3);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        /* Logo Tilt Effect */
+        .logo-tilt {
+            transition: transform 0.3s ease;
+        }
+
+        .logo-tilt:hover {
+            transform: rotate(-5deg) scale(1.05);
         }
 
         .nav-links {
@@ -512,17 +568,88 @@
 
 <body>
 
-    <nav class="glass-nav">
-        <div class="nav-logo">
-            <a href="index.html">
-                <img src="logo_white_ds.png" alt="Remrin" class="logo-img">
-            </a>
-        </div>
-        <div class="nav-links">
-            <a href="#" class="nav-item">About</a>
-            <a href="#" class="nav-btn-login">Login</a>
-        </div>
-    </nav>
+    <!-- VIDEO LAYER -->
+    <video autoplay muted loop playsinline id="orb-video-bg">
+        <source src="orbs.webm" type="video/webm">
+    </video>
+    <div class="vignette"></div>
+
+    <!-- ========== PRELINE FLOATING HEADER ========== -->
+    <header class="fixed top-4 inset-x-0 flex flex-wrap md:justify-start md:flex-nowrap z-50 w-full">
+        <nav
+            class="nav-floating relative max-w-4xl w-full flex flex-wrap md:flex-nowrap basis-full items-center justify-between py-2 ps-5 pe-2 md:py-0 mx-auto rounded-full border border-white/10">
+
+            <!-- Logo -->
+            <div class="flex items-center">
+                <a class="flex-none rounded-md inline-block focus:outline-hidden focus:opacity-80 logo-tilt" href="index.html"
+                    aria-label="Remrin">
+                    <img src="logo.svg" alt="Remrin" class="h-8 w-auto">
+                </a>
+            </div>
+
+            <!-- Button Group -->
+            <div class="md:order-3 flex items-center gap-x-3">
+                <div class="md:ps-3">
+                    <a class="group inline-flex items-center gap-x-2 py-2 px-4 bg-[#ff00cc] font-medium text-sm text-white rounded-full hover:bg-[#ff33d4] transition-colors focus:outline-hidden"
+                        href="#">
+                        Login
+                    </a>
+                </div>
+
+                <!-- Mobile Toggle -->
+                <div class="md:hidden">
+                    <button type="button"
+                        class="size-9 flex justify-center items-center text-sm font-semibold rounded-full bg-neutral-800 text-white"
+                        id="nav-toggle">
+                        <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" x2="21" y1="6" y2="6" />
+                            <line x1="3" x2="21" y1="12" y2="12" />
+                            <line x1="3" x2="21" y1="18" y2="18" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Nav Links -->
+            <div class="hidden md:block">
+                <div class="flex flex-row items-center gap-y-3 py-2 md:py-0 md:ps-7">
+                    <a class="px-3 py-4 text-sm text-white hover:text-[#ff00cc] transition-colors focus:outline-hidden"
+                        href="index.html">Home</a>
+                    <a class="px-3 py-4 text-sm text-white hover:text-[#ff00cc] transition-colors focus:outline-hidden"
+                        href="#">Market</a>
+                    <a class="px-3 py-4 text-sm text-white hover:text-[#ff00cc] transition-colors focus:outline-hidden"
+                        href="#">Community</a>
+
+                    <!-- About Dropdown -->
+                    <div class="relative group">
+                        <button
+                            class="px-3 py-4 flex items-center text-sm text-white hover:text-[#ff00cc] transition-colors focus:outline-hidden">
+                            About
+                            <svg class="ms-1 shrink-0 size-3.5 transition-transform group-hover:rotate-180"
+                                xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="m6 9 6 6 6-6" />
+                            </svg>
+                        </button>
+                        <!-- Dropdown Menu -->
+                        <div
+                            class="invisible group-hover:visible opacity-0 group-hover:opacity-100 absolute top-full left-0 mt-2 w-48 rounded-xl bg-neutral-800/90 backdrop-blur-md p-2 transition-all duration-200 border border-white/10">
+                            <a class="block px-4 py-2 text-sm text-white hover:text-[#ff00cc] hover:bg-white/5 rounded-lg transition-colors"
+                                href="#">Our Story</a>
+                            <a class="block px-4 py-2 text-sm text-white hover:text-[#ff00cc] hover:bg-white/5 rounded-lg transition-colors"
+                                href="#">Team</a>
+                            <a class="block px-4 py-2 text-sm text-white hover:text-[#ff00cc] hover:bg-white/5 rounded-lg transition-colors"
+                                href="#">Contact</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <!-- ========== END HEADER ========== -->
 
     <div class="fog-wrapper">
         <div class="fog-layer fog-pink"></div>

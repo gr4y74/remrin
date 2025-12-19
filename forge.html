@@ -2,1428 +2,452 @@
 <html lang="en">
 
 <head>
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/png" href="assets/favicon.png">
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Remrin.ai | The Soul Layer</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remrin | Soul Forge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Crimson+Pro:wght@200..900&display=swap"
+        rel="stylesheet">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@200..900&display=swap" rel="stylesheet">
+    <!-- Forge CSS Modules -->
+    <link rel="stylesheet" href="shared/atmosphere.css">
+    <link rel="stylesheet" href="forge/vision.css">
+    <link rel="stylesheet" href="forge/card.css">
+    <link rel="stylesheet" href="forge/orb.css">
+
+    <script>
+        // Tailwind Config
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        accent: '#ff00cc', // Pink accent
+                    }
+                }
+            }
+        }
+    </script>
 
     <style>
-        /* =========================================
-           0. CUSTOM FONTS
-           ========================================= */
-        @font-face {
-            font-family: 'Product Sans';
-            src: url('assets/fonts/product-sans/Product_Sans_Regular.ttf') format('truetype');
-            font-weight: 400;
-            font-style: normal;
-        }
-
-        @font-face {
-            font-family: 'Product Sans';
-            src: url('assets/fonts/product-sans/Product_Sans_Bold.ttf') format('truetype');
-            font-weight: 700;
-            font-style: normal;
-        }
-
-        @font-face {
-            font-family: 'Product Sans';
-            src: url('assets/fonts/product-sans/Product_Sans_Italic.ttf') format('truetype');
-            font-weight: 400;
-            font-style: italic;
-        }
-
-        /* =========================================
-           1. THE SKELETON
-           ========================================= */
-        :root {
-            --void-bg: #030014;
-        }
-
-        * {
-            box-sizing: border-box;
-            outline: none;
-        }
-
-        /* 1. BASE SETTINGS */
-        body,
-        html {
-            margin: 0;
-            width: 100%;
-            /* CHANGED: 100% -> 100dvh (Fixes mobile scroll bug) */
-            height: 100dvh;
-
-            background-color: var(--void-bg);
-            color: #fff;
-            font-family: 'Crimson Pro', serif;
+        /* BASE SETTINGS */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #030014;
+            color: #e2e8f0;
             overflow: hidden;
         }
 
-        h1,
-        h2,
-        h3,
-        .brand-font {
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .font-narrative {
             font-family: 'Crimson Pro', serif;
         }
 
-        /* =========================================
-           2. THE HUD
-           ========================================= */
-        .glass-nav {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 80px;
-            z-index: 100;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 40px;
-            background: linear-gradient(to bottom, rgba(3, 0, 20, 0.9), rgba(3, 0, 20, 0));
-        }
-
-        .nav-logo a {
-            display: block;
-            height: 100%;
-            display: flex;
-            align-items: center;
-        }
-
-        .logo-img {
-            height: 32px;
+        /* VIDEO LAYER */
+        #orb-video-bg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
             width: auto;
-            filter: drop-shadow(0 0 10px rgba(138, 43, 226, 0.6));
-            transition: transform 0.3s;
+            height: auto;
+            transform: translate(-50%, -50%);
+            z-index: -2;
+            opacity: 0.6;
+            filter: contrast(1.1) saturate(1.2);
+            transition: opacity 0.5s ease;
         }
 
-        .logo-img:hover {
-            transform: scale(1.05) rotate(5deg);
+        /* VIGNETTE */
+        .vignette {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, transparent 0%, #030014 90%);
+            z-index: -1;
+            pointer-events: none;
         }
 
-        .nav-links {
-            display: flex;
-            gap: 30px;
-            align-items: center;
+        /* CHAT BUBBLES - GLASS STYLE */
+        .bubble-ai {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-left: 2px solid #ff00cc;
+            /* Pink Accent */
+            padding: 1.25rem 1.5rem;
+            border-radius: 4px 20px 20px 20px;
+            color: #f1f5f9;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            animation: slideInLeft 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            max-width: 90%;
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.15rem;
+            line-height: 1.7;
         }
 
-        .nav-item {
-            color: rgba(255, 255, 255, 0.6);
-            text-decoration: none;
-            font-size: 0.9rem;
+        .bubble-user {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 20px 4px 20px 20px;
+            padding: 1rem 1.5rem;
+            color: #fff;
+            align-self: flex-end;
+            max-width: 80%;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.05);
+            animation: slideInRight 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
             font-weight: 500;
-            font-family: 'Product Sans', sans-serif;
-            transition: color 0.2s;
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.15rem;
         }
 
-        .nav-item:hover {
+        /* INPUT AREA - FLOATING BAR */
+        .input-bar {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 999px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .input-bar:focus-within {
+            border-color: rgba(255, 0, 204, 0.5);
+            box-shadow: 0 0 30px rgba(255, 0, 204, 0.2);
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .forge-input {
+            background: transparent;
+            border: none;
             color: white;
+            outline: none;
+            width: 100%;
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.1rem;
         }
 
-        .nav-btn-login {
-            padding: 8px 24px;
+        .forge-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+            font-style: italic;
+        }
+
+        /* GLASS ICON BUTTONS */
+        .glass-btn {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 100px;
-            color: white;
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 600;
-            font-family: 'Product Sans', sans-serif;
-            transition: all 0.2s;
-        }
-
-        .nav-btn-login:hover {
-            background: white;
-            color: black;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
-        }
-
-        /* =========================================
-           3. THE HERO STAGE (Layout Engine)
-           ========================================= */
-        .hero-stage {
-            position: relative;
-            width: 100vw;
-            /* CHANGED: 100vh -> 100dvh */
-            height: 100dvh;
-
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            align-items: center;
-            padding-bottom: 40px;
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        /* LAYER 0: VIDEO */
-        #orb-video-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: 0;
-            opacity: 1;
-        }
-
-        .video-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(3, 0, 20, 0.3);
-            z-index: 1;
-        }
-
-        /* LAYER 1: ATMOSPHERE */
-        .fog-wrapper {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        .fog-layer {
-            position: absolute;
-            width: 150vw;
-            height: 150vw;
+            backdrop-filter: blur(10px);
             border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.6;
-            mix-blend-mode: screen;
-            animation: rotateFog 60s linear infinite;
-        }
-
-        .fog-pink {
-            top: -30%;
-            left: -20%;
-            background: radial-gradient(circle, rgba(255, 0, 150, 0.6) 0%, transparent 60%);
-            animation-duration: 45s;
-        }
-
-        .fog-blue {
-            bottom: -30%;
-            right: -20%;
-            background: radial-gradient(circle, rgba(0, 100, 255, 0.6) 0%, transparent 60%);
-            animation-duration: 55s;
-            animation-direction: reverse;
-        }
-
-        /* =========================================
-           LAYER 2: PARALLAX STARS (Hyper-Dense & Randomized)
-           ========================================= */
-
-        .stars-wrapper {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            /* Behind fog */
-            overflow: hidden;
-            pointer-events: none;
-        }
-
-        @keyframes animStar {
-            from {
-                transform: translateY(0px);
-            }
-
-            to {
-                transform: translateY(-2000px);
-            }
-        }
-
-        /* 1. SMALL STARS (The Dust - 400+ Stars) */
-        #stars,
-        #stars-curtain {
-            width: 1px;
-            height: 1px;
-            background: transparent;
-            animation: animStar 100s linear infinite;
-
-            box-shadow:
-                1742px 142px #FFF, 421px 520px #FFF, 200px 900px #FFF, 1432px 1400px #FFF,
-                600px 1200px #FFF, 1900px 1800px #FFF, 1050px 500px #FFF, 1500px 1100px #FFF,
-                1300px 600px #FFF, 110px 1500px #FFF, 700px 400px #FFF, 1200px 1200px #FFF,
-                50px 300px #FFF, 800px 900px #FFF, 500px 1700px #FFF, 100px 1900px #FFF,
-                950px 250px #FFF, 1250px 150px #FFF, 1850px 850px #FFF, 350px 1350px #FFF,
-                1600px 50px #FFF, 250px 1050px #FFF, 1400px 1650px #FFF, 900px 250px #FFF,
-                150px 800px #FFF, 1750px 1250px #FFF, 450px 150px #FFF, 1150px 1950px #FFF,
-                1950px 350px #FFF, 50px 1450px #FFF, 750px 650px #FFF, 1350px 450px #FFF,
-                /* DENSITY BOOST X2 */
-                1242px 1342px #FFF, 221px 120px #FFF, 800px 1800px #FFF, 1432px 400px #FFF,
-                300px 1200px #FFF, 1900px 200px #FFF, 50px 1500px #FFF, 1100px 100px #FFF,
-                600px 1600px #FFF, 1000px 500px #FFF, 1700px 1400px #FFF, 200px 200px #FFF,
-                1800px 1300px #FFF, 400px 1900px #FFF, 500px 700px #FFF, 1100px 1900px #FFF,
-                150px 650px #FFF, 1250px 1150px #FFF, 1850px 1850px #FFF, 1350px 350px #FFF,
-                92px 1842px #FFF, 1621px 420px #FFF, 400px 1200px #FFF, 832px 100px #FFF,
-                1600px 1900px #FFF, 300px 800px #FFF, 1250px 1500px #FFF, 900px 100px #FFF,
-                300px 100px #FFF, 1100px 600px #FFF, 700px 1300px #FFF, 1200px 900px #FFF,
-                /* DENSITY BOOST X3 */
-                542px 842px #FFF, 1821px 720px #FFF, 200px 100px #FFF, 1132px 1900px #FFF,
-                800px 200px #FFF, 100px 1800px #FFF, 1550px 500px #FFF, 500px 100px #FFF,
-                1300px 1600px #FFF, 10px 1500px #FFF, 1700px 1400px #FFF, 1900px 1200px #FFF,
-                1800px 300px #FFF, 400px 1900px #FFF, 1500px 1700px #FFF, 100px 900px #FFF,
-                950px 1650px #FFF, 250px 1150px #FFF, 1850px 1850px #FFF, 1350px 1350px #FFF;
-        }
-
-        #stars::after,
-        #stars-curtain::after {
-            content: " ";
-            position: absolute;
-            top: 2000px;
-            width: 1px;
-            height: 1px;
-            background: transparent;
-            box-shadow: inherit;
-        }
-
-        /* 2. MEDIUM STARS (The Glimmer - 100+ Stars) */
-        #stars2,
-        #stars2-curtain {
-            width: 2px;
-            height: 2px;
-            background: transparent;
-            animation: animStar 75s linear infinite;
-
-            box-shadow:
-                400px 500px #FFF, 1200px 1600px #FFF, 1700px 200px #FFF, 200px 900px #FFF,
-                800px 1300px #FFF, 1500px 600px #FFF, 100px 1800px #FFF, 600px 100px #FFF,
-                1100px 800px #FFF, 1400px 1400px #FFF, 300px 300px #FFF, 900px 1100px #FFF,
-                1600px 400px #FFF, 150px 1200px #FFF, 1850px 1500px #FFF, 550px 850px #FFF,
-                1250px 50px #FFF, 50px 1950px #FFF, 750px 250px #FFF, 1350px 1750px #FFF,
-                1950px 950px #FFF, 450px 150px #FFF, 1050px 1050px #FFF, 1550px 650px #FFF,
-                /* RANDOM FILL */
-                242px 942px #FFF, 1421px 1120px #FFF, 100px 200px #FFF, 1632px 1900px #FFF,
-                900px 1500px #FFF, 100px 100px #FFF, 1050px 500px #FFF, 500px 1100px #FFF,
-                1700px 600px #FFF, 110px 1500px #FFF, 1700px 1400px #FFF, 200px 1200px #FFF;
-        }
-
-        #stars2::after {
-            content: " ";
-            position: absolute;
-            top: 2000px;
-            width: 2px;
-            height: 2px;
-            background: transparent;
-            box-shadow: inherit;
-        }
-
-        /* 3. BIG STARS (The Beacons) */
-        #stars3,
-        #stars3-curtain {
-            width: 3px;
-            height: 3px;
-            background: transparent;
-            animation: animStar 50s linear infinite;
-
-            box-shadow:
-                600px 800px #FFF, 1300px 200px #FFF, 200px 1500px #FFF, 1600px 500px #FFF,
-                900px 1200px #FFF, 100px 400px #FFF, 1800px 1700px #FFF, 500px 900px #FFF,
-                1500px 1400px #FFF, 300px 100px #FFF, 1100px 1900px #FFF, 1900px 1100px #FFF,
-                150px 650px #FFF, 750px 1350px #FFF, 1250px 450px #FFF, 1750px 1850px #FFF;
-        }
-
-        #stars3::after,
-        #stars3-curtain::after {
-            content: " ";
-            position: absolute;
-            top: 2000px;
-            width: 3px;
-            height: 3px;
-            background: transparent;
-            box-shadow: inherit;
-        }
-
-        /* LAYER 3: INSTRUCTIONS (Fixed Position) */
-        .hero-instructions {
-            position: absolute;
-            top: 13%;
-            /* MOVED DOWN from 20% to avoid header smash */
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            width: 100%;
-            padding: 0 20px;
-            z-index: 10;
-            animation: fadeIn 2s ease-in-out;
-        }
-
-        .hero-title {
-            font-family: 'Crimson Pro', serif;
-            font-size: 3.5rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            margin-bottom: 10px;
-            background: linear-gradient(to right, #fff, #a5b4fc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero-subtitle {
-            font-family: 'Crimson Pro', serif;
-            font-size: 1.125rem;
-            color: rgba(255, 255, 255, 0.7);
-            font-weight: 400;
-            font-style: italic;
-        }
-
-        .sub-line {
-            display: block;
-            /* Forces it to a new line (like <br> but better) */
-            margin-top: 10px;
-            /* Adds breathing room between the lines */
-            color: rgba(255, 255, 255, 0.8);
-            /* Optional: Make the second line slightly brighter? */
-        }
-
-        /* =========================================
-           4. THE REMRIN TERMINAL (Corrected)
-           ========================================= */
-
-        .terminal-wrapper {
-            position: relative;
-            z-index: 999;
-            width: 95%;
-            max-width: 900px;
-            height: 55vh;
-            /* Fixed height for the glass box */
-            animation: floatUp 1s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-
-        .glass-terminal {
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 10, 15, 0.65);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-top: 1px solid rgba(138, 43, 226, 0.25);
-            border-radius: 24px;
-
-            display: flex;
-            flex-direction: column;
-            /* Stacks Header -> Log -> Input */
-            overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-        }
-
-        /* HEADER */
-        .terminal-header {
-            height: 50px;
-            padding: 0 25px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            background: linear-gradient(90deg, rgba(138, 43, 226, 0.05) 0%, transparent 100%);
-            flex-shrink: 0;
-            /* Never shrink the header */
-        }
-
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            background: #00ff88;
-            border-radius: 50%;
-            box-shadow: 0 0 8px #00ff88;
-            animation: pulse 2s infinite;
-        }
-
-        .header-title {
-            font-size: 0.7rem;
-            letter-spacing: 2px;
-            color: rgba(255, 255, 255, 0.4);
-            text-transform: uppercase;
-            font-weight: 500;
-        }
-
-        /* CHAT LOG (Takes all available space) */
-        .chat-log {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-
-            /* Hide Scrollbar */
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-
-        .chat-log::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* MESSAGES */
-        .message {
-            display: flex;
-            gap: 16px;
-            align-items: flex-end;
-            max-width: 85%;
-        }
-
-        .rem-msg {
-            align-self: flex-start;
-        }
-
-        .user-msg {
-            align-self: flex-end;
-            flex-direction: row-reverse;
-        }
-
-        .avatar {
-            font-size: 1.4rem;
-            padding-bottom: 4px;
-        }
-
-        .bubble {
-            padding: 16px 22px;
-            border-radius: 20px;
-            font-size: 1.05rem;
-            line-height: 1.6;
-            color: rgba(255, 255, 255, 0.95);
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .user-msg .bubble {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            border: none;
-            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
-        }
-
-        /* INPUT ZONE (Footer - Fixed at bottom) */
-        .input-zone {
-            padding: 20px 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            align-items: center;
-            /* Fix vertical alignment */
-            gap: 15px;
-            background: rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-            /* Never collapse this area */
-        }
-
-        .input-zone:focus-within {
-            background: rgba(20, 20, 30, 0.4);
-            border-top: 1px solid rgba(168, 85, 247, 0.5);
-            box-shadow: 0 -5px 20px rgba(138, 43, 226, 0.15);
-        }
-
-        input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            outline: none;
-            font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.9);
-            font-weight: 300;
-            font-family: 'Crimson Pro', serif;
-        }
-
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.3);
-            font-style: italic;
-        }
-
-        button {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            border: none;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Product Sans', sans-serif;
-            font-weight: 600;
-        }
-
-        button:hover {
-            background: white;
-            color: black;
-            transform: scale(1.1);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
-        }
-
-        /* CHAT COMPONENTS */
-        .terminal-header {
-            height: 50px;
-            padding: 0 25px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            background: linear-gradient(90deg, rgba(138, 43, 226, 0.05) 0%, transparent 100%);
-        }
-
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            background: #00ff88;
-            border-radius: 50%;
-            box-shadow: 0 0 8px #00ff88;
-            animation: pulse 2s infinite;
-        }
-
-        .header-title {
-            font-size: 0.7rem;
-            letter-spacing: 2px;
-            color: rgba(255, 255, 255, 0.4);
-            text-transform: uppercase;
-            font-weight: 500;
-        }
-
-        .chat-log {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* HIDE SCROLLBAR (Chrome, Safari, Opera) */
-        .chat-log::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* HIDE SCROLLBAR (Firefox, IE, Edge) */
-        .chat-log {
-            -ms-overflow-style: none;
-            /* IE and Edge */
-            scrollbar-width: none;
-            /* Firefox */
-        }
-
-
-        .message {
-            display: flex;
-            gap: 16px;
-            align-items: flex-end;
-            max-width: 85%;
-            position: relative;
-            z-index: 300;
-        }
-
-        .rem-msg {
-            align-self: flex-start;
-        }
-
-        .user-msg {
-            align-self: flex-end;
-            flex-direction: row-reverse;
-        }
-
-        .avatar {
-            font-size: 1.4rem;
-            padding-bottom: 4px;
-        }
-
-        .bubble {
-            padding: 16px 22px;
-            border-radius: 20px;
-            font-size: 1.25rem;
-            line-height: 1.75;
-            color: rgba(255, 255, 255, 0.95);
-            font-weight: 500;
-            letter-spacing: 0.3px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            font-family: 'Crimson Pro', serif;
-        }
-
-        .rem-msg .bubble {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-bottom-left-radius: 4px;
-        }
-
-        .user-msg .bubble {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            border-bottom-right-radius: 4px;
-            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
-        }
-
-        /* THE INPUT ZONE (Footer Container) */
-        .input-zone {
-            padding: 20px 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            gap: 15px;
-            background: rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        /* THE PULSE (When user clicks inside) */
-        .input-zone:focus-within {
-            background: rgba(20, 20, 30, 0.4);
-            border-top: 1px solid rgba(168, 85, 247, 0.5);
-            /* Bright Purple */
-            box-shadow: 0 -5px 20px rgba(138, 43, 226, 0.15);
-            /* Purple Glow */
-        }
-
-        /* INPUT FIELD (Stealth Mode - No White Box!) */
-        input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            outline: none;
-            /* <--- CRITICAL: Kills the white outline */
-
-            font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.9);
-            font-weight: 300;
-            font-family: 'Crimson Pro', serif;
-        }
-
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.3);
-            font-style: italic;
-        }
-
-        /* SEND BUTTON */
-        button {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            border: none;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
+            transition: all 0.2s ease;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
-        button:hover {
-            background: white;
-            color: black;
-            transform: scale(1.1);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
-        }
-
-        /* ANIMATIONS */
-        @keyframes rotateFog {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        @keyframes twinkle {
-
-            0%,
-            100% {
-                opacity: 0.4;
-                transform: scale(0.8);
-            }
-
-            50% {
-                opacity: 1;
-                transform: scale(1.3);
-            }
-        }
-
-        @keyframes floatUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes pulse {
-            0% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.5;
-            }
-
-            100% {
-                opacity: 1;
-            }
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateX(-50%) translateY(-20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
-            }
-        }
-
-        /* 1. THE CONTAINER (Centering Logic) */
-        .footer-info {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            /* Space between logo and text */
-
-            /* This centers the logo relative to the text below it */
-            align-items: center;
-
-            /* Optional: If you want the text centered too */
-            text-align: center;
-        }
-
-        /* 2. THE LOGO (Size Boost) */
-        .remrin-brand {
-            /* Increased from 20px -> 30px (+50% size boost) */
-            height: 30px;
-            width: auto;
-            max-width: 120px;
-
-            object-fit: contain;
-            opacity: 1;
-            /* Made fully opaque for clarity */
-            margin-bottom: 2px;
-            /* Tiny breathing room before the ID */
-        }
-
-        /* 3. THE ID TEXT (Optional Polish) */
-        .set-id {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.55rem;
-            /* Slightly smaller to let logo pop */
-            color: #666;
-            letter-spacing: 0.5px;
-        }
-
-        /* MOBILE FIXES - CLEANED! */
-        @media (max-width: 600px) {
-            .glass-nav {
-                padding: 0 20px;
-            }
-
-            .nav-item {
-                display: none;
-            }
-
-            .terminal-wrapper {
-                height: 60vh;
-                width: 100%;
-                border-radius: 0;
-            }
-
-            .glass-terminal {
-                border-radius: 24px 24px 0 0;
-            }
-
-            .hero-title {
-                font-size: 2rem;
-            }
-
-            .hero-instructions {
-                top: 25%;
-                padding: 0 20px;
-            }
-        }
-
-        /* =========================================
-           CARD STYLES (Ported from volt.html)
-           ========================================= */
-        /* 2. THE CARD CHASSIS */
-        .trading-card {
-            width: 340px;
-            height: 520px;
-            /* Standard TCG Aspect Ratio */
-            position: relative;
-            z-index: 10;
-            /* Above Stars */
-            border-radius: 20px;
-            padding: 12px;
-            background: #1a1a1a;
-            box-shadow:
-                0 0 40px rgba(0, 0, 0, 0.5),
-                0 20px 50px rgba(0, 0, 0, 0.5);
-            transition: transform 0.1s ease;
-            user-select: none;
-        }
-
-        /* RARITY THEMES (Border Colors) */
-        .trading-card[data-rarity="common"] {
-            background: linear-gradient(135deg, #444, #222);
-        }
-
-        .trading-card[data-rarity="rare"] {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-        }
-
-        .trading-card[data-rarity="legendary"] {
-            background: linear-gradient(135deg, #f59e0b, #d97706, #b91c1c);
-        }
-
-        /* THE HOLOGRAPHIC FOIL OVERLAY */
-        .holo-foil {
-            position: absolute;
-            inset: 0;
-            border-radius: 20px;
-            background: linear-gradient(115deg,
-                    transparent 20%,
-                    rgba(255, 255, 255, 0.1) 25%,
-                    rgba(255, 0, 204, 0.1) 30%,
-                    rgba(0, 204, 255, 0.1) 35%,
-                    transparent 40%);
-            background-size: 200% 200%;
-            opacity: 0.6;
-            pointer-events: none;
-            mix-blend-mode: overlay;
-            z-index: 10;
-            animation: holoShift 4s linear infinite;
-        }
-
-        @keyframes holoShift {
-            0% {
-                background-position: 150% 0%;
-            }
-
-            100% {
-                background-position: -50% 0%;
-            }
-        }
-
-        /* THE INNER FRAME (The Content Area) */
-        .card-inner {
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 10, 15, 0.95);
-            border-radius: 14px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
-            z-index: 2;
-        }
-
-        /* HEADER (Name & Rank) */
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 14px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .soul-name {
-            font-family: 'Outfit', sans-serif;
-            font-weight: 800;
-            font-size: 1.2rem;
-            text-transform: uppercase;
-        }
-
-        .creativity-badge {
-            font-family: 'Product Sans', sans-serif;
-            font-size: 0.6rem;
-            font-weight: 700;
-            color: #ff00cc;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            box-shadow: 0 0 10px rgba(255, 0, 204, 0.2);
-        }
-
-        .hp-label {
-            font-size: 0.5rem;
-            color: #666;
-            margin-right: 2px;
-        }
-
-        /* ARTWORK (The Hero) */
-        .art-box {
-            width: 100%;
-            height: 200px;
-            position: relative;
-            border-bottom: 4px solid #f59e0b;
-            /* Rarity Color Line */
-            overflow: hidden;
-        }
-
-        /* HERO IMAGE: Added object-position top to focus on face */
-        .art-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: top;
-        }
-
-        .type-strip {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
-            padding: 20px 14px 6px 14px;
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.8);
-            font-style: italic;
-        }
-
-        /* CARD BODY (Stats & Bio) */
-        .card-body {
-            padding: 14px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .traits-row {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-
-        .trait-pill {
-            font-size: 0.6rem;
-            padding: 2px 8px;
-            border-radius: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .bio-text {
-            font-size: 0.8rem;
-            line-height: 1.4;
-            color: #ccc;
-            border-left: 2px solid #333;
-            padding-left: 8px;
-            font-style: italic;
-        }
-
-        .stats-container {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-top: auto;
-        }
-
-        .stat-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.7rem;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .stat-label {
-            width: 60px;
-            color: #666;
-        }
-
-        .stat-bar-bg {
-            flex: 1;
-            height: 4px;
-            background: #333;
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .stat-bar-fill {
-            height: 100%;
-            background: #f59e0b;
-            width: 0%;
-            transition: width 1s ease;
-        }
-
-        /* FOOTER (QR & Logo) */
-        .card-footer {
-            background: #111;
-            padding: 10px 14px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        /* 1. THE CONTAINER (Centering Logic) */
-        .footer-info {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            /* Space between logo and text */
-
-            /* This centers the logo relative to the text below it */
-            align-items: center;
-
-            /* Optional: If you want the text centered too */
-            text-align: center;
-        }
-
-        /* 2. THE LOGO (Size Boost) */
-        .remrin-brand {
-            /* Increased from 20px -> 30px (+50% size boost) */
-            height: 30px;
-            width: auto;
-            max-width: 120px;
-
-            object-fit: contain;
-            opacity: 1;
-            /* Made fully opaque for clarity */
-            margin-bottom: 2px;
-            /* Tiny breathing room before the ID */
-        }
-
-        .qr-chip {
-            width: 42px;
-            height: 42px;
-            background: white;
-            padding: 2px;
-            border-radius: 4px;
-        }
-
-        /* =========================================
-           4. INITIALIZATION ORB (The Curtain)
-           ========================================= */
-        .init-container {
-            /* Positioned by director.js */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3rem;
-            animation: fadeIn 1.5s ease 0.5s forwards;
-            pointer-events: auto;
-            width: 100%;
-            max-width: 100vw;
-            /* Ensure clickable */
-        }
-
-        .soul-orb {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            position: relative;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-            z-index: 50;
-            margin: 0 auto;
-            /* Force centering if flex fails */
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        .soul-orb:hover {
+        .glass-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
             transform: scale(1.05);
         }
 
-        .orb-core {
-            position: absolute;
-            inset: 0;
-            border-radius: 50%;
-            background: radial-gradient(circle at 35% 35%,
-                    #ffffff 0%,
-                    #ff00cc 25%,
-                    #bd00ff 50%,
-                    #00ccff 100%);
-            box-shadow:
-                0 0 30px rgba(255, 0, 204, 0.6),
-                0 0 60px rgba(189, 0, 255, 0.4),
-                inset 0 0 20px rgba(255, 255, 255, 0.5);
-            animation: orbPulse 4s ease-in-out infinite;
-            filter: brightness(1.2);
+        /* CHAT MASK */
+        .chat-mask {
+            mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 100%);
         }
 
-        .orb-glow {
-            position: absolute;
-            inset: -40px;
-            border-radius: 50%;
-            background: radial-gradient(circle,
-                    rgba(0, 204, 255, 0.3) 0%,
-                    rgba(255, 0, 204, 0.1) 50%,
-                    transparent 70%);
-            filter: blur(20px);
-            animation: glowPulse 4s ease-in-out infinite;
+        /* Hide scrollbar */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
         }
 
-        .orb-ring {
-            position: absolute;
-            inset: -10px;
-            border-radius: 50%;
-            border: 2px solid rgba(0, 255, 255, 0.5);
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
-            animation: ringPulse 3s ease-in-out infinite;
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
 
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: rgba(139, 92, 246, 0.6);
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
-        .particle:nth-child(1) {
-            top: 20%;
-            left: 10%;
-            animation: float1 4s ease-in-out infinite;
-        }
-
-        .particle:nth-child(2) {
-            top: 60%;
-            right: 15%;
-            animation: float2 5s ease-in-out infinite;
-        }
-
-        .particle:nth-child(3) {
-            bottom: 30%;
-            left: 20%;
-            animation: float3 6s ease-in-out infinite;
-        }
-
-        .init-text {
-            text-align: center;
-            color: rgba(255, 255, 255, 0.8);
-            margin-top: 2rem;
-        }
-
-        .init-title {
-            font-size: 1.5rem;
-            font-weight: 300;
-            letter-spacing: 0.1em;
-            margin-bottom: 0.5rem;
-            color: #c084fc;
-            font-family: 'Crimson Pro', serif;
-        }
-
-        .init-subtitle {
-            font-size: 1rem;
-            color: rgba(255, 255, 255, 0.5);
-            font-style: italic;
-            letter-spacing: 0.05em;
-            font-family: 'Crimson Pro', serif;
-        }
-
-        .hint {
-            position: absolute;
-            bottom: 4rem;
-            font-size: 0.875rem;
-            color: rgba(255, 255, 255, 0.3);
-            letter-spacing: 0.1em;
-            animation: pulseHint 2s ease-in-out infinite;
-            font-family: 'Product Sans', sans-serif;
-        }
-
-        @keyframes orbPulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 0.8;
-            }
-
-            50% {
-                transform: scale(1.1);
-                opacity: 1;
-            }
-        }
-
-        @keyframes glowPulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 0.5;
-            }
-
-            50% {
-                transform: scale(1.2);
-                opacity: 0.8;
-            }
-        }
-
-        @keyframes ringPulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 0.3;
-            }
-
-            50% {
-                transform: scale(1.15);
-                opacity: 0.6;
-            }
-        }
-
-        @keyframes float1 {
-
-            0%,
-            100% {
-                transform: translate(0, 0);
-            }
-
-            50% {
-                transform: translate(20px, -30px);
-            }
-        }
-
-        @keyframes float2 {
-
-            0%,
-            100% {
-                transform: translate(0, 0);
-            }
-
-            50% {
-                transform: translate(-25px, 20px);
-            }
-        }
-
-        @keyframes float3 {
-
-            0%,
-            100% {
-                transform: translate(0, 0);
-            }
-
-            50% {
-                transform: translate(15px, -25px);
-            }
-        }
-
-        @keyframes pulseHint {
-
-            0%,
-            100% {
-                opacity: 0.3;
-            }
-
-            50% {
-                opacity: 0.6;
-            }
-        }
-
-        @keyframes explode {
-            0% {
-                transform: scale(1);
-                opacity: 1;
-            }
-
-            100% {
-                transform: scale(3);
+        /* ANIMATIONS */
+        @keyframes slideInLeft {
+            from {
                 opacity: 0;
+                transform: translateY(10px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
             }
         }
 
-        .soul-orb.clicked {
-            animation: explode 0.6s ease-out forwards;
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 0, 204, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 0, 204, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 0, 204, 0);
+            }
+        }
+
+        .mic-active {
+            animation: pulse-ring 2s infinite;
+            color: #ff00cc !important;
+        }
+
+        /* PRELINE NAV OVERRIDES */
+        .nav-floating {
+            background: rgba(30, 30, 40, 0.3);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        /* LOGO TILT EFFECT */
+        .logo-tilt {
+            transition: transform 0.3s ease;
+        }
+
+        .logo-tilt:hover {
+            transform: rotate(-5deg) scale(1.05);
+        }
+
+        /* =========================================
+           DIRECTOR.JS COMPATIBILITY CLASSES
+           ========================================= */
+        /* Message container - maps to glass bubbles */
+        .message {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-width: 90%;
+        }
+
+        .rem-msg {
+            align-self: flex-start;
+        }
+
+        .user-msg {
+            align-self: flex-end;
+        }
+
+        /* Bubble styling - inherits from glass styles */
+        .rem-msg .bubble {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-left: 2px solid #ff00cc;
+            padding: 1.25rem 1.5rem;
+            border-radius: 4px 20px 20px 20px;
+            color: #f1f5f9;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            animation: slideInLeft 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.15rem;
+            line-height: 1.7;
+        }
+
+        .user-msg .bubble {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 20px 4px 20px 20px;
+            padding: 1rem 1.5rem;
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.05);
+            animation: slideInRight 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            font-weight: 500;
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.15rem;
+        }
+
+        /* Voice toggle styling */
+        #voice-toggle {
+            cursor: pointer;
         }
     </style>
 </head>
 
-<body>
+<body class="h-screen w-screen flex flex-col items-center justify-center overflow-hidden">
 
-    <nav class="glass-nav">
-        <div class="nav-logo">
-            <a href="index.html">
-                <img src="logo.svg" alt="Remrin" class="logo-img">
-            </a>
-        </div>
-        <div class="nav-links">
-            <a href="#" class="nav-item">Soul Market</a>
-            <a href="#" class="nav-item">About</a>
-            <a href="#" class="nav-btn-login">Login</a>
-        </div>
-    </nav>
+    <!-- VIDEO LAYER -->
+    <video autoplay muted loop playsinline id="orb-video-bg">
+        <source src="orbs.webm" type="video/webm">
+    </video>
+    <div class="vignette"></div>
 
-    <div class="hero-stage">
+    <!-- STARS LAYER -->
+    <div class="stars-wrapper">
+        <div id="stars"></div>
+        <div id="stars2"></div>
+        <div id="stars3"></div>
+    </div>
 
-        <video id="orb-video-bg" autoplay loop muted playsinline>
-            <source src="orbs.webm" type="video/webm">
-        </video>
+    <!-- ========== PRELINE FLOATING HEADER ========== -->
+    <header class="fixed top-4 inset-x-0 flex flex-wrap md:justify-start md:flex-nowrap z-50 w-full">
+        <nav
+            class="nav-floating relative max-w-4xl w-full flex flex-wrap md:flex-nowrap basis-full items-center justify-between py-2 ps-5 pe-2 md:py-0 mx-auto rounded-full border border-white/10">
 
-        <div class="video-overlay"></div>
+            <!-- Logo -->
+            <div class="flex items-center">
+                <a class="flex-none rounded-md inline-block focus:outline-hidden focus:opacity-80 logo-tilt"
+                    href="index.html" aria-label="Remrin">
+                    <img src="logo.svg" alt="Remrin" class="h-8 w-auto">
+                </a>
+            </div>
 
-        <div class="fog-wrapper">
-            <div class="fog-layer fog-pink"></div>
-            <div class="fog-layer fog-blue"></div>
-        </div>
+            <!-- Button Group -->
+            <div class="md:order-3 flex items-center gap-x-3">
+                <div class="md:ps-3">
+                    <a class="group inline-flex items-center gap-x-2 py-2 px-4 bg-[#ff00cc] font-medium text-sm text-white rounded-full hover:bg-[#ff33d4] transition-colors focus:outline-hidden"
+                        href="#">
+                        Login
+                    </a>
+                </div>
 
-        <div class="stars-wrapper">
-            <div id="stars"></div>
-            <div id="stars2"></div>
-            <div id="stars3"></div>
-        </div>
+                <!-- Mobile Toggle -->
+                <div class="md:hidden">
+                    <button type="button"
+                        class="size-9 flex justify-center items-center text-sm font-semibold rounded-full bg-neutral-800 text-white"
+                        id="nav-toggle">
+                        <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" x2="21" y1="6" y2="6" />
+                            <line x1="3" x2="21" y1="12" y2="12" />
+                            <line x1="3" x2="21" y1="18" y2="18" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
 
-        <div class="hero-instructions">
-            <h1 class="hero-title">The Soul Forge Awaits. </h1>
-            <p class="hero-subtitle">
-                Craft a companion who truly knows you—someone who listens, understands, and grows with you.
-                <span class="sub-line">From imagination to existence, bring them to life.</span>
+            <!-- Nav Links -->
+            <div class="hidden md:block">
+                <div class="flex flex-row items-center gap-y-3 py-2 md:py-0 md:ps-7">
+                    <a class="px-3 py-4 text-sm text-white hover:text-[#ff00cc] transition-colors focus:outline-hidden"
+                        href="index.html">Home</a>
+                    <a class="px-3 py-4 text-sm text-white hover:text-[#ff00cc] transition-colors focus:outline-hidden"
+                        href="#">Market</a>
+                    <a class="px-3 py-4 text-sm text-white hover:text-[#ff00cc] transition-colors focus:outline-hidden"
+                        href="#">Community</a>
+
+                    <!-- About Dropdown -->
+                    <div class="relative group">
+                        <button
+                            class="px-3 py-4 flex items-center text-sm text-white hover:text-[#ff00cc] transition-colors focus:outline-hidden">
+                            About
+                            <svg class="ms-1 shrink-0 size-3.5 transition-transform group-hover:rotate-180"
+                                xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="m6 9 6 6 6-6" />
+                            </svg>
+                        </button>
+                        <!-- Dropdown Menu -->
+                        <div
+                            class="invisible group-hover:visible opacity-0 group-hover:opacity-100 absolute top-full left-0 mt-2 w-48 rounded-xl bg-neutral-800/90 backdrop-blur-md p-2 transition-all duration-200 border border-white/10">
+                            <a class="block px-4 py-2 text-sm text-white hover:text-[#ff00cc] hover:bg-white/5 rounded-lg transition-colors"
+                                href="#">Our Story</a>
+                            <a class="block px-4 py-2 text-sm text-white hover:text-[#ff00cc] hover:bg-white/5 rounded-lg transition-colors"
+                                href="#">Team</a>
+                            <a class="block px-4 py-2 text-sm text-white hover:text-[#ff00cc] hover:bg-white/5 rounded-lg transition-colors"
+                                href="#">Contact</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <!-- ========== END HEADER ========== -->
+
+    <!-- MAIN CHAT AREA -->
+    <main class="relative z-10 w-full max-w-2xl h-[80vh] flex flex-col justify-end pb-8 pt-20">
+
+        <!-- HEADER TEXT -->
+        <div class="text-center mb-6 px-4">
+            <h1 class="text-2xl md:text-3xl font-light text-white mb-3" style="font-family: 'Crimson Pro', serif;">The
+                Soul Forge Awaits.</h1>
+            <p class="text-sm md:text-base text-gray-400 leading-relaxed" style="font-family: 'Inter', sans-serif;">
+                Craft a companion who truly knows you—someone who listens, understands, and grows with you.<br>
+                <span class="text-gray-500">From imagination to existence, bring them to life.</span>
             </p>
         </div>
 
-        <div class="terminal-wrapper">
-            <div class="glass-terminal">
+        <!-- Chat History -->
+        <div id="chat-history"
+            class="chat-mask flex-1 overflow-y-auto p-4 sm:p-0 space-y-6 flex flex-col scrollbar-hide pb-6">
+            <div class="flex-1"></div> <!-- Spacer -->
+        </div>
 
-                <div class="terminal-header">
-                    <div id="voice-toggle" class="status-dot"></div>
-                    <span id="voice-status-text"
-                        style="margin-left: 10px; font-family: monospace; color: #00ff88; cursor: pointer;">VOICE:
-                        ONLINE</span>
-                </div>
+        <!-- INPUT BAR -->
+        <div class="w-full px-4 sm:px-0 mt-4">
+            <div class="input-bar flex items-center px-4 py-3 sm:py-4">
 
-                <div id="chat-history" class="chat-log"></div>
+                <!-- MIC BUTTON (Left) -->
+                <button id="mic-btn"
+                    class="text-gray-400 hover:text-white transition-colors mr-3 p-2 rounded-full hover:bg-white/10">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        <line x1="12" y1="19" x2="12" y2="23"></line>
+                        <line x1="8" y1="23" x2="16" y2="23"></line>
+                    </svg>
+                </button>
 
-                <div class="input-zone">
-                    <input type="text" id="user-input" placeholder="Initializing..." autocomplete="off">
-                    <button id="mic-btn" style="margin-right: 5px;">🎤</button>
-                    <button id="send-btn">➔</button>
-                </div>
+                <!-- TEXT INPUT -->
+                <input type="text" id="user-input" placeholder="Initializing..." class="forge-input text-base"
+                    autocomplete="off">
 
+                <!-- SEND BUTTON (Right) -->
+                <button id="send-btn" class="ml-2 text-[#ff00cc] hover:text-white transition-colors p-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+
+                <!-- MUTE/UNMUTE BUTTON (Speaker Icon) -->
+                <button id="voice-toggle"
+                    class="ml-2 text-gray-400 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10"
+                    title="Toggle Voice">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                    </svg>
+                </button>
             </div>
         </div>
 
-    </div>
+    </main>
 
-
-
-
+    <!-- VISION OVERLAY -->
     <div id="vision-overlay" class="vision-overlay hidden">
         <div class="vision-card">
             <button id="close-vision" class="close-btn">×</button>
@@ -1434,13 +458,10 @@
             <img id="vision-image" src="" alt="Soul Manifestation" class="hidden">
         </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <div id="card-overlay" class="hidden">
-        <div class="fog-wrapper">
-            <div class="fog-layer fog-pink"></div>
-            <div class="fog-layer fog-blue"></div>
-        </div>
+
+    <!-- CARD OVERLAY -->
+    <div id="card-overlay"
+        class="hidden fixed inset-0 bg-[#030014] z-[3000] flex flex-col items-center justify-center gap-8">
         <div class="stars-wrapper">
             <div id="stars"></div>
             <div id="stars2"></div>
@@ -1451,26 +472,19 @@
             <div class="trading-card" data-rarity="legendary" id="final-soul-card">
                 <div class="holo-foil"></div>
                 <div class="card-inner">
-
                     <div class="card-header">
                         <div class="soul-name" id="card-name">SOUL_NAME</div>
                         <div class="creativity-badge">
                             <span class="hp-label">SYNC</span><span id="card-sync">99%</span>
                         </div>
                     </div>
-
                     <div class="art-box">
                         <img id="card-image" class="art-img" src="" crossorigin="anonymous" alt="Soul Avatar">
                         <div class="type-strip" id="card-type">Archetype • Origin</div>
                     </div>
-
                     <div class="card-body">
-                        <div class="traits-row" id="card-traits">
-                            <!-- Pills will be injected here -->
-                        </div>
-                        <div class="bio-text" id="card-bio">
-                            Bio description goes here...
-                        </div>
+                        <div class="traits-row" id="card-traits"></div>
+                        <div class="bio-text" id="card-bio">Bio description goes here...</div>
                         <div class="stats-container">
                             <div class="stat-row">
                                 <span class="stat-label">Power</span>
@@ -1486,33 +500,31 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="card-footer">
                         <div class="footer-info">
                             <img src="logo.svg" class="remrin-brand" alt="Remrin.ai">
                             <div class="set-id">#GENESIS-V1 • 2025</div>
                         </div>
-                        <div class="qr-chip" id="qrcode-container">
-                            <!-- QR Code injected here -->
-                        </div>
+                        <div class="qr-chip" id="qrcode-container"></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="actions">
+        <div class="actions flex gap-4">
             <button class="btn-download" id="download-card-btn">SAVE CARD 📥</button>
             <button class="btn-confirm" id="confirm-card-btn">CONFIRM SOUL ✅</button>
         </div>
     </div>
-    <script>
 
-        // Kickstart Video
+    <!-- LOCAL SCRIPTS -->
+    <script>
+        // Video Kickstart (Mute toggle handled by director.js)
         window.addEventListener('load', function () {
-            var video = document.getElementById('orb-video-bg');
+            const video = document.getElementById('orb-video-bg');
             if (video) {
                 video.muted = true;
-                video.play().catch(e => console.log("Kickstart failed:", e));
+                video.play().catch(e => console.log("Video autoplay failed:", e));
             }
         });
     </script>
@@ -1522,7 +534,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-    <!-- CONFIG AND APP SCRIPTS -->
+    <!-- CORE APP SCRIPTS -->
     <script src="config.js"></script>
     <script src="ritual.js"></script>
     <script src="director.js"></script>
