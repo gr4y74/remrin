@@ -1,3 +1,4 @@
+import "server-only"
 import { pipeline } from "@xenova/transformers"
 
 export async function generateLocalEmbedding(content: string) {
