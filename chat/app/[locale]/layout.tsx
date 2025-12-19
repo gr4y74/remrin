@@ -11,6 +11,10 @@ import { cookies } from "next/headers"
 import { ReactNode } from "react"
 import "./globals.css"
 
+// Force Node.js runtime to avoid Edge Runtime __dirname issues
+export const runtime = "nodejs"
+export const dynamic = "force-dynamic"
+
 const inter = Inter({ subsets: ["latin"] })
 const APP_NAME = "Chatbot UI"
 const APP_DEFAULT_TITLE = "Chatbot UI"
