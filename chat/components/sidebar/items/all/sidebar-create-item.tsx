@@ -170,7 +170,9 @@ export const SidebarCreateItem: FC<SidebarCreateItemProps> = ({
       return updatedAssistant
     },
     tools: createTool,
-    models: createModel
+    models: createModel,
+    // Personas don't use create flow - they use claim flow
+    personas: async () => null
   }
 
   const stateUpdateFunctions = {
@@ -181,7 +183,9 @@ export const SidebarCreateItem: FC<SidebarCreateItemProps> = ({
     collections: setCollections,
     assistants: setAssistants,
     tools: setTools,
-    models: setModels
+    models: setModels,
+    // Personas use separate state management
+    personas: () => { }
   }
 
   const handleCreate = async () => {
