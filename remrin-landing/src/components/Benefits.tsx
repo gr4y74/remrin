@@ -51,11 +51,11 @@ export const Benefits = (props: Readonly<BenefitsProps>) => {
             }`}>
           <div>
             <div className="flex flex-col w-full mt-4">
-              <h3 className="max-w-2xl mt-3 text-3xl font-bold leading-snug tracking-tight text-white lg:leading-tight lg:text-4xl font-serif">
+              <h3 className="max-w-2xl mt-3 text-3xl lg:text-4xl font-tiempos font-medium tracking-tight text-white">
                 {data.title}
               </h3>
 
-              <p className="max-w-2xl py-4 text-lg leading-normal text-gray-400 lg:text-xl xl:text-xl">
+              <p className="max-w-2xl py-4 text-lg lg:text-xl text-gray-400 leading-relaxed">
                 {data.desc}
               </p>
             </div>

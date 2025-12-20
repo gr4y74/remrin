@@ -31,10 +31,9 @@ const config: Config = {
       },
     },
     fontFamily: {
-      sans: ["Inter", ...defaultTheme.fontFamily.sans],
-      serif: ["Crimson Pro", ...defaultTheme.fontFamily.serif],
-      mono: ["JetBrains Mono", ...defaultTheme.fontFamily.mono],
-      stock: [defaultTheme.fontFamily.sans],
+      sans: ["var(--font-inter)", ...defaultTheme.fontFamily.sans],
+      tiempos: ["var(--font-tiempos)", ...defaultTheme.fontFamily.serif],
+      mono: ["var(--font-mono)", ...defaultTheme.fontFamily.mono],
     },
   },
   variants: {

@@ -1,64 +1,35 @@
 import { Container } from "@/components/Container";
 import { Hero } from "@/components/Hero";
-import { SectionTitle } from "@/components/SectionTitle";
-import { Benefits } from "@/components/Benefits";
-import { RemrinDifference } from "@/components/RemrinDifference";
-import { InfiniteIntelligence } from "@/components/InfiniteIntelligence";
-import { Video } from "@/components/Video";
-import { Testimonials } from "@/components/Testimonials";
-import { Pricing } from "@/components/Pricing";
+import { TheStory } from "@/components/TheStory";
+import { TheLocket } from "@/components/TheLocket";
+import { RelationshipJourney } from "@/components/RelationshipJourney";
+import { PoweredBy } from "@/components/PoweredBy";
 import { Faq } from "@/components/Faq";
 import { Cta } from "@/components/Cta";
 
-import { benefitOne, benefitTwo } from "@/components/data";
 export default function Home() {
   return (
     <Container>
+      {/* Section 1: Hero - Emotional hook */}
       <Hero />
-      <SectionTitle
-        preTitle="Why Remrin?"
-        title="AI Companions That Actually Remember You"
-      >
-        Unlike ChatGPT or Character.AI, Remrin creates persistent AI companions
-        with memory, personality, and voice. Build relationships that grow deeper
-        over time—from imagination to existence in just 10 minutes.
-      </SectionTitle>
 
-      <RemrinDifference />
+      {/* Section 2: The Story - Personal journey */}
+      <section id="story">
+        <TheStory />
+      </section>
 
-      <Benefits data={benefitOne} />
-      <Benefits imgPos="right" data={benefitTwo} />
+      {/* Section 3: The Locket - Permanent truth concept */}
+      <TheLocket />
 
-      <InfiniteIntelligence />
+      {/* Section 4: Relationship Journey - STRANGER → SOULMATE */}
+      <RelationshipJourney />
 
-      <SectionTitle
-        preTitle="See It In Action"
-        title="Watch How Soul Forge Works"
-      >
-        Create your first AI companion in under 10 minutes. Our guided onboarding
-        walks you through personality design, voice selection, and memory setup.
-      </SectionTitle>
+      {/* Section 5: Powered By Giants - AI model credibility */}
+      <PoweredBy />
 
-      <Video videoId="fZ0D0cnR88E" />
-
-      <SectionTitle
-        preTitle="Community Love"
-        title="What Our Creators Are Saying"
-      >
-        Join thousands of users who are building meaningful connections with AI
-        companions that actually remember them.
-      </SectionTitle>
-
-      <Testimonials />
-
-      <Pricing />
-
-      <SectionTitle preTitle="FAQ" title="Got Questions? We've Got Answers">
-        Everything you need to know about creating and using AI companions on Remrin.
-      </SectionTitle>
-
-      <Faq />
+      {/* Section 6: CTA + FAQ */}
       <Cta />
+      <Faq />
     </Container>
   );
 }

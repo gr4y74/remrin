@@ -1,16 +1,11 @@
 import type { Metadata } from "next";
-import { Crimson_Pro, Inter, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-
-const crimsonPro = Crimson_Pro({
-  subsets: ["latin"],
-  variable: "--font-crimson",
-  display: "swap",
-});
+import { tiemposHeadline } from "./fonts";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -60,7 +55,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="dark">
-      <body className={`${inter.variable} ${crimsonPro.variable} ${jetbrainsMono.variable} font-sans text-white antialiased`}>
+      <body className={`${inter.variable} ${tiemposHeadline.variable} ${jetbrainsMono.variable} font-sans text-white antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           {/* Base dark background - underneath everything */}
           <div className="base-bg" />

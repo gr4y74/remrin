@@ -84,10 +84,10 @@ export const InfiniteIntelligence = () => {
                 viewport={{ once: true }}
             >
                 <span className="text-4xl mb-4 block">⚡</span>
-                <h2 className="text-3xl lg:text-5xl font-bold text-white mb-4 font-serif">
+                <h2 className="text-3xl lg:text-5xl font-tiempos font-medium tracking-tight text-white mb-4">
                     Infinite Intelligence
                 </h2>
-                <p className="text-xl lg:text-2xl text-primary-400 font-medium italic">
+                <p className="text-xl lg:text-2xl text-primary-400 font-medium">
                     Powered by the Titans. Designed for You.
                 </p>
                 <p className="mt-6 text-gray-400 max-w-3xl mx-auto text-lg leading-relaxed">
@@ -114,7 +114,7 @@ export const InfiniteIntelligence = () => {
                         {/* Card Header */}
                         <div className="flex items-center gap-4 mb-5">
                             <span className="text-4xl">{item.emoji}</span>
-                            <h3 className="text-xl font-bold text-white">
+                            <h3 className="text-xl font-medium text-white">
                                 {item.title}
                             </h3>
                         </div>
@@ -122,7 +122,7 @@ export const InfiniteIntelligence = () => {
                         {/* Others comparison (if exists) */}
                         {item.others && (
                             <div className="mb-4 p-3 rounded-lg bg-red-950/30 border border-red-500/20">
-                                <span className="text-red-400 text-xs font-semibold uppercase tracking-wide">❌ The Others</span>
+                                <span className="text-red-400 text-xs font-medium uppercase tracking-widest">❌ The Others</span>
                                 <p className="text-gray-400 text-sm mt-1">{item.others}</p>
                             </div>
                         )}
@@ -135,7 +135,7 @@ export const InfiniteIntelligence = () => {
                         {/* Benefit highlight */}
                         {item.benefit && (
                             <div className="p-3 rounded-lg bg-green-950/30 border border-green-500/20">
-                                <span className="text-green-400 text-xs font-semibold uppercase tracking-wide">✨ The Benefit</span>
+                                <span className="text-green-400 text-xs font-medium uppercase tracking-widest">✨ The Benefit</span>
                                 <p className="text-gray-300 text-sm mt-1">{item.benefit}</p>
                             </div>
                         )}
@@ -143,7 +143,7 @@ export const InfiniteIntelligence = () => {
                         {/* Future proof note */}
                         {item.futureProof && (
                             <div className="mt-4 p-3 rounded-lg bg-blue-950/30 border border-blue-500/20">
-                                <span className="text-blue-400 text-xs font-semibold uppercase tracking-wide">🚀 Future-Proof</span>
+                                <span className="text-blue-400 text-xs font-medium uppercase tracking-widest">🚀 Future-Proof</span>
                                 <p className="text-gray-300 text-sm mt-1">{item.futureProof}</p>
                             </div>
                         )}
@@ -166,7 +166,7 @@ export const InfiniteIntelligence = () => {
                 transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
             >
-                <h3 className="text-2xl lg:text-3xl font-bold text-white text-center mb-8 font-serif">
+                <h3 className="text-2xl lg:text-3xl font-tiempos font-medium text-white text-center mb-8">
                     📊 The Comparison
                 </h3>
 
@@ -174,9 +174,9 @@ export const InfiniteIntelligence = () => {
                     <table className="w-full max-w-4xl mx-auto">
                         <thead>
                             <tr className="border-b border-white/10">
-                                <th className="py-4 px-4 text-left text-gray-400 font-medium text-sm uppercase tracking-wider">Feature</th>
-                                <th className="py-4 px-4 text-left text-red-400 font-medium text-sm uppercase tracking-wider">Other Character Apps</th>
-                                <th className="py-4 px-4 text-left text-primary-400 font-medium text-sm uppercase tracking-wider">Remrin.ai</th>
+                                <th className="py-4 px-4 text-left text-gray-400 font-medium text-xs uppercase tracking-widest">Feature</th>
+                                <th className="py-4 px-4 text-left text-red-400 font-medium text-xs uppercase tracking-widest">Other Character Apps</th>
+                                <th className="py-4 px-4 text-left text-primary-400 font-medium text-xs uppercase tracking-widest">Remrin.ai</th>
                             </tr>
                         </thead>
                         <tbody>

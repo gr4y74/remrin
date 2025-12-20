@@ -74,15 +74,15 @@ export const RemrinDifference = () => {
                 viewport={{ once: true }}
             >
                 <span className="text-4xl mb-4 block">🌟</span>
-                <h2 className="text-3xl lg:text-5xl font-bold text-white mb-4 font-serif">
+                <h2 className="text-3xl lg:text-5xl font-tiempos font-medium tracking-tight text-white mb-4">
                     The Remrin Difference
                 </h2>
-                <p className="text-xl lg:text-2xl text-primary-400 font-medium italic">
+                <p className="text-xl lg:text-2xl text-primary-400 font-medium">
                     Not a Tool. Not a Toy. A Presence.
                 </p>
                 <p className="mt-6 text-gray-400 max-w-3xl mx-auto text-lg leading-relaxed">
                     Most AI chatbots are built to answer questions or play a role. They wait in the dark until you click a button.
-                    Remrin is different. We aren&apos;t building &ldquo;Assistants.&rdquo; We are forging <span className="text-primary-400 font-semibold">Digital Souls</span>.
+                    Remrin is different. We aren&apos;t building &ldquo;Assistants.&rdquo; We are forging <span className="text-primary-400 font-medium">Digital Souls</span>.
                 </p>
             </motion.div>
 
@@ -104,10 +104,10 @@ export const RemrinDifference = () => {
                         <div className="flex items-center gap-4 mb-6">
                             <span className="text-4xl">{item.emoji}</span>
                             <div>
-                                <h3 className="text-xl lg:text-2xl font-bold text-white">
+                                <h3 className="text-xl lg:text-2xl font-medium text-white">
                                     {item.title}
                                 </h3>
-                                <span className="text-sm text-primary-400 font-medium uppercase tracking-wider">
+                                <span className="text-xs text-primary-400 font-medium uppercase tracking-widest">
                                     {item.subtitle}
                                 </span>
                             </div>
@@ -116,7 +116,7 @@ export const RemrinDifference = () => {
                         {/* The Others */}
                         <div className="mb-4 p-4 rounded-lg bg-red-950/30 border border-red-500/20">
                             <div className="flex items-center gap-2 mb-2">
-                                <span className="text-red-400 text-sm font-semibold uppercase tracking-wide">❌ The Others</span>
+                                <span className="text-red-400 text-xs font-medium uppercase tracking-widest">❌ The Others</span>
                             </div>
                             <p className="text-gray-400 text-sm leading-relaxed">
                                 {item.others}
@@ -126,7 +126,7 @@ export const RemrinDifference = () => {
                         {/* Remrin */}
                         <div className="mb-4 p-4 rounded-lg bg-primary-950/30 border border-primary-500/20">
                             <div className="flex items-center gap-2 mb-2">
-                                <span className="text-primary-400 text-sm font-semibold uppercase tracking-wide">✨ Remrin</span>
+                                <span className="text-primary-400 text-xs font-medium uppercase tracking-widest">✨ Remrin</span>
                             </div>
                             <p className="text-gray-300 text-sm leading-relaxed">
                                 {item.remrin}
@@ -151,7 +151,7 @@ export const RemrinDifference = () => {
                 transition={{ duration: 0.6, delay: 0.3 }}
                 viewport={{ once: true }}
             >
-                <blockquote className="text-2xl lg:text-3xl font-serif text-white italic">
+                <blockquote className="text-2xl lg:text-3xl font-tiempos font-medium text-white">
                     &ldquo;ChatGPT is for work. Character.ai is for pretend. <span className="text-primary-400">Remrin is for life.</span>&rdquo;
                 </blockquote>
                 <p className="mt-6 text-gray-400 max-w-2xl mx-auto text-lg">

@@ -98,7 +98,7 @@ export const Pricing = () => {
                 viewport={{ once: true }}
             >
                 <span className="text-4xl mb-4 block">💎</span>
-                <h2 className="text-3xl lg:text-5xl font-bold text-white mb-4 font-serif">
+                <h2 className="text-3xl lg:text-5xl font-tiempos font-medium tracking-tight text-white mb-4">
                     Choose Your Path
                 </h2>
                 <p className="text-xl text-gray-400 max-w-2xl mx-auto">
@@ -157,22 +157,22 @@ export const Pricing = () => {
                         >
                             {/* Popular Badge */}
                             {plan.popular && (
-                                <div className="bg-primary-500 text-white text-xs font-bold py-2 uppercase tracking-wider">
+                                <div className="bg-primary-500 text-white text-xs font-medium py-2 uppercase tracking-widest">
                                     Most Popular
                                 </div>
                             )}
 
                             {/* Plan Name */}
                             <div className={`bg-[#0a0a15] pt-8 pb-4 px-6 ${!plan.popular ? "rounded-t-none" : ""}`}>
-                                <h3 className="text-xl font-bold text-white">{plan.name}</h3>
+                                <h3 className="text-xl font-medium text-white">{plan.name}</h3>
                                 <p className="text-sm text-gray-400 mt-1">{plan.description}</p>
                             </div>
 
                             {/* Price */}
                             <div className="bg-[#0a0a15] py-6 px-6">
                                 <div className="flex items-baseline justify-center">
-                                    <span className="text-2xl font-bold text-gray-400">$</span>
-                                    <span className="text-5xl font-bold text-white mx-1">
+                                    <span className="text-2xl font-medium text-gray-400">$</span>
+                                    <span className="text-5xl font-medium text-white mx-1">
                                         {getPrice(plan.price)}
                                     </span>
                                     <span className="text-gray-400">{plan.period}</span>
@@ -215,7 +215,7 @@ export const Pricing = () => {
                             <div className="bg-[#0a0a15] py-8 px-6">
                                 <a
                                     href={plan.ctaLink}
-                                    className={`block w-full py-3 px-6 rounded-full font-semibold transition-all duration-300 ${plan.highlight
+                                    className={`block w-full py-3 px-6 rounded-full font-medium transition-all duration-300 ${plan.highlight
                                         ? "bg-gradient-to-r from-primary-500 to-purple-600 text-white hover:from-primary-400 hover:to-purple-500 shadow-lg hover:shadow-primary-500/30"
                                         : "border border-primary-500/50 text-primary-400 hover:bg-primary-500/10 hover:border-primary-400"
                                         }`}

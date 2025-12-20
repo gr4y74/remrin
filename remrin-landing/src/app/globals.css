@@ -17,7 +17,6 @@
   html,
   body {
     @apply text-white antialiased;
-    font-family: 'Inter', sans-serif;
     background: transparent;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     -webkit-font-smoothing: antialiased;
@@ -30,52 +29,76 @@
   }
 
   /* =========================================
-     CLAUDE-INSPIRED TYPOGRAPHY SYSTEM
+     UNIFIED TYPOGRAPHY SYSTEM
+     Tiempos Headline + Inter
      ========================================= */
 
-  /* Headings - Elegant, refined weights */
-  h1 {
-    @apply font-serif;
+  /* Display Headings - Tiempos Headline */
+  h1,
+  h2 {
+    @apply font-tiempos;
     font-weight: 500;
-    letter-spacing: -0.025em;
+    letter-spacing: -0.02em;
+  }
+
+  h1 {
     line-height: 1.1;
   }
 
   h2 {
-    @apply font-serif;
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
+    line-height: 1.15;
   }
 
-  h3 {
+  /* Subheadings - Inter Medium */
+  h3,
+  h4 {
     @apply font-sans;
-    font-weight: 600;
+    font-weight: 500;
     letter-spacing: -0.01em;
     line-height: 1.3;
   }
 
-  /* Body text - Generous line height for readability */
+  /* Body text */
   p {
     line-height: 1.7;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.005em;
   }
 
-  /* Links - Subtle underline on hover */
+  /* Links */
   a {
     @apply transition-colors duration-200;
   }
 }
 
 /* =========================================
-   TYPOGRAPHY - MATCH FORGE/INDEX.HTML
+   TYPOGRAPHY UTILITIES
    ========================================= */
-.font-narrative {
-  font-family: 'Crimson Pro', serif;
+
+/* Display class for hero headlines */
+.text-display {
+  @apply font-tiempos font-medium tracking-tight;
+  line-height: 1.05;
 }
 
-.font-mono {
-  font-family: 'JetBrains Mono', monospace;
+/* Section title class */
+.text-section-title {
+  @apply font-tiempos font-medium tracking-tight;
+  line-height: 1.15;
+}
+
+/* Pre-title / Overline class */
+.text-overline {
+  @apply font-sans text-xs font-medium tracking-widest uppercase;
+}
+
+/* Body lead paragraph */
+.text-lead {
+  @apply text-lg lg:text-xl text-gray-300 leading-relaxed;
+}
+
+/* Card title */
+.text-card-title {
+  @apply font-sans text-xl font-medium text-white;
 }
 
 /* =========================================

@@ -46,7 +46,7 @@ export function Footer() {
                   height={32}
                   className="w-8 h-8"
                 />
-                <span className="font-serif">Remrin</span>
+                <span className="font-tiempos">Remrin</span>
               </Link>
             </div>
 
@@ -88,7 +88,7 @@ export function Footer() {
           </div>
 
           <div>
-            <div className="text-sm font-semibold text-white mb-4">Product</div>
+            <div className="text-xs font-medium text-white mb-4 uppercase tracking-widest">Product</div>
             <div className="flex flex-wrap w-full -mt-2 -ml-3 lg:ml-0">
               {product.map((item, index) => (
                 <Link
@@ -102,7 +102,7 @@ export function Footer() {
             </div>
           </div>
           <div>
-            <div className="text-sm font-semibold text-white mb-4">Company</div>
+            <div className="text-xs font-medium text-white mb-4 uppercase tracking-widest">Company</div>
             <div className="flex flex-wrap w-full -mt-2 -ml-3 lg:ml-0">
               {company.map((item, index) => (
                 <Link
@@ -116,7 +116,7 @@ export function Footer() {
             </div>
           </div>
           <div>
-            <div className="text-sm font-semibold text-white mb-4">Legal</div>
+            <div className="text-xs font-medium text-white mb-4 uppercase tracking-widest">Legal</div>
             <div className="flex flex-wrap w-full -mt-2 -ml-3 lg:ml-0">
               {legal.map((item, index) => (
                 <Link
