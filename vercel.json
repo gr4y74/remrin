@@ -1,0 +1,6 @@
+{
+    "buildCommand": "cd remrin-landing && npm run build",
+    "outputDirectory": "remrin-landing/.next",
+    "installCommand": "cd remrin-landing && npm install",
+    "framework": "nextjs"
+}
