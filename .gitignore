@@ -1,3 +1,18 @@
+# Backup folders
+_archive_v1/
+_backup*/
+*backup*
+chat-backup-*/
+forge_backup.html
+index_genesis.html
+
+# Dependencies
 node_modules/
+
+# Environment files
 .env
+.env.local
+.env.*.local
+
+# OS files
 .DS_Store
