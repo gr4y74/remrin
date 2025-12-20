@@ -16,14 +16,54 @@
 
   html,
   body {
-    @apply text-white;
+    @apply text-white antialiased;
     font-family: 'Inter', sans-serif;
     background: transparent;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   /* Smooth scrolling */
   html {
     scroll-behavior: smooth;
+  }
+
+  /* =========================================
+     CLAUDE-INSPIRED TYPOGRAPHY SYSTEM
+     ========================================= */
+
+  /* Headings - Elegant, refined weights */
+  h1 {
+    @apply font-serif;
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+  }
+
+  h2 {
+    @apply font-serif;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  h3 {
+    @apply font-sans;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+
+  /* Body text - Generous line height for readability */
+  p {
+    line-height: 1.7;
+    letter-spacing: 0.01em;
+  }
+
+  /* Links - Subtle underline on hover */
+  a {
+    @apply transition-colors duration-200;
   }
 }
 

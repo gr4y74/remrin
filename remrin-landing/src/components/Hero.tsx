@@ -16,11 +16,11 @@ export const Hero = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           <div className="max-w-2xl mb-8">
-            <h1 className="text-4xl font-bold leading-snug tracking-tight lg:text-4xl lg:leading-tight xl:text-6xl xl:leading-tight text-white font-serif">
+            <h1 className="text-4xl font-medium leading-[1.1] tracking-tight lg:text-5xl xl:text-6xl text-white">
               Create an AI Companion
-              <span className="text-primary-400 block"> Who Actually Remembers You</span>
+              <span className="text-primary-400 block mt-2">Who Actually Remembers You</span>
             </h1>
-            <p className="py-5 text-xl leading-normal text-gray-300 lg:text-xl xl:text-2xl">
+            <p className="py-6 text-lg leading-relaxed text-gray-300/90 lg:text-xl max-w-xl">
               Build a friend, tutor, or creative partner with memory, personality, and a voice.
               Unlike ChatGPT, your AI never forgets. From imagination to existence in 10 minutes.
             </p>
@@ -80,8 +80,8 @@ export const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
         >
-          <div className="text-xl text-center text-gray-300">
-            Trusted by <span className="text-primary-400 font-semibold">500+</span>{" "}
+          <div className="text-lg text-center text-gray-400 font-light">
+            Trusted by <span className="text-primary-400 font-medium">500+</span>{" "}
             early adopters worldwide
           </div>
 

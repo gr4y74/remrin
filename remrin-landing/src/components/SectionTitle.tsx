@@ -23,19 +23,19 @@ export const SectionTitle = (props: Readonly<SectionTitleProps>) => {
         className={`flex w-full flex-col mt-4 ${props.align === "left" ? "" : "items-center justify-center text-center"
           }`}>
         {props.preTitle && (
-          <div className="text-sm font-bold tracking-wider text-primary-400 uppercase">
+          <div className="text-sm font-medium tracking-widest text-primary-400/90 uppercase mb-4">
             {props.preTitle}
           </div>
         )}
 
         {props.title && (
-          <h2 className="max-w-2xl mt-3 text-3xl font-bold leading-snug tracking-tight text-white lg:leading-tight lg:text-4xl font-serif">
+          <h2 className="max-w-2xl text-3xl font-medium leading-tight tracking-tight text-white lg:text-4xl">
             {props.title}
           </h2>
         )}
 
         {props.children && (
-          <p className="max-w-2xl py-4 text-lg leading-normal text-gray-400 lg:text-xl xl:text-xl">
+          <p className="max-w-2xl mt-4 text-lg leading-relaxed text-gray-400/90 lg:text-xl">
             {props.children}
           </p>
         )}
