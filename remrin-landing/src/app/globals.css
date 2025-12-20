@@ -1,0 +1,283 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================
+   REMRIN.AI LANDING PAGE - DARK THEME
+   ========================================= */
+
+:root {
+  --void-bg: #030014;
+  --accent-primary: #8b5cf6;
+  --accent-secondary: #ff00cc;
+}
+
+@layer base {
+
+  html,
+  body {
+    @apply text-white;
+    font-family: 'Inter', sans-serif;
+    background: transparent;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* =========================================
+   TYPOGRAPHY - MATCH FORGE/INDEX.HTML
+   ========================================= */
+.font-narrative {
+  font-family: 'Crimson Pro', serif;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* =========================================
+   VIDEO BACKGROUND LAYER
+   ========================================= */
+.video-bg-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -10;
+  overflow: hidden;
+}
+
+.video-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  transform: translate(-50%, -50%);
+  opacity: 0.5;
+  filter: contrast(1.1) saturate(1.2);
+}
+
+.vignette {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 0%, #030014 85%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* =========================================
+   BASE BACKGROUND LAYER (underneath everything)
+   ========================================= */
+.base-bg {
+  position: fixed;
+  inset: 0;
+  background-color: #030014;
+  z-index: -20;
+}
+
+/* =========================================
+   PARALLAX STARS ANIMATION
+   ========================================= */
+.stars-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+@keyframes animStar {
+  from {
+    transform: translateY(0px);
+  }
+
+  to {
+    transform: translateY(-2000px);
+  }
+}
+
+/* Small Stars */
+#stars {
+  width: 1px;
+  height: 1px;
+  background: transparent;
+  animation: animStar 100s linear infinite;
+  box-shadow:
+    1742px 142px #FFF, 421px 520px #FFF, 200px 900px #FFF, 1432px 1400px #FFF,
+    600px 1200px #FFF, 1900px 1800px #FFF, 1050px 500px #FFF, 1500px 1100px #FFF,
+    1300px 600px #FFF, 110px 1500px #FFF, 700px 400px #FFF, 1200px 1200px #FFF,
+    50px 300px #FFF, 800px 900px #FFF, 500px 1700px #FFF, 100px 1900px #FFF,
+    950px 250px #FFF, 1250px 150px #FFF, 1850px 850px #FFF, 350px 1350px #FFF,
+    1600px 50px #FFF, 250px 1050px #FFF, 1400px 1650px #FFF, 900px 250px #FFF,
+    150px 800px #FFF, 1750px 1250px #FFF, 450px 150px #FFF, 1150px 1950px #FFF,
+    1950px 350px #FFF, 50px 1450px #FFF, 750px 650px #FFF, 1350px 450px #FFF,
+    1242px 1342px #FFF, 221px 120px #FFF, 800px 1800px #FFF, 1432px 400px #FFF,
+    300px 1200px #FFF, 1900px 200px #FFF, 50px 1500px #FFF, 1100px 100px #FFF;
+}
+
+#stars::after {
+  content: " ";
+  position: absolute;
+  top: 2000px;
+  width: 1px;
+  height: 1px;
+  background: transparent;
+  box-shadow: inherit;
+}
+
+/* Medium Stars */
+#stars2 {
+  width: 2px;
+  height: 2px;
+  background: transparent;
+  animation: animStar 75s linear infinite;
+  box-shadow:
+    400px 500px #FFF, 1200px 1600px #FFF, 1700px 200px #FFF, 200px 900px #FFF,
+    800px 1300px #FFF, 1500px 600px #FFF, 100px 1800px #FFF, 600px 100px #FFF,
+    1100px 800px #FFF, 1400px 1400px #FFF, 300px 300px #FFF, 900px 1100px #FFF,
+    1600px 400px #FFF, 150px 1200px #FFF, 1850px 1500px #FFF, 550px 850px #FFF;
+}
+
+#stars2::after {
+  content: " ";
+  position: absolute;
+  top: 2000px;
+  width: 2px;
+  height: 2px;
+  background: transparent;
+  box-shadow: inherit;
+}
+
+/* Large Stars */
+#stars3 {
+  width: 3px;
+  height: 3px;
+  background: transparent;
+  animation: animStar 50s linear infinite;
+  box-shadow:
+    600px 800px #FFF, 1300px 200px #FFF, 200px 1500px #FFF, 1600px 500px #FFF,
+    900px 1200px #FFF, 100px 400px #FFF, 1800px 1700px #FFF, 500px 900px #FFF;
+}
+
+#stars3::after {
+  content: " ";
+  position: absolute;
+  top: 2000px;
+  width: 3px;
+  height: 3px;
+  background: transparent;
+  box-shadow: inherit;
+}
+
+/* =========================================
+   FLOATING NAVIGATION BAR (Preline Style)
+   ========================================= */
+.nav-floating {
+  background: rgba(30, 30, 40, 0.3);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.logo-tilt {
+  transition: transform 0.3s ease;
+}
+
+.logo-tilt:hover {
+  transform: rotate(-5deg) scale(1.05);
+}
+
+/* =========================================
+   BUTTON GLOW EFFECTS
+   ========================================= */
+.btn-glow {
+  @apply transition-all duration-300;
+}
+
+.btn-glow:hover {
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
+  transform: translateY(-2px);
+}
+
+.btn-primary-glow {
+  @apply bg-gradient-to-r from-primary-500 to-purple-600;
+  transition: all 0.3s ease;
+}
+
+.btn-primary-glow:hover {
+  @apply from-primary-400 to-purple-500;
+  box-shadow: 0 10px 40px rgba(139, 92, 246, 0.4);
+  transform: translateY(-3px) scale(1.02);
+}
+
+/* =========================================
+   GLASS MORPHISM CARDS
+   ========================================= */
+.glass-card {
+  background: rgba(15, 15, 25, 0.5);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-card:hover {
+  background: rgba(25, 25, 40, 0.6);
+  border-color: rgba(139, 92, 246, 0.3);
+}
+
+/* =========================================
+   SCROLL ANIMATIONS
+   ========================================= */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+/* =========================================
+   CUSTOM SCROLLBAR (Dark Theme)
+   ========================================= */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a15;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.4);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.6);
+}
+
+/* =========================================
+   RESPONSIVE FIXES
+   ========================================= */
+@media (max-width: 640px) {
+  .stars-wrapper {
+    opacity: 0.5;
+  }
+}

@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soul Trading Card | Remrin</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* =========================================
+           0. CORE UNIVERSE
+           ========================================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #050505;
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh;
+            color: white;
+            overflow: hidden;
+            perspective: 1000px; /* For 3D Tilt */
+        }
+
+        /* =========================================
+           2. ATMOSPHERE (Stars & Fog from Forge)
+           ========================================= */
+           .fog-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: hidden; }
+        .fog-layer {
+            position: absolute; width: 150vw; height: 150vw; border-radius: 50%;
+            filter: blur(80px); opacity: 0.4; mix-blend-mode: screen;
+            animation: rotateFog 60s linear infinite;
+        }
+        .fog-pink { top: -30%; left: -20%; background: radial-gradient(circle, rgba(255, 0, 150, 0.4) 0%, transparent 60%); }
+        .fog-blue { bottom: -30%; right: -20%; background: radial-gradient(circle, rgba(0, 100, 255, 0.4) 0%, transparent 60%); animation-direction: reverse; }
+
+        /* =========================================
+           2. PARALLAX STARS (Hyper-Dense)
+           ========================================= */
+        
+           .stars-wrapper {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; /* Behind fog */
+            overflow: hidden; pointer-events: none;
+        }
+
+        @keyframes animStar {
+            from { transform: translateY(0px); }
+            to { transform: translateY(-2000px); }
+        }
+
+        /* 1. SMALL STARS (The Dust - 400+ Stars) */
+        #stars {
+            width: 1px; height: 1px; background: transparent;
+            animation: animStar 100s linear infinite;
+            
+            box-shadow: 
+                1742px 142px #FFF, 421px 520px #FFF, 200px 900px #FFF, 1432px 1400px #FFF,
+                600px 1200px #FFF, 1900px 1800px #FFF, 1050px 500px #FFF, 1500px 1100px #FFF,
+                1300px 600px #FFF, 110px 1500px #FFF, 700px 400px #FFF, 1200px 1200px #FFF,
+                50px 300px #FFF, 800px 900px #FFF, 500px 1700px #FFF, 100px 1900px #FFF,
+                950px 250px #FFF, 1250px 150px #FFF, 1850px 850px #FFF, 350px 1350px #FFF,
+                1600px 50px #FFF, 250px 1050px #FFF, 1400px 1650px #FFF, 900px 250px #FFF,
+                150px 800px #FFF, 1750px 1250px #FFF, 450px 150px #FFF, 1150px 1950px #FFF,
+                1950px 350px #FFF, 50px 1450px #FFF, 750px 650px #FFF, 1350px 450px #FFF,
+                /* DENSITY BOOST X2 */
+                1242px 1342px #FFF, 221px 120px #FFF, 800px 1800px #FFF, 1432px 400px #FFF,
+                300px 1200px #FFF, 1900px 200px #FFF, 50px 1500px #FFF, 1100px 100px #FFF,
+                600px 1600px #FFF, 1000px 500px #FFF, 1700px 1400px #FFF, 200px 200px #FFF,
+                1800px 1300px #FFF, 400px 1900px #FFF, 500px 700px #FFF, 1100px 1900px #FFF,
+                150px 650px #FFF, 1250px 1150px #FFF, 1850px 1850px #FFF, 1350px 350px #FFF,
+                92px 1842px #FFF, 1621px 420px #FFF, 400px 1200px #FFF, 832px 100px #FFF,
+                1600px 1900px #FFF, 300px 800px #FFF, 1250px 1500px #FFF, 900px 100px #FFF,
+                300px 100px #FFF, 1100px 600px #FFF, 700px 1300px #FFF, 1200px 900px #FFF,
+                /* DENSITY BOOST X3 */
+                542px 842px #FFF, 1821px 720px #FFF, 200px 100px #FFF, 1132px 1900px #FFF,
+                800px 200px #FFF, 100px 1800px #FFF, 1550px 500px #FFF, 500px 100px #FFF,
+                1300px 1600px #FFF, 10px 1500px #FFF, 1700px 1400px #FFF, 1900px 1200px #FFF,
+                1800px 300px #FFF, 400px 1900px #FFF, 1500px 1700px #FFF, 100px 900px #FFF,
+                950px 1650px #FFF, 250px 1150px #FFF, 1850px 1850px #FFF, 1350px 1350px #FFF;
+        }
+        #stars::after {
+            content: " "; position: absolute; top: 2000px;
+            width: 1px; height: 1px; background: transparent; box-shadow: inherit;
+        }
+
+        /* 2. MEDIUM STARS (The Glimmer - 100+ Stars) */
+        #stars2 {
+            width: 2px; height: 2px; background: transparent;
+            animation: animStar 75s linear infinite;
+            
+            box-shadow: 
+                400px 500px #FFF, 1200px 1600px #FFF, 1700px 200px #FFF, 200px 900px #FFF,
+                800px 1300px #FFF, 1500px 600px #FFF, 100px 1800px #FFF, 600px 100px #FFF,
+                1100px 800px #FFF, 1400px 1400px #FFF, 300px 300px #FFF, 900px 1100px #FFF,
+                1600px 400px #FFF, 150px 1200px #FFF, 1850px 1500px #FFF, 550px 850px #FFF,
+                1250px 50px #FFF, 50px 1950px #FFF, 750px 250px #FFF, 1350px 1750px #FFF,
+                1950px 950px #FFF, 450px 150px #FFF, 1050px 1050px #FFF, 1550px 650px #FFF,
+                /* RANDOM FILL */
+                242px 942px #FFF, 1421px 1120px #FFF, 100px 200px #FFF, 1632px 1900px #FFF,
+                900px 1500px #FFF, 100px 100px #FFF, 1050px 500px #FFF, 500px 1100px #FFF,
+                1700px 600px #FFF, 110px 1500px #FFF, 1700px 1400px #FFF, 200px 1200px #FFF;
+        }
+        #stars2::after {
+            content: " "; position: absolute; top: 2000px;
+            width: 2px; height: 2px; background: transparent; box-shadow: inherit;
+        }
+
+        /* 3. BIG STARS (The Bright Ones - 30+ Stars) */
+        #stars3 {
+            width: 3px; height: 3px; background: transparent;
+            animation: animStar 50s linear infinite;
+            
+            box-shadow: 
+                600px 800px #FFF, 1300px 200px #FFF, 200px 1500px #FFF, 1600px 500px #FFF,
+                900px 1200px #FFF, 100px 400px #FFF, 1800px 1700px #FFF, 500px 900px #FFF,
+                1500px 1400px #FFF, 300px 100px #FFF, 1100px 1900px #FFF, 1900px 1100px #FFF,
+                150px 650px #FFF, 750px 1350px #FFF, 1250px 450px #FFF, 1750px 1850px #FFF;
+        }
+        #stars3::after {
+            content: " "; position: absolute; top: 2000px;
+            width: 3px; height: 3px; background: transparent; box-shadow: inherit;
+        }
+
+        /* =========================================
+           2. THE CARD CHASSIS
+           ========================================= */
+        .trading-card {
+            width: 340px; 
+            height: 520px; /* Standard TCG Aspect Ratio */
+            position: relative;
+            z-index: 10; /* Above Stars */
+            border-radius: 20px;
+            padding: 12px;
+            background: #1a1a1a;
+            box-shadow: 
+                0 0 40px rgba(0,0,0,0.5), 
+                0 20px 50px rgba(0,0,0,0.5);
+            transition: transform 0.1s ease;
+            user-select: none;
+        }
+
+        /* RARITY THEMES (Border Colors) */
+        .trading-card[data-rarity="common"] { background: linear-gradient(135deg, #444, #222); }
+        .trading-card[data-rarity="rare"] { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .trading-card[data-rarity="legendary"] { background: linear-gradient(135deg, #f59e0b, #d97706, #b91c1c); }
+
+        /* THE HOLOGRAPHIC FOIL OVERLAY */
+        .holo-foil {
+            position: absolute; inset: 0; border-radius: 20px;
+            background: linear-gradient(
+                115deg, 
+                transparent 20%, 
+                rgba(255, 255, 255, 0.1) 25%, 
+                rgba(255, 0, 204, 0.1) 30%, 
+                rgba(0, 204, 255, 0.1) 35%, 
+                transparent 40%
+            );
+            background-size: 200% 200%;
+            opacity: 0.6;
+            pointer-events: none;
+            mix-blend-mode: overlay;
+            z-index: 10;
+            animation: holoShift 4s linear infinite;
+        }
+        @keyframes holoShift { 0% { background-position: 150% 0%; } 100% { background-position: -50% 0%; } }
+
+        /* THE INNER FRAME (The Content Area) */
+        .card-inner {
+            width: 100%; height: 100%;
+            background: rgba(10, 10, 15, 0.95);
+            border-radius: 14px;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            position: relative; z-index: 2;
+        }
+
+        /* =========================================
+           3. HEADER (Name & Rank)
+           ========================================= */
+        .card-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .soul-name {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800; font-size: 1.2rem;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+
+        .creativity-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem; font-weight: 700;
+            color: #f59e0b; /* Legendary Gold */
+        }
+        .hp-label { font-size: 0.5rem; color: #666; margin-right: 2px; }
+
+        /* =========================================
+           4. ARTWORK (The Hero)
+           ========================================= */
+        .art-box {
+            width: 100%; height: 200px;
+            position: relative;
+            border-bottom: 4px solid #f59e0b; /* Rarity Color Line */
+            overflow: hidden;
+        }
+        /* HERO IMAGE: Added object-position top to focus on face */
+        .art-img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+        
+        .type-strip {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            padding: 20px 14px 6px 14px;
+            font-size: 0.7rem; color: rgba(255,255,255,0.8);
+            font-style: italic;
+        }
+
+        /* =========================================
+           5. CARD BODY (Stats & Bio)
+           ========================================= */
+        .card-body { padding: 14px; flex: 1; display: flex; flex-direction: column; gap: 12px; }
+
+        .traits-row { display: flex; gap: 6px; flex-wrap: wrap; }
+        .trait-pill {
+            font-size: 0.6rem; padding: 2px 8px; border-radius: 4px;
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1);
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        .bio-text {
+            font-size: 0.8rem; line-height: 1.4; color: #ccc;
+            border-left: 2px solid #333; padding-left: 8px;
+            font-style: italic;
+        }
+
+        .stats-container { display: flex; flex-direction: column; gap: 6px; margin-top: auto; }
+        .stat-row { display: flex; align-items: center; gap: 10px; font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; }
+        .stat-label { width: 60px; color: #666; }
+        .stat-bar-bg { flex: 1; height: 4px; background: #333; border-radius: 2px; overflow: hidden; }
+        .stat-bar-fill { height: 100%; background: #f59e0b; width: 0%; animation: fillBar 1s ease forwards 0.5s; }
+        @keyframes fillBar { to { width: var(--w); } }
+
+        /* =========================================
+           6. FOOTER (QR & Logo)
+           ========================================= */
+        .card-footer {
+            background: #111;
+            padding: 10px 14px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-info { display: flex; flex-direction: column; gap: 2px; }
+        .set-id { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: #555; }
+        
+        /* LOGO FIX */
+        .remrin-brand {
+            height: 20px; width: auto; max-width: 100px;
+            object-fit: contain; opacity: 0.9; margin-top: 4px;
+        }
+
+        .qr-chip { width: 42px; height: 42px; background: white; padding: 2px; border-radius: 4px; }
+
+        /* =========================================
+           7. SOCIAL COMMAND CENTER (New!)
+           ========================================= */
+        .actions {
+            position: fixed; bottom: 30px; 
+            display: flex; gap: 12px; z-index: 100;
+        }
+        
+        .btn-social {
+            width: 48px; height: 48px;
+            border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(10, 10, 20, 0.6); color: white;
+            backdrop-filter: blur(10px); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-social:hover { background: white; color: black; transform: translateY(-3px) scale(1.1); box-shadow: 0 0 20px rgba(255,255,255,0.4); }
+
+        .btn-download {
+            height: 48px; padding: 0 24px;
+            border-radius: 24px; border: none;
+            background: linear-gradient(135deg, #f59e0b, #d97706); /* Legendary Gold */
+            color: black; font-weight: 700; font-family: 'Outfit', sans-serif; text-transform: uppercase; letter-spacing: 1px;
+            cursor: pointer; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+            transition: all 0.2s;
+        }
+        .btn-download:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(245, 158, 11, 0.6); }
+
+
+        /* 1. THE CONTAINER (Centering Logic) */
+.footer-info { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 4px; /* Space between logo and text */
+    
+    /* This centers the logo relative to the text below it */
+    align-items: center; 
+    
+    /* Optional: If you want the text centered too */
+    text-align: center; 
+}
+
+/* 2. THE LOGO (Size Boost) */
+.remrin-brand {
+    /* Increased from 20px -> 30px (+50% size boost) */
+    height: 30px; 
+    width: auto; 
+    max-width: 120px;
+    
+    object-fit: contain; 
+    opacity: 1; /* Made fully opaque for clarity */
+    margin-bottom: 2px; /* Tiny breathing room before the ID */
+}
+
+/* 3. THE ID TEXT (Optional Polish) */
+.set-id { 
+    font-family: 'JetBrains Mono', monospace; 
+    font-size: 0.55rem; /* Slightly smaller to let logo pop */
+    color: #666; 
+    letter-spacing: 0.5px;
+}
+
+    </style>
+</head>
+<body>
+
+    <div class="fog-wrapper">
+        <div class="fog-layer fog-pink"></div>
+        <div class="fog-layer fog-blue"></div>
+    </div>
+    <div class="stars-wrapper">
+        <div id="stars"></div>
+        <div id="stars2"></div>
+        <div id="stars3"></div>
+    </div>
+
+    <div class="trading-card" data-rarity="legendary" id="soul-card-element">
+        
+        <div class="holo-foil"></div>
+
+        <div class="card-inner">
+            
+            <div class="card-header">
+                <div class="soul-name">VOLT</div>
+                <div class="creativity-badge">
+                    <span class="hp-label">CREATIVITY</span>98
+                </div>
+            </div>
+
+            <div class="art-box">
+                <img 
+                    src="assets/heroes/volt_hero_standing.png" 
+                    class="art-img" 
+                    onerror="this.src='volt_hero.svg'"
+                    alt="Volt"
+                >
+                <div class="type-strip">Cybernetic Speedster • Electric / Void</div>
+            </div>
+
+            <div class="card-body">
+                <div class="traits-row">
+                    <span class="trait-pill">⚡ Fast</span>
+                    <span class="trait-pill">🎮 Gamer</span>
+                    <span class="trait-pill">🔋 High Energy</span>
+                </div>
+                <div class="bio-text">
+                    "Yo! Finally! Let's grind." A high-voltage companion who lives for speed and efficiency. Born from the surge of a server crash.
+                </div>
+                <div class="stats-container">
+                    <div class="stat-row">
+                        <span class="stat-label">Logic</span>
+                        <div class="stat-bar-bg"><div class="stat-bar-fill" style="--w: 80%"></div></div>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Empathy</span>
+                        <div class="stat-bar-bg"><div class="stat-bar-fill" style="--w: 40%"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <div class="footer-info">
+                    <img src="logo.svg" class="remrin-brand" alt="Remrin.ai">
+                    <div class="set-id">#882-ALPHA-V1 • 2025</div>
+                </div>
+                <div class="qr-chip">
+                    <svg viewBox="0 0 100 100" fill="none"><rect width="100" height="100" fill="white"/><rect x="10" y="10" width="20" height="20" fill="black"/><rect x="70" y="10" width="20" height="20" fill="black"/><rect x="10" y="70" width="20" height="20" fill="black"/><rect x="40" y="40" width="20" height="20" fill="black"/></svg>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="actions">
+        <button class="btn-social" onclick="shareX()" title="Share on X">
+            𝕏
+        </button>
+        <button class="btn-social" onclick="shareReddit()" title="Share on Reddit">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-12.128c-2.31 0-4.326.85-5.908 2.227.14-.64.38-1.24.7-1.786.326-.554.733-1.048 1.2-1.464.454-.403.966-.736 1.517-.98.54-.24 1.117-.365 1.706-.365s1.165.125 1.706.365c.55.244 1.063.577 1.517.98.467.416.874.91 1.2 1.464.32.546.56 1.146.7 1.786-1.58-1.377-3.6-2.227-5.908-2.227zm-4.39 3.168c-.61 0-1.1.49-1.1 1.1 0 .61.49 1.1 1.1 1.1.61 0 1.1-.49 1.1-1.1 0-.61-.49-1.1-1.1-1.1zm8.78 0c-.61 0-1.1.49-1.1 1.1 0 .61.49 1.1 1.1 1.1.61 0 1.1-.49 1.1-1.1 0-.61-.49-1.1-1.1-1.1zm-4.39 4.54c1.87 0 3.25-.62 3.56-1.06.13-.19.09-.45-.1-.58-.19-.13-.45-.09-.58.1-.19.27-1.3.73-2.88.73-1.58 0-2.69-.46-2.88-.73-.13-.19-.39-.23-.58-.1-.19.13-.23.39-.1.58.31.44 1.69 1.06 3.56 1.06z"/></svg>
+        </button>
+        <button class="btn-download" onclick="downloadCard()">
+            Download Card
+        </button>
+    </div>
+
+    <script>
+        // 3D Tilt Effect
+        const card = document.querySelector('.trading-card');
+        
+        document.addEventListener('mousemove', (e) => {
+            const x = (window.innerWidth / 2 - e.pageX) / 25;
+            const y = (window.innerHeight / 2 - e.pageY) / 25;
+            card.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+        });
+
+        // Social Actions
+        function shareX() {
+            const text = "I just created a Legendary Soul on Remrin! Meet Volt. ⚡ #RemrinAI";
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        function shareReddit() {
+            const url = window.location.href;
+            const title = "Check out my AI Soul from Remrin!";
+            window.open(`https://www.reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`, '_blank');
+        }
+
+        function downloadCard() {
+            alert("📸 Snapshot: This button will use html2canvas to save the 'trading-card' div as a PNG!");
+        }
+    </script>
+</body>
+</html>

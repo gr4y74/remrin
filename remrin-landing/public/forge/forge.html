@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remrin | Soul Forge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Crimson+Pro:wght@200..900&display=swap"
+        rel="stylesheet">
+
+    <!-- Forge CSS Modules -->
+    <link rel="stylesheet" href="shared/atmosphere.css">
+    <link rel="stylesheet" href="forge/vision.css">
+    <link rel="stylesheet" href="forge/card.css">
+    <link rel="stylesheet" href="forge/orb.css">
+
+    <script>
+        // Tailwind Config
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        accent: '#ff00cc', // Pink accent
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* BASE SETTINGS */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #030014;
+            color: #e2e8f0;
+            overflow: hidden;
+        }
+
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .font-narrative {
+            font-family: 'Crimson Pro', serif;
+        }
+
+        /* VIDEO LAYER */
+        #orb-video-bg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            z-index: -2;
+            opacity: 0.6;
+            filter: contrast(1.1) saturate(1.2);
+            transition: opacity 0.5s ease;
+        }
+
+        /* VIGNETTE */
+        .vignette {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, transparent 0%, #030014 90%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* CHAT BUBBLES - GLASS STYLE */
+        .bubble-ai {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-left: 2px solid #ff00cc;
+            /* Pink Accent */
+            padding: 1.25rem 1.5rem;
+            border-radius: 4px 20px 20px 20px;
+            color: #f1f5f9;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            animation: slideInLeft 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            max-width: 90%;
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.15rem;
+            line-height: 1.7;
+        }
+
+        .bubble-user {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 20px 4px 20px 20px;
+            padding: 1rem 1.5rem;
+            color: #fff;
+            align-self: flex-end;
+            max-width: 80%;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.05);
+            animation: slideInRight 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            font-weight: 500;
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.15rem;
+        }
+
+        /* INPUT AREA - FLOATING BAR */
+        .input-bar {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 999px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .input-bar:focus-within {
+            border-color: rgba(255, 0, 204, 0.5);
+            box-shadow: 0 0 30px rgba(255, 0, 204, 0.2);
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .forge-input {
+            background: transparent;
+            border: none;
+            color: white;
+            outline: none;
+            width: 100%;
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.1rem;
+        }
+
+        .forge-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+            font-style: italic;
+        }
+
+        /* GLASS ICON BUTTONS */
+        .glass-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .glass-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* CHAT MASK */
+        .chat-mask {
+            mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 100%);
+        }
+
+        /* Hide scrollbar */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* ANIMATIONS */
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 0, 204, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 0, 204, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 0, 204, 0);
+            }
+        }
+
+        .mic-active {
+            animation: pulse-ring 2s infinite;
+            color: #ff00cc !important;
+        }
+
+        /* PRELINE NAV OVERRIDES */
+        .nav-floating {
+            background: rgba(30, 30, 40, 0.3);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        /* LOGO TILT EFFECT */
+        .logo-tilt {
+            transition: transform 0.3s ease;
+        }
+
+        .logo-tilt:hover {
+            transform: rotate(-5deg) scale(1.05);
+        }
+
+        /* =========================================
+           DIRECTOR.JS COMPATIBILITY CLASSES
+           ========================================= */
+        /* Message container - maps to glass bubbles */
+        .message {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-width: 90%;
+        }
+
+        .rem-msg {
+            align-self: flex-start;
+        }
+
+        .user-msg {
+            align-self: flex-end;
+        }
+
+        /* Bubble styling - inherits from glass styles */
+        .rem-msg .bubble {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-left: 2px solid #ff00cc;
+            padding: 1.25rem 1.5rem;
+            border-radius: 4px 20px 20px 20px;
+            color: #f1f5f9;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            animation: slideInLeft 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.15rem;
+            line-height: 1.7;
+        }
+
+        .user-msg .bubble {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 20px 4px 20px 20px;
+            padding: 1rem 1.5rem;
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.05);
+            animation: slideInRight 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            font-weight: 500;
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.15rem;
+        }
+
+        /* Voice toggle styling */
+        #voice-toggle {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body class="h-screen w-screen flex flex-col items-center justify-center overflow-hidden">
+
+    <!-- VIDEO LAYER -->
+    <video autoplay muted loop playsinline id="orb-video-bg">
+        <source src="orbs.webm" type="video/webm">
+    </video>
+    <div class="vignette"></div>
+
+    <!-- STARS LAYER -->
+    <div class="stars-wrapper">
+        <div id="stars"></div>
+        <div id="stars2"></div>
+        <div id="stars3"></div>
+    </div>
+
+    <!-- ========== PRELINE FLOATING HEADER ========== -->
+    <header class="fixed top-4 inset-x-0 flex flex-wrap md:justify-start md:flex-nowrap z-50 w-full">
+        <nav
+            class="nav-floating relative max-w-4xl w-full flex flex-wrap md:flex-nowrap basis-full items-center justify-between py-2 ps-5 pe-2 md:py-0 mx-auto rounded-full border border-white/10">
+
+            <!-- Logo -->
+            <div class="flex items-center">
+                <a class="flex-none rounded-md inline-block focus:outline-hidden focus:opacity-80 logo-tilt"
+                    href="index.html" aria-label="Remrin">
+                    <img src="logo.svg" alt="Remrin" class="h-8 w-auto">
+                </a>
+            </div>
+
+            <!-- Button Group -->
+            <div class="md:order-3 flex items-center gap-x-3">
+                <div class="md:ps-3">
+                    <a class="group inline-flex items-center gap-x-2 py-2 px-4 bg-[#ff00cc] font-medium text-sm text-white rounded-full hover:bg-[#ff33d4] transition-colors focus:outline-hidden"
+                        href="#">
+                        Login
+                    </a>
+                </div>
+
+                <!-- Mobile Toggle -->
+                <div class="md:hidden">
+                    <button type="button"
+                        class="size-9 flex justify-center items-center text-sm font-semibold rounded-full bg-neutral-800 text-white"
+                        id="nav-toggle">
+                        <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" x2="21" y1="6" y2="6" />
+                            <line x1="3" x2="21" y1="12" y2="12" />
+                            <line x1="3" x2="21" y1="18" y2="18" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Nav Links -->
+            <div class="hidden md:block">
+                <div class="flex flex-row items-center gap-y-3 py-2 md:py-0 md:ps-7">
+                    <a class="px-3 py-4 text-sm text-white hover:text-[#ff00cc] transition-colors focus:outline-hidden"
+                        href="index.html">Home</a>
+                    <a class="px-3 py-4 text-sm text-white hover:text-[#ff00cc] transition-colors focus:outline-hidden"
+                        href="#">Market</a>
+                    <a class="px-3 py-4 text-sm text-white hover:text-[#ff00cc] transition-colors focus:outline-hidden"
+                        href="#">Community</a>
+
+                    <!-- About Dropdown -->
+                    <div class="relative group">
+                        <button
+                            class="px-3 py-4 flex items-center text-sm text-white hover:text-[#ff00cc] transition-colors focus:outline-hidden">
+                            About
+                            <svg class="ms-1 shrink-0 size-3.5 transition-transform group-hover:rotate-180"
+                                xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="m6 9 6 6 6-6" />
+                            </svg>
+                        </button>
+                        <!-- Dropdown Menu -->
+                        <div
+                            class="invisible group-hover:visible opacity-0 group-hover:opacity-100 absolute top-full left-0 mt-2 w-48 rounded-xl bg-neutral-800/90 backdrop-blur-md p-2 transition-all duration-200 border border-white/10">
+                            <a class="block px-4 py-2 text-sm text-white hover:text-[#ff00cc] hover:bg-white/5 rounded-lg transition-colors"
+                                href="#">Our Story</a>
+                            <a class="block px-4 py-2 text-sm text-white hover:text-[#ff00cc] hover:bg-white/5 rounded-lg transition-colors"
+                                href="#">Team</a>
+                            <a class="block px-4 py-2 text-sm text-white hover:text-[#ff00cc] hover:bg-white/5 rounded-lg transition-colors"
+                                href="#">Contact</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <!-- ========== END HEADER ========== -->
+
+    <!-- MAIN CHAT AREA -->
+    <main class="relative z-10 w-full max-w-2xl h-[80vh] flex flex-col justify-end pb-8 pt-20">
+
+        <!-- HEADER TEXT -->
+        <div class="text-center mb-6 px-4">
+            <h1 class="text-2xl md:text-3xl font-light text-white mb-3" style="font-family: 'Crimson Pro', serif;">The
+                Soul Forge Awaits.</h1>
+            <p class="text-sm md:text-base text-gray-400 leading-relaxed" style="font-family: 'Inter', sans-serif;">
+                Craft a companion who truly knows you—someone who listens, understands, and grows with you.<br>
+                <span class="text-gray-500">From imagination to existence, bring them to life.</span>
+            </p>
+        </div>
+
+        <!-- Chat History -->
+        <div id="chat-history"
+            class="chat-mask flex-1 overflow-y-auto p-4 sm:p-0 space-y-6 flex flex-col scrollbar-hide pb-6">
+            <div class="flex-1"></div> <!-- Spacer -->
+        </div>
+
+        <!-- INPUT BAR -->
+        <div class="w-full px-4 sm:px-0 mt-4">
+            <div class="input-bar flex items-center px-4 py-3 sm:py-4">
+
+                <!-- MIC BUTTON (Left) -->
+                <button id="mic-btn"
+                    class="text-gray-400 hover:text-white transition-colors mr-3 p-2 rounded-full hover:bg-white/10">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        <line x1="12" y1="19" x2="12" y2="23"></line>
+                        <line x1="8" y1="23" x2="16" y2="23"></line>
+                    </svg>
+                </button>
+
+                <!-- TEXT INPUT -->
+                <input type="text" id="user-input" placeholder="Initializing..." class="forge-input text-base"
+                    autocomplete="off">
+
+                <!-- SEND BUTTON (Right) -->
+                <button id="send-btn" class="ml-2 text-[#ff00cc] hover:text-white transition-colors p-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+
+                <!-- MUTE/UNMUTE BUTTON (Speaker Icon) -->
+                <button id="voice-toggle"
+                    class="ml-2 text-gray-400 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10"
+                    title="Toggle Voice">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- VISION OVERLAY -->
+    <div id="vision-overlay" class="vision-overlay hidden">
+        <div class="vision-card">
+            <button id="close-vision" class="close-btn">×</button>
+            <div class="vision-loader" id="vision-loader">
+                <div class="orb-pulse"></div>
+                <p>Manifesting Form...</p>
+            </div>
+            <img id="vision-image" src="" alt="Soul Manifestation" class="hidden">
+        </div>
+    </div>
+
+    <!-- CARD OVERLAY -->
+    <div id="card-overlay"
+        class="hidden fixed inset-0 bg-[#030014] z-[3000] flex flex-col items-center justify-center gap-8">
+        <div class="stars-wrapper">
+            <div id="stars"></div>
+            <div id="stars2"></div>
+            <div id="stars3"></div>
+        </div>
+
+        <div class="card-stage">
+            <div class="trading-card" data-rarity="legendary" id="final-soul-card">
+                <div class="holo-foil"></div>
+                <div class="card-inner">
+                    <div class="card-header">
+                        <div class="soul-name" id="card-name">SOUL_NAME</div>
+                        <div class="creativity-badge">
+                            <span class="hp-label">SYNC</span><span id="card-sync">99%</span>
+                        </div>
+                    </div>
+                    <div class="art-box">
+                        <img id="card-image" class="art-img" src="" crossorigin="anonymous" alt="Soul Avatar">
+                        <div class="type-strip" id="card-type">Archetype • Origin</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="traits-row" id="card-traits"></div>
+                        <div class="bio-text" id="card-bio">Bio description goes here...</div>
+                        <div class="stats-container">
+                            <div class="stat-row">
+                                <span class="stat-label">Power</span>
+                                <div class="stat-bar-bg">
+                                    <div class="stat-bar-fill" style="width: 85%"></div>
+                                </div>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Bond</span>
+                                <div class="stat-bar-bg">
+                                    <div class="stat-bar-fill" style="width: 100%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="footer-info">
+                            <img src="logo.svg" class="remrin-brand" alt="Remrin.ai">
+                            <div class="set-id">#GENESIS-V1 • 2025</div>
+                        </div>
+                        <div class="qr-chip" id="qrcode-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions flex gap-4">
+            <button class="btn-download" id="download-card-btn">SAVE CARD 📥</button>
+            <button class="btn-confirm" id="confirm-card-btn">CONFIRM SOUL ✅</button>
+        </div>
+    </div>
+
+    <!-- LOCAL SCRIPTS -->
+    <script>
+        // Video Kickstart (Mute toggle handled by director.js)
+        window.addEventListener('load', function () {
+            const video = document.getElementById('orb-video-bg');
+            if (video) {
+                video.muted = true;
+                video.play().catch(e => console.log("Video autoplay failed:", e));
+            }
+        });
+    </script>
+
+    <!-- EXTERNAL LIBRARIES -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <!-- CORE APP SCRIPTS -->
+    <script src="config.js"></script>
+    <script src="ritual.js"></script>
+    <script src="director.js"></script>
+</body>
+
+</html>
