@@ -642,7 +642,50 @@ function showCardReveal() {
             if (insertError) throw new Error("DB Insert Failed: " + insertError.message);
             console.log("✅ DB RECORD INSERTED:", insertedSoul);
 
-            // 3. REDIRECT (Login page handles both login and signup)
+            // 3. INVOKE NBB UPSCALER (compile-persona)
+            const newPersonaId = insertedSoul[0]?.id;
+            if (newPersonaId) {
+                newConfirmBtn.innerText = "FORGING NEURAL PATHWAYS...";
+                console.log("🧬 INVOKING UPSCALER FOR:", newPersonaId);
+
+                try {
+                    // Call the compile-persona edge function
+                    const compileResponse = await fetch(SUPABASE_URL + '/functions/v1/compile-persona', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                        },
+                        body: JSON.stringify({
+                            persona_id: newPersonaId,
+                            name: soulBlueprint.name,
+                            identity: soulBlueprint.vision,
+                            tone: soulBlueprint.temperament,
+                            user_input_raw: JSON.stringify({
+                                purpose: soulBlueprint.purpose,
+                                relation: soulBlueprint.relation,
+                                psychology: soulBlueprint.user_psychology,
+                                appearance: soulBlueprint.appearance
+                            })
+                        })
+                    });
+
+                    const compileResult = await compileResponse.json();
+
+                    if (compileResult.error) {
+                        console.warn("⚠️ UPSCALER WARNING:", compileResult.error);
+                        // Don't block - continue to redirect even if upscaler fails
+                    } else {
+                        console.log("✅ NEURAL BLUEPRINT COMPILED:", compileResult.blueprint ? "Success" : "No blueprint");
+                    }
+                } catch (upscaleError) {
+                    console.warn("⚠️ UPSCALER FAILED (non-blocking):", upscaleError);
+                    // Continue anyway - don't block user flow
+                }
+            }
+
+            // 4. REDIRECT (Login page handles both login and signup)
+            newConfirmBtn.innerText = "LAUNCHING...";
             const redirectUrl = `https://remrin-chat.vercel.app/login?email=${encodeURIComponent(soulBlueprint.email)}`;
             console.log("🚀 REDIRECTING:", redirectUrl);
             window.location.href = redirectUrl;
