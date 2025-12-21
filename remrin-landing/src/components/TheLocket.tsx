@@ -7,6 +7,7 @@ import { Container } from "@/components/Container";
 const lockedFacts = [
     "Your dog's name is Max",
     "Sister's birthday: March 15",
+    "Kitten's name is Carrot",
     "Morning person, not night owl",
     "Favorite color: Deep purple",
     "Allergic to shellfish",
@@ -84,9 +85,9 @@ export const TheLocket = () => {
                     >
                         {/* 3-column layout: Left facts | Heart | Right facts */}
                         <div className="flex items-center justify-center gap-6">
-                            {/* Left column - first 2 facts */}
-                            <div className="flex flex-col gap-3">
-                                {lockedFacts.slice(0, 2).map((fact, index) => (
+                            {/* Left column - first 3 facts */}
+                            <div className="flex flex-col gap-3 items-end">
+                                {lockedFacts.slice(0, 3).map((fact, index) => (
                                     <motion.div
                                         key={index}
                                         className="px-3 py-2 rounded-full bg-black/80 border border-white/20 text-sm text-gray-300 whitespace-nowrap backdrop-blur-sm cursor-pointer"
@@ -129,10 +130,10 @@ export const TheLocket = () => {
                             </div>
 
                             {/* Right column - last 3 facts */}
-                            <div className="flex flex-col gap-3">
-                                {lockedFacts.slice(2).map((fact, index) => (
+                            <div className="flex flex-col gap-3 items-start">
+                                {lockedFacts.slice(3).map((fact, index) => (
                                     <motion.div
-                                        key={index + 2}
+                                        key={index + 3}
                                         className="px-3 py-2 rounded-full bg-black/80 border border-white/20 text-sm text-gray-300 whitespace-nowrap backdrop-blur-sm cursor-pointer"
                                         initial={{ opacity: 0, x: 20 }}
                                         whileInView={{ opacity: 1, x: 0 }}
