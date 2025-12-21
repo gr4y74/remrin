@@ -10,6 +10,7 @@ import { BehaviorTab } from "./components/behavior-tab"
 import { VisualsTab } from "./components/visuals-tab"
 import { VoiceTab } from "./components/voice-tab"
 import { StoreTab } from "./components/store-tab"
+import { MODERATION_STATUS_LABELS } from "./types"
 import {
     IconUser,
     IconBrain,
@@ -18,7 +19,10 @@ import {
     IconShoppingBag,
     IconDeviceFloppy,
     IconRocket,
-    IconArrowLeft
+    IconArrowLeft,
+    IconSend,
+    IconArrowBack,
+    IconHistory
 } from "@tabler/icons-react"
 import Link from "next/link"
 
@@ -28,15 +32,19 @@ export default function StudioPage() {
 
     const {
         persona,
+        moderationHistory,
         loading,
         saving,
         error,
         loadPersona,
+        loadCategories,
         updateField,
         updateMetadata,
         uploadFile,
         autoCompile,
         saveDraft,
+        submitForReview,
+        withdrawFromReview,
         publish
     } = useStudioPersona()
 
@@ -45,13 +53,27 @@ export default function StudioPage() {
         if (personaId) {
             loadPersona(personaId)
         }
-    }, [personaId, loadPersona])
+        loadCategories()
+    }, [personaId, loadPersona, loadCategories])
 
     const handleSaveDraft = async () => {
         const success = await saveDraft()
         if (success) {
-            // Could show toast here
             console.log('Draft saved!')
+        }
+    }
+
+    const handleSubmitForReview = async () => {
+        const success = await submitForReview()
+        if (success) {
+            console.log('Submitted for review!')
+        }
+    }
+
+    const handleWithdraw = async () => {
+        const success = await withdrawFromReview()
+        if (success) {
+            console.log('Withdrawn from review')
         }
     }
 
@@ -61,6 +83,12 @@ export default function StudioPage() {
             console.log('Published!')
         }
     }
+
+    const statusInfo = MODERATION_STATUS_LABELS[persona.status]
+    const canEdit = persona.status === 'draft' || persona.status === 'rejected'
+    const canSubmit = persona.status === 'draft' && persona.name && persona.system_prompt
+    const canWithdraw = persona.status === 'pending_review'
+    const isApproved = persona.status === 'approved'
 
     return (
         <div className="flex h-screen flex-col bg-zinc-950 text-white">
@@ -83,6 +111,14 @@ export default function StudioPage() {
                             </span>
                         )}
                     </h1>
+
+                    {/* Moderation Status Badge */}
+                    {persona.id && (
+                        <span className={`ml-2 inline-flex items-center gap-1 rounded-full bg-zinc-800 px-3 py-1 text-sm ${statusInfo.color}`}>
+                            <span>{statusInfo.icon}</span>
+                            <span>{statusInfo.label}</span>
+                        </span>
+                    )}
                 </div>
 
                 <div className="flex items-center gap-3">
@@ -90,26 +126,93 @@ export default function StudioPage() {
                         <span className="text-sm text-red-400">{error}</span>
                     )}
 
-                    <Button
-                        variant="outline"
-                        onClick={handleSaveDraft}
-                        disabled={saving || !persona.name}
-                        className="border-zinc-700"
-                    >
-                        <IconDeviceFloppy size={18} className="mr-2" />
-                        {saving ? 'Saving...' : 'Save Draft'}
-                    </Button>
+                    {/* Save Draft - always available for editable states */}
+                    {canEdit && (
+                        <Button
+                            variant="outline"
+                            onClick={handleSaveDraft}
+                            disabled={saving || !persona.name}
+                            className="border-zinc-700"
+                        >
+                            <IconDeviceFloppy size={18} className="mr-2" />
+                            {saving ? 'Saving...' : 'Save Draft'}
+                        </Button>
+                    )}
 
-                    <Button
-                        onClick={handlePublish}
-                        disabled={saving || !persona.name || !persona.system_prompt}
-                        className="bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400"
-                    >
-                        <IconRocket size={18} className="mr-2" />
-                        Publish to Store
-                    </Button>
+                    {/* Submit for Review - only for drafts */}
+                    {canSubmit && (
+                        <Button
+                            onClick={handleSubmitForReview}
+                            disabled={saving}
+                            className="bg-gradient-to-r from-amber-600 to-orange-500 hover:from-amber-500 hover:to-orange-400"
+                        >
+                            <IconSend size={18} className="mr-2" />
+                            {saving ? 'Submitting...' : 'Submit for Review'}
+                        </Button>
+                    )}
+
+                    {/* Withdraw from Review - only for pending */}
+                    {canWithdraw && (
+                        <Button
+                            variant="outline"
+                            onClick={handleWithdraw}
+                            disabled={saving}
+                            className="border-yellow-600 text-yellow-400 hover:bg-yellow-600/20"
+                        >
+                            <IconArrowBack size={18} className="mr-2" />
+                            Withdraw
+                        </Button>
+                    )}
+
+                    {/* Direct Publish - only for admins or approved personas */}
+                    {(isApproved || persona.status === 'draft') && (
+                        <Button
+                            onClick={handlePublish}
+                            disabled={saving || !persona.name || !persona.system_prompt}
+                            className="bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400"
+                        >
+                            <IconRocket size={18} className="mr-2" />
+                            {persona.visibility === 'PUBLIC' ? 'Published ✓' : 'Publish to Store'}
+                        </Button>
+                    )}
                 </div>
             </header>
+
+            {/* Rejection Reason Banner */}
+            {persona.status === 'rejected' && persona.rejection_reason && (
+                <div className="border-b border-red-900/50 bg-red-950/30 px-6 py-3">
+                    <div className="flex items-start gap-3">
+                        <span className="text-red-400">❌</span>
+                        <div>
+                            <p className="font-medium text-red-400">Your submission was rejected</p>
+                            <p className="text-sm text-red-300/80">{persona.rejection_reason}</p>
+                            <p className="text-xs text-zinc-500 mt-1">
+                                Please make the necessary changes and submit again.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Pending Review Banner */}
+            {persona.status === 'pending_review' && (
+                <div className="border-b border-yellow-900/50 bg-yellow-950/30 px-6 py-3">
+                    <div className="flex items-start gap-3">
+                        <span className="text-yellow-400">⏳</span>
+                        <div>
+                            <p className="font-medium text-yellow-400">Awaiting Review</p>
+                            <p className="text-sm text-yellow-300/80">
+                                Your Soul is being reviewed by our moderation team. This usually takes 24-48 hours.
+                            </p>
+                            {persona.submitted_at && (
+                                <p className="text-xs text-zinc-500 mt-1">
+                                    Submitted: {new Date(persona.submitted_at).toLocaleString()}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Loading State */}
             {loading && (
@@ -196,19 +299,30 @@ export default function StudioPage() {
                             <div className="flex items-center gap-4">
                                 <span className="text-zinc-500">
                                     Status:{' '}
-                                    <span className={persona.visibility === 'PUBLIC' ? 'text-green-400' : 'text-yellow-400'}>
-                                        {persona.visibility === 'PUBLIC' ? 'Published' : 'Draft'}
+                                    <span className={statusInfo.color}>
+                                        {statusInfo.icon} {statusInfo.label}
                                     </span>
                                 </span>
+                                {persona.visibility === 'PUBLIC' && (
+                                    <span className="text-green-400">• Live</span>
+                                )}
                                 {persona.id && (
                                     <span className="text-zinc-600">
                                         ID: {persona.id}
                                     </span>
                                 )}
                             </div>
-                            <span className="text-zinc-600">
-                                {persona.created_at && `Created: ${new Date(persona.created_at).toLocaleDateString()}`}
-                            </span>
+                            <div className="flex items-center gap-4">
+                                {moderationHistory.length > 0 && (
+                                    <button className="flex items-center gap-1 text-zinc-500 hover:text-zinc-300">
+                                        <IconHistory size={14} />
+                                        <span>{moderationHistory.length} moderation events</span>
+                                    </button>
+                                )}
+                                <span className="text-zinc-600">
+                                    {persona.created_at && `Created: ${new Date(persona.created_at).toLocaleDateString()}`}
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </main>
@@ -216,3 +330,4 @@ export default function StudioPage() {
         </div>
     )
 }
+

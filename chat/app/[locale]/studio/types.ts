@@ -1,5 +1,7 @@
 // Soul Studio Types
 
+export type ModerationStatus = 'draft' | 'pending_review' | 'approved' | 'rejected' | 'suspended'
+
 export interface SwagItem {
     name: string
     url: string
@@ -36,6 +38,37 @@ export interface StudioPersona {
     metadata: PersonaMetadata
     created_at?: string
     updated_at?: string
+    // Moderation fields
+    status: ModerationStatus
+    category?: string
+    tags?: string[]
+    intro_message?: string
+    is_featured?: boolean
+    submitted_at?: string
+    reviewed_at?: string
+    reviewed_by?: string
+    rejection_reason?: string
+}
+
+export interface Category {
+    id: string
+    slug: string
+    name: string
+    description?: string
+    icon?: string
+    color?: string
+    sort_order: number
+    is_active: boolean
+}
+
+export interface ModerationAction {
+    id: string
+    persona_id: string
+    moderator_id: string
+    action: 'submit' | 'approve' | 'reject' | 'suspend' | 'feature' | 'unfeature'
+    reason?: string
+    metadata?: Record<string, unknown>
+    created_at: string
 }
 
 export const DEFAULT_PERSONA: StudioPersona = {
@@ -49,6 +82,9 @@ export const DEFAULT_PERSONA: StudioPersona = {
     base_model: 'deepseek-chat',
     safety_level: 'ADULT',
     visibility: 'PRIVATE',
+    status: 'draft',
+    category: 'general',
+    tags: [],
     metadata: {}
 }
 
@@ -64,3 +100,22 @@ export const SAFETY_LEVELS = [
     { value: 'TEEN', label: '⚡ Teen (PG-13)' },
     { value: 'ADULT', label: '🔞 Adult (Unrestricted)' }
 ]
+
+export const MODERATION_STATUS_LABELS: Record<ModerationStatus, { label: string; color: string; icon: string }> = {
+    draft: { label: 'Draft', color: 'text-zinc-400', icon: '📝' },
+    pending_review: { label: 'Pending Review', color: 'text-yellow-400', icon: '⏳' },
+    approved: { label: 'Approved', color: 'text-green-400', icon: '✅' },
+    rejected: { label: 'Rejected', color: 'text-red-400', icon: '❌' },
+    suspended: { label: 'Suspended', color: 'text-orange-400', icon: '🚫' }
+}
+
+export const DEFAULT_CATEGORIES: Category[] = [
+    { id: '1', slug: 'general', name: 'General', icon: '🌟', color: '#6366f1', sort_order: 0, is_active: true },
+    { id: '2', slug: 'romance', name: 'Romance', icon: '💕', color: '#ec4899', sort_order: 1, is_active: true },
+    { id: '3', slug: 'adventure', name: 'Adventure', icon: '⚔️', color: '#f59e0b', sort_order: 2, is_active: true },
+    { id: '4', slug: 'helper', name: 'Helper', icon: '🧠', color: '#10b981', sort_order: 3, is_active: true },
+    { id: '5', slug: 'anime', name: 'Anime & Game', icon: '🎮', color: '#8b5cf6', sort_order: 4, is_active: true },
+    { id: '6', slug: 'original', name: 'Original', icon: '✨', color: '#06b6d4', sort_order: 5, is_active: true },
+    { id: '7', slug: 'education', name: 'Education', icon: '📚', color: '#3b82f6', sort_order: 6, is_active: true }
+]
+

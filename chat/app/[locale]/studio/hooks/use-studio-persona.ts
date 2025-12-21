@@ -2,17 +2,51 @@
 
 import { useState, useCallback } from "react"
 import { createClient } from "@/lib/supabase/client"
-import { StudioPersona, DEFAULT_PERSONA, PersonaMetadata } from "../types"
+import { StudioPersona, DEFAULT_PERSONA, PersonaMetadata, Category, ModerationAction, ModerationStatus } from "../types"
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || ""
 
 export function useStudioPersona(initialPersonaId?: string) {
     const [persona, setPersona] = useState<StudioPersona>(DEFAULT_PERSONA)
+    const [categories, setCategories] = useState<Category[]>([])
+    const [moderationHistory, setModerationHistory] = useState<ModerationAction[]>([])
     const [loading, setLoading] = useState(false)
     const [saving, setSaving] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
     const supabase = createClient()
+
+    // Load categories from database
+    const loadCategories = useCallback(async () => {
+        try {
+            const { data, error: fetchError } = await supabase
+                .from('categories')
+                .select('*')
+                .eq('is_active', true)
+                .order('sort_order', { ascending: true })
+
+            if (fetchError) throw fetchError
+            if (data) setCategories(data)
+        } catch (e) {
+            console.error('Failed to load categories:', e)
+        }
+    }, [supabase])
+
+    // Load moderation history for a persona
+    const loadModerationHistory = useCallback(async (personaId: string) => {
+        try {
+            const { data, error: fetchError } = await supabase
+                .from('content_moderation')
+                .select('*')
+                .eq('persona_id', personaId)
+                .order('created_at', { ascending: false })
+
+            if (fetchError) throw fetchError
+            if (data) setModerationHistory(data)
+        } catch (e) {
+            console.error('Failed to load moderation history:', e)
+        }
+    }, [supabase])
 
     // Load existing persona
     const loadPersona = useCallback(async (personaId: string) => {
@@ -32,15 +66,20 @@ export function useStudioPersona(initialPersonaId?: string) {
                 setPersona({
                     ...DEFAULT_PERSONA,
                     ...data,
+                    status: data.status || 'draft',
+                    category: data.category || 'general',
+                    tags: data.tags || [],
                     metadata: data.metadata || {}
                 })
+                // Also load moderation history
+                await loadModerationHistory(personaId)
             }
         } catch (e: unknown) {
             setError(e instanceof Error ? e.message : 'Failed to load persona')
         } finally {
             setLoading(false)
         }
-    }, [supabase])
+    }, [supabase, loadModerationHistory])
 
     // Update persona field
     const updateField = useCallback(<K extends keyof StudioPersona>(
@@ -138,7 +177,12 @@ export function useStudioPersona(initialPersonaId?: string) {
                 voice_id: persona.voice_id,
                 safety_level: persona.safety_level,
                 visibility: 'PRIVATE',
+                status: persona.status || 'draft',
+                category: persona.category || 'general',
+                tags: persona.tags || [],
+                intro_message: persona.intro_message,
                 owner_id: userId,
+                creator_id: userId,
                 config: {
                     tagline: persona.tagline,
                     description: persona.description,
@@ -177,7 +221,52 @@ export function useStudioPersona(initialPersonaId?: string) {
         }
     }, [persona, supabase])
 
-    // Publish persona
+    // Submit for review (changes status to pending_review)
+    const submitForReview = useCallback(async () => {
+        setSaving(true)
+        setError(null)
+
+        try {
+            // First save as draft if needed
+            if (!persona.id) {
+                const saved = await saveDraft()
+                if (!saved) throw new Error('Failed to save before submitting')
+            }
+
+            const { data: userData } = await supabase.auth.getUser()
+            const userId = userData.user?.id
+
+            // Update status to pending_review
+            const { error: submitError } = await supabase
+                .from('personas')
+                .update({
+                    status: 'pending_review',
+                    submitted_at: new Date().toISOString(),
+                    visibility: 'PRIVATE' // Keep private until approved
+                })
+                .eq('id', persona.id)
+
+            if (submitError) throw submitError
+
+            // Log the moderation action
+            await supabase.from('content_moderation').insert([{
+                persona_id: persona.id,
+                moderator_id: userId,
+                action: 'submit',
+                reason: 'Submitted for review by creator'
+            }])
+
+            setPersona(prev => ({ ...prev, status: 'pending_review' }))
+            return true
+        } catch (e: unknown) {
+            setError(e instanceof Error ? e.message : 'Failed to submit for review')
+            return false
+        } finally {
+            setSaving(false)
+        }
+    }, [persona.id, saveDraft, supabase])
+
+    // Publish persona (for approved personas or direct publish for admins)
     const publish = useCallback(async () => {
         setSaving(true)
         setError(null)
@@ -192,12 +281,15 @@ export function useStudioPersona(initialPersonaId?: string) {
             // Then update visibility
             const { error: publishError } = await supabase
                 .from('personas')
-                .update({ visibility: 'PUBLIC' })
+                .update({
+                    visibility: 'PUBLIC',
+                    status: 'approved'
+                })
                 .eq('id', persona.id)
 
             if (publishError) throw publishError
 
-            setPersona(prev => ({ ...prev, visibility: 'PUBLIC' }))
+            setPersona(prev => ({ ...prev, visibility: 'PUBLIC', status: 'approved' }))
             return true
         } catch (e: unknown) {
             setError(e instanceof Error ? e.message : 'Failed to publish')
@@ -207,18 +299,52 @@ export function useStudioPersona(initialPersonaId?: string) {
         }
     }, [persona.id, saveDraft, supabase])
 
+    // Withdraw from review (back to draft)
+    const withdrawFromReview = useCallback(async () => {
+        if (!persona.id || persona.status !== 'pending_review') return false
+
+        setSaving(true)
+        setError(null)
+
+        try {
+            const { error: withdrawError } = await supabase
+                .from('personas')
+                .update({
+                    status: 'draft',
+                    submitted_at: null
+                })
+                .eq('id', persona.id)
+
+            if (withdrawError) throw withdrawError
+
+            setPersona(prev => ({ ...prev, status: 'draft' }))
+            return true
+        } catch (e: unknown) {
+            setError(e instanceof Error ? e.message : 'Failed to withdraw')
+            return false
+        } finally {
+            setSaving(false)
+        }
+    }, [persona.id, persona.status, supabase])
+
     return {
         persona,
         setPersona,
+        categories,
+        moderationHistory,
         loading,
         saving,
         error,
         loadPersona,
+        loadCategories,
         updateField,
         updateMetadata,
         uploadFile,
         autoCompile,
         saveDraft,
+        submitForReview,
+        withdrawFromReview,
         publish
     }
 }
+
