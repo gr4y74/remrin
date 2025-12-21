@@ -201,12 +201,17 @@ export const PersonaCarousel = () => {
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={currentIndex}
-                                className="relative rounded-2xl overflow-hidden shadow-2xl shadow-primary-500/20 border border-white/10"
+                                className="relative rounded-2xl overflow-hidden shadow-2xl shadow-primary-500/20 border border-white/10 cursor-pointer z-10"
                                 style={{ width: 200, height: 280 }}
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.9 }}
-                                transition={{ duration: 0.3 }}
+                                whileHover={{
+                                    scale: 2,
+                                    zIndex: 50,
+                                    boxShadow: "0 25px 80px rgba(168, 85, 247, 0.5)"
+                                }}
+                                transition={{ type: "spring", stiffness: 200, damping: 20 }}
                             >
                                 <Image
                                     src={currentPersona.image}
@@ -284,8 +289,8 @@ export const PersonaCarousel = () => {
                                 key={idx}
                                 onClick={() => setCurrentIndex(idx)}
                                 className={`w-2 h-2 rounded-full transition-all ${idx === currentIndex
-                                        ? 'bg-primary-400 w-6'
-                                        : 'bg-gray-600 hover:bg-gray-500'
+                                    ? 'bg-primary-400 w-6'
+                                    : 'bg-gray-600 hover:bg-gray-500'
                                     }`}
                                 aria-label={`Go to persona ${idx + 1}`}
                             />
