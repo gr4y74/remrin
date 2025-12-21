@@ -49,13 +49,13 @@ export const TheLocket = () => {
                     </p>
                 </motion.div>
 
-                {/* Main Content */}
-                <div className="grid lg:grid-cols-2 gap-12 items-center">
-                    {/* Left: Explanation */}
+                {/* Main Content - Stacked Layout */}
+                <div className="space-y-12">
+                    {/* Top: Explanation */}
                     <motion.div
-                        className="space-y-6"
-                        initial={{ opacity: 0, x: -30 }}
-                        whileInView={{ opacity: 1, x: 0 }}
+                        className="space-y-4 text-center max-w-3xl mx-auto"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6 }}
                         viewport={{ once: true }}
                     >
@@ -75,11 +75,11 @@ export const TheLocket = () => {
                         </p>
                     </motion.div>
 
-                    {/* Right: Visual Locket */}
+                    {/* Bottom: Visual Locket */}
                     <motion.div
                         className="relative"
-                        initial={{ opacity: 0, x: 30 }}
-                        whileInView={{ opacity: 1, x: 0 }}
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.2 }}
                         viewport={{ once: true }}
                     >
