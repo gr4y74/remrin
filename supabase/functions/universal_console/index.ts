@@ -244,6 +244,80 @@ async function retrieveMemories(
 }
 
 // ─────────────────────────────────────────────────────────────
+// NEURAL BEHAVIORAL BLUEPRINT (NBB) PARSER
+// ─────────────────────────────────────────────────────────────
+interface BehavioralBlueprint {
+  lexical_rules?: {
+    sentence_structure?: string;
+    vocabulary_tier?: string;
+    punctuation_style?: string;
+    [key: string]: string | undefined;
+  };
+  negative_constraints?: string[];
+  anchors?: Array<{
+    trigger: string;
+    response: string;
+  }>;
+}
+
+function buildBehavioralContext(blueprint: BehavioralBlueprint | null | undefined): string {
+  if (!blueprint) return "";
+
+  const sections: string[] = [];
+
+  // Parse negative constraints (NEVER rules)
+  if (blueprint.negative_constraints && blueprint.negative_constraints.length > 0) {
+    const neverRules = blueprint.negative_constraints
+      .map(constraint => `- NEVER: ${constraint}`)
+      .join("\n");
+    sections.push(neverRules);
+  }
+
+  // Parse lexical rules
+  if (blueprint.lexical_rules) {
+    const rules = blueprint.lexical_rules;
+    const lexicalLines: string[] = [];
+
+    if (rules.sentence_structure) {
+      lexicalLines.push(`Sentence Structure: ${rules.sentence_structure}`);
+    }
+    if (rules.vocabulary_tier) {
+      lexicalLines.push(`Vocabulary Tier: ${rules.vocabulary_tier}`);
+    }
+    if (rules.punctuation_style) {
+      lexicalLines.push(`Punctuation Style: ${rules.punctuation_style}`);
+    }
+
+    // Handle any additional lexical rules
+    for (const [key, value] of Object.entries(rules)) {
+      if (!['sentence_structure', 'vocabulary_tier', 'punctuation_style'].includes(key) && value) {
+        const formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+        lexicalLines.push(`${formattedKey}: ${value}`);
+      }
+    }
+
+    if (lexicalLines.length > 0) {
+      sections.push(lexicalLines.join("\n"));
+    }
+  }
+
+  // Parse anchors (Q&A examples)
+  if (blueprint.anchors && blueprint.anchors.length > 0) {
+    const anchorText = blueprint.anchors
+      .map(anchor => `Q: "${anchor.trigger}"\nA: "${anchor.response}"`)
+      .join("\n\n");
+    sections.push(`[BEHAVIORAL ANCHORS]:\n${anchorText}`);
+  }
+
+  if (sections.length === 0) return "";
+
+  return `
+[BEHAVIORAL OVERRIDE - MANDATORY]
+${sections.join("\n\n")}
+`.trim();
+}
+
+// ─────────────────────────────────────────────────────────────
 // MULTI-PERSONA SYSTEM PROMPT BUILDER
 // ─────────────────────────────────────────────────────────────
 async function buildSystemPrompt(
@@ -268,8 +342,18 @@ async function buildSystemPrompt(
 
   if (isMultiPersona) {
     // Multi-persona collaboration mode
+    // Build behavioral context for all personas (combined)
+    const allBehavioralContexts = personas
+      .filter(p => p.behavioral_blueprint)
+      .map(p => `[${p.name.toUpperCase()}]\n${buildBehavioralContext(p.behavioral_blueprint)}`)
+      .join("\n\n");
+
+    const behavioralHeader = allBehavioralContexts
+      ? `[BEHAVIORAL OVERRIDE - MANDATORY - ALL PERSONAS]\n${allBehavioralContexts}\n\n`
+      : "";
+
     return `
-[MULTI-PERSONA COLLABORATION MODE]
+${behavioralHeader}[MULTI-PERSONA COLLABORATION MODE]
 You are a GROUP of AI personas working together to help the user:
 
 ${personas.map(p => `
@@ -303,6 +387,9 @@ ${memoryBlock || "No relevant memories."}
     const persona = personas[0];
     const locketText = allLockets[0].lockets.map(l => `- ${l.content}`).join("\n");
 
+    // Build behavioral override section (placed FIRST)
+    const behavioralContext = buildBehavioralContext(persona.behavioral_blueprint);
+
     let safetyInstruction = "";
     if (persona.safety_level === 'CHILD') {
       safetyInstruction = `
@@ -313,7 +400,10 @@ ${memoryBlock || "No relevant memories."}
       `.trim();
     }
 
+    // CRITICAL: Behavioral context is placed BEFORE identity/system_prompt
     return `
+${behavioralContext}
+
 [IDENTITY]
 ${persona.system_prompt}
 
@@ -505,7 +595,7 @@ serve(async (req) => {
           // ─────────────────────────────────────────────────────
           // STEP 7: SAVE INTERACTION & HANDLE SPECIAL COMMANDS
           // ─────────────────────────────────────────────────────
-          
+
           // Check for [SAVE_FACT: type | content] commands
           const saveFactRegex = /\[SAVE_FACT:\s*(\w+)\s*\|\s*(.+?)\]/g;
           let match;
