@@ -82,49 +82,19 @@ export const TheLocket = () => {
                         transition={{ duration: 0.6, delay: 0.2 }}
                         viewport={{ once: true }}
                     >
-                        {/* Central Locket - larger container to fit floating pills */}
-                        <div className="relative w-80 h-80 mx-auto">
-                            {/* Glow effect */}
-                            <div className="absolute inset-8 bg-primary-500/20 blur-3xl rounded-full" />
-
-                            {/* Locket circle - centered in container */}
-                            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full bg-gradient-to-br from-primary-500/30 to-purple-600/30 border-2 border-primary-400/50 flex items-center justify-center">
-                                <svg
-                                    className="w-20 h-20 text-primary-300"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    strokeWidth={1}
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
-                                    />
-                                </svg>
-                            </div>
-
-                            {/* Floating fact pills - positioned around outer edge */}
-                            {lockedFacts.map((fact, index) => {
-                                const angle = (index * 72 - 90) * (Math.PI / 180);
-                                const radius = 140;
-                                const x = Math.cos(angle) * radius;
-                                const y = Math.sin(angle) * radius;
-
-                                return (
+                        {/* 3-column layout: Left facts | Heart | Right facts */}
+                        <div className="flex items-center justify-center gap-6">
+                            {/* Left column - first 2 facts */}
+                            <div className="flex flex-col gap-3">
+                                {lockedFacts.slice(0, 2).map((fact, index) => (
                                     <motion.div
                                         key={index}
-                                        className="absolute px-3 py-1.5 rounded-full bg-black/80 border border-white/20 text-xs text-gray-300 whitespace-nowrap backdrop-blur-sm z-10 cursor-pointer"
-                                        style={{
-                                            left: `calc(50% + ${x}px)`,
-                                            top: `calc(50% + ${y}px)`,
-                                            transform: "translate(-50%, -50%)",
-                                        }}
-                                        initial={{ opacity: 0, scale: 0.8 }}
-                                        whileInView={{ opacity: 1, scale: 1 }}
+                                        className="px-3 py-2 rounded-full bg-black/80 border border-white/20 text-sm text-gray-300 whitespace-nowrap backdrop-blur-sm cursor-pointer"
+                                        initial={{ opacity: 0, x: -20 }}
+                                        whileInView={{ opacity: 1, x: 0 }}
                                         whileHover={{
-                                            scale: 1.08,
-                                            y: -2,
+                                            scale: 1.05,
+                                            x: -4,
                                             boxShadow: "0 0 20px rgba(168, 85, 247, 0.4)"
                                         }}
                                         transition={{ duration: 0.4, delay: 0.5 + index * 0.1 }}
@@ -132,8 +102,52 @@ export const TheLocket = () => {
                                     >
                                         🔒 {fact}
                                     </motion.div>
-                                );
-                            })}
+                                ))}
+                            </div>
+
+                            {/* Center - Locket Heart */}
+                            <div className="relative">
+                                {/* Glow effect */}
+                                <div className="absolute inset-0 bg-primary-500/30 blur-3xl rounded-full" />
+
+                                {/* Locket circle */}
+                                <div className="relative w-40 h-40 lg:w-48 lg:h-48 rounded-full bg-gradient-to-br from-primary-500/30 to-purple-600/30 border-2 border-primary-400/50 flex items-center justify-center">
+                                    <svg
+                                        className="w-16 h-16 lg:w-20 lg:h-20 text-primary-300"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        strokeWidth={1}
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
+                                        />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            {/* Right column - last 3 facts */}
+                            <div className="flex flex-col gap-3">
+                                {lockedFacts.slice(2).map((fact, index) => (
+                                    <motion.div
+                                        key={index + 2}
+                                        className="px-3 py-2 rounded-full bg-black/80 border border-white/20 text-sm text-gray-300 whitespace-nowrap backdrop-blur-sm cursor-pointer"
+                                        initial={{ opacity: 0, x: 20 }}
+                                        whileInView={{ opacity: 1, x: 0 }}
+                                        whileHover={{
+                                            scale: 1.05,
+                                            x: 4,
+                                            boxShadow: "0 0 20px rgba(168, 85, 247, 0.4)"
+                                        }}
+                                        transition={{ duration: 0.4, delay: 0.6 + index * 0.1 }}
+                                        viewport={{ once: true }}
+                                    >
+                                        🔒 {fact}
+                                    </motion.div>
+                                ))}
+                            </div>
                         </div>
                     </motion.div>
                 </div>
