@@ -55,12 +55,16 @@ export const Message: FC<MessageProps> = ({
     availableOpenRouterModels,
     chatMessages,
     selectedAssistant,
+    selectedPersona, // For Talkie-style persona chat detection
     chatImages,
     assistantImages,
     toolInUse,
     files,
     models
   } = useContext(ChatbotUIContext)
+
+  // Detect if this is a persona chat for conditional Talkie-style enhancements
+  const isPersonaChat = !!selectedPersona
 
   const { handleSendMessage } = useChatHandler()
 
@@ -183,13 +187,26 @@ export const Message: FC<MessageProps> = ({
     <div
       className={cn(
         "flex w-full justify-center",
-        message.role === "user" ? "" : "bg-secondary"
+        message.role === "user" ? "" : "bg-secondary",
+        // Talkie-style: Fade-in animation for persona chats
+        isPersonaChat && "animate-fadeIn"
       )}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
       onKeyDown={handleKeyDown}
     >
-      <div className="relative flex w-full flex-col p-6 sm:w-[550px] sm:px-0 md:w-[650px] lg:w-[650px] xl:w-[700px]">
+      <div
+        className={cn(
+          "relative flex w-full flex-col p-6 sm:w-[550px] sm:px-0 md:w-[650px] lg:w-[650px] xl:w-[700px]",
+          // Talkie-style: Glassmorphism and hover effect for persona messages
+          isPersonaChat && message.role === "assistant" && [
+            "rounded-2xl my-2 mx-4 sm:mx-0",
+            "bg-white/5 backdrop-blur-md border border-white/10",
+            "transition-transform duration-200 ease-out",
+            "hover:scale-[1.01]"
+          ]
+        )}
+      >
         <div className="absolute right-5 top-7 sm:right-0">
           <MessageActions
             onCopy={handleCopy}
@@ -214,7 +231,20 @@ export const Message: FC<MessageProps> = ({
           ) : (
             <div className="flex items-center space-x-3">
               {message.role === "assistant" ? (
-                messageAssistantImage ? (
+                // Talkie-style: Show persona avatar when chatting with a persona
+                isPersonaChat && selectedPersona?.image_url ? (
+                  <Image
+                    style={{
+                      width: `${ICON_SIZE}px`,
+                      height: `${ICON_SIZE}px`
+                    }}
+                    className="rounded-full ring-2 ring-white/20"
+                    src={selectedPersona.image_url}
+                    alt={`${selectedPersona.name} avatar`}
+                    height={ICON_SIZE}
+                    width={ICON_SIZE}
+                  />
+                ) : messageAssistantImage ? (
                   <Image
                     style={{
                       width: `${ICON_SIZE}px`,
@@ -255,21 +285,24 @@ export const Message: FC<MessageProps> = ({
 
               <div className="font-semibold">
                 {message.role === "assistant"
-                  ? message.assistant_id
-                    ? assistants.find(
+                  ? // Talkie-style: Show persona name when chatting with a persona
+                  isPersonaChat && selectedPersona
+                    ? selectedPersona.name
+                    : message.assistant_id
+                      ? assistants.find(
                         assistant => assistant.id === message.assistant_id
                       )?.name
-                    : selectedAssistant
-                      ? selectedAssistant?.name
-                      : MODEL_DATA?.modelName
+                      : selectedAssistant
+                        ? selectedAssistant?.name
+                        : MODEL_DATA?.modelName
                   : profile?.display_name ?? profile?.username}
               </div>
             </div>
           )}
           {!firstTokenReceived &&
-          isGenerating &&
-          isLast &&
-          message.role === "assistant" ? (
+            isGenerating &&
+            isLast &&
+            message.role === "assistant" ? (
             <>
               {(() => {
                 switch (toolInUse) {

@@ -1074,39 +1074,54 @@ export type Database = {
       }
       personas: {
         Row: {
+          behavioral_blueprint: Json | null
+          category: string | null
           config: Json | null
           created_at: string | null
           description: string | null
           id: string
           image_url: string | null
+          is_official: boolean | null
+          metadata: Json | null
           name: string
           owner_id: string | null
+          price: number | null
           safety_level: string | null
           system_prompt: string
           visibility: string | null
           voice_id: string | null
         }
         Insert: {
+          behavioral_blueprint?: Json | null
+          category?: string | null
           config?: Json | null
           created_at?: string | null
           description?: string | null
           id?: string
           image_url?: string | null
+          is_official?: boolean | null
+          metadata?: Json | null
           name: string
           owner_id?: string | null
+          price?: number | null
           safety_level?: string | null
           system_prompt: string
           visibility?: string | null
           voice_id?: string | null
         }
         Update: {
+          behavioral_blueprint?: Json | null
+          category?: string | null
           config?: Json | null
           created_at?: string | null
           description?: string | null
           id?: string
           image_url?: string | null
+          is_official?: boolean | null
+          metadata?: Json | null
           name?: string
           owner_id?: string | null
+          price?: number | null
           safety_level?: string | null
           system_prompt?: string
           visibility?: string | null
@@ -1630,6 +1645,7 @@ export type Database = {
     }
     Functions: {
       check_inactivity: { Args: never; Returns: undefined }
+      claim_persona: { Args: { soul_id: string }; Returns: boolean }
       create_duplicate_messages_for_new_chat: {
         Args: { new_chat_id: string; new_user_id: string; old_chat_id: string }
         Returns: undefined
