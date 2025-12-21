@@ -6,6 +6,21 @@
 
 ---
 
+## ⚙️ Turbo Workflows Available
+
+All agents can use these slash commands for automatic execution:
+
+| Command | Description |
+|---------|-------------|
+| `/verify` | Run TypeScript check + lint |
+| `/commit-deploy` | Auto-commit, push, and deploy |
+| `/regen-types` | Regenerate Supabase types |
+| `/dev` | Start development server |
+
+**Tell each agent:** "When you complete your tasks, run `/verify` then `/commit-deploy`"
+
+---
+
 ## 🔵 Agent #1: Database & Schema Manager
 
 Copy this entire prompt into a new Antigravity session:
