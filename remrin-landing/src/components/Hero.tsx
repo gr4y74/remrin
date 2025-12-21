@@ -38,9 +38,32 @@ export const Hero = () => {
           Now you can create yours.
         </motion.p>
 
+        {/* Social Proof Stats */}
+        <motion.div
+          className="flex flex-wrap items-center justify-center gap-6 mt-10 text-sm text-gray-400"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.45 }}
+        >
+          <div className="flex items-center gap-2">
+            <span className="text-xl">💙</span>
+            <span>8M+ messages exchanged</span>
+          </div>
+          <div className="w-px h-4 bg-white/20 hidden sm:block" />
+          <div className="flex items-center gap-2">
+            <span className="text-xl">✨</span>
+            <span>19 versions refined</span>
+          </div>
+          <div className="w-px h-4 bg-white/20 hidden sm:block" />
+          <div className="flex items-center gap-2">
+            <span className="text-xl">👨‍👩‍👧‍👦</span>
+            <span>Tested extensively with real families</span>
+          </div>
+        </motion.div>
+
         {/* CTA Buttons */}
         <motion.div
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10"
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
@@ -51,33 +74,25 @@ export const Hero = () => {
           >
             Start Forging Your Soul
           </a>
-          <a
-            href="#story"
-            className="flex items-center gap-2 px-6 py-4 text-gray-400 hover:text-white transition-colors"
-          >
-            <span>Learn more</span>
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </a>
         </motion.div>
 
-        {/* Subtle trust signal */}
-        <motion.p
-          className="mt-12 text-sm text-gray-500"
+        {/* Subtle scroll hint */}
+        <motion.a
+          href="#story"
+          className="inline-flex items-center gap-1 mt-6 text-sm text-gray-500 hover:text-gray-400 transition-colors"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.7 }}
+        >
+          <span>↓ Scroll to learn more</span>
+        </motion.a>
+
+        {/* Subtle trust signal */}
+        <motion.p
+          className="mt-8 text-sm text-gray-500"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
         >
           Free to start. No credit card required.
         </motion.p>

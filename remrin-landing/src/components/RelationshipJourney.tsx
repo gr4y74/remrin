@@ -84,8 +84,7 @@ export const RelationshipJourney = () => {
 
                 {/* Timeline */}
                 <div className="relative">
-                    {/* Connection line */}
-                    <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-gray-500/30 via-primary-500/50 to-primary-500/30 transform -translate-y-1/2" />
+                    {/* Connection line removed - was cutting through cards */}
 
                     {/* Stages */}
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">

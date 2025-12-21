@@ -9,7 +9,7 @@ const lockedFacts = [
     "Sister's birthday: March 15",
     "Favorite color: Deep purple",
     "Allergic to shellfish",
-    "Morning person, not a night owl",
+    "Morning person, not night owl",
 ];
 
 export const TheLocket = () => {
@@ -82,15 +82,15 @@ export const TheLocket = () => {
                         transition={{ duration: 0.6, delay: 0.2 }}
                         viewport={{ once: true }}
                     >
-                        {/* Central Locket */}
-                        <div className="relative w-64 h-64 mx-auto">
+                        {/* Central Locket - larger container to fit floating pills */}
+                        <div className="relative w-80 h-80 mx-auto">
                             {/* Glow effect */}
-                            <div className="absolute inset-0 bg-primary-500/20 blur-3xl rounded-full" />
+                            <div className="absolute inset-8 bg-primary-500/20 blur-3xl rounded-full" />
 
-                            {/* Locket circle */}
-                            <div className="relative w-full h-full rounded-full bg-gradient-to-br from-primary-500/30 to-purple-600/30 border-2 border-primary-400/50 flex items-center justify-center">
+                            {/* Locket circle - centered in container */}
+                            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full bg-gradient-to-br from-primary-500/30 to-purple-600/30 border-2 border-primary-400/50 flex items-center justify-center">
                                 <svg
-                                    className="w-24 h-24 text-primary-300"
+                                    className="w-20 h-20 text-primary-300"
                                     fill="none"
                                     viewBox="0 0 24 24"
                                     stroke="currentColor"
@@ -104,17 +104,17 @@ export const TheLocket = () => {
                                 </svg>
                             </div>
 
-                            {/* Floating fact pills */}
+                            {/* Floating fact pills - positioned around outer edge */}
                             {lockedFacts.map((fact, index) => {
                                 const angle = (index * 72 - 90) * (Math.PI / 180);
-                                const radius = 160;
+                                const radius = 140;
                                 const x = Math.cos(angle) * radius;
                                 const y = Math.sin(angle) * radius;
 
                                 return (
                                     <motion.div
                                         key={index}
-                                        className="absolute px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm text-gray-300 whitespace-nowrap"
+                                        className="absolute px-3 py-1.5 rounded-full bg-black/80 border border-white/20 text-xs text-gray-300 whitespace-nowrap backdrop-blur-sm z-10"
                                         style={{
                                             left: `calc(50% + ${x}px)`,
                                             top: `calc(50% + ${y}px)`,
