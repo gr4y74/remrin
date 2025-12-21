@@ -98,8 +98,14 @@ export const RelationshipJourney = () => {
                                 viewport={{ once: true }}
                             >
                                 {/* Card */}
-                                <div
-                                    className={`p-4 rounded-xl ${stage.bgColor} border ${stage.borderColor} text-center h-full`}
+                                <motion.div
+                                    className={`p-4 rounded-xl ${stage.bgColor} border ${stage.borderColor} text-center h-full cursor-pointer`}
+                                    whileHover={{
+                                        scale: 1.05,
+                                        y: -4,
+                                        boxShadow: "0 8px 30px rgba(168, 85, 247, 0.3)"
+                                    }}
+                                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
                                 >
                                     {/* Icon */}
                                     <div className="text-3xl mb-3">{stage.icon}</div>
@@ -118,7 +124,7 @@ export const RelationshipJourney = () => {
                                     <p className="text-sm text-gray-400 leading-relaxed">
                                         {stage.description}
                                     </p>
-                                </div>
+                                </motion.div>
                             </motion.div>
                         ))}
                     </div>

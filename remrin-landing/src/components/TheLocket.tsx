@@ -7,9 +7,9 @@ import { Container } from "@/components/Container";
 const lockedFacts = [
     "Your dog's name is Max",
     "Sister's birthday: March 15",
+    "Morning person, not night owl",
     "Favorite color: Deep purple",
     "Allergic to shellfish",
-    "Morning person, not night owl",
 ];
 
 export const TheLocket = () => {
@@ -114,7 +114,7 @@ export const TheLocket = () => {
                                 return (
                                     <motion.div
                                         key={index}
-                                        className="absolute px-3 py-1.5 rounded-full bg-black/80 border border-white/20 text-xs text-gray-300 whitespace-nowrap backdrop-blur-sm z-10"
+                                        className="absolute px-3 py-1.5 rounded-full bg-black/80 border border-white/20 text-xs text-gray-300 whitespace-nowrap backdrop-blur-sm z-10 cursor-pointer"
                                         style={{
                                             left: `calc(50% + ${x}px)`,
                                             top: `calc(50% + ${y}px)`,
@@ -122,6 +122,11 @@ export const TheLocket = () => {
                                         }}
                                         initial={{ opacity: 0, scale: 0.8 }}
                                         whileInView={{ opacity: 1, scale: 1 }}
+                                        whileHover={{
+                                            scale: 1.08,
+                                            y: -2,
+                                            boxShadow: "0 0 20px rgba(168, 85, 247, 0.4)"
+                                        }}
                                         transition={{ duration: 0.4, delay: 0.5 + index * 0.1 }}
                                         viewport={{ once: true }}
                                     >
