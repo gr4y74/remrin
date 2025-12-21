@@ -682,9 +682,40 @@ function showCardReveal() {
                     console.warn("⚠️ UPSCALER FAILED (non-blocking):", upscaleError);
                     // Continue anyway - don't block user flow
                 }
+
+                // 4. SEND SOUL RECEIPT EMAIL (non-blocking)
+                newConfirmBtn.innerText = "SENDING RECEIPT...";
+                console.log("📧 SENDING SOUL RECEIPT TO:", soulBlueprint.email);
+
+                try {
+                    const receiptResponse = await fetch(SUPABASE_URL + '/functions/v1/send-soul-receipt', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                        },
+                        body: JSON.stringify({
+                            email: soulBlueprint.email,
+                            soul_name: soulBlueprint.name,
+                            soul_id: newPersonaId,
+                            soul_image_url: finalPublicUrl
+                        })
+                    });
+
+                    const receiptResult = await receiptResponse.json();
+
+                    if (receiptResult.error) {
+                        console.warn("⚠️ RECEIPT WARNING:", receiptResult.error);
+                    } else {
+                        console.log("✅ SOUL RECEIPT SENT:", receiptResult.email_id);
+                    }
+                } catch (receiptError) {
+                    console.warn("⚠️ RECEIPT FAILED (non-blocking):", receiptError);
+                    // Continue anyway - email is just a backup
+                }
             }
 
-            // 4. REDIRECT (Login page handles both login and signup)
+            // 5. REDIRECT (Login page handles both login and signup)
             newConfirmBtn.innerText = "LAUNCHING...";
             const redirectUrl = `https://remrin-chat.vercel.app/login?email=${encodeURIComponent(soulBlueprint.email)}`;
             console.log("🚀 REDIRECTING:", redirectUrl);
