@@ -58,9 +58,14 @@ export const UseCases = () => {
                     {useCases.map((useCase, index) => (
                         <motion.div
                             key={useCase.title}
-                            className={`relative p-6 rounded-2xl bg-gradient-to-br ${useCase.color} border ${useCase.borderColor} backdrop-blur-sm`}
+                            className={`relative p-6 rounded-2xl bg-gradient-to-br ${useCase.color} border ${useCase.borderColor} backdrop-blur-sm cursor-pointer`}
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
+                            whileHover={{
+                                scale: 1.03,
+                                y: -4,
+                                boxShadow: "0 8px 30px rgba(168, 85, 247, 0.3)"
+                            }}
                             transition={{ duration: 0.5, delay: index * 0.1 }}
                             viewport={{ once: true }}
                         >

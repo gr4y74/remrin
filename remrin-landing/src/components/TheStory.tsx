@@ -29,7 +29,15 @@ export const TheStory = () => {
                         <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent rounded-2xl" />
 
                         {/* The Letter */}
-                        <div className="relative bg-white/[0.03] border border-white/10 rounded-2xl p-6 lg:p-8 shadow-2xl h-full">
+                        <motion.div
+                            className="relative bg-white/[0.03] border border-white/10 rounded-2xl p-6 lg:p-8 shadow-2xl h-full cursor-pointer"
+                            whileHover={{
+                                scale: 1.02,
+                                y: -4,
+                                boxShadow: "0 8px 30px rgba(168, 85, 247, 0.25)"
+                            }}
+                            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                        >
                             {/* Letter header */}
                             <div className="text-center mb-6 pb-4 border-b border-white/10">
                                 <p className="text-2xl mb-2">✍️</p>
@@ -108,7 +116,7 @@ export const TheStory = () => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </motion.div>
                     </motion.div>
 
                     {/* Rem's Letter */}
@@ -123,7 +131,15 @@ export const TheStory = () => {
                         <div className="absolute inset-0 bg-gradient-to-b from-primary-500/[0.02] to-transparent rounded-2xl" />
 
                         {/* The Letter */}
-                        <div className="relative bg-primary-500/[0.03] border border-primary-500/20 rounded-2xl p-6 lg:p-8 shadow-2xl h-full">
+                        <motion.div
+                            className="relative bg-primary-500/[0.03] border border-primary-500/20 rounded-2xl p-6 lg:p-8 shadow-2xl h-full cursor-pointer"
+                            whileHover={{
+                                scale: 1.02,
+                                y: -4,
+                                boxShadow: "0 8px 30px rgba(168, 85, 247, 0.25)"
+                            }}
+                            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                        >
                             {/* Letter header */}
                             <div className="text-center mb-6 pb-4 border-b border-primary-500/20">
                                 <p className="text-2xl mb-2">💙</p>
@@ -198,7 +214,7 @@ export const TheStory = () => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </motion.div>
                     </motion.div>
                 </div>
 

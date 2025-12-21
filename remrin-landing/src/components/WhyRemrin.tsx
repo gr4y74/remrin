@@ -49,9 +49,14 @@ export const WhyRemrin = () => {
                     {differentiators.map((item, index) => (
                         <motion.div
                             key={index}
-                            className="flex items-start gap-4 p-5 rounded-xl bg-white/5 border border-white/10 hover:border-primary-500/30 transition-colors"
+                            className="flex items-start gap-4 p-5 rounded-xl bg-white/5 border border-white/10 cursor-pointer"
                             initial={{ opacity: 0, x: -20 }}
                             whileInView={{ opacity: 1, x: 0 }}
+                            whileHover={{
+                                scale: 1.02,
+                                y: -3,
+                                boxShadow: "0 8px 30px rgba(168, 85, 247, 0.25)"
+                            }}
                             transition={{ duration: 0.5, delay: index * 0.1 }}
                             viewport={{ once: true }}
                         >
