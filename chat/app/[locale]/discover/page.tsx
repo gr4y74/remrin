@@ -15,17 +15,22 @@ export const metadata: Metadata = {
 const PAGE_SIZE = 12
 
 export default async function DiscoverPage() {
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
-    // Fetch categories
-    const { data: categoriesData } = await supabase
-        .from("categories")
-        .select("id, name, slug, icon, color")
-        .eq("is_active", true)
-        .order("sort_order", { ascending: true })
+    // Fetch categories with error handling
+    let categories: Array<{ id: string; name: string; slug: string; icon: string | null; color: string | null }> = []
+    try {
+        const { data: categoriesData } = await supabase
+            .from("categories")
+            .select("id, name, slug, icon, color")
+            .eq("is_active", true)
+            .order("sort_order", { ascending: true })
 
-    const categories = categoriesData ?? []
+        categories = categoriesData ?? []
+    } catch (error) {
+        console.error("Error fetching categories:", error)
+    }
 
     // Create category color map
     const categoryColors: Record<string, string> = {}
