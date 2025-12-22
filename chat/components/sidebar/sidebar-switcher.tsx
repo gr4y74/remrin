@@ -3,7 +3,9 @@ import {
   IconAdjustmentsHorizontal,
   IconBolt,
   IconBooks,
+  IconCards,
   IconCompass,
+  IconDiamond,
   IconFile,
   IconHeart,
   IconMessage,
@@ -121,6 +123,32 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
               className="flex size-[40px] cursor-pointer items-center justify-center rounded hover:bg-accent hover:opacity-50"
             >
               <IconPhoto size={SIDEBAR_ICON_SIZE} className="text-purple-400" />
+            </Link>
+          }
+        />
+
+        {/* Soul Summons - Gacha */}
+        <WithTooltip
+          display={<div>Soul Summons</div>}
+          trigger={
+            <Link
+              href="/summon"
+              className="flex size-[40px] cursor-pointer items-center justify-center rounded hover:bg-accent hover:opacity-50"
+            >
+              <IconDiamond size={SIDEBAR_ICON_SIZE} className="text-pink-400" />
+            </Link>
+          }
+        />
+
+        {/* Collection - My Souls */}
+        <WithTooltip
+          display={<div>My Collection</div>}
+          trigger={
+            <Link
+              href="/collection"
+              className="flex size-[40px] cursor-pointer items-center justify-center rounded hover:bg-accent hover:opacity-50"
+            >
+              <IconCards size={SIDEBAR_ICON_SIZE} className="text-emerald-400" />
             </Link>
           }
         />

@@ -12,6 +12,56 @@ export default function PricingPage() {
     // Annual toggle temporarily disabled until ids are created
     // const [isAnnual, setIsAnnual] = useState(false)
     const isAnnual = false
+    const [loadingTier, setLoadingTier] = useState<string | null>(null)
+    const router = useRouter()
+    const { toast } = useToast()
+
+    const handleSubscribe = async (tierId: string, priceId: string | undefined) => {
+        try {
+            if (!priceId || priceId.includes("free")) {
+                // Free tier logic
+                router.push("/login?signup=true")
+                return
+            }
+
+            setLoadingTier(tierId)
+
+            const response = await fetch("/api/stripe/checkout", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    priceId,
+                    mode: "subscription",
+                    successUrl: window.location.origin + "/settings?success=true",
+                    cancelUrl: window.location.origin + "/pricing?canceled=true",
+                }),
+            })
+
+            if (!response.ok) {
+                throw new Error("Checkout failed")
+            }
+
+            const { sessionId } = await response.json()
+            const stripe = await getStripe()
+
+            if (!stripe) {
+                throw new Error("Stripe failed to load")
+            }
+
+            await (stripe as any).redirectToCheckout({ sessionId })
+        } catch (error) {
+            console.error("Subscription error:", error)
+            toast({
+                title: "Error",
+                description: "Something went wrong. Please try again.",
+                variant: "destructive",
+            })
+        } finally {
+            setLoadingTier(null)
+        }
+    }
 
     const tiers = [
         {

@@ -29,7 +29,7 @@ export interface GachaPoolItem {
         id: string
         name: string
         description: string
-        image_path: string | null
+        image_url: string | null
     }
 }
 
@@ -47,7 +47,7 @@ export interface UserPull {
         id: string
         name: string
         description: string
-        image_path: string | null
+        image_url: string | null
     }
 }
 
@@ -69,7 +69,7 @@ export interface PullResult {
         id: string
         name: string
         description: string
-        image_path: string | null
+        image_url: string | null
     }
 }
 
@@ -160,7 +160,7 @@ export async function getPoolItems(
                 id,
                 name,
                 description,
-                image_path
+                image_url
             )
         `)
         .eq("pool_id", poolId)
@@ -190,7 +190,7 @@ export async function getFeaturedItems(
                 id,
                 name,
                 description,
-                image_path
+                image_url
             )
         `)
         .eq("pool_id", poolId)
@@ -486,7 +486,7 @@ export async function getPullHistory(
                 id,
                 name,
                 description,
-                image_path
+                image_url
             )
         `)
         .eq("user_id", userId)
@@ -518,7 +518,7 @@ export async function getPoolPullHistory(
                 id,
                 name,
                 description,
-                image_path
+                image_url
             )
         `)
         .eq("user_id", userId)
