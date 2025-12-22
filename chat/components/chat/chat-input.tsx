@@ -20,10 +20,11 @@ import { useChatHandler } from "./chat-hooks/use-chat-handler"
 import { useChatHistoryHandler } from "./chat-hooks/use-chat-history"
 import { usePromptAndCommand } from "./chat-hooks/use-prompt-and-command"
 import { useSelectFileHandler } from "./chat-hooks/use-select-file-handler"
+import { SuggestedReplies } from "@/components/chat-enhanced"
 
-interface ChatInputProps {}
+interface ChatInputProps { }
 
-export const ChatInput: FC<ChatInputProps> = ({}) => {
+export const ChatInput: FC<ChatInputProps> = ({ }) => {
   const { t } = useTranslation()
 
   useHotkey("l", () => {
@@ -54,7 +55,9 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
     chatSettings,
     selectedTools,
     setSelectedTools,
-    assistantImages
+    assistantImages,
+    selectedPersona,
+    setUserInput
   } = useContext(ChatbotUIContext)
 
   const {
@@ -74,12 +77,51 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
   } = useChatHistoryHandler()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [suggestions, setSuggestions] = useState<string[]>([])
+  const prevIsGenerating = useRef(isGenerating)
 
   useEffect(() => {
     setTimeout(() => {
       handleFocusChatInput()
     }, 200) // FIX: hacky
   }, [selectedPreset, selectedAssistant])
+
+  // Fetch suggestions when AI finishes generating a response
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      // Only fetch when isGenerating changes from true to false (AI just finished)
+      if (prevIsGenerating.current && !isGenerating && chatMessages.length > 0) {
+        try {
+          const lastMessage = chatMessages[chatMessages.length - 1]
+          const response = await fetch("/api/chat/suggestions", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              personaName: selectedPersona?.name,
+              recentMessages: chatMessages.slice(-3).map(m => ({
+                role: m.message.role,
+                content: m.message.content
+              }))
+            })
+          })
+          const data = await response.json()
+          setSuggestions(data.suggestions || [])
+        } catch (error) {
+          console.error("Error fetching suggestions:", error)
+        }
+      }
+      prevIsGenerating.current = isGenerating
+    }
+
+    fetchSuggestions()
+  }, [isGenerating, chatMessages, selectedPersona])
+
+  // Clear suggestions when user starts typing
+  useEffect(() => {
+    if (userInput.length > 0) {
+      setSuggestions([])
+    }
+  }, [userInput])
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (!isTyping && event.key === "Enter" && !event.shiftKey) {
@@ -210,6 +252,20 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
           </div>
         )}
       </div>
+
+      {/* Suggested Replies */}
+      {suggestions.length > 0 && (
+        <div className="mb-2">
+          <SuggestedReplies
+            suggestions={suggestions}
+            onSelect={(suggestion) => {
+              setUserInput(suggestion)
+              setSuggestions([])
+              handleFocusChatInput()
+            }}
+          />
+        </div>
+      )}
 
       <div className="border-input relative mt-3 flex min-h-[60px] w-full items-center justify-center rounded-xl border-2">
         <div className="absolute bottom-[76px] left-0 max-h-[300px] w-full overflow-auto rounded-xl dark:border-none">

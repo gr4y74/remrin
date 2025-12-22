@@ -52,7 +52,10 @@ export default async function DiscoverPage() {
         .order("created_at", { ascending: false })
         .range(0, PAGE_SIZE - 1)
 
-    const initialPersonas = personasData ?? []
+    const initialPersonas = (personasData ?? []).map((p) => ({
+        ...p,
+        persona_stats: Array.isArray(p.persona_stats) ? p.persona_stats[0] ?? null : p.persona_stats
+    }))
     const initialHasMore = initialPersonas.length === PAGE_SIZE
 
     // Fetch trending personas (featured or high trending score)
