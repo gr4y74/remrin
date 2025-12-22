@@ -1,5 +1,5 @@
--- Market Listings table for the soul marketplace
--- Allows sellers to list their personas for sale
+-- Market Listings System for Soul Bazaar
+-- Created: 2024-12-22
 
 CREATE TABLE market_listings (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -15,13 +15,12 @@ CREATE TABLE market_listings (
     UNIQUE(persona_id)  -- One listing per persona
 );
 
--- Indexes for efficient querying
+-- Indexes for fast queries
 CREATE INDEX idx_listings_active ON market_listings(is_active, created_at DESC);
 CREATE INDEX idx_listings_seller ON market_listings(seller_id);
 CREATE INDEX idx_listings_price ON market_listings(price_aether) WHERE is_active = true;
-CREATE INDEX idx_listings_popular ON market_listings(total_sales DESC) WHERE is_active = true;
 
--- Enable Row Level Security
+-- Row Level Security
 ALTER TABLE market_listings ENABLE ROW LEVEL SECURITY;
 
 -- Anyone can view active listings
@@ -32,8 +31,8 @@ ON market_listings FOR SELECT USING (is_active = true);
 CREATE POLICY "Sellers can manage own listings"
 ON market_listings FOR ALL USING (seller_id = auth.uid()::text);
 
--- Trigger to update updated_at timestamp
-CREATE OR REPLACE FUNCTION update_market_listing_updated_at()
+-- Function to update the updated_at timestamp
+CREATE OR REPLACE FUNCTION update_listing_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN
     NEW.updated_at = NOW();
@@ -41,7 +40,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER market_listing_updated_at
-    BEFORE UPDATE ON market_listings
-    FOR EACH ROW
-    EXECUTE FUNCTION update_market_listing_updated_at();
+CREATE TRIGGER trigger_listing_updated_at
+    BEFORE UPDATE ON market_listings FOR EACH ROW
+    EXECUTE FUNCTION update_listing_updated_at();
