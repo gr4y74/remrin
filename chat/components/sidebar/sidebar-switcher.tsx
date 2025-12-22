@@ -3,6 +3,7 @@ import {
   IconAdjustmentsHorizontal,
   IconBolt,
   IconBooks,
+  IconCompass,
   IconFile,
   IconHeart,
   IconMessage,
@@ -10,6 +11,7 @@ import {
   IconRobotFace,
   IconSparkles
 } from "@tabler/icons-react"
+import Link from "next/link"
 import { FC } from "react"
 import { TabsList } from "../ui/tabs"
 import { WithTooltip } from "../ui/with-tooltip"
@@ -27,7 +29,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
 }) => {
   return (
     <div className="flex flex-col justify-between border-r-2 pb-5">
-      <TabsList className="bg-background grid h-[480px] grid-rows-8">
+      <TabsList className="bg-background grid h-[540px] grid-rows-10">
         <SidebarSwitchItem
           icon={<IconMessage size={SIDEBAR_ICON_SIZE} />}
           contentType="chats"
@@ -80,6 +82,19 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
           icon={<IconHeart size={SIDEBAR_ICON_SIZE} />}
           contentType="personas"
           onContentTypeChange={onContentTypeChange}
+        />
+
+        {/* Discover Link - Navigate to discover page */}
+        <WithTooltip
+          display={<div>Discover Souls</div>}
+          trigger={
+            <Link
+              href="/discover"
+              className="flex size-[40px] cursor-pointer items-center justify-center rounded hover:bg-accent hover:opacity-50"
+            >
+              <IconCompass size={SIDEBAR_ICON_SIZE} className="text-cyan-400" />
+            </Link>
+          }
         />
       </TabsList>
 

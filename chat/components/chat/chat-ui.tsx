@@ -18,10 +18,11 @@ import { ChatInput } from "./chat-input"
 import { ChatMessages } from "./chat-messages"
 import { ChatScrollButtons } from "./chat-scroll-buttons"
 import { ChatSecondaryButtons } from "./chat-secondary-buttons"
+import { TypingIndicator } from "@/components/chat-enhanced"
 
-interface ChatUIProps {}
+interface ChatUIProps { }
 
-export const ChatUI: FC<ChatUIProps> = ({}) => {
+export const ChatUI: FC<ChatUIProps> = ({ }) => {
   useHotkey("o", () => handleNewChat())
 
   const params = useParams()
@@ -38,7 +39,9 @@ export const ChatUI: FC<ChatUIProps> = ({}) => {
     setChatFiles,
     setShowFilesDisplay,
     setUseRetrieval,
-    setSelectedTools
+    setSelectedTools,
+    isGenerating,
+    selectedPersona
   } = useContext(ChatbotUIContext)
 
   const { handleNewChat, handleFocusChatInput } = useChatHandler()
@@ -83,30 +86,30 @@ export const ChatUI: FC<ChatUIProps> = ({}) => {
       message =>
         message.image_paths
           ? message.image_paths.map(async imagePath => {
-              const url = await getMessageImageFromStorage(imagePath)
+            const url = await getMessageImageFromStorage(imagePath)
 
-              if (url) {
-                const response = await fetch(url)
-                const blob = await response.blob()
-                const base64 = await convertBlobToBase64(blob)
-
-                return {
-                  messageId: message.id,
-                  path: imagePath,
-                  base64,
-                  url,
-                  file: null
-                }
-              }
+            if (url) {
+              const response = await fetch(url)
+              const blob = await response.blob()
+              const base64 = await convertBlobToBase64(blob)
 
               return {
                 messageId: message.id,
                 path: imagePath,
-                base64: "",
+                base64,
                 url,
                 file: null
               }
-            })
+            }
+
+            return {
+              messageId: message.id,
+              path: imagePath,
+              base64: "",
+              url,
+              file: null
+            }
+          })
           : []
     )
 
@@ -214,6 +217,13 @@ export const ChatUI: FC<ChatUIProps> = ({}) => {
         <div ref={messagesStartRef} />
 
         <ChatMessages />
+
+        {/* Typing Indicator - Shows during AI response generation */}
+        {isGenerating && (
+          <div className="mx-auto w-full min-w-[300px] max-w-[600px] px-4 py-2 sm:max-w-[700px] lg:max-w-[700px] xl:max-w-[800px]">
+            <TypingIndicator characterName={selectedPersona?.name} />
+          </div>
+        )}
 
         <div ref={messagesEndRef} />
       </div>
