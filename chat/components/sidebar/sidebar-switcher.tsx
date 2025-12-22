@@ -10,6 +10,7 @@ import {
   IconPencil,
   IconPhoto,
   IconRobotFace,
+  IconShoppingCart,
   IconSparkles
 } from "@tabler/icons-react"
 import Link from "next/link"
@@ -94,6 +95,19 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
               className="flex size-[40px] cursor-pointer items-center justify-center rounded hover:bg-accent hover:opacity-50"
             >
               <IconCompass size={SIDEBAR_ICON_SIZE} className="text-cyan-400" />
+            </Link>
+          }
+        />
+
+        {/* Marketplace Link - Soul Bazaar */}
+        <WithTooltip
+          display={<div>Soul Bazaar</div>}
+          trigger={
+            <Link
+              href="/marketplace"
+              className="flex size-[40px] cursor-pointer items-center justify-center rounded hover:bg-accent hover:opacity-50"
+            >
+              <IconShoppingCart size={SIDEBAR_ICON_SIZE} className="text-amber-400" />
             </Link>
           }
         />
