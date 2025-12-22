@@ -1810,6 +1810,50 @@ export type Database = {
         }
         Relationships: []
       }
+      wallets: {
+        Row: {
+          balance_aether: number
+          balance_brain: number
+          created_at: string
+          is_creator: boolean | null
+          tier: "wanderer" | "soul_weaver" | "architect" | "titan"
+          total_earned: number | null
+          total_spent: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          balance_aether?: number
+          balance_brain?: number
+          created_at?: string
+          is_creator?: boolean | null
+          tier?: "wanderer" | "soul_weaver" | "architect" | "titan"
+          total_earned?: number | null
+          total_spent?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          balance_aether?: number
+          balance_brain?: number
+          created_at?: string
+          is_creator?: boolean | null
+          tier?: "wanderer" | "soul_weaver" | "architect" | "titan"
+          total_earned?: number | null
+          total_spent?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -1929,7 +1973,7 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      subscription_tier: "wanderer" | "soul_weaver" | "architect" | "titan"
     }
     CompositeTypes: {
       [_ in never]: never
