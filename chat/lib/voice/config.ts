@@ -103,11 +103,24 @@ export const AVAILABLE_VOICES: VoiceConfig[] = [
         pitch: 1.15,
         rate: 1.05,
         description: "Expressive female voice"
+    },
+    // Mother of Souls voice - mystical and ancient
+    {
+        id: "female-mystical",
+        name: "The Mother",
+        gender: "female",
+        language: "en-US",
+        pitch: 0.95,
+        rate: 0.9,
+        description: "Ancient, wise female voice"
     }
 ]
 
 // Default voice
 export const DEFAULT_VOICE_ID = "female-1"
+
+// Mother of Souls specific voice
+export const MOTHER_VOICE_ID = "female-mystical"
 
 /**
  * Get voice configuration by ID

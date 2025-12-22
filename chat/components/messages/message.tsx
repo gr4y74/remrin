@@ -24,6 +24,9 @@ import { WithTooltip } from "../ui/with-tooltip"
 import { MessageActions } from "./message-actions"
 import { MessageMarkdown } from "./message-markdown"
 import { MessageVoiceBadge } from "@/components/voice"
+import { SoulRevealCard, VoiceSelector, VisionLoading } from "@/components/soul-forge"
+import { isMotherOfSouls, isVoiceSelectionPrompt, MOTHER_VOICE_ID } from "@/lib/forge/is-mother-chat"
+import type { SoulRevealData } from "@/lib/forge/tool-handlers"
 
 const ICON_SIZE = 32
 
@@ -66,6 +69,34 @@ export const Message: FC<MessageProps> = ({
 
   // Detect if this is a persona chat for conditional Talkie-style enhancements
   const isPersonaChat = !!selectedPersona
+
+  // Detect if chatting with The Mother of Souls
+  const isMotherChat = isMotherOfSouls(selectedPersona)
+
+  // Parse soul_reveal data from message content if it's a special message
+  const parseSoulRevealData = (content: string): SoulRevealData | null => {
+    if (content.startsWith('__SOUL_REVEAL__')) {
+      try {
+        const jsonStart = content.indexOf('{');
+        const jsonEnd = content.lastIndexOf('}') + 1;
+        if (jsonStart !== -1 && jsonEnd > jsonStart) {
+          return JSON.parse(content.slice(jsonStart, jsonEnd));
+        }
+      } catch {
+        console.error('[Message] Failed to parse soul reveal data');
+      }
+    }
+    return null;
+  }
+
+  const soulRevealData = parseSoulRevealData(message.content)
+  const isSoulRevealMessage = soulRevealData !== null
+
+  // Check if this message is asking about voice selection (for VoiceSelector injection)
+  const showVoiceSelector = isMotherChat &&
+    message.role === 'assistant' &&
+    isVoiceSelectionPrompt(message.content) &&
+    !isSoulRevealMessage
 
   const { handleSendMessage } = useChatHandler()
 
@@ -330,6 +361,11 @@ export const Message: FC<MessageProps> = ({
                 }
               })()}
             </>
+          ) : isSoulRevealMessage && soulRevealData ? (
+            <SoulRevealCard
+              data={soulRevealData}
+              onStartChat={() => console.log('[Soul Reveal] Start chat clicked')}
+            />
           ) : isEditing ? (
             <TextareaAutosize
               textareaRef={editInputRef}
@@ -339,15 +375,24 @@ export const Message: FC<MessageProps> = ({
               maxRows={20}
             />
           ) : (
-            <MessageMarkdown content={message.content} />
+            <>
+              <MessageMarkdown content={message.content} />
+              {/* Voice Selector - Show when Mother asks about voice */}
+              {showVoiceSelector && (
+                <VoiceSelector
+                  onSelect={(voiceId) => console.log('[Voice Selected]', voiceId)}
+                />
+              )}
+            </>
           )}
 
           {/* Voice Badge - Show for AI messages in persona chat when voice_id is set */}
-          {message.role === "assistant" && isPersonaChat && selectedPersona?.voice_id && !isEditing && (
+          {/* For Mother of Souls, use MOTHER_VOICE_ID */}
+          {message.role === "assistant" && isPersonaChat && (isMotherChat ? MOTHER_VOICE_ID : selectedPersona?.voice_id) && !isEditing && !isSoulRevealMessage && (
             <div className="mt-3">
               <MessageVoiceBadge
                 text={message.content}
-                voiceId={selectedPersona.voice_id}
+                voiceId={isMotherChat ? MOTHER_VOICE_ID : (selectedPersona?.voice_id || '')}
               />
             </div>
           )}
