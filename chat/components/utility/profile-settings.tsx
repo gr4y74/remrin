@@ -20,7 +20,8 @@ import {
   IconLoader2,
   IconLock,
   IconLogout,
-  IconUser
+  IconUser,
+  IconCreditCard
 } from "@tabler/icons-react"
 import { Badge } from "../ui/badge"
 import { Tables } from "@/supabase/types"
@@ -369,8 +370,9 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ }) => {
           </SheetHeader>
 
           <Tabs defaultValue="profile">
-            <TabsList className="mt-4 grid w-full grid-cols-2">
+            <TabsList className="mt-4 grid w-full grid-cols-3">
               <TabsTrigger value="profile">Profile</TabsTrigger>
+              <TabsTrigger value="billing">Billing</TabsTrigger>
               <TabsTrigger value="keys">Advanced</TabsTrigger>
             </TabsList>
 
@@ -464,6 +466,80 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ }) => {
                   used={profileInstructions.length}
                   limit={PROFILE_CONTEXT_MAX}
                 />
+              </div>
+            </TabsContent>
+
+            <TabsContent className="mt-4 space-y-4" value="billing">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Current Plan</Label>
+                  <div className="p-3 border rounded-md bg-accent/50 flex items-center justify-between">
+                    <span className="capitalize font-medium">{wallet?.tier ? wallet.tier.replace("_", " ") : "Free Tier"}</span>
+                    {wallet?.tier && (
+                      <Badge variant="default" className="bg-primary">Active</Badge>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Aether Balance</Label>
+                  <div className="p-3 border rounded-md bg-accent/50 flex items-center justify-between">
+                    <span className="font-medium">{wallet?.balance_aether?.toLocaleString() || 0} Credits</span>
+                  </div>
+                </div>
+
+                <div className="pt-4 space-y-3">
+                  {wallet?.tier ? (
+                    <Button
+                      className="w-full"
+                      onClick={async () => {
+                        try {
+                          const response = await fetch("/api/stripe/portal", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" }
+                          })
+                          const { url } = await response.json()
+                          if (url) window.location.href = url
+                        } catch (error) {
+                          toast.error("Failed to redirect to billing portal")
+                        }
+                      }}
+                    >
+                      <IconCreditCard className="mr-2" size={18} />
+                      Manage Subscription
+                    </Button>
+                  ) : (
+                    <Button
+                      className="w-full"
+                      onClick={() => {
+                        setIsOpen(false)
+                        router.push("/pricing")
+                      }}
+                    >
+                      <IconCreditCard className="mr-2" size={18} />
+                      Upgrade Plan
+                    </Button>
+                  )}
+
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => {
+                      setIsOpen(false)
+                      // Trigger wallet top-up modal if accessible, or navigate to marketplace
+                      // Since we are in settings, maybe just direct to pricing or let them use the wallet widget
+                      const walletTrigger = document.getElementById("wallet-trigger-button")
+                      if (walletTrigger) {
+                        walletTrigger.click()
+                      } else {
+                        // Fallback check
+                        toast.info("Please use the wallet icon in the sidebar to buy credits.")
+                      }
+                    }}
+                  >
+                    Buy Aether Credits
+                  </Button>
+                </div>
               </div>
             </TabsContent>
 

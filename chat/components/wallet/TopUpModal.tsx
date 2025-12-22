@@ -8,73 +8,98 @@ import {
     DialogHeader,
     DialogTitle
 } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { IconCheck, IconCoin, IconLock, IconShield } from "@tabler/icons-react"
+import { IconCoin, IconLock, IconShield } from "@tabler/icons-react"
 import { FC, useState } from "react"
+import { CreditPackCard } from "@/components/pricing/CreditPackCard"
+import { getStripe } from "@/lib/stripe/client"
+import { useToast } from "@/components/ui/use-toast"
 
 interface TopUpModalProps {
     isOpen: boolean
     onClose: () => void
-    onSuccess?: (amount: number) => void
     currentBalance?: number
 }
 
 interface Package {
     id: string
     aether: number
-    price: number
-    pricePerAether: number
+    price: string
+    priceNum: number // for logic if needed
+    bonus: number
     popular?: boolean
-    bestValue?: boolean
+    priceId: string
 }
 
 const PACKAGES: Package[] = [
-    { id: "starter", aether: 100, price: 10, pricePerAether: 0.10 },
-    { id: "popular", aether: 500, price: 40, pricePerAether: 0.08, popular: true },
-    { id: "best-value", aether: 1000, price: 75, pricePerAether: 0.075, bestValue: true }
+    { id: "starter", aether: 100, price: "$4.99", priceNum: 4.99, bonus: 0, priceId: "price_credit_starter" },
+    { id: "pro", aether: 250, price: "$9.99", priceNum: 9.99, bonus: 25, popular: true, priceId: "price_credit_pro" },
+    { id: "max", aether: 750, price: "$24.99", priceNum: 24.99, bonus: 100, priceId: "price_credit_max" }
 ]
 
 export const TopUpModal: FC<TopUpModalProps> = ({
     isOpen,
     onClose,
-    onSuccess,
     currentBalance = 0
 }) => {
-    const [selectedPackage, setSelectedPackage] = useState<string | null>("popular")
-    const [isProcessing, setIsProcessing] = useState(false)
+    const [processingPackage, setProcessingPackage] = useState<string | null>(null)
+    const { toast } = useToast()
 
-    const handlePurchase = async () => {
-        if (!selectedPackage) return
+    const handlePurchase = async (pkg: Package) => {
+        try {
+            setProcessingPackage(pkg.id)
 
-        const pkg = PACKAGES.find(p => p.id === selectedPackage)
-        if (!pkg) return
+            const response = await fetch("/api/stripe/checkout", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    priceId: pkg.priceId,
+                    mode: "payment", // one-time payment
+                    successUrl: window.location.origin + "/settings?success=true",
+                    cancelUrl: window.location.origin + "/?canceled=true", // Go back home or stay on page
+                }),
+            })
 
-        setIsProcessing(true)
+            if (!response.ok) {
+                throw new Error("Checkout failed")
+            }
 
-        // TODO: Integrate Stripe checkout
-        // For now, simulate a delay
-        await new Promise(resolve => setTimeout(resolve, 1500))
+            const { sessionId } = await response.json()
+            const stripe = await getStripe()
 
-        setIsProcessing(false)
-        onSuccess?.(pkg.aether)
-        onClose()
+            if (!stripe) {
+                throw new Error("Stripe failed to load")
+            }
+
+            await (stripe as any).redirectToCheckout({ sessionId })
+        } catch (error) {
+            console.error("Purchase error:", error)
+            toast({
+                title: "Error",
+                description: "Could not initiate checkout. Please try again.",
+                variant: "destructive",
+            })
+        } finally {
+            setProcessingPackage(null)
+        }
     }
 
     return (
         <Dialog open={isOpen} onOpenChange={() => onClose()}>
-            <DialogContent className="sm:max-w-[500px] bg-[#0d1117] border-white/10">
+            <DialogContent className="sm:max-w-4xl bg-[#0d1117] border-white/10">
                 <DialogHeader>
                     <DialogTitle className="text-2xl font-bold text-white flex items-center gap-2">
                         <IconCoin className="text-amber-400" size={28} />
                         Add Aether Credits
                     </DialogTitle>
                     <DialogDescription className="text-zinc-400">
-                        Power your AI souls with Aether credits
+                        Power your AI souls with Aether credits. One-time purchase, never expires.
                     </DialogDescription>
                 </DialogHeader>
 
                 {/* Current Balance */}
-                <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/5 border border-white/10">
+                <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/5 border border-white/10 mb-4">
                     <span className="text-zinc-400">Current Balance</span>
                     <span className="text-lg font-bold text-amber-400">
                         {currentBalance.toLocaleString()} Aether
@@ -82,102 +107,25 @@ export const TopUpModal: FC<TopUpModalProps> = ({
                 </div>
 
                 {/* Package Selection */}
-                <div className="grid gap-3 mt-2">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {PACKAGES.map((pkg) => (
-                        <button
+                        <CreditPackCard
                             key={pkg.id}
-                            onClick={() => setSelectedPackage(pkg.id)}
-                            className={cn(
-                                "relative flex items-center justify-between p-4 rounded-xl border transition-all duration-300",
-                                "hover:scale-[1.02] hover:shadow-lg",
-                                selectedPackage === pkg.id
-                                    ? "bg-gradient-to-r from-amber-500/10 to-yellow-500/10 border-amber-500/50 shadow-amber-500/10"
-                                    : "bg-white/5 border-white/10 hover:border-white/20"
-                            )}
-                        >
-                            {/* Popular/Best Value Badge */}
-                            {(pkg.popular || pkg.bestValue) && (
-                                <div className={cn(
-                                    "absolute -top-2.5 right-4 px-2.5 py-0.5 rounded-full text-xs font-semibold",
-                                    pkg.bestValue
-                                        ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
-                                        : "bg-gradient-to-r from-amber-500 to-yellow-500 text-black"
-                                )}>
-                                    {pkg.bestValue ? "Best Value" : "Popular"}
-                                </div>
-                            )}
-
-                            {/* Left: Amount */}
-                            <div className="flex items-center gap-3">
-                                <div className={cn(
-                                    "size-12 flex items-center justify-center rounded-full",
-                                    selectedPackage === pkg.id
-                                        ? "bg-amber-500/20"
-                                        : "bg-white/5"
-                                )}>
-                                    <IconCoin size={24} className="text-amber-400" />
-                                </div>
-                                <div className="text-left">
-                                    <p className="text-xl font-bold text-white">
-                                        {pkg.aether.toLocaleString()} Aether
-                                    </p>
-                                    <p className="text-sm text-zinc-500">
-                                        ${pkg.pricePerAether.toFixed(2)} per credit
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* Right: Price + Selection */}
-                            <div className="flex items-center gap-3">
-                                <span className="text-2xl font-bold text-white">
-                                    ${pkg.price}
-                                </span>
-                                <div className={cn(
-                                    "size-6 flex items-center justify-center rounded-full border-2 transition-all",
-                                    selectedPackage === pkg.id
-                                        ? "bg-amber-500 border-amber-500"
-                                        : "border-zinc-600"
-                                )}>
-                                    {selectedPackage === pkg.id && (
-                                        <IconCheck size={14} className="text-black" />
-                                    )}
-                                </div>
-                            </div>
-                        </button>
+                            amount={pkg.aether}
+                            price={pkg.price}
+                            bonusAmount={pkg.bonus}
+                            isPopular={pkg.popular}
+                            isLoading={processingPackage === pkg.id}
+                            onBuy={() => handlePurchase(pkg)}
+                        />
                     ))}
                 </div>
 
-                {/* Checkout Button */}
-                <Button
-                    onClick={handlePurchase}
-                    disabled={!selectedPackage || isProcessing}
-                    className={cn(
-                        "w-full h-12 text-lg font-semibold mt-2",
-                        "bg-gradient-to-r from-amber-500 to-yellow-500",
-                        "hover:from-amber-400 hover:to-yellow-400",
-                        "text-black",
-                        "disabled:opacity-50 disabled:cursor-not-allowed"
-                    )}
-                >
-                    {isProcessing ? (
-                        <span className="flex items-center gap-2">
-                            <div className="size-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
-                            Processing...
-                        </span>
-                    ) : (
-                        "Purchase with Stripe"
-                    )}
-                </Button>
-
                 {/* Security Badges */}
-                <div className="flex items-center justify-center gap-6 mt-2 text-zinc-500">
+                <div className="flex items-center justify-center gap-6 mt-6 text-zinc-500">
                     <div className="flex items-center gap-1.5 text-xs">
                         <IconLock size={14} />
-                        <span>Secure Payment</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-xs">
-                        <IconShield size={14} />
-                        <span>SSL Encrypted</span>
+                        <span>Secure Payment via Stripe</span>
                     </div>
                 </div>
             </DialogContent>
