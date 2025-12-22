@@ -8,6 +8,7 @@ import {
   IconHeart,
   IconMessage,
   IconPencil,
+  IconPhoto,
   IconRobotFace,
   IconSparkles
 } from "@tabler/icons-react"
@@ -93,6 +94,19 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
               className="flex size-[40px] cursor-pointer items-center justify-center rounded hover:bg-accent hover:opacity-50"
             >
               <IconCompass size={SIDEBAR_ICON_SIZE} className="text-cyan-400" />
+            </Link>
+          }
+        />
+
+        {/* Moments Link - Navigate to moments gallery */}
+        <WithTooltip
+          display={<div>Moments Gallery</div>}
+          trigger={
+            <Link
+              href="/moments"
+              className="flex size-[40px] cursor-pointer items-center justify-center rounded hover:bg-accent hover:opacity-50"
+            >
+              <IconPhoto size={SIDEBAR_ICON_SIZE} className="text-purple-400" />
             </Link>
           }
         />

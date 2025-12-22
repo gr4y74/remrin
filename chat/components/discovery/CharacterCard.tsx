@@ -1,10 +1,12 @@
 "use client"
 
+import { useState, useRef } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
 import { MessageCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { calculateTilt, staggerDelay } from "@/lib/animations"
 
 interface CharacterCardProps {
     id: string
@@ -14,6 +16,7 @@ interface CharacterCardProps {
     categoryColor?: string | null
     totalChats: number
     className?: string
+    animationIndex?: number
 }
 
 // Format large numbers: 12500 -> "12.5K"
@@ -34,16 +37,56 @@ export function CharacterCard({
     category,
     categoryColor,
     totalChats,
-    className
+    className,
+    animationIndex = 0
 }: CharacterCardProps) {
+    const cardRef = useRef<HTMLDivElement>(null)
+    const [tiltStyle, setTiltStyle] = useState<React.CSSProperties>({})
+    const [isHovering, setIsHovering] = useState(false)
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        const { rotateX, rotateY } = calculateTilt(e, 8)
+        setTiltStyle({
+            transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`
+        })
+    }
+
+    const handleMouseEnter = () => {
+        setIsHovering(true)
+    }
+
+    const handleMouseLeave = () => {
+        setIsHovering(false)
+        setTiltStyle({
+            transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)'
+        })
+    }
+
+    // Glow color based on category
+    const glowColor = categoryColor || 'rgba(139, 92, 246, 0.6)'
+
     return (
         <Link href={`/character/${id}`} className="block">
             <div
+                ref={cardRef}
                 className={cn(
-                    "group relative overflow-hidden rounded-2xl border border-white/5 bg-white/5 transition-all duration-300",
-                    "hover:scale-[1.03] hover:border-purple-500/30 hover:shadow-xl hover:shadow-purple-500/20",
+                    "group relative overflow-hidden rounded-2xl border border-white/5 bg-white/5",
+                    "transition-all duration-300 ease-out animate-card-enter",
                     className
                 )}
+                style={{
+                    ...tiltStyle,
+                    animationDelay: `${staggerDelay(animationIndex)}ms`,
+                    animationFillMode: 'both',
+                    boxShadow: isHovering
+                        ? `0 20px 40px rgba(0,0,0,0.4), 0 0 40px ${glowColor}`
+                        : '0 4px 20px rgba(0,0,0,0.2)',
+                    borderColor: isHovering ? glowColor : 'rgba(255,255,255,0.05)',
+                    ['--glow-color' as string]: glowColor
+                }}
+                onMouseMove={handleMouseMove}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
             >
                 {/* Portrait Image */}
                 <div className="relative aspect-[3/4] w-full overflow-hidden">
@@ -52,7 +95,10 @@ export function CharacterCard({
                             src={imageUrl}
                             alt={name}
                             fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-110"
+                            className={cn(
+                                "object-cover transition-transform duration-500 ease-out",
+                                isHovering ? "scale-105" : "scale-100"
+                            )}
                             sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
                         />
                     ) : (
@@ -79,7 +125,11 @@ export function CharacterCard({
                         {/* Category Badge */}
                         {category && (
                             <Badge
-                                className="mb-2 rounded-full border-0 px-2.5 py-0.5 text-xs font-medium"
+                                className={cn(
+                                    "mb-2 rounded-full border-0 px-2.5 py-0.5 text-xs font-medium",
+                                    "transition-all duration-300",
+                                    isHovering && "scale-105"
+                                )}
                                 style={{
                                     backgroundColor: categoryColor
                                         ? `${categoryColor}30`
@@ -92,7 +142,11 @@ export function CharacterCard({
                         )}
 
                         {/* Character Name */}
-                        <h3 className="line-clamp-2 text-lg font-bold leading-tight text-white drop-shadow-lg">
+                        <h3 className={cn(
+                            "line-clamp-2 text-lg font-bold leading-tight text-white drop-shadow-lg",
+                            "transition-transform duration-300",
+                            isHovering && "translate-x-1"
+                        )}>
                             {name}
                         </h3>
                     </div>

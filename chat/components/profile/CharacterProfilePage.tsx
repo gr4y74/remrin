@@ -7,8 +7,11 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { CharacterHeader } from "./CharacterHeader"
 import { SoulCardDisplay } from "./SoulCardDisplay"
-import { MessageCircle, ArrowLeft, Loader2 } from "lucide-react"
+import { MomentsGallery, MomentData } from "@/components/moments"
+import { MessageCircle, ArrowLeft, Loader2, ImageIcon } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
+import { useParallaxScroll } from "@/lib/animations"
+import { cn } from "@/lib/utils"
 
 interface PersonaStats {
     totalChats: number
@@ -32,15 +35,20 @@ interface CharacterProfilePageProps {
     persona: PersonaData
     stats: PersonaStats
     isFollowing: boolean
+    moments?: MomentData[]
+    hasMoments?: boolean
 }
 
 export function CharacterProfilePage({
     persona,
     stats,
-    isFollowing
+    isFollowing,
+    moments = [],
+    hasMoments = false
 }: CharacterProfilePageProps) {
     const router = useRouter()
     const [isStartingChat, setIsStartingChat] = useState(false)
+    const parallaxOffset = useParallaxScroll(0.3)
 
     const handleStartChat = async () => {
         setIsStartingChat(true)
@@ -99,9 +107,15 @@ export function CharacterProfilePage({
 
     return (
         <div className="relative min-h-screen bg-[#0d1117]">
-            {/* Blurred Hero Background */}
+            {/* Blurred Hero Background with Parallax */}
             {persona.imageUrl && (
-                <div className="absolute inset-0 overflow-hidden">
+                <div
+                    className="absolute inset-0 overflow-hidden"
+                    style={{
+                        transform: `translateY(${parallaxOffset}px)`,
+                        willChange: 'transform'
+                    }}
+                >
                     <Image
                         src={persona.imageUrl}
                         alt=""
@@ -116,10 +130,10 @@ export function CharacterProfilePage({
             {/* Content */}
             <div className="relative z-10">
                 {/* Back Button */}
-                <div className="px-4 py-4 md:px-8">
+                <div className="px-4 py-4 md:px-8 animate-fade-in">
                     <button
                         onClick={() => router.back()}
-                        className="inline-flex items-center gap-2 text-zinc-400 transition-colors hover:text-white"
+                        className="inline-flex items-center gap-2 text-zinc-400 transition-all duration-300 hover:text-white hover:translate-x-[-4px]"
                     >
                         <ArrowLeft className="size-5" />
                         <span>Back</span>
@@ -130,7 +144,10 @@ export function CharacterProfilePage({
                 <main className="mx-auto max-w-4xl px-4 pb-24 pt-8 md:px-8">
                     <div className="flex flex-col gap-12 lg:flex-row lg:gap-16">
                         {/* Left Column - Soul Card */}
-                        <div className="mx-auto w-full max-w-xs shrink-0 lg:mx-0">
+                        <div
+                            className="mx-auto w-full max-w-xs shrink-0 lg:mx-0 animate-fade-in-up"
+                            style={{ animationDelay: '100ms', animationFillMode: 'both' }}
+                        >
                             <SoulCardDisplay
                                 name={persona.name}
                                 imageUrl={persona.imageUrl}
@@ -141,21 +158,29 @@ export function CharacterProfilePage({
                         {/* Right Column - Character Details */}
                         <div className="flex-1 space-y-8">
                             {/* Header */}
-                            <CharacterHeader
-                                personaId={persona.id}
-                                name={persona.name}
-                                description={persona.description}
-                                imageUrl={persona.imageUrl}
-                                category={persona.category}
-                                totalChats={stats.totalChats}
-                                followersCount={stats.followersCount}
-                                isFollowing={isFollowing}
-                                creatorName={persona.creatorName}
-                            />
+                            <div
+                                className="animate-fade-in-up"
+                                style={{ animationDelay: '200ms', animationFillMode: 'both' }}
+                            >
+                                <CharacterHeader
+                                    personaId={persona.id}
+                                    name={persona.name}
+                                    description={persona.description}
+                                    imageUrl={persona.imageUrl}
+                                    category={persona.category}
+                                    totalChats={stats.totalChats}
+                                    followersCount={stats.followersCount}
+                                    isFollowing={isFollowing}
+                                    creatorName={persona.creatorName}
+                                />
+                            </div>
 
                             {/* Intro Message Preview */}
                             {persona.introMessage && (
-                                <div className="rounded-2xl bg-white/5 p-6 backdrop-blur-xl">
+                                <div
+                                    className="rounded-2xl bg-white/5 p-6 backdrop-blur-xl animate-fade-in-up transition-all duration-300 hover:bg-white/10"
+                                    style={{ animationDelay: '300ms', animationFillMode: 'both' }}
+                                >
                                     <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-zinc-500">
                                         First Message
                                     </h2>
@@ -165,13 +190,22 @@ export function CharacterProfilePage({
                                 </div>
                             )}
 
-                            {/* Start Chat CTA */}
-                            <div className="pt-4">
+                            {/* Start Chat CTA with floating animation */}
+                            <div
+                                className="pt-4 animate-fade-in-up"
+                                style={{ animationDelay: '400ms', animationFillMode: 'both' }}
+                            >
                                 <Button
                                     size="lg"
                                     onClick={handleStartChat}
                                     disabled={isStartingChat}
-                                    className="group w-full rounded-2xl bg-gradient-to-r from-purple-600 to-cyan-500 py-6 text-lg font-bold text-white shadow-2xl shadow-purple-500/25 transition-all duration-300 hover:from-purple-500 hover:to-cyan-400 hover:shadow-purple-500/40 disabled:opacity-70"
+                                    className={cn(
+                                        "group w-full rounded-2xl bg-gradient-to-r from-purple-600 to-cyan-500 py-6 text-lg font-bold text-white",
+                                        "shadow-2xl shadow-purple-500/25 transition-all duration-300",
+                                        "hover:from-purple-500 hover:to-cyan-400 hover:shadow-purple-500/40 hover:scale-[1.02]",
+                                        "disabled:opacity-70",
+                                        !isStartingChat && "animate-float"
+                                    )}
                                 >
                                     {isStartingChat ? (
                                         <>
@@ -180,12 +214,49 @@ export function CharacterProfilePage({
                                         </>
                                     ) : (
                                         <>
-                                            <MessageCircle className="mr-3 size-6 transition-transform duration-300 group-hover:scale-110" />
+                                            <MessageCircle className="mr-3 size-6 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12" />
                                             Start Chat
                                         </>
                                     )}
                                 </Button>
                             </div>
+
+                            {/* Moments Section */}
+                            {(hasMoments || moments.length > 0) && (
+                                <div className="space-y-4">
+                                    <div className="flex items-center justify-between">
+                                        <h2 className="flex items-center gap-2 text-lg font-semibold text-white">
+                                            <ImageIcon className="size-5 text-purple-400" />
+                                            Moments
+                                        </h2>
+                                        {moments.length > 0 && (
+                                            <a
+                                                href={`/moments?persona=${persona.id}`}
+                                                className="text-sm text-purple-400 transition-colors hover:text-purple-300"
+                                            >
+                                                View All →
+                                            </a>
+                                        )}
+                                    </div>
+                                    {moments.length > 0 ? (
+                                        <MomentsGallery
+                                            initialMoments={moments}
+                                            personaId={persona.id}
+                                            initialHasMore={false}
+                                            showViewAllLink={true}
+                                            viewAllHref={`/moments?persona=${persona.id}`}
+                                        />
+                                    ) : (
+                                        <div className="rounded-2xl bg-white/5 p-8 text-center backdrop-blur-xl">
+                                            <ImageIcon className="mx-auto mb-3 size-12 text-zinc-500" />
+                                            <p className="text-zinc-400">No moments yet</p>
+                                            <p className="mt-1 text-sm text-zinc-500">
+                                                Check back later for gallery content
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </main>

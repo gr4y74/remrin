@@ -9,16 +9,18 @@ import { toast } from "sonner"
 
 interface FollowButtonProps {
     personaId: string
-    initialIsFollowing: boolean
+    initialIsFollowing?: boolean
     initialFollowerCount?: number
     onFollowChange?: (isFollowing: boolean) => void
+    compact?: boolean
 }
 
 export function FollowButton({
     personaId,
-    initialIsFollowing,
+    initialIsFollowing = false,
     initialFollowerCount = 0,
-    onFollowChange
+    onFollowChange,
+    compact = false
 }: FollowButtonProps) {
     const [isFollowing, setIsFollowing] = useState(initialIsFollowing)
     const [followerCount, setFollowerCount] = useState(initialFollowerCount)
@@ -76,12 +78,13 @@ export function FollowButton({
     }, [isFollowing, followerCount, personaId, supabase, onFollowChange])
 
     return (
-        <div className="flex items-center gap-3">
+        <div className={cn("flex items-center", compact ? "gap-2" : "gap-3")}>
             <Button
                 onClick={handleToggleFollow}
                 disabled={isLoading}
                 className={cn(
-                    "group relative overflow-hidden rounded-full px-6 py-2 font-semibold transition-all duration-300",
+                    "group relative overflow-hidden rounded-full font-semibold transition-all duration-300",
+                    compact ? "px-3 py-1 text-sm" : "px-6 py-2",
                     isFollowing
                         ? "bg-white/10 text-white hover:bg-red-500/20 hover:text-red-400"
                         : "bg-gradient-to-r from-purple-600 to-cyan-500 text-white hover:from-purple-500 hover:to-cyan-400 shadow-lg shadow-purple-500/25"
@@ -89,11 +92,12 @@ export function FollowButton({
             >
                 <span className="flex items-center gap-2">
                     {isLoading ? (
-                        <Loader2 className="size-5 animate-spin" />
+                        <Loader2 className={cn("animate-spin", compact ? "size-4" : "size-5")} />
                     ) : (
                         <Heart
                             className={cn(
-                                "size-5 transition-all duration-300",
+                                "transition-all duration-300",
+                                compact ? "size-4" : "size-5",
                                 isFollowing
                                     ? "fill-red-500 text-red-500"
                                     : "fill-transparent group-hover:fill-white/50"
@@ -104,8 +108,8 @@ export function FollowButton({
                 </span>
             </Button>
 
-            {/* Follower count display */}
-            {followerCount > 0 && (
+            {/* Follower count display - hide in compact mode */}
+            {!compact && followerCount > 0 && (
                 <span className="text-sm text-zinc-400">
                     {followerCount.toLocaleString()} {followerCount === 1 ? "follower" : "followers"}
                 </span>

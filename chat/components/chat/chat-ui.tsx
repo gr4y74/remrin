@@ -11,6 +11,8 @@ import { convertBlobToBase64 } from "@/lib/blob-to-b64"
 import useHotkey from "@/lib/hooks/use-hotkey"
 import { LLMID, MessageImage } from "@/types"
 import { useParams } from "next/navigation"
+import Image from "next/image"
+import Link from "next/link"
 import { FC, useContext, useEffect, useState } from "react"
 import { ChatHelp } from "./chat-help"
 import { useScroll } from "./chat-hooks/use-scroll"
@@ -19,6 +21,7 @@ import { ChatMessages } from "./chat-messages"
 import { ChatScrollButtons } from "./chat-scroll-buttons"
 import { ChatSecondaryButtons } from "./chat-secondary-buttons"
 import { TypingIndicator } from "@/components/chat-enhanced"
+import { FollowButton } from "@/components/profile"
 
 interface ChatUIProps { }
 
@@ -204,11 +207,40 @@ export const ChatUI: FC<ChatUIProps> = ({ }) => {
         <ChatSecondaryButtons />
       </div>
 
-      <div className="bg-secondary flex max-h-[50px] min-h-[50px] w-full items-center justify-center border-b-2 font-bold">
-        <div className="max-w-[200px] truncate sm:max-w-[400px] md:max-w-[500px] lg:max-w-[600px] xl:max-w-[700px]">
-          {selectedChat?.name || "Chat"}
+      {/* Chat Header - Enhanced when chatting with a persona */}
+      {selectedPersona ? (
+        <div className="bg-secondary/80 backdrop-blur-sm flex max-h-[60px] min-h-[60px] w-full items-center justify-between border-b border-white/10 px-4 font-bold">
+          <Link
+            href={`/character/${selectedPersona.id}`}
+            className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+          >
+            {selectedPersona.image_url && (
+              <Image
+                src={selectedPersona.image_url}
+                alt={selectedPersona.name}
+                width={36}
+                height={36}
+                className="rounded-full ring-2 ring-white/20"
+              />
+            )}
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold text-foreground">
+                {selectedPersona.name}
+              </span>
+              <span className="text-xs text-muted-foreground/70">
+                View Profile
+              </span>
+            </div>
+          </Link>
+          <FollowButton personaId={selectedPersona.id} compact />
         </div>
-      </div>
+      ) : (
+        <div className="bg-secondary flex max-h-[50px] min-h-[50px] w-full items-center justify-center border-b-2 font-bold">
+          <div className="max-w-[200px] truncate sm:max-w-[400px] md:max-w-[500px] lg:max-w-[600px] xl:max-w-[700px]">
+            {selectedChat?.name || "Chat"}
+          </div>
+        </div>
+      )}
 
       <div
         className="flex size-full flex-col overflow-auto border-b"

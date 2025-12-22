@@ -23,6 +23,7 @@ import { TextareaAutosize } from "../ui/textarea-autosize"
 import { WithTooltip } from "../ui/with-tooltip"
 import { MessageActions } from "./message-actions"
 import { MessageMarkdown } from "./message-markdown"
+import { MessageVoiceBadge } from "@/components/voice"
 
 const ICON_SIZE = 32
 
@@ -339,6 +340,16 @@ export const Message: FC<MessageProps> = ({
             />
           ) : (
             <MessageMarkdown content={message.content} />
+          )}
+
+          {/* Voice Badge - Show for AI messages in persona chat when voice_id is set */}
+          {message.role === "assistant" && isPersonaChat && selectedPersona?.voice_id && !isEditing && (
+            <div className="mt-3">
+              <MessageVoiceBadge
+                text={message.content}
+                voiceId={selectedPersona.voice_id}
+              />
+            </div>
           )}
         </div>
 

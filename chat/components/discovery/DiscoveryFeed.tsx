@@ -151,8 +151,12 @@ export function DiscoveryFeed({
                 {loading && (
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {Array.from({ length: 6 }).map((_, i) => (
-                            <div key={i} className="overflow-hidden rounded-2xl border border-white/5 bg-white/5">
-                                <Skeleton className="aspect-[3/4] w-full bg-zinc-800" />
+                            <div
+                                key={i}
+                                className="overflow-hidden rounded-2xl border border-white/5 bg-white/5 animate-fade-in"
+                                style={{ animationDelay: `${i * 50}ms` }}
+                            >
+                                <Skeleton className="aspect-[3/4] w-full bg-zinc-800 animate-shimmer" />
                             </div>
                         ))}
                     </div>
@@ -173,7 +177,7 @@ export function DiscoveryFeed({
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                                {personas.map((persona) => (
+                                {personas.map((persona, index) => (
                                     <CharacterCard
                                         key={persona.id}
                                         id={persona.id}
@@ -182,6 +186,7 @@ export function DiscoveryFeed({
                                         category={persona.category}
                                         categoryColor={persona.category ? categoryColors[persona.category] : null}
                                         totalChats={persona.persona_stats?.total_chats ?? 0}
+                                        animationIndex={index}
                                     />
                                 ))}
                             </div>
