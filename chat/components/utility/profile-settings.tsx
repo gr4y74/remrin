@@ -26,7 +26,7 @@ import { Badge } from "../ui/badge"
 import { Tables } from "@/supabase/types"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { FC, useCallback, useContext, useRef, useState } from "react"
+import { FC, useCallback, useContext, useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
 import { SIDEBAR_ICON_SIZE } from "../sidebar/sidebar-switcher"
 import { Button } from "../ui/button"
@@ -66,7 +66,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ }) => {
   const [wallet, setWallet] = useState<Tables<"wallets"> | null>(null)
 
   useEffect(() => {
-    if (isOpen && profile) {
+    if (isOpen && profile && profile.user_id) {
       supabase
         .from("wallets")
         .select("*")
