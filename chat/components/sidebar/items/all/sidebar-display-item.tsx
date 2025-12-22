@@ -65,27 +65,9 @@ export const SidebarItem: FC<SidebarItemProps> = ({
     tools: async (item: any) => { },
     models: async (item: any) => { },
     personas: async (persona: Tables<"personas">) => {
-      if (!selectedWorkspace) return
-      if (!persona.owner_id) return // Personas without owners can't start chats
-
-      // Create a chat with the persona's system prompt
-      const createdChat = await createChat({
-        user_id: persona.owner_id,
-        workspace_id: selectedWorkspace.id,
-        model: "deepseek-chat", // Default model for personas
-        name: `Chat with ${persona.name}`,
-        prompt: persona.system_prompt, // The persona's personality becomes the system prompt
-        temperature: 0.7,
-        context_length: 4096,
-        include_profile_context: true,
-        include_workspace_instructions: false,
-        embeddings_provider: "openai"
-      })
-
-      setChats(prevState => [createdChat, ...prevState])
-      setSelectedPersona(persona)
-
-      return router.push(`/${selectedWorkspace.id}/chat/${createdChat.id}`)
+      // Navigate to character profile page for detailed view
+      // Users can start chat from the profile page
+      return router.push(`/character/${persona.id}`)
     }
   }
 

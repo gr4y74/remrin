@@ -235,6 +235,68 @@ export type Database = {
           },
         ]
       }
+      categories: {
+        Row: {
+          color: string | null
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          slug: string
+          sort_order: number | null
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          slug: string
+          sort_order?: number | null
+        }
+        Update: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          slug?: string
+          sort_order?: number | null
+        }
+        Relationships: []
+      }
+      character_follows: {
+        Row: {
+          followed_at: string
+          persona_id: string
+          user_id: string
+        }
+        Insert: {
+          followed_at?: string
+          persona_id: string
+          user_id: string
+        }
+        Update: {
+          followed_at?: string
+          persona_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "character_follows_persona_id_fkey"
+            columns: ["persona_id"]
+            isOneToOne: false
+            referencedRelation: "personas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chat_files: {
         Row: {
           chat_id: string
@@ -513,6 +575,44 @@ export type Database = {
           voice_id?: string
         }
         Relationships: []
+      }
+      content_moderation: {
+        Row: {
+          action: string
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          moderator_id: string
+          persona_id: string | null
+          reason: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          moderator_id: string
+          persona_id?: string | null
+          reason?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          moderator_id?: string
+          persona_id?: string | null
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_moderation_persona_id_fkey"
+            columns: ["persona_id"]
+            isOneToOne: false
+            referencedRelation: "personas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       core_locket: {
         Row: {
@@ -1072,22 +1172,69 @@ export type Database = {
           },
         ]
       }
+      persona_stats: {
+        Row: {
+          followers_count: number
+          last_chat_at: string | null
+          persona_id: string
+          total_chats: number
+          total_messages: number
+          trending_score: number
+          updated_at: string
+        }
+        Insert: {
+          followers_count?: number
+          last_chat_at?: string | null
+          persona_id: string
+          total_chats?: number
+          total_messages?: number
+          trending_score?: number
+          updated_at?: string
+        }
+        Update: {
+          followers_count?: number
+          last_chat_at?: string | null
+          persona_id?: string
+          total_chats?: number
+          total_messages?: number
+          trending_score?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "persona_stats_persona_id_fkey"
+            columns: ["persona_id"]
+            isOneToOne: true
+            referencedRelation: "personas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       personas: {
         Row: {
           behavioral_blueprint: Json | null
           category: string | null
           config: Json | null
           created_at: string | null
+          creator_id: string | null
           description: string | null
           id: string
           image_url: string | null
+          intro_message: string | null
+          is_featured: boolean | null
           is_official: boolean | null
           metadata: Json | null
           name: string
           owner_id: string | null
           price: number | null
+          rejection_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
           safety_level: string | null
+          status: string | null
+          submitted_at: string | null
           system_prompt: string
+          tags: string[] | null
           visibility: string | null
           voice_id: string | null
         }
@@ -1096,16 +1243,25 @@ export type Database = {
           category?: string | null
           config?: Json | null
           created_at?: string | null
+          creator_id?: string | null
           description?: string | null
           id?: string
           image_url?: string | null
+          intro_message?: string | null
+          is_featured?: boolean | null
           is_official?: boolean | null
           metadata?: Json | null
           name: string
           owner_id?: string | null
           price?: number | null
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           safety_level?: string | null
+          status?: string | null
+          submitted_at?: string | null
           system_prompt: string
+          tags?: string[] | null
           visibility?: string | null
           voice_id?: string | null
         }
@@ -1114,16 +1270,25 @@ export type Database = {
           category?: string | null
           config?: Json | null
           created_at?: string | null
+          creator_id?: string | null
           description?: string | null
           id?: string
           image_url?: string | null
+          intro_message?: string | null
+          is_featured?: boolean | null
           is_official?: boolean | null
           metadata?: Json | null
           name?: string
           owner_id?: string | null
           price?: number | null
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           safety_level?: string | null
+          status?: string | null
+          submitted_at?: string | null
           system_prompt?: string
+          tags?: string[] | null
           visibility?: string | null
           voice_id?: string | null
         }
@@ -1675,6 +1840,7 @@ export type Database = {
         Returns: Record<string, unknown>
       }
       increment_user_requests: { Args: { uid: string }; Returns: undefined }
+      initialize_persona_stats: { Args: never; Returns: undefined }
       match_documents: {
         Args: {
           match_count: number
