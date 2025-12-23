@@ -1,28 +1,51 @@
 import Stripe from 'stripe'
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: '2024-12-18.acacia' as any,
-})
+// Lazy-initialized clients to avoid build-time errors
+let _stripe: Stripe | null = null
+let _supabase: SupabaseClient | null = null
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+function getStripe(): Stripe {
+    if (!_stripe) {
+        const apiKey = process.env.STRIPE_SECRET_KEY
+        if (!apiKey) {
+            throw new Error('STRIPE_SECRET_KEY environment variable is not set')
+        }
+        _stripe = new Stripe(apiKey, {
+            apiVersion: '2025-12-15.clover',
+        })
+    }
+    return _stripe
+}
 
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
+function getSupabaseAdmin(): SupabaseClient {
+    if (!_supabase) {
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+        const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+        if (!supabaseUrl || !supabaseServiceKey) {
+            throw new Error('Supabase environment variables are not set')
+        }
+        _supabase = createClient(supabaseUrl, supabaseServiceKey)
+    }
+    return _supabase
+}
 
 export type Tier = 'wanderer' | 'soul_weaver' | 'architect' | 'titan'
 
 export const mapPriceIdToTier = (priceId: string): Tier => {
     const mapping: Record<string, Tier> = {
-        [process.env.STRIPE_PRICE_ID_WANDERER!]: 'wanderer',
-        [process.env.STRIPE_PRICE_ID_SOUL_WEAVER!]: 'soul_weaver',
-        [process.env.STRIPE_PRICE_ID_ARCHITECT!]: 'architect',
-        [process.env.STRIPE_PRICE_ID_TITAN!]: 'titan',
+        [process.env.STRIPE_PRICE_ID_WANDERER || '']: 'wanderer',
+        [process.env.STRIPE_PRICE_ID_SOUL_WEAVER || '']: 'soul_weaver',
+        [process.env.STRIPE_PRICE_ID_ARCHITECT || '']: 'architect',
+        [process.env.STRIPE_PRICE_ID_TITAN || '']: 'titan',
     }
     return mapping[priceId] || 'wanderer'
 }
 
 export const syncSubscriptionStatus = async (userId: string, subscriptionId: string) => {
+    const stripe = getStripe()
+    const supabase = getSupabaseAdmin()
+
     try {
         const subscription = await stripe.subscriptions.retrieve(subscriptionId)
 
