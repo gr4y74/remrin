@@ -315,8 +315,8 @@ export default function HomePage() {
 
         {/* Hero Section with Carousel */}
         <section className="relative z-10 mt-8">
-          <div className="px-6 mb-4">
-            <h2 className="flex items-center gap-2 text-lg font-semibold text-white/80">
+          <div className="px-6 mb-4 text-center">
+            <h2 className="inline-flex items-center gap-2 text-lg font-semibold text-white/80">
               <IconSparkles size={20} className="text-amber-400" />
               Featured Souls
             </h2>
@@ -336,7 +336,7 @@ export default function HomePage() {
 
         {/* Main Gallery */}
         <section className="relative z-10 mt-8">
-          <div className="px-6 mb-4 flex items-center justify-between">
+          <div className="px-6 mb-4 flex flex-col items-center gap-2">
             <h2 className="text-lg font-semibold text-white/80">
               Explore Souls
             </h2>

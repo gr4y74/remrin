@@ -208,12 +208,13 @@ export function DraggableGallery({
                 {/* Grid container */}
                 <div
                     ref={gridRef}
-                    className="grid"
+                    className="grid justify-center"
                     style={{
                         display: "grid",
-                        gridTemplateColumns: `repeat(${config.cols}, ${config.itemSize}px)`,
+                        gridTemplateColumns: `repeat(auto-fill, ${config.itemSize}px)`,
                         gap: config.gap,
-                        padding: config.gap
+                        padding: config.gap,
+                        justifyContent: "center"
                     }}
                 >
                     {items.map((item, index) => (

@@ -36,8 +36,8 @@ export function HeroCarousel({
     const [isHovered, setIsHovered] = useState(false)
     const autoPlayRef = useRef<NodeJS.Timeout>()
 
-    const CARD_WIDTH = 380
-    const CARD_SPACING = 0.1 // stagger spacing
+    const CARD_WIDTH = 520
+    const CARD_SPACING = 0.08 // stagger spacing - smaller = tighter packing
 
     // Animate cards to position
     const animateToIndex = useCallback((index: number) => {
@@ -109,7 +109,7 @@ export function HeroCarousel({
         <div
             ref={containerRef}
             className={cn(
-                "relative w-full h-[280px] overflow-hidden",
+                "relative w-full h-[340px] overflow-hidden",
                 className
             )}
             onMouseEnter={() => setIsHovered(true)}
