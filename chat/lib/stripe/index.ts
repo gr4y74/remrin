@@ -1,11 +1,32 @@
 import Stripe from 'stripe';
 import { SupabaseClient } from '@supabase/supabase-js';
 
-// Initialize Stripe
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: '2025-12-15.clover',
-    typescript: true,
-});
+// Lazy-initialized Stripe client to avoid build-time errors
+// when STRIPE_SECRET_KEY is not available
+let _stripe: Stripe | null = null;
+
+function getStripe(): Stripe {
+    if (!_stripe) {
+        const apiKey = process.env.STRIPE_SECRET_KEY;
+        if (!apiKey) {
+            throw new Error('STRIPE_SECRET_KEY environment variable is not set');
+        }
+        _stripe = new Stripe(apiKey, {
+            apiVersion: '2025-12-15.clover',
+            typescript: true,
+        });
+    }
+    return _stripe;
+}
+
+// Export getter for backward compatibility
+export const stripe = {
+    get customers() { return getStripe().customers; },
+    get checkout() { return getStripe().checkout; },
+    get billingPortal() { return getStripe().billingPortal; },
+    get subscriptions() { return getStripe().subscriptions; },
+    get webhooks() { return getStripe().webhooks; },
+};
 
 /**
  * Get or create a Stripe customer for a user.
@@ -36,7 +57,7 @@ export async function getOrCreateCustomer({
     }
 
     // 2. Create new customer in Stripe
-    const customer = await stripe.customers.create({
+    const customer = await getStripe().customers.create({
         email,
         name,
         metadata: {
@@ -77,7 +98,7 @@ export async function createCheckoutSession({
     mode?: Stripe.Checkout.SessionCreateParams.Mode;
     metadata?: Record<string, string>;
 }) {
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
         customer: customerId,
         line_items: [
             {
@@ -105,7 +126,7 @@ export async function createCustomerPortalSession({
     customerId: string;
     returnUrl: string;
 }) {
-    const session = await stripe.billingPortal.sessions.create({
+    const session = await getStripe().billingPortal.sessions.create({
         customer: customerId,
         return_url: returnUrl,
     });

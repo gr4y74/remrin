@@ -1,22 +1,35 @@
 import { headers } from 'next/headers'
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
-import { createClient } from '@supabase/supabase-js'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { syncSubscriptionStatus } from '@/lib/stripe/subscription'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: '2024-12-18.acacia' as any,
-})
+// Lazy initialization to avoid build-time errors
+function getStripe(): Stripe {
+    const apiKey = process.env.STRIPE_SECRET_KEY
+    if (!apiKey) {
+        throw new Error('STRIPE_SECRET_KEY environment variable is not set')
+    }
+    return new Stripe(apiKey, {
+        apiVersion: '2025-12-15.clover',
+    })
+}
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
+function getSupabaseAdmin() {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    if (!supabaseUrl || !supabaseServiceKey) {
+        throw new Error('Supabase environment variables are not set')
+    }
+    return createSupabaseClient(supabaseUrl, supabaseServiceKey)
+}
 
 export async function POST(req: Request) {
     const body = await req.text()
     const signature = headers().get('stripe-signature') as string
+
+    const stripe = getStripe()
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
 
     let event: Stripe.Event
 
@@ -30,6 +43,8 @@ export async function POST(req: Request) {
         console.error(`Webhook signature verification failed: ${err.message}`)
         return new NextResponse(`Webhook Error: ${err.message}`, { status: 400 })
     }
+
+    const supabase = getSupabaseAdmin()
 
     try {
         switch (event.type) {
