@@ -1,4 +1,3 @@
-export { CharacterCard } from "./CharacterCard"
-export { CategoryTabs } from "./CategoryTabs"
-export { TrendingCarousel } from "./TrendingCarousel"
-export { DiscoveryFeed } from "./DiscoveryFeed"
+export { EtherealCard } from "./EtherealCard"
+export { DraggableGallery } from "./DraggableGallery"
+export { HeroCarousel } from "./HeroCarousel"
