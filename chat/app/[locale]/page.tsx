@@ -69,7 +69,7 @@ export default function HomePage() {
   }, [])
 
   const handlePersonaClick = (persona: { id: string }) => {
-    router.push(`/chat?persona=${persona.id}`)
+    router.push(`/character/${persona.id}`)
   }
 
   if (loading) {
