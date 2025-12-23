@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useContext } from "react"
+import { useEffect, useState, useContext, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
@@ -27,15 +27,37 @@ interface Persona {
 
 const SIDEBAR_WIDTH = 350
 
+// Demo names for generating extra cards
+const DEMO_NAMES = [
+  "Crystal Moonweaver", "Shadow Drifter", "Ember Phoenix", "Frost Whisper",
+  "Storm Caller", "Velvet Dream", "Thunder Strike", "Mystic Rose",
+  "Dark Knight", "Silver Star", "Golden Sun", "Ruby Heart",
+  "Sapphire Wave", "Jade Dragon", "Onyx Shadow", "Pearl Mist",
+  "Diamond Edge", "Amethyst Glow", "Topaz Flash", "Opal Shimmer",
+  "Celestia Dawn", "Midnight Raven", "Aurora Sky", "Crimson Wolf",
+  "Emerald Forest", "Violet Storm", "Azure Wind", "Scarlet Flame"
+]
+
+const DEMO_DESCRIPTIONS = [
+  "A mysterious wanderer with ancient wisdom",
+  "Master of the arcane arts",
+  "Guardian of the eternal flame",
+  "Keeper of forgotten secrets",
+  "Born from starlight and shadow",
+  "Traveler between worlds",
+  "Wielder of elemental power",
+  "Protector of the innocent"
+]
+
 export default function HomePage() {
   const router = useRouter()
-  const { profile } = useContext(ChatbotUIContext)
+  const { workspaces, profile } = useContext(ChatbotUIContext)
   const [personas, setPersonas] = useState<Persona[]>([])
-  const [featuredPersonas, setFeaturedPersonas] = useState<Persona[]>([])
   const [loading, setLoading] = useState(true)
   const [showSidebar, setShowSidebar] = useState(false)
   const [contentType, setContentType] = useState<ContentType>("chats")
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [defaultWorkspaceId, setDefaultWorkspaceId] = useState<string | null>(null)
 
   useEffect(() => {
     // Check if sidebar preference exists
@@ -45,6 +67,14 @@ export default function HomePage() {
     }
   }, [])
 
+  // Get default workspace when available
+  useEffect(() => {
+    if (workspaces && workspaces.length > 0) {
+      // Use the first workspace as default
+      setDefaultWorkspaceId(workspaces[0].id)
+    }
+  }, [workspaces])
+
   useEffect(() => {
     const fetchPersonas = async () => {
       try {
@@ -53,6 +83,19 @@ export default function HomePage() {
         // Check if user is logged in
         const { data: { user } } = await supabase.auth.getUser()
         setIsLoggedIn(!!user)
+
+        // If logged in, try to get their workspaces
+        if (user) {
+          const { data: workspaceData } = await supabase
+            .from("workspaces")
+            .select("id")
+            .eq("user_id", user.id)
+            .limit(1)
+
+          if (workspaceData && workspaceData.length > 0) {
+            setDefaultWorkspaceId(workspaceData[0].id)
+          }
+        }
 
         // Fetch all public personas
         const { data: allPersonas } = await supabase
@@ -68,7 +111,7 @@ export default function HomePage() {
           .order("created_at", { ascending: false })
           .limit(50)
 
-        if (allPersonas) {
+        if (allPersonas && allPersonas.length > 0) {
           // Assign random rarities for demo
           const withRarity = allPersonas.map((p, i) => ({
             ...p,
@@ -81,9 +124,9 @@ export default function HomePage() {
           }))
 
           setPersonas(withRarity)
-          // Get featured OR top 5 for carousel
-          const featured = withRarity.filter(p => p.is_featured)
-          setFeaturedPersonas(featured.length > 0 ? featured.slice(0, 5) : withRarity.slice(0, 5))
+        } else {
+          // No real personas, will use demo data
+          setPersonas([])
         }
       } catch (error) {
         console.error("Error fetching personas:", error)
@@ -95,8 +138,81 @@ export default function HomePage() {
     fetchPersonas()
   }, [])
 
+  // Generate demo cards to fill the gallery
+  const galleryItems = useMemo(() => {
+    if (personas.length >= 20) return personas
+
+    // Start with real personas
+    const items = [...personas]
+
+    // Add demo cards to reach at least 30 items
+    const demoCount = Math.max(30 - personas.length, 0)
+    for (let i = 0; i < demoCount; i++) {
+      const rarityRoll = Math.random()
+      const rarity: "common" | "rare" | "epic" | "legendary" =
+        rarityRoll < 0.02 ? "legendary" :
+          rarityRoll < 0.10 ? "epic" :
+            rarityRoll < 0.30 ? "rare" : "common"
+
+      items.push({
+        id: `demo-${i}`,
+        name: DEMO_NAMES[i % DEMO_NAMES.length],
+        description: DEMO_DESCRIPTIONS[i % DEMO_DESCRIPTIONS.length],
+        image_url: null, // Will show placeholder
+        rarity,
+        message_count: Math.floor(Math.random() * 50000),
+        follower_count: Math.floor(Math.random() * 10000)
+      })
+    }
+
+    return items
+  }, [personas])
+
+  // Generate hero carousel items (mix of real + demo)
+  const carouselItems = useMemo(() => {
+    const featured = personas.filter(p => p.is_featured)
+    const items = featured.length > 0 ? featured : personas.slice(0, 3)
+
+    // Add demo items to reach 8 total
+    const demoCount = Math.max(8 - items.length, 0)
+    for (let i = 0; i < demoCount; i++) {
+      items.push({
+        id: `demo-carousel-${i}`,
+        name: DEMO_NAMES[(i + 10) % DEMO_NAMES.length],
+        description: DEMO_DESCRIPTIONS[(i + 3) % DEMO_DESCRIPTIONS.length],
+        image_url: null,
+        rarity: i === 0 ? "legendary" as const : i < 2 ? "epic" as const : "rare" as const,
+        is_featured: true,
+        message_count: Math.floor(Math.random() * 100000),
+        follower_count: Math.floor(Math.random() * 50000)
+      })
+    }
+
+    return items.slice(0, 8)
+  }, [personas])
+
   const handlePersonaClick = (persona: { id: string }) => {
-    router.push(`/chat?persona=${persona.id}`)
+    // Only navigate for real personas (not demo)
+    if (persona.id.startsWith("demo-")) {
+      // Demo persona - could show a modal or redirect to signup
+      if (!isLoggedIn) {
+        router.push("/login")
+      } else {
+        router.push("/studio")
+      }
+      return
+    }
+
+    // Navigate to chat with proper workspace
+    if (defaultWorkspaceId) {
+      router.push(`/${defaultWorkspaceId}/chat?persona=${persona.id}`)
+    } else if (isLoggedIn) {
+      // User is logged in but we don't have workspace yet, redirect to setup
+      router.push("/setup")
+    } else {
+      // Not logged in, redirect to login
+      router.push("/login")
+    }
   }
 
   const handleToggleSidebar = () => {
@@ -198,27 +314,25 @@ export default function HomePage() {
         </header>
 
         {/* Hero Section with Carousel */}
-        {featuredPersonas.length > 0 && (
-          <section className="relative z-10 mt-8">
-            <div className="px-6 mb-4">
-              <h2 className="flex items-center gap-2 text-lg font-semibold text-white/80">
-                <IconSparkles size={20} className="text-amber-400" />
-                Featured Souls
-              </h2>
-            </div>
-            <HeroCarousel
-              items={featuredPersonas.map(p => ({
-                id: p.id,
-                name: p.name,
-                description: p.description,
-                imageUrl: p.image_url,
-                rarity: p.rarity,
-                isFeatured: true
-              }))}
-              onItemClick={handlePersonaClick}
-            />
-          </section>
-        )}
+        <section className="relative z-10 mt-8">
+          <div className="px-6 mb-4">
+            <h2 className="flex items-center gap-2 text-lg font-semibold text-white/80">
+              <IconSparkles size={20} className="text-amber-400" />
+              Featured Souls
+            </h2>
+          </div>
+          <HeroCarousel
+            items={carouselItems.map(p => ({
+              id: p.id,
+              name: p.name,
+              description: p.description,
+              imageUrl: p.image_url,
+              rarity: p.rarity,
+              isFeatured: true
+            }))}
+            onItemClick={handlePersonaClick}
+          />
+        </section>
 
         {/* Main Gallery */}
         <section className="relative z-10 mt-8">
@@ -235,38 +349,18 @@ export default function HomePage() {
             </Link>
           </div>
 
-          {personas.length > 0 ? (
-            <DraggableGallery
-              items={personas.map(p => ({
-                id: p.id,
-                name: p.name,
-                description: p.description,
-                imageUrl: p.image_url,
-                rarity: p.rarity,
-                messageCount: p.message_count,
-                followersCount: p.follower_count
-              }))}
-              onItemClick={handlePersonaClick}
-            />
-          ) : (
-            <div className="flex flex-col items-center justify-center py-20 text-center">
-              <div className="w-24 h-24 rounded-full bg-purple-500/10 flex items-center justify-center mb-6">
-                <IconSparkles size={48} className="text-purple-400" />
-              </div>
-              <h3 className="text-xl font-semibold text-white mb-2">
-                No Souls Yet
-              </h3>
-              <p className="text-white/50 mb-6 max-w-sm">
-                Be the first to create a Soul and bring it to life!
-              </p>
-              <Link
-                href="/studio"
-                className="px-6 py-3 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium hover:from-purple-500 hover:to-pink-500 transition-all"
-              >
-                Create Your First Soul
-              </Link>
-            </div>
-          )}
+          <DraggableGallery
+            items={galleryItems.map(p => ({
+              id: p.id,
+              name: p.name,
+              description: p.description,
+              imageUrl: p.image_url,
+              rarity: p.rarity,
+              messageCount: p.message_count,
+              followersCount: p.follower_count
+            }))}
+            onItemClick={handlePersonaClick}
+          />
         </section>
 
         {/* Quick Actions Footer */}
