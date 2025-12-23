@@ -257,8 +257,8 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Main Content */}
-      <div className="relative flex-1 min-h-screen text-white overflow-auto">
+      {/* Main Content - normal page scroll */}
+      <div className="relative flex-1 min-h-screen text-white overflow-y-auto">
         {/* Sidebar Toggle */}
         {isLoggedIn && (
           <Button
