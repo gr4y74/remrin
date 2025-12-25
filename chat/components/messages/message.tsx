@@ -160,7 +160,7 @@ export const Message: FC<MessageProps> = ({
       input.focus()
       input.setSelectionRange(input.value.length, input.value.length)
     }
-  }, [isEditing])
+  }, [isEditing, message.content])
 
   const MODEL_DATA = [
     ...models.map(model => ({
@@ -234,13 +234,13 @@ export const Message: FC<MessageProps> = ({
           // User message styling - right aligned bubble
           message.role === "user" && [
             "ml-auto mr-4 max-w-[85%] rounded-2xl rounded-br-sm",
-            "bg-rem-blue/20 border border-rem-blue/30"
+            "bg-rem-blue/20 border-rem-blue/30 border"
           ],
           // Assistant message styling - left aligned with persona styling
           message.role === "assistant" && [
-            "mr-auto ml-4 max-w-[85%] rounded-2xl rounded-bl-sm",
+            "ml-4 mr-auto max-w-[85%] rounded-2xl rounded-bl-sm",
             isPersonaChat
-              ? "bg-dark-blue/80 backdrop-blur-sm border border-ram-pink/20"
+              ? "bg-dark-blue/80 border-ram-pink/20 border backdrop-blur-sm"
               : "bg-secondary/50"
           ],
           "transition-all duration-200 ease-out hover:shadow-lg"
@@ -322,7 +322,7 @@ export const Message: FC<MessageProps> = ({
                 />
               )}
 
-              <div className="font-tiempos-headline font-medium text-rp-text">
+              <div className="font-tiempos-headline text-rp-text font-medium">
                 {message.role === "assistant"
                   ? // Talkie-style: Show persona name when chatting with a persona
                   isPersonaChat && selectedPersona

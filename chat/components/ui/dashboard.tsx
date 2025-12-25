@@ -98,7 +98,7 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
       >
         {/* Icon Strip (always visible) */}
         <div
-          className="flex h-full flex-col border-r border-border/50 bg-rp-base"
+          className="border-border/50 bg-rp-base flex h-full flex-col border-r"
           style={{ width: `${ICON_SIDEBAR_WIDTH}px` }}
         >
           <Tabs
@@ -120,8 +120,8 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
         {/* Expandable Sidebar Content */}
         <div
           className={cn(
-            "relative h-full overflow-hidden bg-rp-surface transition-all duration-200 ease-out",
-            isSidebarExpanded ? "opacity-100" : "opacity-0 pointer-events-none"
+            "bg-rp-surface relative h-full overflow-hidden transition-all duration-200 ease-out",
+            isSidebarExpanded ? "opacity-100" : "pointer-events-none opacity-0"
           )}
           style={{
             width: isSidebarExpanded ? `${SIDEBAR_WIDTH}px` : "0px"
@@ -142,7 +142,7 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
         {/* Sidebar Toggle Chevron - Always visible */}
         <button
           onClick={handleToggleSidebar}
-          className="absolute z-20 flex size-8 items-center justify-center rounded-full bg-rp-overlay border border-border/50 text-rp-subtle hover:bg-rp-highlight-med hover:text-rp-text transition-all duration-200"
+          className="bg-rp-overlay border-border/50 text-rp-subtle hover:bg-rp-highlight-med hover:text-rp-text absolute z-20 flex size-8 items-center justify-center rounded-full border transition-all duration-200"
           style={{
             left: isSidebarExpanded ? `${ICON_SIDEBAR_WIDTH + SIDEBAR_WIDTH - 16}px` : `${ICON_SIDEBAR_WIDTH - 16}px`,
             top: "50%",
@@ -156,7 +156,7 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
 
       {/* Panel 2: Main Chat Area */}
       <div
-        className="relative flex min-w-0 flex-1 flex-col bg-background"
+        className="bg-background relative flex min-w-0 flex-1 flex-col"
         onDrop={onFileDrop}
         onDragOver={onDragOver}
         onDragEnter={handleDragEnter}

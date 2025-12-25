@@ -102,7 +102,7 @@ export function PullAnimation({
             particles.push(
                 <div
                     key={i}
-                    className="absolute left-1/2 top-1/2 rounded-full animate-sparkle-burst"
+                    className="animate-sparkle-burst absolute left-1/2 top-1/2 rounded-full"
                     style={{
                         width: size,
                         height: size,
@@ -131,13 +131,13 @@ export function PullAnimation({
                 <div className="relative flex flex-col items-center justify-center">
                     {/* Background glow */}
                     <div
-                        className="absolute size-[400px] rounded-full blur-3xl opacity-30 animate-gacha-orb-pulse"
+                        className="animate-gacha-orb-pulse absolute size-[400px] rounded-full opacity-30 blur-3xl"
                         style={{ backgroundColor: orbColor.primary }}
                     />
 
                     {/* Main orb */}
                     <div
-                        className="relative size-32 rounded-full animate-gacha-orb-pulse"
+                        className="animate-gacha-orb-pulse relative size-32 rounded-full"
                         style={{
                             background: `radial-gradient(circle at 30% 30%, white, ${orbColor.primary})`,
                             boxShadow: `0 0 60px ${orbColor.glow}, 0 0 120px ${orbColor.glow}`
@@ -149,11 +149,11 @@ export function PullAnimation({
 
                     {/* Rotating ring */}
                     <div
-                        className="absolute size-48 rounded-full border-2 border-dashed animate-gradient-rotate"
+                        className="animate-gradient-rotate absolute size-48 rounded-full border-2 border-dashed"
                         style={{ borderColor: orbColor.primary, opacity: 0.5 }}
                     />
                     <div
-                        className="absolute size-56 rounded-full border animate-gradient-rotate"
+                        className="animate-gradient-rotate absolute size-56 rounded-full border"
                         style={{
                             borderColor: orbColor.primary,
                             opacity: 0.3,
@@ -163,7 +163,7 @@ export function PullAnimation({
                     />
 
                     {/* Text */}
-                    <p className="mt-12 text-lg font-medium text-white/60 animate-pulse">
+                    <p className="mt-12 animate-pulse text-lg font-medium text-white/60">
                         Summoning souls from the Aether...
                     </p>
                 </div>
@@ -174,7 +174,7 @@ export function PullAnimation({
                 <div className="relative flex items-center justify-center">
                     {/* Bright flash */}
                     <div
-                        className="absolute size-[600px] rounded-full animate-sparkle-burst"
+                        className="animate-sparkle-burst absolute size-[600px] rounded-full"
                         style={{
                             background: `radial-gradient(circle, ${orbColor.primary}, transparent 70%)`,
                             opacity: 0.8
@@ -188,9 +188,9 @@ export function PullAnimation({
 
             {/* Cards Phase */}
             {phase === "cards" && (
-                <div className="relative flex flex-col items-center justify-center w-full max-w-lg px-4">
+                <div className="relative flex w-full max-w-lg flex-col items-center justify-center px-4">
                     {/* Single card display */}
-                    <div className="w-full animate-card-flip">
+                    <div className="animate-card-flip w-full">
                         <PullResultComponent
                             result={results[currentCardIndex]}
                             onAddToLibrary={onAddToLibrary || (() => { })}

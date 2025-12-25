@@ -1,0 +1,139 @@
+
+> remrin@2.0.0 build
+> next build
+
+  ▲ Next.js 14.2.35
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+
+./app/[locale]/[workspaceid]/layout.tsx
+73:6  Warning: React Hook useEffect has missing dependencies: 'fetchWorkspaceData', 'router', and 'workspaceId'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+90:6  Warning: React Hook useEffect has missing dependencies: 'fetchWorkspaceData', 'setChatFiles', 'setChatImages', 'setChatMessages', 'setFirstTokenReceived', 'setIsGenerating', 'setNewMessageFiles', 'setNewMessageImages', 'setSelectedChat', 'setShowFilesDisplay', and 'setUserInput'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+
+./app/[locale]/admin/moderation/page.tsx
+242:45  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+297:37  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/[locale]/login/password/page.tsx
+23:6  Warning: React Hook useEffect has a missing dependency: 'router'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./app/[locale]/setup/page.tsx
+100:6  Warning: React Hook useEffect has missing dependencies: 'router', 'setAvailableHostedModels', 'setAvailableOpenRouterModels', 'setEnvKeyMap', and 'setProfile'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+
+./app/[locale]/studio/components/identity-tab.tsx
+59:25  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/[locale]/studio/components/store-tab.tsx
+106:37  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/[locale]/studio/components/visuals-tab.tsx
+39:25  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./components/character/CharacterPanel.tsx
+77:21  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./components/chat/chat-hooks/use-scroll.tsx
+29:6  Warning: React Hook useEffect has a missing dependency: 'userScrolled'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+35:6  Warning: React Hook useEffect has missing dependencies: 'isGenerating', 'scrollToBottom', and 'userScrolled'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/chat/chat-hooks/use-select-file-handler.tsx
+33:6  Warning: React Hook useEffect has a missing dependency: 'handleFilesToAccept'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/chat/chat-input.tsx
+94:6  Warning: React Hook useEffect has a missing dependency: 'handleFocusChatInput'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/chat/chat-settings.tsx
+47:6  Warning: React Hook useEffect has missing dependencies: 'chatSettings' and 'setChatSettings'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/chat/chat-ui.tsx
+83:6  Warning: React Hook useEffect has missing dependencies: 'fetchChat', 'fetchMessages', 'handleFocusChatInput', 'params.chatid', 'scrollToBottom', and 'setIsAtBottom'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/gacha/PullHistory.tsx
+118:33  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+   Collecting page data ...
+ ⚠ Using edge runtime on a page currently disables static generation for that page
+   Generating static pages (0/21) ...
+   Generating static pages (5/21) 
+   Generating static pages (10/21) 
+   Generating static pages (15/21) 
+ ✓ Generating static pages (21/21)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                Size     First Load JS
+┌ ○ /_not-found                            880 B          88.6 kB
+├ ƒ /[locale]                              3.48 kB        1.49 MB
+├ ƒ /[locale]/[workspaceid]                1.02 kB        88.7 kB
+├ ƒ /[locale]/[workspaceid]/chat           879 B          1.62 MB
+├ ƒ /[locale]/[workspaceid]/chat/[chatid]  323 B          1.62 MB
+├ ƒ /[locale]/admin                        4.01 kB         100 kB
+├ ƒ /[locale]/admin/featured               5.22 kB         121 kB
+├ ƒ /[locale]/admin/moderation             5.5 kB          164 kB
+├ ƒ /[locale]/character/[characterId]      3.48 kB         194 kB
+├ ƒ /[locale]/collection                   8.7 kB          173 kB
+├ ƒ /[locale]/creator                      12.2 kB         194 kB
+├ ƒ /[locale]/discover                     3.21 kB         202 kB
+├ ƒ /[locale]/help                         148 B          87.9 kB
+├ ƒ /[locale]/login                        4.78 kB         213 kB
+├ ƒ /[locale]/login/password               2.46 kB         171 kB
+├ ƒ /[locale]/marketplace                  7.83 kB         119 kB
+├ ƒ /[locale]/moments                      2.52 kB         181 kB
+├ ƒ /[locale]/pricing                      6 kB            100 kB
+├ ƒ /[locale]/setup                        6.76 kB         167 kB
+├ ƒ /[locale]/signup                       6.72 kB         216 kB
+├ ƒ /[locale]/studio                       11.7 kB         199 kB
+├ ƒ /[locale]/summon                       14.7 kB         176 kB
+├ ƒ /api/admin/auth                        0 B                0 B
+├ ƒ /api/admin/personas                    0 B                0 B
+├ ƒ /api/assistants/openai                 0 B                0 B
+├ ƒ /api/auth/signout                      0 B                0 B
+├ ƒ /api/chat/anthropic                    0 B                0 B
+├ ƒ /api/chat/azure                        0 B                0 B
+├ ƒ /api/chat/custom                       0 B                0 B
+├ ƒ /api/chat/google                       0 B                0 B
+├ ƒ /api/chat/groq                         0 B                0 B
+├ ƒ /api/chat/mistral                      0 B                0 B
+├ ƒ /api/chat/openai                       0 B                0 B
+├ ƒ /api/chat/openrouter                   0 B                0 B
+├ ƒ /api/chat/perplexity                   0 B                0 B
+├ ƒ /api/chat/suggestions                  0 B                0 B
+├ ƒ /api/chat/tools                        0 B                0 B
+├ ƒ /api/command                           0 B                0 B
+├ ƒ /api/forge/finalize-soul               0 B                0 B
+├ ƒ /api/forge/generate-portrait           0 B                0 B
+├ ƒ /api/forge/reveal                      0 B                0 B
+├ ƒ /api/gacha/history                     0 B                0 B
+├ ƒ /api/gacha/pools                       0 B                0 B
+├ ƒ /api/gacha/pull                        0 B                0 B
+├ ○ /api/keys                              0 B                0 B
+├ ƒ /api/marketplace                       0 B                0 B
+├ ƒ /api/marketplace/[id]                  0 B                0 B
+├ ƒ /api/marketplace/list                  0 B                0 B
+├ ƒ /api/retrieval/process                 0 B                0 B
+├ ƒ /api/retrieval/process/docx            0 B                0 B
+├ ƒ /api/retrieval/retrieve                0 B                0 B
+├ ƒ /api/stripe/checkout                   0 B                0 B
+├ ƒ /api/stripe/portal                     0 B                0 B
+├ ƒ /api/stripe/webhook                    0 B                0 B
+├ ƒ /api/username/available                0 B                0 B
+├ ƒ /api/username/get                      0 B                0 B
+├ ƒ /api/voice/tts                         0 B                0 B
+├ ƒ /api/wallet                            0 B                0 B
+├ ƒ /api/wallet/topup                      0 B                0 B
+└ ƒ /auth/callback                         0 B                0 B
++ First Load JS shared by all              87.7 kB
+  ├ chunks/2117-2fff3f42b8543c19.js        31.9 kB
+  ├ chunks/fd9d1056-efbb5f4a710e7b0a.js    53.6 kB
+  └ other shared chunks (total)            2.17 kB
+
+
+ƒ Middleware                               82 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

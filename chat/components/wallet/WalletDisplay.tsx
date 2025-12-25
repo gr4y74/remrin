@@ -30,8 +30,8 @@ export const WalletDisplay: FC<WalletDisplayProps> = ({
                 onClick={onAddFunds}
                 className={cn(
                     "group flex items-center gap-2 rounded-full px-3 py-1.5",
-                    "bg-gradient-to-r from-rp-gold/10 to-rp-gold/5",
-                    "border border-rp-gold/20 hover:border-rp-gold/40",
+                    "from-rp-gold/10 to-rp-gold/5 bg-gradient-to-r",
+                    "border-rp-gold/20 hover:border-rp-gold/40 border",
                     "transition-all duration-300 hover:scale-105",
                     "backdrop-blur-sm",
                     className
@@ -43,11 +43,11 @@ export const WalletDisplay: FC<WalletDisplayProps> = ({
                         size={18}
                         className="text-rp-gold animate-coin-glow"
                     />
-                    <div className="absolute inset-0 rounded-full bg-rp-gold/20 blur-sm animate-pulse" />
+                    <div className="bg-rp-gold/20 absolute inset-0 animate-pulse rounded-full blur-sm" />
                 </div>
 
                 {/* Balance */}
-                <span className="text-sm font-semibold text-rp-gold">
+                <span className="text-rp-gold text-sm font-semibold">
                     {formatBalance(balanceAether)}
                 </span>
 
@@ -65,24 +65,24 @@ export const WalletDisplay: FC<WalletDisplayProps> = ({
         <div
             className={cn(
                 "rounded-2xl p-5",
-                "bg-rp-surface backdrop-blur-xl shadow-xl",
-                "border border-rp-highlight-low",
+                "bg-rp-surface shadow-xl backdrop-blur-xl",
+                "border-rp-highlight-low border",
                 className
             )}
         >
             {/* Header */}
-            <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-rp-text">Your Wallet</h3>
+            <div className="mb-4 flex items-center justify-between">
+                <h3 className="text-rp-text text-lg font-semibold">Your Wallet</h3>
                 {onAddFunds && (
                     <button
                         onClick={onAddFunds}
                         className={cn(
-                            "flex items-center gap-1.5 px-3 py-1.5 rounded-lg",
-                            "bg-gradient-to-r from-rp-gold to-rp-iris",
-                            "text-rp-base font-medium text-sm",
+                            "flex items-center gap-1.5 rounded-lg px-3 py-1.5",
+                            "from-rp-gold to-rp-iris bg-gradient-to-r",
+                            "text-rp-base text-sm font-medium",
                             "hover:from-rp-gold/80 hover:to-rp-iris/80",
                             "transition-all duration-200 hover:scale-105",
-                            "shadow-lg shadow-rp-gold/20"
+                            "shadow-rp-gold/20 shadow-lg"
                         )}
                     >
                         <IconPlus size={16} />
@@ -94,15 +94,15 @@ export const WalletDisplay: FC<WalletDisplayProps> = ({
             {/* Balances */}
             <div className="space-y-3">
                 {/* Aether Balance */}
-                <div className="flex items-center justify-between p-3 rounded-xl bg-rp-overlay border border-rp-gold/10">
+                <div className="bg-rp-overlay border-rp-gold/10 flex items-center justify-between rounded-xl border p-3">
                     <div className="flex items-center gap-3">
-                        <div className="relative size-10 flex items-center justify-center rounded-full bg-gradient-to-br from-rp-gold/20 to-rp-iris/20">
+                        <div className="from-rp-gold/20 to-rp-iris/20 relative flex size-10 items-center justify-center rounded-full bg-gradient-to-br">
                             <IconCoin size={22} className="text-rp-gold" />
-                            <div className="absolute inset-0 rounded-full bg-rp-gold/10 blur-md animate-pulse" />
+                            <div className="bg-rp-gold/10 absolute inset-0 animate-pulse rounded-full blur-md" />
                         </div>
                         <div>
-                            <p className="text-xs text-rp-subtle">Aether Credits</p>
-                            <p className="text-xl font-bold text-rp-text">
+                            <p className="text-rp-subtle text-xs">Aether Credits</p>
+                            <p className="text-rp-text text-xl font-bold">
                                 {formatBalance(balanceAether)}
                             </p>
                         </div>
@@ -110,14 +110,14 @@ export const WalletDisplay: FC<WalletDisplayProps> = ({
                 </div>
 
                 {/* Brain Balance */}
-                <div className="flex items-center justify-between p-3 rounded-xl bg-rp-overlay border border-rp-iris/10">
+                <div className="bg-rp-overlay border-rp-iris/10 flex items-center justify-between rounded-xl border p-3">
                     <div className="flex items-center gap-3">
-                        <div className="relative size-10 flex items-center justify-center rounded-full bg-gradient-to-br from-rp-iris/20 to-rp-rose/20">
+                        <div className="from-rp-iris/20 to-rp-rose/20 relative flex size-10 items-center justify-center rounded-full bg-gradient-to-br">
                             <span className="text-lg">🧠</span>
                         </div>
                         <div>
-                            <p className="text-xs text-rp-subtle">Brain Credits</p>
-                            <p className="text-xl font-bold text-rp-text">
+                            <p className="text-rp-subtle text-xs">Brain Credits</p>
+                            <p className="text-rp-text text-xl font-bold">
                                 {formatBalance(balanceBrain)}
                             </p>
                         </div>

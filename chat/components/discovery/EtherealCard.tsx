@@ -40,7 +40,7 @@ export function EtherealCard({
 
     return (
         <ElectricCard rarity={rarity} onClick={onClick} className={className}>
-            <div className="relative w-full aspect-[3/4] overflow-hidden rounded-xl">
+            <div className="relative aspect-[3/4] w-full overflow-hidden rounded-xl">
                 {/* Image */}
                 <div className="absolute inset-0">
                     {imageUrl ? (
@@ -52,8 +52,8 @@ export function EtherealCard({
                             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                         />
                     ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-rp-iris/50 to-rp-rose/50 flex items-center justify-center">
-                            <span className="text-4xl font-bold text-rp-text/30">
+                        <div className="from-rp-iris/50 to-rp-rose/50 flex size-full items-center justify-center bg-gradient-to-br">
+                            <span className="text-rp-text/30 text-4xl font-bold">
                                 {name.slice(0, 2).toUpperCase()}
                             </span>
                         </div>
@@ -61,17 +61,17 @@ export function EtherealCard({
                 </div>
 
                 {/* Gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-rp-base/90 via-rp-base/20 to-transparent" />
+                <div className="from-rp-base/90 via-rp-base/20 absolute inset-0 bg-gradient-to-t to-transparent" />
 
                 {/* Badges */}
-                <div className="absolute top-3 left-3 flex gap-2">
+                <div className="absolute left-3 top-3 flex gap-2">
                     {isNew && (
-                        <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-rp-foam to-rp-pine text-[10px] font-bold text-rp-base uppercase tracking-wider">
+                        <span className="from-rp-foam to-rp-pine text-rp-base rounded-full bg-gradient-to-r px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
                             New
                         </span>
                     )}
                     {isFeatured && (
-                        <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-rp-gold to-rp-rose text-[10px] font-bold text-rp-base uppercase tracking-wider flex items-center gap-1">
+                        <span className="from-rp-gold to-rp-rose text-rp-base flex items-center gap-1 rounded-full bg-gradient-to-r px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
                             <IconSparkles size={10} />
                             Featured
                         </span>
@@ -80,12 +80,12 @@ export function EtherealCard({
 
                 {/* Rarity indicator */}
                 {rarity !== "common" && (
-                    <div className="absolute top-3 right-3">
+                    <div className="absolute right-3 top-3">
                         <span className={cn(
-                            "px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
+                            "rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
                             rarity === "rare" && "bg-rp-iris/80 text-rp-base",
                             rarity === "epic" && "bg-rp-rose/80 text-rp-base",
-                            rarity === "legendary" && "bg-gradient-to-r from-rp-gold to-rp-love text-rp-base"
+                            rarity === "legendary" && "from-rp-gold to-rp-love text-rp-base bg-gradient-to-r"
                         )}>
                             {rarity}
                         </span>
@@ -93,12 +93,12 @@ export function EtherealCard({
                 )}
 
                 {/* Content */}
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <h3 className="text-lg font-bold text-white truncate mb-1">
+                <div className="absolute inset-x-0 bottom-0 p-4">
+                    <h3 className="mb-1 truncate text-lg font-bold text-white">
                         {name}
                     </h3>
                     {description && (
-                        <p className="text-xs text-white/60 line-clamp-2 mb-3">
+                        <p className="mb-3 line-clamp-2 text-xs text-white/60">
                             {description}
                         </p>
                     )}
@@ -117,7 +117,7 @@ export function EtherealCard({
                 </div>
 
                 {/* Hover shine effect */}
-                <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+                <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 hover:opacity-100">
                     <div
                         className="absolute inset-0"
                         style={{

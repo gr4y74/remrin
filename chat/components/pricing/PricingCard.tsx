@@ -46,12 +46,12 @@ export function PricingCard({
     return (
         <Card
             className={cn(
-                "relative flex flex-col h-full bg-rp-surface transition-all duration-300 hover:shadow-xl",
-                isPopular ? "border-rp-iris shadow-rp-iris/10 scale-105 z-10" : "border-rp-muted/20"
+                "bg-rp-surface relative flex h-full flex-col transition-all duration-300 hover:shadow-xl",
+                isPopular ? "border-rp-iris shadow-rp-iris/10 z-10 scale-105" : "border-rp-muted/20"
             )}
         >
             {isPopular && (
-                <div className="absolute -top-3 left-0 right-0 flex justify-center">
+                <div className="absolute inset-x-0 -top-3 flex justify-center">
                     <Badge variant="default" className="bg-rp-iris text-rp-base hover:bg-rp-iris border-0">
                         Most Popular
                     </Badge>
@@ -59,14 +59,14 @@ export function PricingCard({
             )}
 
             <CardHeader>
-                <CardTitle className="text-2xl font-bold text-rp-text">{title}</CardTitle>
-                <div className="flex items-baseline gap-1 mt-2">
-                    <span className="text-4xl font-extrabold text-rp-text">{price}</span>
+                <CardTitle className="text-rp-text text-2xl font-bold">{title}</CardTitle>
+                <div className="mt-2 flex items-baseline gap-1">
+                    <span className="text-rp-text text-4xl font-extrabold">{price}</span>
                     {price !== "Free" && (
                         <span className="text-rp-subtle">/{interval}</span>
                     )}
                 </div>
-                <CardDescription className="mt-2 text-rp-subtle">{description}</CardDescription>
+                <CardDescription className="text-rp-subtle mt-2">{description}</CardDescription>
             </CardHeader>
 
             <CardContent className="flex-1">
@@ -75,11 +75,11 @@ export function PricingCard({
                         <li key={index} className="flex items-start gap-2">
                             <Check
                                 className={cn(
-                                    "h-5 w-5 shrink-0",
+                                    "size-5 shrink-0",
                                     feature.included ? "text-rp-foam" : "text-rp-muted opacity-50"
                                 )}
                             />
-                            <span className={cn("text-sm text-rp-text", !feature.included && "text-rp-muted opacity-50")}>
+                            <span className={cn("text-rp-text text-sm", !feature.included && "text-rp-muted opacity-50")}>
                                 {feature.text}
                             </span>
                         </li>

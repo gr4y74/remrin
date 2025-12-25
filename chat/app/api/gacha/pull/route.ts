@@ -3,6 +3,8 @@ import { performPull, getUserPity, PULL_COST_SINGLE, PULL_COST_MULTI } from "@/l
 import { cookies } from "next/headers"
 import { NextRequest, NextResponse } from "next/server"
 
+export const dynamic = "force-dynamic"
+
 /**
  * POST /api/gacha/pull
  * Perform a gacha pull

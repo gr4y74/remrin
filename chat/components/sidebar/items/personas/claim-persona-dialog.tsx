@@ -92,7 +92,7 @@ export const ClaimPersonaDialog: FC<ClaimPersonaDialogProps> = ({
                             onChange={e => setSoulId(e.target.value)}
                             className="font-mono text-sm"
                         />
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-muted-foreground text-xs">
                             You can find this ID in your confirmation email or the Forge
                             completion screen.
                         </p>

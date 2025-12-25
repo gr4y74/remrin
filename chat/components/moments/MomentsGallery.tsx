@@ -178,8 +178,8 @@ export function MomentsGallery({
     if (moments.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-                <p className="text-lg text-rp-subtle">No moments yet</p>
-                <p className="mt-1 text-sm text-rp-muted">
+                <p className="text-rp-subtle text-lg">No moments yet</p>
+                <p className="text-rp-muted mt-1 text-sm">
                     Check back later for new content
                 </p>
             </div>
@@ -214,7 +214,7 @@ export function MomentsGallery({
                         variant="outline"
                         onClick={loadMore}
                         disabled={isLoading}
-                        className="rounded-full border-rp-muted/20 bg-rp-surface px-8 hover:bg-rp-overlay text-rp-text"
+                        className="border-rp-muted/20 bg-rp-surface hover:bg-rp-overlay text-rp-text rounded-full px-8"
                     >
                         {isLoading ? (
                             <>
@@ -231,7 +231,7 @@ export function MomentsGallery({
                     <Button
                         variant="ghost"
                         asChild
-                        className="rounded-full text-rp-iris hover:text-rp-iris/80 hover:bg-rp-iris/10"
+                        className="text-rp-iris hover:text-rp-iris/80 hover:bg-rp-iris/10 rounded-full"
                     >
                         <a href={viewAllHref}>View All Moments →</a>
                     </Button>

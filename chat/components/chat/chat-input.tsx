@@ -91,7 +91,7 @@ export const ChatInput: FC<ChatInputProps> = ({ }) => {
     setTimeout(() => {
       handleFocusChatInput()
     }, 200) // FIX: hacky
-  }, [selectedPreset, selectedAssistant])
+  }, [handleFocusChatInput, selectedPreset, selectedAssistant])
 
   // Fetch suggestions when AI finishes generating a response
   useEffect(() => {
@@ -229,7 +229,7 @@ export const ChatInput: FC<ChatInputProps> = ({ }) => {
                 )
               }
             >
-              <div className="flex cursor-pointer items-center justify-center space-x-1 rounded-lg bg-rp-iris px-3 py-1 hover:bg-rp-iris/80">
+              <div className="bg-rp-iris hover:bg-rp-iris/80 flex cursor-pointer items-center justify-center space-x-1 rounded-lg px-3 py-1">
                 <IconBolt size={20} />
 
                 <div>{tool.name}</div>
@@ -275,7 +275,7 @@ export const ChatInput: FC<ChatInputProps> = ({ }) => {
       )}
 
       {/* Clean Input Box with Solid Background - No border */}
-      <div className="relative mt-3 flex min-h-[56px] w-full items-center rounded-2xl bg-rp-surface">
+      <div className="bg-rp-surface relative mt-3 flex min-h-[56px] w-full items-center rounded-2xl">
         <div className="absolute bottom-[76px] left-0 max-h-[300px] w-full overflow-auto rounded-xl dark:border-none">
           <ChatCommandInput />
         </div>
@@ -284,7 +284,7 @@ export const ChatInput: FC<ChatInputProps> = ({ }) => {
         <div className="flex items-center gap-1 pl-3">
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="flex size-9 items-center justify-center rounded-lg text-rp-muted transition-colors hover:bg-rp-overlay hover:text-rp-text"
+            className="text-rp-muted hover:bg-rp-overlay hover:text-rp-text flex size-9 items-center justify-center rounded-lg transition-colors"
             title="Attach file"
           >
             <IconCirclePlus size={22} />
@@ -312,7 +312,7 @@ export const ChatInput: FC<ChatInputProps> = ({ }) => {
         {/* Text Input */}
         <TextareaAutosize
           textareaRef={chatInputRef}
-          className="flex-1 resize-none bg-transparent px-3 py-3 text-rp-text placeholder:text-rp-muted focus:outline-none"
+          className="text-rp-text placeholder:text-rp-muted flex-1 resize-none bg-transparent p-3 focus:outline-none"
           placeholder={t(`Ask anything. Type @  /  #  !`)}
           onValueChange={handleInputChange}
           value={userInput}
@@ -329,7 +329,7 @@ export const ChatInput: FC<ChatInputProps> = ({ }) => {
           {isGenerating ? (
             <button
               onClick={handleStopMessage}
-              className="flex size-9 items-center justify-center rounded-lg bg-rp-love/80 text-white transition-colors hover:bg-rp-love"
+              className="bg-rp-love/80 hover:bg-rp-love flex size-9 items-center justify-center rounded-lg text-white transition-colors"
             >
               <IconPlayerStopFilled size={18} className="animate-pulse" />
             </button>
@@ -341,8 +341,8 @@ export const ChatInput: FC<ChatInputProps> = ({ }) => {
               }}
               disabled={!userInput}
               className={cn(
-                "flex size-9 items-center justify-center rounded-lg bg-rp-rose text-rp-base transition-all",
-                userInput ? "hover:bg-rp-rose/80 hover:scale-105" : "opacity-40 cursor-not-allowed"
+                "bg-rp-rose text-rp-base flex size-9 items-center justify-center rounded-lg transition-all",
+                userInput ? "hover:bg-rp-rose/80 hover:scale-105" : "cursor-not-allowed opacity-40"
               )}
             >
               <IconSend size={18} />

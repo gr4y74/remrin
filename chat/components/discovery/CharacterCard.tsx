@@ -70,8 +70,8 @@ export function CharacterCard({
             <div
                 ref={cardRef}
                 className={cn(
-                    "group relative overflow-hidden rounded-2xl border border-rp-muted/20 bg-rp-surface",
-                    "transition-all duration-300 ease-out animate-card-enter",
+                    "border-rp-muted/20 bg-rp-surface group relative overflow-hidden rounded-2xl border",
+                    "animate-card-enter transition-all duration-300 ease-out",
                     className
                 )}
                 style={{
@@ -102,26 +102,26 @@ export function CharacterCard({
                             sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
                         />
                     ) : (
-                        <div className="flex size-full items-center justify-center bg-gradient-to-br from-rp-iris/50 to-rp-foam/50">
-                            <span className="text-4xl font-bold text-rp-text/50">
+                        <div className="from-rp-iris/50 to-rp-foam/50 flex size-full items-center justify-center bg-gradient-to-br">
+                            <span className="text-rp-text/50 text-4xl font-bold">
                                 {name.slice(0, 2).toUpperCase()}
                             </span>
                         </div>
                     )}
 
                     {/* Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-rp-base/90 via-rp-base/20 to-transparent" />
+                    <div className="from-rp-base/90 via-rp-base/20 absolute inset-0 bg-gradient-to-t to-transparent" />
 
                     {/* Stats Badge */}
                     <div className="absolute right-3 top-3">
-                        <Badge className="flex items-center gap-1 rounded-full border-0 bg-rp-base/60 px-2 py-1 text-xs text-rp-text backdrop-blur-sm">
+                        <Badge className="bg-rp-base/60 text-rp-text flex items-center gap-1 rounded-full border-0 px-2 py-1 text-xs backdrop-blur-sm">
                             <MessageCircle className="size-3" />
                             <span>{formatCount(totalChats)}</span>
                         </Badge>
                     </div>
 
                     {/* Bottom Content */}
-                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <div className="absolute inset-x-0 bottom-0 p-4">
                         {/* Category Badge */}
                         {category && (
                             <Badge
@@ -143,7 +143,7 @@ export function CharacterCard({
 
                         {/* Character Name */}
                         <h3 className={cn(
-                            "line-clamp-2 text-lg font-bold leading-tight text-rp-text drop-shadow-lg",
+                            "text-rp-text line-clamp-2 text-lg font-bold leading-tight drop-shadow-lg",
                             "transition-transform duration-300",
                             isHovering && "translate-x-1"
                         )}>

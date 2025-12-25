@@ -224,7 +224,7 @@ export default function HomePage() {
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#0a0a0f]">
-        <IconLoader2 className="h-12 w-12 animate-spin text-purple-500" />
+        <IconLoader2 className="size-12 animate-spin text-purple-500" />
       </div>
     )
   }
@@ -258,7 +258,7 @@ export default function HomePage() {
       )}
 
       {/* Main Content - normal page scroll */}
-      <div className="relative flex-1 min-h-screen text-white overflow-y-auto">
+      <div className="relative min-h-screen flex-1 overflow-y-auto text-white">
         {/* Sidebar Toggle */}
         {isLoggedIn && (
           <Button
@@ -277,19 +277,19 @@ export default function HomePage() {
         )}
 
         {/* Ethereal background */}
-        <div className="fixed inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full bg-purple-500/5 blur-[120px]" />
-          <div className="absolute top-1/3 right-1/4 w-[500px] h-[500px] rounded-full bg-pink-500/5 blur-[100px]" />
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full bg-amber-500/5 blur-[150px]" />
+        <div className="pointer-events-none fixed inset-0 overflow-hidden">
+          <div className="absolute left-1/4 top-0 size-[600px] rounded-full bg-purple-500/5 blur-[120px]" />
+          <div className="absolute right-1/4 top-1/3 size-[500px] rounded-full bg-pink-500/5 blur-[100px]" />
+          <div className="absolute bottom-0 left-1/2 h-[400px] w-[800px] -translate-x-1/2 rounded-full bg-amber-500/5 blur-[150px]" />
         </div>
 
         {/* Header */}
-        <header className="relative z-50 flex items-center justify-between px-6 py-4 glass-dark">
+        <header className="glass-dark relative z-50 flex items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-pink-500">
               <IconSparkles size={24} className="text-white" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-xl font-bold text-transparent">
               Remrin
             </span>
           </div>
@@ -297,7 +297,7 @@ export default function HomePage() {
           <div className="flex items-center gap-4">
             <Link
               href="/summon"
-              className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 text-amber-400 hover:bg-amber-500/30 transition-colors"
+              className="flex items-center gap-2 rounded-full border border-amber-500/30 bg-gradient-to-r from-amber-500/20 to-orange-500/20 px-4 py-2 text-amber-400 transition-colors hover:bg-amber-500/30"
             >
               <IconDiamond size={18} />
               <span className="text-sm font-medium">Soul Summons</span>
@@ -305,7 +305,7 @@ export default function HomePage() {
             {!isLoggedIn && (
               <Link
                 href="/login"
-                className="px-4 py-2 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-medium hover:from-purple-500 hover:to-pink-500 transition-all shadow-lg shadow-purple-500/25"
+                className="rounded-full bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-purple-500/25 transition-all hover:from-purple-500 hover:to-pink-500"
               >
                 Sign In
               </Link>
@@ -315,7 +315,7 @@ export default function HomePage() {
 
         {/* Hero Section with Carousel */}
         <section className="relative z-10 mt-8">
-          <div className="px-6 mb-4 text-center">
+          <div className="mb-4 px-6 text-center">
             <h2 className="inline-flex items-center gap-2 text-lg font-semibold text-white/80">
               <IconSparkles size={20} className="text-amber-400" />
               Featured Souls
@@ -336,13 +336,13 @@ export default function HomePage() {
 
         {/* Main Gallery */}
         <section className="relative z-10 mt-8">
-          <div className="px-6 mb-4 flex flex-col items-center gap-2">
+          <div className="mb-4 flex flex-col items-center gap-2 px-6">
             <h2 className="text-lg font-semibold text-white/80">
               Explore Souls
             </h2>
             <Link
               href="/discover"
-              className="flex items-center gap-1 text-sm text-purple-400 hover:text-purple-300 transition-colors"
+              className="flex items-center gap-1 text-sm text-purple-400 transition-colors hover:text-purple-300"
             >
               View all
               <IconArrowRight size={16} />
@@ -364,14 +364,14 @@ export default function HomePage() {
         </section>
 
         {/* Quick Actions Footer */}
-        <section className="relative z-10 py-12 mt-8 glass-dark">
-          <div className="max-w-4xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <section className="glass-dark relative z-10 mt-8 py-12">
+          <div className="mx-auto grid max-w-4xl grid-cols-1 gap-6 px-6 md:grid-cols-3">
             <Link
               href="/summon"
-              className="p-6 rounded-2xl bg-gradient-to-br from-amber-500/10 to-orange-500/10 border border-amber-500/20 hover:border-amber-500/40 transition-colors group"
+              className="group rounded-2xl border border-amber-500/20 bg-gradient-to-br from-amber-500/10 to-orange-500/10 p-6 transition-colors hover:border-amber-500/40"
             >
-              <IconDiamond size={32} className="text-amber-400 mb-4" />
-              <h3 className="font-semibold text-white mb-2 group-hover:text-amber-400 transition-colors">
+              <IconDiamond size={32} className="mb-4 text-amber-400" />
+              <h3 className="mb-2 font-semibold text-white transition-colors group-hover:text-amber-400">
                 Soul Summons
               </h3>
               <p className="text-sm text-white/50">
@@ -381,10 +381,10 @@ export default function HomePage() {
 
             <Link
               href="/studio"
-              className="p-6 rounded-2xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 hover:border-purple-500/40 transition-colors group"
+              className="group rounded-2xl border border-purple-500/20 bg-gradient-to-br from-purple-500/10 to-pink-500/10 p-6 transition-colors hover:border-purple-500/40"
             >
-              <IconSparkles size={32} className="text-purple-400 mb-4" />
-              <h3 className="font-semibold text-white mb-2 group-hover:text-purple-400 transition-colors">
+              <IconSparkles size={32} className="mb-4 text-purple-400" />
+              <h3 className="mb-2 font-semibold text-white transition-colors group-hover:text-purple-400">
                 Soul Studio
               </h3>
               <p className="text-sm text-white/50">
@@ -394,14 +394,14 @@ export default function HomePage() {
 
             <Link
               href="/marketplace"
-              className="p-6 rounded-2xl bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 hover:border-cyan-500/40 transition-colors group"
+              className="group rounded-2xl border border-cyan-500/20 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 p-6 transition-colors hover:border-cyan-500/40"
             >
-              <svg className="w-8 h-8 text-cyan-400 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg className="mb-4 size-8 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
                 <line x1="3" y1="6" x2="21" y2="6" />
                 <path d="M16 10a4 4 0 0 1-8 0" />
               </svg>
-              <h3 className="font-semibold text-white mb-2 group-hover:text-cyan-400 transition-colors">
+              <h3 className="mb-2 font-semibold text-white transition-colors group-hover:text-cyan-400">
                 Soul Bazaar
               </h3>
               <p className="text-sm text-white/50">

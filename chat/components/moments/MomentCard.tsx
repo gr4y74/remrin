@@ -73,8 +73,8 @@ export function MomentCard({
     return (
         <div
             className={cn(
-                "group relative cursor-pointer overflow-hidden rounded-2xl border border-rp-muted/10 bg-rp-surface transition-all duration-300",
-                "hover:scale-[1.02] hover:border-rp-iris/30 hover:shadow-xl hover:shadow-rp-iris/20",
+                "border-rp-muted/10 bg-rp-surface group relative cursor-pointer overflow-hidden rounded-2xl border transition-all duration-300",
+                "hover:border-rp-iris/30 hover:shadow-rp-iris/20 hover:scale-[1.02] hover:shadow-xl",
                 className
             )}
             onClick={onClick}
@@ -90,14 +90,14 @@ export function MomentCard({
                 />
 
                 {/* Gradient Overlay - stronger on hover */}
-                <div className="absolute inset-0 bg-gradient-to-t from-rp-base/80 via-transparent to-transparent opacity-60 transition-opacity duration-300 group-hover:opacity-100" />
+                <div className="from-rp-base/80 absolute inset-0 bg-gradient-to-t via-transparent to-transparent opacity-60 transition-opacity duration-300 group-hover:opacity-100" />
 
                 {/* Glassmorphism overlay on hover */}
-                <div className="absolute inset-0 bg-rp-base/20 opacity-0 backdrop-blur-[2px] transition-opacity duration-300 group-hover:opacity-100" />
+                <div className="bg-rp-base/20 absolute inset-0 opacity-0 backdrop-blur-[2px] transition-opacity duration-300 group-hover:opacity-100" />
 
                 {/* Persona Avatar + Name (top left) */}
                 <div className="absolute left-3 top-3 flex items-center gap-2">
-                    <div className="relative size-8 overflow-hidden rounded-full border-2 border-rp-muted/20 bg-rp-surface/50 backdrop-blur-sm">
+                    <div className="border-rp-muted/20 bg-rp-surface/50 relative size-8 overflow-hidden rounded-full border-2 backdrop-blur-sm">
                         {personaImageUrl ? (
                             <Image
                                 src={personaImageUrl}
@@ -106,21 +106,21 @@ export function MomentCard({
                                 className="object-cover"
                             />
                         ) : (
-                            <div className="flex size-full items-center justify-center bg-gradient-to-br from-rp-iris to-rp-foam text-xs font-bold text-rp-base">
+                            <div className="from-rp-iris to-rp-foam text-rp-base flex size-full items-center justify-center bg-gradient-to-br text-xs font-bold">
                                 {personaName.slice(0, 1).toUpperCase()}
                             </div>
                         )}
                     </div>
-                    <span className="text-sm font-medium text-rp-text drop-shadow-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                    <span className="text-rp-text text-sm font-medium opacity-0 drop-shadow-lg transition-opacity duration-300 group-hover:opacity-100">
                         {personaName}
                     </span>
                 </div>
 
                 {/* Bottom Content */}
-                <div className="absolute bottom-0 left-0 right-0 p-4">
+                <div className="absolute inset-x-0 bottom-0 p-4">
                     {/* Caption - truncated, full on hover */}
                     {caption && (
-                        <p className="mb-3 line-clamp-2 text-sm text-rp-text/90 drop-shadow-lg transition-all duration-300 group-hover:line-clamp-none">
+                        <p className="text-rp-text/90 mb-3 line-clamp-2 text-sm drop-shadow-lg transition-all duration-300 group-hover:line-clamp-none">
                             {caption}
                         </p>
                     )}
@@ -131,7 +131,7 @@ export function MomentCard({
                         disabled={isLiking}
                         className={cn(
                             "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-all duration-200",
-                            "bg-rp-base/20 backdrop-blur-sm hover:bg-rp-base/40",
+                            "bg-rp-base/20 hover:bg-rp-base/40 backdrop-blur-sm",
                             isLiked ? "text-rp-love" : "text-rp-text/80 hover:text-rp-text"
                         )}
                     >

@@ -79,7 +79,7 @@ export const WelcomeModal: FC<WelcomeModalProps> = () => {
         <Dialog open={isOpen} onOpenChange={handleOpenChange}>
             <DialogContent className="border-rp-muted/20 bg-rp-surface sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle className="text-2xl font-bold text-rp-text">Welcome to Remrin</DialogTitle>
+                    <DialogTitle className="text-rp-text text-2xl font-bold">Welcome to Remrin</DialogTitle>
                     <DialogDescription className="text-rp-subtle">
                         Before we begin, please tell us a bit about yourself so we can customize your experience.
                     </DialogDescription>
@@ -87,7 +87,7 @@ export const WelcomeModal: FC<WelcomeModalProps> = () => {
 
                 <div className="grid gap-6 py-4">
                     <div className="space-y-2">
-                        <Label htmlFor="name" className="text-right text-rp-text/80">
+                        <Label htmlFor="name" className="text-rp-text/80 text-right">
                             What should we call you?
                         </Label>
                         <Input
@@ -100,7 +100,7 @@ export const WelcomeModal: FC<WelcomeModalProps> = () => {
                     </div>
 
                     <div className="space-y-2">
-                        <Label className="text-right text-rp-text/80">Age Group</Label>
+                        <Label className="text-rp-text/80 text-right">Age Group</Label>
                         <div className="grid grid-cols-2 gap-2">
                             {[
                                 { label: "Under 13", value: "under_13" },
@@ -115,7 +115,7 @@ export const WelcomeModal: FC<WelcomeModalProps> = () => {
                                         "w-full transition-all",
                                         ageBracket === option.value
                                             ? "bg-rp-iris text-rp-base hover:bg-rp-iris/90 border-0"
-                                            : "bg-transparent hover:bg-rp-highlight-low border-rp-muted/20 text-rp-text"
+                                            : "hover:bg-rp-highlight-low border-rp-muted/20 text-rp-text bg-transparent"
                                     )}
                                     onClick={() => setAgeBracket(option.value)}
                                 >
@@ -124,7 +124,7 @@ export const WelcomeModal: FC<WelcomeModalProps> = () => {
                             ))}
                         </div>
                         {ageBracket === "under_13" && (
-                            <p className="text-xs text-rp-gold mt-1">
+                            <p className="text-rp-gold mt-1 text-xs">
                                 Note: Remrin provides a family-friendly experience for all ages.
                             </p>
                         )}
@@ -135,7 +135,7 @@ export const WelcomeModal: FC<WelcomeModalProps> = () => {
                     <Button
                         onClick={handleSubmit}
                         disabled={loading}
-                        className="w-full bg-gradient-to-r from-rp-pine to-rp-iris hover:opacity-90 text-rp-base border-0 font-bold"
+                        className="from-rp-pine to-rp-iris text-rp-base w-full border-0 bg-gradient-to-r font-bold hover:opacity-90"
                     >
                         {loading ? "Entering..." : "Enter Remrin"}
                     </Button>

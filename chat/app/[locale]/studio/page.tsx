@@ -97,7 +97,7 @@ export default function StudioPage() {
                 <div className="flex items-center gap-4">
                     <Link
                         href="/"
-                        className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors"
+                        className="flex items-center gap-2 text-zinc-400 transition-colors hover:text-white"
                     >
                         <IconArrowLeft size={20} />
                         Back
@@ -186,7 +186,7 @@ export default function StudioPage() {
                         <div>
                             <p className="font-medium text-red-400">Your submission was rejected</p>
                             <p className="text-sm text-red-300/80">{persona.rejection_reason}</p>
-                            <p className="text-xs text-zinc-500 mt-1">
+                            <p className="mt-1 text-xs text-zinc-500">
                                 Please make the necessary changes and submit again.
                             </p>
                         </div>
@@ -205,7 +205,7 @@ export default function StudioPage() {
                                 Your Soul is being reviewed by our moderation team. This usually takes 24-48 hours.
                             </p>
                             {persona.submitted_at && (
-                                <p className="text-xs text-zinc-500 mt-1">
+                                <p className="mt-1 text-xs text-zinc-500">
                                     Submitted: {new Date(persona.submitted_at).toLocaleString()}
                                 </p>
                             )}

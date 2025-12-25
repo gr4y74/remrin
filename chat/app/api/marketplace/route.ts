@@ -3,6 +3,8 @@ import { getActiveListings, ListingFilters } from "@/lib/marketplace"
 import { cookies } from "next/headers"
 import { NextRequest, NextResponse } from "next/server"
 
+export const dynamic = "force-dynamic"
+
 /**
  * GET /api/marketplace
  * List all active marketplace listings with persona details

@@ -22,7 +22,7 @@ export const TypingIndicator: FC<TypingIndicatorProps> = ({
             className={cn(
                 // Glassmorphism styling
                 "inline-flex items-center gap-3 rounded-2xl px-4 py-3",
-                "bg-white/5 backdrop-blur-md border border-white/10",
+                "border border-white/10 bg-white/5 backdrop-blur-md",
                 "animate-fadeIn",
                 className
             )}
@@ -30,22 +30,22 @@ export const TypingIndicator: FC<TypingIndicatorProps> = ({
             {/* Three animated dots */}
             <div className="flex items-center gap-1">
                 <span
-                    className="size-2 rounded-full bg-foreground/60 animate-pulse-dot"
+                    className="bg-foreground/60 animate-pulse-dot size-2 rounded-full"
                     style={{ animationDelay: "0ms" }}
                 />
                 <span
-                    className="size-2 rounded-full bg-foreground/60 animate-pulse-dot"
+                    className="bg-foreground/60 animate-pulse-dot size-2 rounded-full"
                     style={{ animationDelay: "160ms" }}
                 />
                 <span
-                    className="size-2 rounded-full bg-foreground/60 animate-pulse-dot"
+                    className="bg-foreground/60 animate-pulse-dot size-2 rounded-full"
                     style={{ animationDelay: "320ms" }}
                 />
             </div>
 
             {/* Character name text */}
             {characterName && (
-                <span className="text-sm text-muted-foreground">
+                <span className="text-muted-foreground text-sm">
                     {characterName} is typing...
                 </span>
             )}

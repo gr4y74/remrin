@@ -11,7 +11,7 @@ export default function ChangePasswordPage() {
   const router = useRouter()
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       const session = (await supabase.auth.getSession()).data.session
 
       if (!session) {
@@ -20,7 +20,7 @@ export default function ChangePasswordPage() {
         setLoading(false)
       }
     })()
-  }, [])
+  }, [router])
 
   if (loading) {
     return null

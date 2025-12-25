@@ -46,7 +46,7 @@ export function CategoryTabs({
         <div className="relative">
             {/* Left Gradient */}
             {showLeftGradient && (
-                <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-12 bg-gradient-to-r from-rp-base to-transparent" />
+                <div className="from-rp-base pointer-events-none absolute left-0 top-0 z-10 h-full w-12 bg-gradient-to-r to-transparent" />
             )}
 
             {/* Scrollable Tabs */}
@@ -78,7 +78,7 @@ export function CategoryTabs({
 
                             {/* Active Indicator */}
                             {isActive && (
-                                <div className="absolute -bottom-0.5 left-1/2 h-0.5 w-8 -translate-x-1/2 rounded-full bg-gradient-to-r from-rp-iris to-rp-foam" />
+                                <div className="from-rp-iris to-rp-foam absolute -bottom-0.5 left-1/2 h-0.5 w-8 -translate-x-1/2 rounded-full bg-gradient-to-r" />
                             )}
                         </button>
                     )
@@ -87,7 +87,7 @@ export function CategoryTabs({
 
             {/* Right Gradient */}
             {showRightGradient && (
-                <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-12 bg-gradient-to-l from-rp-base to-transparent" />
+                <div className="from-rp-base pointer-events-none absolute right-0 top-0 z-10 h-full w-12 bg-gradient-to-l to-transparent" />
             )}
         </div>
     )

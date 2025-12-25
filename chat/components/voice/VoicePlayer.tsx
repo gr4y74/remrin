@@ -225,7 +225,7 @@ export const VoicePlayer: FC<VoicePlayerProps> = ({
     return (
         <div
             className={cn(
-                "flex items-center gap-3 rounded-lg bg-secondary/50",
+                "bg-secondary/50 flex items-center gap-3 rounded-lg",
                 compact ? "px-2 py-1.5" : "px-4 py-3",
                 className
             )}
@@ -239,7 +239,7 @@ export const VoicePlayer: FC<VoicePlayerProps> = ({
                     compact ? "size-8" : "size-10",
                     "bg-primary text-primary-foreground",
                     "hover:bg-primary/90",
-                    "disabled:opacity-50 disabled:cursor-not-allowed"
+                    "disabled:cursor-not-allowed disabled:opacity-50"
                 )}
                 aria-label={isPlaying ? "Pause" : "Play"}
             >
@@ -253,10 +253,10 @@ export const VoicePlayer: FC<VoicePlayerProps> = ({
             </button>
 
             {/* Progress Bar */}
-            <div className="flex-1 flex flex-col gap-1">
+            <div className="flex flex-1 flex-col gap-1">
                 <div
                     className={cn(
-                        "w-full bg-muted rounded-full cursor-pointer",
+                        "bg-muted w-full cursor-pointer rounded-full",
                         compact ? "h-1" : "h-1.5"
                     )}
                     onClick={handleSeek}
@@ -269,7 +269,7 @@ export const VoicePlayer: FC<VoicePlayerProps> = ({
 
                 {/* Duration display */}
                 {!compact && (
-                    <div className="flex justify-between text-xs text-muted-foreground">
+                    <div className="text-muted-foreground flex justify-between text-xs">
                         <span>{formatTime(currentTime)}</span>
                         <span>{formatTime(duration)}</span>
                     </div>

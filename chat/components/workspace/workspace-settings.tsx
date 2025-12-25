@@ -28,9 +28,9 @@ import { TextareaAutosize } from "../ui/textarea-autosize"
 import { WithTooltip } from "../ui/with-tooltip"
 import { DeleteWorkspace } from "./delete-workspace"
 
-interface WorkspaceSettingsProps {}
+interface WorkspaceSettingsProps { }
 
-export const WorkspaceSettings: FC<WorkspaceSettingsProps> = ({}) => {
+export const WorkspaceSettings: FC<WorkspaceSettingsProps> = ({ }) => {
   const {
     profile,
     selectedWorkspace,
@@ -73,7 +73,7 @@ export const WorkspaceSettings: FC<WorkspaceSettingsProps> = ({}) => {
       )?.base64 || ""
 
     setImageLink(workspaceImage)
-  }, [workspaceImages])
+  }, [workspaceImages, selectedWorkspace?.image_path])
 
   const handleSave = async () => {
     if (!selectedWorkspace) return

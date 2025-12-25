@@ -23,33 +23,35 @@ export const Announcements: FC<AnnouncementsProps> = () => {
       parsedAnnouncements = JSON.parse(storedAnnouncements)
     }
 
-    // Filter out announcements that are no longer in state
-    const validAnnouncements = announcements.filter((a: Announcement) =>
-      parsedAnnouncements.find(storedA => storedA.id === a.id)
-    )
+    setAnnouncements(prevAnnouncements => {
+      // Filter out announcements that are no longer in state
+      const validAnnouncements = prevAnnouncements.filter((a: Announcement) =>
+        parsedAnnouncements.find(storedA => storedA.id === a.id)
+      )
 
-    // Add new announcements to the list
-    const newAnnouncements = announcements.filter(
-      (a: Announcement) =>
-        !parsedAnnouncements.find(storedA => storedA.id === a.id)
-    )
+      // Add new announcements to the list
+      const newAnnouncements = prevAnnouncements.filter(
+        (a: Announcement) =>
+          !parsedAnnouncements.find(storedA => storedA.id === a.id)
+      )
 
-    // Combine valid and new announcements
-    const combinedAnnouncements = [...validAnnouncements, ...newAnnouncements]
+      // Combine valid and new announcements
+      const combinedAnnouncements = [...validAnnouncements, ...newAnnouncements]
 
-    // Mark announcements as read if they are marked as read in local storage
-    const updatedAnnouncements = combinedAnnouncements.map(
-      (a: Announcement) => {
-        const storedAnnouncement = parsedAnnouncements.find(
-          (storedA: Announcement) => storedA.id === a.id
-        )
-        return storedAnnouncement?.read ? { ...a, read: true } : a
-      }
-    )
+      // Mark announcements as read if they are marked as read in local storage
+      const updatedAnnouncements = combinedAnnouncements.map(
+        (a: Announcement) => {
+          const storedAnnouncement = parsedAnnouncements.find(
+            (storedA: Announcement) => storedA.id === a.id
+          )
+          return storedAnnouncement?.read ? { ...a, read: true } : a
+        }
+      )
 
-    // Update state and local storage
-    setAnnouncements(updatedAnnouncements)
-    localStorage.setItem("announcements", JSON.stringify(updatedAnnouncements))
+      // Update local storage with the final state
+      localStorage.setItem("announcements", JSON.stringify(updatedAnnouncements))
+      return updatedAnnouncements
+    })
   }, [])
 
   const unreadCount = announcements.filter(a => !a.read).length
@@ -83,7 +85,7 @@ export const Announcements: FC<AnnouncementsProps> = () => {
         <div className="relative cursor-pointer hover:opacity-50">
           <IconSpeakerphone size={SIDEBAR_ICON_SIZE} />
           {unreadCount > 0 && (
-            <div className="notification-indicator absolute right-[-4px] top-[-4px] flex size-4 items-center justify-center rounded-full bg-rp-love text-[10px] text-white">
+            <div className="notification-indicator bg-rp-love absolute right-[-4px] top-[-4px] flex size-4 items-center justify-center rounded-full text-[10px] text-white">
               {unreadCount}
             </div>
           )}

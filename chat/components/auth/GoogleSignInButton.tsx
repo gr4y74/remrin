@@ -23,15 +23,15 @@ export function GoogleSignInButton() {
     return (
         <Button
             variant="outline"
-            className="w-full relative"
+            className="relative w-full"
             onClick={handleSignIn}
             disabled={isLoading}
         >
             {isLoading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 size-4 animate-spin" />
             ) : (
                 <svg
-                    className="mr-2 h-4 w-4"
+                    className="mr-2 size-4"
                     aria-hidden="true"
                     focusable="false"
                     data-prefix="fab"

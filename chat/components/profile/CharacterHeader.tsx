@@ -44,20 +44,20 @@ export function CharacterHeader({
     return (
         <div className="flex flex-col items-center gap-6 text-center">
             {/* Large Avatar */}
-            <Avatar className="size-32 ring-4 ring-white/10 ring-offset-2 ring-offset-rp-base shadow-2xl">
+            <Avatar className="ring-offset-rp-base size-32 shadow-2xl ring-4 ring-white/10 ring-offset-2">
                 <AvatarImage src={imageUrl || ""} alt={name} className="object-cover" />
-                <AvatarFallback className="bg-gradient-to-br from-rp-iris to-rp-foam text-3xl font-bold text-rp-base">
+                <AvatarFallback className="from-rp-iris to-rp-foam text-rp-base bg-gradient-to-br text-3xl font-bold">
                     {name.slice(0, 2).toUpperCase()}
                 </AvatarFallback>
             </Avatar>
 
             {/* Name and Description */}
             <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tight text-rp-text md:text-4xl">
+                <h1 className="text-rp-text text-3xl font-bold tracking-tight md:text-4xl">
                     {name}
                 </h1>
                 {description && (
-                    <p className="mx-auto max-w-md text-lg text-rp-subtle">
+                    <p className="text-rp-subtle mx-auto max-w-md text-lg">
                         {description}
                     </p>
                 )}
@@ -67,23 +67,23 @@ export function CharacterHeader({
             {category && (
                 <Badge
                     variant="secondary"
-                    className="rounded-full bg-rp-overlay px-4 py-1 text-sm font-medium text-rp-text hover:bg-rp-overlay/80"
+                    className="bg-rp-overlay text-rp-text hover:bg-rp-overlay/80 rounded-full px-4 py-1 text-sm font-medium"
                 >
                     {category}
                 </Badge>
             )}
 
             {/* Stats Row */}
-            <div className="flex items-center gap-6 text-rp-subtle">
+            <div className="text-rp-subtle flex items-center gap-6">
                 <div className="flex items-center gap-2">
-                    <MessageCircle className="size-5 text-rp-iris" />
-                    <span className="font-semibold text-rp-text">{formatCount(totalChats)}</span>
+                    <MessageCircle className="text-rp-iris size-5" />
+                    <span className="text-rp-text font-semibold">{formatCount(totalChats)}</span>
                     <span>chats</span>
                 </div>
-                <div className="h-4 w-px bg-rp-overlay" />
+                <div className="bg-rp-overlay h-4 w-px" />
                 <div className="flex items-center gap-2">
-                    <Users className="size-5 text-rp-foam" />
-                    <span className="font-semibold text-rp-text">{formatCount(followersCount)}</span>
+                    <Users className="text-rp-foam size-5" />
+                    <span className="text-rp-text font-semibold">{formatCount(followersCount)}</span>
                     <span>followers</span>
                 </div>
             </div>
@@ -97,7 +97,7 @@ export function CharacterHeader({
 
             {/* Creator Attribution */}
             {creatorName && (
-                <p className="text-sm text-rp-muted">
+                <p className="text-rp-muted text-sm">
                     Created by <span className="text-rp-subtle">{creatorName}</span>
                 </p>
             )}

@@ -106,7 +106,7 @@ export function CharacterProfilePage({
     }
 
     return (
-        <div className="relative min-h-screen bg-rp-base">
+        <div className="bg-rp-base relative min-h-screen">
             {/* Blurred Hero Background with Parallax */}
             {persona.imageUrl && (
                 <div
@@ -120,20 +120,20 @@ export function CharacterProfilePage({
                         src={persona.imageUrl}
                         alt=""
                         fill
-                        className="object-cover opacity-30 blur-3xl scale-110"
+                        className="scale-110 object-cover opacity-30 blur-3xl"
                         priority
                     />
-                    <div className="absolute inset-0 bg-gradient-to-b from-rp-base/50 via-rp-base/80 to-rp-base" />
+                    <div className="from-rp-base/50 via-rp-base/80 to-rp-base absolute inset-0 bg-gradient-to-b" />
                 </div>
             )}
 
             {/* Content */}
             <div className="relative z-10">
                 {/* Back Button */}
-                <div className="px-4 py-4 md:px-8 animate-fade-in">
+                <div className="animate-fade-in p-4 md:px-8">
                     <button
                         onClick={() => router.back()}
-                        className="inline-flex items-center gap-2 text-rp-subtle transition-all duration-300 hover:text-rp-text hover:translate-x-[-4px]"
+                        className="text-rp-subtle hover:text-rp-text inline-flex items-center gap-2 transition-all duration-300 hover:translate-x-[-4px]"
                     >
                         <ArrowLeft className="size-5" />
                         <span>Back</span>
@@ -145,7 +145,7 @@ export function CharacterProfilePage({
                     <div className="flex flex-col gap-12 lg:flex-row lg:gap-16">
                         {/* Left Column - Soul Card */}
                         <div
-                            className="mx-auto w-full max-w-xs shrink-0 lg:mx-0 animate-fade-in-up"
+                            className="animate-fade-in-up mx-auto w-full max-w-xs shrink-0 lg:mx-0"
                             style={{ animationDelay: '100ms', animationFillMode: 'both' }}
                         >
                             <SoulCardDisplay
@@ -178,13 +178,13 @@ export function CharacterProfilePage({
                             {/* Intro Message Preview */}
                             {persona.introMessage && (
                                 <div
-                                    className="rounded-2xl bg-rp-surface p-6 backdrop-blur-xl animate-fade-in-up transition-all duration-300 hover:bg-rp-overlay"
+                                    className="bg-rp-surface animate-fade-in-up hover:bg-rp-overlay rounded-2xl p-6 backdrop-blur-xl transition-all duration-300"
                                     style={{ animationDelay: '300ms', animationFillMode: 'both' }}
                                 >
-                                    <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-rp-muted">
+                                    <h2 className="text-rp-muted mb-3 text-sm font-semibold uppercase tracking-wider">
                                         First Message
                                     </h2>
-                                    <p className="text-base italic leading-relaxed text-rp-text">
+                                    <p className="text-rp-text text-base italic leading-relaxed">
                                         &ldquo;{persona.introMessage}&rdquo;
                                     </p>
                                 </div>
@@ -192,7 +192,7 @@ export function CharacterProfilePage({
 
                             {/* Start Chat CTA with floating animation */}
                             <div
-                                className="pt-4 animate-fade-in-up"
+                                className="animate-fade-in-up pt-4"
                                 style={{ animationDelay: '400ms', animationFillMode: 'both' }}
                             >
                                 <Button
@@ -200,8 +200,8 @@ export function CharacterProfilePage({
                                     onClick={handleStartChat}
                                     disabled={isStartingChat}
                                     className={cn(
-                                        "group w-full rounded-2xl bg-gradient-to-r from-rp-iris to-rp-foam py-6 text-lg font-bold text-rp-base",
-                                        "shadow-2xl shadow-rp-iris/25 transition-all duration-300",
+                                        "from-rp-iris to-rp-foam text-rp-base group w-full rounded-2xl bg-gradient-to-r py-6 text-lg font-bold",
+                                        "shadow-rp-iris/25 shadow-2xl transition-all duration-300",
                                         "hover:from-rp-iris/80 hover:to-rp-foam/80 hover:shadow-rp-iris/40 hover:scale-[1.02]",
                                         "disabled:opacity-70",
                                         !isStartingChat && "animate-float"
@@ -214,7 +214,7 @@ export function CharacterProfilePage({
                                         </>
                                     ) : (
                                         <>
-                                            <MessageCircle className="mr-3 size-6 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12" />
+                                            <MessageCircle className="mr-3 size-6 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" />
                                             Start Chat
                                         </>
                                     )}
@@ -225,14 +225,14 @@ export function CharacterProfilePage({
                             {(hasMoments || moments.length > 0) && (
                                 <div className="space-y-4">
                                     <div className="flex items-center justify-between">
-                                        <h2 className="flex items-center gap-2 text-lg font-semibold text-rp-text">
-                                            <ImageIcon className="size-5 text-rp-iris" />
+                                        <h2 className="text-rp-text flex items-center gap-2 text-lg font-semibold">
+                                            <ImageIcon className="text-rp-iris size-5" />
                                             Moments
                                         </h2>
                                         {moments.length > 0 && (
                                             <Link
                                                 href={`/moments?persona=${persona.id}`}
-                                                className="text-sm text-rp-iris transition-colors hover:text-rp-rose"
+                                                className="text-rp-iris hover:text-rp-rose text-sm transition-colors"
                                             >
                                                 View All →
                                             </Link>
@@ -247,10 +247,10 @@ export function CharacterProfilePage({
                                             viewAllHref={`/moments?persona=${persona.id}`}
                                         />
                                     ) : (
-                                        <div className="rounded-2xl bg-rp-surface p-8 text-center backdrop-blur-xl">
-                                            <ImageIcon className="mx-auto mb-3 size-12 text-rp-muted" />
+                                        <div className="bg-rp-surface rounded-2xl p-8 text-center backdrop-blur-xl">
+                                            <ImageIcon className="text-rp-muted mx-auto mb-3 size-12" />
                                             <p className="text-rp-subtle">No moments yet</p>
-                                            <p className="mt-1 text-sm text-rp-muted">
+                                            <p className="text-rp-muted mt-1 text-sm">
                                                 Check back later for gallery content
                                             </p>
                                         </div>

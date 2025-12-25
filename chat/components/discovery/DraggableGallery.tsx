@@ -102,10 +102,10 @@ export function DraggableGallery({
                 <button
                     onClick={() => setShowControls(!showControls)}
                     className={cn(
-                        "fixed bottom-6 right-6 z-40 p-3 rounded-full transition-all shadow-lg",
+                        "fixed bottom-6 right-6 z-40 rounded-full p-3 shadow-lg transition-all",
                         showControls
                             ? "bg-rp-iris text-rp-base"
-                            : "bg-rp-base/60 backdrop-blur-md border border-rp-muted text-rp-subtle hover:text-rp-text"
+                            : "bg-rp-base/60 border-rp-muted text-rp-subtle hover:text-rp-text border backdrop-blur-md"
                     )}
                     title="Grid Settings"
                 >
@@ -114,18 +114,18 @@ export function DraggableGallery({
 
                 {/* Settings panel */}
                 {showControls && (
-                    <div className="fixed bottom-20 right-6 z-40 p-4 w-64 rounded-xl bg-rp-surface backdrop-blur-md border border-rp-muted shadow-xl">
-                        <h4 className="text-sm font-medium text-rp-text mb-3">Grid Settings</h4>
+                    <div className="bg-rp-surface border-rp-muted fixed bottom-20 right-6 z-40 w-64 rounded-xl border p-4 shadow-xl backdrop-blur-md">
+                        <h4 className="text-rp-text mb-3 text-sm font-medium">Grid Settings</h4>
                         <div className="space-y-4 text-xs">
                             <div>
-                                <label className="text-rp-muted block mb-1">Gap</label>
+                                <label className="text-rp-muted mb-1 block">Gap</label>
                                 <input
                                     type="range"
                                     min="8"
                                     max="32"
                                     value={config.gap}
                                     onChange={(e) => handleConfigChange('gap', parseInt(e.target.value))}
-                                    className="w-full accent-rp-iris"
+                                    className="accent-rp-iris w-full"
                                     title="Gap size"
                                 />
                                 <span className="text-rp-subtle">{config.gap}px</span>
@@ -138,27 +138,27 @@ export function DraggableGallery({
             {/* Expanded view overlay - PORTAL-LIKE: fixed with highest z-index */}
             {expandedItem && (
                 <div
-                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-rp-base/90 backdrop-blur-sm"
+                    className="bg-rp-base/90 fixed inset-0 z-[9999] flex items-center justify-center backdrop-blur-sm"
                     onClick={handleCloseExpanded}
                     style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
                 >
                     <div
-                        className="relative max-w-3xl w-full mx-4 animate-fade-in-scale"
+                        className="animate-fade-in-scale relative mx-4 w-full max-w-3xl"
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Close button */}
                         <button
                             onClick={handleCloseExpanded}
-                            className="absolute -top-12 right-0 p-2 text-rp-subtle hover:text-rp-text transition-colors z-10"
+                            className="text-rp-subtle hover:text-rp-text absolute -top-12 right-0 z-10 p-2 transition-colors"
                             title="Close"
                         >
                             <IconX size={28} />
                         </button>
 
                         {/* Expanded card */}
-                        <div className="flex flex-col md:flex-row gap-6 bg-rp-surface rounded-2xl overflow-hidden border border-rp-highlight-med shadow-2xl">
+                        <div className="bg-rp-surface border-rp-highlight-med flex flex-col gap-6 overflow-hidden rounded-2xl border shadow-2xl md:flex-row">
                             {/* Large image */}
-                            <div className="relative w-full md:w-1/2 aspect-square md:aspect-[3/4] min-h-[300px]">
+                            <div className="relative aspect-square min-h-[300px] w-full md:aspect-[3/4] md:w-1/2">
                                 {expandedItem.imageUrl ? (
                                     <Image
                                         src={expandedItem.imageUrl}
@@ -167,8 +167,8 @@ export function DraggableGallery({
                                         className="object-cover"
                                     />
                                 ) : (
-                                    <div className="w-full h-full bg-gradient-to-br from-rp-iris/50 to-rp-rose/50 flex items-center justify-center">
-                                        <span className="text-6xl font-bold text-rp-text/30">
+                                    <div className="from-rp-iris/50 to-rp-rose/50 flex size-full items-center justify-center bg-gradient-to-br">
+                                        <span className="text-rp-text/30 text-6xl font-bold">
                                             {expandedItem.name.slice(0, 2).toUpperCase()}
                                         </span>
                                     </div>
@@ -176,29 +176,29 @@ export function DraggableGallery({
                             </div>
 
                             {/* Details */}
-                            <div className="flex-1 p-6 md:p-8 flex flex-col justify-center">
+                            <div className="flex flex-1 flex-col justify-center p-6 md:p-8">
                                 {/* Rarity badge */}
                                 {expandedItem.rarity && expandedItem.rarity !== "common" && (
                                     <span className={cn(
-                                        "inline-flex w-fit px-3 py-1 rounded-full text-xs font-bold uppercase mb-4",
+                                        "mb-4 inline-flex w-fit rounded-full px-3 py-1 text-xs font-bold uppercase",
                                         expandedItem.rarity === "rare" && "bg-rp-iris text-rp-base",
                                         expandedItem.rarity === "epic" && "bg-rp-rose text-rp-base",
-                                        expandedItem.rarity === "legendary" && "bg-gradient-to-r from-rp-gold to-rp-love text-rp-base"
+                                        expandedItem.rarity === "legendary" && "from-rp-gold to-rp-love text-rp-base bg-gradient-to-r"
                                     )}>
                                         {expandedItem.rarity}
                                     </span>
                                 )}
 
-                                <h2 className="text-2xl md:text-3xl font-bold text-rp-text mb-4">
+                                <h2 className="text-rp-text mb-4 text-2xl font-bold md:text-3xl">
                                     {expandedItem.name}
                                 </h2>
 
-                                <p className="text-rp-subtle mb-6 leading-relaxed text-sm md:text-base">
+                                <p className="text-rp-subtle mb-6 text-sm leading-relaxed md:text-base">
                                     {expandedItem.description || "A mysterious soul waiting to be discovered..."}
                                 </p>
 
                                 {/* Stats */}
-                                <div className="flex gap-4 text-sm text-rp-muted mb-6">
+                                <div className="text-rp-muted mb-6 flex gap-4 text-sm">
                                     <span>💬 {(expandedItem.messageCount || 0).toLocaleString()}</span>
                                     <span>❤️ {(expandedItem.followersCount || 0).toLocaleString()}</span>
                                 </div>
@@ -206,7 +206,7 @@ export function DraggableGallery({
                                 {/* CTA Button */}
                                 <button
                                     onClick={handleExpandedClick}
-                                    className="w-full py-3 md:py-4 rounded-xl bg-gradient-to-r from-rp-iris to-rp-rose text-rp-base font-semibold hover:from-rp-iris/80 hover:to-rp-rose/80 transition-all shadow-lg shadow-rp-iris/25"
+                                    className="from-rp-iris to-rp-rose text-rp-base hover:from-rp-iris/80 hover:to-rp-rose/80 shadow-rp-iris/25 w-full rounded-xl bg-gradient-to-r py-3 font-semibold shadow-lg transition-all md:py-4"
                                 >
                                     Start Chatting
                                 </button>

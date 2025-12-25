@@ -3,6 +3,8 @@ import { getPullHistory, getPoolPullHistory, getPullStats } from "@/lib/gacha"
 import { cookies } from "next/headers"
 import { NextRequest, NextResponse } from "next/server"
 
+export const dynamic = "force-dynamic"
+
 /**
  * GET /api/gacha/history
  * Get user's gacha pull history

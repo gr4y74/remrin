@@ -54,7 +54,7 @@ export function ElectricCard({
             {/* Background glow (only for epic/legendary) */}
             {isAnimated && (
                 <div
-                    className="absolute inset-0 rounded-2xl blur-xl opacity-50 -z-10 animate-pulse"
+                    className="absolute inset-0 -z-10 animate-pulse rounded-2xl opacity-50 blur-xl"
                     style={{
                         background: `linear-gradient(-30deg, ${colors.border}, transparent, ${colors.glow})`,
                         transform: "scale(1.1)"
@@ -66,11 +66,11 @@ export function ElectricCard({
             {isAnimated && (
                 <>
                     <div
-                        className="absolute inset-0 rounded-2xl blur-sm opacity-60"
+                        className="absolute inset-0 rounded-2xl opacity-60 blur-sm"
                         style={{ border: `2px solid ${colors.glow}` }}
                     />
                     <div
-                        className="absolute inset-0 rounded-2xl blur-md opacity-40"
+                        className="absolute inset-0 rounded-2xl opacity-40 blur-md"
                         style={{ border: `2px solid ${colors.border}` }}
                     />
                 </>
@@ -79,7 +79,7 @@ export function ElectricCard({
             {/* Main card container */}
             <div
                 className={cn(
-                    "relative rounded-2xl p-[2px] overflow-hidden",
+                    "relative overflow-hidden rounded-2xl p-[2px]",
                     isAnimated && "electric-border-animated"
                 )}
                 style={{
@@ -91,7 +91,7 @@ export function ElectricCard({
             >
                 {/* Inner border */}
                 <div
-                    className="rounded-[calc(1rem-2px)] overflow-hidden"
+                    className="overflow-hidden rounded-[calc(1rem-2px)]"
                     style={{
                         border: `2px solid ${colors.border}`,
                         boxShadow: isAnimated ? `0 0 20px ${colors.glow}` : "none"
@@ -107,7 +107,7 @@ export function ElectricCard({
             {/* Overlay shine effect */}
             {isAnimated && (
                 <div
-                    className="absolute inset-0 rounded-2xl pointer-events-none mix-blend-overlay opacity-30"
+                    className="pointer-events-none absolute inset-0 rounded-2xl opacity-30 mix-blend-overlay"
                     style={{
                         background: "linear-gradient(-30deg, white, transparent 30%, transparent 70%, white)",
                         filter: "blur(8px)",
@@ -126,9 +126,9 @@ export function LegendaryElectricCard({
     onClick
 }: Omit<ElectricCardProps, "rarity">) {
     return (
-        <div className="relative group">
+        <div className="group relative">
             {/* Animated electric effect */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ overflow: "visible" }}>
+            <svg className="pointer-events-none absolute inset-0 size-full opacity-0 transition-opacity duration-500 group-hover:opacity-100" style={{ overflow: "visible" }}>
                 <defs>
                     <filter id="electric-glow" x="-50%" y="-50%" width="200%" height="200%">
                         <feTurbulence

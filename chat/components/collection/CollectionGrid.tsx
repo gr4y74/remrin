@@ -109,19 +109,19 @@ export function CollectionGrid({
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 {/* Search */}
                 <div className="relative flex-1 sm:max-w-xs">
-                    <IconSearch className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-rp-muted" />
+                    <IconSearch className="text-rp-muted absolute left-3 top-1/2 size-4 -translate-y-1/2" />
                     <Input
                         type="text"
                         placeholder="Search souls..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-9 bg-rp-surface border-rp-muted/20 text-rp-text placeholder:text-rp-muted"
+                        className="bg-rp-surface border-rp-muted/20 text-rp-text placeholder:text-rp-muted pl-9"
                     />
                 </div>
 
                 {/* Sort Controls */}
                 <div className="flex items-center gap-2">
-                    <span className="text-xs text-rp-subtle">Sort:</span>
+                    <span className="text-rp-subtle text-xs">Sort:</span>
                     {(["rarity", "newest", "name", "duplicates"] as SortOption[]).map((option) => (
                         <Button
                             key={option}
@@ -165,7 +165,7 @@ export function CollectionGrid({
                             className={cn(
                                 "h-8 px-3 text-sm font-medium transition-all",
                                 activeFilter === tab.value
-                                    ? `${tab.color} text-rp-text ring-1 ring-rp-muted/20`
+                                    ? `${tab.color} text-rp-text ring-rp-muted/20 ring-1`
                                     : "text-rp-subtle hover:text-rp-text hover:bg-rp-surface"
                             )}
                         >
@@ -182,7 +182,7 @@ export function CollectionGrid({
             </div>
 
             {/* Results Count */}
-            <div className="text-sm text-rp-subtle">
+            <div className="text-rp-subtle text-sm">
                 Showing {ownedCount} owned of {totalCount} souls
                 {searchTerm && ` matching "${searchTerm}"`}
             </div>
@@ -193,14 +193,14 @@ export function CollectionGrid({
                     {Array.from({ length: 10 }).map((_, i) => (
                         <div
                             key={i}
-                            className="aspect-[3/4] animate-pulse rounded-xl bg-rp-surface"
+                            className="bg-rp-surface aspect-[3/4] animate-pulse rounded-xl"
                         />
                     ))}
                 </div>
             ) : filteredSouls.length === 0 ? (
-                <div className="flex min-h-[300px] flex-col items-center justify-center rounded-xl border border-dashed border-rp-muted/20 bg-rp-surface p-8 text-center">
-                    <p className="text-lg font-medium text-rp-text/60">No souls found</p>
-                    <p className="mt-1 text-sm text-rp-muted">
+                <div className="border-rp-muted/20 bg-rp-surface flex min-h-[300px] flex-col items-center justify-center rounded-xl border border-dashed p-8 text-center">
+                    <p className="text-rp-text/60 text-lg font-medium">No souls found</p>
+                    <p className="text-rp-muted mt-1 text-sm">
                         {searchTerm
                             ? "Try a different search term"
                             : "Pull from the gacha to add souls to your collection!"}

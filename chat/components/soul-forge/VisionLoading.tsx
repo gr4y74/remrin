@@ -1,6 +1,7 @@
 "use client"
 
 import { cn } from "@/lib/utils"
+import Image from "next/image"
 import { FC, useEffect, useState } from "react"
 
 interface VisionLoadingProps {
@@ -41,7 +42,7 @@ export const VisionLoading: FC<VisionLoadingProps> = ({
     return (
         <div
             className={cn(
-                "relative w-64 h-64 mx-auto",
+                "relative mx-auto size-64",
                 className
             )}
         >
@@ -58,7 +59,7 @@ export const VisionLoading: FC<VisionLoadingProps> = ({
             {/* Main circular container */}
             <div
                 className={cn(
-                    "relative w-full h-full rounded-full overflow-hidden",
+                    "relative size-full overflow-hidden rounded-full",
                     "bg-gradient-to-br from-slate-900 via-purple-900/50 to-slate-900",
                     "border-2 border-white/10",
                     "shadow-2xl shadow-purple-500/20"
@@ -83,7 +84,7 @@ export const VisionLoading: FC<VisionLoadingProps> = ({
                         {[...Array(8)].map((_, i) => (
                             <div
                                 key={i}
-                                className="smoke-particle absolute rounded-full bg-white/20 blur-sm animate-smoke-rise"
+                                className="smoke-particle animate-smoke-rise absolute rounded-full bg-white/20 blur-sm"
                                 style={{
                                     width: `${20 + Math.random() * 30}px`,
                                     height: `${20 + Math.random() * 30}px`,
@@ -101,15 +102,15 @@ export const VisionLoading: FC<VisionLoadingProps> = ({
                 <div className="absolute inset-0 flex items-center justify-center">
                     {/* Loading state */}
                     {status === "loading" && (
-                        <div className="text-center px-6 animate-fade-in">
-                            <p className="text-white/80 text-sm font-medium mb-3">
+                        <div className="animate-fade-in px-6 text-center">
+                            <p className="mb-3 text-sm font-medium text-white/80">
                                 Your companion takes form
                             </p>
                             <div className="flex items-center justify-center gap-1">
                                 {[0, 1, 2].map((i) => (
                                     <div
                                         key={i}
-                                        className="w-2 h-2 rounded-full bg-white/60 animate-pulse"
+                                        className="size-2 animate-pulse rounded-full bg-white/60"
                                         style={{
                                             animationDelay: `${i * 200}ms`
                                         }}
@@ -121,17 +122,19 @@ export const VisionLoading: FC<VisionLoadingProps> = ({
 
                     {/* Generated image */}
                     {imageUrl && (
-                        <img
+                        <Image
                             src={imageUrl}
                             alt="Soul portrait"
+                            fill
                             className={cn(
-                                "absolute inset-0 w-full h-full object-cover",
+                                "absolute inset-0 size-full object-cover",
                                 "transition-all duration-1000 ease-out",
                                 showImage && imageLoaded
-                                    ? "opacity-100 scale-100"
-                                    : "opacity-0 scale-110"
+                                    ? "scale-100 opacity-100"
+                                    : "scale-110 opacity-0"
                             )}
                             onLoad={() => setImageLoaded(true)}
+                            unoptimized={imageUrl.startsWith("data:")}
                         />
                     )}
                 </div>

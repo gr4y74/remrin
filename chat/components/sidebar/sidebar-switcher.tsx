@@ -41,8 +41,8 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
   const iconHoverClass = "transition-all duration-200 hover:scale-110 hover:text-rp-rose"
 
   return (
-    <div className="flex flex-col justify-between border-r border-rp-highlight-med pb-5">
-      <TabsList className="bg-transparent grid h-auto gap-1 p-2">
+    <div className="border-rp-highlight-med flex flex-col justify-between border-r pb-5">
+      <TabsList className="grid h-auto gap-1 bg-transparent p-2">
         {/* Primary: Chats */}
         <SidebarSwitchItem
           icon={<IconMessage size={SIDEBAR_ICON_SIZE} className={iconHoverClass} />}
@@ -56,7 +56,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
           trigger={
             <Link
               href="/discover"
-              className="flex size-[40px] cursor-pointer items-center justify-center rounded-lg hover:bg-rp-overlay"
+              className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
             >
               <IconCompass size={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, "text-rp-foam")} />
             </Link>
@@ -69,7 +69,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
           trigger={
             <Link
               href="/marketplace"
-              className="flex size-[40px] cursor-pointer items-center justify-center rounded-lg hover:bg-rp-overlay"
+              className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
             >
               <IconShoppingCart size={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, "text-rp-gold")} />
             </Link>
@@ -82,7 +82,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
           trigger={
             <Link
               href="/moments"
-              className="flex size-[40px] cursor-pointer items-center justify-center rounded-lg hover:bg-rp-overlay"
+              className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
             >
               <IconPhoto size={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, "text-rp-iris")} />
             </Link>
@@ -95,7 +95,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
           trigger={
             <Link
               href="/summon"
-              className="flex size-[40px] cursor-pointer items-center justify-center rounded-lg hover:bg-rp-overlay"
+              className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
             >
               <IconDiamond size={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, "text-rp-rose")} />
             </Link>
@@ -108,7 +108,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
           trigger={
             <Link
               href="/collection"
-              className="flex size-[40px] cursor-pointer items-center justify-center rounded-lg hover:bg-rp-overlay"
+              className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
             >
               <IconCards size={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, "text-rp-pine")} />
             </Link>
@@ -116,7 +116,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
         />
 
         {/* Divider */}
-        <div className="my-2 h-px bg-rp-highlight-med" />
+        <div className="bg-rp-highlight-med my-2 h-px" />
 
         {/* Tools Dropdown */}
         <WithTooltip
@@ -124,7 +124,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
           trigger={
             <button
               onClick={() => setIsToolsOpen(!isToolsOpen)}
-              className="flex size-[40px] cursor-pointer items-center justify-center rounded-lg hover:bg-rp-overlay"
+              className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
             >
               <IconSettings size={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, isToolsOpen && "text-rp-rose rotate-90")} />
             </button>
@@ -133,7 +133,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
 
         {/* Tools Submenu */}
         {isToolsOpen && (
-          <div className="flex flex-col gap-1 mt-1 pl-1 border-l-2 border-rp-highlight-med animate-fadeIn">
+          <div className="border-rp-highlight-med animate-fadeIn mt-1 flex flex-col gap-1 border-l-2 pl-1">
             <SidebarSwitchItem
               icon={<IconAdjustmentsHorizontal size={20} className={iconHoverClass} />}
               contentType="presets"

@@ -129,7 +129,7 @@ export function DiscoveryFeed({
     }
 
     return (
-        <div className="min-h-screen bg-rp-base">
+        <div className="bg-rp-base min-h-screen">
             <div className="mx-auto max-w-7xl px-4 py-8">
                 {/* Trending Section */}
                 {trendingPersonas.length > 0 && (
@@ -153,10 +153,10 @@ export function DiscoveryFeed({
                         {Array.from({ length: 6 }).map((_, i) => (
                             <div
                                 key={i}
-                                className="overflow-hidden rounded-2xl border border-rp-muted/20 bg-rp-surface animate-fade-in"
+                                className="border-rp-muted/20 bg-rp-surface animate-fade-in overflow-hidden rounded-2xl border"
                                 style={{ animationDelay: `${i * 50}ms` }}
                             >
-                                <Skeleton className="aspect-[3/4] w-full bg-rp-muted/30 animate-shimmer" />
+                                <Skeleton className="bg-rp-muted/30 animate-shimmer aspect-[3/4] w-full" />
                             </div>
                         ))}
                     </div>
@@ -167,8 +167,8 @@ export function DiscoveryFeed({
                     <>
                         {personas.length === 0 ? (
                             <div className="flex flex-col items-center justify-center py-20 text-center">
-                                <SearchX className="mb-4 size-16 text-rp-muted" />
-                                <h3 className="mb-2 text-xl font-semibold text-rp-text">
+                                <SearchX className="text-rp-muted mb-4 size-16" />
+                                <h3 className="text-rp-text mb-2 text-xl font-semibold">
                                     No characters found
                                 </h3>
                                 <p className="text-rp-subtle">
@@ -199,7 +199,7 @@ export function DiscoveryFeed({
                                     onClick={handleLoadMore}
                                     disabled={loadingMore}
                                     variant="outline"
-                                    className="min-w-40 rounded-full border-rp-muted bg-rp-surface text-rp-text hover:bg-rp-overlay"
+                                    className="border-rp-muted bg-rp-surface text-rp-text hover:bg-rp-overlay min-w-40 rounded-full"
                                 >
                                     {loadingMore ? (
                                         <>

@@ -86,14 +86,14 @@ export const MessageCodeBlock: FC<MessageCodeBlockProps> = memo(
     }
 
     return (
-      <div className="codeblock relative w-full bg-rp-base font-sans">
-        <div className="flex w-full items-center justify-between bg-rp-surface px-4 text-rp-text">
+      <div className="codeblock bg-rp-base relative w-full font-sans">
+        <div className="bg-rp-surface text-rp-text flex w-full items-center justify-between px-4">
           <span className="text-xs lowercase">{language}</span>
           <div className="flex items-center space-x-1">
             <Button
               variant="ghost"
               size="icon"
-              className="hover:bg-rp-overlay focus-visible:ring-1 focus-visible:ring-rp-muted focus-visible:ring-offset-0"
+              className="hover:bg-rp-overlay focus-visible:ring-rp-muted focus-visible:ring-1 focus-visible:ring-offset-0"
               onClick={downloadAsFile}
             >
               <IconDownload size={16} />
@@ -102,7 +102,7 @@ export const MessageCodeBlock: FC<MessageCodeBlockProps> = memo(
             <Button
               variant="ghost"
               size="icon"
-              className="text-xs hover:bg-rp-overlay focus-visible:ring-1 focus-visible:ring-rp-muted focus-visible:ring-offset-0"
+              className="hover:bg-rp-overlay focus-visible:ring-rp-muted text-xs focus-visible:ring-1 focus-visible:ring-offset-0"
               onClick={onCopy}
             >
               {isCopied ? <IconCheck size={16} /> : <IconCopy size={16} />}

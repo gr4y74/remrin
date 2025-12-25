@@ -128,12 +128,12 @@ export default function PricingPage() {
     ]
 
     return (
-        <div className="container mx-auto py-12 px-4 max-w-7xl">
-            <div className="text-center mb-12 space-y-4">
-                <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
+        <div className="container mx-auto max-w-7xl px-4 py-12">
+            <div className="mb-12 space-y-4 text-center">
+                <h1 className="text-4xl font-extrabold tracking-tight md:text-5xl">
                     Choose Your Destiny
                 </h1>
-                <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                <p className="text-muted-foreground mx-auto max-w-2xl text-xl">
                     Unlock the full potential of Remrin. Create, explore, and connect with souls across the multiverse.
                 </p>
 
@@ -155,7 +155,7 @@ export default function PricingPage() {
                 */}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-4">
                 {tiers.map((tier) => (
                     <PricingCard
                         key={tier.id}

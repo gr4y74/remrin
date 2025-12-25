@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select"
 import { StudioPersona, BASE_MODELS, SAFETY_LEVELS } from "../types"
 import { IconUpload, IconPhoto } from "@tabler/icons-react"
+import Image from "next/image"
 
 interface IdentityTabProps {
     persona: StudioPersona
@@ -50,16 +51,17 @@ export function IdentityTab({ persona, updateField, uploadFile }: IdentityTabPro
             <div className="space-y-2">
                 <Label>Avatar Image</Label>
                 <div
-                    className="relative flex h-48 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-zinc-700 bg-zinc-900/50 transition-colors hover:border-purple-500"
+                    className="relative flex size-48 cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-zinc-700 bg-zinc-900/50 transition-colors hover:border-purple-500"
                     onClick={() => fileInputRef.current?.click()}
                     onDrop={handleDrop}
                     onDragOver={(e) => e.preventDefault()}
                 >
                     {persona.image_url ? (
-                        <img
+                        <Image
                             src={persona.image_url}
                             alt="Avatar"
-                            className="size-full object-cover"
+                            fill
+                            className="object-cover"
                         />
                     ) : (
                         <div className="flex flex-col items-center gap-2 text-zinc-500">
@@ -85,7 +87,7 @@ export function IdentityTab({ persona, updateField, uploadFile }: IdentityTabPro
                     value={persona.name}
                     onChange={(e) => updateField('name', e.target.value)}
                     placeholder="Soul Name"
-                    className="bg-zinc-900 border-zinc-700"
+                    className="border-zinc-700 bg-zinc-900"
                 />
             </div>
 
@@ -97,7 +99,7 @@ export function IdentityTab({ persona, updateField, uploadFile }: IdentityTabPro
                     value={persona.tagline || ''}
                     onChange={(e) => updateField('tagline', e.target.value)}
                     placeholder="A short memorable phrase..."
-                    className="bg-zinc-900 border-zinc-700"
+                    className="border-zinc-700 bg-zinc-900"
                 />
             </div>
 
@@ -109,7 +111,7 @@ export function IdentityTab({ persona, updateField, uploadFile }: IdentityTabPro
                     value={persona.description || ''}
                     onChange={(e) => updateField('description', e.target.value)}
                     placeholder="Detailed description of this Soul's personality, backstory, and purpose..."
-                    className="min-h-[120px] bg-zinc-900 border-zinc-700"
+                    className="min-h-[120px] border-zinc-700 bg-zinc-900"
                 />
             </div>
 
@@ -120,7 +122,7 @@ export function IdentityTab({ persona, updateField, uploadFile }: IdentityTabPro
                     value={persona.base_model || 'deepseek-chat'}
                     onValueChange={(value) => updateField('base_model', value)}
                 >
-                    <SelectTrigger className="bg-zinc-900 border-zinc-700">
+                    <SelectTrigger className="border-zinc-700 bg-zinc-900">
                         <SelectValue placeholder="Select model..." />
                     </SelectTrigger>
                     <SelectContent>
@@ -140,7 +142,7 @@ export function IdentityTab({ persona, updateField, uploadFile }: IdentityTabPro
                     value={persona.safety_level || 'ADULT'}
                     onValueChange={(value) => updateField('safety_level', value as StudioPersona['safety_level'])}
                 >
-                    <SelectTrigger className="bg-zinc-900 border-zinc-700">
+                    <SelectTrigger className="border-zinc-700 bg-zinc-900">
                         <SelectValue placeholder="Select safety level..." />
                     </SelectTrigger>
                     <SelectContent>

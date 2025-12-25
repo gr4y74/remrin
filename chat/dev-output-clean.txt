@@ -1,0 +1,21 @@
+
+> remrin@2.0.0 dev
+> next dev
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 2.8s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 2.1s (189 modules)
+No valid locales in accept-language header: *
+Reverting to using defaultLocale: en
+ ○ Compiling /[locale]/login ...
+ ✓ Compiled /[locale]/login in 14.9s (1881 modules)
+ ✓ Compiled in 894ms (816 modules)
+ ✓ Compiled in 187ms (801 modules)
+ GET /login 200 in 16891ms
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (130kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ GET /login 200 in 111ms

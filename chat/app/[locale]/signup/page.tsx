@@ -40,7 +40,7 @@ export default async function Signup() {
     }
 
     return (
-        <div className="flex h-screen w-full flex-col items-center justify-center bg-gradient-to-br from-background to-background/50 p-4">
+        <div className="from-background to-background/50 flex h-screen w-full flex-col items-center justify-center bg-gradient-to-br p-4">
             <SignupForm />
         </div>
     )

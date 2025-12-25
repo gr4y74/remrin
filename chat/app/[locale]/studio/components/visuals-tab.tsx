@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { PersonaMetadata } from "../types"
 import { IconPhoto, IconSparkles } from "@tabler/icons-react"
+import Image from "next/image"
 
 interface VisualsTabProps {
     metadata: PersonaMetadata
@@ -36,10 +37,11 @@ export function VisualsTab({ metadata, updateMetadata, uploadFile }: VisualsTabP
                     onClick={() => heroInputRef.current?.click()}
                 >
                     {metadata.hero_image_url ? (
-                        <img
+                        <Image
                             src={metadata.hero_image_url}
                             alt="Hero"
-                            className="size-full object-cover"
+                            fill
+                            className="object-cover"
                         />
                     ) : (
                         <div className="flex flex-col items-center gap-2 text-zinc-500">
@@ -68,7 +70,7 @@ export function VisualsTab({ metadata, updateMetadata, uploadFile }: VisualsTabP
                     value={metadata.appearance_prompt || ''}
                     onChange={(e) => updateMetadata('appearance_prompt', e.target.value)}
                     placeholder="Blue spiky hair, red sneakers, confident stance, anime style, vibrant colors..."
-                    className="min-h-[100px] bg-zinc-900 border-zinc-700"
+                    className="min-h-[100px] border-zinc-700 bg-zinc-900"
                 />
                 <p className="text-xs text-zinc-500">
                     Describe how image generators should render this character.
@@ -83,7 +85,7 @@ export function VisualsTab({ metadata, updateMetadata, uploadFile }: VisualsTabP
                     value={metadata.negative_prompt || ''}
                     onChange={(e) => updateMetadata('negative_prompt', e.target.value)}
                     placeholder="low quality, blurry, watermark, text, deformed, ugly..."
-                    className="min-h-[80px] bg-zinc-900 border-zinc-700"
+                    className="min-h-[80px] border-zinc-700 bg-zinc-900"
                 />
                 <p className="text-xs text-zinc-500">
                     Elements to exclude from generated images.

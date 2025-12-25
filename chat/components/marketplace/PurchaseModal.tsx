@@ -87,22 +87,22 @@ export function PurchaseModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="overflow-hidden border-rp-muted/20 bg-rp-base text-rp-text sm:max-w-md">
+            <DialogContent className="border-rp-muted/20 bg-rp-base text-rp-text overflow-hidden sm:max-w-md">
                 {/* Success State */}
                 {purchaseState === "success" && (
                     <div className="flex flex-col items-center py-8">
                         <div className="animate-fade-in-scale relative">
-                            <div className="absolute inset-0 animate-pulse-glow rounded-full"
+                            <div className="animate-pulse-glow absolute inset-0 rounded-full"
                                 style={{ '--glow-color': 'rgba(156, 207, 216, 0.6)' } as React.CSSProperties}
                             />
-                            <div className="relative rounded-full bg-rp-foam p-4">
-                                <IconCheck className="size-12 text-rp-base" />
+                            <div className="bg-rp-foam relative rounded-full p-4">
+                                <IconCheck className="text-rp-base size-12" />
                             </div>
                         </div>
-                        <h3 className="mt-6 text-2xl font-bold text-rp-foam">
+                        <h3 className="text-rp-foam mt-6 text-2xl font-bold">
                             Purchase Complete!
                         </h3>
-                        <p className="mt-2 text-center text-rp-subtle">
+                        <p className="text-rp-subtle mt-2 text-center">
                             {listing.personas.name} has been added to your library.
                         </p>
                     </div>
@@ -111,19 +111,19 @@ export function PurchaseModal({
                 {/* Error State */}
                 {purchaseState === "error" && (
                     <div className="flex flex-col items-center py-8">
-                        <div className="rounded-full bg-rp-love/20 p-4">
-                            <IconAlertCircle className="size-12 text-rp-love" />
+                        <div className="bg-rp-love/20 rounded-full p-4">
+                            <IconAlertCircle className="text-rp-love size-12" />
                         </div>
-                        <h3 className="mt-6 text-xl font-bold text-rp-love">
+                        <h3 className="text-rp-love mt-6 text-xl font-bold">
                             Purchase Failed
                         </h3>
-                        <p className="mt-2 text-center text-rp-subtle">
+                        <p className="text-rp-subtle mt-2 text-center">
                             {errorMessage}
                         </p>
                         <Button
                             onClick={() => setPurchaseState("idle")}
                             variant="outline"
-                            className="mt-4 border-rp-muted/20 text-rp-text hover:bg-rp-surface"
+                            className="border-rp-muted/20 text-rp-text hover:bg-rp-surface mt-4"
                         >
                             Try Again
                         </Button>
@@ -134,7 +134,7 @@ export function PurchaseModal({
                 {(purchaseState === "idle" || purchaseState === "confirming") && (
                     <>
                         <DialogHeader>
-                            <DialogTitle className="text-xl text-rp-text">
+                            <DialogTitle className="text-rp-text text-xl">
                                 Confirm Purchase
                             </DialogTitle>
                             <DialogDescription className="text-rp-subtle">
@@ -143,7 +143,7 @@ export function PurchaseModal({
                         </DialogHeader>
 
                         {/* Soul Preview */}
-                        <div className="my-4 flex items-center gap-4 rounded-xl bg-rp-surface p-4">
+                        <div className="bg-rp-surface my-4 flex items-center gap-4 rounded-xl p-4">
                             <div className="relative size-20 shrink-0 overflow-hidden rounded-lg">
                                 {listing.personas.image_path ? (
                                     <Image
@@ -153,22 +153,22 @@ export function PurchaseModal({
                                         className="object-cover"
                                     />
                                 ) : (
-                                    <div className="flex size-full items-center justify-center bg-gradient-to-br from-rp-gold/50 to-rp-rose/50">
-                                        <span className="text-lg font-bold text-rp-text/50">
+                                    <div className="from-rp-gold/50 to-rp-rose/50 flex size-full items-center justify-center bg-gradient-to-br">
+                                        <span className="text-rp-text/50 text-lg font-bold">
                                             {listing.personas.name.slice(0, 2).toUpperCase()}
                                         </span>
                                     </div>
                                 )}
                             </div>
                             <div className="flex-1">
-                                <h4 className="font-bold text-rp-text">
+                                <h4 className="text-rp-text font-bold">
                                     {listing.personas.name}
                                 </h4>
-                                <p className="mt-1 line-clamp-2 text-sm text-rp-subtle">
+                                <p className="text-rp-subtle mt-1 line-clamp-2 text-sm">
                                     {listing.personas.description || "A unique AI companion"}
                                 </p>
                                 {listing.is_limited_edition && (
-                                    <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-rp-love/20 px-2 py-0.5 text-xs text-rp-love">
+                                    <div className="bg-rp-love/20 text-rp-love mt-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs">
                                         <IconSparkles className="size-3" />
                                         Limited Edition
                                     </div>
@@ -177,25 +177,25 @@ export function PurchaseModal({
                         </div>
 
                         {/* Price Breakdown */}
-                        <div className="space-y-2 rounded-xl bg-rp-surface p-4">
+                        <div className="bg-rp-surface space-y-2 rounded-xl p-4">
                             <div className="flex items-center justify-between text-sm">
                                 <span className="text-rp-subtle">Price</span>
                                 <div className="flex items-center gap-1">
-                                    <IconDiamond className="size-4 text-rp-gold" />
-                                    <span className="font-semibold text-rp-text">
+                                    <IconDiamond className="text-rp-gold size-4" />
+                                    <span className="text-rp-text font-semibold">
                                         {listing.price_aether.toLocaleString()}
                                     </span>
                                 </div>
                             </div>
-                            <div className="flex items-center justify-between text-xs text-rp-muted">
+                            <div className="text-rp-muted flex items-center justify-between text-xs">
                                 <span>Platform fee (30%)</span>
                                 <span>{platformFee.toLocaleString()}</span>
                             </div>
-                            <div className="flex items-center justify-between text-xs text-rp-muted">
+                            <div className="text-rp-muted flex items-center justify-between text-xs">
                                 <span>Seller receives</span>
                                 <span>{sellerReceives.toLocaleString()}</span>
                             </div>
-                            <div className="my-2 border-t border-rp-muted/20" />
+                            <div className="border-rp-muted/20 my-2 border-t" />
                             <div className="flex items-center justify-between">
                                 <span className="text-rp-subtle">Your Balance</span>
                                 <div className={cn(
@@ -207,7 +207,7 @@ export function PurchaseModal({
                                 </div>
                             </div>
                             {!canAfford && (
-                                <div className="mt-2 flex items-center gap-2 rounded-lg bg-rp-love/20 p-2 text-xs text-rp-love">
+                                <div className="bg-rp-love/20 text-rp-love mt-2 flex items-center gap-2 rounded-lg p-2 text-xs">
                                     <IconX className="size-4" />
                                     <span>Insufficient balance. You need {(listing.price_aether - userBalance).toLocaleString()} more Aether.</span>
                                 </div>
@@ -219,7 +219,7 @@ export function PurchaseModal({
                                 variant="outline"
                                 onClick={onClose}
                                 disabled={purchaseState === "confirming"}
-                                className="flex-1 border-rp-muted/20 text-rp-text hover:bg-rp-surface"
+                                className="border-rp-muted/20 text-rp-text hover:bg-rp-surface flex-1"
                             >
                                 Cancel
                             </Button>
@@ -227,7 +227,7 @@ export function PurchaseModal({
                                 onClick={handlePurchase}
                                 disabled={!canAfford || purchaseState === "confirming"}
                                 className={cn(
-                                    "flex-1 bg-gradient-to-r from-rp-gold to-rp-rose font-semibold text-rp-base",
+                                    "from-rp-gold to-rp-rose text-rp-base flex-1 bg-gradient-to-r font-semibold",
                                     "hover:from-rp-gold/80 hover:to-rp-rose/80",
                                     "disabled:opacity-50"
                                 )}

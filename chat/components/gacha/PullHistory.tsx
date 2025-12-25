@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { Loader2 } from "lucide-react"
+import Image from "next/image"
 
 interface PullRecord {
     id: string
@@ -74,7 +75,7 @@ export function PullHistory() {
     if (loading) {
         return (
             <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <Loader2 className="text-muted-foreground size-8 animate-spin" />
             </div>
         )
     }
@@ -101,7 +102,7 @@ export function PullHistory() {
 
             {/* Pull List */}
             {filteredPulls.length === 0 ? (
-                <div className="py-12 text-center text-muted-foreground">
+                <div className="text-muted-foreground py-12 text-center">
                     No pulls yet. Visit the Soul Summons to try your luck!
                 </div>
             ) : (
@@ -110,22 +111,23 @@ export function PullHistory() {
                         <div
                             key={pull.id}
                             className={cn(
-                                "group relative overflow-hidden rounded-lg border-2 bg-rp-surface transition-transform hover:scale-105",
+                                "bg-rp-surface group relative overflow-hidden rounded-lg border-2 transition-transform hover:scale-105",
                                 RARITY_COLORS[pull.rarity] || "border-rp-muted/20"
                             )}
                         >
-                            <div className="aspect-square">
-                                <img
+                            <div className="relative aspect-square">
+                                <Image
                                     src={pull.persona?.image_url || "/placeholder-soul.png"}
                                     alt={pull.persona?.name || "Soul"}
-                                    className="h-full w-full object-cover"
+                                    fill
+                                    className="size-full object-cover"
                                 />
                             </div>
                             <div className="p-2">
-                                <p className="truncate text-sm font-medium text-rp-text">
+                                <p className="text-rp-text truncate text-sm font-medium">
                                     {pull.persona?.name || "Unknown"}
                                 </p>
-                                <p className="text-xs text-rp-muted">
+                                <p className="text-rp-muted text-xs">
                                     {format(new Date(pull.pulled_at), "MMM d, yyyy")}
                                 </p>
                             </div>

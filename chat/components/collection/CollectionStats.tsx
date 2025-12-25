@@ -54,7 +54,7 @@ function ProgressBar({
     const percentage = max > 0 ? Math.min((value / max) * 100, 100) : 0
 
     return (
-        <div className="h-2 w-full overflow-hidden rounded-full bg-rp-base">
+        <div className="bg-rp-base h-2 w-full overflow-hidden rounded-full">
             <div
                 className={cn("h-full rounded-full transition-all duration-500", color)}
                 style={{ width: `${percentage}%` }}
@@ -73,16 +73,16 @@ export function CollectionStats({
     return (
         <div className={cn("space-y-6", className)}>
             {/* Overall Progress */}
-            <div className="rounded-xl border border-rp-muted/20 bg-rp-surface p-4 backdrop-blur-sm">
+            <div className="border-rp-muted/20 bg-rp-surface rounded-xl border p-4 backdrop-blur-sm">
                 <div className="flex items-center gap-2">
-                    <IconDiamond className="size-5 text-rp-gold" />
-                    <h3 className="font-semibold text-rp-text">Collection Progress</h3>
+                    <IconDiamond className="text-rp-gold size-5" />
+                    <h3 className="text-rp-text font-semibold">Collection Progress</h3>
                 </div>
 
                 <div className="mt-4 space-y-2">
                     <div className="flex items-center justify-between text-sm">
                         <span className="text-rp-subtle">Total Souls</span>
-                        <span className="font-medium text-rp-text">
+                        <span className="text-rp-text font-medium">
                             {stats.totalOwned} / {stats.totalAvailable}
                         </span>
                     </div>
@@ -91,17 +91,17 @@ export function CollectionStats({
                         max={stats.totalAvailable}
                         color="bg-gradient-to-r from-rp-gold to-rp-rose"
                     />
-                    <div className="text-right text-xs text-muted-foreground">
+                    <div className="text-muted-foreground text-right text-xs">
                         {stats.overallPercentage}% Complete
                     </div>
                 </div>
             </div>
 
             {/* Rarity Breakdown */}
-            <div className="rounded-xl border border-rp-muted/20 bg-rp-surface p-4 backdrop-blur-sm">
+            <div className="border-rp-muted/20 bg-rp-surface rounded-xl border p-4 backdrop-blur-sm">
                 <div className="flex items-center gap-2">
-                    <IconStar className="size-5 text-rp-iris" />
-                    <h3 className="font-semibold text-rp-text">By Rarity</h3>
+                    <IconStar className="text-rp-iris size-5" />
+                    <h3 className="text-rp-text font-semibold">By Rarity</h3>
                 </div>
 
                 <div className="mt-4 space-y-4">
@@ -116,7 +116,7 @@ export function CollectionStats({
                                         <span>{config.icon}</span>
                                         {config.label}
                                     </span>
-                                    <span className="text-xs text-rp-muted">
+                                    <span className="text-rp-muted text-xs">
                                         {rarityStats.owned}/{rarityStats.total}
                                     </span>
                                 </div>
@@ -133,10 +133,10 @@ export function CollectionStats({
 
             {/* Pity Counter */}
             {pityInfo && (
-                <div className="rounded-xl border border-rp-muted/20 bg-rp-surface p-4 backdrop-blur-sm">
+                <div className="border-rp-muted/20 bg-rp-surface rounded-xl border p-4 backdrop-blur-sm">
                     <div className="flex items-center gap-2">
-                        <IconFlame className="size-5 text-rp-rose" />
-                        <h3 className="font-semibold text-rp-text">Pity Counter</h3>
+                        <IconFlame className="text-rp-rose size-5" />
+                        <h3 className="text-rp-text font-semibold">Pity Counter</h3>
                     </div>
 
                     <div className="mt-4 space-y-4">
@@ -144,7 +144,7 @@ export function CollectionStats({
                         <div className="space-y-1.5">
                             <div className="flex items-center justify-between text-sm">
                                 <span className="text-rp-gold">Legendary Pity</span>
-                                <span className="text-xs text-rp-muted">
+                                <span className="text-rp-muted text-xs">
                                     {pityInfo.pullsSinceLegendary}/{pityInfo.legendaryPity}
                                 </span>
                             </div>
@@ -154,7 +154,7 @@ export function CollectionStats({
                                 color="bg-gradient-to-r from-rp-gold to-rp-iris"
                             />
                             {pityInfo.pullsSinceLegendary >= 75 && (
-                                <p className="flex items-center gap-1 text-xs text-rp-gold">
+                                <p className="text-rp-gold flex items-center gap-1 text-xs">
                                     <IconTrendingUp className="size-3" />
                                     Increased rates active!
                                 </p>
@@ -165,7 +165,7 @@ export function CollectionStats({
                         <div className="space-y-1.5">
                             <div className="flex items-center justify-between text-sm">
                                 <span className="text-rp-pine">Rare Pity</span>
-                                <span className="text-xs text-rp-muted">
+                                <span className="text-rp-muted text-xs">
                                     {pityInfo.pullsSinceRare}/{pityInfo.rarePity}
                                 </span>
                             </div>
@@ -177,9 +177,9 @@ export function CollectionStats({
                         </div>
 
                         {/* Total Pulls */}
-                        <div className="flex items-center justify-between border-t border-rp-muted/20 pt-3 text-sm">
+                        <div className="border-rp-muted/20 flex items-center justify-between border-t pt-3 text-sm">
                             <span className="text-rp-subtle">Total Pulls</span>
-                            <span className="font-semibold text-rp-text">{pityInfo.totalPulls}</span>
+                            <span className="text-rp-text font-semibold">{pityInfo.totalPulls}</span>
                         </div>
                     </div>
                 </div>

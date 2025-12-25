@@ -86,8 +86,8 @@ export function FollowButton({
                     "group relative overflow-hidden rounded-full font-semibold transition-all duration-300",
                     compact ? "px-3 py-1 text-sm" : "px-6 py-2",
                     isFollowing
-                        ? "bg-white/10 text-white hover:bg-rp-love/20 hover:text-rp-love"
-                        : "bg-gradient-to-r from-rp-iris to-rp-foam text-rp-base hover:from-rp-iris/80 hover:to-rp-foam/80 shadow-lg shadow-rp-iris/25"
+                        ? "hover:bg-rp-love/20 hover:text-rp-love bg-white/10 text-white"
+                        : "from-rp-iris to-rp-foam text-rp-base hover:from-rp-iris/80 hover:to-rp-foam/80 shadow-rp-iris/25 bg-gradient-to-r shadow-lg"
                 )}
             >
                 <span className="flex items-center gap-2">
@@ -100,7 +100,7 @@ export function FollowButton({
                                 compact ? "size-4" : "size-5",
                                 isFollowing
                                     ? "fill-rp-love text-rp-love"
-                                    : "fill-transparent group-hover:fill-rp-base/50"
+                                    : "group-hover:fill-rp-base/50 fill-transparent"
                             )}
                         />
                     )}
@@ -110,7 +110,7 @@ export function FollowButton({
 
             {/* Follower count display - hide in compact mode */}
             {!compact && followerCount > 0 && (
-                <span className="text-sm text-rp-subtle">
+                <span className="text-rp-subtle text-sm">
                     {followerCount.toLocaleString()} {followerCount === 1 ? "follower" : "followers"}
                 </span>
             )}

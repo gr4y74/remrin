@@ -28,13 +28,13 @@ export default function ChatPage() {
       {chatMessages.length === 0 ? (
         <div className="relative flex h-full flex-col items-center justify-center">
           {/* Centered Brand Logo with Tilt Animation - Fixed center position */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -mt-16">
+          <div className="absolute left-1/2 top-1/2 -mt-16 -translate-x-1/2 -translate-y-1/2">
             <Image
               src="/logo.svg"
               alt="Remrin"
               width={150}
               height={150}
-              className="drop-shadow-[0_0_25px_rgba(235,188,186,0.4)] transition-transform duration-300 ease-out hover:rotate-[-5deg] hover:scale-105 cursor-pointer"
+              className="cursor-pointer drop-shadow-[0_0_25px_rgba(235,188,186,0.4)] transition-transform duration-300 ease-out hover:rotate-[-5deg] hover:scale-105"
             />
           </div>
 

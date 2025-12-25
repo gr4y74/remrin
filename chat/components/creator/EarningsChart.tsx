@@ -24,8 +24,8 @@ export function EarningsChart({ data, className = "" }: EarningsChartProps) {
     }
 
     return (
-        <div className={`rounded-xl border border-rp-muted/20 bg-rp-surface p-4 ${className}`}>
-            <h3 className="mb-4 text-sm font-medium text-rp-subtle">
+        <div className={`border-rp-muted/20 bg-rp-surface rounded-xl border p-4 ${className}`}>
+            <h3 className="text-rp-subtle mb-4 text-sm font-medium">
                 Last 7 Days
             </h3>
 
@@ -38,17 +38,17 @@ export function EarningsChart({ data, className = "" }: EarningsChartProps) {
                             className="flex flex-1 flex-col items-center gap-1"
                         >
                             {/* Tooltip on hover */}
-                            <div className="group relative flex-1 w-full flex items-end">
+                            <div className="group relative flex w-full flex-1 items-end">
                                 <div
-                                    className="w-full rounded-t-md bg-gradient-to-t from-rp-iris to-rp-rose transition-all duration-500 ease-out hover:from-rp-iris/80 hover:to-rp-rose/80"
+                                    className="from-rp-iris to-rp-rose hover:from-rp-iris/80 hover:to-rp-rose/80 w-full rounded-t-md bg-gradient-to-t transition-all duration-500 ease-out"
                                     style={{
                                         height: `${Math.max(height, 4)}%`,
                                         animationDelay: `${index * 75}ms`
                                     }}
                                 />
                                 {/* Tooltip */}
-                                <div className="absolute bottom-full left-1/2 z-10 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded-lg bg-rp-base px-2 py-1 text-xs text-rp-text shadow-lg group-hover:block">
-                                    <span className="font-semibold text-rp-iris">
+                                <div className="bg-rp-base text-rp-text absolute bottom-full left-1/2 z-10 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded-lg px-2 py-1 text-xs shadow-lg group-hover:block">
+                                    <span className="text-rp-iris font-semibold">
                                         {day.amount.toLocaleString()}
                                     </span>{" "}
                                     Aether
@@ -60,7 +60,7 @@ export function EarningsChart({ data, className = "" }: EarningsChartProps) {
                             </div>
 
                             {/* Day label */}
-                            <span className="text-[10px] text-rp-muted">
+                            <span className="text-rp-muted text-[10px]">
                                 {formatDate(day.date)}
                             </span>
                         </div>

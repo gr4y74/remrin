@@ -8,9 +8,9 @@ import { Button } from "../ui/button"
 import { ChatSettingsForm } from "../ui/chat-settings-form"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 
-interface ChatSettingsProps {}
+interface ChatSettingsProps { }
 
-export const ChatSettings: FC<ChatSettingsProps> = ({}) => {
+export const ChatSettings: FC<ChatSettingsProps> = ({ }) => {
   useHotkey("i", () => handleClick())
 
   const {
@@ -44,7 +44,7 @@ export const ChatSettings: FC<ChatSettingsProps> = ({}) => {
         CHAT_SETTING_LIMITS[chatSettings.model]?.MAX_CONTEXT_LENGTH || 4096
       )
     })
-  }, [chatSettings?.model])
+  }, [chatSettings, chatSettings?.model, setChatSettings])
 
   if (!chatSettings) return null
 

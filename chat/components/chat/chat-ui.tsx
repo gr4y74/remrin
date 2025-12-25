@@ -13,7 +13,7 @@ import { LLMID, MessageImage } from "@/types"
 import { useParams } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
-import { FC, useContext, useEffect, useState } from "react"
+import { FC, useCallback, useContext, useEffect, useState } from "react"
 import { ChatHelp } from "./chat-help"
 import { useScroll } from "./chat-hooks/use-scroll"
 import { ChatInput } from "./chat-input"
@@ -63,26 +63,7 @@ export const ChatUI: FC<ChatUIProps> = ({ }) => {
 
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const fetchData = async () => {
-      await fetchMessages()
-      await fetchChat()
-
-      scrollToBottom()
-      setIsAtBottom(true)
-    }
-
-    if (params.chatid) {
-      fetchData().then(() => {
-        handleFocusChatInput()
-        setLoading(false)
-      })
-    } else {
-      setLoading(false)
-    }
-  }, [])
-
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     const fetchedMessages = await getMessagesByChatId(params.chatid as string)
 
     const imagePromises: Promise<MessageImage>[] = fetchedMessages.flatMap(
@@ -154,9 +135,9 @@ export const ChatUI: FC<ChatUIProps> = ({ }) => {
     })
 
     setChatMessages(fetchedChatMessages)
-  }
+  }, [params.chatid, setChatFileItems, setChatFiles, setChatImages, setChatMessages, setShowFilesDisplay, setUseRetrieval])
 
-  const fetchChat = async () => {
+  const fetchChat = useCallback(async () => {
     const chat = await getChatById(params.chatid as string)
     if (!chat) return
 
@@ -185,7 +166,26 @@ export const ChatUI: FC<ChatUIProps> = ({ }) => {
       includeWorkspaceInstructions: chat.include_workspace_instructions,
       embeddingsProvider: chat.embeddings_provider as "openai" | "local"
     })
-  }
+  }, [assistants, params.chatid, setChatSettings, setSelectedAssistant, setSelectedChat, setSelectedTools])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchMessages()
+      await fetchChat()
+
+      scrollToBottom()
+      setIsAtBottom(true)
+    }
+
+    if (params.chatid) {
+      fetchData().then(() => {
+        handleFocusChatInput()
+        setLoading(false)
+      })
+    } else {
+      setLoading(false)
+    }
+  }, [fetchChat, fetchMessages, handleFocusChatInput, params.chatid, scrollToBottom, setIsAtBottom])
 
   if (loading) {
     return <Loading />
@@ -209,10 +209,10 @@ export const ChatUI: FC<ChatUIProps> = ({ }) => {
 
       {/* Chat Header - Enhanced when chatting with a persona */}
       {selectedPersona ? (
-        <div className="bg-secondary/80 backdrop-blur-sm flex max-h-[60px] min-h-[60px] w-full items-center justify-between border-b border-white/10 px-4 font-bold">
+        <div className="bg-secondary/80 flex max-h-[60px] min-h-[60px] w-full items-center justify-between border-b border-white/10 px-4 font-bold backdrop-blur-sm">
           <Link
             href={`/character/${selectedPersona.id}`}
-            className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+            className="flex items-center gap-3 transition-opacity hover:opacity-80"
           >
             {selectedPersona.image_url && (
               <Image
@@ -224,10 +224,10 @@ export const ChatUI: FC<ChatUIProps> = ({ }) => {
               />
             )}
             <div className="flex flex-col">
-              <span className="text-sm font-semibold text-foreground">
+              <span className="text-foreground text-sm font-semibold">
                 {selectedPersona.name}
               </span>
-              <span className="text-xs text-muted-foreground/70">
+              <span className="text-muted-foreground/70 text-xs">
                 View Profile
               </span>
             </div>

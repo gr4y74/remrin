@@ -41,7 +41,7 @@ export const EmojiPicker: FC<EmojiPickerProps> = ({ onEmojiSelect }) => {
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
                 className={cn(
-                    "rounded p-1.5 transition-colors hover:bg-rp-overlay",
+                    "hover:bg-rp-overlay rounded p-1.5 transition-colors",
                     isOpen ? "bg-rp-overlay text-rp-rose" : "text-rp-muted"
                 )}
                 title="Insert emoji"

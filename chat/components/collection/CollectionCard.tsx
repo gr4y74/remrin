@@ -94,8 +94,8 @@ export function CollectionCard({
         <div
             ref={cardRef}
             className={cn(
-                "group relative overflow-hidden rounded-xl border-2 bg-rp-surface",
-                "transition-all duration-300 ease-out animate-card-enter",
+                "bg-rp-surface group relative overflow-hidden rounded-xl border-2",
+                "animate-card-enter transition-all duration-300 ease-out",
                 soul.isOwned ? config.border : "border-rp-muted/20",
                 soul.isOwned ? "cursor-pointer" : "cursor-default",
                 className
@@ -133,32 +133,32 @@ export function CollectionCard({
                         "flex size-full items-center justify-center",
                         soul.isOwned
                             ? `bg-gradient-to-br ${config.gradient}`
-                            : "bg-gradient-to-br from-rp-base/80 to-rp-surface/80"
+                            : "from-rp-base/80 to-rp-surface/80 bg-gradient-to-br"
                     )}>
                         {soul.isOwned ? (
-                            <span className="text-3xl font-bold text-rp-text/50">
+                            <span className="text-rp-text/50 text-3xl font-bold">
                                 {soul.name.slice(0, 2).toUpperCase()}
                             </span>
                         ) : (
-                            <IconLock className="size-10 text-rp-text/20" />
+                            <IconLock className="text-rp-text/20 size-10" />
                         )}
                     </div>
                 )}
 
                 {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-rp-base/80 via-rp-base/20 to-transparent" />
+                <div className="from-rp-base/80 via-rp-base/20 absolute inset-0 bg-gradient-to-t to-transparent" />
 
                 {/* Duplicate Count Badge */}
                 {soul.isOwned && soul.pullCount > 1 && (
                     <div className="absolute right-2 top-2">
-                        <Badge className="rounded-full border-0 bg-rp-base/70 px-2 py-0.5 text-xs font-bold text-rp-text backdrop-blur-sm">
+                        <Badge className="bg-rp-base/70 text-rp-text rounded-full border-0 px-2 py-0.5 text-xs font-bold backdrop-blur-sm">
                             ×{soul.pullCount}
                         </Badge>
                     </div>
                 )}
 
                 {/* Bottom Content */}
-                <div className="absolute bottom-0 left-0 right-0 p-3">
+                <div className="absolute inset-x-0 bottom-0 p-3">
                     {/* Rarity Stars */}
                     <div className="mb-1 flex gap-0.5">
                         {Array.from({ length: config.stars }).map((_, i) => (
@@ -173,7 +173,7 @@ export function CollectionCard({
                         {Array.from({ length: 4 - config.stars }).map((_, i) => (
                             <IconStar
                                 key={i}
-                                className="size-3 text-rp-muted"
+                                className="text-rp-muted size-3"
                             />
                         ))}
                     </div>

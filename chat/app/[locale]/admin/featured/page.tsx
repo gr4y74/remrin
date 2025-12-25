@@ -14,7 +14,7 @@ export default function AdminFeaturedPage() {
                     <div className="flex items-center gap-4">
                         <Link
                             href="/admin"
-                            className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors"
+                            className="flex items-center gap-2 text-zinc-400 transition-colors hover:text-white"
                         >
                             <IconArrowLeft size={20} />
                             Back to Admin
@@ -27,9 +27,9 @@ export default function AdminFeaturedPage() {
                 </header>
 
                 {/* Content */}
-                <main className="p-6 max-w-7xl mx-auto">
+                <main className="mx-auto max-w-7xl p-6">
                     <div className="mb-6">
-                        <h2 className="text-2xl font-bold mb-2">Manage Featured Content</h2>
+                        <h2 className="mb-2 text-2xl font-bold">Manage Featured Content</h2>
                         <p className="text-zinc-400">
                             Control which Souls appear in the Hero Carousel and Gallery.
                         </p>

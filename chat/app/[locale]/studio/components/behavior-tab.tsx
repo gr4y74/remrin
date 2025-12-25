@@ -61,7 +61,7 @@ export function BehaviorTab({ persona, updateField, autoCompile, loading }: Beha
                     value={persona.system_prompt}
                     onChange={(e) => updateField('system_prompt', e.target.value)}
                     placeholder="You are [Name], a [personality traits]. You speak with [tone]. Your purpose is [goal]..."
-                    className="min-h-[200px] font-mono text-sm bg-zinc-900 border-zinc-700"
+                    className="min-h-[200px] border-zinc-700 bg-zinc-900 font-mono text-sm"
                 />
             </div>
 
@@ -88,7 +88,7 @@ export function BehaviorTab({ persona, updateField, autoCompile, loading }: Beha
     { "trigger": "Who are you?", "response": "..." }
   ]
 }`}
-                    className="min-h-[300px] font-mono text-xs bg-zinc-950 border-zinc-700 text-green-400"
+                    className="min-h-[300px] border-zinc-700 bg-zinc-950 font-mono text-xs text-green-400"
                 />
             </div>
         </div>

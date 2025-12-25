@@ -14,6 +14,7 @@ import {
     IconStarOff
 } from "@tabler/icons-react"
 import Link from "next/link"
+import Image from "next/image"
 
 interface PendingPersona {
     id: string
@@ -184,7 +185,7 @@ export default function ModerationPage() {
                     <div className="flex items-center gap-4">
                         <Link
                             href="/"
-                            className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors"
+                            className="flex items-center gap-2 text-zinc-400 transition-colors hover:text-white"
                         >
                             <IconArrowLeft size={20} />
                             Back
@@ -216,14 +217,14 @@ export default function ModerationPage() {
 
             <div className="flex">
                 {/* List Panel */}
-                <div className="w-1/2 border-r border-zinc-800 h-[calc(100vh-73px)] overflow-auto">
+                <div className="h-[calc(100vh-73px)] w-1/2 overflow-auto border-r border-zinc-800">
                     {loading ? (
-                        <div className="flex items-center justify-center h-full">
+                        <div className="flex h-full items-center justify-center">
                             <span className="text-zinc-500">Loading...</span>
                         </div>
                     ) : personas.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center h-full text-zinc-500">
-                            <span className="text-4xl mb-4">✅</span>
+                        <div className="flex h-full flex-col items-center justify-center text-zinc-500">
+                            <span className="mb-4 text-4xl">✅</span>
                             <span>No pending reviews</span>
                         </div>
                     ) : (
@@ -232,41 +233,44 @@ export default function ModerationPage() {
                                 <div
                                     key={persona.id}
                                     onClick={() => setSelectedPersona(persona)}
-                                    className={`p-4 cursor-pointer transition-colors ${selectedPersona?.id === persona.id
-                                            ? 'bg-zinc-800'
-                                            : 'hover:bg-zinc-900'
+                                    className={`cursor-pointer p-4 transition-colors ${selectedPersona?.id === persona.id
+                                        ? 'bg-zinc-800'
+                                        : 'hover:bg-zinc-900'
                                         }`}
                                 >
                                     <div className="flex items-start gap-4">
                                         {persona.image_url ? (
-                                            <img
-                                                src={persona.image_url}
-                                                alt={persona.name}
-                                                className="w-16 h-16 rounded-lg object-cover"
-                                            />
+                                            <div className="relative size-16 shrink-0 overflow-hidden rounded-lg">
+                                                <Image
+                                                    src={persona.image_url}
+                                                    alt={persona.name}
+                                                    fill
+                                                    className="object-cover"
+                                                />
+                                            </div>
                                         ) : (
-                                            <div className="w-16 h-16 rounded-lg bg-zinc-800 flex items-center justify-center text-2xl">
+                                            <div className="flex size-16 items-center justify-center rounded-lg bg-zinc-800 text-2xl">
                                                 🤖
                                             </div>
                                         )}
-                                        <div className="flex-1 min-w-0">
+                                        <div className="min-w-0 flex-1">
                                             <div className="flex items-center gap-2">
-                                                <h3 className="font-medium truncate">{persona.name}</h3>
+                                                <h3 className="truncate font-medium">{persona.name}</h3>
                                                 {persona.status === 'pending_review' && (
-                                                    <span className="px-2 py-0.5 text-xs rounded-full bg-yellow-500/20 text-yellow-400">
+                                                    <span className="rounded-full bg-yellow-500/20 px-2 py-0.5 text-xs text-yellow-400">
                                                         Pending
                                                     </span>
                                                 )}
                                                 {persona.status === 'approved' && (
-                                                    <span className="px-2 py-0.5 text-xs rounded-full bg-green-500/20 text-green-400">
+                                                    <span className="rounded-full bg-green-500/20 px-2 py-0.5 text-xs text-green-400">
                                                         Approved
                                                     </span>
                                                 )}
                                             </div>
-                                            <p className="text-sm text-zinc-400 truncate mt-1">
+                                            <p className="mt-1 truncate text-sm text-zinc-400">
                                                 {persona.description || 'No description'}
                                             </p>
-                                            <div className="flex items-center gap-2 mt-2 text-xs text-zinc-500">
+                                            <div className="mt-2 flex items-center gap-2 text-xs text-zinc-500">
                                                 <span>{persona.category || 'general'}</span>
                                                 <span>•</span>
                                                 <span>{persona.safety_level || 'ADULT'}</span>
@@ -288,34 +292,37 @@ export default function ModerationPage() {
                 </div>
 
                 {/* Detail Panel */}
-                <div className="w-1/2 h-[calc(100vh-73px)] overflow-auto">
+                <div className="h-[calc(100vh-73px)] w-1/2 overflow-auto">
                     {selectedPersona ? (
                         <div className="p-6">
                             {/* Header with image */}
-                            <div className="flex items-start gap-6 mb-6">
+                            <div className="mb-6 flex items-start gap-6">
                                 {selectedPersona.image_url ? (
-                                    <img
-                                        src={selectedPersona.image_url}
-                                        alt={selectedPersona.name}
-                                        className="w-32 h-32 rounded-xl object-cover"
-                                    />
+                                    <div className="relative size-32 shrink-0 overflow-hidden rounded-xl">
+                                        <Image
+                                            src={selectedPersona.image_url}
+                                            alt={selectedPersona.name}
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    </div>
                                 ) : (
-                                    <div className="w-32 h-32 rounded-xl bg-zinc-800 flex items-center justify-center text-5xl">
+                                    <div className="flex size-32 items-center justify-center rounded-xl bg-zinc-800 text-5xl">
                                         🤖
                                     </div>
                                 )}
                                 <div className="flex-1">
                                     <h2 className="text-2xl font-bold">{selectedPersona.name}</h2>
-                                    <p className="text-zinc-400 mt-1">{selectedPersona.description}</p>
-                                    <div className="flex items-center gap-3 mt-3">
-                                        <span className="px-2 py-1 text-xs rounded bg-zinc-800">
+                                    <p className="mt-1 text-zinc-400">{selectedPersona.description}</p>
+                                    <div className="mt-3 flex items-center gap-3">
+                                        <span className="rounded bg-zinc-800 px-2 py-1 text-xs">
                                             {selectedPersona.category || 'general'}
                                         </span>
-                                        <span className="px-2 py-1 text-xs rounded bg-zinc-800">
+                                        <span className="rounded bg-zinc-800 px-2 py-1 text-xs">
                                             {selectedPersona.safety_level || 'ADULT'}
                                         </span>
                                         {selectedPersona.tags?.map((tag) => (
-                                            <span key={tag} className="px-2 py-1 text-xs rounded bg-purple-500/20 text-purple-400">
+                                            <span key={tag} className="rounded bg-purple-500/20 px-2 py-1 text-xs text-purple-400">
                                                 {tag}
                                             </span>
                                         ))}
@@ -325,9 +332,9 @@ export default function ModerationPage() {
 
                             {/* System Prompt */}
                             <div className="mb-6">
-                                <h3 className="text-sm font-medium text-zinc-400 mb-2">System Prompt</h3>
-                                <div className="bg-zinc-900 rounded-lg p-4 max-h-48 overflow-auto">
-                                    <pre className="text-sm whitespace-pre-wrap">{selectedPersona.system_prompt}</pre>
+                                <h3 className="mb-2 text-sm font-medium text-zinc-400">System Prompt</h3>
+                                <div className="max-h-48 overflow-auto rounded-lg bg-zinc-900 p-4">
+                                    <pre className="whitespace-pre-wrap text-sm">{selectedPersona.system_prompt}</pre>
                                 </div>
                             </div>
 
@@ -350,7 +357,7 @@ export default function ModerationPage() {
                             {/* Actions */}
                             {selectedPersona.status === 'pending_review' && (
                                 <div className="border-t border-zinc-800 pt-6">
-                                    <h3 className="text-sm font-medium text-zinc-400 mb-4">Moderation Actions</h3>
+                                    <h3 className="mb-4 text-sm font-medium text-zinc-400">Moderation Actions</h3>
 
                                     {/* Rejection Reason */}
                                     <div className="mb-4">
@@ -359,7 +366,7 @@ export default function ModerationPage() {
                                             value={rejectionReason}
                                             onChange={(e) => setRejectionReason(e.target.value)}
                                             placeholder="Explain why this submission is being rejected..."
-                                            className="w-full mt-2 bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm resize-none"
+                                            className="mt-2 w-full resize-none rounded-lg border border-zinc-700 bg-zinc-900 p-3 text-sm"
                                             rows={3}
                                         />
                                     </div>
@@ -395,7 +402,7 @@ export default function ModerationPage() {
                             {/* Feature toggle for approved */}
                             {selectedPersona.status === 'approved' && (
                                 <div className="border-t border-zinc-800 pt-6">
-                                    <h3 className="text-sm font-medium text-zinc-400 mb-4">Curation Actions</h3>
+                                    <h3 className="mb-4 text-sm font-medium text-zinc-400">Curation Actions</h3>
                                     <Button
                                         onClick={() => handleFeature(selectedPersona, !(selectedPersona as any).is_featured)}
                                         disabled={actionLoading}
@@ -418,8 +425,8 @@ export default function ModerationPage() {
                             )}
                         </div>
                     ) : (
-                        <div className="flex flex-col items-center justify-center h-full text-zinc-500">
-                            <span className="text-4xl mb-4">👈</span>
+                        <div className="flex h-full flex-col items-center justify-center text-zinc-500">
+                            <span className="mb-4 text-4xl">👈</span>
                             <span>Select a persona to review</span>
                         </div>
                     )}

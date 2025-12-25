@@ -27,7 +27,7 @@ import { Badge } from "../ui/badge"
 import { Tables } from "@/supabase/types"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { FC, useCallback, useContext, useEffect, useRef, useState } from "react"
+import { FC, useCallback, useContext, useEffect, useRef, useState, useMemo } from "react"
 import { toast } from "sonner"
 import { SIDEBAR_ICON_SIZE } from "../sidebar/sidebar-switcher"
 import { Button } from "../ui/button"
@@ -270,48 +270,56 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ }) => {
     }
   }
 
+  const debouncedCheck = useMemo(
+    () =>
+      debounce(async (username: string) => {
+        if (!username) return
+
+        if (username.length < PROFILE_USERNAME_MIN) {
+          setUsernameAvailable(false)
+          return
+        }
+
+        if (username.length > PROFILE_USERNAME_MAX) {
+          setUsernameAvailable(false)
+          return
+        }
+
+        const usernameRegex = /^[a-zA-Z0-9_]+$/
+        if (!usernameRegex.test(username)) {
+          setUsernameAvailable(false)
+          toast.error(
+            "Username must be letters, numbers, or underscores only - no other characters or spacing allowed."
+          )
+          return
+        }
+
+        setLoadingUsername(true)
+
+        const response = await fetch(`/api/username/available`, {
+          method: "POST",
+          body: JSON.stringify({ username })
+        })
+
+        const data = await response.json()
+        const isAvailable = data.isAvailable
+
+        setUsernameAvailable(isAvailable)
+
+        if (username === profile?.username) {
+          setUsernameAvailable(true)
+        }
+
+        setLoadingUsername(false)
+      }, 500),
+    [profile?.username]
+  )
+
   const checkUsernameAvailability = useCallback(
-    debounce(async (username: string) => {
-      if (!username) return
-
-      if (username.length < PROFILE_USERNAME_MIN) {
-        setUsernameAvailable(false)
-        return
-      }
-
-      if (username.length > PROFILE_USERNAME_MAX) {
-        setUsernameAvailable(false)
-        return
-      }
-
-      const usernameRegex = /^[a-zA-Z0-9_]+$/
-      if (!usernameRegex.test(username)) {
-        setUsernameAvailable(false)
-        toast.error(
-          "Username must be letters, numbers, or underscores only - no other characters or spacing allowed."
-        )
-        return
-      }
-
-      setLoadingUsername(true)
-
-      const response = await fetch(`/api/username/available`, {
-        method: "POST",
-        body: JSON.stringify({ username })
-      })
-
-      const data = await response.json()
-      const isAvailable = data.isAvailable
-
-      setUsernameAvailable(isAvailable)
-
-      if (username === profile?.username) {
-        setUsernameAvailable(true)
-      }
-
-      setLoadingUsername(false)
-    }, 500),
-    []
+    (username: string) => {
+      debouncedCheck(username)
+    },
+    [debouncedCheck]
   )
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -351,7 +359,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ }) => {
               <div className="flex items-center">
                 User Settings
                 {profile.user_id && (
-                  <Badge variant="secondary" className="ml-2 capitalize border-rp-muted/20 bg-rp-surface">
+                  <Badge variant="secondary" className="border-rp-muted/20 bg-rp-surface ml-2 capitalize">
                     {wallet?.tier?.replace("_", " ") || "Free"}
                   </Badge>
                 )}
@@ -473,8 +481,8 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ }) => {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label>Current Plan</Label>
-                  <div className="p-3 border rounded-md bg-accent/50 flex items-center justify-between">
-                    <span className="capitalize font-medium">{wallet?.tier ? wallet.tier.replace("_", " ") : "Free Tier"}</span>
+                  <div className="bg-accent/50 flex items-center justify-between rounded-md border p-3">
+                    <span className="font-medium capitalize">{wallet?.tier ? wallet.tier.replace("_", " ") : "Free Tier"}</span>
                     {wallet?.tier && (
                       <Badge variant="default" className="bg-primary">Active</Badge>
                     )}
@@ -483,12 +491,12 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ }) => {
 
                 <div className="space-y-2">
                   <Label>Aether Balance</Label>
-                  <div className="p-3 border rounded-md bg-accent/50 flex items-center justify-between">
+                  <div className="bg-accent/50 flex items-center justify-between rounded-md border p-3">
                     <span className="font-medium">{wallet?.balance_aether?.toLocaleString() || 0} Credits</span>
                   </div>
                 </div>
 
-                <div className="pt-4 space-y-3">
+                <div className="space-y-3 pt-4">
                   {wallet?.tier ? (
                     <Button
                       className="w-full"
@@ -545,10 +553,10 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ }) => {
 
             <TabsContent className="mt-4 space-y-4" value="keys">
               {wallet?.tier !== "architect" && wallet?.tier !== "titan" ? (
-                <div className="flex flex-col items-center justify-center py-10 space-y-3 text-center border rounded-lg border-rp-muted/20 bg-rp-surface">
+                <div className="border-rp-muted/20 bg-rp-surface flex flex-col items-center justify-center space-y-3 rounded-lg border py-10 text-center">
                   <IconLock size={48} className="text-rp-muted opacity-50" />
-                  <div className="text-lg font-medium text-rp-text">Advanced Settings Locked</div>
-                  <p className="text-sm text-rp-subtle max-w-xs">
+                  <div className="text-rp-text text-lg font-medium">Advanced Settings Locked</div>
+                  <p className="text-rp-subtle max-w-xs text-sm">
                     API Key configuration is available for Architect and Titan tiers.
                   </p>
                 </div>

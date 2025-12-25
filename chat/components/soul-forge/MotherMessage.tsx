@@ -73,7 +73,7 @@ export const MotherMessage: FC<MotherMessageProps> = ({
     return (
         <div
             className={cn(
-                "relative max-w-[85%] animate-fade-in-up",
+                "animate-fade-in-up relative max-w-[85%]",
                 className
             )}
         >
@@ -81,7 +81,7 @@ export const MotherMessage: FC<MotherMessageProps> = ({
             <div
                 className={cn(
                     "absolute -inset-2 rounded-2xl blur-xl",
-                    "bg-gradient-to-r from-rp-pine/20 via-rp-foam/20 to-rp-pine/20",
+                    "from-rp-pine/20 via-rp-foam/20 to-rp-pine/20 bg-gradient-to-r",
                     "animate-mother-glow",
                     isSpeaking && "opacity-75"
                 )}
@@ -90,28 +90,28 @@ export const MotherMessage: FC<MotherMessageProps> = ({
             {/* Message bubble */}
             <div
                 className={cn(
-                    "relative px-5 py-4 rounded-2xl",
-                    "bg-gradient-to-br from-rp-surface/90 via-rp-surface/80 to-rp-base/90",
-                    "border border-rp-pine/30",
+                    "relative rounded-2xl px-5 py-4",
+                    "from-rp-surface/90 via-rp-surface/80 to-rp-base/90 bg-gradient-to-br",
+                    "border-rp-pine/30 border",
                     "backdrop-blur-sm",
-                    "shadow-lg shadow-rp-pine/10"
+                    "shadow-rp-pine/10 shadow-lg"
                 )}
             >
                 {/* Speaking indicator */}
                 {isSpeaking && (
-                    <div className="absolute -top-2 -right-2 flex items-center gap-1 px-2 py-1 rounded-full bg-rp-pine/80 animate-pulse">
+                    <div className="bg-rp-pine/80 absolute -right-2 -top-2 flex animate-pulse items-center gap-1 rounded-full px-2 py-1">
                         <IconVolume size={12} className="text-white" />
-                        <span className="text-[10px] text-white font-medium">Speaking</span>
+                        <span className="text-[10px] font-medium text-white">Speaking</span>
                     </div>
                 )}
 
                 {/* Message content */}
-                <p className="text-rp-text/90 text-sm leading-relaxed whitespace-pre-wrap">
+                <p className="text-rp-text/90 whitespace-pre-wrap text-sm leading-relaxed">
                     {message}
                 </p>
 
                 {/* Decorative element */}
-                <div className="absolute bottom-0 left-4 w-8 h-[2px] bg-gradient-to-r from-rp-pine to-transparent rounded-full" />
+                <div className="from-rp-pine absolute bottom-0 left-4 h-[2px] w-8 rounded-full bg-gradient-to-r to-transparent" />
             </div>
         </div>
     )

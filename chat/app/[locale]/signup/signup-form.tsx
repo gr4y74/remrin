@@ -111,9 +111,9 @@ export default function SignupForm() {
                             className="text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2 transition-colors"
                         >
                             {passwordVisible ? (
-                                <EyeOff className="h-4 w-4" />
+                                <EyeOff className="size-4" />
                             ) : (
-                                <Eye className="h-4 w-4" />
+                                <Eye className="size-4" />
                             )}
                         </button>
                     </div>
@@ -132,15 +132,15 @@ export default function SignupForm() {
                             </div>
                             <ul className="text-muted-foreground space-y-1 text-xs">
                                 <li className={`flex items-center gap-1 ${hasMinLength ? "text-green-500" : ""}`}>
-                                    {hasMinLength ? <Check className="h-3 w-3" /> : <div className="h-3 w-3 rounded-full border" />}
+                                    {hasMinLength ? <Check className="size-3" /> : <div className="size-3 rounded-full border" />}
                                     At least 8 characters
                                 </li>
                                 <li className={`flex items-center gap-1 ${hasNumber ? "text-green-500" : ""}`}>
-                                    {hasNumber ? <Check className="h-3 w-3" /> : <div className="h-3 w-3 rounded-full border" />}
+                                    {hasNumber ? <Check className="size-3" /> : <div className="size-3 rounded-full border" />}
                                     Contains a number
                                 </li>
                                 <li className={`flex items-center gap-1 ${hasSpecialChar ? "text-green-500" : ""}`}>
-                                    {hasSpecialChar ? <Check className="h-3 w-3" /> : <div className="h-3 w-3 rounded-full border" />}
+                                    {hasSpecialChar ? <Check className="size-3" /> : <div className="size-3 rounded-full border" />}
                                     Contains a special character
                                 </li>
                             </ul>
@@ -204,7 +204,7 @@ function SubmitButton({ loading }: { loading: boolean }) {
             type="submit"
             disabled={isLoading}
         >
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
             Create Account
         </Button>
     )

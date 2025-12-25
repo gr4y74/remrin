@@ -81,12 +81,12 @@ export const CanvasPanel: FC<CanvasPanelProps> = ({
 
     return (
         <div
-            className="flex h-full shrink-0 flex-col border-l border-border/50 bg-darker-dark-blue"
+            className="border-border/50 bg-darker-dark-blue flex h-full shrink-0 flex-col border-l"
             style={{ width: `${width}px` }}
         >
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-border/50 px-4 py-2">
-                <h3 className="text-sm font-medium text-foreground">Artifacts</h3>
+            <div className="border-border/50 flex items-center justify-between border-b px-4 py-2">
+                <h3 className="text-foreground text-sm font-medium">Artifacts</h3>
                 <Button
                     variant="ghost"
                     size="icon"
@@ -98,14 +98,14 @@ export const CanvasPanel: FC<CanvasPanelProps> = ({
             </div>
 
             {/* Tabs */}
-            <div className="flex overflow-x-auto border-b border-border/50 bg-almost-black-blue/50">
+            <div className="border-border/50 bg-almost-black-blue/50 flex overflow-x-auto border-b">
                 {artifacts.map(artifact => {
                     const Icon = getArtifactIcon(artifact.type)
                     return (
                         <div
                             key={artifact.id}
                             className={cn(
-                                "group flex min-w-0 max-w-[180px] cursor-pointer items-center gap-2 border-r border-border/30 px-3 py-2",
+                                "border-border/30 group flex min-w-0 max-w-[180px] cursor-pointer items-center gap-2 border-r px-3 py-2",
                                 activeArtifactId === artifact.id
                                     ? "bg-darker-dark-blue text-foreground"
                                     : "text-muted-foreground hover:bg-darker-dark-blue/50 hover:text-foreground"
@@ -119,7 +119,7 @@ export const CanvasPanel: FC<CanvasPanelProps> = ({
                                     e.stopPropagation()
                                     handleCloseArtifact(artifact.id)
                                 }}
-                                className="ml-auto shrink-0 rounded p-0.5 opacity-0 transition-opacity hover:bg-muted group-hover:opacity-100"
+                                className="hover:bg-muted ml-auto shrink-0 rounded p-0.5 opacity-0 transition-opacity group-hover:opacity-100"
                             >
                                 <IconX size={12} />
                             </button>
@@ -132,8 +132,8 @@ export const CanvasPanel: FC<CanvasPanelProps> = ({
             {activeArtifact && (
                 <>
                     {/* Actions Bar */}
-                    <div className="flex items-center justify-between border-b border-border/50 px-4 py-2">
-                        <span className="text-xs text-muted-foreground">
+                    <div className="border-border/50 flex items-center justify-between border-b px-4 py-2">
+                        <span className="text-muted-foreground text-xs">
                             {activeArtifact.language || activeArtifact.type}
                         </span>
                         <div className="flex items-center gap-1">
@@ -174,7 +174,7 @@ export const CanvasPanel: FC<CanvasPanelProps> = ({
                                 {activeArtifact.content}
                             </SyntaxHighlighter>
                         ) : (
-                            <pre className="whitespace-pre-wrap p-4 text-sm text-foreground">
+                            <pre className="text-foreground whitespace-pre-wrap p-4 text-sm">
                                 {activeArtifact.content}
                             </pre>
                         )}

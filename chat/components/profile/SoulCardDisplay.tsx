@@ -34,7 +34,7 @@ export function SoulCardDisplay({
     return (
         <div
             className={cn(
-                "group relative overflow-hidden rounded-2xl bg-rp-surface backdrop-blur-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-rp-iris/10",
+                "bg-rp-surface hover:shadow-rp-iris/10 group relative overflow-hidden rounded-2xl backdrop-blur-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl",
                 className
             )}
         >
@@ -48,19 +48,19 @@ export function SoulCardDisplay({
                         className="object-cover transition-transform duration-500 group-hover:scale-110"
                     />
                 ) : (
-                    <div className="flex size-full items-center justify-center bg-gradient-to-br from-rp-iris/50 to-rp-foam/50">
-                        <span className="text-6xl font-bold text-rp-text/50">
+                    <div className="from-rp-iris/50 to-rp-foam/50 flex size-full items-center justify-center bg-gradient-to-br">
+                        <span className="text-rp-text/50 text-6xl font-bold">
                             {name.slice(0, 2).toUpperCase()}
                         </span>
                     </div>
                 )}
 
                 {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-rp-base/80 via-transparent to-transparent" />
+                <div className="from-rp-base/80 absolute inset-0 bg-gradient-to-t via-transparent to-transparent" />
 
                 {/* Character Name */}
-                <div className="absolute bottom-4 left-4 right-4">
-                    <h3 className="text-xl font-bold text-rp-text drop-shadow-lg">
+                <div className="absolute inset-x-4 bottom-4">
+                    <h3 className="text-rp-text text-xl font-bold drop-shadow-lg">
                         {name}
                     </h3>
                 </div>
@@ -81,7 +81,7 @@ export function SoulCardDisplay({
                         </Badge>
                     ))}
                     {tags.length > 4 && (
-                        <Badge className="rounded-full border border-rp-muted bg-rp-surface/50 px-3 py-1 text-xs font-medium text-rp-subtle">
+                        <Badge className="border-rp-muted bg-rp-surface/50 text-rp-subtle rounded-full border px-3 py-1 text-xs font-medium">
                             +{tags.length - 4}
                         </Badge>
                     )}

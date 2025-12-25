@@ -87,8 +87,8 @@ export function ListingCard({
         <div
             ref={cardRef}
             className={cn(
-                "group relative overflow-hidden rounded-2xl border border-rp-muted/20 bg-rp-surface",
-                "transition-all duration-300 ease-out animate-card-enter",
+                "border-rp-muted/20 bg-rp-surface group relative overflow-hidden rounded-2xl border",
+                "animate-card-enter transition-all duration-300 ease-out",
                 className
             )}
             style={{
@@ -119,24 +119,24 @@ export function ListingCard({
                         sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
                     />
                 ) : (
-                    <div className="flex size-full items-center justify-center bg-gradient-to-br from-rp-gold/50 to-rp-rose/50">
-                        <span className="text-4xl font-bold text-rp-text/50">
+                    <div className="from-rp-gold/50 to-rp-rose/50 flex size-full items-center justify-center bg-gradient-to-br">
+                        <span className="text-rp-text/50 text-4xl font-bold">
                             {personaName.slice(0, 2).toUpperCase()}
                         </span>
                     </div>
                 )}
 
                 {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-rp-base/90 via-rp-base/30 to-transparent" />
+                <div className="from-rp-base/90 via-rp-base/30 absolute inset-0 bg-gradient-to-t to-transparent" />
 
                 {/* Limited Edition Badge */}
                 {isLimitedEdition && (
                     <div className="absolute left-3 top-3">
-                        <Badge className="flex items-center gap-1 rounded-full border-0 bg-rp-love/90 px-2 py-1 text-xs font-semibold text-rp-base backdrop-blur-sm">
+                        <Badge className="bg-rp-love/90 text-rp-base flex items-center gap-1 rounded-full border-0 px-2 py-1 text-xs font-semibold backdrop-blur-sm">
                             <IconSparkles className="size-3" />
                             <span>Limited</span>
                             {quantityRemaining !== null && quantityRemaining !== undefined && (
-                                <span className="ml-1 text-rp-base/80">
+                                <span className="text-rp-base/80 ml-1">
                                     {quantityRemaining} left
                                 </span>
                             )}
@@ -146,17 +146,17 @@ export function ListingCard({
 
                 {/* Sales Badge */}
                 <div className="absolute right-3 top-3">
-                    <Badge className="flex items-center gap-1 rounded-full border-0 bg-rp-base/60 px-2 py-1 text-xs text-rp-text backdrop-blur-sm">
-                        <IconFlame className="size-3 text-rp-gold" />
+                    <Badge className="bg-rp-base/60 text-rp-text flex items-center gap-1 rounded-full border-0 px-2 py-1 text-xs backdrop-blur-sm">
+                        <IconFlame className="text-rp-gold size-3" />
                         <span>{formatCount(totalSales)} sold</span>
                     </Badge>
                 </div>
 
                 {/* Bottom Content */}
-                <div className="absolute bottom-0 left-0 right-0 p-4">
+                <div className="absolute inset-x-0 bottom-0 p-4">
                     {/* Character Name */}
                     <h3 className={cn(
-                        "line-clamp-1 text-lg font-bold leading-tight text-rp-text drop-shadow-lg",
+                        "text-rp-text line-clamp-1 text-lg font-bold leading-tight drop-shadow-lg",
                         "transition-transform duration-300",
                         isHovering && "translate-x-1"
                     )}>
@@ -165,7 +165,7 @@ export function ListingCard({
 
                     {/* Creator */}
                     {creatorName && (
-                        <p className="mt-0.5 text-xs text-rp-subtle">
+                        <p className="text-rp-subtle mt-0.5 text-xs">
                             by {creatorName}
                         </p>
                     )}
@@ -174,11 +174,11 @@ export function ListingCard({
                     <div className="mt-3 flex items-center justify-between">
                         {/* Price */}
                         <div className="flex items-center gap-1.5">
-                            <IconDiamond className="size-5 text-rp-gold" />
-                            <span className="text-lg font-bold text-rp-gold">
+                            <IconDiamond className="text-rp-gold size-5" />
+                            <span className="text-rp-gold text-lg font-bold">
                                 {priceAether.toLocaleString()}
                             </span>
-                            <span className="text-xs text-rp-subtle">Aether</span>
+                            <span className="text-rp-subtle text-xs">Aether</span>
                         </div>
 
                         {/* Buy Button */}
@@ -186,10 +186,10 @@ export function ListingCard({
                             size="sm"
                             onClick={handleBuyClick}
                             className={cn(
-                                "rounded-full bg-gradient-to-r from-rp-gold to-rp-rose px-4 font-semibold text-rp-base",
+                                "from-rp-gold to-rp-rose text-rp-base rounded-full bg-gradient-to-r px-4 font-semibold",
                                 "hover:from-rp-gold/80 hover:to-rp-rose/80",
                                 "transition-all duration-300",
-                                isHovering && "scale-105 shadow-lg shadow-rp-gold/30"
+                                isHovering && "shadow-rp-gold/30 scale-105 shadow-lg"
                             )}
                         >
                             Buy Now

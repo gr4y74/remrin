@@ -3,6 +3,8 @@ import { getActivePools, getPoolById, getFeaturedItems } from "@/lib/gacha"
 import { cookies } from "next/headers"
 import { NextRequest, NextResponse } from "next/server"
 
+export const dynamic = "force-dynamic"
+
 /**
  * GET /api/gacha/pools
  * Returns active gacha pools with featured items

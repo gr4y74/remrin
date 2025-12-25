@@ -67,7 +67,7 @@ export function VoiceTab({ persona, metadata, updateField, updateMetadata, uploa
                     value={persona.voice_id || ''}
                     onChange={(e) => updateField('voice_id', e.target.value)}
                     placeholder="e.g., ThT5KcBeYtu3NO4 or alloy"
-                    className="bg-zinc-900 border-zinc-700 font-mono"
+                    className="border-zinc-700 bg-zinc-900 font-mono"
                 />
                 <p className="text-xs text-zinc-500">
                     The voice synthesis ID for text-to-speech. Leave blank to use default.

@@ -87,9 +87,9 @@ export const TopUpModal: FC<TopUpModalProps> = ({
 
     return (
         <Dialog open={isOpen} onOpenChange={() => onClose()}>
-            <DialogContent className="sm:max-w-4xl bg-rp-base border-rp-muted/20">
+            <DialogContent className="bg-rp-base border-rp-muted/20 sm:max-w-4xl">
                 <DialogHeader>
-                    <DialogTitle className="text-2xl font-bold text-rp-text flex items-center gap-2">
+                    <DialogTitle className="text-rp-text flex items-center gap-2 text-2xl font-bold">
                         <IconCoin className="text-rp-gold" size={28} />
                         Add Aether Credits
                     </DialogTitle>
@@ -99,15 +99,15 @@ export const TopUpModal: FC<TopUpModalProps> = ({
                 </DialogHeader>
 
                 {/* Current Balance */}
-                <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-rp-surface border border-rp-muted/20 mb-4">
+                <div className="bg-rp-surface border-rp-muted/20 mb-4 flex items-center justify-between rounded-xl border px-4 py-3">
                     <span className="text-rp-subtle">Current Balance</span>
-                    <span className="text-lg font-bold text-rp-gold">
+                    <span className="text-rp-gold text-lg font-bold">
                         {currentBalance.toLocaleString()} Aether
                     </span>
                 </div>
 
                 {/* Package Selection */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                     {PACKAGES.map((pkg) => (
                         <CreditPackCard
                             key={pkg.id}
@@ -122,7 +122,7 @@ export const TopUpModal: FC<TopUpModalProps> = ({
                 </div>
 
                 {/* Security Badges */}
-                <div className="flex items-center justify-center gap-6 mt-6 text-rp-muted">
+                <div className="text-rp-muted mt-6 flex items-center justify-center gap-6">
                     <div className="flex items-center gap-1.5 text-xs">
                         <IconLock size={14} />
                         <span>Secure Payment via Stripe</span>

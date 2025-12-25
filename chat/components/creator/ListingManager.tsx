@@ -67,14 +67,14 @@ export function ListingManager({ listings, userId, onRefresh }: ListingManagerPr
 
     if (listings.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center rounded-xl border border-rp-muted/20 bg-rp-surface p-8 text-center">
-                <div className="mb-4 rounded-full bg-rp-iris/20 p-4">
-                    <TrendingUp className="size-8 text-rp-iris" />
+            <div className="border-rp-muted/20 bg-rp-surface flex flex-col items-center justify-center rounded-xl border p-8 text-center">
+                <div className="bg-rp-iris/20 mb-4 rounded-full p-4">
+                    <TrendingUp className="text-rp-iris size-8" />
                 </div>
-                <h3 className="mb-2 text-lg font-semibold text-rp-text">
+                <h3 className="text-rp-text mb-2 text-lg font-semibold">
                     No Listings Yet
                 </h3>
-                <p className="text-sm text-rp-subtle">
+                <p className="text-rp-subtle text-sm">
                     Create your first listing to start earning Aether!
                 </p>
             </div>
@@ -82,7 +82,7 @@ export function ListingManager({ listings, userId, onRefresh }: ListingManagerPr
     }
 
     return (
-        <div className="rounded-xl border border-rp-muted/20 bg-rp-surface overflow-hidden">
+        <div className="border-rp-muted/20 bg-rp-surface overflow-hidden rounded-xl border">
             <Table>
                 <TableHeader>
                     <TableRow className="border-rp-muted/20 hover:bg-transparent">
@@ -102,7 +102,7 @@ export function ListingManager({ listings, userId, onRefresh }: ListingManagerPr
                             {/* Soul */}
                             <TableCell>
                                 <div className="flex items-center gap-3">
-                                    <div className="relative size-10 overflow-hidden rounded-lg bg-rp-base">
+                                    <div className="bg-rp-base relative size-10 overflow-hidden rounded-lg">
                                         {listing.personas?.image_path ? (
                                             <Image
                                                 src={listing.personas.image_path}
@@ -111,17 +111,17 @@ export function ListingManager({ listings, userId, onRefresh }: ListingManagerPr
                                                 className="object-cover"
                                             />
                                         ) : (
-                                            <div className="flex size-full items-center justify-center text-lg font-bold text-rp-muted">
+                                            <div className="text-rp-muted flex size-full items-center justify-center text-lg font-bold">
                                                 {listing.personas?.name?.[0] || "?"}
                                             </div>
                                         )}
                                     </div>
                                     <div>
-                                        <p className="font-medium text-rp-text">
+                                        <p className="text-rp-text font-medium">
                                             {listing.personas?.name || "Unknown"}
                                         </p>
                                         {listing.is_limited_edition && (
-                                            <span className="text-xs text-rp-gold">
+                                            <span className="text-rp-gold text-xs">
                                                 Limited ({listing.quantity_remaining} left)
                                             </span>
                                         )}
@@ -131,15 +131,15 @@ export function ListingManager({ listings, userId, onRefresh }: ListingManagerPr
 
                             {/* Price */}
                             <TableCell>
-                                <span className="font-medium text-rp-iris">
+                                <span className="text-rp-iris font-medium">
                                     {listing.price_aether.toLocaleString()}
                                 </span>
-                                <span className="ml-1 text-xs text-rp-muted">Aether</span>
+                                <span className="text-rp-muted ml-1 text-xs">Aether</span>
                             </TableCell>
 
                             {/* Sales */}
                             <TableCell className="text-center">
-                                <span className="font-medium text-rp-text">
+                                <span className="text-rp-text font-medium">
                                     {listing.total_sales}
                                 </span>
                             </TableCell>
@@ -159,7 +159,7 @@ export function ListingManager({ listings, userId, onRefresh }: ListingManagerPr
                                     <Button
                                         variant="ghost"
                                         size="icon"
-                                        className="size-8 text-rp-subtle hover:text-rp-text"
+                                        className="text-rp-subtle hover:text-rp-text size-8"
                                     >
                                         <Edit2 className="size-4" />
                                     </Button>
@@ -169,7 +169,7 @@ export function ListingManager({ listings, userId, onRefresh }: ListingManagerPr
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                className="size-8 text-rp-subtle hover:text-rp-love"
+                                                className="text-rp-subtle hover:text-rp-love size-8"
                                                 disabled={loadingId === listing.id}
                                             >
                                                 {loadingId === listing.id ? (
@@ -186,14 +186,14 @@ export function ListingManager({ listings, userId, onRefresh }: ListingManagerPr
                                                 </AlertDialogTitle>
                                                 <AlertDialogDescription className="text-rp-subtle">
                                                     This will deactivate the listing for{" "}
-                                                    <span className="font-medium text-rp-text">
+                                                    <span className="text-rp-text font-medium">
                                                         {listing.personas?.name}
                                                     </span>
                                                     . You can create a new listing later.
                                                 </AlertDialogDescription>
                                             </AlertDialogHeader>
                                             <AlertDialogFooter>
-                                                <AlertDialogCancel className="border-rp-muted/20 bg-transparent text-rp-text hover:bg-rp-surface">
+                                                <AlertDialogCancel className="border-rp-muted/20 text-rp-text hover:bg-rp-surface bg-transparent">
                                                     Cancel
                                                 </AlertDialogCancel>
                                                 <AlertDialogAction

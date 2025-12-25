@@ -24,7 +24,7 @@ export default function CollectionPage() {
     if (loading) {
         return (
             <div className="flex min-h-screen items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <Loader2 className="text-muted-foreground size-8 animate-spin" />
             </div>
         )
     }
@@ -43,7 +43,7 @@ export default function CollectionPage() {
                 <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
                     My Collection
                 </h1>
-                <p className="mt-1 text-muted-foreground">
+                <p className="text-muted-foreground mt-1">
                     View all the Souls you&apos;ve summoned from the Aether Gate
                 </p>
             </div>

@@ -74,14 +74,14 @@ export const TransactionHistory: FC<TransactionHistoryProps> = ({
                 {[...Array(5)].map((_, i) => (
                     <div
                         key={i}
-                        className="flex items-center gap-4 p-4 rounded-xl bg-white/5 animate-pulse"
+                        className="flex animate-pulse items-center gap-4 rounded-xl bg-white/5 p-4"
                     >
                         <div className="size-10 rounded-full bg-white/10" />
                         <div className="flex-1 space-y-2">
-                            <div className="h-4 w-32 bg-white/10 rounded" />
-                            <div className="h-3 w-20 bg-white/10 rounded" />
+                            <div className="h-4 w-32 rounded bg-white/10" />
+                            <div className="h-3 w-20 rounded bg-white/10" />
                         </div>
-                        <div className="h-5 w-16 bg-white/10 rounded" />
+                        <div className="h-5 w-16 rounded bg-white/10" />
                     </div>
                 ))}
             </div>
@@ -94,11 +94,11 @@ export const TransactionHistory: FC<TransactionHistoryProps> = ({
                 "flex flex-col items-center justify-center py-12 text-center",
                 className
             )}>
-                <div className="size-16 flex items-center justify-center rounded-full bg-rp-overlay mb-4">
+                <div className="bg-rp-overlay mb-4 flex size-16 items-center justify-center rounded-full">
                     <IconWallet size={32} className="text-rp-muted" />
                 </div>
-                <h3 className="text-lg font-semibold text-rp-text mb-1">No transactions yet</h3>
-                <p className="text-sm text-rp-muted">
+                <h3 className="text-rp-text mb-1 text-lg font-semibold">No transactions yet</h3>
+                <p className="text-rp-muted text-sm">
                     Your transaction history will appear here
                 </p>
             </div>
@@ -116,25 +116,25 @@ export const TransactionHistory: FC<TransactionHistoryProps> = ({
                     <div
                         key={transaction.id}
                         className={cn(
-                            "flex items-center gap-4 p-4 rounded-xl",
-                            "bg-rp-overlay border border-rp-muted/20",
-                            "transition-all duration-200 hover:bg-rp-overlay/80"
+                            "flex items-center gap-4 rounded-xl p-4",
+                            "bg-rp-overlay border-rp-muted/20 border",
+                            "hover:bg-rp-overlay/80 transition-all duration-200"
                         )}
                     >
                         {/* Icon */}
                         <div className={cn(
-                            "size-10 flex items-center justify-center rounded-full",
+                            "flex size-10 items-center justify-center rounded-full",
                             config.bgColor
                         )}>
                             <Icon size={20} className={config.color} />
                         </div>
 
                         {/* Description & Date */}
-                        <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-rp-text truncate">
+                        <div className="min-w-0 flex-1">
+                            <p className="text-rp-text truncate text-sm font-medium">
                                 {transaction.description}
                             </p>
-                            <p className="text-xs text-rp-muted">
+                            <p className="text-rp-muted text-xs">
                                 {formatDate(transaction.created_at)}
                             </p>
                         </div>
@@ -156,11 +156,11 @@ export const TransactionHistory: FC<TransactionHistoryProps> = ({
                     variant="ghost"
                     onClick={onLoadMore}
                     disabled={loading}
-                    className="w-full mt-4 text-rp-subtle hover:text-rp-text"
+                    className="text-rp-subtle hover:text-rp-text mt-4 w-full"
                 >
                     {loading ? (
                         <span className="flex items-center gap-2">
-                            <div className="size-4 border-2 border-rp-muted/30 border-t-rp-iris rounded-full animate-spin" />
+                            <div className="border-rp-muted/30 border-t-rp-iris size-4 animate-spin rounded-full border-2" />
                             Loading...
                         </span>
                     ) : (

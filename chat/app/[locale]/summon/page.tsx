@@ -101,7 +101,7 @@ export default function SummonPage() {
     if (loading && pools.length === 0) {
         return (
             <div className="flex min-h-screen items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <Loader2 className="text-muted-foreground size-8 animate-spin" />
             </div>
         )
     }
@@ -112,17 +112,17 @@ export default function SummonPage() {
                 <h1 className="bg-gradient-to-r from-purple-400 via-pink-500 to-orange-400 bg-clip-text text-4xl font-extrabold tracking-tight text-transparent md:text-5xl">
                     Soul Summons
                 </h1>
-                <p className="mt-2 text-muted-foreground">
+                <p className="text-muted-foreground mt-2">
                     Spend Aether to summon powerful Souls from across the multiverse
                 </p>
                 <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-amber-500/10 px-4 py-2 text-amber-400">
-                    <Sparkles className="h-4 w-4" />
+                    <Sparkles className="size-4" />
                     <span className="font-semibold">{userBalance} Aether</span>
                 </div>
             </div>
 
             {error && (
-                <div className="mb-4 rounded-lg bg-destructive/10 p-4 text-center text-destructive">
+                <div className="bg-destructive/10 text-destructive mb-4 rounded-lg p-4 text-center">
                     {error}
                 </div>
             )}
@@ -130,11 +130,11 @@ export default function SummonPage() {
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="mx-auto grid w-full max-w-md grid-cols-2">
                     <TabsTrigger value="summon" className="gap-2">
-                        <Sparkles className="h-4 w-4" />
+                        <Sparkles className="size-4" />
                         Summon
                     </TabsTrigger>
                     <TabsTrigger value="history" className="gap-2">
-                        <History className="h-4 w-4" />
+                        <History className="size-4" />
                         History
                     </TabsTrigger>
                 </TabsList>

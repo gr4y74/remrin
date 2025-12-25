@@ -101,12 +101,12 @@ export const MessageVoiceBadge: FC<MessageVoiceBadgeProps> = ({
         <button
             onClick={togglePlayback}
             className={cn(
-                "inline-flex items-center gap-2 px-3 py-1.5 rounded-full",
-                "bg-white/5 border border-white/10",
-                "hover:bg-white/10 hover:border-white/20",
+                "inline-flex items-center gap-2 rounded-full px-3 py-1.5",
+                "border border-white/10 bg-white/5",
+                "hover:border-white/20 hover:bg-white/10",
                 "transition-all duration-200",
-                "text-sm text-muted-foreground",
-                "focus:outline-none focus:ring-2 focus:ring-primary/50",
+                "text-muted-foreground text-sm",
+                "focus:ring-primary/50 focus:outline-none focus:ring-2",
                 className
             )}
             aria-label={isPlaying ? "Stop voice playback" : "Play voice message"}
@@ -121,7 +121,7 @@ export const MessageVoiceBadge: FC<MessageVoiceBadgeProps> = ({
             )}
 
             {/* Audio visualization bars */}
-            <div className="flex items-end gap-0.5 h-4">
+            <div className="flex h-4 items-end gap-0.5">
                 {[1, 2, 3, 4].map((bar) => (
                     <div
                         key={bar}

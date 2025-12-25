@@ -151,10 +151,10 @@ export function CreateListingModal({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-md border-rp-muted/20 bg-rp-base">
+            <DialogContent className="border-rp-muted/20 bg-rp-base max-w-md">
                 <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2 text-rp-text">
-                        <Sparkles className="size-5 text-rp-iris" />
+                    <DialogTitle className="text-rp-text flex items-center gap-2">
+                        <Sparkles className="text-rp-iris size-5" />
                         Create Listing
                     </DialogTitle>
                     <DialogDescription className="text-rp-subtle">
@@ -185,7 +185,7 @@ export function CreateListingModal({
                                     </SelectItem>
                                 ))}
                                 {personas.length === 0 && !loadingPersonas && (
-                                    <div className="p-2 text-center text-sm text-rp-muted">
+                                    <div className="text-rp-muted p-2 text-center text-sm">
                                         No unlisted souls available
                                     </div>
                                 )}
@@ -195,8 +195,8 @@ export function CreateListingModal({
 
                     {/* Preview Card */}
                     {selectedPersona && (
-                        <div className="flex items-center gap-3 rounded-lg border border-rp-muted/20 bg-rp-surface p-3">
-                            <div className="relative size-12 overflow-hidden rounded-lg bg-rp-base">
+                        <div className="border-rp-muted/20 bg-rp-surface flex items-center gap-3 rounded-lg border p-3">
+                            <div className="bg-rp-base relative size-12 overflow-hidden rounded-lg">
                                 {selectedPersona.image_path ? (
                                     <Image
                                         src={selectedPersona.image_path}
@@ -205,16 +205,16 @@ export function CreateListingModal({
                                         className="object-cover"
                                     />
                                 ) : (
-                                    <div className="flex size-full items-center justify-center text-lg font-bold text-rp-muted">
+                                    <div className="text-rp-muted flex size-full items-center justify-center text-lg font-bold">
                                         {selectedPersona.name[0]}
                                     </div>
                                 )}
                             </div>
-                            <div className="flex-1 min-w-0">
-                                <p className="font-medium text-rp-text truncate">
+                            <div className="min-w-0 flex-1">
+                                <p className="text-rp-text truncate font-medium">
                                     {selectedPersona.name}
                                 </p>
-                                <p className="text-xs text-rp-subtle truncate">
+                                <p className="text-rp-subtle truncate text-xs">
                                     {selectedPersona.description || "No description"}
                                 </p>
                             </div>
@@ -234,14 +234,14 @@ export function CreateListingModal({
                     </div>
 
                     {/* Limited Edition Toggle */}
-                    <div className="flex items-center justify-between rounded-lg border border-rp-muted/20 bg-rp-surface p-3">
+                    <div className="border-rp-muted/20 bg-rp-surface flex items-center justify-between rounded-lg border p-3">
                         <div className="flex items-center gap-2">
-                            <IconDiamond className="size-4 text-rp-gold" />
+                            <IconDiamond className="text-rp-gold size-4" />
                             <div>
-                                <p className="text-sm font-medium text-rp-text">
+                                <p className="text-rp-text text-sm font-medium">
                                     Limited Edition
                                 </p>
-                                <p className="text-xs text-rp-subtle">
+                                <p className="text-rp-subtle text-xs">
                                     Set a maximum quantity
                                 </p>
                             </div>
@@ -268,7 +268,7 @@ export function CreateListingModal({
 
                     {/* Error */}
                     {error && (
-                        <p className="text-sm text-rp-love">{error}</p>
+                        <p className="text-rp-love text-sm">{error}</p>
                     )}
                 </div>
 
@@ -276,14 +276,14 @@ export function CreateListingModal({
                     <Button
                         variant="outline"
                         onClick={() => onOpenChange(false)}
-                        className="border-rp-muted/20 bg-transparent text-rp-text hover:bg-rp-surface"
+                        className="border-rp-muted/20 text-rp-text hover:bg-rp-surface bg-transparent"
                     >
                         Cancel
                     </Button>
                     <Button
                         onClick={handleSubmit}
                         disabled={loading || !selectedPersonaId || !price}
-                        className="bg-gradient-to-r from-rp-iris to-rp-rose text-rp-base hover:from-rp-iris/80 hover:to-rp-rose/80"
+                        className="from-rp-iris to-rp-rose text-rp-base hover:from-rp-iris/80 hover:to-rp-rose/80 bg-gradient-to-r"
                     >
                         {loading ? (
                             <>

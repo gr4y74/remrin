@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Plus, Coins } from "lucide-react"
+import Image from "next/image"
 import { PullResult as PullResultType, RARITY_COLORS } from "@/lib/hooks/use-gacha"
 
 // This is the single-card display used by PullAnimation
@@ -35,16 +36,17 @@ export function PullResult({
                         background: `linear-gradient(135deg, ${rarityColor.primary}, ${rarityColor.glow})`
                     }}
                 >
-                    <div className="h-full w-full overflow-hidden rounded-lg bg-background">
+                    <div className="bg-background size-full overflow-hidden rounded-lg">
                         {/* Portrait */}
                         <div className="relative h-48 w-full">
-                            <img
+                            <Image
                                 src={result.persona?.image_url || "/placeholder-soul.png"}
                                 alt={result.persona?.name || "Soul"}
-                                className="h-full w-full object-cover"
+                                fill
+                                className="size-full object-cover"
                             />
                             {result.is_new && (
-                                <div className="absolute right-2 top-2 rounded-full bg-primary px-2 py-0.5 text-xs font-bold text-primary-foreground animate-pulse">
+                                <div className="bg-primary text-primary-foreground absolute right-2 top-2 animate-pulse rounded-full px-2 py-0.5 text-xs font-bold">
                                     NEW!
                                 </div>
                             )}

@@ -93,9 +93,9 @@ export default function LoginForm() {
                             className="text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2 transition-colors"
                         >
                             {passwordVisible ? (
-                                <EyeOff className="h-4 w-4" />
+                                <EyeOff className="size-4" />
                             ) : (
-                                <Eye className="h-4 w-4" />
+                                <Eye className="size-4" />
                             )}
                         </button>
                     </div>
@@ -140,7 +140,7 @@ function SubmitButton({ loading }: { loading: boolean }) {
             type="submit"
             disabled={isLoading}
         >
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
             Sign In
         </Button>
     )

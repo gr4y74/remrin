@@ -27,7 +27,7 @@ import {
 import { AssistantImage } from "@/types/images/assistant-image"
 import { VALID_ENV_KEYS } from "@/types/valid-keys"
 import { useRouter } from "next/navigation"
-import { FC, useEffect, useState } from "react"
+import { FC, useEffect, useState, useCallback } from "react"
 
 interface GlobalStateProps {
   children: React.ReactNode
@@ -168,36 +168,7 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
     }
   }, [selectedPersona, setSelectedPersona])
 
-  useEffect(() => {
-    ; (async () => {
-      const profile = await fetchStartingData()
-
-      if (profile) {
-        const hostedModelRes = await fetchHostedModels(profile)
-        if (!hostedModelRes) return
-
-        setEnvKeyMap(hostedModelRes.envKeyMap)
-        setAvailableHostedModels(hostedModelRes.hostedModels)
-
-        if (
-          profile["openrouter_api_key"] ||
-          hostedModelRes.envKeyMap["openrouter"]
-        ) {
-          const openRouterModels = await fetchOpenRouterModels()
-          if (!openRouterModels) return
-          setAvailableOpenRouterModels(openRouterModels)
-        }
-      }
-
-      if (process.env.NEXT_PUBLIC_OLLAMA_URL) {
-        const localModels = await fetchOllamaModels()
-        if (!localModels) return
-        setAvailableLocalModels(localModels)
-      }
-    })()
-  }, [])
-
-  const fetchStartingData = async () => {
+  const fetchStartingData = useCallback(async () => {
     const session = (await supabase.auth.getSession()).data.session
 
     if (session) {
@@ -244,7 +215,36 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
 
       return profile
     }
-  }
+  }, [router])
+
+  useEffect(() => {
+    ; (async () => {
+      const profile = await fetchStartingData()
+
+      if (profile) {
+        const hostedModelRes = await fetchHostedModels(profile)
+        if (!hostedModelRes) return
+
+        setEnvKeyMap(hostedModelRes.envKeyMap)
+        setAvailableHostedModels(hostedModelRes.hostedModels)
+
+        if (
+          profile["openrouter_api_key"] ||
+          hostedModelRes.envKeyMap["openrouter"]
+        ) {
+          const openRouterModels = await fetchOpenRouterModels()
+          if (!openRouterModels) return
+          setAvailableOpenRouterModels(openRouterModels)
+        }
+      }
+
+      if (process.env.NEXT_PUBLIC_OLLAMA_URL) {
+        const localModels = await fetchOllamaModels()
+        if (!localModels) return
+        setAvailableLocalModels(localModels)
+      }
+    })()
+  }, [fetchStartingData])
 
   return (
     <RemrinContext.Provider

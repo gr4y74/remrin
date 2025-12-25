@@ -35,12 +35,12 @@ export const SoulRevealCard: FC<SoulRevealCardProps> = ({
             className="relative mx-auto max-w-md overflow-hidden rounded-3xl"
         >
             {/* Glowing background effect */}
-            <div className="absolute inset-0 bg-gradient-to-br from-rp-iris/20 via-rp-rose/10 to-rp-pine/20 blur-xl" />
+            <div className="from-rp-iris/20 via-rp-rose/10 to-rp-pine/20 absolute inset-0 bg-gradient-to-br blur-xl" />
 
             {/* Card content */}
-            <div className="relative rounded-3xl border border-rp-muted bg-rp-base/60 p-6 backdrop-blur-xl">
+            <div className="border-rp-muted bg-rp-base/60 relative rounded-3xl border p-6 backdrop-blur-xl">
                 {/* Sparkle accent */}
-                <div className="absolute -right-4 -top-4 text-rp-gold/60">
+                <div className="text-rp-gold/60 absolute -right-4 -top-4">
                     <IconSparkles size={40} className="animate-pulse" />
                 </div>
 
@@ -49,9 +49,9 @@ export const SoulRevealCard: FC<SoulRevealCardProps> = ({
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3, duration: 0.6 }}
-                    className="relative mx-auto mb-6 size-48 overflow-hidden rounded-full ring-4 ring-rp-iris/30"
+                    className="ring-rp-iris/30 relative mx-auto mb-6 size-48 overflow-hidden rounded-full ring-4"
                 >
-                    <div className="absolute inset-0 animate-pulse bg-gradient-to-tr from-rp-iris/30 to-rp-rose/30" />
+                    <div className="from-rp-iris/30 to-rp-rose/30 absolute inset-0 animate-pulse bg-gradient-to-tr" />
                     <Image
                         src={data.imageUrl}
                         alt={data.name}
@@ -59,7 +59,7 @@ export const SoulRevealCard: FC<SoulRevealCardProps> = ({
                         className="object-cover"
                     />
                     {/* Glow overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-rp-iris/50 to-transparent" />
+                    <div className="from-rp-iris/50 absolute inset-0 bg-gradient-to-t to-transparent" />
                 </motion.div>
 
                 {/* Name */}
@@ -67,7 +67,7 @@ export const SoulRevealCard: FC<SoulRevealCardProps> = ({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.5 }}
-                    className="mb-2 text-center font-serif text-3xl font-bold text-rp-text"
+                    className="text-rp-text mb-2 text-center font-serif text-3xl font-bold"
                 >
                     {data.name}
                 </motion.h2>
@@ -77,7 +77,7 @@ export const SoulRevealCard: FC<SoulRevealCardProps> = ({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.6 }}
-                    className="mb-4 text-center text-sm italic text-rp-iris/80"
+                    className="text-rp-iris/80 mb-4 text-center text-sm italic"
                 >
                     {data.essence}
                 </motion.p>
@@ -92,7 +92,7 @@ export const SoulRevealCard: FC<SoulRevealCardProps> = ({
                     {data.personality.split(',').map((trait, i) => (
                         <span
                             key={i}
-                            className="rounded-full bg-rp-iris/20 px-3 py-1 text-xs text-rp-iris"
+                            className="bg-rp-iris/20 text-rp-iris rounded-full px-3 py-1 text-xs"
                         >
                             {trait.trim()}
                         </span>
@@ -105,7 +105,7 @@ export const SoulRevealCard: FC<SoulRevealCardProps> = ({
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.8 }}
-                        className="mb-6 text-center text-sm text-rp-muted"
+                        className="text-rp-muted mb-6 text-center text-sm"
                     >
                         <IconVolume className="mr-1 inline size-4" />
                         {data.voiceDescription}
@@ -134,7 +134,7 @@ export const SoulRevealCard: FC<SoulRevealCardProps> = ({
                         <Button
                             size="sm"
                             onClick={() => onStartChat(personaId)}
-                            className="bg-gradient-to-r from-rp-iris to-rp-rose text-rp-base hover:from-rp-iris/80 hover:to-rp-rose/80"
+                            className="from-rp-iris to-rp-rose text-rp-base hover:from-rp-iris/80 hover:to-rp-rose/80 bg-gradient-to-r"
                         >
                             <IconMessageCircle className="mr-2 size-4" />
                             Start Chat

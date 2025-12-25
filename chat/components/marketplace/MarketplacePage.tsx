@@ -95,26 +95,26 @@ export function MarketplacePage({
     }, [])
 
     return (
-        <div className="flex size-full flex-col overflow-hidden bg-rp-base">
+        <div className="bg-rp-base flex size-full flex-col overflow-hidden">
             {/* Header */}
-            <div className="border-b border-rp-muted/20 bg-rp-base/50 px-6 py-4 backdrop-blur-sm">
+            <div className="border-rp-muted/20 bg-rp-base/50 border-b px-6 py-4 backdrop-blur-sm">
                 <div className="mx-auto max-w-7xl">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <IconShoppingCart className="size-8 text-rp-gold" />
+                            <IconShoppingCart className="text-rp-gold size-8" />
                             <div>
-                                <h1 className="text-2xl font-bold text-rp-text">Soul Bazaar</h1>
-                                <p className="text-sm text-rp-subtle">
+                                <h1 className="text-rp-text text-2xl font-bold">Soul Bazaar</h1>
+                                <p className="text-rp-subtle text-sm">
                                     Discover and collect unique AI companions
                                 </p>
                             </div>
                         </div>
 
                         {/* User Balance Display */}
-                        <div className="hidden items-center gap-2 rounded-full bg-rp-surface px-4 py-2 sm:flex">
-                            <span className="text-sm text-rp-subtle">Balance:</span>
-                            <span className="font-bold text-rp-gold">{userBalance.toLocaleString()}</span>
-                            <span className="text-xs text-rp-muted">Aether</span>
+                        <div className="bg-rp-surface hidden items-center gap-2 rounded-full px-4 py-2 sm:flex">
+                            <span className="text-rp-subtle text-sm">Balance:</span>
+                            <span className="text-rp-gold font-bold">{userBalance.toLocaleString()}</span>
+                            <span className="text-rp-muted text-xs">Aether</span>
                         </div>
                     </div>
 
@@ -122,12 +122,12 @@ export function MarketplacePage({
                     <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         {/* Search */}
                         <div className="relative flex-1 sm:max-w-md">
-                            <IconSearch className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-rp-muted" />
+                            <IconSearch className="text-rp-muted absolute left-3 top-1/2 size-4 -translate-y-1/2" />
                             <Input
                                 placeholder="Search souls..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="border-rp-muted/20 bg-rp-surface pl-10 text-rp-text placeholder:text-rp-muted"
+                                className="border-rp-muted/20 bg-rp-surface text-rp-text placeholder:text-rp-muted pl-10"
                             />
                         </div>
 
@@ -147,7 +147,7 @@ export function MarketplacePage({
                             </Button>
 
                             {sortDropdownOpen && (
-                                <div className="absolute right-0 top-full z-50 mt-2 w-48 rounded-lg border border-rp-muted/20 bg-rp-overlay py-1 shadow-xl">
+                                <div className="border-rp-muted/20 bg-rp-overlay absolute right-0 top-full z-50 mt-2 w-48 rounded-lg border py-1 shadow-xl">
                                     {SORT_OPTIONS.map((option) => (
                                         <button
                                             key={option.value}
@@ -156,7 +156,7 @@ export function MarketplacePage({
                                                 setSortDropdownOpen(false)
                                             }}
                                             className={cn(
-                                                "w-full px-4 py-2 text-left text-sm transition-colors hover:bg-rp-surface",
+                                                "hover:bg-rp-surface w-full px-4 py-2 text-left text-sm transition-colors",
                                                 sortBy === option.value
                                                     ? "text-rp-gold"
                                                     : "text-rp-text/80"
@@ -237,13 +237,13 @@ export function MarketplacePage({
                     ) : (
                         /* Empty State */
                         <div className="flex flex-col items-center justify-center py-20">
-                            <div className="rounded-full bg-rp-surface p-6">
-                                <IconMoodEmpty className="size-16 text-rp-text/30" />
+                            <div className="bg-rp-surface rounded-full p-6">
+                                <IconMoodEmpty className="text-rp-text/30 size-16" />
                             </div>
-                            <h3 className="mt-6 text-xl font-semibold text-rp-text">
+                            <h3 className="text-rp-text mt-6 text-xl font-semibold">
                                 No souls found
                             </h3>
-                            <p className="mt-2 text-center text-rp-subtle">
+                            <p className="text-rp-subtle mt-2 text-center">
                                 {searchQuery
                                     ? `No results for "${searchQuery}". Try a different search term.`
                                     : "The marketplace is empty right now. Check back later!"}
@@ -252,7 +252,7 @@ export function MarketplacePage({
                                 <Button
                                     variant="outline"
                                     onClick={() => setSearchQuery("")}
-                                    className="mt-4 border-rp-muted/20 text-rp-text hover:bg-rp-surface"
+                                    className="border-rp-muted/20 text-rp-text hover:bg-rp-surface mt-4"
                                 >
                                     Clear search
                                 </Button>

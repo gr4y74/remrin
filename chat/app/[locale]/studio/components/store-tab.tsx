@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select"
 import { PersonaMetadata, SwagItem } from "../types"
 import { IconPlus, IconTrash, IconShoppingBag } from "@tabler/icons-react"
+import Image from "next/image"
 
 interface StoreTabProps {
     metadata: PersonaMetadata
@@ -79,7 +80,7 @@ export function StoreTab({ metadata, updateMetadata }: StoreTabProps) {
                         value={metadata.price || ''}
                         onChange={(e) => updateMetadata('price', parseFloat(e.target.value) || 0)}
                         placeholder="0.00"
-                        className="bg-zinc-900 border-zinc-700 pl-7"
+                        className="border-zinc-700 bg-zinc-900 pl-7"
                     />
                 </div>
                 <p className="text-xs text-zinc-500">
@@ -103,11 +104,14 @@ export function StoreTab({ metadata, updateMetadata }: StoreTabProps) {
                                 className="flex items-center gap-3 rounded-lg border border-zinc-700 bg-zinc-900/50 p-3"
                             >
                                 {item.image_url && (
-                                    <img
-                                        src={item.image_url}
-                                        alt={item.name}
-                                        className="size-12 rounded object-cover"
-                                    />
+                                    <div className="relative size-12 shrink-0 overflow-hidden rounded">
+                                        <Image
+                                            src={item.image_url}
+                                            alt={item.name}
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    </div>
                                 )}
                                 <div className="flex-1">
                                     <div className="font-medium">{item.name}</div>
@@ -144,13 +148,13 @@ export function StoreTab({ metadata, updateMetadata }: StoreTabProps) {
                             value={newItem.name || ''}
                             onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
                             placeholder="Item name"
-                            className="bg-zinc-900 border-zinc-700"
+                            className="border-zinc-700 bg-zinc-900"
                         />
                         <Select
                             value={newItem.type || 'Physical'}
                             onValueChange={(value) => setNewItem({ ...newItem, type: value as SwagItem['type'] })}
                         >
-                            <SelectTrigger className="bg-zinc-900 border-zinc-700">
+                            <SelectTrigger className="border-zinc-700 bg-zinc-900">
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -164,14 +168,14 @@ export function StoreTab({ metadata, updateMetadata }: StoreTabProps) {
                         value={newItem.url || ''}
                         onChange={(e) => setNewItem({ ...newItem, url: e.target.value })}
                         placeholder="Purchase URL (https://...)"
-                        className="bg-zinc-900 border-zinc-700"
+                        className="border-zinc-700 bg-zinc-900"
                     />
 
                     <Input
                         value={newItem.image_url || ''}
                         onChange={(e) => setNewItem({ ...newItem, image_url: e.target.value })}
                         placeholder="Image URL (optional)"
-                        className="bg-zinc-900 border-zinc-700"
+                        className="border-zinc-700 bg-zinc-900"
                     />
 
                     <Button

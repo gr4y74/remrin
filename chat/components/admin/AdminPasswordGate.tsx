@@ -56,8 +56,8 @@ export function AdminPasswordGate({ children }: AdminPasswordGateProps) {
     // Show loading while checking session
     if (checking) {
         return (
-            <div className="min-h-screen bg-rp-base flex items-center justify-center">
-                <div className="w-8 h-8 border-4 border-rp-iris border-t-transparent rounded-full animate-spin" />
+            <div className="bg-rp-base flex min-h-screen items-center justify-center">
+                <div className="border-rp-iris size-8 animate-spin rounded-full border-4 border-t-transparent" />
             </div>
         )
     }
@@ -65,27 +65,27 @@ export function AdminPasswordGate({ children }: AdminPasswordGateProps) {
     // Show password prompt if not authenticated
     if (!isAuthenticated) {
         return (
-            <div className="min-h-screen bg-rp-base flex items-center justify-center p-4">
+            <div className="bg-rp-base flex min-h-screen items-center justify-center p-4">
                 <div className="w-full max-w-md">
                     {/* Back link */}
                     <Link
                         href="/"
-                        className="flex items-center gap-2 text-rp-subtle hover:text-rp-text transition-colors mb-8"
+                        className="text-rp-subtle hover:text-rp-text mb-8 flex items-center gap-2 transition-colors"
                     >
                         <IconArrowLeft size={18} />
                         Back to Home
                     </Link>
 
                     {/* Password form */}
-                    <div className="bg-rp-surface rounded-2xl border border-rp-muted/20 p-8 shadow-2xl">
-                        <div className="flex items-center justify-center w-16 h-16 mx-auto mb-6 rounded-full bg-rp-iris/10 border border-rp-iris/20">
+                    <div className="bg-rp-surface border-rp-muted/20 rounded-2xl border p-8 shadow-2xl">
+                        <div className="bg-rp-iris/10 border-rp-iris/20 mx-auto mb-6 flex size-16 items-center justify-center rounded-full border">
                             <IconLock size={32} className="text-rp-iris" />
                         </div>
 
-                        <h1 className="text-2xl font-bold text-rp-text text-center mb-2">
+                        <h1 className="text-rp-text mb-2 text-center text-2xl font-bold">
                             Admin Access
                         </h1>
-                        <p className="text-rp-subtle text-center text-sm mb-8">
+                        <p className="text-rp-subtle mb-8 text-center text-sm">
                             Enter the admin password to continue
                         </p>
 
@@ -96,13 +96,13 @@ export function AdminPasswordGate({ children }: AdminPasswordGateProps) {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     placeholder="Enter admin password"
-                                    className="w-full px-4 py-3 bg-rp-base border border-rp-muted/20 rounded-xl text-rp-text placeholder:text-rp-muted focus:outline-none focus:border-rp-iris transition-colors"
+                                    className="bg-rp-base border-rp-muted/20 text-rp-text placeholder:text-rp-muted focus:border-rp-iris w-full rounded-xl border px-4 py-3 transition-colors focus:outline-none"
                                     autoFocus
                                 />
                             </div>
 
                             {error && (
-                                <p className="text-rp-love text-sm text-center">
+                                <p className="text-rp-love text-center text-sm">
                                     {error}
                                 </p>
                             )}
@@ -110,7 +110,7 @@ export function AdminPasswordGate({ children }: AdminPasswordGateProps) {
                             <button
                                 type="submit"
                                 disabled={loading || !password}
-                                className="w-full py-3 rounded-xl bg-gradient-to-r from-rp-iris to-rp-rose text-rp-base font-semibold hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-rp-iris/20"
+                                className="from-rp-iris to-rp-rose text-rp-base shadow-rp-iris/20 w-full rounded-xl bg-gradient-to-r py-3 font-semibold shadow-lg transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
                             >
                                 {loading ? "Verifying..." : "Access Admin Panel"}
                             </button>

@@ -40,14 +40,15 @@ export const VoiceSelector: FC<VoiceSelectorProps> = ({
         }
     }
 
-    const getGenderColor = (gender: VoiceConfig["gender"]) => {
+    const getGenderColor = (gender: VoiceConfig["gender"], opacity?: string) => {
+        const suffix = opacity ? `/${opacity}` : ""
         switch (gender) {
             case "male":
-                return "from-rp-pine to-rp-foam"
+                return `from-rp-pine${suffix} to-rp-foam${suffix}`
             case "female":
-                return "from-rp-rose to-rp-love"
+                return `from-rp-rose${suffix} to-rp-love${suffix}`
             default:
-                return "from-rp-gold to-rp-rose"
+                return `from-rp-gold${suffix} to-rp-rose${suffix}`
         }
     }
 
@@ -82,16 +83,16 @@ export const VoiceSelector: FC<VoiceSelectorProps> = ({
         <div className={cn("w-full", className)}>
             {/* Header */}
             <div className="mb-4 text-center">
-                <h3 className="text-sm font-semibold text-rp-iris uppercase tracking-wider">
+                <h3 className="text-rp-iris text-sm font-semibold uppercase tracking-wider">
                     Select Voice Frequency
                 </h3>
-                <p className="text-xs text-rp-muted mt-1">
+                <p className="text-rp-muted mt-1 text-xs">
                     Click preview to hear, then select your companion&apos;s voice
                 </p>
             </div>
 
             {/* Voice Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
                 {AVAILABLE_VOICES.map((voice) => {
                     const isSelected = selectedId === voice.id
                     const isPreviewing = previewingId === voice.id
@@ -101,12 +102,12 @@ export const VoiceSelector: FC<VoiceSelectorProps> = ({
                             key={voice.id}
                             className={cn(
                                 "relative rounded-xl p-4 transition-all duration-300",
-                                "bg-rp-surface border border-rp-muted/20",
+                                "bg-rp-surface border-rp-muted/20 border",
                                 "hover:bg-rp-overlay hover:scale-[1.02] hover:shadow-lg",
                                 isSelected && [
-                                    "ring-2 ring-offset-2 ring-offset-rp-base",
-                                    `bg-gradient-to-br ${getGenderColor(voice.gender)} bg-opacity-10`,
-                                    "border-transparent animate-pulse-glow"
+                                    "ring-offset-rp-base ring-2 ring-offset-2",
+                                    `bg-gradient-to-br ${getGenderColor(voice.gender, "10")}`,
+                                    "animate-pulse-glow border-transparent"
                                 ]
                             )}
                             style={isSelected ? {
@@ -116,20 +117,20 @@ export const VoiceSelector: FC<VoiceSelectorProps> = ({
                         >
                             {/* Selected checkmark */}
                             {isSelected && (
-                                <div className="absolute -top-2 -right-2 size-6 rounded-full bg-rp-iris flex items-center justify-center shadow-lg animate-fade-in-scale">
+                                <div className="bg-rp-iris animate-fade-in-scale absolute -right-2 -top-2 flex size-6 items-center justify-center rounded-full shadow-lg">
                                     <IconCheck size={14} className="text-rp-base" />
                                 </div>
                             )}
 
                             {/* Voice info */}
-                            <div className="flex items-center gap-2 mb-3">
+                            <div className="mb-3 flex items-center gap-2">
                                 {getGenderIcon(voice.gender)}
-                                <span className="font-medium text-sm text-rp-text">{voice.name}</span>
+                                <span className="text-rp-text text-sm font-medium">{voice.name}</span>
                             </div>
 
                             {/* Description */}
                             {voice.description && (
-                                <p className="text-xs text-rp-muted mb-3 line-clamp-1">
+                                <p className="text-rp-muted mb-3 line-clamp-1 text-xs">
                                     {voice.description}
                                 </p>
                             )}
@@ -143,7 +144,7 @@ export const VoiceSelector: FC<VoiceSelectorProps> = ({
                                         handlePreview(voice)
                                     }}
                                     className={cn(
-                                        "flex-1 flex items-center justify-center gap-1.5 px-3 py-2",
+                                        "flex flex-1 items-center justify-center gap-1.5 px-3 py-2",
                                         "rounded-lg text-xs font-medium transition-all",
                                         "bg-rp-base hover:bg-rp-base/80",
                                         isPreviewing && "bg-rp-iris text-rp-base"
@@ -168,7 +169,7 @@ export const VoiceSelector: FC<VoiceSelectorProps> = ({
                                     onClick={() => handleSelect(voice.id)}
                                     disabled={isSelected}
                                     className={cn(
-                                        "flex-1 px-3 py-2 rounded-lg text-xs font-semibold transition-all",
+                                        "flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-all",
                                         isSelected
                                             ? "bg-rp-iris text-rp-base cursor-default"
                                             : `bg-gradient-to-r ${getGenderColor(voice.gender)} text-rp-base hover:opacity-90`

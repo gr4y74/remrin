@@ -63,7 +63,7 @@ export default function AdminPage() {
                     <div className="flex items-center gap-4">
                         <Link
                             href="/"
-                            className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors"
+                            className="flex items-center gap-2 text-zinc-400 transition-colors hover:text-white"
                         >
                             <IconArrowLeft size={20} />
                             Back to App
@@ -76,30 +76,30 @@ export default function AdminPage() {
                 </header>
 
                 {/* Content */}
-                <main className="p-6 max-w-4xl mx-auto">
+                <main className="mx-auto max-w-4xl p-6">
                     <div className="mb-8">
-                        <h2 className="text-2xl font-bold mb-2">Welcome, Admin</h2>
+                        <h2 className="mb-2 text-2xl font-bold">Welcome, Admin</h2>
                         <p className="text-zinc-400">
                             Manage content, users, and platform settings from here.
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         {adminModules.map((module) => (
                             <Link
                                 key={module.title}
                                 href={module.href}
-                                className={`relative group block rounded-xl border border-zinc-800 bg-zinc-900/50 p-6 transition-all hover:border-zinc-700 hover:bg-zinc-900 ${module.badge === 'Coming Soon' ? 'opacity-50 pointer-events-none' : ''
+                                className={`group relative block rounded-xl border border-zinc-800 bg-zinc-900/50 p-6 transition-all hover:border-zinc-700 hover:bg-zinc-900 ${module.badge === 'Coming Soon' ? 'pointer-events-none opacity-50' : ''
                                     }`}
                             >
-                                <div className={`inline-flex p-3 rounded-lg bg-gradient-to-br ${module.color} mb-4`}>
+                                <div className={`inline-flex rounded-lg bg-gradient-to-br p-3 ${module.color} mb-4`}>
                                     <module.icon size={24} className="text-white" />
                                 </div>
-                                <h3 className="text-lg font-semibold mb-1">{module.title}</h3>
+                                <h3 className="mb-1 text-lg font-semibold">{module.title}</h3>
                                 <p className="text-sm text-zinc-400">{module.description}</p>
 
                                 {module.badge && (
-                                    <span className="absolute top-4 right-4 px-2 py-1 text-xs rounded bg-zinc-800 text-zinc-500">
+                                    <span className="absolute right-4 top-4 rounded bg-zinc-800 px-2 py-1 text-xs text-zinc-500">
                                         {module.badge}
                                     </span>
                                 )}
@@ -109,8 +109,8 @@ export default function AdminPage() {
 
                     {/* Quick Stats */}
                     <div className="mt-8 rounded-xl border border-zinc-800 bg-zinc-900/50 p-6">
-                        <h3 className="text-lg font-semibold mb-4">Quick Stats</h3>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <h3 className="mb-4 text-lg font-semibold">Quick Stats</h3>
+                        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                             <div className="text-center">
                                 <div className="text-3xl font-bold text-amber-400">—</div>
                                 <div className="text-sm text-zinc-500">Pending Reviews</div>
@@ -128,7 +128,7 @@ export default function AdminPage() {
                                 <div className="text-sm text-zinc-500">Active Users</div>
                             </div>
                         </div>
-                        <p className="text-xs text-zinc-600 mt-4 text-center">
+                        <p className="mt-4 text-center text-xs text-zinc-600">
                             Stats will be populated once analytics module is complete
                         </p>
                     </div>

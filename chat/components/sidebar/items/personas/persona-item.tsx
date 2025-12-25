@@ -82,7 +82,7 @@ export const PersonaItem: FC<PersonaItemProps> = ({ persona }) => {
                         {persona.system_prompt && (
                             <div className="space-y-1">
                                 <Label>Personality</Label>
-                                <div className="max-h-32 overflow-y-auto text-sm text-muted-foreground">
+                                <div className="text-muted-foreground max-h-32 overflow-y-auto text-sm">
                                     {persona.system_prompt.slice(0, 200)}
                                     {persona.system_prompt.length > 200 ? "..." : ""}
                                 </div>
@@ -92,13 +92,13 @@ export const PersonaItem: FC<PersonaItemProps> = ({ persona }) => {
                         {persona.voice_id && (
                             <div className="space-y-1">
                                 <Label>Voice ID</Label>
-                                <div className="text-xs text-muted-foreground">
+                                <div className="text-muted-foreground text-xs">
                                     {persona.voice_id}
                                 </div>
                             </div>
                         )}
 
-                        <div className="pt-2 text-xs italic text-muted-foreground">
+                        <div className="text-muted-foreground pt-2 text-xs italic">
                             Personas are created in the Soul Forge. Click to start chatting!
                         </div>
                     </div>
