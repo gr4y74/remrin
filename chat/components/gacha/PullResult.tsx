@@ -54,7 +54,7 @@ export function PullResult({
 
                         {/* Info */}
                         <div className="p-3 text-center">
-                            <h3 className="truncate text-lg font-bold text-white">
+                            <h3 className="font-tiempos-headline truncate text-lg font-bold text-white">
                                 {result.persona?.name || "Unknown Soul"}
                             </h3>
                             <div className="mt-1 flex justify-center gap-0.5">
@@ -69,7 +69,7 @@ export function PullResult({
                                 ))}
                             </div>
                             <p
-                                className="mt-1 text-sm font-semibold capitalize"
+                                className="font-tiempos-headline mt-1 text-sm font-semibold capitalize"
                                 style={{ color: rarityColor.primary }}
                             >
                                 {result.rarity}

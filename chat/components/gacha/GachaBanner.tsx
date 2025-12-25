@@ -147,7 +147,7 @@ export function GachaBanner({
                                                 </div>
                                             )}
                                             <Badge
-                                                className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full px-1.5 py-0 text-[10px] capitalize"
+                                                className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full px-1.5 py-0 text-xs capitalize"
                                                 style={{
                                                     backgroundColor: RARITY_COLORS[item.rarity].primary,
                                                     color: item.rarity === "legendary" ? "var(--rp-base)" : "var(--rp-text)"

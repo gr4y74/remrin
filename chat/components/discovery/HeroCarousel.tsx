@@ -185,7 +185,7 @@ export function HeroCarousel({
 
                                 {/* Featured badge */}
                                 {item.isFeatured && isActive && (
-                                    <div className="from-rp-gold to-rp-rose text-rp-base absolute left-3 top-3 flex items-center gap-1 rounded-full bg-gradient-to-r px-2 py-1 text-[10px] font-bold">
+                                    <div className="from-rp-gold to-rp-rose text-rp-base absolute left-3 top-3 flex items-center gap-1 rounded-full bg-gradient-to-r px-2 py-1 text-xs font-bold">
                                         <IconSparkles size={10} />
                                         Featured
                                     </div>
@@ -194,7 +194,7 @@ export function HeroCarousel({
                                 {/* Rarity badge */}
                                 {item.rarity && item.rarity !== "common" && (
                                     <div className={cn(
-                                        "absolute right-3 top-3 rounded-full px-2 py-0.5 text-[9px] font-bold uppercase",
+                                        "absolute right-3 top-3 rounded-full px-2 py-0.5 text-xs font-bold uppercase",
                                         item.rarity === "rare" && "bg-rp-iris text-rp-base",
                                         item.rarity === "epic" && "bg-rp-rose text-rp-base",
                                         item.rarity === "legendary" && "from-rp-gold to-rp-love text-rp-base bg-gradient-to-r"
@@ -209,7 +209,7 @@ export function HeroCarousel({
                                         {item.name}
                                     </h3>
                                     {item.description && (
-                                        <p className="text-rp-subtle mt-0.5 line-clamp-1 text-[10px]">
+                                        <p className="text-rp-subtle mt-0.5 line-clamp-1 text-xs">
                                             {item.description}
                                         </p>
                                     )}

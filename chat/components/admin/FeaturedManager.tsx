@@ -294,7 +294,7 @@ export function FeaturedManager() {
 
                         {/* Info */}
                         <div className="p-3">
-                            <h3 className="text-rp-text truncate text-sm font-medium">
+                            <h3 className="font-tiempos-headline text-rp-text truncate text-sm font-medium">
                                 {persona.name}
                             </h3>
                             <p className="text-rp-muted truncate text-xs">

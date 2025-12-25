@@ -62,7 +62,7 @@ export const MessageCodeBlock: FC<MessageCodeBlockProps> = memo(
         3,
         true
       )}${fileExtension}`
-      const fileName = window.prompt("Enter file name" || "", suggestedFileName)
+      const fileName = window.prompt("Enter file name", suggestedFileName)
 
       if (!fileName) {
         return
@@ -86,7 +86,7 @@ export const MessageCodeBlock: FC<MessageCodeBlockProps> = memo(
     }
 
     return (
-      <div className="codeblock bg-rp-base relative w-full font-sans">
+      <div className="codeblock bg-rp-base relative w-full">
         <div className="bg-rp-surface text-rp-text flex w-full items-center justify-between px-4">
           <span className="text-xs lowercase">{language}</span>
           <div className="flex items-center space-x-1">

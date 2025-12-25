@@ -53,7 +53,7 @@ export function CharacterHeader({
 
             {/* Name and Description */}
             <div className="space-y-2">
-                <h1 className="text-rp-text text-3xl font-bold tracking-tight md:text-4xl">
+                <h1 className="font-tiempos-headline text-rp-text text-3xl font-bold tracking-tight md:text-4xl">
                     {name}
                 </h1>
                 {description && (

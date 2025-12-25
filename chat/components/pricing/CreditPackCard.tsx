@@ -40,7 +40,7 @@ export function CreditPackCard({
             )}
         >
             {isPopular && (
-                <div className="bg-rp-iris text-rp-base absolute right-0 top-0 rounded-bl-lg px-3 py-1 text-[10px] font-bold uppercase tracking-wider">
+                <div className="bg-rp-iris text-rp-base absolute right-0 top-0 rounded-bl-lg px-3 py-1 text-xs font-bold uppercase tracking-wider">
                     Most Popular
                 </div>
             )}

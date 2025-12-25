@@ -222,6 +222,17 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-tiempos-text), 'Tiempos Text', Georgia, serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-tiempos-headline), 'Tiempos Headline', Georgia, serif;
+    @apply font-semibold;
   }
 
   /* Ram Pink hover states */

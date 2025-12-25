@@ -66,12 +66,12 @@ export function EtherealCard({
                 {/* Badges */}
                 <div className="absolute left-3 top-3 flex gap-2">
                     {isNew && (
-                        <span className="from-rp-foam to-rp-pine text-rp-base rounded-full bg-gradient-to-r px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                        <span className="from-rp-foam to-rp-pine text-rp-base rounded-full bg-gradient-to-r px-2 py-0.5 text-xs font-bold uppercase tracking-wider">
                             New
                         </span>
                     )}
                     {isFeatured && (
-                        <span className="from-rp-gold to-rp-rose text-rp-base flex items-center gap-1 rounded-full bg-gradient-to-r px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                        <span className="from-rp-gold to-rp-rose text-rp-base flex items-center gap-1 rounded-full bg-gradient-to-r px-2 py-0.5 text-xs font-bold uppercase tracking-wider">
                             <IconSparkles size={10} />
                             Featured
                         </span>
@@ -82,7 +82,7 @@ export function EtherealCard({
                 {rarity !== "common" && (
                     <div className="absolute right-3 top-3">
                         <span className={cn(
-                            "rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+                            "rounded-full px-2 py-0.5 text-xs font-bold uppercase tracking-wider",
                             rarity === "rare" && "bg-rp-iris/80 text-rp-base",
                             rarity === "epic" && "bg-rp-rose/80 text-rp-base",
                             rarity === "legendary" && "from-rp-gold to-rp-love text-rp-base bg-gradient-to-r"

@@ -574,7 +574,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ }) => {
 
                       <Button
                         className={cn(
-                          "h-[18px] w-[150px] text-[11px]",
+                          "h-[18px] w-[150px] text-xs",
                           (useAzureOpenai && !envKeyMap["azure"]) ||
                             (!useAzureOpenai && !envKeyMap["openai"])
                             ? "ml-3"

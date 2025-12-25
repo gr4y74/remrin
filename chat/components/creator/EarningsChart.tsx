@@ -60,7 +60,7 @@ export function EarningsChart({ data, className = "" }: EarningsChartProps) {
                             </div>
 
                             {/* Day label */}
-                            <span className="text-rp-muted text-[10px]">
+                            <span className="text-rp-muted text-xs">
                                 {formatDate(day.date)}
                             </span>
                         </div>

@@ -60,7 +60,7 @@ export function SoulCardDisplay({
 
                 {/* Character Name */}
                 <div className="absolute inset-x-4 bottom-4">
-                    <h3 className="text-rp-text text-xl font-bold drop-shadow-lg">
+                    <h3 className="font-tiempos-headline text-rp-text text-xl font-bold drop-shadow-lg">
                         {name}
                     </h3>
                 </div>

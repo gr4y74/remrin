@@ -143,7 +143,7 @@ export function CharacterCard({
 
                         {/* Character Name */}
                         <h3 className={cn(
-                            "text-rp-text line-clamp-2 text-lg font-bold leading-tight drop-shadow-lg",
+                            "font-tiempos-headline text-rp-text line-clamp-2 text-lg font-bold leading-tight drop-shadow-lg",
                             "transition-transform duration-300",
                             isHovering && "translate-x-1"
                         )}>

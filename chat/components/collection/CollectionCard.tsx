@@ -180,7 +180,7 @@ export function CollectionCard({
 
                     {/* Name */}
                     <h3 className={cn(
-                        "line-clamp-1 text-sm font-semibold leading-tight drop-shadow-lg",
+                        "font-tiempos-headline line-clamp-1 text-sm font-semibold leading-tight drop-shadow-lg",
                         "transition-transform duration-300",
                         soul.isOwned ? "text-rp-text" : "text-rp-text/40",
                         isHovering && soul.isOwned && "translate-x-0.5"

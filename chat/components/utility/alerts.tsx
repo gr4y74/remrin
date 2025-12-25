@@ -16,7 +16,7 @@ export const Alerts: FC<AlertsProps> = () => {
         <div className="relative cursor-pointer hover:opacity-50">
           <IconBell size={SIDEBAR_ICON_SIZE} />
           {1 > 0 && (
-            <span className="notification-indicator bg-rp-love absolute right-[-4px] top-[-4px] flex size-4 items-center justify-center rounded-full text-[10px] text-white">
+            <span className="notification-indicator bg-rp-love absolute right-[-4px] top-[-4px] flex size-4 items-center justify-center rounded-full text-xs text-white">
               1
             </span>
           )}

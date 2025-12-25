@@ -156,7 +156,7 @@ export function ListingCard({
                 <div className="absolute inset-x-0 bottom-0 p-4">
                     {/* Character Name */}
                     <h3 className={cn(
-                        "text-rp-text line-clamp-1 text-lg font-bold leading-tight drop-shadow-lg",
+                        "font-tiempos-headline text-rp-text line-clamp-1 text-lg font-bold leading-tight drop-shadow-lg",
                         "transition-transform duration-300",
                         isHovering && "translate-x-1"
                     )}>

@@ -77,7 +77,7 @@ export const APIStep: FC<APIStepProps> = ({
           </div>
 
           <Button
-            className="ml-3 h-[18px] w-[150px] text-[11px]"
+            className="ml-3 h-[18px] w-[150px] text-xs"
             onClick={() => onUseAzureOpenaiChange(!useAzureOpenai)}
           >
             {useAzureOpenai

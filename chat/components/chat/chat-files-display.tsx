@@ -141,7 +141,7 @@ export const ChatFilesDisplay: FC<ChatFilesDisplayProps> = ({ }) => {
                 />
 
                 <IconX
-                  className="bg-rp-muted border-rp-text hover:border-rp-love hover:bg-rp-base hover:text-rp-love absolute right-[-6px] top-[-2px] flex size-5 cursor-pointer items-center justify-center rounded-full border-DEFAULT text-[10px]"
+                  className="bg-rp-muted border-rp-text hover:border-rp-love hover:bg-rp-base hover:text-rp-love absolute right-[-6px] top-[-2px] flex size-5 cursor-pointer items-center justify-center rounded-full border-DEFAULT text-xs"
                   onClick={e => {
                     e.stopPropagation()
                     setNewMessageImages(
@@ -208,7 +208,7 @@ export const ChatFilesDisplay: FC<ChatFilesDisplayProps> = ({ }) => {
                   </div>
 
                   <IconX
-                    className="bg-rp-muted border-rp-text hover:border-rp-love hover:bg-rp-base hover:text-rp-love absolute right-[-6px] top-[-6px] flex size-5 cursor-pointer items-center justify-center rounded-full border-DEFAULT text-[10px]"
+                    className="bg-rp-muted border-rp-text hover:border-rp-love hover:bg-rp-base hover:text-rp-love absolute right-[-6px] top-[-6px] flex size-5 cursor-pointer items-center justify-center rounded-full border-DEFAULT text-xs"
                     onClick={e => {
                       e.stopPropagation()
                       setNewMessageFiles(

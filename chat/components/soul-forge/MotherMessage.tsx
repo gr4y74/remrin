@@ -101,7 +101,7 @@ export const MotherMessage: FC<MotherMessageProps> = ({
                 {isSpeaking && (
                     <div className="bg-rp-pine/80 absolute -right-2 -top-2 flex animate-pulse items-center gap-1 rounded-full px-2 py-1">
                         <IconVolume size={12} className="text-white" />
-                        <span className="text-[10px] font-medium text-white">Speaking</span>
+                        <span className="text-xs font-medium text-white">Speaking</span>
                     </div>
                 )}
 
