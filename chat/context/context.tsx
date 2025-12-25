@@ -142,6 +142,25 @@ interface ChatbotUIContext {
   setSelectedTools: Dispatch<SetStateAction<Tables<"tools">[]>>
   toolInUse: string
   setToolInUse: Dispatch<SetStateAction<string>>
+
+  // UI PANEL STORE (4-Panel Layout)
+  isSidebarExpanded: boolean
+  setIsSidebarExpanded: Dispatch<SetStateAction<boolean>>
+  isCanvasOpen: boolean
+  setIsCanvasOpen: Dispatch<SetStateAction<boolean>>
+  isCharacterPanelOpen: boolean
+  setIsCharacterPanelOpen: Dispatch<SetStateAction<boolean>>
+  artifacts: Artifact[]
+  setArtifacts: Dispatch<SetStateAction<Artifact[]>>
+}
+
+// Artifact type for Canvas panel
+export interface Artifact {
+  id: string
+  title: string
+  content: string
+  type: 'code' | 'markdown' | 'math' | 'document'
+  language?: string
 }
 
 export const ChatbotUIContext = createContext<ChatbotUIContext>({
@@ -273,5 +292,15 @@ export const ChatbotUIContext = createContext<ChatbotUIContext>({
   selectedTools: [],
   setSelectedTools: () => { },
   toolInUse: "none",
-  setToolInUse: () => { }
+  setToolInUse: () => { },
+
+  // UI PANEL STORE (4-Panel Layout)
+  isSidebarExpanded: false,
+  setIsSidebarExpanded: () => { },
+  isCanvasOpen: false,
+  setIsCanvasOpen: () => { },
+  isCharacterPanelOpen: true,
+  setIsCharacterPanelOpen: () => { },
+  artifacts: [],
+  setArtifacts: () => { }
 })

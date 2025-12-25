@@ -2,7 +2,7 @@
 
 "use client"
 
-import { ChatbotUIContext } from "@/context/context"
+import { ChatbotUIContext, Artifact } from "@/context/context"
 import { getProfileByUserId } from "@/db/profile"
 import { getPersonasByOwnerId } from "@/db/personas"
 import { getWorkspaceImageFromStorage } from "@/db/storage/workspace-images"
@@ -128,6 +128,45 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   // TOOL STORE
   const [selectedTools, setSelectedTools] = useState<Tables<"tools">[]>([])
   const [toolInUse, setToolInUse] = useState<string>("none")
+
+  // UI PANEL STORE (4-Panel Layout)
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState<boolean>(false)
+  const [isCanvasOpen, setIsCanvasOpen] = useState<boolean>(false)
+  const [isCharacterPanelOpen, setIsCharacterPanelOpen] = useState<boolean>(true)
+  const [artifacts, setArtifacts] = useState<Artifact[]>([])
+
+  // Demo persona for character panel preview
+  useEffect(() => {
+    if (!selectedPersona) {
+      setSelectedPersona({
+        id: "demo-persona",
+        name: "Rem",
+        description: "A devoted and loving maid from the Roswaal mansion. Known for her blue hair, kind heart, and unwavering loyalty. She's skilled in combat with her morning star and deeply cares for those she loves.",
+        image_url: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=400&h=600&fit=crop",
+        category: "Anime",
+        intro_message: "Good morning! I hope you slept well. Is there anything I can do for you today? 💙",
+        creator_id: null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        owner_id: null,
+        shared: true,
+        is_public: true,
+        voice_id: null,
+        config: {},
+        behavioral_blueprint: {},
+        chat_count: 0,
+        tone: "warm",
+        writing_style: "expressive",
+        conversation_style: "supportive",
+        emotional_range: "empathetic",
+        response_length: "medium",
+        formality: "casual",
+        tags: ["anime", "maid", "loyal"],
+        scenario: null,
+        sfw_description: "A kind and devoted maid"
+      } as any)
+    }
+  }, [selectedPersona, setSelectedPersona])
 
   useEffect(() => {
     ; (async () => {
@@ -338,7 +377,17 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         selectedTools,
         setSelectedTools,
         toolInUse,
-        setToolInUse
+        setToolInUse,
+
+        // UI PANEL STORE (4-Panel Layout)
+        isSidebarExpanded,
+        setIsSidebarExpanded,
+        isCanvasOpen,
+        setIsCanvasOpen,
+        isCharacterPanelOpen,
+        setIsCharacterPanelOpen,
+        artifacts,
+        setArtifacts
       }}
     >
       {children}

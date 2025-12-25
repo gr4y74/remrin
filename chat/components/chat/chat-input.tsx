@@ -5,8 +5,10 @@ import { cn } from "@/lib/utils"
 import {
   IconBolt,
   IconCirclePlus,
+  IconLayoutSidebarRight,
   IconPlayerStopFilled,
-  IconSend
+  IconSend,
+  IconUser
 } from "@tabler/icons-react"
 import Image from "next/image"
 import { FC, useContext, useEffect, useRef, useState } from "react"
@@ -21,6 +23,7 @@ import { useChatHistoryHandler } from "./chat-hooks/use-chat-history"
 import { usePromptAndCommand } from "./chat-hooks/use-prompt-and-command"
 import { useSelectFileHandler } from "./chat-hooks/use-select-file-handler"
 import { SuggestedReplies } from "@/components/chat-enhanced"
+import { EmojiPicker } from "./emoji-picker"
 
 interface ChatInputProps { }
 
@@ -57,7 +60,11 @@ export const ChatInput: FC<ChatInputProps> = ({ }) => {
     setSelectedTools,
     assistantImages,
     selectedPersona,
-    setUserInput
+    setUserInput,
+    isCanvasOpen,
+    setIsCanvasOpen,
+    isCharacterPanelOpen,
+    setIsCharacterPanelOpen
   } = useContext(ChatbotUIContext)
 
   const {
@@ -267,38 +274,46 @@ export const ChatInput: FC<ChatInputProps> = ({ }) => {
         </div>
       )}
 
-      <div className="border-input relative mt-3 flex min-h-[60px] w-full items-center justify-center rounded-xl border-2">
+      {/* Clean Input Box with Solid Background */}
+      <div className="relative mt-3 flex min-h-[56px] w-full items-center rounded-2xl bg-rp-surface border border-rp-highlight-med">
         <div className="absolute bottom-[76px] left-0 max-h-[300px] w-full overflow-auto rounded-xl dark:border-none">
           <ChatCommandInput />
         </div>
 
-        <>
-          <IconCirclePlus
-            className="absolute bottom-[12px] left-3 cursor-pointer p-1 hover:opacity-50"
-            size={32}
+        {/* Left side - Attach and Emoji */}
+        <div className="flex items-center gap-1 pl-3">
+          <button
             onClick={() => fileInputRef.current?.click()}
-          />
-
-          {/* Hidden input to select files from device */}
-          <Input
-            ref={fileInputRef}
-            className="hidden"
-            type="file"
-            onChange={e => {
-              if (!e.target.files) return
-              handleSelectDeviceFile(e.target.files[0])
+            className="flex size-9 items-center justify-center rounded-lg text-rp-muted transition-colors hover:bg-rp-overlay hover:text-rp-text"
+            title="Attach file"
+          >
+            <IconCirclePlus size={22} />
+          </button>
+          <EmojiPicker
+            onEmojiSelect={(emoji) => {
+              setUserInput(prev => prev + emoji)
+              handleFocusChatInput()
             }}
-            accept={filesToAccept}
           />
-        </>
+        </div>
 
+        {/* Hidden file input */}
+        <Input
+          ref={fileInputRef}
+          className="hidden"
+          type="file"
+          onChange={e => {
+            if (!e.target.files) return
+            handleSelectDeviceFile(e.target.files[0])
+          }}
+          accept={filesToAccept}
+        />
+
+        {/* Text Input */}
         <TextareaAutosize
           textareaRef={chatInputRef}
-          className="ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring text-md flex w-full resize-none rounded-md border-none bg-transparent px-14 py-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-          placeholder={t(
-            // `Ask anything. Type "@" for assistants, "/" for prompts, "#" for files, and "!" for tools.`
-            `Ask anything. Type @  /  #  !`
-          )}
+          className="flex-1 resize-none bg-transparent px-3 py-3 text-rp-text placeholder:text-rp-muted focus:outline-none"
+          placeholder={t(`Ask anything. Type @  /  #  !`)}
           onValueChange={handleInputChange}
           value={userInput}
           minRows={1}
@@ -309,26 +324,29 @@ export const ChatInput: FC<ChatInputProps> = ({ }) => {
           onCompositionEnd={() => setIsTyping(false)}
         />
 
-        <div className="absolute bottom-[14px] right-3 cursor-pointer hover:opacity-50">
+        {/* Right side - Send button only */}
+        <div className="flex items-center gap-2 pr-3">
           {isGenerating ? (
-            <IconPlayerStopFilled
-              className="hover:bg-background animate-pulse rounded bg-transparent p-1"
+            <button
               onClick={handleStopMessage}
-              size={30}
-            />
+              className="flex size-9 items-center justify-center rounded-lg bg-rp-love/80 text-white transition-colors hover:bg-rp-love"
+            >
+              <IconPlayerStopFilled size={18} className="animate-pulse" />
+            </button>
           ) : (
-            <IconSend
-              className={cn(
-                "bg-primary text-secondary rounded p-1",
-                !userInput && "cursor-not-allowed opacity-50"
-              )}
+            <button
               onClick={() => {
                 if (!userInput) return
-
                 handleSendMessage(userInput, chatMessages, false)
               }}
-              size={30}
-            />
+              disabled={!userInput}
+              className={cn(
+                "flex size-9 items-center justify-center rounded-lg bg-rp-rose text-rp-base transition-all",
+                userInput ? "hover:bg-rp-rose/80 hover:scale-105" : "opacity-40 cursor-not-allowed"
+              )}
+            >
+              <IconSend size={18} />
+            </button>
           )}
         </div>
       </div>

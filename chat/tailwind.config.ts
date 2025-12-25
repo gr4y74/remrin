@@ -15,6 +15,12 @@ module.exports = {
         '2xl': '1400px'
       }
     },
+    fontFamily: {
+      sans: ['Inter', 'system-ui', 'sans-serif'],
+      'tiempos-headline': ['Tiempos Headline', 'Georgia', 'serif'],
+      'tiempos-text': ['Tiempos Text', 'Georgia', 'serif'],
+      'tiempos-fine': ['Tiempos Fine', 'Georgia', 'serif'],
+    },
     extend: {
       colors: {
         border: 'hsl(var(--border))',
@@ -49,7 +55,25 @@ module.exports = {
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))'
-        }
+        },
+        // Rosé Pine Color Palette
+        'rp-base': 'hsl(var(--rp-base))',
+        'rp-surface': 'hsl(var(--rp-surface))',
+        'rp-overlay': 'hsl(var(--rp-overlay))',
+        'rp-muted': 'hsl(var(--rp-muted))',
+        'rp-subtle': 'hsl(var(--rp-subtle))',
+        'rp-text': 'hsl(var(--rp-text))',
+        'rp-love': 'hsl(var(--rp-love))',
+        'rp-gold': 'hsl(var(--rp-gold))',
+        'rp-rose': 'hsl(var(--rp-rose))',
+        'rp-pine': 'hsl(var(--rp-pine))',
+        'rp-foam': 'hsl(var(--rp-foam))',
+        'rp-iris': 'hsl(var(--rp-iris))',
+        'rp-highlight-low': 'hsl(var(--rp-highlight-low))',
+        'rp-highlight-med': 'hsl(var(--rp-highlight-med))',
+        'rp-highlight-high': 'hsl(var(--rp-highlight-high))',
+        // Keep ram-pink alias for existing components
+        'ram-pink': 'hsl(var(--rp-rose))'
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -73,6 +97,23 @@ module.exports = {
         'pulse-dot': {
           '0%, 80%, 100%': { opacity: 0.3, transform: 'scale(0.8)' },
           '40%': { opacity: 1, transform: 'scale(1)' }
+        },
+        // Panel transition animations
+        'slide-in-left': {
+          from: { transform: 'translateX(-100%)' },
+          to: { transform: 'translateX(0)' }
+        },
+        'slide-out-left': {
+          from: { transform: 'translateX(0)' },
+          to: { transform: 'translateX(-100%)' }
+        },
+        'slide-in-right': {
+          from: { transform: 'translateX(100%)' },
+          to: { transform: 'translateX(0)' }
+        },
+        'slide-out-right': {
+          from: { transform: 'translateX(0)' },
+          to: { transform: 'translateX(100%)' }
         }
       },
       animation: {
@@ -80,7 +121,12 @@ module.exports = {
         'accordion-up': 'accordion-up 0.2s ease-out',
         // Talkie-style animations
         fadeIn: 'fadeIn 0.3s ease-out forwards',
-        'pulse-dot': 'pulse-dot 1.4s infinite ease-in-out'
+        'pulse-dot': 'pulse-dot 1.4s infinite ease-in-out',
+        // Panel animations
+        'slide-in-left': 'slide-in-left 0.2s ease-out',
+        'slide-out-left': 'slide-out-left 0.2s ease-out',
+        'slide-in-right': 'slide-in-right 0.2s ease-out',
+        'slide-out-right': 'slide-out-right 0.2s ease-out'
       }
     }
   },

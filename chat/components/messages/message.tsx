@@ -218,8 +218,9 @@ export const Message: FC<MessageProps> = ({
   return (
     <div
       className={cn(
-        "flex w-full justify-center",
-        message.role === "user" ? "" : "bg-secondary",
+        "flex w-full justify-center py-2",
+        // User messages align right, assistant left
+        message.role === "user" ? "bg-transparent" : "",
         // Talkie-style: Fade-in animation for persona chats
         isPersonaChat && "animate-fadeIn"
       )}
@@ -229,14 +230,20 @@ export const Message: FC<MessageProps> = ({
     >
       <div
         className={cn(
-          "relative flex w-full flex-col p-6 sm:w-[550px] sm:px-0 md:w-[650px] lg:w-[650px] xl:w-[700px]",
-          // Talkie-style: Glassmorphism and hover effect for persona messages
-          isPersonaChat && message.role === "assistant" && [
-            "rounded-2xl my-2 mx-4 sm:mx-0",
-            "bg-white/5 backdrop-blur-md border border-white/10",
-            "transition-transform duration-200 ease-out",
-            "hover:scale-[1.01]"
-          ]
+          "relative flex w-full flex-col px-4 py-3 sm:w-[550px] md:w-[650px] lg:w-[700px] xl:w-[750px]",
+          // User message styling - right aligned bubble
+          message.role === "user" && [
+            "ml-auto mr-4 max-w-[85%] rounded-2xl rounded-br-sm",
+            "bg-rem-blue/20 border border-rem-blue/30"
+          ],
+          // Assistant message styling - left aligned with persona styling
+          message.role === "assistant" && [
+            "mr-auto ml-4 max-w-[85%] rounded-2xl rounded-bl-sm",
+            isPersonaChat
+              ? "bg-dark-blue/80 backdrop-blur-sm border border-ram-pink/20"
+              : "bg-secondary/50"
+          ],
+          "transition-all duration-200 ease-out hover:shadow-lg"
         )}
       >
         <div className="absolute right-5 top-7 sm:right-0">
@@ -315,7 +322,7 @@ export const Message: FC<MessageProps> = ({
                 />
               )}
 
-              <div className="font-semibold">
+              <div className="font-tiempos-headline font-medium text-rp-text">
                 {message.role === "assistant"
                   ? // Talkie-style: Show persona name when chatting with a persona
                   isPersonaChat && selectedPersona
