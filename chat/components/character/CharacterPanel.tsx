@@ -207,7 +207,7 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                             <div>
                                 <h3 className="mb-2 font-medium text-foreground">Intro Message</h3>
                                 <p className="text-sm leading-relaxed text-muted-foreground">
-                                    "{selectedPersona.intro_message}"
+                                    &ldquo;{selectedPersona.intro_message}&rdquo;
                                 </p>
                             </div>
                         )}
