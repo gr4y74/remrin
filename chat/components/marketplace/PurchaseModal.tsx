@@ -87,22 +87,22 @@ export function PurchaseModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="overflow-hidden border-white/10 bg-zinc-900 text-white sm:max-w-md">
+            <DialogContent className="overflow-hidden border-rp-muted/20 bg-rp-base text-rp-text sm:max-w-md">
                 {/* Success State */}
                 {purchaseState === "success" && (
                     <div className="flex flex-col items-center py-8">
                         <div className="animate-fade-in-scale relative">
                             <div className="absolute inset-0 animate-pulse-glow rounded-full"
-                                style={{ '--glow-color': 'rgba(34, 197, 94, 0.6)' } as React.CSSProperties}
+                                style={{ '--glow-color': 'rgba(156, 207, 216, 0.6)' } as React.CSSProperties}
                             />
-                            <div className="relative rounded-full bg-green-500 p-4">
-                                <IconCheck className="size-12 text-white" />
+                            <div className="relative rounded-full bg-rp-foam p-4">
+                                <IconCheck className="size-12 text-rp-base" />
                             </div>
                         </div>
-                        <h3 className="mt-6 text-2xl font-bold text-green-400">
+                        <h3 className="mt-6 text-2xl font-bold text-rp-foam">
                             Purchase Complete!
                         </h3>
-                        <p className="mt-2 text-center text-white/60">
+                        <p className="mt-2 text-center text-rp-subtle">
                             {listing.personas.name} has been added to your library.
                         </p>
                     </div>
@@ -111,19 +111,19 @@ export function PurchaseModal({
                 {/* Error State */}
                 {purchaseState === "error" && (
                     <div className="flex flex-col items-center py-8">
-                        <div className="rounded-full bg-red-500/20 p-4">
-                            <IconAlertCircle className="size-12 text-red-400" />
+                        <div className="rounded-full bg-rp-love/20 p-4">
+                            <IconAlertCircle className="size-12 text-rp-love" />
                         </div>
-                        <h3 className="mt-6 text-xl font-bold text-red-400">
+                        <h3 className="mt-6 text-xl font-bold text-rp-love">
                             Purchase Failed
                         </h3>
-                        <p className="mt-2 text-center text-white/60">
+                        <p className="mt-2 text-center text-rp-subtle">
                             {errorMessage}
                         </p>
                         <Button
                             onClick={() => setPurchaseState("idle")}
                             variant="outline"
-                            className="mt-4 border-white/10 text-white hover:bg-white/10"
+                            className="mt-4 border-rp-muted/20 text-rp-text hover:bg-rp-surface"
                         >
                             Try Again
                         </Button>
@@ -134,16 +134,16 @@ export function PurchaseModal({
                 {(purchaseState === "idle" || purchaseState === "confirming") && (
                     <>
                         <DialogHeader>
-                            <DialogTitle className="text-xl text-white">
+                            <DialogTitle className="text-xl text-rp-text">
                                 Confirm Purchase
                             </DialogTitle>
-                            <DialogDescription className="text-white/50">
+                            <DialogDescription className="text-rp-subtle">
                                 You are about to purchase this soul.
                             </DialogDescription>
                         </DialogHeader>
 
                         {/* Soul Preview */}
-                        <div className="my-4 flex items-center gap-4 rounded-xl bg-white/5 p-4">
+                        <div className="my-4 flex items-center gap-4 rounded-xl bg-rp-surface p-4">
                             <div className="relative size-20 shrink-0 overflow-hidden rounded-lg">
                                 {listing.personas.image_path ? (
                                     <Image
@@ -153,22 +153,22 @@ export function PurchaseModal({
                                         className="object-cover"
                                     />
                                 ) : (
-                                    <div className="flex size-full items-center justify-center bg-gradient-to-br from-amber-600/50 to-orange-500/50">
-                                        <span className="text-lg font-bold text-white/50">
+                                    <div className="flex size-full items-center justify-center bg-gradient-to-br from-rp-gold/50 to-rp-rose/50">
+                                        <span className="text-lg font-bold text-rp-text/50">
                                             {listing.personas.name.slice(0, 2).toUpperCase()}
                                         </span>
                                     </div>
                                 )}
                             </div>
                             <div className="flex-1">
-                                <h4 className="font-bold text-white">
+                                <h4 className="font-bold text-rp-text">
                                     {listing.personas.name}
                                 </h4>
-                                <p className="mt-1 line-clamp-2 text-sm text-white/50">
+                                <p className="mt-1 line-clamp-2 text-sm text-rp-subtle">
                                     {listing.personas.description || "A unique AI companion"}
                                 </p>
                                 {listing.is_limited_edition && (
-                                    <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-red-500/20 px-2 py-0.5 text-xs text-red-400">
+                                    <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-rp-love/20 px-2 py-0.5 text-xs text-rp-love">
                                         <IconSparkles className="size-3" />
                                         Limited Edition
                                     </div>
@@ -177,37 +177,37 @@ export function PurchaseModal({
                         </div>
 
                         {/* Price Breakdown */}
-                        <div className="space-y-2 rounded-xl bg-white/5 p-4">
+                        <div className="space-y-2 rounded-xl bg-rp-surface p-4">
                             <div className="flex items-center justify-between text-sm">
-                                <span className="text-white/60">Price</span>
+                                <span className="text-rp-subtle">Price</span>
                                 <div className="flex items-center gap-1">
-                                    <IconDiamond className="size-4 text-amber-400" />
-                                    <span className="font-semibold text-white">
+                                    <IconDiamond className="size-4 text-rp-gold" />
+                                    <span className="font-semibold text-rp-text">
                                         {listing.price_aether.toLocaleString()}
                                     </span>
                                 </div>
                             </div>
-                            <div className="flex items-center justify-between text-xs text-white/40">
+                            <div className="flex items-center justify-between text-xs text-rp-muted">
                                 <span>Platform fee (30%)</span>
                                 <span>{platformFee.toLocaleString()}</span>
                             </div>
-                            <div className="flex items-center justify-between text-xs text-white/40">
+                            <div className="flex items-center justify-between text-xs text-rp-muted">
                                 <span>Seller receives</span>
                                 <span>{sellerReceives.toLocaleString()}</span>
                             </div>
-                            <div className="my-2 border-t border-white/10" />
+                            <div className="my-2 border-t border-rp-muted/20" />
                             <div className="flex items-center justify-between">
-                                <span className="text-white/60">Your Balance</span>
+                                <span className="text-rp-subtle">Your Balance</span>
                                 <div className={cn(
                                     "flex items-center gap-1 font-semibold",
-                                    canAfford ? "text-green-400" : "text-red-400"
+                                    canAfford ? "text-rp-foam" : "text-rp-love"
                                 )}>
                                     <IconDiamond className="size-4" />
                                     <span>{userBalance.toLocaleString()}</span>
                                 </div>
                             </div>
                             {!canAfford && (
-                                <div className="mt-2 flex items-center gap-2 rounded-lg bg-red-500/20 p-2 text-xs text-red-400">
+                                <div className="mt-2 flex items-center gap-2 rounded-lg bg-rp-love/20 p-2 text-xs text-rp-love">
                                     <IconX className="size-4" />
                                     <span>Insufficient balance. You need {(listing.price_aether - userBalance).toLocaleString()} more Aether.</span>
                                 </div>
@@ -219,7 +219,7 @@ export function PurchaseModal({
                                 variant="outline"
                                 onClick={onClose}
                                 disabled={purchaseState === "confirming"}
-                                className="flex-1 border-white/10 text-white hover:bg-white/10"
+                                className="flex-1 border-rp-muted/20 text-rp-text hover:bg-rp-surface"
                             >
                                 Cancel
                             </Button>
@@ -227,8 +227,8 @@ export function PurchaseModal({
                                 onClick={handlePurchase}
                                 disabled={!canAfford || purchaseState === "confirming"}
                                 className={cn(
-                                    "flex-1 bg-gradient-to-r from-amber-500 to-orange-500 font-semibold text-white",
-                                    "hover:from-amber-400 hover:to-orange-400",
+                                    "flex-1 bg-gradient-to-r from-rp-gold to-rp-rose font-semibold text-rp-base",
+                                    "hover:from-rp-gold/80 hover:to-rp-rose/80",
                                     "disabled:opacity-50"
                                 )}
                             >

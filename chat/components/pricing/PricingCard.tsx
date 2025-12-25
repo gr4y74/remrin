@@ -46,27 +46,27 @@ export function PricingCard({
     return (
         <Card
             className={cn(
-                "relative flex flex-col h-full transition-all duration-300 hover:shadow-lg",
-                isPopular ? "border-primary shadow-md scale-105 z-10" : "border-border"
+                "relative flex flex-col h-full bg-rp-surface transition-all duration-300 hover:shadow-xl",
+                isPopular ? "border-rp-iris shadow-rp-iris/10 scale-105 z-10" : "border-rp-muted/20"
             )}
         >
             {isPopular && (
                 <div className="absolute -top-3 left-0 right-0 flex justify-center">
-                    <Badge variant="default" className="bg-primary text-primary-foreground">
+                    <Badge variant="default" className="bg-rp-iris text-rp-base hover:bg-rp-iris border-0">
                         Most Popular
                     </Badge>
                 </div>
             )}
 
             <CardHeader>
-                <CardTitle className="text-2xl font-bold">{title}</CardTitle>
+                <CardTitle className="text-2xl font-bold text-rp-text">{title}</CardTitle>
                 <div className="flex items-baseline gap-1 mt-2">
-                    <span className="text-4xl font-extrabold">{price}</span>
+                    <span className="text-4xl font-extrabold text-rp-text">{price}</span>
                     {price !== "Free" && (
-                        <span className="text-muted-foreground">/{interval}</span>
+                        <span className="text-rp-subtle">/{interval}</span>
                     )}
                 </div>
-                <CardDescription className="mt-2">{description}</CardDescription>
+                <CardDescription className="mt-2 text-rp-subtle">{description}</CardDescription>
             </CardHeader>
 
             <CardContent className="flex-1">
@@ -76,10 +76,10 @@ export function PricingCard({
                             <Check
                                 className={cn(
                                     "h-5 w-5 shrink-0",
-                                    feature.included ? "text-primary" : "text-muted-foreground opacity-50"
+                                    feature.included ? "text-rp-foam" : "text-rp-muted opacity-50"
                                 )}
                             />
-                            <span className={cn("text-sm", !feature.included && "text-muted-foreground opacity-50")}>
+                            <span className={cn("text-sm text-rp-text", !feature.included && "text-rp-muted opacity-50")}>
                                 {feature.text}
                             </span>
                         </li>
@@ -89,7 +89,10 @@ export function PricingCard({
 
             <CardFooter>
                 <Button
-                    className="w-full"
+                    className={cn(
+                        "w-full font-bold",
+                        isPopular ? "bg-rp-iris text-rp-base hover:bg-rp-iris/90" : "border-rp-muted/30 text-rp-text hover:bg-rp-overlay"
+                    )}
                     variant={isPopular ? "default" : "outline"}
                     onClick={onSubscribe}
                     disabled={isLoading}

@@ -350,9 +350,9 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ }) => {
             <SheetTitle className="flex items-center justify-between space-x-2">
               <div className="flex items-center">
                 User Settings
-                {wallet?.tier && (
-                  <Badge variant="secondary" className="ml-2 capitalize border-white/10 bg-white/10">
-                    {wallet.tier.replace("_", " ")}
+                {profile.user_id && (
+                  <Badge variant="secondary" className="ml-2 capitalize border-rp-muted/20 bg-rp-surface">
+                    {wallet?.tier?.replace("_", " ") || "Free"}
                   </Badge>
                 )}
               </div>
@@ -410,9 +410,9 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ }) => {
                       {loadingUsername ? (
                         <IconLoader2 className="animate-spin" />
                       ) : usernameAvailable ? (
-                        <IconCircleCheckFilled className="text-green-500" />
+                        <IconCircleCheckFilled className="text-rp-foam" />
                       ) : (
-                        <IconCircleXFilled className="text-red-500" />
+                        <IconCircleXFilled className="text-rp-love" />
                       )}
                     </div>
                   ) : null}
@@ -545,10 +545,10 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ }) => {
 
             <TabsContent className="mt-4 space-y-4" value="keys">
               {wallet?.tier !== "architect" && wallet?.tier !== "titan" ? (
-                <div className="flex flex-col items-center justify-center py-10 space-y-3 text-center border rounded-lg border-white/10 bg-white/5">
-                  <IconLock size={48} className="text-muted-foreground opacity-50" />
-                  <div className="text-lg font-medium">Advanced Settings Locked</div>
-                  <p className="text-sm text-muted-foreground max-w-xs">
+                <div className="flex flex-col items-center justify-center py-10 space-y-3 text-center border rounded-lg border-rp-muted/20 bg-rp-surface">
+                  <IconLock size={48} className="text-rp-muted opacity-50" />
+                  <div className="text-lg font-medium text-rp-text">Advanced Settings Locked</div>
+                  <p className="text-sm text-rp-subtle max-w-xs">
                     API Key configuration is available for Architect and Titan tiers.
                   </p>
                 </div>

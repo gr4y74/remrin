@@ -80,14 +80,14 @@ export function ListingCard({
 
     // Gold/amber glow for marketplace cards
     const glowColor = isLimitedEdition
-        ? 'rgba(239, 68, 68, 0.6)' // Red for limited
-        : 'rgba(245, 158, 11, 0.6)' // Amber for regular
+        ? 'rgba(235, 111, 146, 0.6)' // rp-love for limited
+        : 'rgba(246, 193, 119, 0.6)' // rp-gold for regular
 
     return (
         <div
             ref={cardRef}
             className={cn(
-                "group relative overflow-hidden rounded-2xl border border-white/5 bg-white/5",
+                "group relative overflow-hidden rounded-2xl border border-rp-muted/20 bg-rp-surface",
                 "transition-all duration-300 ease-out animate-card-enter",
                 className
             )}
@@ -98,7 +98,7 @@ export function ListingCard({
                 boxShadow: isHovering
                     ? `0 20px 40px rgba(0,0,0,0.4), 0 0 40px ${glowColor}`
                     : '0 4px 20px rgba(0,0,0,0.2)',
-                borderColor: isHovering ? glowColor : 'rgba(255,255,255,0.05)',
+                borderColor: isHovering ? glowColor : 'rgba(110, 106, 134, 0.2)',
                 ['--glow-color' as string]: glowColor
             }}
             onMouseMove={handleMouseMove}
@@ -119,24 +119,24 @@ export function ListingCard({
                         sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
                     />
                 ) : (
-                    <div className="flex size-full items-center justify-center bg-gradient-to-br from-amber-600/50 to-orange-500/50">
-                        <span className="text-4xl font-bold text-white/50">
+                    <div className="flex size-full items-center justify-center bg-gradient-to-br from-rp-gold/50 to-rp-rose/50">
+                        <span className="text-4xl font-bold text-rp-text/50">
                             {personaName.slice(0, 2).toUpperCase()}
                         </span>
                     </div>
                 )}
 
                 {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-rp-base/90 via-rp-base/30 to-transparent" />
 
                 {/* Limited Edition Badge */}
                 {isLimitedEdition && (
                     <div className="absolute left-3 top-3">
-                        <Badge className="flex items-center gap-1 rounded-full border-0 bg-red-500/90 px-2 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                        <Badge className="flex items-center gap-1 rounded-full border-0 bg-rp-love/90 px-2 py-1 text-xs font-semibold text-rp-base backdrop-blur-sm">
                             <IconSparkles className="size-3" />
                             <span>Limited</span>
                             {quantityRemaining !== null && quantityRemaining !== undefined && (
-                                <span className="ml-1 text-white/80">
+                                <span className="ml-1 text-rp-base/80">
                                     {quantityRemaining} left
                                 </span>
                             )}
@@ -146,8 +146,8 @@ export function ListingCard({
 
                 {/* Sales Badge */}
                 <div className="absolute right-3 top-3">
-                    <Badge className="flex items-center gap-1 rounded-full border-0 bg-black/60 px-2 py-1 text-xs text-white backdrop-blur-sm">
-                        <IconFlame className="size-3 text-orange-400" />
+                    <Badge className="flex items-center gap-1 rounded-full border-0 bg-rp-base/60 px-2 py-1 text-xs text-rp-text backdrop-blur-sm">
+                        <IconFlame className="size-3 text-rp-gold" />
                         <span>{formatCount(totalSales)} sold</span>
                     </Badge>
                 </div>
@@ -156,7 +156,7 @@ export function ListingCard({
                 <div className="absolute bottom-0 left-0 right-0 p-4">
                     {/* Character Name */}
                     <h3 className={cn(
-                        "line-clamp-1 text-lg font-bold leading-tight text-white drop-shadow-lg",
+                        "line-clamp-1 text-lg font-bold leading-tight text-rp-text drop-shadow-lg",
                         "transition-transform duration-300",
                         isHovering && "translate-x-1"
                     )}>
@@ -165,7 +165,7 @@ export function ListingCard({
 
                     {/* Creator */}
                     {creatorName && (
-                        <p className="mt-0.5 text-xs text-white/60">
+                        <p className="mt-0.5 text-xs text-rp-subtle">
                             by {creatorName}
                         </p>
                     )}
@@ -174,11 +174,11 @@ export function ListingCard({
                     <div className="mt-3 flex items-center justify-between">
                         {/* Price */}
                         <div className="flex items-center gap-1.5">
-                            <IconDiamond className="size-5 text-amber-400" />
-                            <span className="text-lg font-bold text-amber-400">
+                            <IconDiamond className="size-5 text-rp-gold" />
+                            <span className="text-lg font-bold text-rp-gold">
                                 {priceAether.toLocaleString()}
                             </span>
-                            <span className="text-xs text-white/50">Aether</span>
+                            <span className="text-xs text-rp-subtle">Aether</span>
                         </div>
 
                         {/* Buy Button */}
@@ -186,10 +186,10 @@ export function ListingCard({
                             size="sm"
                             onClick={handleBuyClick}
                             className={cn(
-                                "rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-4 font-semibold text-white",
-                                "hover:from-amber-400 hover:to-orange-400",
+                                "rounded-full bg-gradient-to-r from-rp-gold to-rp-rose px-4 font-semibold text-rp-base",
+                                "hover:from-rp-gold/80 hover:to-rp-rose/80",
                                 "transition-all duration-300",
-                                isHovering && "scale-105 shadow-lg shadow-amber-500/30"
+                                isHovering && "scale-105 shadow-lg shadow-rp-gold/30"
                             )}
                         >
                             Buy Now

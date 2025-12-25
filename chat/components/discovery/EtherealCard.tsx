@@ -52,8 +52,8 @@ export function EtherealCard({
                             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                         />
                     ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-purple-900/50 to-pink-900/50 flex items-center justify-center">
-                            <span className="text-4xl font-bold text-white/30">
+                        <div className="w-full h-full bg-gradient-to-br from-rp-iris/50 to-rp-rose/50 flex items-center justify-center">
+                            <span className="text-4xl font-bold text-rp-text/30">
                                 {name.slice(0, 2).toUpperCase()}
                             </span>
                         </div>
@@ -61,17 +61,17 @@ export function EtherealCard({
                 </div>
 
                 {/* Gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-rp-base/90 via-rp-base/20 to-transparent" />
 
                 {/* Badges */}
                 <div className="absolute top-3 left-3 flex gap-2">
                     {isNew && (
-                        <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 text-[10px] font-bold text-white uppercase tracking-wider">
+                        <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-rp-foam to-rp-pine text-[10px] font-bold text-rp-base uppercase tracking-wider">
                             New
                         </span>
                     )}
                     {isFeatured && (
-                        <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-[10px] font-bold text-black uppercase tracking-wider flex items-center gap-1">
+                        <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-rp-gold to-rp-rose text-[10px] font-bold text-rp-base uppercase tracking-wider flex items-center gap-1">
                             <IconSparkles size={10} />
                             Featured
                         </span>
@@ -83,9 +83,9 @@ export function EtherealCard({
                     <div className="absolute top-3 right-3">
                         <span className={cn(
                             "px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
-                            rarity === "rare" && "bg-purple-500/80 text-white",
-                            rarity === "epic" && "bg-pink-500/80 text-white",
-                            rarity === "legendary" && "bg-gradient-to-r from-amber-400 to-orange-500 text-black"
+                            rarity === "rare" && "bg-rp-iris/80 text-rp-base",
+                            rarity === "epic" && "bg-rp-rose/80 text-rp-base",
+                            rarity === "legendary" && "bg-gradient-to-r from-rp-gold to-rp-love text-rp-base"
                         )}>
                             {rarity}
                         </span>

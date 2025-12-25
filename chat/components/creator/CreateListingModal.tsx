@@ -23,7 +23,8 @@ import {
     SelectTrigger,
     SelectValue
 } from "@/components/ui/select"
-import { Loader2, Sparkles, Crown } from "lucide-react"
+import { Loader2, Sparkles } from "lucide-react"
+import { IconDiamond } from "@tabler/icons-react"
 
 interface Persona {
     id: string
@@ -150,13 +151,13 @@ export function CreateListingModal({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-md border-white/10 bg-zinc-900">
+            <DialogContent className="max-w-md border-rp-muted/20 bg-rp-base">
                 <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2 text-white">
-                        <Sparkles className="size-5 text-purple-400" />
+                    <DialogTitle className="flex items-center gap-2 text-rp-text">
+                        <Sparkles className="size-5 text-rp-iris" />
                         Create Listing
                     </DialogTitle>
-                    <DialogDescription className="text-zinc-400">
+                    <DialogDescription className="text-rp-subtle">
                         List one of your souls in the marketplace.
                     </DialogDescription>
                 </DialogHeader>
@@ -164,27 +165,27 @@ export function CreateListingModal({
                 <div className="space-y-4 py-4">
                     {/* Persona Select */}
                     <div className="space-y-2">
-                        <Label className="text-zinc-300">Select Soul</Label>
+                        <Label className="text-rp-text/80">Select Soul</Label>
                         <Select
                             value={selectedPersonaId}
                             onValueChange={setSelectedPersonaId}
                             disabled={loadingPersonas}
                         >
-                            <SelectTrigger className="border-white/10 bg-white/5 text-white">
+                            <SelectTrigger className="border-rp-muted/20 bg-rp-surface text-rp-text">
                                 <SelectValue placeholder="Choose a soul to list..." />
                             </SelectTrigger>
-                            <SelectContent className="border-white/10 bg-zinc-900">
+                            <SelectContent className="border-rp-muted/20 bg-rp-overlay">
                                 {personas.map((persona) => (
                                     <SelectItem
                                         key={persona.id}
                                         value={persona.id}
-                                        className="text-white focus:bg-white/10"
+                                        className="text-rp-text focus:bg-rp-surface"
                                     >
                                         {persona.name}
                                     </SelectItem>
                                 ))}
                                 {personas.length === 0 && !loadingPersonas && (
-                                    <div className="p-2 text-center text-sm text-zinc-500">
+                                    <div className="p-2 text-center text-sm text-rp-muted">
                                         No unlisted souls available
                                     </div>
                                 )}
@@ -194,8 +195,8 @@ export function CreateListingModal({
 
                     {/* Preview Card */}
                     {selectedPersona && (
-                        <div className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/5 p-3">
-                            <div className="relative size-12 overflow-hidden rounded-lg bg-zinc-800">
+                        <div className="flex items-center gap-3 rounded-lg border border-rp-muted/20 bg-rp-surface p-3">
+                            <div className="relative size-12 overflow-hidden rounded-lg bg-rp-base">
                                 {selectedPersona.image_path ? (
                                     <Image
                                         src={selectedPersona.image_path}
@@ -204,16 +205,16 @@ export function CreateListingModal({
                                         className="object-cover"
                                     />
                                 ) : (
-                                    <div className="flex size-full items-center justify-center text-lg font-bold text-zinc-600">
+                                    <div className="flex size-full items-center justify-center text-lg font-bold text-rp-muted">
                                         {selectedPersona.name[0]}
                                     </div>
                                 )}
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="font-medium text-white truncate">
+                                <p className="font-medium text-rp-text truncate">
                                     {selectedPersona.name}
                                 </p>
-                                <p className="text-xs text-zinc-400 truncate">
+                                <p className="text-xs text-rp-subtle truncate">
                                     {selectedPersona.description || "No description"}
                                 </p>
                             </div>
@@ -222,25 +223,25 @@ export function CreateListingModal({
 
                     {/* Price */}
                     <div className="space-y-2">
-                        <Label className="text-zinc-300">Price (Aether)</Label>
+                        <Label className="text-rp-text/80">Price (Aether)</Label>
                         <Input
                             type="number"
                             placeholder="100"
                             value={price}
                             onChange={(e) => setPrice(e.target.value)}
-                            className="border-white/10 bg-white/5 text-white placeholder:text-zinc-500"
+                            className="border-rp-muted/20 bg-rp-surface text-rp-text placeholder:text-rp-muted"
                         />
                     </div>
 
                     {/* Limited Edition Toggle */}
-                    <div className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 p-3">
+                    <div className="flex items-center justify-between rounded-lg border border-rp-muted/20 bg-rp-surface p-3">
                         <div className="flex items-center gap-2">
-                            <Crown className="size-4 text-amber-400" />
+                            <IconDiamond className="size-4 text-rp-gold" />
                             <div>
-                                <p className="text-sm font-medium text-white">
+                                <p className="text-sm font-medium text-rp-text">
                                     Limited Edition
                                 </p>
-                                <p className="text-xs text-zinc-400">
+                                <p className="text-xs text-rp-subtle">
                                     Set a maximum quantity
                                 </p>
                             </div>
@@ -254,20 +255,20 @@ export function CreateListingModal({
                     {/* Quantity (if limited) */}
                     {isLimited && (
                         <div className="space-y-2">
-                            <Label className="text-zinc-300">Quantity</Label>
+                            <Label className="text-rp-text/80">Quantity</Label>
                             <Input
                                 type="number"
                                 placeholder="10"
                                 value={quantity}
                                 onChange={(e) => setQuantity(e.target.value)}
-                                className="border-white/10 bg-white/5 text-white placeholder:text-zinc-500"
+                                className="border-rp-muted/20 bg-rp-surface text-rp-text placeholder:text-rp-muted"
                             />
                         </div>
                     )}
 
                     {/* Error */}
                     {error && (
-                        <p className="text-sm text-red-400">{error}</p>
+                        <p className="text-sm text-rp-love">{error}</p>
                     )}
                 </div>
 
@@ -275,14 +276,14 @@ export function CreateListingModal({
                     <Button
                         variant="outline"
                         onClick={() => onOpenChange(false)}
-                        className="border-white/10 bg-transparent text-white hover:bg-white/5"
+                        className="border-rp-muted/20 bg-transparent text-rp-text hover:bg-rp-surface"
                     >
                         Cancel
                     </Button>
                     <Button
                         onClick={handleSubmit}
                         disabled={loading || !selectedPersonaId || !price}
-                        className="bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-500 hover:to-pink-500"
+                        className="bg-gradient-to-r from-rp-iris to-rp-rose text-rp-base hover:from-rp-iris/80 hover:to-rp-rose/80"
                     >
                         {loading ? (
                             <>

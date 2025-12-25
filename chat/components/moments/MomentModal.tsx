@@ -96,7 +96,7 @@ export function MomentModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent className="flex max-h-[95vh] max-w-5xl flex-col gap-0 overflow-hidden border-white/10 bg-[#0d1117]/95 p-0 backdrop-blur-xl sm:rounded-2xl">
+            <DialogContent className="flex max-h-[95vh] max-w-5xl flex-col gap-0 overflow-hidden border-rp-muted/20 bg-rp-base/95 p-0 backdrop-blur-xl sm:rounded-2xl">
                 <VisuallyHidden>
                     <DialogTitle>Moment by {moment.persona.name}</DialogTitle>
                 </VisuallyHidden>
@@ -104,19 +104,19 @@ export function MomentModal({
                 {/* Close Button */}
                 <button
                     onClick={onClose}
-                    className="absolute right-4 top-4 z-50 rounded-full bg-black/50 p-2 text-white/70 backdrop-blur-sm transition-colors hover:bg-black/70 hover:text-white"
+                    className="absolute right-4 top-4 z-50 rounded-full bg-rp-base/50 p-2 text-rp-text/70 backdrop-blur-sm transition-colors hover:bg-rp-base/70 hover:text-rp-text"
                 >
                     <X className="size-5" />
                 </button>
 
                 <div className="flex flex-1 flex-col overflow-hidden md:flex-row">
                     {/* Image Section */}
-                    <div className="relative flex-1 bg-black">
+                    <div className="relative flex-1 bg-rp-base">
                         {/* Navigation Arrows */}
                         {onPrev && (
                             <button
                                 onClick={onPrev}
-                                className="absolute left-4 top-1/2 z-40 -translate-y-1/2 rounded-full bg-black/50 p-3 text-white/70 backdrop-blur-sm transition-all hover:bg-black/70 hover:text-white"
+                                className="absolute left-4 top-1/2 z-40 -translate-y-1/2 rounded-full bg-rp-base/50 p-3 text-rp-text/70 backdrop-blur-sm transition-all hover:bg-rp-base/70 hover:text-rp-text"
                             >
                                 <ChevronLeft className="size-6" />
                             </button>
@@ -124,7 +124,7 @@ export function MomentModal({
                         {onNext && (
                             <button
                                 onClick={onNext}
-                                className="absolute right-4 top-1/2 z-40 -translate-y-1/2 rounded-full bg-black/50 p-3 text-white/70 backdrop-blur-sm transition-all hover:bg-black/70 hover:text-white"
+                                className="absolute right-4 top-1/2 z-40 -translate-y-1/2 rounded-full bg-rp-base/50 p-3 text-rp-text/70 backdrop-blur-sm transition-all hover:bg-rp-base/70 hover:text-rp-text"
                             >
                                 <ChevronRight className="size-6" />
                             </button>
@@ -144,10 +144,10 @@ export function MomentModal({
                     </div>
 
                     {/* Details Section */}
-                    <div className="flex w-full flex-col border-t border-white/10 md:w-80 md:border-l md:border-t-0">
+                    <div className="flex w-full flex-col border-t border-rp-muted/20 md:w-80 md:border-l md:border-t-0">
                         {/* Persona Header */}
-                        <div className="flex items-center gap-3 border-b border-white/10 p-4">
-                            <div className="relative size-10 overflow-hidden rounded-full border-2 border-white/20">
+                        <div className="flex items-center gap-3 border-b border-rp-muted/20 p-4">
+                            <div className="relative size-10 overflow-hidden rounded-full border-2 border-rp-muted/20">
                                 {moment.persona.imageUrl ? (
                                     <Image
                                         src={moment.persona.imageUrl}
@@ -156,13 +156,13 @@ export function MomentModal({
                                         className="object-cover"
                                     />
                                 ) : (
-                                    <div className="flex size-full items-center justify-center bg-gradient-to-br from-purple-600 to-cyan-500 text-sm font-bold text-white">
+                                    <div className="flex size-full items-center justify-center bg-gradient-to-br from-rp-iris to-rp-foam text-sm font-bold text-rp-base">
                                         {moment.persona.name.slice(0, 1).toUpperCase()}
                                     </div>
                                 )}
                             </div>
                             <div className="flex-1">
-                                <p className="font-semibold text-white">
+                                <p className="font-semibold text-rp-text">
                                     {moment.persona.name}
                                 </p>
                             </div>
@@ -171,18 +171,18 @@ export function MomentModal({
                         {/* Caption */}
                         <div className="flex-1 overflow-y-auto p-4">
                             {moment.caption ? (
-                                <p className="text-sm leading-relaxed text-zinc-300">
+                                <p className="text-sm leading-relaxed text-rp-text">
                                     {moment.caption}
                                 </p>
                             ) : (
-                                <p className="text-sm italic text-zinc-500">
+                                <p className="text-sm italic text-rp-muted">
                                     No caption
                                 </p>
                             )}
                         </div>
 
                         {/* Actions */}
-                        <div className="border-t border-white/10 p-4 space-y-3">
+                        <div className="border-t border-rp-muted/20 p-4 space-y-3">
                             {/* Action Buttons */}
                             <div className="flex items-center gap-4">
                                 <button
@@ -190,14 +190,14 @@ export function MomentModal({
                                     className={cn(
                                         "flex items-center gap-2 transition-colors",
                                         moment.isLiked
-                                            ? "text-red-500"
-                                            : "text-zinc-400 hover:text-white"
+                                            ? "text-rp-love"
+                                            : "text-rp-subtle hover:text-rp-text"
                                     )}
                                 >
                                     <Heart
                                         className={cn(
                                             "size-6",
-                                            moment.isLiked && "fill-red-500"
+                                            moment.isLiked && "fill-rp-love"
                                         )}
                                     />
                                     <span className="font-medium">
@@ -207,7 +207,7 @@ export function MomentModal({
 
                                 <button
                                     onClick={handleShare}
-                                    className="flex items-center gap-2 text-zinc-400 transition-colors hover:text-white"
+                                    className="flex items-center gap-2 text-rp-subtle transition-colors hover:text-rp-text"
                                 >
                                     <Share2 className="size-5" />
                                     <span>Share</span>
@@ -218,7 +218,7 @@ export function MomentModal({
                             <Link href={`/character/${moment.persona.id}`}>
                                 <Button
                                     variant="outline"
-                                    className="w-full rounded-xl border-white/10 bg-white/5 hover:bg-white/10"
+                                    className="w-full rounded-xl border-rp-muted/20 bg-rp-surface hover:bg-rp-overlay"
                                 >
                                     <User className="mr-2 size-4" />
                                     View Character

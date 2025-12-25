@@ -57,8 +57,8 @@ export function TrendingCarousel({ personas }: TrendingCarouselProps) {
             {/* Section Header */}
             <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <Star className="size-5 text-amber-400" />
-                    <h2 className="text-xl font-bold text-white">Trending Now</h2>
+                    <Star className="size-5 text-rp-gold" />
+                    <h2 className="text-xl font-bold text-rp-text">Trending Now</h2>
                 </div>
 
                 {/* Arrow Buttons */}
@@ -68,7 +68,7 @@ export function TrendingCarousel({ personas }: TrendingCarouselProps) {
                         size="icon"
                         onClick={() => scroll("left")}
                         disabled={!canScrollLeft}
-                        className="size-8 rounded-full bg-white/5 text-white hover:bg-white/10 disabled:opacity-30"
+                        className="size-8 rounded-full bg-rp-overlay text-rp-text hover:bg-rp-overlay/80 disabled:opacity-30"
                     >
                         <ChevronLeft className="size-4" />
                     </Button>
@@ -77,7 +77,7 @@ export function TrendingCarousel({ personas }: TrendingCarouselProps) {
                         size="icon"
                         onClick={() => scroll("right")}
                         disabled={!canScrollRight}
-                        className="size-8 rounded-full bg-white/5 text-white hover:bg-white/10 disabled:opacity-30"
+                        className="size-8 rounded-full bg-rp-overlay text-rp-text hover:bg-rp-overlay/80 disabled:opacity-30"
                     >
                         <ChevronRight className="size-4" />
                     </Button>
@@ -98,8 +98,8 @@ export function TrendingCarousel({ personas }: TrendingCarouselProps) {
                     >
                         <div
                             className={cn(
-                                "group relative w-72 overflow-hidden rounded-2xl border border-white/10 bg-white/5 transition-all duration-300",
-                                "hover:scale-[1.02] hover:border-amber-500/30 hover:shadow-lg hover:shadow-amber-500/20"
+                                "group relative w-72 overflow-hidden rounded-2xl border border-rp-highlight-low bg-rp-surface transition-all duration-300",
+                                "hover:scale-[1.02] hover:border-rp-gold/30 hover:shadow-lg hover:shadow-rp-gold/20"
                             )}
                         >
                             {/* Image */}
@@ -113,19 +113,19 @@ export function TrendingCarousel({ personas }: TrendingCarouselProps) {
                                         sizes="288px"
                                     />
                                 ) : (
-                                    <div className="flex size-full items-center justify-center bg-gradient-to-br from-amber-600/50 to-purple-600/50">
-                                        <span className="text-5xl font-bold text-white/50">
+                                    <div className="flex size-full items-center justify-center bg-gradient-to-br from-rp-gold/50 to-rp-iris/50">
+                                        <span className="text-5xl font-bold text-rp-text/50">
                                             {persona.name.slice(0, 2).toUpperCase()}
                                         </span>
                                     </div>
                                 )}
 
                                 {/* Gradient Overlay */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-rp-base/90 via-rp-base/30 to-transparent" />
 
                                 {/* Featured Badge */}
                                 {persona.isFeatured && (
-                                    <Badge className="absolute left-3 top-3 gap-1 rounded-full border-0 bg-amber-500/90 px-2 py-0.5 text-xs text-white">
+                                    <Badge className="absolute left-3 top-3 gap-1 rounded-full border-0 bg-rp-gold/90 px-2 py-0.5 text-xs text-rp-base">
                                         <Star className="size-3 fill-current" />
                                         Featured
                                     </Badge>
@@ -133,7 +133,7 @@ export function TrendingCarousel({ personas }: TrendingCarouselProps) {
 
                                 {/* Stats */}
                                 <div className="absolute right-3 top-3">
-                                    <Badge className="flex items-center gap-1 rounded-full border-0 bg-black/60 px-2 py-1 text-xs text-white backdrop-blur-sm">
+                                    <Badge className="flex items-center gap-1 rounded-full border-0 bg-rp-base/60 px-2 py-1 text-xs text-rp-text backdrop-blur-sm">
                                         <MessageCircle className="size-3" />
                                         {formatCount(persona.totalChats)}
                                     </Badge>
@@ -141,11 +141,11 @@ export function TrendingCarousel({ personas }: TrendingCarouselProps) {
 
                                 {/* Bottom Content */}
                                 <div className="absolute bottom-0 left-0 right-0 p-4">
-                                    <h3 className="mb-1 text-lg font-bold text-white drop-shadow-lg">
+                                    <h3 className="mb-1 text-lg font-bold text-rp-text drop-shadow-lg">
                                         {persona.name}
                                     </h3>
                                     {persona.description && (
-                                        <p className="line-clamp-2 text-sm text-zinc-300/80">
+                                        <p className="line-clamp-2 text-sm text-rp-subtle">
                                             {persona.description}
                                         </p>
                                     )}

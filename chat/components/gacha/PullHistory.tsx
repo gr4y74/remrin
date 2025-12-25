@@ -18,11 +18,11 @@ interface PullRecord {
 }
 
 const RARITY_COLORS: Record<string, string> = {
-    common: "border-gray-500",
-    uncommon: "border-green-500",
-    rare: "border-blue-500",
-    epic: "border-purple-500",
-    legendary: "border-yellow-500",
+    common: "border-rp-muted",
+    uncommon: "border-rp-foam",
+    rare: "border-rp-pine",
+    epic: "border-rp-iris",
+    legendary: "border-rp-gold",
 }
 
 export function PullHistory() {
@@ -90,8 +90,8 @@ export function PullHistory() {
                         className={cn(
                             "rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
                             filter === r
-                                ? "bg-primary text-primary-foreground"
-                                : "bg-muted hover:bg-muted/80"
+                                ? "bg-rp-iris text-rp-base"
+                                : "bg-rp-surface text-rp-subtle hover:bg-rp-overlay hover:text-rp-text"
                         )}
                     >
                         {r.charAt(0).toUpperCase() + r.slice(1)}
@@ -110,8 +110,8 @@ export function PullHistory() {
                         <div
                             key={pull.id}
                             className={cn(
-                                "group relative overflow-hidden rounded-lg border-2 bg-card transition-transform hover:scale-105",
-                                RARITY_COLORS[pull.rarity] || "border-border"
+                                "group relative overflow-hidden rounded-lg border-2 bg-rp-surface transition-transform hover:scale-105",
+                                RARITY_COLORS[pull.rarity] || "border-rp-muted/20"
                             )}
                         >
                             <div className="aspect-square">
@@ -122,10 +122,10 @@ export function PullHistory() {
                                 />
                             </div>
                             <div className="p-2">
-                                <p className="truncate text-sm font-medium">
+                                <p className="truncate text-sm font-medium text-rp-text">
                                     {pull.persona?.name || "Unknown"}
                                 </p>
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-xs text-rp-muted">
                                     {format(new Date(pull.pulled_at), "MMM d, yyyy")}
                                 </p>
                             </div>

@@ -148,7 +148,7 @@ export function FeaturedManager() {
     if (loading) {
         return (
             <div className="flex items-center justify-center py-20">
-                <IconLoader2 className="w-8 h-8 animate-spin text-purple-500" />
+                <IconLoader2 className="w-8 h-8 animate-spin text-rp-iris" />
             </div>
         )
     }
@@ -157,21 +157,21 @@ export function FeaturedManager() {
         <div className="space-y-6">
             {/* Stats Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4 text-center">
-                    <div className="text-2xl font-bold text-white">{stats.total}</div>
-                    <div className="text-sm text-zinc-500">Total Souls</div>
+                <div className="bg-rp-surface border border-rp-muted/20 rounded-xl p-4 text-center">
+                    <div className="text-2xl font-bold text-rp-text">{stats.total}</div>
+                    <div className="text-sm text-rp-muted">Total Souls</div>
                 </div>
-                <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4 text-center">
-                    <div className="text-2xl font-bold text-amber-400">{stats.featured}</div>
-                    <div className="text-sm text-zinc-500">Featured</div>
+                <div className="bg-rp-surface border border-rp-muted/20 rounded-xl p-4 text-center">
+                    <div className="text-2xl font-bold text-rp-gold">{stats.featured}</div>
+                    <div className="text-sm text-rp-muted">Featured</div>
                 </div>
-                <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4 text-center">
-                    <div className="text-2xl font-bold text-green-400">{stats.public}</div>
-                    <div className="text-sm text-zinc-500">Public</div>
+                <div className="bg-rp-surface border border-rp-muted/20 rounded-xl p-4 text-center">
+                    <div className="text-2xl font-bold text-rp-foam">{stats.public}</div>
+                    <div className="text-sm text-rp-muted">Public</div>
                 </div>
-                <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4 text-center">
-                    <div className="text-2xl font-bold text-zinc-400">{stats.private}</div>
-                    <div className="text-sm text-zinc-500">Private</div>
+                <div className="bg-rp-surface border border-rp-muted/20 rounded-xl p-4 text-center">
+                    <div className="text-2xl font-bold text-rp-subtle">{stats.private}</div>
+                    <div className="text-sm text-rp-muted">Private</div>
                 </div>
             </div>
 
@@ -184,8 +184,8 @@ export function FeaturedManager() {
                         className={cn(
                             "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
                             activeTab === "featured"
-                                ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
-                                : "text-zinc-400 hover:text-white"
+                                ? "bg-rp-gold/20 text-rp-gold border border-rp-gold/30"
+                                : "text-rp-subtle hover:text-rp-text"
                         )}
                     >
                         <IconStarFilled size={16} className="inline mr-2" />
@@ -196,8 +196,8 @@ export function FeaturedManager() {
                         className={cn(
                             "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
                             activeTab === "visibility"
-                                ? "bg-green-500/20 text-green-400 border border-green-500/30"
-                                : "text-zinc-400 hover:text-white"
+                                ? "bg-rp-foam/20 text-rp-foam border border-rp-foam/30"
+                                : "text-rp-subtle hover:text-rp-text"
                         )}
                     >
                         <IconEye size={16} className="inline mr-2" />
@@ -208,18 +208,18 @@ export function FeaturedManager() {
                 {/* Search & Actions */}
                 <div className="flex gap-3 w-full md:w-auto">
                     <div className="relative flex-1 md:w-64">
-                        <IconSearch size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
+                        <IconSearch size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-rp-muted" />
                         <input
                             type="text"
                             placeholder="Search souls..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder:text-zinc-500 focus:outline-none focus:border-purple-500"
+                            className="w-full pl-10 pr-4 py-2 bg-rp-base border border-rp-muted/20 rounded-lg text-rp-text placeholder:text-rp-muted focus:outline-none focus:border-rp-iris"
                         />
                     </div>
                     <button
                         onClick={fetchPersonas}
-                        className="p-2 text-zinc-400 hover:text-white transition-colors"
+                        className="p-2 text-rp-muted hover:text-rp-text transition-colors"
                         title="Refresh"
                     >
                         <IconRefresh size={20} />
@@ -229,8 +229,8 @@ export function FeaturedManager() {
 
             {/* Pending Changes Banner */}
             {pendingChanges.size > 0 && (
-                <div className="flex items-center justify-between px-4 py-3 bg-purple-500/10 border border-purple-500/30 rounded-xl">
-                    <span className="text-purple-400 text-sm">
+                <div className="flex items-center justify-between px-4 py-3 bg-rp-iris/10 border border-rp-iris/30 rounded-xl">
+                    <span className="text-rp-iris text-sm font-medium">
                         {pendingChanges.size} unsaved change{pendingChanges.size !== 1 ? "s" : ""}
                     </span>
                     <div className="flex gap-2">
@@ -239,14 +239,14 @@ export function FeaturedManager() {
                                 setPendingChanges(new Map())
                                 fetchPersonas()
                             }}
-                            className="px-3 py-1 text-sm text-zinc-400 hover:text-white transition-colors"
+                            className="px-3 py-1 text-sm text-rp-subtle hover:text-rp-text transition-colors"
                         >
                             Discard
                         </button>
                         <button
                             onClick={saveChanges}
                             disabled={saving}
-                            className="px-4 py-1 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition-colors disabled:opacity-50 flex items-center gap-2"
+                            className="px-4 py-1 text-sm bg-rp-iris text-rp-base rounded-lg hover:opacity-90 transition-colors disabled:opacity-50 flex items-center gap-2"
                         >
                             {saving ? (
                                 <IconLoader2 size={14} className="animate-spin" />
@@ -265,16 +265,16 @@ export function FeaturedManager() {
                     <div
                         key={persona.id}
                         className={cn(
-                            "relative bg-zinc-900/50 border rounded-xl overflow-hidden transition-all",
+                            "relative bg-rp-surface border rounded-xl overflow-hidden transition-all",
                             activeTab === "featured" && persona.is_featured
-                                ? "border-amber-500/50 ring-1 ring-amber-500/20"
+                                ? "border-rp-gold/50 ring-1 ring-rp-gold/20"
                                 : activeTab === "visibility" && persona.visibility === "PUBLIC"
-                                    ? "border-green-500/50 ring-1 ring-green-500/20"
-                                    : "border-zinc-800"
+                                    ? "border-rp-foam/50 ring-1 ring-rp-foam/20"
+                                    : "border-rp-muted/20"
                         )}
                     >
                         {/* Image */}
-                        <div className="relative aspect-[3/4] bg-zinc-800">
+                        <div className="relative aspect-[3/4] bg-rp-base">
                             {persona.image_url ? (
                                 <Image
                                     src={persona.image_url}
@@ -283,21 +283,21 @@ export function FeaturedManager() {
                                     className="object-cover"
                                 />
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center text-3xl font-bold text-zinc-600">
+                                <div className="w-full h-full flex items-center justify-center text-3xl font-bold text-rp-muted">
                                     {persona.name.slice(0, 2).toUpperCase()}
                                 </div>
                             )}
 
                             {/* Overlay gradient */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-rp-base/80 via-transparent to-transparent" />
                         </div>
 
                         {/* Info */}
                         <div className="p-3">
-                            <h3 className="font-medium text-white text-sm truncate">
+                            <h3 className="font-medium text-rp-text text-sm truncate">
                                 {persona.name}
                             </h3>
-                            <p className="text-xs text-zinc-500 truncate">
+                            <p className="text-xs text-rp-muted truncate">
                                 {persona.visibility === "PUBLIC" ? "Public" : "Private"}
                             </p>
                         </div>
@@ -312,11 +312,11 @@ export function FeaturedManager() {
                                 "absolute top-2 right-2 p-2 rounded-lg transition-all",
                                 activeTab === "featured"
                                     ? persona.is_featured
-                                        ? "bg-amber-500 text-black"
-                                        : "bg-black/50 text-white/50 hover:text-amber-400"
+                                        ? "bg-rp-gold text-rp-base shadow-lg shadow-rp-gold/20"
+                                        : "bg-rp-base/50 text-rp-text/50 hover:text-rp-gold"
                                     : persona.visibility === "PUBLIC"
-                                        ? "bg-green-500 text-black"
-                                        : "bg-black/50 text-white/50 hover:text-green-400"
+                                        ? "bg-rp-foam text-rp-base shadow-lg shadow-rp-foam/20"
+                                        : "bg-rp-base/50 text-rp-text/50 hover:text-rp-foam"
                             )}
                         >
                             {activeTab === "featured" ? (
@@ -330,7 +330,7 @@ export function FeaturedManager() {
             </div>
 
             {filteredPersonas.length === 0 && (
-                <div className="text-center py-12 text-zinc-500">
+                <div className="text-center py-12 text-rp-muted">
                     No souls found matching your search.
                 </div>
             )}

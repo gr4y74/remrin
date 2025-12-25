@@ -77,17 +77,17 @@ export const WelcomeModal: FC<WelcomeModalProps> = () => {
 
     return (
         <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-            <DialogContent className="glassmorphism-dark sm:max-w-[425px]">
+            <DialogContent className="border-rp-muted/20 bg-rp-surface sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle className="text-2xl font-bold">Welcome to Remrin</DialogTitle>
-                    <DialogDescription className="text-gray-300">
+                    <DialogTitle className="text-2xl font-bold text-rp-text">Welcome to Remrin</DialogTitle>
+                    <DialogDescription className="text-rp-subtle">
                         Before we begin, please tell us a bit about yourself so we can customize your experience.
                     </DialogDescription>
                 </DialogHeader>
 
                 <div className="grid gap-6 py-4">
                     <div className="space-y-2">
-                        <Label htmlFor="name" className="text-right">
+                        <Label htmlFor="name" className="text-right text-rp-text/80">
                             What should we call you?
                         </Label>
                         <Input
@@ -95,12 +95,12 @@ export const WelcomeModal: FC<WelcomeModalProps> = () => {
                             value={displayName}
                             onChange={(e) => setDisplayName(e.target.value)}
                             placeholder="Enter your display name"
-                            className="bg-black/20 border-white/10"
+                            className="bg-rp-base border-rp-muted/20 text-rp-text placeholder:text-rp-muted"
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <Label className="text-right">Age Group</Label>
+                        <Label className="text-right text-rp-text/80">Age Group</Label>
                         <div className="grid grid-cols-2 gap-2">
                             {[
                                 { label: "Under 13", value: "under_13" },
@@ -112,10 +112,10 @@ export const WelcomeModal: FC<WelcomeModalProps> = () => {
                                     key={option.value}
                                     variant={ageBracket === option.value ? "default" : "outline"}
                                     className={cn(
-                                        "w-full",
+                                        "w-full transition-all",
                                         ageBracket === option.value
-                                            ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                                            : "bg-transparent hover:bg-white/5 border-white/10"
+                                            ? "bg-rp-iris text-rp-base hover:bg-rp-iris/90 border-0"
+                                            : "bg-transparent hover:bg-rp-highlight-low border-rp-muted/20 text-rp-text"
                                     )}
                                     onClick={() => setAgeBracket(option.value)}
                                 >
@@ -124,7 +124,7 @@ export const WelcomeModal: FC<WelcomeModalProps> = () => {
                             ))}
                         </div>
                         {ageBracket === "under_13" && (
-                            <p className="text-xs text-yellow-500 mt-1">
+                            <p className="text-xs text-rp-gold mt-1">
                                 Note: Remrin provides a family-friendly experience for all ages.
                             </p>
                         )}
@@ -135,7 +135,7 @@ export const WelcomeModal: FC<WelcomeModalProps> = () => {
                     <Button
                         onClick={handleSubmit}
                         disabled={loading}
-                        className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0"
+                        className="w-full bg-gradient-to-r from-rp-pine to-rp-iris hover:opacity-90 text-rp-base border-0 font-bold"
                     >
                         {loading ? "Entering..." : "Enter Remrin"}
                     </Button>

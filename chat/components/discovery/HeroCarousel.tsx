@@ -129,8 +129,8 @@ export function HeroCarousel({
             onMouseLeave={() => setIsHovered(false)}
         >
             {/* Edge gradients for fade effect */}
-            <div className="absolute inset-y-0 left-0 w-48 bg-gradient-to-r from-[#0a0a0f] via-[#0a0a0f]/80 to-transparent z-20 pointer-events-none" />
-            <div className="absolute inset-y-0 right-0 w-48 bg-gradient-to-l from-[#0a0a0f] via-[#0a0a0f]/80 to-transparent z-20 pointer-events-none" />
+            <div className="absolute inset-y-0 left-0 w-48 bg-gradient-to-r from-rp-base via-rp-base/80 to-transparent z-20 pointer-events-none" />
+            <div className="absolute inset-y-0 right-0 w-48 bg-gradient-to-l from-rp-base via-rp-base/80 to-transparent z-20 pointer-events-none" />
 
             {/* Cards container - centered */}
             <div
@@ -160,8 +160,8 @@ export function HeroCarousel({
                                 "relative w-full h-full rounded-2xl overflow-hidden",
                                 "border-2 transition-all duration-300",
                                 isActive
-                                    ? "border-purple-500/60 shadow-2xl shadow-purple-500/40"
-                                    : "border-white/10"
+                                    ? "border-rp-iris/60 shadow-2xl shadow-rp-iris/40"
+                                    : "border-rp-highlight-low"
                             )}>
                                 {/* Image */}
                                 {item.imageUrl ? (
@@ -173,19 +173,19 @@ export function HeroCarousel({
                                         priority={index < 3}
                                     />
                                 ) : (
-                                    <div className="absolute inset-0 bg-gradient-to-br from-purple-900/50 to-pink-900/50 flex items-center justify-center">
-                                        <span className="text-4xl font-bold text-white/30">
+                                    <div className="absolute inset-0 bg-gradient-to-br from-rp-iris/50 to-rp-rose/50 flex items-center justify-center">
+                                        <span className="text-4xl font-bold text-rp-text/30">
                                             {item.name.slice(0, 2).toUpperCase()}
                                         </span>
                                     </div>
                                 )}
 
                                 {/* Overlay gradient */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-rp-base/90 via-rp-base/20 to-transparent" />
 
                                 {/* Featured badge */}
                                 {item.isFeatured && isActive && (
-                                    <div className="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-black text-[10px] font-bold">
+                                    <div className="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 rounded-full bg-gradient-to-r from-rp-gold to-rp-rose text-rp-base text-[10px] font-bold">
                                         <IconSparkles size={10} />
                                         Featured
                                     </div>
@@ -195,9 +195,9 @@ export function HeroCarousel({
                                 {item.rarity && item.rarity !== "common" && (
                                     <div className={cn(
                                         "absolute top-3 right-3 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase",
-                                        item.rarity === "rare" && "bg-purple-500 text-white",
-                                        item.rarity === "epic" && "bg-pink-500 text-white",
-                                        item.rarity === "legendary" && "bg-gradient-to-r from-amber-400 to-orange-500 text-black"
+                                        item.rarity === "rare" && "bg-rp-iris text-rp-base",
+                                        item.rarity === "epic" && "bg-rp-rose text-rp-base",
+                                        item.rarity === "legendary" && "bg-gradient-to-r from-rp-gold to-rp-love text-rp-base"
                                     )}>
                                         {item.rarity}
                                     </div>
@@ -205,11 +205,11 @@ export function HeroCarousel({
 
                                 {/* Content - at bottom */}
                                 <div className="absolute bottom-0 left-0 right-0 p-3">
-                                    <h3 className="text-base font-bold text-white truncate">
+                                    <h3 className="text-base font-bold text-rp-text truncate">
                                         {item.name}
                                     </h3>
                                     {item.description && (
-                                        <p className="text-[10px] text-white/50 line-clamp-1 mt-0.5">
+                                        <p className="text-[10px] text-rp-subtle line-clamp-1 mt-0.5">
                                             {item.description}
                                         </p>
                                     )}
@@ -217,7 +217,7 @@ export function HeroCarousel({
 
                                 {/* Active glow effect */}
                                 {isActive && (
-                                    <div className="absolute inset-0 rounded-2xl ring-1 ring-purple-400/30 pointer-events-none" />
+                                    <div className="absolute inset-0 rounded-2xl ring-1 ring-rp-iris/30 pointer-events-none" />
                                 )}
                             </div>
                         </div>
@@ -229,13 +229,13 @@ export function HeroCarousel({
             <div className="flex items-center justify-center gap-4 mt-6 relative z-30">
                 <button
                     onClick={goPrev}
-                    className="px-6 py-2 rounded-full bg-transparent border border-white/20 text-white/70 text-sm font-medium hover:bg-white/10 hover:border-white/40 transition-all"
+                    className="px-6 py-2 rounded-full bg-transparent border border-rp-muted text-rp-subtle text-sm font-medium hover:bg-rp-overlay hover:border-rp-muted/40 transition-all"
                 >
                     Prev
                 </button>
                 <button
                     onClick={goNext}
-                    className="px-6 py-2 rounded-full bg-white/10 border border-white/20 text-white text-sm font-medium hover:bg-white/20 hover:border-white/40 transition-all"
+                    className="px-6 py-2 rounded-full bg-rp-surface border border-rp-muted text-rp-text text-sm font-medium hover:bg-rp-overlay hover:border-rp-muted/40 transition-all"
                 >
                     Next
                 </button>
@@ -250,8 +250,8 @@ export function HeroCarousel({
                         className={cn(
                             "w-2 h-2 rounded-full transition-all duration-300",
                             index === currentIndex
-                                ? "w-6 bg-purple-500"
-                                : "bg-white/20 hover:bg-white/40"
+                                ? "w-6 bg-rp-iris"
+                                : "bg-rp-muted/20 hover:bg-rp-muted/40"
                         )}
                         aria-label={`Go to slide ${index + 1}`}
                     />

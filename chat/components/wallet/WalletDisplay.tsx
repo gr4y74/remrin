@@ -30,8 +30,8 @@ export const WalletDisplay: FC<WalletDisplayProps> = ({
                 onClick={onAddFunds}
                 className={cn(
                     "group flex items-center gap-2 rounded-full px-3 py-1.5",
-                    "bg-gradient-to-r from-amber-500/10 to-yellow-500/10",
-                    "border border-amber-500/20 hover:border-amber-500/40",
+                    "bg-gradient-to-r from-rp-gold/10 to-rp-gold/5",
+                    "border border-rp-gold/20 hover:border-rp-gold/40",
                     "transition-all duration-300 hover:scale-105",
                     "backdrop-blur-sm",
                     className
@@ -41,20 +41,20 @@ export const WalletDisplay: FC<WalletDisplayProps> = ({
                 <div className="relative">
                     <IconCoin
                         size={18}
-                        className="text-amber-400 animate-coin-glow"
+                        className="text-rp-gold animate-coin-glow"
                     />
-                    <div className="absolute inset-0 rounded-full bg-amber-400/20 blur-sm animate-pulse" />
+                    <div className="absolute inset-0 rounded-full bg-rp-gold/20 blur-sm animate-pulse" />
                 </div>
 
                 {/* Balance */}
-                <span className="text-sm font-semibold text-amber-300">
+                <span className="text-sm font-semibold text-rp-gold">
                     {formatBalance(balanceAether)}
                 </span>
 
                 {/* Add indicator on hover */}
                 <IconPlus
                     size={14}
-                    className="text-amber-400/0 group-hover:text-amber-400 transition-colors duration-200"
+                    className="text-rp-gold/0 group-hover:text-rp-gold transition-colors duration-200"
                 />
             </button>
         )
@@ -65,25 +65,24 @@ export const WalletDisplay: FC<WalletDisplayProps> = ({
         <div
             className={cn(
                 "rounded-2xl p-5",
-                "bg-gradient-to-br from-white/5 to-white/[0.02]",
-                "border border-white/10",
-                "backdrop-blur-xl shadow-xl",
+                "bg-rp-surface backdrop-blur-xl shadow-xl",
+                "border border-rp-highlight-low",
                 className
             )}
         >
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-white">Your Wallet</h3>
+                <h3 className="text-lg font-semibold text-rp-text">Your Wallet</h3>
                 {onAddFunds && (
                     <button
                         onClick={onAddFunds}
                         className={cn(
                             "flex items-center gap-1.5 px-3 py-1.5 rounded-lg",
-                            "bg-gradient-to-r from-amber-500 to-yellow-500",
-                            "text-black font-medium text-sm",
-                            "hover:from-amber-400 hover:to-yellow-400",
+                            "bg-gradient-to-r from-rp-gold to-rp-iris",
+                            "text-rp-base font-medium text-sm",
+                            "hover:from-rp-gold/80 hover:to-rp-iris/80",
                             "transition-all duration-200 hover:scale-105",
-                            "shadow-lg shadow-amber-500/20"
+                            "shadow-lg shadow-rp-gold/20"
                         )}
                     >
                         <IconPlus size={16} />
@@ -95,15 +94,15 @@ export const WalletDisplay: FC<WalletDisplayProps> = ({
             {/* Balances */}
             <div className="space-y-3">
                 {/* Aether Balance */}
-                <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-amber-500/10">
+                <div className="flex items-center justify-between p-3 rounded-xl bg-rp-overlay border border-rp-gold/10">
                     <div className="flex items-center gap-3">
-                        <div className="relative size-10 flex items-center justify-center rounded-full bg-gradient-to-br from-amber-500/20 to-yellow-500/20">
-                            <IconCoin size={22} className="text-amber-400" />
-                            <div className="absolute inset-0 rounded-full bg-amber-400/10 blur-md animate-pulse" />
+                        <div className="relative size-10 flex items-center justify-center rounded-full bg-gradient-to-br from-rp-gold/20 to-rp-iris/20">
+                            <IconCoin size={22} className="text-rp-gold" />
+                            <div className="absolute inset-0 rounded-full bg-rp-gold/10 blur-md animate-pulse" />
                         </div>
                         <div>
-                            <p className="text-xs text-zinc-400">Aether Credits</p>
-                            <p className="text-xl font-bold text-white">
+                            <p className="text-xs text-rp-subtle">Aether Credits</p>
+                            <p className="text-xl font-bold text-rp-text">
                                 {formatBalance(balanceAether)}
                             </p>
                         </div>
@@ -111,14 +110,14 @@ export const WalletDisplay: FC<WalletDisplayProps> = ({
                 </div>
 
                 {/* Brain Balance */}
-                <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-purple-500/10">
+                <div className="flex items-center justify-between p-3 rounded-xl bg-rp-overlay border border-rp-iris/10">
                     <div className="flex items-center gap-3">
-                        <div className="relative size-10 flex items-center justify-center rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20">
+                        <div className="relative size-10 flex items-center justify-center rounded-full bg-gradient-to-br from-rp-iris/20 to-rp-rose/20">
                             <span className="text-lg">🧠</span>
                         </div>
                         <div>
-                            <p className="text-xs text-zinc-400">Brain Credits</p>
-                            <p className="text-xl font-bold text-white">
+                            <p className="text-xs text-rp-subtle">Brain Credits</p>
+                            <p className="text-xl font-bold text-rp-text">
                                 {formatBalance(balanceBrain)}
                             </p>
                         </div>

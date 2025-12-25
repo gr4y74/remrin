@@ -24,8 +24,8 @@ export function EarningsChart({ data, className = "" }: EarningsChartProps) {
     }
 
     return (
-        <div className={`rounded-xl border border-white/10 bg-white/5 p-4 ${className}`}>
-            <h3 className="mb-4 text-sm font-medium text-zinc-400">
+        <div className={`rounded-xl border border-rp-muted/20 bg-rp-surface p-4 ${className}`}>
+            <h3 className="mb-4 text-sm font-medium text-rp-subtle">
                 Last 7 Days
             </h3>
 
@@ -40,27 +40,27 @@ export function EarningsChart({ data, className = "" }: EarningsChartProps) {
                             {/* Tooltip on hover */}
                             <div className="group relative flex-1 w-full flex items-end">
                                 <div
-                                    className="w-full rounded-t-md bg-gradient-to-t from-purple-600 to-purple-400 transition-all duration-500 ease-out hover:from-purple-500 hover:to-purple-300"
+                                    className="w-full rounded-t-md bg-gradient-to-t from-rp-iris to-rp-rose transition-all duration-500 ease-out hover:from-rp-iris/80 hover:to-rp-rose/80"
                                     style={{
                                         height: `${Math.max(height, 4)}%`,
                                         animationDelay: `${index * 75}ms`
                                     }}
                                 />
                                 {/* Tooltip */}
-                                <div className="absolute bottom-full left-1/2 z-10 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded-lg bg-zinc-900 px-2 py-1 text-xs text-white shadow-lg group-hover:block">
-                                    <span className="font-semibold text-purple-400">
+                                <div className="absolute bottom-full left-1/2 z-10 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded-lg bg-rp-base px-2 py-1 text-xs text-rp-text shadow-lg group-hover:block">
+                                    <span className="font-semibold text-rp-iris">
                                         {day.amount.toLocaleString()}
                                     </span>{" "}
                                     Aether
                                     <br />
-                                    <span className="text-zinc-400">
+                                    <span className="text-rp-subtle">
                                         {day.count} sales
                                     </span>
                                 </div>
                             </div>
 
                             {/* Day label */}
-                            <span className="text-[10px] text-zinc-500">
+                            <span className="text-[10px] text-rp-muted">
                                 {formatDate(day.date)}
                             </span>
                         </div>

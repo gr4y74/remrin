@@ -7,7 +7,7 @@ import { IconBell } from "@tabler/icons-react"
 import { FC } from "react"
 import { SIDEBAR_ICON_SIZE } from "../sidebar/sidebar-switcher"
 
-interface AlertsProps {}
+interface AlertsProps { }
 
 export const Alerts: FC<AlertsProps> = () => {
   return (
@@ -16,7 +16,7 @@ export const Alerts: FC<AlertsProps> = () => {
         <div className="relative cursor-pointer hover:opacity-50">
           <IconBell size={SIDEBAR_ICON_SIZE} />
           {1 > 0 && (
-            <span className="notification-indicator absolute right-[-4px] top-[-4px] flex size-4 items-center justify-center rounded-full bg-red-600 text-[10px] text-white">
+            <span className="notification-indicator absolute right-[-4px] top-[-4px] flex size-4 items-center justify-center rounded-full bg-rp-love text-[10px] text-white">
               1
             </span>
           )}

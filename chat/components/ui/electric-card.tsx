@@ -12,24 +12,24 @@ interface ElectricCardProps {
 
 const RARITY_COLORS = {
     common: {
-        border: "#6b7280",      // gray-500
-        glow: "rgba(107, 114, 128, 0.3)",
-        gradient: "rgba(107, 114, 128, 0.15)"
+        border: "#6e6a86",      // rp-muted
+        glow: "rgba(110, 106, 134, 0.3)",
+        gradient: "rgba(110, 106, 134, 0.15)"
     },
     rare: {
-        border: "#8b5cf6",      // purple-500
-        glow: "rgba(139, 92, 246, 0.4)",
-        gradient: "rgba(139, 92, 246, 0.2)"
+        border: "#c4a7e7",      // rp-iris
+        glow: "rgba(196, 167, 231, 0.4)",
+        gradient: "rgba(196, 167, 231, 0.2)"
     },
     epic: {
-        border: "#ec4899",      // pink-500
-        glow: "rgba(236, 72, 153, 0.5)",
-        gradient: "rgba(236, 72, 153, 0.25)"
+        border: "#ebbcba",      // rp-rose
+        glow: "rgba(235, 188, 186, 0.5)",
+        gradient: "rgba(235, 188, 186, 0.25)"
     },
     legendary: {
-        border: "#f59e0b",      // amber-500
-        glow: "rgba(245, 158, 11, 0.6)",
-        gradient: "rgba(245, 158, 11, 0.3)"
+        border: "#f6c177",      // rp-gold
+        glow: "rgba(246, 193, 119, 0.6)",
+        gradient: "rgba(246, 193, 119, 0.3)"
     }
 }
 
@@ -85,8 +85,8 @@ export function ElectricCard({
                 style={{
                     background: isAnimated
                         ? `linear-gradient(-30deg, ${colors.gradient}, transparent, ${colors.gradient}), 
-                           linear-gradient(to bottom, #0a0a0f, #0a0a0f)`
-                        : "#12121a"
+                           linear-gradient(to bottom, var(--rp-base), var(--rp-base))`
+                        : "var(--rp-surface)"
                 }}
             >
                 {/* Inner border */}
@@ -98,7 +98,7 @@ export function ElectricCard({
                     }}
                 >
                     {/* Card content */}
-                    <div className="bg-[#0a0a0f] rounded-[calc(1rem-4px)]">
+                    <div className="bg-rp-base rounded-[calc(1rem-4px)]">
                         {children}
                     </div>
                 </div>

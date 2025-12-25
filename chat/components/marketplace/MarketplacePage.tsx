@@ -95,26 +95,26 @@ export function MarketplacePage({
     }, [])
 
     return (
-        <div className="flex size-full flex-col overflow-hidden bg-gradient-to-b from-black via-zinc-950 to-black">
+        <div className="flex size-full flex-col overflow-hidden bg-rp-base">
             {/* Header */}
-            <div className="border-b border-white/5 bg-black/50 px-6 py-4 backdrop-blur-sm">
+            <div className="border-b border-rp-muted/20 bg-rp-base/50 px-6 py-4 backdrop-blur-sm">
                 <div className="mx-auto max-w-7xl">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <IconShoppingCart className="size-8 text-amber-400" />
+                            <IconShoppingCart className="size-8 text-rp-gold" />
                             <div>
-                                <h1 className="text-2xl font-bold text-white">Soul Bazaar</h1>
-                                <p className="text-sm text-white/50">
+                                <h1 className="text-2xl font-bold text-rp-text">Soul Bazaar</h1>
+                                <p className="text-sm text-rp-subtle">
                                     Discover and collect unique AI companions
                                 </p>
                             </div>
                         </div>
 
                         {/* User Balance Display */}
-                        <div className="hidden items-center gap-2 rounded-full bg-white/5 px-4 py-2 sm:flex">
-                            <span className="text-sm text-white/60">Balance:</span>
-                            <span className="font-bold text-amber-400">{userBalance.toLocaleString()}</span>
-                            <span className="text-xs text-white/40">Aether</span>
+                        <div className="hidden items-center gap-2 rounded-full bg-rp-surface px-4 py-2 sm:flex">
+                            <span className="text-sm text-rp-subtle">Balance:</span>
+                            <span className="font-bold text-rp-gold">{userBalance.toLocaleString()}</span>
+                            <span className="text-xs text-rp-muted">Aether</span>
                         </div>
                     </div>
 
@@ -122,12 +122,12 @@ export function MarketplacePage({
                     <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         {/* Search */}
                         <div className="relative flex-1 sm:max-w-md">
-                            <IconSearch className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-white/40" />
+                            <IconSearch className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-rp-muted" />
                             <Input
                                 placeholder="Search souls..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="border-white/10 bg-white/5 pl-10 text-white placeholder:text-white/40"
+                                className="border-rp-muted/20 bg-rp-surface pl-10 text-rp-text placeholder:text-rp-muted"
                             />
                         </div>
 
@@ -136,7 +136,7 @@ export function MarketplacePage({
                             <Button
                                 variant="outline"
                                 onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
-                                className="border-white/10 bg-white/5 text-white hover:bg-white/10"
+                                className="border-rp-muted/20 bg-rp-surface text-rp-text hover:bg-rp-overlay"
                             >
                                 {sortBy === "price" ? (
                                     <IconSortAscending className="mr-2 size-4" />
@@ -147,7 +147,7 @@ export function MarketplacePage({
                             </Button>
 
                             {sortDropdownOpen && (
-                                <div className="absolute right-0 top-full z-50 mt-2 w-48 rounded-lg border border-white/10 bg-zinc-900 py-1 shadow-xl">
+                                <div className="absolute right-0 top-full z-50 mt-2 w-48 rounded-lg border border-rp-muted/20 bg-rp-overlay py-1 shadow-xl">
                                     {SORT_OPTIONS.map((option) => (
                                         <button
                                             key={option.value}
@@ -156,10 +156,10 @@ export function MarketplacePage({
                                                 setSortDropdownOpen(false)
                                             }}
                                             className={cn(
-                                                "w-full px-4 py-2 text-left text-sm transition-colors hover:bg-white/10",
+                                                "w-full px-4 py-2 text-left text-sm transition-colors hover:bg-rp-surface",
                                                 sortBy === option.value
-                                                    ? "text-amber-400"
-                                                    : "text-white/80"
+                                                    ? "text-rp-gold"
+                                                    : "text-rp-text/80"
                                             )}
                                         >
                                             {option.label}
@@ -180,8 +180,8 @@ export function MarketplacePage({
                                 className={cn(
                                     "shrink-0 rounded-full px-4",
                                     selectedCategory === null
-                                        ? "bg-amber-500 text-white hover:bg-amber-400"
-                                        : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white"
+                                        ? "bg-rp-gold text-rp-base hover:bg-rp-gold/80"
+                                        : "bg-rp-surface text-rp-subtle hover:bg-rp-overlay hover:text-rp-text"
                                 )}
                             >
                                 All
@@ -195,8 +195,8 @@ export function MarketplacePage({
                                     className={cn(
                                         "shrink-0 rounded-full px-4",
                                         selectedCategory === cat.id
-                                            ? "bg-amber-500 text-white hover:bg-amber-400"
-                                            : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white"
+                                            ? "bg-rp-gold text-rp-base hover:bg-rp-gold/80"
+                                            : "bg-rp-surface text-rp-subtle hover:bg-rp-overlay hover:text-rp-text"
                                     )}
                                     style={{
                                         backgroundColor: selectedCategory === cat.id && cat.color
@@ -237,13 +237,13 @@ export function MarketplacePage({
                     ) : (
                         /* Empty State */
                         <div className="flex flex-col items-center justify-center py-20">
-                            <div className="rounded-full bg-white/5 p-6">
-                                <IconMoodEmpty className="size-16 text-white/30" />
+                            <div className="rounded-full bg-rp-surface p-6">
+                                <IconMoodEmpty className="size-16 text-rp-text/30" />
                             </div>
-                            <h3 className="mt-6 text-xl font-semibold text-white">
+                            <h3 className="mt-6 text-xl font-semibold text-rp-text">
                                 No souls found
                             </h3>
-                            <p className="mt-2 text-center text-white/50">
+                            <p className="mt-2 text-center text-rp-subtle">
                                 {searchQuery
                                     ? `No results for "${searchQuery}". Try a different search term.`
                                     : "The marketplace is empty right now. Check back later!"}
@@ -252,7 +252,7 @@ export function MarketplacePage({
                                 <Button
                                     variant="outline"
                                     onClick={() => setSearchQuery("")}
-                                    className="mt-4 border-white/10 text-white hover:bg-white/10"
+                                    className="mt-4 border-rp-muted/20 text-rp-text hover:bg-rp-surface"
                                 >
                                     Clear search
                                 </Button>

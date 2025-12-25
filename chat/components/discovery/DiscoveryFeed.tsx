@@ -129,7 +129,7 @@ export function DiscoveryFeed({
     }
 
     return (
-        <div className="min-h-screen bg-[#0d1117]">
+        <div className="min-h-screen bg-rp-base">
             <div className="mx-auto max-w-7xl px-4 py-8">
                 {/* Trending Section */}
                 {trendingPersonas.length > 0 && (
@@ -153,10 +153,10 @@ export function DiscoveryFeed({
                         {Array.from({ length: 6 }).map((_, i) => (
                             <div
                                 key={i}
-                                className="overflow-hidden rounded-2xl border border-white/5 bg-white/5 animate-fade-in"
+                                className="overflow-hidden rounded-2xl border border-rp-muted/20 bg-rp-surface animate-fade-in"
                                 style={{ animationDelay: `${i * 50}ms` }}
                             >
-                                <Skeleton className="aspect-[3/4] w-full bg-zinc-800 animate-shimmer" />
+                                <Skeleton className="aspect-[3/4] w-full bg-rp-muted/30 animate-shimmer" />
                             </div>
                         ))}
                     </div>
@@ -167,11 +167,11 @@ export function DiscoveryFeed({
                     <>
                         {personas.length === 0 ? (
                             <div className="flex flex-col items-center justify-center py-20 text-center">
-                                <SearchX className="mb-4 size-16 text-zinc-600" />
-                                <h3 className="mb-2 text-xl font-semibold text-zinc-300">
+                                <SearchX className="mb-4 size-16 text-rp-muted" />
+                                <h3 className="mb-2 text-xl font-semibold text-rp-text">
                                     No characters found
                                 </h3>
-                                <p className="text-zinc-500">
+                                <p className="text-rp-subtle">
                                     Try selecting a different category or check back later.
                                 </p>
                             </div>
@@ -199,7 +199,7 @@ export function DiscoveryFeed({
                                     onClick={handleLoadMore}
                                     disabled={loadingMore}
                                     variant="outline"
-                                    className="min-w-40 rounded-full border-zinc-700 bg-white/5 text-white hover:bg-white/10"
+                                    className="min-w-40 rounded-full border-rp-muted bg-rp-surface text-rp-text hover:bg-rp-overlay"
                                 >
                                     {loadingMore ? (
                                         <>

@@ -229,7 +229,7 @@ export const ChatInput: FC<ChatInputProps> = ({ }) => {
                 )
               }
             >
-              <div className="flex cursor-pointer items-center justify-center space-x-1 rounded-lg bg-purple-600 px-3 py-1 hover:opacity-50">
+              <div className="flex cursor-pointer items-center justify-center space-x-1 rounded-lg bg-rp-iris px-3 py-1 hover:bg-rp-iris/80">
                 <IconBolt size={20} />
 
                 <div>{tool.name}</div>

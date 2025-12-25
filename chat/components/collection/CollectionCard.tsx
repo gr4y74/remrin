@@ -25,31 +25,31 @@ const RARITY_CONFIG: Record<Rarity, {
     stars: number
 }> = {
     common: {
-        border: "border-gray-500/50",
-        glow: "rgba(156, 163, 175, 0.4)",
-        gradient: "from-gray-600/50 to-gray-500/50",
-        text: "text-gray-400",
+        border: "border-rp-muted/50",
+        glow: "rgba(110, 106, 134, 0.4)",
+        gradient: "from-rp-muted/50 to-rp-muted/30",
+        text: "text-rp-subtle",
         stars: 1
     },
     rare: {
-        border: "border-blue-500/50",
-        glow: "rgba(59, 130, 246, 0.5)",
-        gradient: "from-blue-600/50 to-blue-500/50",
-        text: "text-blue-400",
+        border: "border-rp-pine/50",
+        glow: "rgba(49, 116, 143, 0.5)",
+        gradient: "from-rp-pine/50 to-rp-pine/30",
+        text: "text-rp-foam",
         stars: 2
     },
     epic: {
-        border: "border-purple-500/50",
-        glow: "rgba(139, 92, 246, 0.5)",
-        gradient: "from-purple-600/50 to-purple-500/50",
-        text: "text-purple-400",
+        border: "border-rp-iris/50",
+        glow: "rgba(196, 167, 231, 0.5)",
+        gradient: "from-rp-iris/50 to-rp-iris/30",
+        text: "text-rp-iris",
         stars: 3
     },
     legendary: {
-        border: "border-amber-500/50",
-        glow: "rgba(245, 158, 11, 0.6)",
-        gradient: "from-amber-600/50 to-orange-500/50",
-        text: "text-amber-400",
+        border: "border-rp-gold/50",
+        glow: "rgba(246, 193, 119, 0.6)",
+        gradient: "from-rp-gold/50 to-rp-rose/50",
+        text: "text-rp-gold",
         stars: 4
     }
 }
@@ -94,9 +94,9 @@ export function CollectionCard({
         <div
             ref={cardRef}
             className={cn(
-                "group relative overflow-hidden rounded-xl border-2 bg-white/5",
+                "group relative overflow-hidden rounded-xl border-2 bg-rp-surface",
                 "transition-all duration-300 ease-out animate-card-enter",
-                soul.isOwned ? config.border : "border-white/10",
+                soul.isOwned ? config.border : "border-rp-muted/20",
                 soul.isOwned ? "cursor-pointer" : "cursor-default",
                 className
             )}
@@ -133,25 +133,25 @@ export function CollectionCard({
                         "flex size-full items-center justify-center",
                         soul.isOwned
                             ? `bg-gradient-to-br ${config.gradient}`
-                            : "bg-gradient-to-br from-gray-800/80 to-gray-900/80"
+                            : "bg-gradient-to-br from-rp-base/80 to-rp-surface/80"
                     )}>
                         {soul.isOwned ? (
-                            <span className="text-3xl font-bold text-white/50">
+                            <span className="text-3xl font-bold text-rp-text/50">
                                 {soul.name.slice(0, 2).toUpperCase()}
                             </span>
                         ) : (
-                            <IconLock className="size-10 text-white/20" />
+                            <IconLock className="size-10 text-rp-text/20" />
                         )}
                     </div>
                 )}
 
                 {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-rp-base/80 via-rp-base/20 to-transparent" />
 
                 {/* Duplicate Count Badge */}
                 {soul.isOwned && soul.pullCount > 1 && (
                     <div className="absolute right-2 top-2">
-                        <Badge className="rounded-full border-0 bg-black/70 px-2 py-0.5 text-xs font-bold text-white backdrop-blur-sm">
+                        <Badge className="rounded-full border-0 bg-rp-base/70 px-2 py-0.5 text-xs font-bold text-rp-text backdrop-blur-sm">
                             ×{soul.pullCount}
                         </Badge>
                     </div>
@@ -166,14 +166,14 @@ export function CollectionCard({
                                 key={i}
                                 className={cn(
                                     "size-3",
-                                    soul.isOwned ? config.text : "text-gray-600"
+                                    soul.isOwned ? config.text : "text-rp-muted"
                                 )}
                             />
                         ))}
                         {Array.from({ length: 4 - config.stars }).map((_, i) => (
                             <IconStar
                                 key={i}
-                                className="size-3 text-gray-700"
+                                className="size-3 text-rp-muted"
                             />
                         ))}
                     </div>
@@ -182,7 +182,7 @@ export function CollectionCard({
                     <h3 className={cn(
                         "line-clamp-1 text-sm font-semibold leading-tight drop-shadow-lg",
                         "transition-transform duration-300",
-                        soul.isOwned ? "text-white" : "text-white/40",
+                        soul.isOwned ? "text-rp-text" : "text-rp-text/40",
                         isHovering && soul.isOwned && "translate-x-0.5"
                     )}>
                         {soul.isOwned ? soul.name : "???"}
@@ -191,7 +191,7 @@ export function CollectionCard({
                     {/* Rarity Label */}
                     <p className={cn(
                         "mt-0.5 text-xs capitalize",
-                        soul.isOwned ? config.text : "text-gray-600"
+                        soul.isOwned ? config.text : "text-rp-muted"
                     )}>
                         {soul.rarity}
                     </p>

@@ -63,14 +63,14 @@ export function CharacterCard({
     }
 
     // Glow color based on category
-    const glowColor = categoryColor || 'rgba(139, 92, 246, 0.6)'
+    const glowColor = categoryColor || 'rgba(196, 167, 231, 0.6)' // rp-iris default
 
     return (
         <Link href={`/character/${id}`} className="block">
             <div
                 ref={cardRef}
                 className={cn(
-                    "group relative overflow-hidden rounded-2xl border border-white/5 bg-white/5",
+                    "group relative overflow-hidden rounded-2xl border border-rp-muted/20 bg-rp-surface",
                     "transition-all duration-300 ease-out animate-card-enter",
                     className
                 )}
@@ -81,7 +81,7 @@ export function CharacterCard({
                     boxShadow: isHovering
                         ? `0 20px 40px rgba(0,0,0,0.4), 0 0 40px ${glowColor}`
                         : '0 4px 20px rgba(0,0,0,0.2)',
-                    borderColor: isHovering ? glowColor : 'rgba(255,255,255,0.05)',
+                    borderColor: isHovering ? glowColor : 'rgba(110, 106, 134, 0.2)',
                     ['--glow-color' as string]: glowColor
                 }}
                 onMouseMove={handleMouseMove}
@@ -102,19 +102,19 @@ export function CharacterCard({
                             sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
                         />
                     ) : (
-                        <div className="flex size-full items-center justify-center bg-gradient-to-br from-purple-600/50 to-cyan-500/50">
-                            <span className="text-4xl font-bold text-white/50">
+                        <div className="flex size-full items-center justify-center bg-gradient-to-br from-rp-iris/50 to-rp-foam/50">
+                            <span className="text-4xl font-bold text-rp-text/50">
                                 {name.slice(0, 2).toUpperCase()}
                             </span>
                         </div>
                     )}
 
                     {/* Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-rp-base/90 via-rp-base/20 to-transparent" />
 
                     {/* Stats Badge */}
                     <div className="absolute right-3 top-3">
-                        <Badge className="flex items-center gap-1 rounded-full border-0 bg-black/60 px-2 py-1 text-xs text-white backdrop-blur-sm">
+                        <Badge className="flex items-center gap-1 rounded-full border-0 bg-rp-base/60 px-2 py-1 text-xs text-rp-text backdrop-blur-sm">
                             <MessageCircle className="size-3" />
                             <span>{formatCount(totalChats)}</span>
                         </Badge>
@@ -133,8 +133,8 @@ export function CharacterCard({
                                 style={{
                                     backgroundColor: categoryColor
                                         ? `${categoryColor}30`
-                                        : "rgba(139, 92, 246, 0.3)",
-                                    color: categoryColor || "#a78bfa"
+                                        : "rgba(196, 167, 231, 0.3)",
+                                    color: categoryColor || "#c4a7e7"
                                 }}
                             >
                                 {category}
@@ -143,7 +143,7 @@ export function CharacterCard({
 
                         {/* Character Name */}
                         <h3 className={cn(
-                            "line-clamp-2 text-lg font-bold leading-tight text-white drop-shadow-lg",
+                            "line-clamp-2 text-lg font-bold leading-tight text-rp-text drop-shadow-lg",
                             "transition-transform duration-300",
                             isHovering && "translate-x-1"
                         )}>

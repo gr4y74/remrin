@@ -32,16 +32,16 @@ export function CreatorDashboard({ userId }: CreatorDashboardProps) {
     const activeListings = listings.filter((l) => l.is_active)
 
     return (
-        <div className="min-h-screen bg-[#0d1117] p-6">
+        <div className="min-h-screen bg-rp-base p-6">
             <div className="mx-auto max-w-6xl space-y-6">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-                            <Sparkles className="size-6 text-purple-400" />
+                        <h1 className="text-2xl font-bold text-rp-text flex items-center gap-2">
+                            <Sparkles className="size-6 text-rp-iris" />
                             Creator Dashboard
                         </h1>
-                        <p className="text-zinc-400">
+                        <p className="text-rp-subtle">
                             Manage your listings and track your earnings
                         </p>
                     </div>
@@ -50,13 +50,13 @@ export function CreatorDashboard({ userId }: CreatorDashboardProps) {
                             variant="outline"
                             size="icon"
                             onClick={refresh}
-                            className="border-white/10 bg-transparent text-white hover:bg-white/5"
+                            className="border-rp-muted/20 bg-transparent text-rp-text hover:bg-rp-surface"
                         >
                             <RefreshCw className="size-4" />
                         </Button>
                         <Button
                             onClick={() => setCreateModalOpen(true)}
-                            className="bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-500 hover:to-pink-500"
+                            className="bg-gradient-to-r from-rp-iris to-rp-rose text-rp-base hover:from-rp-iris/80 hover:to-rp-rose/80"
                         >
                             <Plus className="mr-2 size-4" />
                             Create Listing
@@ -67,50 +67,50 @@ export function CreatorDashboard({ userId }: CreatorDashboardProps) {
                 {/* Stats Cards */}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                     {/* Total Earnings */}
-                    <div className="rounded-xl border border-white/10 bg-gradient-to-br from-purple-900/20 to-pink-900/20 p-6">
+                    <div className="rounded-xl border border-rp-iris/20 bg-gradient-to-br from-rp-iris/20 to-rp-rose/20 p-6">
                         <div className="flex items-center gap-3">
-                            <div className="rounded-lg bg-purple-500/20 p-2">
-                                <Wallet className="size-5 text-purple-400" />
+                            <div className="rounded-lg bg-rp-iris/20 p-2">
+                                <Wallet className="size-5 text-rp-iris" />
                             </div>
-                            <span className="text-sm text-zinc-400">Total Earnings</span>
+                            <span className="text-sm text-rp-subtle">Total Earnings</span>
                         </div>
                         <div className="mt-4">
-                            <span className="text-3xl font-bold text-white">
+                            <span className="text-3xl font-bold text-rp-text">
                                 {(wallet?.total_earned || 0).toLocaleString()}
                             </span>
-                            <span className="ml-2 text-sm text-purple-400">Aether</span>
+                            <span className="ml-2 text-sm text-rp-iris">Aether</span>
                         </div>
                     </div>
 
                     {/* Total Sales */}
-                    <div className="rounded-xl border border-white/10 bg-white/5 p-6">
+                    <div className="rounded-xl border border-rp-muted/20 bg-rp-surface p-6">
                         <div className="flex items-center gap-3">
-                            <div className="rounded-lg bg-green-500/20 p-2">
-                                <ShoppingBag className="size-5 text-green-400" />
+                            <div className="rounded-lg bg-rp-foam/20 p-2">
+                                <ShoppingBag className="size-5 text-rp-foam" />
                             </div>
-                            <span className="text-sm text-zinc-400">Total Sales</span>
+                            <span className="text-sm text-rp-subtle">Total Sales</span>
                         </div>
                         <div className="mt-4">
-                            <span className="text-3xl font-bold text-white">
+                            <span className="text-3xl font-bold text-rp-text">
                                 {totalSalesCount}
                             </span>
-                            <span className="ml-2 text-sm text-zinc-500">souls sold</span>
+                            <span className="ml-2 text-sm text-rp-muted">souls sold</span>
                         </div>
                     </div>
 
                     {/* Active Listings */}
-                    <div className="rounded-xl border border-white/10 bg-white/5 p-6">
+                    <div className="rounded-xl border border-rp-muted/20 bg-rp-surface p-6">
                         <div className="flex items-center gap-3">
-                            <div className="rounded-lg bg-blue-500/20 p-2">
-                                <TrendingUp className="size-5 text-blue-400" />
+                            <div className="rounded-lg bg-rp-pine/20 p-2">
+                                <TrendingUp className="size-5 text-rp-pine" />
                             </div>
-                            <span className="text-sm text-zinc-400">Active Listings</span>
+                            <span className="text-sm text-rp-subtle">Active Listings</span>
                         </div>
                         <div className="mt-4">
-                            <span className="text-3xl font-bold text-white">
+                            <span className="text-3xl font-bold text-rp-text">
                                 {activeListings.length}
                             </span>
-                            <span className="ml-2 text-sm text-zinc-500">
+                            <span className="ml-2 text-sm text-rp-muted">
                                 of {listings.length}
                             </span>
                         </div>
@@ -126,13 +126,13 @@ export function CreatorDashboard({ userId }: CreatorDashboardProps) {
 
                     {/* Recent Activity */}
                     <div className="lg:col-span-2">
-                        <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-                            <h3 className="mb-4 text-sm font-medium text-zinc-400">
+                        <div className="rounded-xl border border-rp-muted/20 bg-rp-surface p-4">
+                            <h3 className="mb-4 text-sm font-medium text-rp-muted">
                                 Recent Sales
                             </h3>
                             {totalSalesCount === 0 ? (
-                                <div className="py-8 text-center text-zinc-500">
-                                    <ShoppingBag className="mx-auto mb-2 size-8 text-zinc-600" />
+                                <div className="py-8 text-center text-rp-muted">
+                                    <ShoppingBag className="mx-auto mb-2 size-8 text-rp-muted/50" />
                                     <p>No sales yet. Your first sale is coming!</p>
                                 </div>
                             ) : (
@@ -143,12 +143,12 @@ export function CreatorDashboard({ userId }: CreatorDashboardProps) {
                                         .map((listing) => (
                                             <div
                                                 key={listing.id}
-                                                className="flex items-center justify-between rounded-lg bg-white/5 p-3"
+                                                className="flex items-center justify-between rounded-lg bg-rp-overlay p-3"
                                             >
-                                                <span className="text-sm text-white">
+                                                <span className="text-sm text-rp-text">
                                                     {listing.personas?.name}
                                                 </span>
-                                                <span className="text-sm text-purple-400">
+                                                <span className="text-sm text-rp-iris">
                                                     {listing.total_sales} sold
                                                 </span>
                                             </div>
@@ -161,7 +161,7 @@ export function CreatorDashboard({ userId }: CreatorDashboardProps) {
 
                 {/* Listings Table */}
                 <div>
-                    <h2 className="mb-4 text-lg font-semibold text-white">
+                    <h2 className="mb-4 text-lg font-semibold text-rp-text">
                         Your Listings
                     </h2>
                     <ListingManager
@@ -185,32 +185,32 @@ export function CreatorDashboard({ userId }: CreatorDashboardProps) {
 
 function DashboardSkeleton() {
     return (
-        <div className="min-h-screen bg-[#0d1117] p-6">
+        <div className="min-h-screen bg-rp-base p-6">
             <div className="mx-auto max-w-6xl space-y-6">
                 {/* Header skeleton */}
                 <div className="flex items-center justify-between">
                     <div>
-                        <Skeleton className="h-8 w-48 bg-zinc-800" />
-                        <Skeleton className="mt-2 h-4 w-64 bg-zinc-800" />
+                        <Skeleton className="h-8 w-48 bg-rp-surface" />
+                        <Skeleton className="mt-2 h-4 w-64 bg-rp-surface" />
                     </div>
-                    <Skeleton className="h-10 w-32 bg-zinc-800" />
+                    <Skeleton className="h-10 w-32 bg-rp-surface" />
                 </div>
 
                 {/* Stats cards skeleton */}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                     {[1, 2, 3].map((i) => (
-                        <Skeleton key={i} className="h-32 rounded-xl bg-zinc-800" />
+                        <Skeleton key={i} className="h-32 rounded-xl bg-rp-surface" />
                     ))}
                 </div>
 
                 {/* Chart & activity skeleton */}
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                    <Skeleton className="h-48 rounded-xl bg-zinc-800 lg:col-span-1" />
-                    <Skeleton className="h-48 rounded-xl bg-zinc-800 lg:col-span-2" />
+                    <Skeleton className="h-48 rounded-xl bg-rp-surface lg:col-span-1" />
+                    <Skeleton className="h-48 rounded-xl bg-rp-surface lg:col-span-2" />
                 </div>
 
                 {/* Table skeleton */}
-                <Skeleton className="h-64 rounded-xl bg-zinc-800" />
+                <Skeleton className="h-64 rounded-xl bg-rp-surface" />
             </div>
         </div>
     )

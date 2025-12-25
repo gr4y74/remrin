@@ -87,21 +87,21 @@ export const TopUpModal: FC<TopUpModalProps> = ({
 
     return (
         <Dialog open={isOpen} onOpenChange={() => onClose()}>
-            <DialogContent className="sm:max-w-4xl bg-[#0d1117] border-white/10">
+            <DialogContent className="sm:max-w-4xl bg-rp-base border-rp-muted/20">
                 <DialogHeader>
-                    <DialogTitle className="text-2xl font-bold text-white flex items-center gap-2">
-                        <IconCoin className="text-amber-400" size={28} />
+                    <DialogTitle className="text-2xl font-bold text-rp-text flex items-center gap-2">
+                        <IconCoin className="text-rp-gold" size={28} />
                         Add Aether Credits
                     </DialogTitle>
-                    <DialogDescription className="text-zinc-400">
+                    <DialogDescription className="text-rp-muted">
                         Power your AI souls with Aether credits. One-time purchase, never expires.
                     </DialogDescription>
                 </DialogHeader>
 
                 {/* Current Balance */}
-                <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/5 border border-white/10 mb-4">
-                    <span className="text-zinc-400">Current Balance</span>
-                    <span className="text-lg font-bold text-amber-400">
+                <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-rp-surface border border-rp-muted/20 mb-4">
+                    <span className="text-rp-subtle">Current Balance</span>
+                    <span className="text-lg font-bold text-rp-gold">
                         {currentBalance.toLocaleString()} Aether
                     </span>
                 </div>
@@ -122,7 +122,7 @@ export const TopUpModal: FC<TopUpModalProps> = ({
                 </div>
 
                 {/* Security Badges */}
-                <div className="flex items-center justify-center gap-6 mt-6 text-zinc-500">
+                <div className="flex items-center justify-center gap-6 mt-6 text-rp-muted">
                     <div className="flex items-center gap-1.5 text-xs">
                         <IconLock size={14} />
                         <span>Secure Payment via Stripe</span>

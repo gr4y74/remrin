@@ -18,11 +18,11 @@ type SortOption = "newest" | "name" | "rarity" | "duplicates"
 type FilterTab = "all" | Rarity
 
 const FILTER_TABS: { value: FilterTab; label: string; color: string }[] = [
-    { value: "all", label: "All", color: "bg-white/10" },
-    { value: "legendary", label: "Legendary", color: "bg-amber-500/20" },
-    { value: "epic", label: "Epic", color: "bg-purple-500/20" },
-    { value: "rare", label: "Rare", color: "bg-blue-500/20" },
-    { value: "common", label: "Common", color: "bg-gray-500/20" }
+    { value: "all", label: "All", color: "bg-rp-muted/10" },
+    { value: "legendary", label: "Legendary", color: "bg-rp-gold/20" },
+    { value: "epic", label: "Epic", color: "bg-rp-iris/20" },
+    { value: "rare", label: "Rare", color: "bg-rp-pine/20" },
+    { value: "common", label: "Common", color: "bg-rp-muted/20" }
 ]
 
 const RARITY_ORDER: Record<Rarity, number> = {
@@ -109,19 +109,19 @@ export function CollectionGrid({
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 {/* Search */}
                 <div className="relative flex-1 sm:max-w-xs">
-                    <IconSearch className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                    <IconSearch className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-rp-muted" />
                     <Input
                         type="text"
                         placeholder="Search souls..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-9 bg-white/5 border-white/10"
+                        className="pl-9 bg-rp-surface border-rp-muted/20 text-rp-text placeholder:text-rp-muted"
                     />
                 </div>
 
                 {/* Sort Controls */}
                 <div className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground">Sort:</span>
+                    <span className="text-xs text-rp-subtle">Sort:</span>
                     {(["rarity", "newest", "name", "duplicates"] as SortOption[]).map((option) => (
                         <Button
                             key={option}
@@ -131,8 +131,8 @@ export function CollectionGrid({
                             className={cn(
                                 "h-7 px-2 text-xs capitalize",
                                 sortBy === option
-                                    ? "bg-white/10 text-white"
-                                    : "text-muted-foreground hover:text-white"
+                                    ? "bg-rp-overlay text-rp-text"
+                                    : "text-rp-subtle hover:text-rp-text hover:bg-rp-overlay/50"
                             )}
                         >
                             {option}
@@ -165,14 +165,14 @@ export function CollectionGrid({
                             className={cn(
                                 "h-8 px-3 text-sm font-medium transition-all",
                                 activeFilter === tab.value
-                                    ? `${tab.color} text-white ring-1 ring-white/20`
-                                    : "text-muted-foreground hover:text-white hover:bg-white/5"
+                                    ? `${tab.color} text-rp-text ring-1 ring-rp-muted/20`
+                                    : "text-rp-subtle hover:text-rp-text hover:bg-rp-surface"
                             )}
                         >
                             {tab.label}
                             <span className={cn(
                                 "ml-1.5 text-xs",
-                                activeFilter === tab.value ? "text-white/70" : "text-muted-foreground"
+                                activeFilter === tab.value ? "text-rp-text/70" : "text-rp-muted"
                             )}>
                                 {count}/{total}
                             </span>
@@ -182,7 +182,7 @@ export function CollectionGrid({
             </div>
 
             {/* Results Count */}
-            <div className="text-sm text-muted-foreground">
+            <div className="text-sm text-rp-subtle">
                 Showing {ownedCount} owned of {totalCount} souls
                 {searchTerm && ` matching "${searchTerm}"`}
             </div>
@@ -193,14 +193,14 @@ export function CollectionGrid({
                     {Array.from({ length: 10 }).map((_, i) => (
                         <div
                             key={i}
-                            className="aspect-[3/4] animate-pulse rounded-xl bg-white/5"
+                            className="aspect-[3/4] animate-pulse rounded-xl bg-rp-surface"
                         />
                     ))}
                 </div>
             ) : filteredSouls.length === 0 ? (
-                <div className="flex min-h-[300px] flex-col items-center justify-center rounded-xl border border-dashed border-white/10 bg-white/5 p-8 text-center">
-                    <p className="text-lg font-medium text-white/60">No souls found</p>
-                    <p className="mt-1 text-sm text-muted-foreground">
+                <div className="flex min-h-[300px] flex-col items-center justify-center rounded-xl border border-dashed border-rp-muted/20 bg-rp-surface p-8 text-center">
+                    <p className="text-lg font-medium text-rp-text/60">No souls found</p>
+                    <p className="mt-1 text-sm text-rp-muted">
                         {searchTerm
                             ? "Try a different search term"
                             : "Pull from the gacha to add souls to your collection!"}

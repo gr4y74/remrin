@@ -106,7 +106,7 @@ export function CharacterProfilePage({
     }
 
     return (
-        <div className="relative min-h-screen bg-[#0d1117]">
+        <div className="relative min-h-screen bg-rp-base">
             {/* Blurred Hero Background with Parallax */}
             {persona.imageUrl && (
                 <div
@@ -123,7 +123,7 @@ export function CharacterProfilePage({
                         className="object-cover opacity-30 blur-3xl scale-110"
                         priority
                     />
-                    <div className="absolute inset-0 bg-gradient-to-b from-[#0d1117]/50 via-[#0d1117]/80 to-[#0d1117]" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-rp-base/50 via-rp-base/80 to-rp-base" />
                 </div>
             )}
 
@@ -133,7 +133,7 @@ export function CharacterProfilePage({
                 <div className="px-4 py-4 md:px-8 animate-fade-in">
                     <button
                         onClick={() => router.back()}
-                        className="inline-flex items-center gap-2 text-zinc-400 transition-all duration-300 hover:text-white hover:translate-x-[-4px]"
+                        className="inline-flex items-center gap-2 text-rp-subtle transition-all duration-300 hover:text-rp-text hover:translate-x-[-4px]"
                     >
                         <ArrowLeft className="size-5" />
                         <span>Back</span>
@@ -178,13 +178,13 @@ export function CharacterProfilePage({
                             {/* Intro Message Preview */}
                             {persona.introMessage && (
                                 <div
-                                    className="rounded-2xl bg-white/5 p-6 backdrop-blur-xl animate-fade-in-up transition-all duration-300 hover:bg-white/10"
+                                    className="rounded-2xl bg-rp-surface p-6 backdrop-blur-xl animate-fade-in-up transition-all duration-300 hover:bg-rp-overlay"
                                     style={{ animationDelay: '300ms', animationFillMode: 'both' }}
                                 >
-                                    <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-zinc-500">
+                                    <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-rp-muted">
                                         First Message
                                     </h2>
-                                    <p className="text-base italic leading-relaxed text-zinc-300">
+                                    <p className="text-base italic leading-relaxed text-rp-text">
                                         &ldquo;{persona.introMessage}&rdquo;
                                     </p>
                                 </div>
@@ -200,9 +200,9 @@ export function CharacterProfilePage({
                                     onClick={handleStartChat}
                                     disabled={isStartingChat}
                                     className={cn(
-                                        "group w-full rounded-2xl bg-gradient-to-r from-purple-600 to-cyan-500 py-6 text-lg font-bold text-white",
-                                        "shadow-2xl shadow-purple-500/25 transition-all duration-300",
-                                        "hover:from-purple-500 hover:to-cyan-400 hover:shadow-purple-500/40 hover:scale-[1.02]",
+                                        "group w-full rounded-2xl bg-gradient-to-r from-rp-iris to-rp-foam py-6 text-lg font-bold text-rp-base",
+                                        "shadow-2xl shadow-rp-iris/25 transition-all duration-300",
+                                        "hover:from-rp-iris/80 hover:to-rp-foam/80 hover:shadow-rp-iris/40 hover:scale-[1.02]",
                                         "disabled:opacity-70",
                                         !isStartingChat && "animate-float"
                                     )}
@@ -225,17 +225,17 @@ export function CharacterProfilePage({
                             {(hasMoments || moments.length > 0) && (
                                 <div className="space-y-4">
                                     <div className="flex items-center justify-between">
-                                        <h2 className="flex items-center gap-2 text-lg font-semibold text-white">
-                                            <ImageIcon className="size-5 text-purple-400" />
+                                        <h2 className="flex items-center gap-2 text-lg font-semibold text-rp-text">
+                                            <ImageIcon className="size-5 text-rp-iris" />
                                             Moments
                                         </h2>
                                         {moments.length > 0 && (
-                                            <a
+                                            <Link
                                                 href={`/moments?persona=${persona.id}`}
-                                                className="text-sm text-purple-400 transition-colors hover:text-purple-300"
+                                                className="text-sm text-rp-iris transition-colors hover:text-rp-rose"
                                             >
                                                 View All →
-                                            </a>
+                                            </Link>
                                         )}
                                     </div>
                                     {moments.length > 0 ? (
@@ -247,10 +247,10 @@ export function CharacterProfilePage({
                                             viewAllHref={`/moments?persona=${persona.id}`}
                                         />
                                     ) : (
-                                        <div className="rounded-2xl bg-white/5 p-8 text-center backdrop-blur-xl">
-                                            <ImageIcon className="mx-auto mb-3 size-12 text-zinc-500" />
-                                            <p className="text-zinc-400">No moments yet</p>
-                                            <p className="mt-1 text-sm text-zinc-500">
+                                        <div className="rounded-2xl bg-rp-surface p-8 text-center backdrop-blur-xl">
+                                            <ImageIcon className="mx-auto mb-3 size-12 text-rp-muted" />
+                                            <p className="text-rp-subtle">No moments yet</p>
+                                            <p className="mt-1 text-sm text-rp-muted">
                                                 Check back later for gallery content
                                             </p>
                                         </div>

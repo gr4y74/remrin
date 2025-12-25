@@ -81,7 +81,7 @@ export const MotherMessage: FC<MotherMessageProps> = ({
             <div
                 className={cn(
                     "absolute -inset-2 rounded-2xl blur-xl",
-                    "bg-gradient-to-r from-blue-500/20 via-cyan-500/20 to-blue-500/20",
+                    "bg-gradient-to-r from-rp-pine/20 via-rp-foam/20 to-rp-pine/20",
                     "animate-mother-glow",
                     isSpeaking && "opacity-75"
                 )}
@@ -91,27 +91,27 @@ export const MotherMessage: FC<MotherMessageProps> = ({
             <div
                 className={cn(
                     "relative px-5 py-4 rounded-2xl",
-                    "bg-gradient-to-br from-slate-800/90 via-slate-800/80 to-slate-900/90",
-                    "border border-blue-500/30",
+                    "bg-gradient-to-br from-rp-surface/90 via-rp-surface/80 to-rp-base/90",
+                    "border border-rp-pine/30",
                     "backdrop-blur-sm",
-                    "shadow-lg shadow-blue-500/10"
+                    "shadow-lg shadow-rp-pine/10"
                 )}
             >
                 {/* Speaking indicator */}
                 {isSpeaking && (
-                    <div className="absolute -top-2 -right-2 flex items-center gap-1 px-2 py-1 rounded-full bg-blue-500/80 animate-pulse">
+                    <div className="absolute -top-2 -right-2 flex items-center gap-1 px-2 py-1 rounded-full bg-rp-pine/80 animate-pulse">
                         <IconVolume size={12} className="text-white" />
                         <span className="text-[10px] text-white font-medium">Speaking</span>
                     </div>
                 )}
 
                 {/* Message content */}
-                <p className="text-white/90 text-sm leading-relaxed whitespace-pre-wrap">
+                <p className="text-rp-text/90 text-sm leading-relaxed whitespace-pre-wrap">
                     {message}
                 </p>
 
                 {/* Decorative element */}
-                <div className="absolute bottom-0 left-4 w-8 h-[2px] bg-gradient-to-r from-blue-500 to-transparent rounded-full" />
+                <div className="absolute bottom-0 left-4 w-8 h-[2px] bg-gradient-to-r from-rp-pine to-transparent rounded-full" />
             </div>
         </div>
     )

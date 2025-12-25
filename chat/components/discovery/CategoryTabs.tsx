@@ -46,7 +46,7 @@ export function CategoryTabs({
         <div className="relative">
             {/* Left Gradient */}
             {showLeftGradient && (
-                <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-12 bg-gradient-to-r from-[#0d1117] to-transparent" />
+                <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-12 bg-gradient-to-r from-rp-base to-transparent" />
             )}
 
             {/* Scrollable Tabs */}
@@ -66,8 +66,8 @@ export function CategoryTabs({
                             className={cn(
                                 "relative flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all duration-200",
                                 isActive
-                                    ? "bg-white/10 text-white"
-                                    : "text-zinc-400 hover:bg-white/5 hover:text-zinc-200"
+                                    ? "bg-rp-overlay text-rp-text"
+                                    : "text-rp-subtle hover:bg-rp-surface hover:text-rp-text"
                             )}
                         >
                             {/* Icon */}
@@ -78,7 +78,7 @@ export function CategoryTabs({
 
                             {/* Active Indicator */}
                             {isActive && (
-                                <div className="absolute -bottom-0.5 left-1/2 h-0.5 w-8 -translate-x-1/2 rounded-full bg-gradient-to-r from-purple-600 to-cyan-500" />
+                                <div className="absolute -bottom-0.5 left-1/2 h-0.5 w-8 -translate-x-1/2 rounded-full bg-gradient-to-r from-rp-iris to-rp-foam" />
                             )}
                         </button>
                     )
@@ -87,7 +87,7 @@ export function CategoryTabs({
 
             {/* Right Gradient */}
             {showRightGradient && (
-                <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-12 bg-gradient-to-l from-[#0d1117] to-transparent" />
+                <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-12 bg-gradient-to-l from-rp-base to-transparent" />
             )}
         </div>
     )

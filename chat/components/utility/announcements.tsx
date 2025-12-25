@@ -9,7 +9,7 @@ import { IconExternalLink, IconSpeakerphone } from "@tabler/icons-react"
 import { FC, useEffect, useState } from "react"
 import { SIDEBAR_ICON_SIZE } from "../sidebar/sidebar-switcher"
 
-interface AnnouncementsProps {}
+interface AnnouncementsProps { }
 
 export const Announcements: FC<AnnouncementsProps> = () => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
@@ -83,7 +83,7 @@ export const Announcements: FC<AnnouncementsProps> = () => {
         <div className="relative cursor-pointer hover:opacity-50">
           <IconSpeakerphone size={SIDEBAR_ICON_SIZE} />
           {unreadCount > 0 && (
-            <div className="notification-indicator absolute right-[-4px] top-[-4px] flex size-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
+            <div className="notification-indicator absolute right-[-4px] top-[-4px] flex size-4 items-center justify-center rounded-full bg-rp-love text-[10px] text-white">
               {unreadCount}
             </div>
           )}

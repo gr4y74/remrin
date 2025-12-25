@@ -67,14 +67,14 @@ export function ListingManager({ listings, userId, onRefresh }: ListingManagerPr
 
     if (listings.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center rounded-xl border border-white/10 bg-white/5 p-8 text-center">
-                <div className="mb-4 rounded-full bg-purple-500/20 p-4">
-                    <TrendingUp className="size-8 text-purple-400" />
+            <div className="flex flex-col items-center justify-center rounded-xl border border-rp-muted/20 bg-rp-surface p-8 text-center">
+                <div className="mb-4 rounded-full bg-rp-iris/20 p-4">
+                    <TrendingUp className="size-8 text-rp-iris" />
                 </div>
-                <h3 className="mb-2 text-lg font-semibold text-white">
+                <h3 className="mb-2 text-lg font-semibold text-rp-text">
                     No Listings Yet
                 </h3>
-                <p className="text-sm text-zinc-400">
+                <p className="text-sm text-rp-subtle">
                     Create your first listing to start earning Aether!
                 </p>
             </div>
@@ -82,27 +82,27 @@ export function ListingManager({ listings, userId, onRefresh }: ListingManagerPr
     }
 
     return (
-        <div className="rounded-xl border border-white/10 bg-white/5 overflow-hidden">
+        <div className="rounded-xl border border-rp-muted/20 bg-rp-surface overflow-hidden">
             <Table>
                 <TableHeader>
-                    <TableRow className="border-white/10 hover:bg-transparent">
-                        <TableHead className="text-zinc-400">Soul</TableHead>
-                        <TableHead className="text-zinc-400">Price</TableHead>
-                        <TableHead className="text-zinc-400 text-center">Sales</TableHead>
-                        <TableHead className="text-zinc-400 text-center">Active</TableHead>
-                        <TableHead className="text-zinc-400 text-right">Actions</TableHead>
+                    <TableRow className="border-rp-muted/20 hover:bg-transparent">
+                        <TableHead className="text-rp-subtle">Soul</TableHead>
+                        <TableHead className="text-rp-subtle">Price</TableHead>
+                        <TableHead className="text-rp-subtle text-center">Sales</TableHead>
+                        <TableHead className="text-rp-subtle text-center">Active</TableHead>
+                        <TableHead className="text-rp-subtle text-right">Actions</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {listings.map((listing) => (
                         <TableRow
                             key={listing.id}
-                            className="border-white/5 hover:bg-white/5"
+                            className="border-rp-muted/10 hover:bg-rp-overlay"
                         >
                             {/* Soul */}
                             <TableCell>
                                 <div className="flex items-center gap-3">
-                                    <div className="relative size-10 overflow-hidden rounded-lg bg-zinc-800">
+                                    <div className="relative size-10 overflow-hidden rounded-lg bg-rp-base">
                                         {listing.personas?.image_path ? (
                                             <Image
                                                 src={listing.personas.image_path}
@@ -111,17 +111,17 @@ export function ListingManager({ listings, userId, onRefresh }: ListingManagerPr
                                                 className="object-cover"
                                             />
                                         ) : (
-                                            <div className="flex size-full items-center justify-center text-lg font-bold text-zinc-600">
+                                            <div className="flex size-full items-center justify-center text-lg font-bold text-rp-muted">
                                                 {listing.personas?.name?.[0] || "?"}
                                             </div>
                                         )}
                                     </div>
                                     <div>
-                                        <p className="font-medium text-white">
+                                        <p className="font-medium text-rp-text">
                                             {listing.personas?.name || "Unknown"}
                                         </p>
                                         {listing.is_limited_edition && (
-                                            <span className="text-xs text-amber-400">
+                                            <span className="text-xs text-rp-gold">
                                                 Limited ({listing.quantity_remaining} left)
                                             </span>
                                         )}
@@ -131,15 +131,15 @@ export function ListingManager({ listings, userId, onRefresh }: ListingManagerPr
 
                             {/* Price */}
                             <TableCell>
-                                <span className="font-medium text-purple-400">
+                                <span className="font-medium text-rp-iris">
                                     {listing.price_aether.toLocaleString()}
                                 </span>
-                                <span className="ml-1 text-xs text-zinc-500">Aether</span>
+                                <span className="ml-1 text-xs text-rp-muted">Aether</span>
                             </TableCell>
 
                             {/* Sales */}
                             <TableCell className="text-center">
-                                <span className="font-medium text-white">
+                                <span className="font-medium text-rp-text">
                                     {listing.total_sales}
                                 </span>
                             </TableCell>
@@ -159,7 +159,7 @@ export function ListingManager({ listings, userId, onRefresh }: ListingManagerPr
                                     <Button
                                         variant="ghost"
                                         size="icon"
-                                        className="size-8 text-zinc-400 hover:text-white"
+                                        className="size-8 text-rp-subtle hover:text-rp-text"
                                     >
                                         <Edit2 className="size-4" />
                                     </Button>
@@ -169,7 +169,7 @@ export function ListingManager({ listings, userId, onRefresh }: ListingManagerPr
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                className="size-8 text-zinc-400 hover:text-red-400"
+                                                className="size-8 text-rp-subtle hover:text-rp-love"
                                                 disabled={loadingId === listing.id}
                                             >
                                                 {loadingId === listing.id ? (
@@ -179,26 +179,26 @@ export function ListingManager({ listings, userId, onRefresh }: ListingManagerPr
                                                 )}
                                             </Button>
                                         </AlertDialogTrigger>
-                                        <AlertDialogContent className="border-white/10 bg-zinc-900">
+                                        <AlertDialogContent className="border-rp-muted/20 bg-rp-base">
                                             <AlertDialogHeader>
-                                                <AlertDialogTitle className="text-white">
+                                                <AlertDialogTitle className="text-rp-text">
                                                     Remove Listing
                                                 </AlertDialogTitle>
-                                                <AlertDialogDescription className="text-zinc-400">
+                                                <AlertDialogDescription className="text-rp-subtle">
                                                     This will deactivate the listing for{" "}
-                                                    <span className="font-medium text-white">
+                                                    <span className="font-medium text-rp-text">
                                                         {listing.personas?.name}
                                                     </span>
                                                     . You can create a new listing later.
                                                 </AlertDialogDescription>
                                             </AlertDialogHeader>
                                             <AlertDialogFooter>
-                                                <AlertDialogCancel className="border-white/10 bg-transparent text-white hover:bg-white/5">
+                                                <AlertDialogCancel className="border-rp-muted/20 bg-transparent text-rp-text hover:bg-rp-surface">
                                                     Cancel
                                                 </AlertDialogCancel>
                                                 <AlertDialogAction
                                                     onClick={() => handleDelete(listing.id)}
-                                                    className="bg-red-600 text-white hover:bg-red-700"
+                                                    className="bg-rp-love text-rp-base hover:bg-rp-love/80"
                                                 >
                                                     Remove
                                                 </AlertDialogAction>

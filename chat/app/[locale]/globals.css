@@ -182,35 +182,35 @@
     /* Rose */
 
     /* Rosé Pine Complete Palette */
-    --rp-base: 251 23% 12%;
+    --rp-base: 249 22% 12%;
     /* #191724 */
-    --rp-surface: 249 22% 15%;
+    --rp-surface: 248 23% 15%;
     /* #1f1d2e */
-    --rp-overlay: 251 25% 18%;
+    --rp-overlay: 248 25% 18%;
     /* #26233a */
-    --rp-muted: 247 15% 47%;
+    --rp-muted: 248 11% 47%;
     /* #6e6a86 */
-    --rp-subtle: 248 20% 59%;
+    --rp-subtle: 247 16% 61%;
     /* #908caa */
     --rp-text: 245 50% 91%;
     /* #e0def4 */
-    --rp-love: 343 81% 75%;
+    --rp-love: 343 76% 68%;
     /* #eb6f92 */
     --rp-gold: 35 88% 72%;
     /* #f6c177 */
-    --rp-rose: 343 76% 68%;
+    --rp-rose: 2 55% 83%;
     /* #ebbcba */
-    --rp-pine: 189 43% 38%;
+    --rp-pine: 197 49% 38%;
     /* #31748f */
     --rp-foam: 189 43% 73%;
     /* #9ccfd8 */
     --rp-iris: 267 57% 78%;
     /* #c4a7e7 */
-    --rp-highlight-low: 249 22% 15%;
+    --rp-highlight-low: 247 18% 15%;
     /* #21202e */
-    --rp-highlight-med: 251 20% 28%;
+    --rp-highlight-med: 251 13% 29%;
     /* #403d52 */
-    --rp-highlight-high: 251 18% 36%;
+    --rp-highlight-high: 251 13% 36%;
     /* #524f67 */
   }
 }

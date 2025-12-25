@@ -104,8 +104,8 @@ export function DraggableGallery({
                     className={cn(
                         "fixed bottom-6 right-6 z-40 p-3 rounded-full transition-all shadow-lg",
                         showControls
-                            ? "bg-purple-500 text-white"
-                            : "bg-black/60 backdrop-blur-md border border-white/20 text-white/60 hover:text-white"
+                            ? "bg-rp-iris text-rp-base"
+                            : "bg-rp-base/60 backdrop-blur-md border border-rp-muted text-rp-subtle hover:text-rp-text"
                     )}
                     title="Grid Settings"
                 >
@@ -114,21 +114,21 @@ export function DraggableGallery({
 
                 {/* Settings panel */}
                 {showControls && (
-                    <div className="fixed bottom-20 right-6 z-40 p-4 w-64 rounded-xl bg-black/80 backdrop-blur-md border border-white/20 shadow-xl">
-                        <h4 className="text-sm font-medium text-white/80 mb-3">Grid Settings</h4>
+                    <div className="fixed bottom-20 right-6 z-40 p-4 w-64 rounded-xl bg-rp-surface backdrop-blur-md border border-rp-muted shadow-xl">
+                        <h4 className="text-sm font-medium text-rp-text mb-3">Grid Settings</h4>
                         <div className="space-y-4 text-xs">
                             <div>
-                                <label className="text-white/50 block mb-1">Gap</label>
+                                <label className="text-rp-muted block mb-1">Gap</label>
                                 <input
                                     type="range"
                                     min="8"
                                     max="32"
                                     value={config.gap}
                                     onChange={(e) => handleConfigChange('gap', parseInt(e.target.value))}
-                                    className="w-full accent-purple-500"
+                                    className="w-full accent-rp-iris"
                                     title="Gap size"
                                 />
-                                <span className="text-white/70">{config.gap}px</span>
+                                <span className="text-rp-subtle">{config.gap}px</span>
                             </div>
                         </div>
                     </div>
@@ -138,7 +138,7 @@ export function DraggableGallery({
             {/* Expanded view overlay - PORTAL-LIKE: fixed with highest z-index */}
             {expandedItem && (
                 <div
-                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-sm"
+                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-rp-base/90 backdrop-blur-sm"
                     onClick={handleCloseExpanded}
                     style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
                 >
@@ -149,14 +149,14 @@ export function DraggableGallery({
                         {/* Close button */}
                         <button
                             onClick={handleCloseExpanded}
-                            className="absolute -top-12 right-0 p-2 text-white/60 hover:text-white transition-colors z-10"
+                            className="absolute -top-12 right-0 p-2 text-rp-subtle hover:text-rp-text transition-colors z-10"
                             title="Close"
                         >
                             <IconX size={28} />
                         </button>
 
                         {/* Expanded card */}
-                        <div className="flex flex-col md:flex-row gap-6 bg-[#12121a] rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+                        <div className="flex flex-col md:flex-row gap-6 bg-rp-surface rounded-2xl overflow-hidden border border-rp-highlight-med shadow-2xl">
                             {/* Large image */}
                             <div className="relative w-full md:w-1/2 aspect-square md:aspect-[3/4] min-h-[300px]">
                                 {expandedItem.imageUrl ? (
@@ -167,8 +167,8 @@ export function DraggableGallery({
                                         className="object-cover"
                                     />
                                 ) : (
-                                    <div className="w-full h-full bg-gradient-to-br from-purple-900/50 to-pink-900/50 flex items-center justify-center">
-                                        <span className="text-6xl font-bold text-white/30">
+                                    <div className="w-full h-full bg-gradient-to-br from-rp-iris/50 to-rp-rose/50 flex items-center justify-center">
+                                        <span className="text-6xl font-bold text-rp-text/30">
                                             {expandedItem.name.slice(0, 2).toUpperCase()}
                                         </span>
                                     </div>
@@ -181,24 +181,24 @@ export function DraggableGallery({
                                 {expandedItem.rarity && expandedItem.rarity !== "common" && (
                                     <span className={cn(
                                         "inline-flex w-fit px-3 py-1 rounded-full text-xs font-bold uppercase mb-4",
-                                        expandedItem.rarity === "rare" && "bg-purple-500 text-white",
-                                        expandedItem.rarity === "epic" && "bg-pink-500 text-white",
-                                        expandedItem.rarity === "legendary" && "bg-gradient-to-r from-amber-400 to-orange-500 text-black"
+                                        expandedItem.rarity === "rare" && "bg-rp-iris text-rp-base",
+                                        expandedItem.rarity === "epic" && "bg-rp-rose text-rp-base",
+                                        expandedItem.rarity === "legendary" && "bg-gradient-to-r from-rp-gold to-rp-love text-rp-base"
                                     )}>
                                         {expandedItem.rarity}
                                     </span>
                                 )}
 
-                                <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+                                <h2 className="text-2xl md:text-3xl font-bold text-rp-text mb-4">
                                     {expandedItem.name}
                                 </h2>
 
-                                <p className="text-white/60 mb-6 leading-relaxed text-sm md:text-base">
+                                <p className="text-rp-subtle mb-6 leading-relaxed text-sm md:text-base">
                                     {expandedItem.description || "A mysterious soul waiting to be discovered..."}
                                 </p>
 
                                 {/* Stats */}
-                                <div className="flex gap-4 text-sm text-white/50 mb-6">
+                                <div className="flex gap-4 text-sm text-rp-muted mb-6">
                                     <span>💬 {(expandedItem.messageCount || 0).toLocaleString()}</span>
                                     <span>❤️ {(expandedItem.followersCount || 0).toLocaleString()}</span>
                                 </div>
@@ -206,7 +206,7 @@ export function DraggableGallery({
                                 {/* CTA Button */}
                                 <button
                                     onClick={handleExpandedClick}
-                                    className="w-full py-3 md:py-4 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold hover:from-purple-500 hover:to-pink-500 transition-all shadow-lg shadow-purple-500/25"
+                                    className="w-full py-3 md:py-4 rounded-xl bg-gradient-to-r from-rp-iris to-rp-rose text-rp-base font-semibold hover:from-rp-iris/80 hover:to-rp-rose/80 transition-all shadow-lg shadow-rp-iris/25"
                                 >
                                     Start Chatting
                                 </button>

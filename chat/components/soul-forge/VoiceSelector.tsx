@@ -32,22 +32,22 @@ export const VoiceSelector: FC<VoiceSelectorProps> = ({
     const getGenderIcon = (gender: VoiceConfig["gender"]) => {
         switch (gender) {
             case "male":
-                return <IconGenderMale size={18} className="text-blue-400" />
+                return <IconGenderMale size={18} className="text-rp-pine" />
             case "female":
-                return <IconGenderFemale size={18} className="text-pink-400" />
+                return <IconGenderFemale size={18} className="text-rp-rose" />
             default:
-                return <span className="text-amber-400 text-sm">◆</span>
+                return <span className="text-rp-gold text-sm">◆</span>
         }
     }
 
     const getGenderColor = (gender: VoiceConfig["gender"]) => {
         switch (gender) {
             case "male":
-                return "from-blue-500 to-cyan-500"
+                return "from-rp-pine to-rp-foam"
             case "female":
-                return "from-pink-500 to-rose-500"
+                return "from-rp-rose to-rp-love"
             default:
-                return "from-amber-500 to-orange-500"
+                return "from-rp-gold to-rp-rose"
         }
     }
 
@@ -82,10 +82,10 @@ export const VoiceSelector: FC<VoiceSelectorProps> = ({
         <div className={cn("w-full", className)}>
             {/* Header */}
             <div className="mb-4 text-center">
-                <h3 className="text-sm font-semibold text-primary/80 uppercase tracking-wider">
+                <h3 className="text-sm font-semibold text-rp-iris uppercase tracking-wider">
                     Select Voice Frequency
                 </h3>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-xs text-rp-muted mt-1">
                     Click preview to hear, then select your companion&apos;s voice
                 </p>
             </div>
@@ -101,35 +101,35 @@ export const VoiceSelector: FC<VoiceSelectorProps> = ({
                             key={voice.id}
                             className={cn(
                                 "relative rounded-xl p-4 transition-all duration-300",
-                                "bg-white/5 border border-white/10",
-                                "hover:bg-white/10 hover:scale-[1.02] hover:shadow-lg",
+                                "bg-rp-surface border border-rp-muted/20",
+                                "hover:bg-rp-overlay hover:scale-[1.02] hover:shadow-lg",
                                 isSelected && [
-                                    "ring-2 ring-offset-2 ring-offset-background",
+                                    "ring-2 ring-offset-2 ring-offset-rp-base",
                                     `bg-gradient-to-br ${getGenderColor(voice.gender)} bg-opacity-10`,
                                     "border-transparent animate-pulse-glow"
                                 ]
                             )}
                             style={isSelected ? {
-                                "--glow-color": voice.gender === "male" ? "rgba(59, 130, 246, 0.5)" :
-                                    voice.gender === "female" ? "rgba(236, 72, 153, 0.5)" : "rgba(245, 158, 11, 0.5)"
+                                "--glow-color": voice.gender === "male" ? "rgba(49, 116, 143, 0.5)" :
+                                    voice.gender === "female" ? "rgba(235, 188, 186, 0.5)" : "rgba(246, 193, 119, 0.5)"
                             } as React.CSSProperties : undefined}
                         >
                             {/* Selected checkmark */}
                             {isSelected && (
-                                <div className="absolute -top-2 -right-2 size-6 rounded-full bg-primary flex items-center justify-center shadow-lg animate-fade-in-scale">
-                                    <IconCheck size={14} className="text-primary-foreground" />
+                                <div className="absolute -top-2 -right-2 size-6 rounded-full bg-rp-iris flex items-center justify-center shadow-lg animate-fade-in-scale">
+                                    <IconCheck size={14} className="text-rp-base" />
                                 </div>
                             )}
 
                             {/* Voice info */}
                             <div className="flex items-center gap-2 mb-3">
                                 {getGenderIcon(voice.gender)}
-                                <span className="font-medium text-sm">{voice.name}</span>
+                                <span className="font-medium text-sm text-rp-text">{voice.name}</span>
                             </div>
 
                             {/* Description */}
                             {voice.description && (
-                                <p className="text-xs text-muted-foreground mb-3 line-clamp-1">
+                                <p className="text-xs text-rp-muted mb-3 line-clamp-1">
                                     {voice.description}
                                 </p>
                             )}
@@ -145,8 +145,8 @@ export const VoiceSelector: FC<VoiceSelectorProps> = ({
                                     className={cn(
                                         "flex-1 flex items-center justify-center gap-1.5 px-3 py-2",
                                         "rounded-lg text-xs font-medium transition-all",
-                                        "bg-white/10 hover:bg-white/20",
-                                        isPreviewing && "bg-primary/20 text-primary"
+                                        "bg-rp-base hover:bg-rp-base/80",
+                                        isPreviewing && "bg-rp-iris text-rp-base"
                                     )}
                                     aria-label={isPreviewing ? "Stop preview" : "Preview voice"}
                                 >
@@ -170,8 +170,8 @@ export const VoiceSelector: FC<VoiceSelectorProps> = ({
                                     className={cn(
                                         "flex-1 px-3 py-2 rounded-lg text-xs font-semibold transition-all",
                                         isSelected
-                                            ? "bg-primary text-primary-foreground cursor-default"
-                                            : `bg-gradient-to-r ${getGenderColor(voice.gender)} text-white hover:opacity-90`
+                                            ? "bg-rp-iris text-rp-base cursor-default"
+                                            : `bg-gradient-to-r ${getGenderColor(voice.gender)} text-rp-base hover:opacity-90`
                                     )}
                                 >
                                     {isSelected ? "Selected" : "Pick"}

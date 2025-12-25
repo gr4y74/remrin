@@ -22,9 +22,9 @@ import { FilePreview } from "../ui/file-preview"
 import { WithTooltip } from "../ui/with-tooltip"
 import { ChatRetrievalSettings } from "./chat-retrieval-settings"
 
-interface ChatFilesDisplayProps {}
+interface ChatFilesDisplayProps { }
 
-export const ChatFilesDisplay: FC<ChatFilesDisplayProps> = ({}) => {
+export const ChatFilesDisplay: FC<ChatFilesDisplayProps> = ({ }) => {
   useHotkey("f", () => setShowFilesDisplay(prev => !prev))
   useHotkey("e", () => setUseRetrieval(prev => !prev))
 
@@ -141,7 +141,7 @@ export const ChatFilesDisplay: FC<ChatFilesDisplayProps> = ({}) => {
                 />
 
                 <IconX
-                  className="bg-muted-foreground border-primary absolute right-[-6px] top-[-2px] flex size-5 cursor-pointer items-center justify-center rounded-full border-DEFAULT text-[10px] hover:border-red-500 hover:bg-white hover:text-red-500"
+                  className="bg-rp-muted border-rp-text absolute right-[-6px] top-[-2px] flex size-5 cursor-pointer items-center justify-center rounded-full border-DEFAULT text-[10px] hover:border-rp-love hover:bg-rp-base hover:text-rp-love"
                   onClick={e => {
                     e.stopPropagation()
                     setNewMessageImages(
@@ -163,7 +163,7 @@ export const ChatFilesDisplay: FC<ChatFilesDisplayProps> = ({}) => {
                   key={index}
                   className="relative flex h-[64px] items-center space-x-4 rounded-xl border-2 px-4 py-3"
                 >
-                  <div className="rounded bg-blue-500 p-2">
+                  <div className="rounded bg-rp-pine p-2">
                     <IconLoader2 className="animate-spin" />
                   </div>
 
@@ -178,7 +178,7 @@ export const ChatFilesDisplay: FC<ChatFilesDisplayProps> = ({}) => {
                   className="relative flex h-[64px] cursor-pointer items-center space-x-4 rounded-xl border-2 px-4 py-3 hover:opacity-50"
                   onClick={() => getLinkAndView(file)}
                 >
-                  <div className="rounded bg-blue-500 p-2">
+                  <div className="rounded bg-rp-pine p-2">
                     {(() => {
                       let fileExtension = file.type.includes("/")
                         ? file.type.split("/")[1]
@@ -208,7 +208,7 @@ export const ChatFilesDisplay: FC<ChatFilesDisplayProps> = ({}) => {
                   </div>
 
                   <IconX
-                    className="bg-muted-foreground border-primary absolute right-[-6px] top-[-6px] flex size-5 cursor-pointer items-center justify-center rounded-full border-DEFAULT text-[10px] hover:border-red-500 hover:bg-white hover:text-red-500"
+                    className="bg-rp-muted border-rp-text absolute right-[-6px] top-[-6px] flex size-5 cursor-pointer items-center justify-center rounded-full border-DEFAULT text-[10px] hover:border-rp-love hover:bg-rp-base hover:text-rp-love"
                     onClick={e => {
                       e.stopPropagation()
                       setNewMessageFiles(
@@ -248,7 +248,7 @@ export const ChatFilesDisplay: FC<ChatFilesDisplayProps> = ({}) => {
   )
 }
 
-const RetrievalToggle = ({}) => {
+const RetrievalToggle = ({ }) => {
   const { useRetrieval, setUseRetrieval } = useContext(RemrinContext)
 
   return (
@@ -267,8 +267,8 @@ const RetrievalToggle = ({}) => {
           <IconCircleFilled
             className={cn(
               "p-1",
-              useRetrieval ? "text-green-500" : "text-red-500",
-              useRetrieval ? "hover:text-green-200" : "hover:text-red-200"
+              useRetrieval ? "text-rp-foam" : "text-rp-love",
+              useRetrieval ? "hover:text-rp-foam/70" : "hover:text-rp-love/70"
             )}
             size={24}
             onClick={e => {

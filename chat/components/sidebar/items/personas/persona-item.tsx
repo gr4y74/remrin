@@ -13,9 +13,9 @@ interface PersonaItemProps {
 
 // Safety level badge colors
 const SAFETY_COLORS: Record<string, { bg: string; text: string }> = {
-    CHILD: { bg: "bg-green-500/20", text: "text-green-400" },
-    TEEN: { bg: "bg-amber-500/20", text: "text-amber-400" },
-    ADULT: { bg: "bg-red-500/20", text: "text-red-400" }
+    CHILD: { bg: "bg-rp-foam/20", text: "text-rp-foam" },
+    TEEN: { bg: "bg-rp-gold/20", text: "text-rp-gold" },
+    ADULT: { bg: "bg-rp-love/20", text: "text-rp-love" }
 }
 
 export const PersonaItem: FC<PersonaItemProps> = ({ persona }) => {
@@ -35,7 +35,7 @@ export const PersonaItem: FC<PersonaItemProps> = ({ persona }) => {
             className="rounded-full object-cover"
         />
     ) : (
-        <IconHeart height={30} width={30} className="text-pink-400" />
+        <IconHeart height={30} width={30} className="text-rp-rose" />
     )
 
     return (
