@@ -19,3 +19,923 @@ Reverting to using defaultLocale: en
  GET /login 200 in 16891ms
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (130kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
  GET /login 200 in 111ms
+ GET /login 200 in 122ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1370ms (1870 modules)
+ GET /_next/static/css/app/%5Blocale%5D/layout.css?v=1766700438677 404 in 1881ms
+ GET /_next/static/chunks/webpack.js?v=1766700438677 404 in 1944ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 1886ms
+ GET /_next/static/chunks/app/%5Blocale%5D/layout.js 404 in 1870ms
+ GET /_next/static/chunks/main-app.js?v=1766700438677 404 in 1896ms
+ GET /_next/static/chunks/app/%5Blocale%5D/login/page.js 404 in 1880ms
+ ○ Compiling /[locale]/discover ...
+ ✓ Compiled /[locale]/discover in 5.1s (1960 modules)
+ ⨯ Error: Cannot find module './vendor-chunks/@opentelemetry.js'
+Require stack:
+- /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+- /mnt/Data68/remrin/chat/.next/server/app/[locale]/discover/page.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1421:15)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1504:12)
+    at mod.require (/mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/mnt/Data68/remrin/chat/.next/server/webpack-runtime.js',
+    '/mnt/Data68/remrin/chat/.next/server/app/[locale]/discover/page.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/en/discover'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 4.3s (2187 modules)
+ GET /discover 500 in 11890ms
+ GET /_next/static/css/app/%5Blocale%5D/layout.css?v=1766700458466 404 in 119ms
+ ⨯ Failed to generate static paths for /[locale]/login:
+Error: Cannot find module './vendor-chunks/@opentelemetry.js'
+Require stack:
+- /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+- /mnt/Data68/remrin/chat/.next/server/app/[locale]/login/page.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1421:15)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1504:12)
+    at mod.require (/mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/mnt/Data68/remrin/chat/.next/server/webpack-runtime.js',
+    '/mnt/Data68/remrin/chat/.next/server/app/[locale]/login/page.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ]
+}
+ ⨯ Failed to generate static paths for /[locale]/login:
+Error: Cannot find module './vendor-chunks/@opentelemetry.js'
+Require stack:
+- /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+- /mnt/Data68/remrin/chat/.next/server/app/[locale]/login/page.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1421:15)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1504:12)
+    at mod.require (/mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/mnt/Data68/remrin/chat/.next/server/webpack-runtime.js',
+    '/mnt/Data68/remrin/chat/.next/server/app/[locale]/login/page.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ]
+}
+ ○ Compiling /[locale]/marketplace ...
+ ✓ Compiled /[locale]/marketplace in 5.7s (2310 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ Error: Cannot find module './vendor-chunks/@opentelemetry.js'
+Require stack:
+- /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+- /mnt/Data68/remrin/chat/.next/server/app/[locale]/marketplace/page.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1421:15)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1504:12)
+    at mod.require (/mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/mnt/Data68/remrin/chat/.next/server/webpack-runtime.js',
+    '/mnt/Data68/remrin/chat/.next/server/app/[locale]/marketplace/page.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/en/marketplace'
+}
+ GET /marketplace 500 in 6912ms
+ ⨯ Error: Cannot find module './vendor-chunks/@opentelemetry.js'
+Require stack:
+- /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+- /mnt/Data68/remrin/chat/.next/server/app/[locale]/discover/page.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1421:15)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1504:12)
+    at mod.require (/mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/mnt/Data68/remrin/chat/.next/server/webpack-runtime.js',
+    '/mnt/Data68/remrin/chat/.next/server/app/[locale]/discover/page.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/en/discover'
+}
+ GET /discover 500 in 1042ms
+ ○ Compiling /[locale]/moments ...
+ ✓ Compiled /[locale]/moments in 1719ms (2336 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ Error: Cannot find module './vendor-chunks/@opentelemetry.js'
+Require stack:
+- /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+- /mnt/Data68/remrin/chat/.next/server/app/[locale]/moments/page.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1421:15)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1504:12)
+    at mod.require (/mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/mnt/Data68/remrin/chat/.next/server/webpack-runtime.js',
+    '/mnt/Data68/remrin/chat/.next/server/app/[locale]/moments/page.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/en/moments'
+}
+ GET /moments 500 in 3336ms
+ ⨯ Error: Cannot find module './vendor-chunks/@opentelemetry.js'
+Require stack:
+- /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+- /mnt/Data68/remrin/chat/.next/server/app/[locale]/marketplace/page.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1421:15)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1504:12)
+    at mod.require (/mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/mnt/Data68/remrin/chat/.next/server/webpack-runtime.js',
+    '/mnt/Data68/remrin/chat/.next/server/app/[locale]/marketplace/page.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/en/marketplace'
+}
+ GET /marketplace 500 in 1999ms
+ ⨯ Error: Cannot find module './vendor-chunks/@opentelemetry.js'
+Require stack:
+- /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+- /mnt/Data68/remrin/chat/.next/server/app/[locale]/discover/page.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1421:15)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1504:12)
+    at mod.require (/mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/mnt/Data68/remrin/chat/.next/server/webpack-runtime.js',
+    '/mnt/Data68/remrin/chat/.next/server/app/[locale]/discover/page.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/en/discover'
+}
+ GET /discover 500 in 1892ms
+ ○ Compiling /[locale]/summon ...
+ ✓ Compiled /[locale]/summon in 4.4s (2460 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ Error: Cannot find module './vendor-chunks/@opentelemetry.js'
+Require stack:
+- /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+- /mnt/Data68/remrin/chat/.next/server/app/[locale]/summon/page.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1421:15)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1504:12)
+    at mod.require (/mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/mnt/Data68/remrin/chat/.next/server/webpack-runtime.js',
+    '/mnt/Data68/remrin/chat/.next/server/app/[locale]/summon/page.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/en/summon'
+}
+ GET /summon 500 in 5785ms
+ ⨯ Error: Cannot find module './vendor-chunks/@opentelemetry.js'
+Require stack:
+- /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+- /mnt/Data68/remrin/chat/.next/server/app/[locale]/marketplace/page.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1421:15)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1504:12)
+    at mod.require (/mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/mnt/Data68/remrin/chat/.next/server/webpack-runtime.js',
+    '/mnt/Data68/remrin/chat/.next/server/app/[locale]/marketplace/page.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/en/marketplace'
+}
+ GET /marketplace 500 in 1349ms
+ ⨯ Error: Cannot find module './vendor-chunks/@opentelemetry.js'
+Require stack:
+- /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+- /mnt/Data68/remrin/chat/.next/server/app/[locale]/discover/page.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1421:15)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1504:12)
+    at mod.require (/mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/mnt/Data68/remrin/chat/.next/server/webpack-runtime.js',
+    '/mnt/Data68/remrin/chat/.next/server/app/[locale]/discover/page.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/en/discover'
+}
+ GET /discover 500 in 1244ms
+ ⨯ Error: Cannot find module './vendor-chunks/@opentelemetry.js'
+Require stack:
+- /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+- /mnt/Data68/remrin/chat/.next/server/app/[locale]/moments/page.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1421:15)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1504:12)
+    at mod.require (/mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/mnt/Data68/remrin/chat/.next/server/webpack-runtime.js',
+    '/mnt/Data68/remrin/chat/.next/server/app/[locale]/moments/page.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/en/moments'
+}
+ GET /moments 500 in 1353ms
+ ○ Compiling /[locale]/collection ...
+ ✓ Compiled /[locale]/collection in 2.4s (2486 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ Error: Cannot find module './vendor-chunks/@opentelemetry.js'
+Require stack:
+- /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+- /mnt/Data68/remrin/chat/.next/server/app/[locale]/collection/page.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1421:15)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1504:12)
+    at mod.require (/mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/mnt/Data68/remrin/chat/.next/server/webpack-runtime.js',
+    '/mnt/Data68/remrin/chat/.next/server/app/[locale]/collection/page.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/en/collection'
+}
+ GET /collection 500 in 3532ms
+ ⨯ Error: Cannot find module './vendor-chunks/@opentelemetry.js'
+Require stack:
+- /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+- /mnt/Data68/remrin/chat/.next/server/app/[locale]/summon/page.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1421:15)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1504:12)
+    at mod.require (/mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/mnt/Data68/remrin/chat/.next/server/webpack-runtime.js',
+    '/mnt/Data68/remrin/chat/.next/server/app/[locale]/summon/page.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/en/summon'
+}
+ GET /summon 500 in 1332ms
+ ⨯ Error: Cannot find module './vendor-chunks/@opentelemetry.js'
+Require stack:
+- /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+- /mnt/Data68/remrin/chat/.next/server/app/[locale]/marketplace/page.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1421:15)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1504:12)
+    at mod.require (/mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/mnt/Data68/remrin/chat/.next/server/webpack-runtime.js',
+    '/mnt/Data68/remrin/chat/.next/server/app/[locale]/marketplace/page.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/en/marketplace'
+}
+ GET /marketplace 500 in 1235ms
+ ⨯ Error: Cannot find module './vendor-chunks/@opentelemetry.js'
+Require stack:
+- /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+- /mnt/Data68/remrin/chat/.next/server/app/[locale]/moments/page.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1421:15)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1504:12)
+    at mod.require (/mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/mnt/Data68/remrin/chat/.next/server/webpack-runtime.js',
+    '/mnt/Data68/remrin/chat/.next/server/app/[locale]/moments/page.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/en/moments'
+}
+ GET /moments 500 in 1434ms
+ ⨯ Error: Cannot find module './vendor-chunks/@opentelemetry.js'
+Require stack:
+- /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+- /mnt/Data68/remrin/chat/.next/server/app/[locale]/discover/page.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1421:15)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1504:12)
+    at mod.require (/mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/mnt/Data68/remrin/chat/.next/server/webpack-runtime.js',
+    '/mnt/Data68/remrin/chat/.next/server/app/[locale]/discover/page.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/en/discover'
+}
+ GET /discover 500 in 1318ms
+ ○ Compiling /[locale] ...
+ ✓ Compiled /[locale] in 27.1s (4940 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ Error: Cannot find module './vendor-chunks/@supabase.js'
+Require stack:
+- /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+- /mnt/Data68/remrin/chat/.next/server/app/[locale]/page.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1421:15)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1504:12)
+    at mod.require (/mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/mnt/Data68/remrin/chat/.next/server/webpack-runtime.js',
+    '/mnt/Data68/remrin/chat/.next/server/app/[locale]/page.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/en'
+}
+ GET / 500 in 28584ms
+ ⨯ Error: Cannot find module './vendor-chunks/@supabase.js'
+Require stack:
+- /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+- /mnt/Data68/remrin/chat/.next/server/app/[locale]/collection/page.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1421:15)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1504:12)
+    at mod.require (/mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/mnt/Data68/remrin/chat/.next/server/webpack-runtime.js',
+    '/mnt/Data68/remrin/chat/.next/server/app/[locale]/collection/page.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/en/collection'
+}
+ GET /collection 500 in 1416ms
+ ⨯ Error: Cannot find module './vendor-chunks/@supabase.js'
+Require stack:
+- /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+- /mnt/Data68/remrin/chat/.next/server/app/[locale]/marketplace/page.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1421:15)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1504:12)
+    at mod.require (/mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/mnt/Data68/remrin/chat/.next/server/webpack-runtime.js',
+    '/mnt/Data68/remrin/chat/.next/server/app/[locale]/marketplace/page.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/en/marketplace'
+}
+ ⨯ Error: Cannot find module './vendor-chunks/@supabase.js'
+Require stack:
+- /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+- /mnt/Data68/remrin/chat/.next/server/app/[locale]/summon/page.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1421:15)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1504:12)
+    at mod.require (/mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/mnt/Data68/remrin/chat/.next/server/webpack-runtime.js',
+    '/mnt/Data68/remrin/chat/.next/server/app/[locale]/summon/page.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/en/summon'
+}
+ GET /marketplace 500 in 1463ms
+ GET /summon 500 in 1338ms
+ ⨯ Error: Cannot find module './vendor-chunks/@supabase.js'
+Require stack:
+- /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+- /mnt/Data68/remrin/chat/.next/server/app/[locale]/moments/page.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1421:15)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1504:12)
+    at mod.require (/mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/mnt/Data68/remrin/chat/.next/server/webpack-runtime.js',
+    '/mnt/Data68/remrin/chat/.next/server/app/[locale]/moments/page.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/en/moments'
+}
+ GET /moments 500 in 1513ms
+ ⨯ Error: Cannot find module './vendor-chunks/@supabase.js'
+Require stack:
+- /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+- /mnt/Data68/remrin/chat/.next/server/app/[locale]/discover/page.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1421:15)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1504:12)
+    at mod.require (/mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/mnt/Data68/remrin/chat/.next/server/webpack-runtime.js',
+    '/mnt/Data68/remrin/chat/.next/server/app/[locale]/discover/page.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/en/discover'
+}
+ GET /discover 500 in 1890ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/mnt/Data68/remrin/chat/.next/server/vendor-chunks/void-elements.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/void-elements' in /mnt/Data68/remrin/chat/.next/server for build dependencies doesn't lead to expected result '/mnt/Data68/remrin/chat/.next/server/vendor-chunks/void-elements.js', but to 'Error: Can't resolve './vendor-chunks/void-elements' in '/mnt/Data68/remrin/chat/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/void-elements (expected /mnt/Data68/remrin/chat/.next/server/vendor-chunks/void-elements.js)
+<w>  at file dependencies /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+<w>  at file /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/.next/server/app/[locale]/discover/page.js
+<w>  at file /mnt/Data68/remrin/chat/.next/server/app/[locale]/discover/page.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+<w>  at file /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+<w>  at file /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+<w>  at file /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /mnt/Data68/remrin/chat/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /mnt/Data68/remrin/chat/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/clsx' in /mnt/Data68/remrin/chat/.next/server for build dependencies doesn't lead to expected result '/mnt/Data68/remrin/chat/.next/server/vendor-chunks/clsx.js', but to 'Error: Can't resolve './vendor-chunks/clsx' in '/mnt/Data68/remrin/chat/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/clsx (expected /mnt/Data68/remrin/chat/.next/server/vendor-chunks/clsx.js)
+<w>  at file dependencies /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+<w>  at file /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/.next/server/app/[locale]/discover/page.js
+<w>  at file /mnt/Data68/remrin/chat/.next/server/app/[locale]/discover/page.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+<w>  at file /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+<w>  at file /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+<w>  at file /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /mnt/Data68/remrin/chat/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /mnt/Data68/remrin/chat/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/i18next-resources-to-backend' in /mnt/Data68/remrin/chat/.next/server for build dependencies doesn't lead to expected result '/mnt/Data68/remrin/chat/.next/server/vendor-chunks/i18next-resources-to-backend.js', but to 'Error: Can't resolve './vendor-chunks/i18next-resources-to-backend' in '/mnt/Data68/remrin/chat/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/i18next-resources-to-backend (expected /mnt/Data68/remrin/chat/.next/server/vendor-chunks/i18next-resources-to-backend.js)
+<w>  at file dependencies /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+<w>  at file /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/.next/server/app/[locale]/discover/page.js
+<w>  at file /mnt/Data68/remrin/chat/.next/server/app/[locale]/discover/page.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+<w>  at file /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+<w>  at file /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+<w>  at file /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /mnt/Data68/remrin/chat/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /mnt/Data68/remrin/chat/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/html-parse-stringify' in /mnt/Data68/remrin/chat/.next/server for build dependencies doesn't lead to expected result '/mnt/Data68/remrin/chat/.next/server/vendor-chunks/html-parse-stringify.js', but to 'Error: Can't resolve './vendor-chunks/html-parse-stringify' in '/mnt/Data68/remrin/chat/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/html-parse-stringify (expected /mnt/Data68/remrin/chat/.next/server/vendor-chunks/html-parse-stringify.js)
+<w>  at file dependencies /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+<w>  at file /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/.next/server/app/[locale]/discover/page.js
+<w>  at file /mnt/Data68/remrin/chat/.next/server/app/[locale]/discover/page.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+<w>  at file /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+<w>  at file /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+<w>  at file /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /mnt/Data68/remrin/chat/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /mnt/Data68/remrin/chat/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/class-variance-authority' in /mnt/Data68/remrin/chat/.next/server for build dependencies doesn't lead to expected result '/mnt/Data68/remrin/chat/.next/server/vendor-chunks/class-variance-authority.js', but to 'Error: Can't resolve './vendor-chunks/class-variance-authority' in '/mnt/Data68/remrin/chat/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/class-variance-authority (expected /mnt/Data68/remrin/chat/.next/server/vendor-chunks/class-variance-authority.js)
+<w>  at file dependencies /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+<w>  at file /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/.next/server/app/[locale]/discover/page.js
+<w>  at file /mnt/Data68/remrin/chat/.next/server/app/[locale]/discover/page.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+<w>  at file /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+<w>  at file /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+<w>  at file /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /mnt/Data68/remrin/chat/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /mnt/Data68/remrin/chat/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/next-themes' in /mnt/Data68/remrin/chat/.next/server for build dependencies doesn't lead to expected result '/mnt/Data68/remrin/chat/.next/server/vendor-chunks/next-themes.js', but to 'Error: Can't resolve './vendor-chunks/next-themes' in '/mnt/Data68/remrin/chat/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/next-themes (expected /mnt/Data68/remrin/chat/.next/server/vendor-chunks/next-themes.js)
+<w>  at file dependencies /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+<w>  at file /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/.next/server/app/[locale]/discover/page.js
+<w>  at file /mnt/Data68/remrin/chat/.next/server/app/[locale]/discover/page.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+<w>  at file /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+<w>  at file /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+<w>  at file /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /mnt/Data68/remrin/chat/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /mnt/Data68/remrin/chat/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /mnt/Data68/remrin/chat/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+ ⨯ Error: Cannot find module './vendor-chunks/@supabase.js'
+Require stack:
+- /mnt/Data68/remrin/chat/.next/server/webpack-runtime.js
+- /mnt/Data68/remrin/chat/.next/server/app/[locale]/login/page.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js
+- /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1421:15)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1504:12)
+    at mod.require (/mnt/Data68/remrin/chat/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/mnt/Data68/remrin/chat/.next/server/webpack-runtime.js',
+    '/mnt/Data68/remrin/chat/.next/server/app/[locale]/login/page.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/require.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/load-components.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/build/utils.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ],
+  page: '/en/login'
+}
+ GET /login 500 in 2216ms

@@ -1,0 +1,52 @@
+
+> remrin@2.0.0 dev
+> next dev
+
+ ⚠ Port 3000 is in use, trying 3001 instead.
+ ⚠ Port 3001 is in use, trying 3002 instead.
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3002
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 4.4s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 1828ms (189 modules)
+ ○ Compiling /[locale]/login ...
+ ✓ Compiled /[locale]/login in 18.6s (1881 modules)
+ ✓ Compiled in 934ms (816 modules)
+ GET /login 200 in 20908ms
+ ○ Compiling /[locale]/discover ...
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (130kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ ✓ Compiled /[locale]/discover in 14.8s (1956 modules)
+ GET /discover 200 in 18213ms
+ ○ Compiling /[locale]/marketplace ...
+ ✓ Compiled /[locale]/marketplace in 1881ms (2079 modules)
+Error fetching listings: {
+  code: '42703',
+  details: null,
+  hint: null,
+  message: 'column personas_1.image_path does not exist'
+}
+ GET /marketplace 200 in 3882ms
+ ○ Compiling /[locale]/moments ...
+ ✓ Compiled /[locale]/moments in 903ms (2105 modules)
+ GET /moments 200 in 2495ms
+ ○ Compiling /[locale]/summon ...
+ ✓ Compiled /[locale]/summon in 1969ms (2229 modules)
+ GET /summon 200 in 3734ms
+ ○ Compiling /[locale]/collection ...
+ ✓ Compiled /[locale]/collection in 1831ms (2255 modules)
+ GET /collection 200 in 3212ms
+ GET /discover 200 in 1583ms
+Error fetching listings: {
+  code: '42703',
+  details: null,
+  hint: null,
+  message: 'column personas_1.image_path does not exist'
+}
+ GET /marketplace 200 in 1458ms
+ GET /moments 200 in 786ms
+ GET /summon 200 in 317ms
+ GET /collection 200 in 217ms
+ GET /login 200 in 628ms
