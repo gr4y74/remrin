@@ -2,7 +2,7 @@
 
 "use client"
 
-import { ChatbotUIContext, Artifact } from "@/context/context"
+import { RemrinContext, Artifact } from "@/context/context"
 import { getProfileByUserId } from "@/db/profile"
 import { getPersonasByOwnerId } from "@/db/personas"
 import { getWorkspaceImageFromStorage } from "@/db/storage/workspace-images"
@@ -247,7 +247,7 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   }
 
   return (
-    <ChatbotUIContext.Provider
+    <RemrinContext.Provider
       value={{
         // PROFILE STORE
         profile,
@@ -391,6 +391,6 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
       }}
     >
       {children}
-    </ChatbotUIContext.Provider>
+    </RemrinContext.Provider>
   )
 }

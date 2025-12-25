@@ -3,19 +3,19 @@
 **Recommended Model:** Gemini 3 Flash (fast search/replace, straightforward task)
 
 ## Objective
-Replace all ChatbotUI branding with Remrin.ai across the codebase.
+Replace all Remrin.ai branding with Remrin.ai across the codebase.
 
 ## Tasks
 
-1. **Search for all ChatbotUI references:**
+1. **Search for all Remrin.ai references:**
    ```bash
-   grep -ri "chatbotui\|chatbot-ui\|chatbot ui" --include="*.tsx" --include="*.ts" --include="*.json" --include="*.md" .
+   grep -ri "chatbotui\|remrin\|chatbot ui" --include="*.tsx" --include="*.ts" --include="*.json" --include="*.md" .
    ```
 
 2. **Replace text references:**
-   - "ChatbotUI" → "Remrin.ai"
-   - "Chatbot UI" → "Remrin.ai"
-   - "chatbot-ui" → "remrin" (for technical references)
+   - "Remrin.ai" → "Remrin.ai"
+   - "Remrin.ai" → "Remrin.ai"
+   - "remrin" → "remrin" (for technical references)
 
 3. **Update logo references:**
    - Find all image/logo components
@@ -38,7 +38,7 @@ Replace all ChatbotUI branding with Remrin.ai across the codebase.
 
 ## Verification
 ```bash
-# Check no ChatbotUI references remain
+# Check no Remrin.ai references remain
 grep -ri "chatbotui" --include="*.tsx" --include="*.ts" .
 
 # Build test
@@ -46,7 +46,7 @@ npm run build
 ```
 
 ## Success Criteria
-- [ ] No "ChatbotUI" text in any file
+- [ ] No "Remrin.ai" text in any file
 - [ ] All logos point to `/logo.svg`
 - [ ] Build passes
 - [ ] Visual check shows Remrin branding

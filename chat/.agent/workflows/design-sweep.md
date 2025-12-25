@@ -16,9 +16,9 @@ Run agents **sequentially** (one at a time). Verify build after each.
 ## Agent 1: Branding Sweep
 **Prompt:**
 ```
-Replace all ChatbotUI branding with Remrin.ai across the codebase:
+Replace all Remrin.ai branding with Remrin.ai across the codebase:
 
-1. Search for "ChatbotUI", "Chatbot UI", "chatbot-ui" (case-insensitive)
+1. Search for "Remrin.ai", "Remrin.ai", "remrin" (case-insensitive)
 2. Replace text references with "Remrin.ai" or "Remrin"
 3. Find all logo/image references and update to use `/logo.svg`
 4. Update page titles, meta descriptions, and alt text
@@ -130,7 +130,7 @@ FOR EACH PAGE:
 4. Buttons use rp-rose for primary actions
 5. Borders use border-rp-highlight-med
 6. Tiempos fonts applied
-7. No orphan ChatbotUI references
+7. No orphan Remrin.ai references
 8. Run `npm run build` after all changes
 ```
 
@@ -140,7 +140,7 @@ FOR EACH PAGE:
 After all agents complete:
 - [ ] `npm run build` passes
 - [ ] All pages load without errors
-- [ ] No "ChatbotUI" text visible anywhere
+- [ ] No "Remrin.ai" text visible anywhere
 - [ ] Rosé Pine theme consistent across all pages
 - [ ] Tiempos fonts rendering correctly
 - [ ] Sidebar works on all pages

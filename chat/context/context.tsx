@@ -12,7 +12,7 @@ import { AssistantImage } from "@/types/images/assistant-image"
 import { VALID_ENV_KEYS } from "@/types/valid-keys"
 import { Dispatch, SetStateAction, createContext } from "react"
 
-interface ChatbotUIContext {
+interface RemrinContext {
   // PROFILE STORE
   profile: Tables<"profiles"> | null
   setProfile: Dispatch<SetStateAction<Tables<"profiles"> | null>>
@@ -163,7 +163,7 @@ export interface Artifact {
   language?: string
 }
 
-export const ChatbotUIContext = createContext<ChatbotUIContext>({
+export const RemrinContext = createContext<RemrinContext>({
   // PROFILE STORE
   profile: null,
   setProfile: () => { },

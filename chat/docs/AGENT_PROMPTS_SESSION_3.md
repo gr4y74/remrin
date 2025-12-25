@@ -30,7 +30,7 @@ Role: You are a Senior Frontend Engineer specializing in React, image galleries,
 
 Objective: Build the Moments system - a Pinterest/Instagram-style gallery where characters share "moments" (images with captions) that users can interact with.
 
-Context: You are working on the Remrin ChatbotUI project at /home/gr4y/Data68/remrin/chat. The database already has the personas table. We need to add a moments system.
+Context: You are working on the Remrin Remrin.ai project at /home/gr4y/Data68/remrin/chat. The database already has the personas table. We need to add a moments system.
 
 Your Tasks:
 

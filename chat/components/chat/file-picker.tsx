@@ -1,4 +1,4 @@
-import { ChatbotUIContext } from "@/context/context"
+import { RemrinContext } from "@/context/context"
 import { Tables } from "@/supabase/types"
 import { IconBooks } from "@tabler/icons-react"
 import { FC, useContext, useEffect, useRef } from "react"
@@ -26,7 +26,7 @@ export const FilePicker: FC<FilePickerProps> = ({
   isFocused
 }) => {
   const { files, collections, setIsFilePickerOpen } =
-    useContext(ChatbotUIContext)
+    useContext(RemrinContext)
 
   const itemsRef = useRef<(HTMLDivElement | null)[]>([])
 

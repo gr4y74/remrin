@@ -1,4 +1,4 @@
-import { ChatbotUIContext } from "@/context/context"
+import { RemrinContext } from "@/context/context"
 import { createAssistants } from "@/db/assistants"
 import { createChats } from "@/db/chats"
 import { createCollections } from "@/db/collections"
@@ -34,7 +34,7 @@ export const Import: FC<ImportProps> = ({}) => {
     setCollections,
     setAssistants,
     setTools
-  } = useContext(ChatbotUIContext)
+  } = useContext(RemrinContext)
 
   const inputRef = useRef<HTMLInputElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)

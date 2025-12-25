@@ -1,4 +1,4 @@
-import { ChatbotUIContext } from "@/context/context"
+import { RemrinContext } from "@/context/context"
 import { updateAssistant } from "@/db/assistants"
 import { updateChat } from "@/db/chats"
 import { updateCollection } from "@/db/collections"
@@ -43,7 +43,7 @@ export const SidebarDataList: FC<SidebarDataListProps> = ({
     setAssistants,
     setTools,
     setModels
-  } = useContext(ChatbotUIContext)
+  } = useContext(RemrinContext)
 
   const divRef = useRef<HTMLDivElement>(null)
 

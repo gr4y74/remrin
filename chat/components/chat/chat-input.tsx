@@ -1,4 +1,4 @@
-import { ChatbotUIContext } from "@/context/context"
+import { RemrinContext } from "@/context/context"
 import useHotkey from "@/lib/hooks/use-hotkey"
 import { LLM_LIST } from "@/lib/models/llm/llm-list"
 import { cn } from "@/lib/utils"
@@ -65,7 +65,7 @@ export const ChatInput: FC<ChatInputProps> = ({ }) => {
     setIsCanvasOpen,
     isCharacterPanelOpen,
     setIsCharacterPanelOpen
-  } = useContext(ChatbotUIContext)
+  } = useContext(RemrinContext)
 
   const {
     chatInputRef,

@@ -9,7 +9,7 @@ import { SidebarSwitcher } from "@/components/sidebar/sidebar-switcher"
 import { Sidebar } from "@/components/sidebar/sidebar"
 import { Tabs } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
-import { ChatbotUIContext } from "@/context/context"
+import { RemrinContext } from "@/context/context"
 import { IconSparkles, IconDiamond, IconArrowRight, IconLoader2, IconChevronCompactRight } from "@tabler/icons-react"
 import { ContentType } from "@/types"
 import { cn } from "@/lib/utils"
@@ -51,7 +51,7 @@ const DEMO_DESCRIPTIONS = [
 
 export default function HomePage() {
   const router = useRouter()
-  const { workspaces, profile } = useContext(ChatbotUIContext)
+  const { workspaces, profile } = useContext(RemrinContext)
   const [personas, setPersonas] = useState<Persona[]>([])
   const [loading, setLoading] = useState(true)
   const [showSidebar, setShowSidebar] = useState(false)

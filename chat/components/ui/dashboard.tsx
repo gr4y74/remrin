@@ -2,7 +2,7 @@
 
 import { Sidebar } from "@/components/sidebar/sidebar"
 import { SidebarSwitcher } from "@/components/sidebar/sidebar-switcher"
-import { ChatbotUIContext } from "@/context/context"
+import { RemrinContext } from "@/context/context"
 import { Button } from "@/components/ui/button"
 import { Tabs } from "@/components/ui/tabs"
 import { CharacterPanel } from "@/components/character"
@@ -43,7 +43,7 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
     setIsCharacterPanelOpen,
     artifacts,
     selectedPersona
-  } = useContext(ChatbotUIContext)
+  } = useContext(RemrinContext)
 
   const [contentType, setContentType] = useState<ContentType>(
     tabValue as ContentType

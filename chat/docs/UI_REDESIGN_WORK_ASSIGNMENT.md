@@ -210,5 +210,5 @@ After all agents complete, verify:
 
 1. **Run `/verify` before committing** - TypeScript and lint checks
 2. **Use existing component patterns** - Check `components/ui/` for examples
-3. **Keep state in context** - Use `ChatbotUIContext` pattern
+3. **Keep state in context** - Use `Remrin.aiContext` pattern
 4. **Test dark mode** - All new components must support dark theme

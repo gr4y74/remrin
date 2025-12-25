@@ -1,4 +1,4 @@
-import { ChatbotUIContext } from "@/context/context"
+import { RemrinContext } from "@/context/context"
 import {
   PROFILE_CONTEXT_MAX,
   PROFILE_DISPLAY_NAME_MAX,
@@ -57,7 +57,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ }) => {
     setAvailableHostedModels,
     setAvailableOpenRouterModels,
     availableOpenRouterModels
-  } = useContext(ChatbotUIContext)
+  } = useContext(RemrinContext)
 
   const router = useRouter()
 
@@ -857,7 +857,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ }) => {
             <WithTooltip
               display={
                 <div>
-                  Download Chatbot UI 1.0 data as JSON. Import coming soon!
+                  Download Remrin.ai 1.0 data as JSON. Import coming soon!
                 </div>
               }
               trigger={

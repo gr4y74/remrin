@@ -1,6 +1,6 @@
 "use client"
 
-import { ChatbotUIContext, Artifact } from "@/context/context"
+import { RemrinContext, Artifact } from "@/context/context"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import {
@@ -25,7 +25,7 @@ export const CanvasPanel: FC<CanvasPanelProps> = ({
     onClose
 }) => {
     const { artifacts, setArtifacts, isCanvasOpen, setIsCanvasOpen } =
-        useContext(ChatbotUIContext)
+        useContext(RemrinContext)
     const [activeArtifactId, setActiveArtifactId] = useState<string | null>(
         artifacts[0]?.id || null
     )

@@ -1,6 +1,6 @@
-# Talkie-AI Clone Blueprint for Remrin ChatbotUI
+# Talkie-AI Clone Blueprint for Remrin Remrin.ai
 
-> **Objective**: Deep-dive audit of Talkie-AI.com to create a comprehensive blueprint for cloning its functionality into the existing ChatbotUI installation at `/chat`.
+> **Objective**: Deep-dive audit of Talkie-AI.com to create a comprehensive blueprint for cloning its functionality into the existing Remrin.ai installation at `/chat`.
 
 ---
 
@@ -14,7 +14,7 @@ Talkie-AI's primary competitive advantage is its **"storybook" UX** — it doesn
 4. **Gamification** through "Moments" and shareable cards
 5. **Low-friction interaction** via "Recommended Replies"
 
-Your current ChatbotUI is architected for **power users** (assistants, tools, workspaces). The transformation requires a paradigm shift from "utility" to "experience."
+Your current Remrin.ai is architected for **power users** (assistants, tools, workspaces). The transformation requires a paradigm shift from "utility" to "experience."
 
 ---
 
@@ -37,9 +37,9 @@ Your current ChatbotUI is architected for **power users** (assistants, tools, wo
 
 ---
 
-## Feature Matrix: Talkie-AI vs. Current ChatbotUI
+## Feature Matrix: Talkie-AI vs. Current Remrin.ai
 
-| Feature Category | Talkie-AI Feature | ChatbotUI Equivalent | Status |
+| Feature Category | Talkie-AI Feature | Remrin.ai Equivalent | Status |
 |-----------------|-------------------|---------------------|--------|
 | **Discovery** | Feed-based character browse | Sidebar list | ❌ **Missing** |
 | | Category tabs (Recommend, Anime, Helper) | Folder hierarchy | ❌ **Missing** |
@@ -80,7 +80,7 @@ Your current ChatbotUI is architected for **power users** (assistants, tools, wo
 ## Gap Analysis by Component
 
 ### 1. Discovery Layer (Completely Missing)
-Current ChatbotUI uses a **sidebar + folder** paradigm. Talkie uses a **feed-based discovery** paradigm.
+Current Remrin.ai uses a **sidebar + folder** paradigm. Talkie uses a **feed-based discovery** paradigm.
 
 **Required Components:**
 - `DiscoveryFeed.tsx` - Infinite scroll grid of character cards
@@ -370,7 +370,7 @@ ALTER TABLE messages ADD COLUMN IF NOT EXISTS voice_duration_seconds INTEGER;
 > Which voice provider(s) should we prioritize?
 
 > [!WARNING]
-> **Breaking Change**: The new Discovery Feed paradigm may require restructuring the main navigation. Currently, ChatbotUI uses a sidebar-centric layout. Moving to a feed-centric layout will change the core UX.
+> **Breaking Change**: The new Discovery Feed paradigm may require restructuring the main navigation. Currently, Remrin.ai uses a sidebar-centric layout. Moving to a feed-centric layout will change the core UX.
 > 
 > Recommend: Create a `/discover` route alongside existing `/chat` to test without breaking current users.
 

@@ -24,7 +24,7 @@ Review each page route for design consistency with the new Rosé Pine theme.
 - [ ] Buttons use `rp-rose` for primary actions
 - [ ] Borders use `border-rp-highlight-med`
 - [ ] Tiempos fonts applied to headings
-- [ ] No orphan "ChatbotUI" references
+- [ ] No orphan "Remrin.ai" references
 - [ ] Logo shows Remrin logo
 
 ## File Locations

@@ -34,7 +34,7 @@ Role: You are a Senior Frontend Engineer specializing in React, Next.js 14, and 
 
 Objective: Build the Discovery Feed page - a Talkie-style character browse experience with category tabs, character cards, and trending sections.
 
-Context: You are working on the Remrin ChatbotUI project at /home/gr4y/Data68/remrin/chat. Session 1 already created:
+Context: You are working on the Remrin Remrin.ai project at /home/gr4y/Data68/remrin/chat. Session 1 already created:
 - `/components/profile/CharacterCard.tsx` (if exists, reuse it; if not, create it)
 - Database tables: `personas` (with category, tags, is_featured, status columns), `persona_stats`, `categories`
 
@@ -127,7 +127,7 @@ Role: You are a Senior Backend Engineer specializing in Next.js API routes, audi
 
 Objective: Build the Text-to-Speech API infrastructure for voice playback on chat messages.
 
-Context: You are working on the Remrin ChatbotUI project at /home/gr4y/Data68/remrin/chat. We need to add voice capabilities so AI messages can be played back as audio, similar to Talkie-AI.
+Context: You are working on the Remrin Remrin.ai project at /home/gr4y/Data68/remrin/chat. We need to add voice capabilities so AI messages can be played back as audio, similar to Talkie-AI.
 
 Your Tasks:
 
@@ -213,7 +213,7 @@ Workspace: /home/gr4y/Data68/remrin/chat
 
 Role: You are a Senior Full-Stack Engineer specializing in React component architecture, state management, and UX integration.
 
-Objective: Connect the components from Session 1 into the existing ChatbotUI, ensuring seamless navigation and data flow.
+Objective: Connect the components from Session 1 into the existing Remrin.ai, ensuring seamless navigation and data flow.
 
 Context: Session 1 created these components that need to be integrated:
 - `/components/profile/` - CharacterProfilePage, CharacterHeader, FollowButton, SoulCardDisplay

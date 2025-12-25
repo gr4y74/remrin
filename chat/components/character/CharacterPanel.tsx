@@ -1,6 +1,6 @@
 "use client"
 
-import { ChatbotUIContext } from "@/context/context"
+import { RemrinContext } from "@/context/context"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import {
@@ -23,7 +23,7 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
     width = 350,
     onClose
 }) => {
-    const { selectedPersona, setIsCharacterPanelOpen, isCharacterPanelOpen } = useContext(ChatbotUIContext)
+    const { selectedPersona, setIsCharacterPanelOpen, isCharacterPanelOpen } = useContext(RemrinContext)
     const [activeTab, setActiveTab] = useState<"chat" | "persona" | "settings">("chat")
     const [isFollowing, setIsFollowing] = useState(false)
 

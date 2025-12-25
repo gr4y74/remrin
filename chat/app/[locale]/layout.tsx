@@ -16,10 +16,10 @@ export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 
 const inter = Inter({ subsets: ["latin"] })
-const APP_NAME = "Chatbot UI"
-const APP_DEFAULT_TITLE = "Chatbot UI"
-const APP_TITLE_TEMPLATE = "%s - Chatbot UI"
-const APP_DESCRIPTION = "Chabot UI PWA!"
+const APP_NAME = "Remrin.ai"
+const APP_DEFAULT_TITLE = "Remrin.ai"
+const APP_TITLE_TEMPLATE = "%s - Remrin.ai"
+const APP_DESCRIPTION = "Remrin.ai - Your Advanced AI Assistant"
 
 interface RootLayoutProps {
   children: ReactNode

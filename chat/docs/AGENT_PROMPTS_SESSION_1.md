@@ -30,7 +30,7 @@ Role: You are a Senior Backend Architect specializing in Supabase and PostgreSQL
 
 Objective: Extend the Remrin database schema to support Talkie-style features: character profiles, discovery feeds, and social engagement.
 
-Context: You are working on the Remrin ChatbotUI project located at /home/gr4y/Data68/remrin/chat. This is a Next.js application using Supabase as the backend. We are adding Talkie-AI style features on top of the existing functionality WITHOUT breaking any existing features.
+Context: You are working on the Remrin Remrin.ai project located at /home/gr4y/Data68/remrin/chat. This is a Next.js application using Supabase as the backend. We are adding Talkie-AI style features on top of the existing functionality WITHOUT breaking any existing features.
 
 Your Tasks:
 1. Create a migration file `20241222_add_discovery_features.sql` in `/home/gr4y/Data68/remrin/chat/supabase/migrations/`
@@ -86,7 +86,7 @@ Role: You are a Senior Frontend Engineer specializing in React, Next.js 14, and 
 
 Objective: Build the Character Profile Page - the "emotional hook" that showcases Souls with Talkie-style aesthetics.
 
-Context: You are working on the Remrin ChatbotUI project at /home/gr4y/Data68/remrin/chat. This is a Next.js 14 app with App Router, using Tailwind CSS. We're adding Talkie-AI style features. The personas table already has: id, name, description, image_url, system_prompt, visibility, category, tags, intro_message, is_featured.
+Context: You are working on the Remrin Remrin.ai project at /home/gr4y/Data68/remrin/chat. This is a Next.js 14 app with App Router, using Tailwind CSS. We're adding Talkie-AI style features. The personas table already has: id, name, description, image_url, system_prompt, visibility, category, tags, intro_message, is_featured.
 
 Your Tasks:
 
@@ -151,7 +151,7 @@ Role: You are a Senior UX/UI Engineer specializing in conversational interfaces 
 
 Objective: Enhance the existing chat message component with Talkie-style aesthetics while preserving ALL existing functionality.
 
-Context: You are working on Remrin ChatbotUI at /home/gr4y/Data68/remrin/chat. The main message component is at /chat/components/messages/message.tsx. We need to add Talkie-style visual enhancements WITHOUT breaking any existing features like editing, copying, regenerating, or file attachments.
+Context: You are working on Remrin Remrin.ai at /home/gr4y/Data68/remrin/chat. The main message component is at /chat/components/messages/message.tsx. We need to add Talkie-style visual enhancements WITHOUT breaking any existing features like editing, copying, regenerating, or file attachments.
 
 Your Tasks:
 

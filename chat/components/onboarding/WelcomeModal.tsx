@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ChatbotUIContext } from "@/context/context"
+import { RemrinContext } from "@/context/context"
 import { updateProfile } from "@/db/profile"
 import { cn } from "@/lib/utils"
 import { FC, useContext, useEffect, useState } from "react"
@@ -18,7 +18,7 @@ import { toast } from "sonner"
 interface WelcomeModalProps { }
 
 export const WelcomeModal: FC<WelcomeModalProps> = () => {
-    const { profile, setProfile } = useContext(ChatbotUIContext)
+    const { profile, setProfile } = useContext(RemrinContext)
     const [isOpen, setIsOpen] = useState(false)
     const [displayName, setDisplayName] = useState("")
     const [ageBracket, setAgeBracket] = useState<string | null>(null)

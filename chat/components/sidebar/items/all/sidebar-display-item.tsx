@@ -1,4 +1,4 @@
-import { ChatbotUIContext } from "@/context/context"
+import { RemrinContext } from "@/context/context"
 import { createChat } from "@/db/chats"
 import { cn } from "@/lib/utils"
 import { Tables } from "@/supabase/types"
@@ -25,7 +25,7 @@ export const SidebarItem: FC<SidebarItemProps> = ({
   isTyping
 }) => {
   const { selectedWorkspace, setChats, setSelectedAssistant, setSelectedPersona } =
-    useContext(ChatbotUIContext)
+    useContext(RemrinContext)
 
   const router = useRouter()
 

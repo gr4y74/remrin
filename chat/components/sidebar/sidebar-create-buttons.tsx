@@ -1,5 +1,5 @@
 import { useChatHandler } from "@/components/chat/chat-hooks/use-chat-handler"
-import { ChatbotUIContext } from "@/context/context"
+import { RemrinContext } from "@/context/context"
 import { createFolder } from "@/db/folders"
 import { ContentType } from "@/types"
 import { IconFolderPlus, IconPlus, IconLink } from "@tabler/icons-react"
@@ -24,7 +24,7 @@ export const SidebarCreateButtons: FC<SidebarCreateButtonsProps> = ({
   hasData
 }) => {
   const { profile, selectedWorkspace, folders, setFolders } =
-    useContext(ChatbotUIContext)
+    useContext(RemrinContext)
   const { handleNewChat } = useChatHandler()
 
   const [isCreatingPrompt, setIsCreatingPrompt] = useState(false)

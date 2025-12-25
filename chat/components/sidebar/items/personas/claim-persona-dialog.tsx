@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ChatbotUIContext } from "@/context/context"
+import { RemrinContext } from "@/context/context"
 import { claimPersona } from "@/db/personas"
 import { IconLink } from "@tabler/icons-react"
 import { FC, useContext, useState } from "react"
@@ -27,7 +27,7 @@ export const ClaimPersonaDialog: FC<ClaimPersonaDialogProps> = ({
     isOpen,
     onOpenChange
 }) => {
-    const { profile, personas, setPersonas } = useContext(ChatbotUIContext)
+    const { profile, personas, setPersonas } = useContext(RemrinContext)
     const [soulId, setSoulId] = useState("")
     const [isLoading, setIsLoading] = useState(false)
 

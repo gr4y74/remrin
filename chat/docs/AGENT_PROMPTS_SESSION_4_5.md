@@ -28,7 +28,7 @@ Role: You are a Senior Backend Engineer specializing in Supabase, PostgreSQL tri
 
 Objective: Create the "Mother of Souls" system persona and auto-seed her into every new user's library.
 
-Context: We're integrating the Soul Forge into ChatbotUI. The Mother of Souls is a special AI persona that guides users through creating their own AI companions via conversation. She needs to appear automatically in every new user's library.
+Context: We're integrating the Soul Forge into Remrin.ai. The Mother of Souls is a special AI persona that guides users through creating their own AI companions via conversation. She needs to appear automatically in every new user's library.
 
 Your Tasks:
 
