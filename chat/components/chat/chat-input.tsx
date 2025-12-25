@@ -274,8 +274,8 @@ export const ChatInput: FC<ChatInputProps> = ({ }) => {
         </div>
       )}
 
-      {/* Clean Input Box with Solid Background */}
-      <div className="relative mt-3 flex min-h-[56px] w-full items-center rounded-2xl bg-rp-surface border border-rp-highlight-med">
+      {/* Clean Input Box with Solid Background - No border */}
+      <div className="relative mt-3 flex min-h-[56px] w-full items-center rounded-2xl bg-rp-surface">
         <div className="absolute bottom-[76px] left-0 max-h-[300px] w-full overflow-auto rounded-xl dark:border-none">
           <ChatCommandInput />
         </div>

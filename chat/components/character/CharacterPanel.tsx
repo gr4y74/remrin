@@ -35,8 +35,26 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
         }
     }
 
-    if (!selectedPersona || !isCharacterPanelOpen) {
+    const handleOpen = () => {
+        setIsCharacterPanelOpen(true)
+    }
+
+    // Always show the toggle chevron, even when panel is closed
+    if (!selectedPersona) {
         return null
+    }
+
+    // Show only the toggle button when panel is closed
+    if (!isCharacterPanelOpen) {
+        return (
+            <button
+                onClick={handleOpen}
+                className="absolute right-0 top-1/2 z-20 flex size-8 -translate-y-1/2 items-center justify-center rounded-l-full bg-rp-overlay border border-r-0 border-border/50 text-rp-subtle hover:bg-rp-highlight-med hover:text-rp-text transition-colors"
+                title="Open character panel"
+            >
+                <IconChevronRight size={16} className="rotate-180" />
+            </button>
+        )
     }
 
     return (

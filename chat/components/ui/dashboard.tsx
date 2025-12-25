@@ -127,15 +127,6 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
             width: isSidebarExpanded ? `${SIDEBAR_WIDTH}px` : "0px"
           }}
         >
-          {/* Expand/Collapse chevron on right edge */}
-          <button
-            onClick={handleToggleSidebar}
-            className="absolute -right-4 top-1/2 z-20 flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-rp-overlay border border-border/50 text-rp-subtle hover:bg-rp-highlight-med hover:text-rp-text transition-colors"
-            title={isSidebarExpanded ? "Collapse sidebar" : "Expand sidebar"}
-          >
-            <IconChevronCompactRight size={16} className={isSidebarExpanded ? "rotate-180" : ""} />
-          </button>
-
           <Tabs
             className="flex h-full"
             value={contentType}
@@ -147,6 +138,20 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
             <Sidebar contentType={contentType} showSidebar={isSidebarExpanded} />
           </Tabs>
         </div>
+
+        {/* Sidebar Toggle Chevron - Always visible */}
+        <button
+          onClick={handleToggleSidebar}
+          className="absolute z-20 flex size-8 items-center justify-center rounded-full bg-rp-overlay border border-border/50 text-rp-subtle hover:bg-rp-highlight-med hover:text-rp-text transition-all duration-200"
+          style={{
+            left: isSidebarExpanded ? `${ICON_SIDEBAR_WIDTH + SIDEBAR_WIDTH - 16}px` : `${ICON_SIDEBAR_WIDTH - 16}px`,
+            top: "50%",
+            transform: "translateY(-50%)"
+          }}
+          title={isSidebarExpanded ? "Collapse sidebar" : "Expand sidebar"}
+        >
+          <IconChevronCompactRight size={16} className={cn("transition-transform", isSidebarExpanded && "rotate-180")} />
+        </button>
       </div>
 
       {/* Panel 2: Main Chat Area */}
@@ -164,23 +169,6 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
         ) : (
           children
         )}
-
-        {/* Sidebar Toggle Button */}
-        <Button
-          className={cn(
-            "absolute left-2 top-1/2 z-10 size-8 -translate-y-1/2 cursor-pointer transition-transform duration-200"
-          )}
-          style={{
-            transform: isSidebarExpanded
-              ? "translateY(-50%) rotate(180deg)"
-              : "translateY(-50%) rotate(0deg)"
-          }}
-          variant="ghost"
-          size="icon"
-          onClick={handleToggleSidebar}
-        >
-          <IconChevronCompactRight size={24} />
-        </Button>
       </div>
 
       {/* Panel 3: Canvas/Artifacts (conditional) */}
