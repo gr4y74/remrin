@@ -60,7 +60,7 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
 
     return (
         <div
-            className="border-border/50 bg-rp-surface relative flex h-full shrink-0 flex-col border-l"
+            className="border-rp-highlight-low bg-rp-surface relative flex h-full shrink-0 flex-col border-l"
             style={{ width: `${width}px` }}
         >
             {/* Collapse chevron on left edge */}
