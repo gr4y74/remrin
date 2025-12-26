@@ -247,7 +247,7 @@ export default function HomePage() {
         >
           {showSidebar && (
             <Tabs
-              className="flex h-full"
+              className="flex h-full bg-[#201d2f]"
               value={contentType}
               onValueChange={tabValue => setContentType(tabValue as ContentType)}
             >
@@ -290,8 +290,8 @@ export default function HomePage() {
             <Image
               src="/logo.svg"
               alt="Remrin"
-              width={64}
-              height={64}
+              width={128}
+              height={128}
               className="drop-shadow-[0_0_12px_rgba(235,188,186,0.4)] transition-transform duration-300 ease-out hover:rotate-[-5deg] hover:scale-105"
             />
           </Link>

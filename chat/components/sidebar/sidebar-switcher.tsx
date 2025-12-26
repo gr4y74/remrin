@@ -79,7 +79,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
               href="/discover"
               className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
             >
-              <IconCompass size={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, "text-rp-foam")} />
+              <Image src="/icons/hero_icons/discover.svg" alt="Discover" width={SIDEBAR_ICON_SIZE} height={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, "text-rp-foam")} />
             </Link>
           }
         />
