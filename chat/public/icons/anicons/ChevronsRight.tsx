@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useAnimation } from "motion/react";
-import type { Variants } from "motion/react";
+import { motion, useAnimation } from "framer-motion";
+import type { Variants } from "framer-motion";
 
 interface ChevronsRightProps extends React.SVGAttributes<SVGSVGElement> {
   width?: number;

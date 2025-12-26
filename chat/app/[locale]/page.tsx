@@ -290,8 +290,8 @@ export default function HomePage() {
             <Image
               src="/logo.svg"
               alt="Remrin"
-              width={48}
-              height={48}
+              width={64}
+              height={64}
               className="drop-shadow-[0_0_12px_rgba(235,188,186,0.4)] transition-transform duration-300 ease-out hover:rotate-[-5deg] hover:scale-105"
             />
           </Link>

@@ -1,7 +1,7 @@
 "use client";
 
-import type { Variants } from "motion/react";
-import { motion, useAnimation } from "motion/react";
+import type { Variants } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
 
 interface SwatchBookProps extends React.SVGAttributes<SVGSVGElement> {
   width?: number;

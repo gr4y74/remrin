@@ -66,7 +66,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
 
         {/* Primary: Chats */}
         <SidebarSwitchItem
-          icon={<IconMessage size={SIDEBAR_ICON_SIZE} className={iconHoverClass} />}
+          icon={<Image src="/icons/hero_icons/chats.svg" alt="Chats" width={SIDEBAR_ICON_SIZE} height={SIDEBAR_ICON_SIZE} className={iconHoverClass} />}
           contentType="chats"
           onContentTypeChange={onContentTypeChange}
         />
@@ -92,7 +92,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
               href="/marketplace"
               className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
             >
-              <IconShoppingCart size={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, "text-rp-gold")} />
+              <Image src="/icons/hero_icons/market.svg" alt="Market" width={SIDEBAR_ICON_SIZE} height={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, "text-rp-gold")} />
             </Link>
           }
         />
@@ -105,7 +105,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
               href="/moments"
               className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
             >
-              <IconPhoto size={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, "text-rp-iris")} />
+              <Image src="/icons/hero_icons/moments.svg" alt="Moments" width={SIDEBAR_ICON_SIZE} height={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, "text-rp-iris")} />
             </Link>
           }
         />
@@ -118,7 +118,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
               href="/summon"
               className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
             >
-              <IconDiamond size={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, "text-rp-rose")} />
+              <Image src="/icons/hero_icons/summon.svg" alt="Summon" width={SIDEBAR_ICON_SIZE} height={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, "text-rp-rose")} />
             </Link>
           }
         />
@@ -131,7 +131,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
               href="/collection"
               className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
             >
-              <IconCards size={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, "text-rp-pine")} />
+              <Image src="/icons/hero_icons/collection.svg" alt="Collection" width={SIDEBAR_ICON_SIZE} height={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, "text-rp-pine")} />
             </Link>
           }
         />
@@ -144,7 +144,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
               id="wallet-trigger-button"
               className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
             >
-              <IconWallet size={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, "text-rp-gold")} />
+              <Image src="/icons/hero_icons/wallet.svg" alt="Wallet" width={SIDEBAR_ICON_SIZE} height={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, "text-rp-gold")} />
             </button>
           }
         />
