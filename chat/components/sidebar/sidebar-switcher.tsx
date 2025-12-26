@@ -22,6 +22,7 @@ import {
 import Link from "next/link"
 import Image from "next/image"
 import { FC, useState } from "react"
+import { useTheme } from "next-themes"
 import { TabsList } from "../ui/tabs"
 import { WithTooltip } from "../ui/with-tooltip"
 import { ProfileSettings } from "../utility/profile-settings"
@@ -38,12 +39,13 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
   onContentTypeChange
 }) => {
   const [isToolsOpen, setIsToolsOpen] = useState(false)
+  const { theme } = useTheme()
 
   // CSS animation class for icons
   const iconHoverClass = "transition-all duration-200 hover:scale-110 hover:text-rp-rose"
 
   return (
-    <div className="border-rp-highlight-med flex flex-col justify-between border-r pb-5">
+    <div className="border-rp-highlight-med flex flex-col justify-between border-r bg-[hsl(var(--sidebar-bg))] pb-5">
       <TabsList className="grid h-auto gap-1 bg-transparent p-2">
         {/* Remrin Logo - Home button */}
         <WithTooltip
@@ -54,7 +56,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
               className="hover:bg-rp-overlay mb-2 flex size-[56px] cursor-pointer items-center justify-center rounded-lg"
             >
               <Image
-                src="/logo_sm.svg"
+                src={theme === "light" ? "/logo_dark_sm.svg" : "/logo_sm.svg"}
                 alt="Remrin Home"
                 width={48}
                 height={48}

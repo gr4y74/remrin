@@ -173,6 +173,16 @@
     --rp-highlight-high: 35 32% 82%;
     /* #cecacd */
 
+    /* Sidebar Colors (Light Mode) */
+    --sidebar-bg: 218 33% 66%;
+    /* #91a8d0 - blue-gray */
+    --sidebar-hover: 218 46% 76%;
+    /* #b4c8ea - lighter blue */
+    --sidebar-border: 218 28% 60%;
+    /* #7a91bd - darker blue */
+    --sidebar-text: 0 0% 100%;
+    /* White text on blue sidebar */
+
     /* Rem/Ram Color Palette */
     --almost-black-blue: 248 100% 4%;
     --darker-dark-blue: 240 25% 12%;
@@ -263,6 +273,16 @@
     /* #403d52 */
     --rp-highlight-high: 251 13% 36%;
     /* #524f67 */
+
+    /* Sidebar Colors (Dark Mode) - same as base */
+    --sidebar-bg: 249 22% 12%;
+    /* Same as rp-base */
+    --sidebar-hover: 251 25% 18%;
+    /* Same as rp-overlay */
+    --sidebar-border: 251 20% 25%;
+    /* Same as border */
+    --sidebar-text: 245 50% 91%;
+    /* Same as rp-text */
   }
 }
 

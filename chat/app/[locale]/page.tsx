@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useContext, useMemo } from "react"
 import { useRouter } from "next/navigation"
+import { useTheme } from "next-themes"
 import Link from "next/link"
 import Image from "next/image"
 import { createClient } from "@/lib/supabase/client"
@@ -53,6 +54,7 @@ const DEMO_DESCRIPTIONS = [
 export default function HomePage() {
   const router = useRouter()
   const { workspaces, profile } = useContext(RemrinContext)
+  const { theme } = useTheme()
   const [personas, setPersonas] = useState<Persona[]>([])
   const [loading, setLoading] = useState(true)
   const [showSidebar, setShowSidebar] = useState(false)
@@ -288,7 +290,7 @@ export default function HomePage() {
         <header className="glass-dark relative z-50 flex items-center justify-between px-6 py-4">
           <Link href="/" className="flex items-center">
             <Image
-              src="/logo.svg"
+              src={theme === "light" ? "/logo_dark.svg" : "/logo.svg"}
               alt="Remrin"
               width={128}
               height={128}
