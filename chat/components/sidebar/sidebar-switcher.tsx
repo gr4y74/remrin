@@ -51,13 +51,13 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
           trigger={
             <Link
               href="/"
-              className="hover:bg-rp-overlay mb-2 flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
+              className="hover:bg-rp-overlay mb-2 flex size-[56px] cursor-pointer items-center justify-center rounded-lg"
             >
               <Image
                 src="/logo_sm.svg"
                 alt="Remrin Home"
-                width={32}
-                height={32}
+                width={48}
+                height={48}
                 className={cn(iconHoverClass, "drop-shadow-[0_0_8px_rgba(235,188,186,0.3)]")}
               />
             </Link>
