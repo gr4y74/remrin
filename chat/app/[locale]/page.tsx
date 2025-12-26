@@ -3,6 +3,7 @@
 import { useEffect, useState, useContext, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 import { createClient } from "@/lib/supabase/client"
 import { HeroCarousel, DraggableGallery } from "@/components/discovery"
 import { SidebarSwitcher } from "@/components/sidebar/sidebar-switcher"
@@ -223,14 +224,14 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0a0a0f]">
-        <IconLoader2 className="size-12 animate-spin text-purple-500" />
+      <div className="bg-rp-base flex min-h-screen items-center justify-center">
+        <IconLoader2 className="text-rp-rose size-12 animate-spin" />
       </div>
     )
   }
 
   return (
-    <div className="flex size-full bg-[#0a0a0f]">
+    <div className="bg-rp-base flex size-full">
       {/* Sidebar - Only for logged in users */}
       {isLoggedIn && (
         <div
@@ -285,14 +286,18 @@ export default function HomePage() {
 
         {/* Header */}
         <header className="glass-dark relative z-50 flex items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-pink-500">
-              <IconSparkles size={24} className="text-white" />
-            </div>
-            <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-xl font-bold text-transparent">
+          <Link href="/" className="flex items-center gap-3">
+            <Image
+              src="/logo.svg"
+              alt="Remrin"
+              width={40}
+              height={40}
+              className="drop-shadow-[0_0_12px_rgba(235,188,186,0.4)]"
+            />
+            <span className="font-tiempos-headline text-rp-text text-xl font-bold">
               Remrin
             </span>
-          </div>
+          </Link>
 
           <div className="flex items-center gap-4">
             <Link

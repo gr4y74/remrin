@@ -54,10 +54,10 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
               className="hover:bg-rp-overlay mb-2 flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
             >
               <Image
-                src="/logo.svg"
+                src="/logo_sm.svg"
                 alt="Remrin Home"
-                width={28}
-                height={28}
+                width={32}
+                height={32}
                 className={cn(iconHoverClass, "drop-shadow-[0_0_8px_rgba(235,188,186,0.3)]")}
               />
             </Link>
@@ -136,6 +136,19 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
           }
         />
 
+        {/* Wallet */}
+        <WithTooltip
+          display={<div>Wallet & Aether</div>}
+          trigger={
+            <button
+              id="wallet-trigger-button"
+              className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
+            >
+              <IconWallet size={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, "text-rp-gold")} />
+            </button>
+          }
+        />
+
         {/* Divider */}
         <div className="bg-rp-highlight-med my-2 h-px" />
 
@@ -200,18 +213,6 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
       </TabsList>
 
       <div className="flex flex-col items-center space-y-4">
-        {/* Wallet */}
-        <WithTooltip
-          display={<div>Wallet & Aether</div>}
-          trigger={
-            <button
-              id="wallet-trigger-button"
-              className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
-            >
-              <IconWallet size={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, "text-rp-gold")} />
-            </button>
-          }
-        />
         <WithTooltip
           display={<div>Profile Settings</div>}
           trigger={<ProfileSettings />}
