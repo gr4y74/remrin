@@ -113,7 +113,7 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
       >
         {/* Icon Strip (always visible) */}
         <div
-          className="border-border/50 bg-rp-base flex h-full flex-col border-r"
+          className="border-rp-highlight-low bg-rp-base flex h-full flex-col border-r"
           style={{ width: `${ICON_SIDEBAR_WIDTH}px` }}
         >
           <Tabs

@@ -91,36 +91,87 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
+    /* Rosé Pine Dawn (Light Theme) */
+    --background: 32 57% 95%;
+    /* Base #faf4ed */
+    --foreground: 248 19% 40%;
+    /* Text #575279 */
 
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
+    --muted: 35 100% 98%;
+    /* Surface #fffaf3 */
+    --muted-foreground: 249 12% 52%;
+    /* Muted #797593 */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
+    --popover: 49 100% 98%;
+    /* Overlay #f2e9e1 */
+    --popover-foreground: 248 19% 40%;
+    /* Text */
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    --card: 35 100% 98%;
+    /* Surface */
+    --card-foreground: 248 19% 40%;
+    /* Text */
 
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
+    --border: 35 32% 88%;
+    /* Highlight Med #dfdad9 */
+    --input: 35 100% 98%;
+    /* Surface */
 
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 3 82% 52%;
+    /* Love #b4637a */
+    --primary-foreground: 32 57% 95%;
+    /* Base */
 
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
+    --secondary: 49 100% 98%;
+    /* Overlay */
+    --secondary-foreground: 248 19% 40%;
+    /* Text */
 
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
+    --accent: 2 55% 83%;
+    /* Rose #d7827e */
+    --accent-foreground: 32 57% 95%;
+    /* Base */
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 3 82% 52%;
+    /* Love */
+    --destructive-foreground: 32 57% 95%;
 
-    --ring: 0 0% 63.9%;
+    --ring: 2 55% 83%;
+    /* Rose */
 
     --radius: 0.5rem;
+
+    /* Rosé Pine Dawn Complete Palette */
+    --rp-base: 32 57% 95%;
+    /* #faf4ed */
+    --rp-surface: 35 100% 98%;
+    /* #fffaf3 */
+    --rp-overlay: 49 100% 98%;
+    /* #f2e9e1 */
+    --rp-muted: 249 12% 52%;
+    /* #797593 */
+    --rp-subtle: 248 12% 59%;
+    /* #9893a5 */
+    --rp-text: 248 19% 40%;
+    /* #575279 */
+    --rp-love: 3 82% 52%;
+    /* #b4637a */
+    --rp-gold: 22 100% 55%;
+    /* #ea9d34 */
+    --rp-rose: 2 55% 67%;
+    /* #d7827e */
+    --rp-pine: 197 49% 38%;
+    /* #286983 */
+    --rp-foam: 189 30% 48%;
+    /* #56949f */
+    --rp-iris: 268 21% 57%;
+    /* #907aa9 */
+    --rp-highlight-low: 35 32% 92%;
+    /* #f4ede8 */
+    --rp-highlight-med: 35 32% 88%;
+    /* #dfdad9 */
+    --rp-highlight-high: 35 32% 82%;
+    /* #cecacd */
 
     /* Rem/Ram Color Palette */
     --almost-black-blue: 248 100% 4%;

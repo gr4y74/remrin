@@ -94,6 +94,24 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                     <span className="bg-rp-base size-1.5 animate-pulse rounded-full" />
                     Live
                 </div>
+
+                {/* Follow Button - Top Left */}
+                <button
+                    onClick={() => setIsFollowing(!isFollowing)}
+                    className={cn(
+                        "absolute left-3 top-3 flex size-9 items-center justify-center rounded-full backdrop-blur-sm transition-all",
+                        isFollowing
+                            ? "bg-rp-rose/30 text-rp-rose"
+                            : "bg-rp-base/60 text-rp-text hover:bg-rp-rose/20 hover:text-rp-rose"
+                    )}
+                    title={isFollowing ? "Following" : "Follow"}
+                >
+                    {isFollowing ? (
+                        <IconHeartFilled size={18} />
+                    ) : (
+                        <IconHeart size={18} />
+                    )}
+                </button>
             </div>
 
             {/* Character Info */}
@@ -107,23 +125,6 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                             by @{(selectedPersona as any).creator_username || "remrin"}
                         </p>
                     </div>
-                    {/* Follow Button */}
-                    <Button
-                        variant={isFollowing ? "secondary" : "default"}
-                        size="sm"
-                        onClick={() => setIsFollowing(!isFollowing)}
-                        className={cn(
-                            "gap-1.5",
-                            isFollowing && "bg-rp-rose/20 hover:bg-rp-rose/30"
-                        )}
-                    >
-                        {isFollowing ? (
-                            <IconHeartFilled size={16} className="text-rp-rose" />
-                        ) : (
-                            <IconHeart size={16} />
-                        )}
-                        {isFollowing ? "Following" : "Follow"}
-                    </Button>
                 </div>
 
                 {/* Stats Row */}

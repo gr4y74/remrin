@@ -16,9 +16,11 @@ import {
   IconSettings,
   IconShoppingCart,
   IconSparkles,
-  IconHeart
+  IconHeart,
+  IconWallet
 } from "@tabler/icons-react"
 import Link from "next/link"
+import Image from "next/image"
 import { FC, useState } from "react"
 import { TabsList } from "../ui/tabs"
 import { WithTooltip } from "../ui/with-tooltip"
@@ -43,6 +45,25 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
   return (
     <div className="border-rp-highlight-med flex flex-col justify-between border-r pb-5">
       <TabsList className="grid h-auto gap-1 bg-transparent p-2">
+        {/* Remrin Logo - Home button */}
+        <WithTooltip
+          display={<div>Home</div>}
+          trigger={
+            <Link
+              href="/"
+              className="hover:bg-rp-overlay mb-2 flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
+            >
+              <Image
+                src="/logo.svg"
+                alt="Remrin Home"
+                width={28}
+                height={28}
+                className={cn(iconHoverClass, "drop-shadow-[0_0_8px_rgba(235,188,186,0.3)]")}
+              />
+            </Link>
+          }
+        />
+
         {/* Primary: Chats */}
         <SidebarSwitchItem
           icon={<IconMessage size={SIDEBAR_ICON_SIZE} className={iconHoverClass} />}
@@ -179,6 +200,18 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
       </TabsList>
 
       <div className="flex flex-col items-center space-y-4">
+        {/* Wallet */}
+        <WithTooltip
+          display={<div>Wallet & Aether</div>}
+          trigger={
+            <button
+              id="wallet-trigger-button"
+              className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
+            >
+              <IconWallet size={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, "text-rp-gold")} />
+            </button>
+          }
+        />
         <WithTooltip
           display={<div>Profile Settings</div>}
           trigger={<ProfileSettings />}
