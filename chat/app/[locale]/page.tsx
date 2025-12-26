@@ -249,7 +249,7 @@ export default function HomePage() {
         >
           {showSidebar && (
             <Tabs
-              className="flex h-full bg-[#201d2f]"
+              className="flex h-full bg-rp-surface"
               value={contentType}
               onValueChange={tabValue => setContentType(tabValue as ContentType)}
             >
@@ -287,7 +287,7 @@ export default function HomePage() {
         </div>
 
         {/* Header */}
-        <header className="glass-dark relative z-50 flex items-center justify-between px-6 py-4">
+        <header className="relative z-50 flex items-center justify-between border-b border-rp-highlight-med bg-rp-base px-6 py-4">
           <Link href="/" className="flex items-center">
             <Image
               src={theme === "light" ? "/logo_dark.svg" : "/logo.svg"}
@@ -368,7 +368,7 @@ export default function HomePage() {
         </section>
 
         {/* Quick Actions Footer */}
-        <section className="glass-dark relative z-10 mt-8 py-12">
+        <section className="relative z-10 mt-8 border-t border-rp-highlight-med bg-rp-base py-12">
           <div className="mx-auto grid max-w-4xl grid-cols-1 gap-6 px-6 md:grid-cols-3">
             <Link
               href="/summon"

@@ -39,8 +39,8 @@ export default function CollectionPage() {
 
     return (
         <div className="container mx-auto max-w-7xl px-4 py-8">
-            <div className="mb-8">
-                <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
+            <div className="mb-6 flex items-center justify-between">
+                <h1 className="font-tiempos-headline text-rp-text text-3xl font-bold">
                     My Collection
                 </h1>
                 <p className="text-muted-foreground mt-1">

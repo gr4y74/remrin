@@ -45,7 +45,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
   const iconHoverClass = "transition-all duration-200 hover:scale-110 hover:text-rp-rose"
 
   return (
-    <div className="border-rp-highlight-med flex flex-col justify-between border-r bg-[hsl(var(--sidebar-bg))] pb-5">
+    <div className="flex h-full flex-col justify-between border-r border-rp-highlight-med bg-[#f0d7d7] pb-5">
       <TabsList className="grid h-auto gap-1 bg-transparent p-2">
         {/* Remrin Logo - Home button */}
         <WithTooltip
@@ -53,7 +53,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
           trigger={
             <Link
               href="/"
-              className="hover:bg-rp-overlay mb-2 flex size-[56px] cursor-pointer items-center justify-center rounded-lg"
+              className="hover:bg-rp-overlay mx-auto mb-2 flex size-[56px] cursor-pointer items-center justify-center rounded-lg"
             >
               <Image
                 src={theme === "light" ? "/logo_dark_sm.svg" : "/logo_sm.svg"}
@@ -67,15 +67,17 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
         />
 
         {/* Primary: Chats */}
-        <SidebarSwitchItem
-          icon={
-            <div className="flex size-6 items-center justify-center">
-              <Image src="/icons/hero_icons/chats.svg" alt="Chats" width={24} height={24} className="size-6 object-contain" style={{ objectFit: 'contain' }} />
-            </div>
-          }
-          contentType="chats"
-          onContentTypeChange={onContentTypeChange}
-        />
+        <div className="mx-auto">
+          <SidebarSwitchItem
+            icon={
+              <div className="flex size-6 items-center justify-center">
+                <Image src="/icons/hero_icons/chats.svg" alt="Chats" width={24} height={24} className="size-6 object-contain" style={{ objectFit: 'contain' }} />
+              </div>
+            }
+            contentType="chats"
+            onContentTypeChange={onContentTypeChange}
+          />
+        </div>
 
         {/* Discover Link */}
         <WithTooltip
@@ -83,7 +85,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
           trigger={
             <Link
               href="/discover"
-              className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
+              className="hover:bg-rp-overlay mx-auto flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
             >
               <div className="flex size-6 items-center justify-center">
                 <Image src="/icons/hero_icons/discover.svg" alt="Discover" width={24} height={24} className="size-6 object-contain" style={{ objectFit: 'contain' }} />
@@ -98,7 +100,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
           trigger={
             <Link
               href="/marketplace"
-              className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
+              className="hover:bg-rp-overlay mx-auto flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
             >
               <div className="flex size-6 items-center justify-center">
                 <Image src="/icons/hero_icons/market.svg" alt="Market" width={24} height={24} className="size-6 object-contain" style={{ objectFit: 'contain' }} />
@@ -113,7 +115,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
           trigger={
             <Link
               href="/moments"
-              className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
+              className="hover:bg-rp-overlay mx-auto flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
             >
               <div className="flex size-6 items-center justify-center">
                 <Image src="/icons/hero_icons/moments.svg" alt="Moments" width={24} height={24} className="size-6 object-contain" style={{ objectFit: 'contain' }} />
@@ -128,7 +130,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
           trigger={
             <Link
               href="/summon"
-              className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
+              className="hover:bg-rp-overlay mx-auto flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
             >
               <div className="flex size-6 items-center justify-center">
                 <Image src="/icons/hero_icons/summon.svg" alt="Summon" width={24} height={24} className="size-6 object-contain" style={{ objectFit: 'contain' }} />
@@ -139,11 +141,11 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
 
         {/* My Collection */}
         <WithTooltip
-          display={<div>My Collection</div>}
+          display={<div className="font-tiempos-headline">My Collection</div>}
           trigger={
             <Link
               href="/collection"
-              className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
+              className="hover:bg-rp-overlay mx-auto flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
             >
               <div className="flex size-6 items-center justify-center">
                 <Image src="/icons/hero_icons/collection.svg" alt="Collection" width={24} height={24} className="size-6 object-contain" style={{ objectFit: 'contain' }} />
@@ -154,11 +156,11 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
 
         {/* Wallet */}
         <WithTooltip
-          display={<div>Wallet & Aether</div>}
+          display={<div className="font-tiempos-headline">Wallet & Aether</div>}
           trigger={
             <Link
               href="/wallet"
-              className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
+              className="hover:bg-rp-overlay mx-auto flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
             >
               <div className="flex size-6 items-center justify-center">
                 <Image src="/icons/hero_icons/wallet.svg" alt="Wallet" width={24} height={24} className="size-6 object-contain" style={{ objectFit: 'contain' }} />

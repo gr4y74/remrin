@@ -17,7 +17,7 @@ import { useSelectFileHandler } from "../chat/chat-hooks/use-select-file-handler
 import { CommandK } from "../utility/command-k"
 
 // Panel widths
-export const ICON_SIDEBAR_WIDTH = 60
+export const ICON_SIDEBAR_WIDTH = 70
 export const SIDEBAR_WIDTH = 280
 export const CANVAS_WIDTH = 450
 export const CHARACTER_PANEL_WIDTH = 350
