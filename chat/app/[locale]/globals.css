@@ -91,97 +91,97 @@
 
 @layer base {
   :root {
-    /* Rosé Pine Dawn (Light Theme) */
+    /* Rosé Pine Dawn (Light Theme) - Updated Pink/Rose Scheme */
     --background: 32 57% 95%;
-    /* Base #faf4ed */
-    --foreground: 248 19% 40%;
-    /* Text #575279 */
+    /* Main window #faf3eb */
+    --foreground: 248 35% 15%;
+    /* Text #201d2f */
 
-    --muted: 35 100% 98%;
-    /* Surface #fffaf3 */
-    --muted-foreground: 249 12% 52%;
-    /* Muted #797593 */
+    --muted: 0 33% 94%;
+    /* Expanded sidebar #f0d7d7 */
+    --muted-foreground: 248 35% 15%;
+    /* Text #201d2f */
 
-    --popover: 49 100% 98%;
-    /* Overlay #f2e9e1 */
-    --popover-foreground: 248 19% 40%;
+    --popover: 0 33% 94%;
+    /* #f0d7d7 */
+    --popover-foreground: 248 35% 15%;
     /* Text */
 
-    --card: 35 100% 98%;
-    /* Surface */
-    --card-foreground: 248 19% 40%;
+    --card: 0 33% 94%;
+    /* #f0d7d7 */
+    --card-foreground: 248 35% 15%;
     /* Text */
 
-    --border: 35 32% 88%;
-    /* Highlight Med #dfdad9 */
-    --input: 35 100% 98%;
-    /* Surface */
+    --border: 351 27% 65%;
+    /* Sidebar border #c5818e */
+    --input: 0 33% 94%;
+    /* #f0d7d7 */
 
-    --primary: 3 82% 52%;
-    /* Love #b4637a */
-    --primary-foreground: 32 57% 95%;
-    /* Base */
+    --primary: 351 27% 65%;
+    /* Sidebar #c5818e */
+    --primary-foreground: 248 35% 15%;
+    /* Dark text */
 
-    --secondary: 49 100% 98%;
-    /* Overlay */
-    --secondary-foreground: 248 19% 40%;
-    /* Text */
+    --secondary: 0 33% 94%;
+    /* #f0d7d7 */
+    --secondary-foreground: 248 35% 15%;
+    /* Dark text */
 
-    --accent: 2 55% 83%;
-    /* Rose #d7827e */
-    --accent-foreground: 32 57% 95%;
-    /* Base */
+    --accent: 351 27% 65%;
+    /* #c5818e */
+    --accent-foreground: 248 35% 15%;
+    /* Dark text */
 
     --destructive: 3 82% 52%;
     /* Love */
     --destructive-foreground: 32 57% 95%;
 
-    --ring: 2 55% 83%;
-    /* Rose */
+    --ring: 351 27% 65%;
+    /* #c5818e */
 
     --radius: 0.5rem;
 
-    /* Rosé Pine Dawn Complete Palette */
+    /* Rosé Pine Dawn Complete Palette - Updated */
     --rp-base: 32 57% 95%;
-    /* #faf4ed */
-    --rp-surface: 35 100% 98%;
-    /* #fffaf3 */
-    --rp-overlay: 49 100% 98%;
-    /* #f2e9e1 */
-    --rp-muted: 249 12% 52%;
-    /* #797593 */
-    --rp-subtle: 248 12% 59%;
-    /* #9893a5 */
-    --rp-text: 248 19% 40%;
-    /* #575279 */
+    /* #faf3eb - main window */
+    --rp-surface: 0 33% 94%;
+    /* #f0d7d7 - expanded sidebar/cards */
+    --rp-overlay: 0 33% 94%;
+    /* #f0d7d7 */
+    --rp-muted: 248 25% 40%;
+    /* Muted dark text */
+    --rp-subtle: 248 20% 50%;
+    /* Subtle dark text */
+    --rp-text: 248 35% 15%;
+    /* #201d2f - main text */
     --rp-love: 3 82% 52%;
     /* #b4637a */
     --rp-gold: 22 100% 55%;
     /* #ea9d34 */
-    --rp-rose: 2 55% 67%;
-    /* #d7827e */
+    --rp-rose: 351 27% 65%;
+    /* #c5818e - sidebar color */
     --rp-pine: 197 49% 38%;
     /* #286983 */
     --rp-foam: 189 30% 48%;
     /* #56949f */
     --rp-iris: 268 21% 57%;
     /* #907aa9 */
-    --rp-highlight-low: 35 32% 92%;
-    /* #f4ede8 */
-    --rp-highlight-med: 35 32% 88%;
-    /* #dfdad9 */
-    --rp-highlight-high: 35 32% 82%;
-    /* #cecacd */
+    --rp-highlight-low: 0 33% 94%;
+    /* #f0d7d7 */
+    --rp-highlight-med: 351 27% 65%;
+    /* #c5818e */
+    --rp-highlight-high: 351 20% 55%;
+    /* Darker rose */
 
-    /* Sidebar Colors (Light Mode) */
-    --sidebar-bg: 218 33% 66%;
-    /* #91a8d0 - blue-gray */
-    --sidebar-hover: 218 46% 76%;
-    /* #b4c8ea - lighter blue */
-    --sidebar-border: 218 28% 60%;
-    /* #7a91bd - darker blue */
-    --sidebar-text: 0 0% 100%;
-    /* White text on blue sidebar */
+    /* Sidebar Colors (Light Mode) - New Pink/Rose Scheme */
+    --sidebar-bg: 351 27% 65%;
+    /* #c5818e - dusty rose sidebar */
+    --sidebar-hover: 0 33% 94%;
+    /* #f0d7d7 - light pink hover */
+    --sidebar-border: 351 20% 55%;
+    /* Darker rose border */
+    --sidebar-text: 248 35% 15%;
+    /* #201d2f - dark text on sidebar */
 
     /* Rem/Ram Color Palette */
     --almost-black-blue: 248 100% 4%;
