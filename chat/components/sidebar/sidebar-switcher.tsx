@@ -67,8 +67,8 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
         {/* Primary: Chats */}
         <SidebarSwitchItem
           icon={
-            <div className="flex size-full items-center justify-center">
-              <Image src="/icons/hero_icons/chats.svg" alt="Chats" width={SIDEBAR_ICON_SIZE} height={SIDEBAR_ICON_SIZE} className={iconHoverClass} />
+            <div className="flex size-6 items-center justify-center">
+              <Image src="/icons/hero_icons/chats.svg" alt="Chats" width={24} height={24} className="size-6 object-contain" style={{ objectFit: 'contain' }} />
             </div>
           }
           contentType="chats"
@@ -83,8 +83,8 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
               href="/discover"
               className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
             >
-              <div className="flex size-full items-center justify-center">
-                <Image src="/icons/hero_icons/discover.svg" alt="Discover" width={SIDEBAR_ICON_SIZE} height={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, "text-rp-foam")} />
+              <div className="flex size-6 items-center justify-center">
+                <Image src="/icons/hero_icons/discover.svg" alt="Discover" width={24} height={24} className="size-6 object-contain" style={{ objectFit: 'contain' }} />
               </div>
             </Link>
           }
@@ -98,8 +98,8 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
               href="/marketplace"
               className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
             >
-              <div className="flex size-full items-center justify-center">
-                <Image src="/icons/hero_icons/market.svg" alt="Market" width={SIDEBAR_ICON_SIZE} height={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, "text-rp-gold")} />
+              <div className="flex size-6 items-center justify-center">
+                <Image src="/icons/hero_icons/market.svg" alt="Market" width={24} height={24} className="size-6 object-contain" style={{ objectFit: 'contain' }} />
               </div>
             </Link>
           }
@@ -113,8 +113,8 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
               href="/moments"
               className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
             >
-              <div className="flex size-full items-center justify-center">
-                <Image src="/icons/hero_icons/moments.svg" alt="Moments" width={SIDEBAR_ICON_SIZE} height={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, "text-rp-iris")} />
+              <div className="flex size-6 items-center justify-center">
+                <Image src="/icons/hero_icons/moments.svg" alt="Moments" width={24} height={24} className="size-6 object-contain" style={{ objectFit: 'contain' }} />
               </div>
             </Link>
           }
@@ -128,8 +128,8 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
               href="/summon"
               className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
             >
-              <div className="flex size-full items-center justify-center">
-                <Image src="/icons/hero_icons/summon.svg" alt="Summon" width={SIDEBAR_ICON_SIZE} height={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, "text-rp-rose")} />
+              <div className="flex size-6 items-center justify-center">
+                <Image src="/icons/hero_icons/summon.svg" alt="Summon" width={24} height={24} className="size-6 object-contain" style={{ objectFit: 'contain' }} />
               </div>
             </Link>
           }
@@ -143,8 +143,8 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
               href="/collection"
               className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
             >
-              <div className="flex size-full items-center justify-center">
-                <Image src="/icons/hero_icons/collection.svg" alt="Collection" width={SIDEBAR_ICON_SIZE} height={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, "text-rp-pine")} />
+              <div className="flex size-6 items-center justify-center">
+                <Image src="/icons/hero_icons/collection.svg" alt="Collection" width={24} height={24} className="size-6 object-contain" style={{ objectFit: 'contain' }} />
               </div>
             </Link>
           }
@@ -158,8 +158,8 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
               href="/wallet"
               className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
             >
-              <div className="flex size-full items-center justify-center">
-                <Image src="/icons/hero_icons/wallet.svg" alt="Wallet" width={SIDEBAR_ICON_SIZE} height={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, "text-rp-gold")} />
+              <div className="flex size-6 items-center justify-center">
+                <Image src="/icons/hero_icons/wallet.svg" alt="Wallet" width={24} height={24} className="size-6 object-contain" style={{ objectFit: 'contain' }} />
               </div>
             </Link>
           }
