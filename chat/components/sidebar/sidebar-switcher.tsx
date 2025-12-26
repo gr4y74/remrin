@@ -167,7 +167,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
 
         {/* Tools Submenu */}
         {isToolsOpen && (
-          <div className="border-rp-highlight-med animate-fadeIn mt-1 flex flex-col gap-1 border-l-2 pl-1">
+          <div className="border-rp-highlight-low animate-fadeIn mt-1 flex flex-col gap-1 border-l-2 pl-1">
             <SidebarSwitchItem
               icon={<IconAdjustmentsHorizontal size={20} className={iconHoverClass} />}
               contentType="presets"

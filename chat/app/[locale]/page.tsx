@@ -286,17 +286,14 @@ export default function HomePage() {
 
         {/* Header */}
         <header className="glass-dark relative z-50 flex items-center justify-between px-6 py-4">
-          <Link href="/" className="flex items-center gap-3">
+          <Link href="/" className="flex items-center">
             <Image
               src="/logo.svg"
               alt="Remrin"
-              width={40}
-              height={40}
-              className="drop-shadow-[0_0_12px_rgba(235,188,186,0.4)]"
+              width={48}
+              height={48}
+              className="drop-shadow-[0_0_12px_rgba(235,188,186,0.4)] transition-transform duration-300 ease-out hover:rotate-[-5deg] hover:scale-105"
             />
-            <span className="font-tiempos-headline text-rp-text text-xl font-bold">
-              Remrin
-            </span>
           </Link>
 
           <div className="flex items-center gap-4">
