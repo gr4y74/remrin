@@ -102,11 +102,11 @@ export const SAFETY_LEVELS = [
 ]
 
 export const MODERATION_STATUS_LABELS: Record<ModerationStatus, { label: string; color: string; icon: string }> = {
-    draft: { label: 'Draft', color: 'text-zinc-400', icon: '📝' },
-    pending_review: { label: 'Pending Review', color: 'text-yellow-400', icon: '⏳' },
-    approved: { label: 'Approved', color: 'text-green-400', icon: '✅' },
-    rejected: { label: 'Rejected', color: 'text-red-400', icon: '❌' },
-    suspended: { label: 'Suspended', color: 'text-orange-400', icon: '🚫' }
+    draft: { label: 'Draft', color: 'text-rp-subtle', icon: '📝' },
+    pending_review: { label: 'Pending Review', color: 'text-rp-gold', icon: '⏳' },
+    approved: { label: 'Approved', color: 'text-rp-foam', icon: '✅' },
+    rejected: { label: 'Rejected', color: 'text-rp-love', icon: '❌' },
+    suspended: { label: 'Suspended', color: 'text-rp-gold', icon: '🚫' }
 }
 
 export const DEFAULT_CATEGORIES: Category[] = [

@@ -178,19 +178,19 @@ export default function ModerationPage() {
     }
 
     return (
-        <div className="min-h-screen bg-zinc-950 text-white">
+        <div className="min-h-screen bg-rp-base text-rp-text">
             {/* Header */}
-            <header className="border-b border-zinc-800 px-6 py-4">
+            <header className="border-b border-rp-highlight-med px-6 py-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <Link
                             href="/"
-                            className="flex items-center gap-2 text-zinc-400 transition-colors hover:text-white"
+                            className="flex items-center gap-2 text-rp-subtle transition-colors hover:text-rp-text"
                         >
                             <IconArrowLeft size={20} />
                             Back
                         </Link>
-                        <div className="h-6 w-px bg-zinc-800" />
+                        <div className="h-6 w-px bg-rp-highlight-med" />
                         <h1 className="text-xl font-semibold">
                             🛡️ Content Moderation
                         </h1>
@@ -199,7 +199,7 @@ export default function ModerationPage() {
                         <Button
                             variant="outline"
                             onClick={() => setFilter(filter === 'pending_review' ? 'all' : 'pending_review')}
-                            className="border-zinc-700"
+                            className="border-rp-highlight-med"
                         >
                             <IconFilter size={18} className="mr-2" />
                             {filter === 'pending_review' ? 'Showing Pending' : 'Showing All'}
@@ -207,7 +207,7 @@ export default function ModerationPage() {
                         <Button
                             variant="outline"
                             onClick={loadPersonas}
-                            className="border-zinc-700"
+                            className="border-rp-highlight-med"
                         >
                             <IconRefresh size={18} />
                         </Button>
@@ -217,25 +217,25 @@ export default function ModerationPage() {
 
             <div className="flex">
                 {/* List Panel */}
-                <div className="h-[calc(100vh-73px)] w-1/2 overflow-auto border-r border-zinc-800">
+                <div className="h-[calc(100vh-73px)] w-1/2 overflow-auto border-r border-rp-highlight-med">
                     {loading ? (
                         <div className="flex h-full items-center justify-center">
-                            <span className="text-zinc-500">Loading...</span>
+                            <span className="text-rp-muted">Loading...</span>
                         </div>
                     ) : personas.length === 0 ? (
-                        <div className="flex h-full flex-col items-center justify-center text-zinc-500">
+                        <div className="flex h-full flex-col items-center justify-center text-rp-muted">
                             <span className="mb-4 text-4xl">✅</span>
                             <span>No pending reviews</span>
                         </div>
                     ) : (
-                        <div className="divide-y divide-zinc-800">
+                        <div className="divide-y divide-rp-highlight-med">
                             {personas.map((persona) => (
                                 <div
                                     key={persona.id}
                                     onClick={() => setSelectedPersona(persona)}
                                     className={`cursor-pointer p-4 transition-colors ${selectedPersona?.id === persona.id
-                                        ? 'bg-zinc-800'
-                                        : 'hover:bg-zinc-900'
+                                        ? 'bg-rp-overlay'
+                                        : 'hover:bg-rp-surface'
                                         }`}
                                 >
                                     <div className="flex items-start gap-4">
@@ -249,7 +249,7 @@ export default function ModerationPage() {
                                                 />
                                             </div>
                                         ) : (
-                                            <div className="flex size-16 items-center justify-center rounded-lg bg-zinc-800 text-2xl">
+                                            <div className="flex size-16 items-center justify-center rounded-lg bg-rp-surface text-2xl">
                                                 🤖
                                             </div>
                                         )}
@@ -257,20 +257,20 @@ export default function ModerationPage() {
                                             <div className="flex items-center gap-2">
                                                 <h3 className="truncate font-medium">{persona.name}</h3>
                                                 {persona.status === 'pending_review' && (
-                                                    <span className="rounded-full bg-yellow-500/20 px-2 py-0.5 text-xs text-yellow-400">
+                                                    <span className="rounded-full bg-rp-gold/20 px-2 py-0.5 text-xs text-rp-gold">
                                                         Pending
                                                     </span>
                                                 )}
                                                 {persona.status === 'approved' && (
-                                                    <span className="rounded-full bg-green-500/20 px-2 py-0.5 text-xs text-green-400">
+                                                    <span className="rounded-full bg-rp-foam/20 px-2 py-0.5 text-xs text-rp-foam">
                                                         Approved
                                                     </span>
                                                 )}
                                             </div>
-                                            <p className="mt-1 truncate text-sm text-zinc-400">
+                                            <p className="mt-1 truncate text-sm text-rp-subtle">
                                                 {persona.description || 'No description'}
                                             </p>
-                                            <div className="mt-2 flex items-center gap-2 text-xs text-zinc-500">
+                                            <div className="mt-2 flex items-center gap-2 text-xs text-rp-muted">
                                                 <span>{persona.category || 'general'}</span>
                                                 <span>•</span>
                                                 <span>{persona.safety_level || 'ADULT'}</span>
@@ -307,22 +307,22 @@ export default function ModerationPage() {
                                         />
                                     </div>
                                 ) : (
-                                    <div className="flex size-32 items-center justify-center rounded-xl bg-zinc-800 text-5xl">
+                                    <div className="flex size-32 items-center justify-center rounded-xl bg-rp-surface text-5xl">
                                         🤖
                                     </div>
                                 )}
                                 <div className="flex-1">
                                     <h2 className="text-2xl font-bold">{selectedPersona.name}</h2>
-                                    <p className="mt-1 text-zinc-400">{selectedPersona.description}</p>
+                                    <p className="mt-1 text-rp-subtle">{selectedPersona.description}</p>
                                     <div className="mt-3 flex items-center gap-3">
-                                        <span className="rounded bg-zinc-800 px-2 py-1 text-xs">
+                                        <span className="rounded bg-rp-surface px-2 py-1 text-xs">
                                             {selectedPersona.category || 'general'}
                                         </span>
-                                        <span className="rounded bg-zinc-800 px-2 py-1 text-xs">
+                                        <span className="rounded bg-rp-surface px-2 py-1 text-xs">
                                             {selectedPersona.safety_level || 'ADULT'}
                                         </span>
                                         {selectedPersona.tags?.map((tag) => (
-                                            <span key={tag} className="rounded bg-purple-500/20 px-2 py-1 text-xs text-purple-400">
+                                            <span key={tag} className="rounded bg-rp-iris/20 px-2 py-1 text-xs text-rp-iris">
                                                 {tag}
                                             </span>
                                         ))}
@@ -332,8 +332,8 @@ export default function ModerationPage() {
 
                             {/* System Prompt */}
                             <div className="mb-6">
-                                <h3 className="mb-2 text-sm font-medium text-zinc-400">System Prompt</h3>
-                                <div className="max-h-48 overflow-auto rounded-lg bg-zinc-900 p-4">
+                                <h3 className="mb-2 text-sm font-medium text-rp-subtle">System Prompt</h3>
+                                <div className="max-h-48 overflow-auto rounded-lg bg-rp-surface p-4">
                                     <pre className="whitespace-pre-wrap text-sm">{selectedPersona.system_prompt}</pre>
                                 </div>
                             </div>
@@ -341,11 +341,11 @@ export default function ModerationPage() {
                             {/* Metadata */}
                             <div className="mb-6 grid grid-cols-2 gap-4 text-sm">
                                 <div>
-                                    <span className="text-zinc-500">ID:</span>
+                                    <span className="text-rp-muted">ID:</span>
                                     <span className="ml-2 font-mono text-xs">{selectedPersona.id}</span>
                                 </div>
                                 <div>
-                                    <span className="text-zinc-500">Submitted:</span>
+                                    <span className="text-rp-muted">Submitted:</span>
                                     <span className="ml-2">
                                         {selectedPersona.submitted_at
                                             ? new Date(selectedPersona.submitted_at).toLocaleString()
@@ -356,17 +356,17 @@ export default function ModerationPage() {
 
                             {/* Actions */}
                             {selectedPersona.status === 'pending_review' && (
-                                <div className="border-t border-zinc-800 pt-6">
-                                    <h3 className="mb-4 text-sm font-medium text-zinc-400">Moderation Actions</h3>
+                                <div className="border-t border-rp-highlight-med pt-6">
+                                    <h3 className="mb-4 text-sm font-medium text-rp-subtle">Moderation Actions</h3>
 
                                     {/* Rejection Reason */}
                                     <div className="mb-4">
-                                        <label className="text-sm text-zinc-500">Rejection Reason (required for reject)</label>
+                                        <label className="text-sm text-rp-muted">Rejection Reason (required for reject)</label>
                                         <textarea
                                             value={rejectionReason}
                                             onChange={(e) => setRejectionReason(e.target.value)}
                                             placeholder="Explain why this submission is being rejected..."
-                                            className="mt-2 w-full resize-none rounded-lg border border-zinc-700 bg-zinc-900 p-3 text-sm"
+                                            className="mt-2 w-full resize-none rounded-lg border border-rp-highlight-med bg-rp-surface p-3 text-sm"
                                             rows={3}
                                         />
                                     </div>
@@ -375,7 +375,7 @@ export default function ModerationPage() {
                                         <Button
                                             onClick={() => handleApprove(selectedPersona)}
                                             disabled={actionLoading}
-                                            className="bg-green-600 hover:bg-green-500"
+                                            className="bg-rp-foam text-rp-base hover:bg-rp-foam/80"
                                         >
                                             <IconCheck size={18} className="mr-2" />
                                             Approve & Publish
@@ -384,13 +384,13 @@ export default function ModerationPage() {
                                             onClick={() => handleReject(selectedPersona)}
                                             disabled={actionLoading || !rejectionReason.trim()}
                                             variant="outline"
-                                            className="border-red-600 text-red-400 hover:bg-red-600/20"
+                                            className="border-rp-love text-rp-love hover:bg-rp-love/20"
                                         >
                                             <IconX size={18} className="mr-2" />
                                             Reject
                                         </Button>
                                         <Link href={`/studio?persona_id=${selectedPersona.id}`}>
-                                            <Button variant="outline" className="border-zinc-700">
+                                            <Button variant="outline" className="border-rp-highlight-med">
                                                 <IconEye size={18} className="mr-2" />
                                                 View in Studio
                                             </Button>
@@ -401,13 +401,13 @@ export default function ModerationPage() {
 
                             {/* Feature toggle for approved */}
                             {selectedPersona.status === 'approved' && (
-                                <div className="border-t border-zinc-800 pt-6">
-                                    <h3 className="mb-4 text-sm font-medium text-zinc-400">Curation Actions</h3>
+                                <div className="border-t border-rp-highlight-med pt-6">
+                                    <h3 className="mb-4 text-sm font-medium text-rp-subtle">Curation Actions</h3>
                                     <Button
                                         onClick={() => handleFeature(selectedPersona, !(selectedPersona as any).is_featured)}
                                         disabled={actionLoading}
                                         variant="outline"
-                                        className="border-amber-600 text-amber-400"
+                                        className="border-rp-gold text-rp-gold"
                                     >
                                         {(selectedPersona as any).is_featured ? (
                                             <>
@@ -425,7 +425,7 @@ export default function ModerationPage() {
                             )}
                         </div>
                     ) : (
-                        <div className="flex h-full flex-col items-center justify-center text-zinc-500">
+                        <div className="flex h-full flex-col items-center justify-center text-rp-muted">
                             <span className="mb-4 text-4xl">👈</span>
                             <span>Select a persona to review</span>
                         </div>

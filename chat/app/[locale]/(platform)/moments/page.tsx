@@ -100,14 +100,14 @@ export default async function MomentsPage({ searchParams }: MomentsPageProps) {
     }
 
     return (
-        <div className="min-h-screen bg-[#0d1117]">
+        <div className="min-h-screen bg-rp-base">
             {/* Header */}
-            <header className="border-b border-white/10 bg-[#0d1117]/80 backdrop-blur-xl">
+            <header className="border-b border-rp-highlight-med bg-rp-base/80 backdrop-blur-xl">
                 <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-                    <h1 className="text-3xl font-bold text-white">
+                    <h1 className="text-3xl font-bold text-rp-text">
                         {personaName ? `${personaName}'s Moments` : "Moments"}
                     </h1>
-                    <p className="mt-2 text-zinc-400">
+                    <p className="mt-2 text-rp-subtle">
                         {personaName
                             ? `Browse gallery content from ${personaName}`
                             : "Explore moments shared by your favorite characters"
@@ -118,10 +118,10 @@ export default async function MomentsPage({ searchParams }: MomentsPageProps) {
                     {personaId && (
                         <a
                             href="/moments"
-                            className="mt-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm text-zinc-300 transition-colors hover:bg-white/15"
+                            className="mt-4 inline-flex items-center gap-2 rounded-full bg-rp-surface px-4 py-2 text-sm text-rp-subtle transition-colors hover:bg-rp-overlay"
                         >
                             <span>Showing: {personaName}</span>
-                            <span className="text-zinc-500">×</span>
+                            <span className="text-rp-muted">×</span>
                         </a>
                     )}
                 </div>

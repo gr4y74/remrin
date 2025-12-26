@@ -50,25 +50,25 @@ export default function AdminPage() {
             description: "Configure categories, safety rules, and more",
             icon: IconSettings,
             href: "/admin/settings",
-            color: "from-zinc-600 to-zinc-500",
+            color: "from-rp-muted to-rp-highlight-high",
             badge: "Coming Soon"
         }
     ]
 
     return (
         <AdminPasswordGate>
-            <div className="min-h-screen bg-zinc-950 text-white">
+            <div className="min-h-screen bg-rp-base text-rp-text">
                 {/* Header */}
-                <header className="border-b border-zinc-800 px-6 py-4">
+                <header className="border-b border-rp-highlight-med px-6 py-4">
                     <div className="flex items-center gap-4">
                         <Link
                             href="/"
-                            className="flex items-center gap-2 text-zinc-400 transition-colors hover:text-white"
+                            className="flex items-center gap-2 text-rp-subtle transition-colors hover:text-rp-text"
                         >
                             <IconArrowLeft size={20} />
                             Back to App
                         </Link>
-                        <div className="h-6 w-px bg-zinc-800" />
+                        <div className="h-6 w-px bg-rp-highlight-med" />
                         <h1 className="text-xl font-semibold">
                             🔧 Admin Dashboard
                         </h1>
@@ -79,7 +79,7 @@ export default function AdminPage() {
                 <main className="mx-auto max-w-4xl p-6">
                     <div className="mb-8">
                         <h2 className="mb-2 text-2xl font-bold">Welcome, Admin</h2>
-                        <p className="text-zinc-400">
+                        <p className="text-rp-subtle">
                             Manage content, users, and platform settings from here.
                         </p>
                     </div>
@@ -89,17 +89,17 @@ export default function AdminPage() {
                             <Link
                                 key={module.title}
                                 href={module.href}
-                                className={`group relative block rounded-xl border border-zinc-800 bg-zinc-900/50 p-6 transition-all hover:border-zinc-700 hover:bg-zinc-900 ${module.badge === 'Coming Soon' ? 'pointer-events-none opacity-50' : ''
+                                className={`group relative block rounded-xl border border-rp-highlight-med bg-rp-surface p-6 transition-all hover:border-rp-highlight-high hover:bg-rp-overlay ${module.badge === 'Coming Soon' ? 'pointer-events-none opacity-50' : ''
                                     }`}
                             >
                                 <div className={`inline-flex rounded-lg bg-gradient-to-br p-3 ${module.color} mb-4`}>
                                     <module.icon size={24} className="text-white" />
                                 </div>
                                 <h3 className="mb-1 text-lg font-semibold">{module.title}</h3>
-                                <p className="text-sm text-zinc-400">{module.description}</p>
+                                <p className="text-sm text-rp-subtle">{module.description}</p>
 
                                 {module.badge && (
-                                    <span className="absolute right-4 top-4 rounded bg-zinc-800 px-2 py-1 text-xs text-zinc-500">
+                                    <span className="absolute right-4 top-4 rounded bg-rp-highlight-med px-2 py-1 text-xs text-rp-muted">
                                         {module.badge}
                                     </span>
                                 )}
@@ -108,27 +108,27 @@ export default function AdminPage() {
                     </div>
 
                     {/* Quick Stats */}
-                    <div className="mt-8 rounded-xl border border-zinc-800 bg-zinc-900/50 p-6">
+                    <div className="mt-8 rounded-xl border border-rp-highlight-med bg-rp-surface p-6">
                         <h3 className="mb-4 text-lg font-semibold">Quick Stats</h3>
                         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                             <div className="text-center">
-                                <div className="text-3xl font-bold text-amber-400">—</div>
-                                <div className="text-sm text-zinc-500">Pending Reviews</div>
+                                <div className="text-3xl font-bold text-rp-gold">—</div>
+                                <div className="text-sm text-rp-muted">Pending Reviews</div>
                             </div>
                             <div className="text-center">
-                                <div className="text-3xl font-bold text-green-400">—</div>
-                                <div className="text-sm text-zinc-500">Approved Today</div>
+                                <div className="text-3xl font-bold text-rp-foam">—</div>
+                                <div className="text-sm text-rp-muted">Approved Today</div>
                             </div>
                             <div className="text-center">
-                                <div className="text-3xl font-bold text-purple-400">—</div>
-                                <div className="text-sm text-zinc-500">Total Souls</div>
+                                <div className="text-3xl font-bold text-rp-iris">—</div>
+                                <div className="text-sm text-rp-muted">Total Souls</div>
                             </div>
                             <div className="text-center">
-                                <div className="text-3xl font-bold text-cyan-400">—</div>
-                                <div className="text-sm text-zinc-500">Active Users</div>
+                                <div className="text-3xl font-bold text-rp-pine">—</div>
+                                <div className="text-sm text-rp-muted">Active Users</div>
                             </div>
                         </div>
-                        <p className="mt-4 text-center text-xs text-zinc-600">
+                        <p className="mt-4 text-center text-xs text-rp-muted">
                             Stats will be populated once analytics module is complete
                         </p>
                     </div>
