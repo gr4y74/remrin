@@ -54,7 +54,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
               className="hover:bg-rp-overlay mb-2 flex size-[56px] cursor-pointer items-center justify-center rounded-lg"
             >
               <Image
-                src="/logo_sm.svg"
+                src="/logo_sm.png"
                 alt="Remrin Home"
                 width={48}
                 height={48}
