@@ -2,6 +2,8 @@ import { Toaster } from "@/components/ui/sonner"
 import { GlobalState } from "@/components/utility/global-state"
 import { Providers } from "@/components/utility/providers"
 import TranslationsProvider from "@/components/utility/translations-provider"
+import { MinimalSidebar } from "@/components/layout/MinimalSidebar"
+import { MobileNav } from "@/components/layout/MobileNav"
 import initTranslations from "@/lib/i18n"
 import { Database } from "@/supabase/types"
 import { createServerClient } from "@supabase/ssr"
@@ -105,8 +107,19 @@ export default async function RootLayout({
             resources={resources}
           >
             <Toaster richColors position="top-center" duration={3000} />
-            <div className="bg-background text-foreground flex h-dvh flex-col items-center overflow-x-auto">
-              {session ? <GlobalState>{children}</GlobalState> : children}
+            <div className="flex min-h-screen">
+              {/* Desktop Sidebar - Hidden on mobile */}
+              <MinimalSidebar />
+
+              {/* Main Content - Offset by sidebar on desktop, full width on mobile */}
+              <main className="flex-1 md:ml-16 pb-20 md:pb-0">
+                <div className="bg-background text-foreground flex h-dvh flex-col items-center overflow-x-auto">
+                  {session ? <GlobalState>{children}</GlobalState> : children}
+                </div>
+              </main>
+
+              {/* Mobile Bottom Navigation - Hidden on desktop */}
+              <MobileNav />
             </div>
           </TranslationsProvider>
         </Providers>
