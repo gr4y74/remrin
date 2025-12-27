@@ -86,22 +86,9 @@ export function MinimalSidebar() {
                 })}
             </div>
 
-            {/* Settings */}
-            <div className="border-rp-muted/20 border-t p-2">
-                <Link
-                    href="/en/settings"
-                    className="text-rp-subtle hover:bg-rp-overlay hover:text-rp-text flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-all"
-                >
-                    <IconSettings size={22} className="shrink-0" />
-                    <motion.span
-                        className="font-tiempos-text whitespace-nowrap text-sm font-medium"
-                        initial={false}
-                        animate={{ opacity: isExpanded ? 1 : 0 }}
-                    >
-                        Settings
-                    </motion.span>
-                </Link>
-            </div>
+            {/* Spacer to push Settings to bottom */}
+            <div className="flex-1" />
+
         </motion.nav>
     )
 }
