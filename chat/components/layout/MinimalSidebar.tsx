@@ -92,7 +92,7 @@ export function MinimalSidebar() {
             <div className="border-rp-muted/20 shrink-0 border-t px-2">
                 <button
                     onClick={() => setShowProfileSettings(true)}
-                    className="text-rp-subtle hover:bg-rp-overlay hover:text-rp-text flex min-h-[44px] w-full items-center gap-3 rounded-lg px-3 py-3 transition-all"
+                    className="text-rp-subtle hover:bg-rp-overlay hover:text-rp-text flex min-h-[44px] w-full items-center gap-3 rounded-lg px-3 py-2 transition-all"
                 >
                     <IconUser size={22} className="shrink-0" />
                     <motion.span
