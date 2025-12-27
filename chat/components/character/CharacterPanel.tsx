@@ -14,6 +14,7 @@ import {
 } from "@tabler/icons-react"
 import { FC, useContext, useState } from "react"
 import Image from "next/image"
+import { TYPOGRAPHY } from "@/lib/design-system"
 
 interface CharacterPanelProps {
     width?: number
@@ -122,7 +123,7 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
             <div className="relative -mt-12 px-4">
                 <div className="flex items-end justify-between">
                     <div>
-                        <h2 className="font-tiempos-headline text-rp-text text-xl font-bold">
+                        <h2 className={`${TYPOGRAPHY.heading.h3} text-rp-text`}>
                             {selectedPersona.name}
                         </h2>
                         <p className="text-rp-subtle mt-0.5 text-sm">
@@ -191,7 +192,7 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
             <div className="flex-1 overflow-auto p-4">
                 {activeTab === "chat" && (
                     <div className="space-y-4">
-                        <h3 className="font-tiempos-headline text-rp-text font-medium">Comments</h3>
+                        <h3 className={`${TYPOGRAPHY.heading.h4} text-rp-text`}>Comments</h3>
                         <div className="bg-rp-base/50 rounded-lg p-3">
                             <input
                                 type="text"
@@ -208,14 +209,14 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                 {activeTab === "persona" && (
                     <div className="space-y-4">
                         <div>
-                            <h3 className="font-tiempos-headline text-rp-text mb-2 font-medium">About</h3>
+                            <h3 className={`${TYPOGRAPHY.heading.h4} text-rp-text mb-2`}>About</h3>
                             <p className="text-rp-subtle text-sm leading-relaxed">
                                 {selectedPersona.description || "No description available."}
                             </p>
                         </div>
                         {selectedPersona.intro_message && (
                             <div>
-                                <h3 className="font-tiempos-headline text-rp-text mb-2 font-medium">Intro Message</h3>
+                                <h3 className={`${TYPOGRAPHY.heading.h4} text-rp-text mb-2`}>Intro Message</h3>
                                 <p className="text-rp-subtle text-sm leading-relaxed">
                                     &ldquo;{selectedPersona.intro_message}&rdquo;
                                 </p>
@@ -226,7 +227,7 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
 
                 {activeTab === "settings" && (
                     <div className="space-y-4">
-                        <h3 className="font-tiempos-headline text-rp-text font-medium">Chat Settings</h3>
+                        <h3 className={`${TYPOGRAPHY.heading.h4} text-rp-text`}>Chat Settings</h3>
                         <p className="text-rp-subtle text-sm">
                             Settings for this chat session will appear here.
                         </p>

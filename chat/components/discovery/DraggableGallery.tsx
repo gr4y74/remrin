@@ -5,6 +5,7 @@ import { EtherealCard } from "./EtherealCard"
 import { cn } from "@/lib/utils"
 import { IconSettings, IconX } from "@tabler/icons-react"
 import Image from "next/image"
+import { TYPOGRAPHY } from "@/lib/design-system"
 
 interface GalleryItem {
     id: string
@@ -115,7 +116,7 @@ export function DraggableGallery({
                 {/* Settings panel */}
                 {showControls && (
                     <div className="bg-rp-surface border-rp-muted fixed bottom-20 right-6 z-40 w-64 rounded-xl border p-4 shadow-xl backdrop-blur-md">
-                        <h4 className="text-rp-text mb-3 text-sm font-medium">Grid Settings</h4>
+                        <h4 className={`${TYPOGRAPHY.body.normal} text-rp-text mb-3 font-medium`}>Grid Settings</h4>
                         <div className="space-y-4 text-xs">
                             <div>
                                 <label className="text-rp-muted mb-1 block">Gap</label>
@@ -189,7 +190,7 @@ export function DraggableGallery({
                                     </span>
                                 )}
 
-                                <h2 className="text-rp-text mb-4 text-2xl font-bold md:text-3xl">
+                                <h2 className={`${TYPOGRAPHY.heading.h2} text-rp-text mb-4`}>
                                     {expandedItem.name}
                                 </h2>
 
