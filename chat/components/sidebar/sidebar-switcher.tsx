@@ -184,7 +184,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
                 onClick={() => setIsToolsOpen(!isToolsOpen)}
                 className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
               >
-                <IconSettings size={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, isToolsOpen && "text-rp-rose rotate-90")} />
+                <IconSettings size={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, isToolsOpen && "rotate-90")} style={{ color: isToolsOpen ? '#DE5BA7' : '#DE5BA7' }} />
               </button>
             </div>
           }
