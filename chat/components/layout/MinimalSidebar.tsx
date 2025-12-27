@@ -85,13 +85,11 @@ export function MinimalSidebar() {
                         </Link>
                     )
                 })}
-            </div>
 
-            {/* Profile Settings */}
-            <div className="border-rp-muted/20 border-t px-2 pb-2">
+                {/* Profile Button - inside nav container for consistent spacing */}
                 <button
                     onClick={() => setShowProfileSettings(true)}
-                    className="text-rp-subtle hover:bg-rp-overlay hover:text-rp-text flex min-h-[44px] w-full items-center gap-3 rounded-lg px-3 py-3 transition-all"
+                    className="text-rp-subtle hover:bg-rp-overlay hover:text-rp-text border-rp-muted/20 -mx-2 mt-2 flex min-h-[44px] w-[calc(100%+1rem)] items-center gap-3 border-t px-5 py-3 transition-all"
                 >
                     <IconUser size={22} className="shrink-0" />
                     <motion.span
@@ -106,26 +104,28 @@ export function MinimalSidebar() {
             </div>
 
             {/* Profile Settings Modal - will be implemented */}
-            {showProfileSettings && (
-                <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-                    onClick={() => setShowProfileSettings(false)}
-                >
+            {
+                showProfileSettings && (
                     <div
-                        className="bg-rp-surface border-rp-muted rounded-lg border p-6 shadow-xl"
-                        onClick={(e) => e.stopPropagation()}
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+                        onClick={() => setShowProfileSettings(false)}
                     >
-                        <h2 className="text-rp-text mb-4 text-xl font-bold">Profile Settings</h2>
-                        <p className="text-rp-subtle mb-4">Profile settings modal - to be implemented with full functionality</p>
-                        <button
-                            onClick={() => setShowProfileSettings(false)}
-                            className="bg-rp-iris hover:bg-rp-iris/80 rounded px-4 py-2 text-white"
+                        <div
+                            className="bg-rp-surface border-rp-muted rounded-lg border p-6 shadow-xl"
+                            onClick={(e) => e.stopPropagation()}
                         >
-                            Close
-                        </button>
+                            <h2 className="text-rp-text mb-4 text-xl font-bold">Profile Settings</h2>
+                            <p className="text-rp-subtle mb-4">Profile settings modal - to be implemented with full functionality</p>
+                            <button
+                                onClick={() => setShowProfileSettings(false)}
+                                className="bg-rp-iris hover:bg-rp-iris/80 rounded px-4 py-2 text-white"
+                            >
+                                Close
+                            </button>
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
         </motion.nav>
     )
