@@ -9,7 +9,7 @@ import { createTools } from "@/db/tools"
 import { IconUpload, IconX } from "@tabler/icons-react"
 import { FC, useContext, useRef, useState } from "react"
 import { toast } from "sonner"
-import { SIDEBAR_ICON_SIZE } from "../sidebar/sidebar-switcher"
+import { SIDEBAR_ICON_SIZE } from "@/lib/legacy-constants"
 import { Badge } from "../ui/badge"
 import { Button } from "../ui/button"
 import {
@@ -21,9 +21,9 @@ import {
 } from "../ui/dialog"
 import { Input } from "../ui/input"
 
-interface ImportProps {}
+interface ImportProps { }
 
-export const Import: FC<ImportProps> = ({}) => {
+export const Import: FC<ImportProps> = ({ }) => {
   const {
     profile,
     selectedWorkspace,

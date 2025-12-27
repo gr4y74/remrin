@@ -7,9 +7,6 @@ import Link from "next/link"
 import Image from "next/image"
 import { createClient } from "@/lib/supabase/client"
 import { HeroCarousel, DraggableGallery } from "@/components/discovery"
-import { SidebarSwitcher } from "@/components/sidebar/sidebar-switcher"
-import { Sidebar } from "@/components/sidebar/sidebar"
-import { Tabs } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { RemrinContext } from "@/context/context"
 import { IconSparkles, IconDiamond, IconArrowRight, IconChevronCompactRight } from "@tabler/icons-react"
@@ -58,18 +55,8 @@ export default function HomePage() {
   const { theme } = useTheme()
   const [personas, setPersonas] = useState<Persona[]>([])
   const [loading, setLoading] = useState(true)
-  const [showSidebar, setShowSidebar] = useState(false)
-  const [contentType, setContentType] = useState<ContentType>("chats")
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [defaultWorkspaceId, setDefaultWorkspaceId] = useState<string | null>(null)
-
-  useEffect(() => {
-    // Check if sidebar preference exists
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("showSidebar")
-      setShowSidebar(saved === "true")
-    }
-  }, [])
 
   // Get default workspace when available
   useEffect(() => {
@@ -219,11 +206,7 @@ export default function HomePage() {
     }
   }
 
-  const handleToggleSidebar = () => {
-    const newValue = !showSidebar
-    setShowSidebar(newValue)
-    localStorage.setItem("showSidebar", String(newValue))
-  }
+
 
   if (loading) {
     return (
@@ -235,50 +218,8 @@ export default function HomePage() {
 
   return (
     <div className="bg-rp-base flex size-full">
-      {/* Sidebar - Only for logged in users */}
-      {isLoggedIn && (
-        <div
-          className={cn(
-            "duration-200 dark:border-none",
-            showSidebar ? "border-r border-white/10" : ""
-          )}
-          style={{
-            minWidth: showSidebar ? `${SIDEBAR_WIDTH}px` : "0px",
-            maxWidth: showSidebar ? `${SIDEBAR_WIDTH}px` : "0px",
-            width: showSidebar ? `${SIDEBAR_WIDTH}px` : "0px"
-          }}
-        >
-          {showSidebar && (
-            <Tabs
-              className="flex h-full bg-rp-surface"
-              value={contentType}
-              onValueChange={tabValue => setContentType(tabValue as ContentType)}
-            >
-              <SidebarSwitcher onContentTypeChange={setContentType} />
-              <Sidebar contentType={contentType} showSidebar={showSidebar} />
-            </Tabs>
-          )}
-        </div>
-      )}
-
       {/* Main Content - normal page scroll */}
       <div className="relative min-h-screen flex-1 overflow-y-auto text-rp-text">
-        {/* Sidebar Toggle */}
-        {isLoggedIn && (
-          <Button
-            className="fixed left-[4px] top-[50%] z-50 size-[32px]"
-            style={{
-              marginLeft: showSidebar ? `${SIDEBAR_WIDTH}px` : "0px",
-              transform: showSidebar ? "rotate(180deg)" : "rotate(0deg)",
-              transition: "margin 200ms, transform 200ms"
-            }}
-            variant="ghost"
-            size="icon"
-            onClick={handleToggleSidebar}
-          >
-            <IconChevronCompactRight size={24} />
-          </Button>
-        )}
 
         {/* Ethereal background */}
         <div className="pointer-events-none fixed inset-0 overflow-hidden">

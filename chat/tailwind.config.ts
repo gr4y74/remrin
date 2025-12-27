@@ -75,6 +75,9 @@ module.exports = {
         // Keep ram-pink alias for existing components
         'ram-pink': 'hsl(var(--rp-rose))'
       },
+      spacing: {
+        'safe-area-inset-bottom': 'env(safe-area-inset-bottom)',
+      },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',

@@ -1,24 +1,16 @@
 "use client"
 
-import { Sidebar } from "@/components/sidebar/sidebar"
-import { SidebarSwitcher } from "@/components/sidebar/sidebar-switcher"
+import { MinimalSidebar } from "@/components/layout/MinimalSidebar"
+import { MobileNav } from "@/components/layout/MobileNav"
 import { RemrinContext } from "@/context/context"
-import { Button } from "@/components/ui/button"
-import { Tabs } from "@/components/ui/tabs"
 import { CharacterPanel } from "@/components/character"
 import { CanvasPanel } from "@/components/canvas"
 import useHotkey from "@/lib/hooks/use-hotkey"
-import { cn } from "@/lib/utils"
-import { ContentType } from "@/types"
-import { IconChevronCompactRight } from "@tabler/icons-react"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { FC, useContext, useState, useEffect } from "react"
+import { FC, useContext, useState } from "react"
 import { useSelectFileHandler } from "../chat/chat-hooks/use-select-file-handler"
 import { CommandK } from "../utility/command-k"
 
 // Panel widths
-export const ICON_SIDEBAR_WIDTH = 70
-export const SIDEBAR_WIDTH = 280
 export const CANVAS_WIDTH = 450
 export const CHARACTER_PANEL_WIDTH = 350
 
@@ -27,31 +19,18 @@ interface DashboardProps {
 }
 
 export const Dashboard: FC<DashboardProps> = ({ children }) => {
-  const pathname = usePathname()
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const tabValue = searchParams.get("tab") || "chats"
-
   const { handleSelectDeviceFile } = useSelectFileHandler()
 
   const {
-    isSidebarExpanded,
-    setIsSidebarExpanded,
     isCanvasOpen,
     setIsCanvasOpen,
     isCharacterPanelOpen,
     setIsCharacterPanelOpen,
-    artifacts,
-    selectedPersona
   } = useContext(RemrinContext)
 
-  const [contentType, setContentType] = useState<ContentType>(
-    tabValue as ContentType
-  )
   const [isDragging, setIsDragging] = useState(false)
 
   // Hotkeys
-  useHotkey("s", () => setIsSidebarExpanded(prev => !prev))
   useHotkey("c", () => setIsCanvasOpen(prev => !prev))
   useHotkey("p", () => setIsCharacterPanelOpen(prev => !prev))
 
@@ -62,21 +41,6 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
     handleSelectDeviceFile(file)
     setIsDragging(false)
   }
-
-  // Mobile responsiveness: auto-collapse on small screens
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setIsSidebarExpanded(false)
-      }
-    }
-
-    // Initial check
-    handleResize()
-
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
-  }, [setIsSidebarExpanded])
 
   const handleDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault()
@@ -92,86 +56,16 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
     event.preventDefault()
   }
 
-  const handleToggleSidebar = () => {
-    setIsSidebarExpanded(prev => !prev)
-  }
-
   return (
-    <div className="flex size-full overflow-hidden">
+    <div className="flex min-h-screen">
       <CommandK />
 
-      {/* Panel 1: Icon Sidebar + Expandable Sidebar */}
-      <div
-        className={cn(
-          "flex h-full shrink-0 transition-all duration-200 ease-out"
-        )}
-        style={{
-          width: isSidebarExpanded
-            ? `${ICON_SIDEBAR_WIDTH + SIDEBAR_WIDTH}px`
-            : `${ICON_SIDEBAR_WIDTH}px`
-        }}
-      >
-        {/* Icon Strip (always visible) */}
-        <div
-          className="border-rp-highlight-low bg-rp-base flex h-full flex-col border-r"
-          style={{ width: `${ICON_SIDEBAR_WIDTH}px` }}
-        >
-          <Tabs
-            className="flex h-full flex-col"
-            value={contentType}
-            onValueChange={tabValue => {
-              setContentType(tabValue as ContentType)
-              router.replace(`${pathname}?tab=${tabValue}`)
-              // Auto-expand sidebar when clicking a tab
-              if (!isSidebarExpanded) {
-                setIsSidebarExpanded(true)
-              }
-            }}
-          >
-            <SidebarSwitcher onContentTypeChange={setContentType} />
-          </Tabs>
-        </div>
+      {/* Minimal Sidebar (Desktop) */}
+      <MinimalSidebar />
 
-        {/* Expandable Sidebar Content */}
-        <div
-          className={cn(
-            "bg-rp-surface relative h-full overflow-hidden transition-all duration-200 ease-out",
-            isSidebarExpanded ? "opacity-100" : "pointer-events-none opacity-0"
-          )}
-          style={{
-            width: isSidebarExpanded ? `${SIDEBAR_WIDTH}px` : "0px"
-          }}
-        >
-          <Tabs
-            className="flex h-full"
-            value={contentType}
-            onValueChange={tabValue => {
-              setContentType(tabValue as ContentType)
-              router.replace(`${pathname}?tab=${tabValue}`)
-            }}
-          >
-            <Sidebar contentType={contentType} showSidebar={isSidebarExpanded} />
-          </Tabs>
-        </div>
-
-        {/* Sidebar Toggle Chevron - Always visible */}
-        <button
-          onClick={handleToggleSidebar}
-          className="bg-rp-overlay border-border/50 text-rp-subtle hover:bg-rp-highlight-med hover:text-rp-text absolute z-20 flex size-8 items-center justify-center rounded-full border transition-all duration-200"
-          style={{
-            left: isSidebarExpanded ? `${ICON_SIDEBAR_WIDTH + SIDEBAR_WIDTH - 16}px` : `${ICON_SIDEBAR_WIDTH - 16}px`,
-            top: "50%",
-            transform: "translateY(-50%)"
-          }}
-          title={isSidebarExpanded ? "Collapse sidebar" : "Expand sidebar"}
-        >
-          <IconChevronCompactRight size={16} className={cn("transition-transform", isSidebarExpanded && "rotate-180")} />
-        </button>
-      </div>
-
-      {/* Panel 2: Main Chat Area */}
-      <div
-        className="bg-background relative flex min-w-0 flex-1 flex-col"
+      {/* Main Content Area */}
+      <main
+        className="flex-1 md:ml-16 pb-20 md:pb-0"
         onDrop={onFileDrop}
         onDragOver={onDragOver}
         onDragEnter={handleDragEnter}
@@ -184,12 +78,15 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
         ) : (
           children
         )}
-      </div>
+      </main>
 
-      {/* Panel 3: Canvas/Artifacts (conditional) */}
+      {/* Mobile Bottom Navigation */}
+      <MobileNav />
+
+      {/* Canvas/Artifacts Panel (conditional) */}
       <CanvasPanel width={CANVAS_WIDTH} />
 
-      {/* Panel 4: Character Panel (conditional) */}
+      {/* Character Panel (conditional) */}
       <CharacterPanel width={CHARACTER_PANEL_WIDTH} />
     </div>
   )
