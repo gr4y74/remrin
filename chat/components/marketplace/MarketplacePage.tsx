@@ -14,6 +14,7 @@ import {
     IconShoppingCart,
     IconMoodEmpty
 } from "@tabler/icons-react"
+import { TYPOGRAPHY } from "@/lib/design-system"
 
 interface MarketplacePageProps {
     initialListings: MarketListingWithPersona[]
@@ -103,7 +104,7 @@ export function MarketplacePage({
                         <div className="flex items-center gap-3">
                             <IconShoppingCart className="text-rp-gold size-8" />
                             <div>
-                                <h1 className="font-tiempos-headline text-rp-text text-2xl font-bold">Soul Bazaar</h1>
+                                <h1 className={`${TYPOGRAPHY.heading.h2} text-rp-text`}>Soul Bazaar</h1>
                                 <p className="text-rp-subtle text-sm">
                                     Discover and collect unique AI companions
                                 </p>
@@ -240,7 +241,7 @@ export function MarketplacePage({
                             <div className="bg-rp-surface rounded-full p-6">
                                 <IconMoodEmpty className="text-rp-text/30 size-16" />
                             </div>
-                            <h3 className="text-rp-text mt-6 text-xl font-semibold">
+                            <h3 className={`${TYPOGRAPHY.heading.h3} text-rp-text`}>
                                 No souls found
                             </h3>
                             <p className="text-rp-subtle mt-2 text-center">

@@ -49,7 +49,25 @@ export const CARD = {
     interactive: 'cursor-pointer active:scale-[0.98]',
 } as const
 
+export const TOUCH_TARGET = {
+    minimum: 'min-h-[44px] min-w-[44px]',
+    comfortable: 'min-h-[48px] min-w-[48px]',
+} as const
+
 export const BUTTON = {
     base: 'rounded-full font-medium transition-all duration-200',
     hover: 'hover:scale-105 active:scale-95',
+    touchFriendly: 'min-h-[44px] min-w-[44px] flex items-center justify-center',
+    focus: 'focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2',
+} as const
+
+export const INTERACTIVE = {
+    hover: 'transition-all duration-200 hover:scale-105 active:scale-95',
+    hoverSubtle: 'transition-all duration-200 hover:scale-102 active:scale-98',
+    touchTarget: 'min-h-[44px] min-w-[44px]',
+} as const
+
+export const FOCUS = {
+    ring: 'focus-visible:ring-2 focus-visible:ring-rp-iris focus-visible:ring-offset-2',
+    outline: 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rp-iris',
 } as const

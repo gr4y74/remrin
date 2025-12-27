@@ -33,7 +33,7 @@ export function VoiceTab({ persona, metadata, updateField, updateMetadata, uploa
             <div className="space-y-2">
                 <Label>Voice Sample (for preview)</Label>
                 <div
-                    className="relative flex h-24 w-full cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-zinc-700 bg-zinc-900/50 transition-colors hover:border-orange-500"
+                    className="relative flex h-24 w-full cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-rp-highlight-med bg-rp-surface/50 transition-colors hover:border-rp-love"
                     onClick={() => audioInputRef.current?.click()}
                 >
                     {metadata.voice_sample_url ? (
@@ -44,7 +44,7 @@ export function VoiceTab({ persona, metadata, updateField, updateMetadata, uploa
                             </audio>
                         </div>
                     ) : (
-                        <div className="flex flex-col items-center gap-2 text-zinc-500">
+                        <div className="flex flex-col items-center gap-2 text-rp-muted">
                             <IconUpload size={24} />
                             <span className="text-sm">Upload audio sample (mp3/wav)</span>
                         </div>
@@ -67,9 +67,9 @@ export function VoiceTab({ persona, metadata, updateField, updateMetadata, uploa
                     value={persona.voice_id || ''}
                     onChange={(e) => updateField('voice_id', e.target.value)}
                     placeholder="e.g., ThT5KcBeYtu3NO4 or alloy"
-                    className="border-zinc-700 bg-zinc-900 font-mono"
+                    className="border-rp-highlight-med bg-rp-surface font-mono"
                 />
-                <p className="text-xs text-zinc-500">
+                <p className="text-xs text-rp-muted">
                     The voice synthesis ID for text-to-speech. Leave blank to use default.
                 </p>
             </div>
@@ -90,8 +90,8 @@ export function VoiceTab({ persona, metadata, updateField, updateMetadata, uploa
                             type="button"
                             onClick={() => updateField('voice_id', preset.id)}
                             className={`rounded-lg border px-3 py-1.5 text-sm transition-colors ${persona.voice_id === preset.id
-                                    ? 'border-orange-500 bg-orange-500/20 text-orange-300'
-                                    : 'border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-zinc-600'
+                                ? 'border-orange-500 bg-orange-500/20 text-orange-300'
+                                : 'border-rp-highlight-med bg-rp-surface text-rp-subtle hover:border-rp-muted'
                                 }`}
                         >
                             {preset.name}

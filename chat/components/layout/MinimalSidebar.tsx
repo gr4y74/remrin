@@ -62,7 +62,7 @@ export function MinimalSidebar() {
                             key={item.href}
                             href={item.href}
                             className={cn(
-                                "group relative flex items-center gap-3 rounded-lg px-3 py-3 transition-all",
+                                "group relative flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-all",
                                 isActive
                                     ? "bg-rp-iris/20 text-rp-iris"
                                     : "text-rp-subtle hover:bg-rp-overlay hover:text-rp-text"
@@ -92,7 +92,7 @@ export function MinimalSidebar() {
             <div className="border-rp-muted/20 border-t p-2">
                 <Link
                     href="/settings"
-                    className="text-rp-subtle hover:bg-rp-overlay hover:text-rp-text flex items-center gap-3 rounded-lg px-3 py-3 transition-all"
+                    className="text-rp-subtle hover:bg-rp-overlay hover:text-rp-text flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-all"
                 >
                     <IconSettings size={22} className="shrink-0" />
                     <motion.span

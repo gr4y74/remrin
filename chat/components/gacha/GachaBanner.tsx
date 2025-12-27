@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { IconChevronLeft, IconChevronRight, IconDiamond, IconSparkles, IconStar } from "@tabler/icons-react"
 import { GachaPool, GachaPoolItem, SINGLE_PULL_COST, TEN_PULL_COST, RARITY_COLORS } from "@/lib/hooks/use-gacha"
+import { TYPOGRAPHY } from "@/lib/design-system"
 
 interface GachaBannerProps {
     pools: GachaPool[]
@@ -63,7 +64,7 @@ export function GachaBanner({
                 className
             )}>
                 <IconSparkles size={48} className="text-rp-muted mb-4" />
-                <h3 className="text-rp-subtle text-lg font-semibold">No Active Banners</h3>
+                <h3 className={`${TYPOGRAPHY.heading.h3} text-rp-subtle`}>No Active Banners</h3>
                 <p className="text-rp-muted mt-1 text-sm">Check back later for new soul summons!</p>
             </div>
         )
@@ -101,7 +102,7 @@ export function GachaBanner({
                     <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">
                         {/* Pool Name & Description */}
                         <div className="mb-6">
-                            <h2 className="text-rp-text mb-2 text-2xl font-bold drop-shadow-lg md:text-3xl">
+                            <h2 className={`${TYPOGRAPHY.heading.h2} text-rp-text mb-2 drop-shadow-lg`}>
                                 {currentPool.name}
                             </h2>
                             {currentPool.description && (

@@ -3,6 +3,7 @@
 import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
+import { TYPOGRAPHY, SPACING } from "@/lib/design-system"
 
 interface SoulCardDisplayProps {
     name: string
@@ -60,7 +61,7 @@ export function SoulCardDisplay({
 
                 {/* Character Name */}
                 <div className="absolute inset-x-4 bottom-4">
-                    <h3 className="font-tiempos-headline text-rp-text text-xl font-bold drop-shadow-lg">
+                    <h3 className={`${TYPOGRAPHY.heading.h3} text-rp-text drop-shadow-lg`}>
                         {name}
                     </h3>
                 </div>
@@ -68,7 +69,7 @@ export function SoulCardDisplay({
 
             {/* Tags Section */}
             {tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 p-4">
+                <div className={`flex flex-wrap gap-2 ${SPACING.card.medium}`}>
                     {tags.slice(0, 4).map((tag, index) => (
                         <Badge
                             key={tag}

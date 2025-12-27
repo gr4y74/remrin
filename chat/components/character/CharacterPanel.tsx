@@ -50,10 +50,11 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
         return (
             <button
                 onClick={handleOpen}
-                className="bg-rp-overlay border-border/50 text-rp-subtle hover:bg-rp-highlight-med hover:text-rp-text absolute right-0 top-1/2 z-20 flex size-8 -translate-y-1/2 items-center justify-center rounded-l-full border border-r-0 transition-colors"
+                className="bg-rp-overlay border-border/50 text-rp-subtle hover:bg-rp-highlight-med hover:text-rp-text absolute right-0 top-1/2 z-20 hidden min-h-[44px] min-w-[44px] -translate-y-1/2 items-center justify-center rounded-l-full border border-r-0 transition-colors md:flex"
+                aria-label="Open character panel"
                 title="Open character panel"
             >
-                <IconChevronRight size={16} className="rotate-180" />
+                <IconChevronRight size={18} className="rotate-180" />
             </button>
         )
     }
@@ -66,10 +67,11 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
             {/* Collapse chevron on left edge */}
             <button
                 onClick={handleClose}
-                className="bg-rp-overlay border-border/50 text-rp-subtle hover:bg-rp-highlight-med hover:text-rp-text absolute -left-4 top-1/2 z-20 flex size-8 -translate-y-1/2 items-center justify-center rounded-full border transition-colors"
+                className="bg-rp-overlay border-border/50 text-rp-subtle hover:bg-rp-highlight-med hover:text-rp-text absolute -left-4 top-1/2 z-20 hidden min-h-[44px] min-w-[44px] -translate-y-1/2 items-center justify-center rounded-full border transition-colors md:flex"
+                aria-label="Collapse character panel"
                 title="Collapse panel"
             >
-                <IconChevronRight size={16} />
+                <IconChevronRight size={18} />
             </button>
 
             {/* Hero Image Section */}
@@ -99,17 +101,19 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                 <button
                     onClick={() => setIsFollowing(!isFollowing)}
                     className={cn(
-                        "absolute left-3 top-3 flex size-9 items-center justify-center rounded-full backdrop-blur-sm transition-all",
+                        "absolute left-3 top-3 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full backdrop-blur-sm transition-all",
                         isFollowing
                             ? "bg-rp-rose/30 text-rp-rose"
                             : "bg-rp-base/60 text-rp-text hover:bg-rp-rose/20 hover:text-rp-rose"
                     )}
+                    aria-label={isFollowing ? "Unfollow character" : "Follow character"}
+                    aria-pressed={isFollowing}
                     title={isFollowing ? "Following" : "Follow"}
                 >
                     {isFollowing ? (
-                        <IconHeartFilled size={18} />
+                        <IconHeartFilled size={20} />
                     ) : (
-                        <IconHeart size={18} />
+                        <IconHeart size={20} />
                     )}
                 </button>
             </div>
@@ -168,13 +172,16 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id as typeof activeTab)}
                         className={cn(
-                            "flex flex-1 items-center justify-center gap-1.5 py-3 text-sm font-medium transition-colors",
+                            "flex min-h-[44px] flex-1 items-center justify-center gap-1.5 py-3 text-sm font-medium transition-colors",
                             activeTab === tab.id
                                 ? "border-rp-iris text-rp-text border-b-2"
                                 : "text-rp-subtle hover:text-rp-text"
                         )}
+                        role="tab"
+                        aria-selected={activeTab === tab.id}
+                        aria-label={`${tab.label} tab`}
                     >
-                        <tab.icon size={16} />
+                        <tab.icon size={18} />
                         {tab.label}
                     </button>
                 ))}
@@ -189,7 +196,7 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                             <input
                                 type="text"
                                 placeholder="Type your comment about this Talkie..."
-                                className="text-rp-text placeholder:text-rp-muted w-full bg-transparent text-sm focus:outline-none"
+                                className="text-rp-text placeholder:text-rp-muted min-h-[44px] w-full bg-transparent text-sm focus:outline-none"
                             />
                         </div>
                         <p className="text-rp-muted text-center text-sm">

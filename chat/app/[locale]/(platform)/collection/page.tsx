@@ -6,6 +6,7 @@ import { CollectionStats } from "@/components/collection/CollectionStats"
 import { useCollection } from "@/hooks/use-collection"
 import { createClient } from "@/lib/supabase/client"
 import { LottieLoader } from "@/components/ui/lottie-loader"
+import { TYPOGRAPHY } from "@/lib/design-system"
 
 export default function CollectionPage() {
     const [userId, setUserId] = useState<string | undefined>(undefined)
@@ -40,7 +41,7 @@ export default function CollectionPage() {
     return (
         <div className="container mx-auto max-w-7xl px-4 py-8">
             <div className="mb-6 flex items-center justify-between">
-                <h1 className="font-tiempos-headline text-rp-text text-3xl font-bold">
+                <h1 className={`${TYPOGRAPHY.heading.h1} text-rp-text`}>
                     My Collection
                 </h1>
                 <p className="text-muted-foreground mt-1">

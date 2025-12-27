@@ -9,6 +9,7 @@ import { Sparkles, History } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useGacha, PullResult } from "@/lib/hooks/use-gacha"
 import { LottieLoader } from "@/components/ui/lottie-loader"
+import { TYPOGRAPHY } from "@/lib/design-system"
 
 export default function SummonPage() {
     const [activeTab, setActiveTab] = useState("summon")
@@ -110,7 +111,7 @@ export default function SummonPage() {
     return (
         <div className="container mx-auto max-w-6xl px-4 py-8">
             <div className="mb-8 text-center">
-                <h1 className="font-tiempos-headline bg-gradient-to-r from-purple-400 via-pink-500 to-orange-400 bg-clip-text text-4xl font-extrabold tracking-tight text-transparent md:text-5xl">
+                <h1 className={`${TYPOGRAPHY.heading.h1} bg-gradient-to-r from-purple-400 via-pink-500 to-orange-400 bg-clip-text text-transparent`}>
                     Soul Summons
                 </h1>
                 <p className="text-muted-foreground mt-2">

@@ -13,6 +13,8 @@ export function LottieLoader({ className, size = 96 }: LottieLoaderProps) {
         <div
             className={cn("inline-flex items-center justify-center", className)}
             style={{ width: size, height: size }}
+            role="status"
+            aria-label="Loading"
         >
             <DotLottieReact
                 src="/dragon.lottie"

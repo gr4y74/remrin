@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { calculateTilt, staggerDelay } from "@/lib/animations"
 import { IconDiamond, IconFlame, IconSparkles } from "@tabler/icons-react"
+import { TYPOGRAPHY, SPACING } from "@/lib/design-system"
 
 interface ListingCardProps {
     id: string
@@ -110,7 +111,7 @@ export function ListingCard({
                 {personaImage ? (
                     <Image
                         src={personaImage}
-                        alt={personaName}
+                        alt={`${personaName} - AI character portrait`}
                         fill
                         className={cn(
                             "object-cover transition-transform duration-500 ease-out",
@@ -153,10 +154,11 @@ export function ListingCard({
                 </div>
 
                 {/* Bottom Content */}
-                <div className="absolute inset-x-0 bottom-0 p-4">
+                <div className={`absolute inset-x-0 bottom-0 ${SPACING.card.medium}`}>
                     {/* Character Name */}
                     <h3 className={cn(
-                        "font-tiempos-headline text-rp-text line-clamp-1 text-lg font-bold leading-tight drop-shadow-lg",
+                        TYPOGRAPHY.heading.h4,
+                        "text-rp-text line-clamp-1 leading-tight drop-shadow-lg",
                         "transition-transform duration-300",
                         isHovering && "translate-x-1"
                     )}>

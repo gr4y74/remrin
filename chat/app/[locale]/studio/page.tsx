@@ -91,22 +91,22 @@ export default function StudioPage() {
     const isApproved = persona.status === 'approved'
 
     return (
-        <div className="flex h-screen flex-col bg-zinc-950 text-white">
+        <div className="flex h-screen flex-col bg-rp-base text-rp-text">
             {/* Header */}
-            <header className="flex items-center justify-between border-b border-zinc-800 px-6 py-4">
+            <header className="flex items-center justify-between border-b border-rp-highlight-med px-6 py-4">
                 <div className="flex items-center gap-4">
                     <Link
                         href="/"
-                        className="flex items-center gap-2 text-zinc-400 transition-colors hover:text-white"
+                        className="flex items-center gap-2 text-rp-subtle transition-colors hover:text-rp-text"
                     >
                         <IconArrowLeft size={20} />
                         Back
                     </Link>
-                    <div className="h-6 w-px bg-zinc-800" />
+                    <div className="h-6 w-px bg-rp-highlight-med" />
                     <h1 className="text-xl font-semibold">
                         Soul Studio
                         {persona.id && (
-                            <span className="ml-2 text-sm font-normal text-zinc-500">
+                            <span className="ml-2 text-sm font-normal text-rp-muted">
                                 Editing: {persona.name || 'Untitled'}
                             </span>
                         )}
@@ -114,7 +114,7 @@ export default function StudioPage() {
 
                     {/* Moderation Status Badge */}
                     {persona.id && (
-                        <span className={`ml-2 inline-flex items-center gap-1 rounded-full bg-zinc-800 px-3 py-1 text-sm ${statusInfo.color}`}>
+                        <span className={`ml-2 inline-flex items-center gap-1 rounded-full bg-rp-overlay px-3 py-1 text-sm ${statusInfo.color}`}>
                             <span>{statusInfo.icon}</span>
                             <span>{statusInfo.label}</span>
                         </span>
@@ -132,7 +132,7 @@ export default function StudioPage() {
                             variant="outline"
                             onClick={handleSaveDraft}
                             disabled={saving || !persona.name}
-                            className="border-zinc-700"
+                            className="border-rp-highlight-med"
                         >
                             <IconDeviceFloppy size={18} className="mr-2" />
                             {saving ? 'Saving...' : 'Save Draft'}
@@ -186,7 +186,7 @@ export default function StudioPage() {
                         <div>
                             <p className="font-medium text-red-400">Your submission was rejected</p>
                             <p className="text-sm text-red-300/80">{persona.rejection_reason}</p>
-                            <p className="mt-1 text-xs text-zinc-500">
+                            <p className="mt-1 text-xs text-rp-muted">
                                 Please make the necessary changes and submit again.
                             </p>
                         </div>
@@ -205,7 +205,7 @@ export default function StudioPage() {
                                 Your Soul is being reviewed by our moderation team. This usually takes 24-48 hours.
                             </p>
                             {persona.submitted_at && (
-                                <p className="mt-1 text-xs text-zinc-500">
+                                <p className="mt-1 text-xs text-rp-muted">
                                     Submitted: {new Date(persona.submitted_at).toLocaleString()}
                                 </p>
                             )}
@@ -217,7 +217,7 @@ export default function StudioPage() {
             {/* Loading State */}
             {loading && (
                 <div className="flex flex-1 items-center justify-center">
-                    <div className="text-zinc-500">Loading...</div>
+                    <div className="text-rp-muted">Loading...</div>
                 </div>
             )}
 
@@ -226,7 +226,7 @@ export default function StudioPage() {
                 <main className="flex-1 overflow-auto p-6">
                     <div className="mx-auto max-w-4xl">
                         <Tabs defaultValue="identity" className="space-y-6">
-                            <TabsList className="grid w-full grid-cols-5 bg-zinc-900">
+                            <TabsList className="grid w-full grid-cols-5 bg-rp-surface">
                                 <TabsTrigger value="identity" className="flex items-center gap-2">
                                     <IconUser size={16} />
                                     <span className="hidden sm:inline">Identity</span>
@@ -249,7 +249,7 @@ export default function StudioPage() {
                                 </TabsTrigger>
                             </TabsList>
 
-                            <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-6">
+                            <div className="rounded-xl border border-rp-highlight-med bg-rp-surface/50 p-6">
                                 <TabsContent value="identity" className="mt-0">
                                     <IdentityTab
                                         persona={persona}
@@ -295,9 +295,9 @@ export default function StudioPage() {
                         </Tabs>
 
                         {/* Status Bar */}
-                        <div className="mt-6 flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/30 px-4 py-3 text-sm">
+                        <div className="mt-6 flex items-center justify-between rounded-lg border border-rp-highlight-med bg-rp-surface/30 px-4 py-3 text-sm">
                             <div className="flex items-center gap-4">
-                                <span className="text-zinc-500">
+                                <span className="text-rp-muted">
                                     Status:{' '}
                                     <span className={statusInfo.color}>
                                         {statusInfo.icon} {statusInfo.label}
@@ -307,19 +307,19 @@ export default function StudioPage() {
                                     <span className="text-green-400">• Live</span>
                                 )}
                                 {persona.id && (
-                                    <span className="text-zinc-600">
+                                    <span className="text-rp-muted/80">
                                         ID: {persona.id}
                                     </span>
                                 )}
                             </div>
                             <div className="flex items-center gap-4">
                                 {moderationHistory.length > 0 && (
-                                    <button className="flex items-center gap-1 text-zinc-500 hover:text-zinc-300">
+                                    <button className="flex items-center gap-1 text-rp-muted hover:text-rp-subtle">
                                         <IconHistory size={14} />
                                         <span>{moderationHistory.length} moderation events</span>
                                     </button>
                                 )}
-                                <span className="text-zinc-600">
+                                <span className="text-rp-muted/80">
                                     {persona.created_at && `Created: ${new Date(persona.created_at).toLocaleDateString()}`}
                                 </span>
                             </div>

@@ -36,7 +36,7 @@ export function BehaviorTab({ persona, updateField, autoCompile, loading }: Beha
                         <IconBrain size={20} />
                         Neural Upscaler
                     </h3>
-                    <p className="text-sm text-zinc-400">
+                    <p className="text-sm text-rp-subtle">
                         Auto-generate behavioral blueprint from name and description
                     </p>
                 </div>
@@ -53,7 +53,7 @@ export function BehaviorTab({ persona, updateField, autoCompile, loading }: Beha
             {/* System Prompt */}
             <div className="space-y-2">
                 <Label htmlFor="system_prompt">System Prompt *</Label>
-                <p className="text-xs text-zinc-500">
+                <p className="text-xs text-rp-muted">
                     The core identity and behavior instructions for this Soul.
                 </p>
                 <Textarea
@@ -61,14 +61,14 @@ export function BehaviorTab({ persona, updateField, autoCompile, loading }: Beha
                     value={persona.system_prompt}
                     onChange={(e) => updateField('system_prompt', e.target.value)}
                     placeholder="You are [Name], a [personality traits]. You speak with [tone]. Your purpose is [goal]..."
-                    className="min-h-[200px] border-zinc-700 bg-zinc-900 font-mono text-sm"
+                    className="min-h-[200px] border-rp-highlight-med bg-rp-surface font-mono text-sm"
                 />
             </div>
 
             {/* NBB JSON Editor */}
             <div className="space-y-2">
                 <Label htmlFor="nbb">Neural Behavioral Blueprint (JSON)</Label>
-                <p className="text-xs text-zinc-500">
+                <p className="text-xs text-rp-muted">
                     Strict lexical rules, constraints, and anchors. Auto-generated or manually edited.
                 </p>
                 <Textarea
@@ -88,7 +88,7 @@ export function BehaviorTab({ persona, updateField, autoCompile, loading }: Beha
     { "trigger": "Who are you?", "response": "..." }
   ]
 }`}
-                    className="min-h-[300px] border-zinc-700 bg-zinc-950 font-mono text-xs text-green-400"
+                    className="min-h-[300px] border-rp-highlight-med bg-rp-base font-mono text-xs text-green-400"
                 />
             </div>
         </div>

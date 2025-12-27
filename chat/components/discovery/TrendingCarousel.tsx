@@ -57,8 +57,8 @@ export function TrendingCarousel({ personas }: TrendingCarouselProps) {
             {/* Section Header */}
             <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <Star className="size-5" style={{ color: '#907AA8' }} />
-                    <h2 className="text-2xl font-bold" style={{ color: '#907AA8' }}>Featured Souls</h2>
+                    <Star className="size-5 text-rp-iris" />
+                    <h2 className="text-2xl font-bold text-rp-iris">Featured Souls</h2>
                 </div>
 
                 {/* Arrow Buttons */}
@@ -68,18 +68,18 @@ export function TrendingCarousel({ personas }: TrendingCarouselProps) {
                         size="icon"
                         onClick={() => scroll("left")}
                         disabled={!canScrollLeft}
-                        className="bg-rp-overlay text-rp-text hover:bg-rp-overlay/80 size-8 rounded-full disabled:opacity-30"
+                        className="bg-rp-overlay text-rp-text hover:bg-rp-overlay/80 min-h-[44px] min-w-[44px] rounded-full disabled:opacity-30"
                     >
-                        <ChevronLeft className="size-4" />
+                        <ChevronLeft className="size-5" />
                     </Button>
                     <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => scroll("right")}
                         disabled={!canScrollRight}
-                        className="bg-rp-overlay text-rp-text hover:bg-rp-overlay/80 size-8 rounded-full disabled:opacity-30"
+                        className="bg-rp-overlay text-rp-text hover:bg-rp-overlay/80 min-h-[44px] min-w-[44px] rounded-full disabled:opacity-30"
                     >
-                        <ChevronRight className="size-4" />
+                        <ChevronRight className="size-5" />
                     </Button>
                 </div>
             </div>

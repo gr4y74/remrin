@@ -2,6 +2,7 @@ import { cookies } from "next/headers"
 import { createClient } from "@/lib/supabase/server"
 import { MomentsGallery, MomentData } from "@/components/moments"
 import { Metadata } from "next"
+import { TYPOGRAPHY } from "@/lib/design-system"
 
 export const metadata: Metadata = {
     title: "Moments | Remrin",
@@ -104,7 +105,7 @@ export default async function MomentsPage({ searchParams }: MomentsPageProps) {
             {/* Header */}
             <header className="border-b border-rp-highlight-med bg-rp-base/80 backdrop-blur-xl">
                 <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-                    <h1 className="font-tiempos-headline text-3xl font-bold text-rp-text">
+                    <h1 className={`${TYPOGRAPHY.heading.h1} text-rp-text`}>
                         {personaName ? `${personaName}'s Moments` : "Moments"}
                     </h1>
                     <p className="mt-2 text-rp-subtle">

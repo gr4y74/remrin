@@ -33,7 +33,7 @@ export function VisualsTab({ metadata, updateMetadata, uploadFile }: VisualsTabP
             <div className="space-y-2">
                 <Label>Hero Image (Store Background)</Label>
                 <div
-                    className="relative flex h-40 w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-zinc-700 bg-zinc-900/50 transition-colors hover:border-cyan-500"
+                    className="relative flex h-40 w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-rp-highlight-med bg-rp-surface/50 transition-colors hover:border-rp-foam"
                     onClick={() => heroInputRef.current?.click()}
                 >
                     {metadata.hero_image_url ? (
@@ -44,7 +44,7 @@ export function VisualsTab({ metadata, updateMetadata, uploadFile }: VisualsTabP
                             className="object-cover"
                         />
                     ) : (
-                        <div className="flex flex-col items-center gap-2 text-zinc-500">
+                        <div className="flex flex-col items-center gap-2 text-rp-muted">
                             <IconPhoto size={40} />
                             <span className="text-sm">Upload hero background</span>
                         </div>
@@ -70,9 +70,9 @@ export function VisualsTab({ metadata, updateMetadata, uploadFile }: VisualsTabP
                     value={metadata.appearance_prompt || ''}
                     onChange={(e) => updateMetadata('appearance_prompt', e.target.value)}
                     placeholder="Blue spiky hair, red sneakers, confident stance, anime style, vibrant colors..."
-                    className="min-h-[100px] border-zinc-700 bg-zinc-900"
+                    className="min-h-[100px] border-rp-highlight-med bg-rp-surface"
                 />
-                <p className="text-xs text-zinc-500">
+                <p className="text-xs text-rp-muted">
                     Describe how image generators should render this character.
                 </p>
             </div>
@@ -85,9 +85,9 @@ export function VisualsTab({ metadata, updateMetadata, uploadFile }: VisualsTabP
                     value={metadata.negative_prompt || ''}
                     onChange={(e) => updateMetadata('negative_prompt', e.target.value)}
                     placeholder="low quality, blurry, watermark, text, deformed, ugly..."
-                    className="min-h-[80px] border-zinc-700 bg-zinc-900"
+                    className="min-h-[80px] border-rp-highlight-med bg-rp-surface"
                 />
-                <p className="text-xs text-zinc-500">
+                <p className="text-xs text-rp-muted">
                     Elements to exclude from generated images.
                 </p>
             </div>

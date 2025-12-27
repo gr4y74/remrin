@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { MessageCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { calculateTilt, staggerDelay } from "@/lib/animations"
+import { TYPOGRAPHY, SPACING } from "@/lib/design-system"
 
 interface CharacterCardProps {
     id: string
@@ -114,14 +115,14 @@ export function CharacterCard({
 
                     {/* Stats Badge */}
                     <div className="absolute right-3 top-3">
-                        <Badge className="bg-rp-base/60 flex items-center gap-1 rounded-full border-0 px-2 py-1 text-xs backdrop-blur-sm" style={{ color: '#BE8E95' }}>
+                        <Badge className="bg-rp-base/60 flex items-center gap-1 rounded-full border-0 px-2 py-1 text-xs text-rp-rose backdrop-blur-sm">
                             <MessageCircle className="size-3" />
                             <span>{formatCount(totalChats)}</span>
                         </Badge>
                     </div>
 
                     {/* Bottom Content */}
-                    <div className="absolute inset-x-0 bottom-0 p-4">
+                    <div className={`absolute inset-x-0 bottom-0 ${SPACING.card.medium}`}>
                         {/* Category Badge */}
                         {category && (
                             <Badge
@@ -143,11 +144,11 @@ export function CharacterCard({
 
                         {/* Character Name */}
                         <h3 className={cn(
-                            "font-tiempos-headline line-clamp-2 text-lg font-bold leading-tight drop-shadow-lg",
+                            TYPOGRAPHY.heading.h4,
+                            "line-clamp-2 leading-tight drop-shadow-lg text-rp-rose",
                             "transition-transform duration-300",
                             isHovering && "translate-x-1"
-                        )}
-                            style={{ color: '#BE8E95' }}>
+                        )}>
                             {name}
                         </h3>
                     </div>

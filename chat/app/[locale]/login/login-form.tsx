@@ -91,6 +91,7 @@ export default function LoginForm() {
                             type="button"
                             onClick={() => setPasswordVisible(!passwordVisible)}
                             className="text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2 transition-colors"
+                            aria-label={passwordVisible ? "Hide password" : "Show password"}
                         >
                             {passwordVisible ? (
                                 <EyeOff className="size-4" />

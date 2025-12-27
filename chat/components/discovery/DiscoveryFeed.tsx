@@ -142,8 +142,8 @@ export function DiscoveryFeed({
                 {/* Explore Souls Section */}
                 <section className="mb-6">
                     <div className="mb-4 flex items-center gap-2">
-                        <Compass className="size-5" style={{ color: '#907AA8' }} />
-                        <h2 className="text-2xl font-bold" style={{ color: '#907AA8' }}>Explore Souls</h2>
+                        <Compass className="size-5 text-rp-iris" />
+                        <h2 className="text-2xl font-bold text-rp-iris">Explore Souls</h2>
                     </div>
                     <CategoryTabs
                         categories={categories}

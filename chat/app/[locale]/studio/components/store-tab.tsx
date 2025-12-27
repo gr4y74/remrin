@@ -54,10 +54,10 @@ export function StoreTab({ metadata, updateMetadata }: StoreTabProps) {
     return (
         <div className="space-y-6">
             {/* Official Toggle */}
-            <div className="flex items-center justify-between rounded-lg border border-zinc-700 bg-zinc-900/50 p-4">
+            <div className="flex items-center justify-between rounded-lg border border-rp-highlight-med bg-rp-surface/50 p-4">
                 <div>
                     <Label className="text-base">Mark as Official Soul</Label>
-                    <p className="text-sm text-zinc-500">
+                    <p className="text-sm text-rp-muted">
                         Official Souls are featured in the store and marketplace
                     </p>
                 </div>
@@ -71,7 +71,7 @@ export function StoreTab({ metadata, updateMetadata }: StoreTabProps) {
             <div className="space-y-2">
                 <Label htmlFor="price">Price (USD)</Label>
                 <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500">$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-rp-muted">$</span>
                     <Input
                         id="price"
                         type="number"
@@ -80,10 +80,10 @@ export function StoreTab({ metadata, updateMetadata }: StoreTabProps) {
                         value={metadata.price || ''}
                         onChange={(e) => updateMetadata('price', parseFloat(e.target.value) || 0)}
                         placeholder="0.00"
-                        className="border-zinc-700 bg-zinc-900 pl-7"
+                        className="border-rp-highlight-med bg-rp-surface pl-7"
                     />
                 </div>
-                <p className="text-xs text-zinc-500">
+                <p className="text-xs text-rp-muted">
                     Set to 0 for free Souls. Premium Souls can be sold in the marketplace.
                 </p>
             </div>
@@ -101,7 +101,7 @@ export function StoreTab({ metadata, updateMetadata }: StoreTabProps) {
                         {swagItems.map((item, index) => (
                             <div
                                 key={index}
-                                className="flex items-center gap-3 rounded-lg border border-zinc-700 bg-zinc-900/50 p-3"
+                                className="flex items-center gap-3 rounded-lg border border-rp-highlight-med bg-rp-surface/50 p-3"
                             >
                                 {item.image_url && (
                                     <div className="relative size-12 shrink-0 overflow-hidden rounded">
@@ -115,7 +115,7 @@ export function StoreTab({ metadata, updateMetadata }: StoreTabProps) {
                                 )}
                                 <div className="flex-1">
                                     <div className="font-medium">{item.name}</div>
-                                    <div className="text-xs text-zinc-500">{item.type}</div>
+                                    <div className="text-xs text-rp-muted">{item.type}</div>
                                 </div>
                                 <a
                                     href={item.url}
@@ -140,21 +140,21 @@ export function StoreTab({ metadata, updateMetadata }: StoreTabProps) {
                 )}
 
                 {/* Add New Item */}
-                <div className="space-y-3 rounded-lg border border-dashed border-zinc-700 p-4">
-                    <div className="text-sm font-medium text-zinc-400">Add New Item</div>
+                <div className="space-y-3 rounded-lg border border-dashed border-rp-highlight-med p-4">
+                    <div className="text-sm font-medium text-rp-subtle">Add New Item</div>
 
                     <div className="grid grid-cols-2 gap-3">
                         <Input
                             value={newItem.name || ''}
                             onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
                             placeholder="Item name"
-                            className="border-zinc-700 bg-zinc-900"
+                            className="border-rp-highlight-med bg-rp-surface"
                         />
                         <Select
                             value={newItem.type || 'Physical'}
                             onValueChange={(value) => setNewItem({ ...newItem, type: value as SwagItem['type'] })}
                         >
-                            <SelectTrigger className="border-zinc-700 bg-zinc-900">
+                            <SelectTrigger className="border-rp-highlight-med bg-rp-surface">
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -168,14 +168,14 @@ export function StoreTab({ metadata, updateMetadata }: StoreTabProps) {
                         value={newItem.url || ''}
                         onChange={(e) => setNewItem({ ...newItem, url: e.target.value })}
                         placeholder="Purchase URL (https://...)"
-                        className="border-zinc-700 bg-zinc-900"
+                        className="border-rp-highlight-med bg-rp-surface"
                     />
 
                     <Input
                         value={newItem.image_url || ''}
                         onChange={(e) => setNewItem({ ...newItem, image_url: e.target.value })}
                         placeholder="Image URL (optional)"
-                        className="border-zinc-700 bg-zinc-900"
+                        className="border-rp-highlight-med bg-rp-surface"
                     />
 
                     <Button

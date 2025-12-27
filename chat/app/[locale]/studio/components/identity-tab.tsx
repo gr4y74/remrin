@@ -51,7 +51,7 @@ export function IdentityTab({ persona, updateField, uploadFile }: IdentityTabPro
             <div className="space-y-2">
                 <Label>Avatar Image</Label>
                 <div
-                    className="relative flex size-48 cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-zinc-700 bg-zinc-900/50 transition-colors hover:border-purple-500"
+                    className="relative flex size-48 cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-rp-highlight-med bg-rp-surface/50 transition-colors hover:border-rp-iris"
                     onClick={() => fileInputRef.current?.click()}
                     onDrop={handleDrop}
                     onDragOver={(e) => e.preventDefault()}
@@ -64,7 +64,7 @@ export function IdentityTab({ persona, updateField, uploadFile }: IdentityTabPro
                             className="object-cover"
                         />
                     ) : (
-                        <div className="flex flex-col items-center gap-2 text-zinc-500">
+                        <div className="flex flex-col items-center gap-2 text-rp-muted">
                             <IconPhoto size={40} />
                             <span className="text-sm">Drop image or click</span>
                         </div>
@@ -87,7 +87,7 @@ export function IdentityTab({ persona, updateField, uploadFile }: IdentityTabPro
                     value={persona.name}
                     onChange={(e) => updateField('name', e.target.value)}
                     placeholder="Soul Name"
-                    className="border-zinc-700 bg-zinc-900"
+                    className="border-rp-highlight-med bg-rp-surface"
                 />
             </div>
 
@@ -99,7 +99,7 @@ export function IdentityTab({ persona, updateField, uploadFile }: IdentityTabPro
                     value={persona.tagline || ''}
                     onChange={(e) => updateField('tagline', e.target.value)}
                     placeholder="A short memorable phrase..."
-                    className="border-zinc-700 bg-zinc-900"
+                    className="border-rp-highlight-med bg-rp-surface"
                 />
             </div>
 
@@ -111,7 +111,7 @@ export function IdentityTab({ persona, updateField, uploadFile }: IdentityTabPro
                     value={persona.description || ''}
                     onChange={(e) => updateField('description', e.target.value)}
                     placeholder="Detailed description of this Soul's personality, backstory, and purpose..."
-                    className="min-h-[120px] border-zinc-700 bg-zinc-900"
+                    className="min-h-[120px] border-rp-highlight-med bg-rp-surface"
                 />
             </div>
 
@@ -122,7 +122,7 @@ export function IdentityTab({ persona, updateField, uploadFile }: IdentityTabPro
                     value={persona.base_model || 'deepseek-chat'}
                     onValueChange={(value) => updateField('base_model', value)}
                 >
-                    <SelectTrigger className="border-zinc-700 bg-zinc-900">
+                    <SelectTrigger className="border-rp-highlight-med bg-rp-surface">
                         <SelectValue placeholder="Select model..." />
                     </SelectTrigger>
                     <SelectContent>
@@ -142,7 +142,7 @@ export function IdentityTab({ persona, updateField, uploadFile }: IdentityTabPro
                     value={persona.safety_level || 'ADULT'}
                     onValueChange={(value) => updateField('safety_level', value as StudioPersona['safety_level'])}
                 >
-                    <SelectTrigger className="border-zinc-700 bg-zinc-900">
+                    <SelectTrigger className="border-rp-highlight-med bg-rp-surface">
                         <SelectValue placeholder="Select safety level..." />
                     </SelectTrigger>
                     <SelectContent>

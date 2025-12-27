@@ -105,6 +105,7 @@ export function MomentModal({
                 <button
                     onClick={onClose}
                     className="bg-rp-base/50 text-rp-text/70 hover:bg-rp-base/70 hover:text-rp-text absolute right-4 top-4 z-50 rounded-full p-2 backdrop-blur-sm transition-colors"
+                    aria-label="Close modal"
                 >
                     <X className="size-5" />
                 </button>
@@ -117,6 +118,7 @@ export function MomentModal({
                             <button
                                 onClick={onPrev}
                                 className="bg-rp-base/50 text-rp-text/70 hover:bg-rp-base/70 hover:text-rp-text absolute left-4 top-1/2 z-40 -translate-y-1/2 rounded-full p-3 backdrop-blur-sm transition-all"
+                                aria-label="Previous moment"
                             >
                                 <ChevronLeft className="size-6" />
                             </button>
@@ -125,6 +127,7 @@ export function MomentModal({
                             <button
                                 onClick={onNext}
                                 className="bg-rp-base/50 text-rp-text/70 hover:bg-rp-base/70 hover:text-rp-text absolute right-4 top-1/2 z-40 -translate-y-1/2 rounded-full p-3 backdrop-blur-sm transition-all"
+                                aria-label="Next moment"
                             >
                                 <ChevronRight className="size-6" />
                             </button>
@@ -193,6 +196,8 @@ export function MomentModal({
                                             ? "text-rp-love"
                                             : "text-rp-subtle hover:text-rp-text"
                                     )}
+                                    aria-label={moment.isLiked ? "Unlike moment" : "Like moment"}
+                                    aria-pressed={moment.isLiked}
                                 >
                                     <Heart
                                         className={cn(
@@ -208,6 +213,7 @@ export function MomentModal({
                                 <button
                                     onClick={handleShare}
                                     className="text-rp-subtle hover:text-rp-text flex items-center gap-2 transition-colors"
+                                    aria-label="Share moment"
                                 >
                                     <Share2 className="size-5" />
                                     <span>Share</span>

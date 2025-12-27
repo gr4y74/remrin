@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils"
 import { calculateTilt, staggerDelay } from "@/lib/animations"
 import { IconLock, IconStar, IconStarFilled } from "@tabler/icons-react"
 import { Rarity, CollectionSoul } from "@/hooks/use-collection"
+import { TYPOGRAPHY, SPACING } from "@/lib/design-system"
 
 interface CollectionCardProps {
     soul: CollectionSoul
@@ -119,7 +120,7 @@ export function CollectionCard({
                 {soul.isOwned && soul.imageUrl ? (
                     <Image
                         src={soul.imageUrl}
-                        alt={soul.name}
+                        alt={`${soul.name} - ${soul.rarity} rarity character`}
                         fill
                         className={cn(
                             "object-cover transition-transform duration-500 ease-out",
@@ -158,7 +159,7 @@ export function CollectionCard({
                 )}
 
                 {/* Bottom Content */}
-                <div className="absolute inset-x-0 bottom-0 p-3">
+                <div className={`absolute inset-x-0 bottom-0 ${SPACING.card.small}`}>
                     {/* Rarity Stars */}
                     <div className="mb-1 flex gap-0.5">
                         {Array.from({ length: config.stars }).map((_, i) => (
@@ -180,7 +181,8 @@ export function CollectionCard({
 
                     {/* Name */}
                     <h3 className={cn(
-                        "font-tiempos-headline line-clamp-1 text-sm font-semibold leading-tight drop-shadow-lg",
+                        TYPOGRAPHY.body.small,
+                        "line-clamp-1 font-semibold leading-tight drop-shadow-lg",
                         "transition-transform duration-300",
                         soul.isOwned ? "text-rp-text" : "text-rp-text/40",
                         isHovering && soul.isOwned && "translate-x-0.5"

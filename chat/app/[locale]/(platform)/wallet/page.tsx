@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client"
 import { IconCoins, IconCreditCard, IconWallet } from "@tabler/icons-react"
 import { useContext, useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
+import { TYPOGRAPHY } from "@/lib/design-system"
 
 export default function WalletPage() {
     const { profile } = useContext(RemrinContext)
@@ -49,7 +50,7 @@ export default function WalletPage() {
             <div className="mx-auto w-full max-w-4xl p-6">
                 {/* Header */}
                 <div className="mb-8">
-                    <h1 className="font-tiempos-headline text-rp-text mb-2 text-3xl font-bold">
+                    <h1 className={`${TYPOGRAPHY.heading.h1} text-rp-text mb-2`}>
                         Wallet & Aether
                     </h1>
                     <p className="text-rp-muted">
@@ -74,7 +75,7 @@ export default function WalletPage() {
 
                 {/* Top Up Section */}
                 <div className="bg-rp-surface border-rp-highlight-med rounded-2xl border p-6">
-                    <h2 className="font-tiempos-headline text-rp-text mb-4 text-xl font-bold">
+                    <h2 className={`${TYPOGRAPHY.heading.h2} text-rp-text mb-4`}>
                         Purchase Aether
                     </h2>
 
@@ -137,7 +138,7 @@ export default function WalletPage() {
 
                 {/* Transaction History (Placeholder) */}
                 <div className="bg-rp-surface border-rp-highlight-med mt-6 rounded-2xl border p-6">
-                    <h2 className="font-tiempos-headline text-rp-text mb-4 text-xl font-bold">
+                    <h2 className={`${TYPOGRAPHY.heading.h2} text-rp-text mb-4`}>
                         Recent Transactions
                     </h2>
                     <p className="text-rp-muted text-center py-8">
