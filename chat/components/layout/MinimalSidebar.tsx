@@ -34,24 +34,24 @@ export function MinimalSidebar() {
 
     return (
         <motion.nav
-            className="bg-rp-surface border-rp-muted/20 fixed left-0 top-0 z-40 hidden h-screen flex-col justify-between border-r md:flex"
+            className="bg-rp-surface border-rp-muted/20 fixed left-0 top-0 z-40 hidden h-screen flex-col border-r md:flex"
             initial={false}
             animate={{ width: isExpanded ? SIDEBAR.expanded : SIDEBAR.collapsed }}
             transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
             onMouseEnter={() => setIsExpanded(true)}
             onMouseLeave={() => setIsExpanded(false)}
         >
-            {/* Top Section: Logo + Nav */}
-            <div className="flex shrink-0 flex-col">
-                {/* Logo */}
-                <div className="border-rp-muted/20 flex h-16 shrink-0 items-center justify-center border-b">
-                    <div className="from-rp-iris to-rp-rose flex size-10 items-center justify-center rounded-lg bg-gradient-to-br">
-                        <span className="text-rp-base text-lg font-bold">R</span>
-                    </div>
+            {/* Logo */}
+            <div className="border-rp-muted/20 flex h-16 shrink-0 items-center justify-center border-b">
+                <div className="from-rp-iris to-rp-rose flex size-10 items-center justify-center rounded-lg bg-gradient-to-br">
+                    <span className="text-rp-base text-lg font-bold">R</span>
                 </div>
+            </div>
 
+            {/* All Items Container - flex-1 to fill, then Profile uses mt-auto */}
+            <div className="flex flex-1 flex-col p-2">
                 {/* Nav Items */}
-                <div className="space-y-1 overflow-y-auto p-2">
+                <div className="space-y-1">
                     {NAV_ITEMS.map((item) => {
                         const Icon = item.icon
                         const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
@@ -86,13 +86,17 @@ export function MinimalSidebar() {
                         )
                     })}
                 </div>
-            </div>
 
-            {/* Bottom Section: Profile */}
-            <div className="border-rp-muted/20 shrink-0 border-t px-2">
+                {/* Spacer pushes profile to bottom */}
+                <div className="flex-1" />
+
+                {/* Separator Line - pure visual, no container */}
+                <div className="border-rp-muted/20 -mx-2 border-t" />
+
+                {/* Profile Button - same styling as nav items */}
                 <button
                     onClick={() => setShowProfileSettings(true)}
-                    className="text-rp-subtle hover:bg-rp-overlay hover:text-rp-text flex w-full items-center gap-3 rounded-lg px-3 pb-3 transition-all"
+                    className="text-rp-subtle hover:bg-rp-overlay hover:text-rp-text group relative flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-all"
                 >
                     <IconUser size={22} className="shrink-0" />
                     <motion.span
