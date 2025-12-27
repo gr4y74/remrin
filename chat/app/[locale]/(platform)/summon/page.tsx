@@ -5,9 +5,10 @@ import { GachaBanner } from "@/components/gacha/GachaBanner"
 import { PullAnimation } from "@/components/gacha/PullAnimation"
 import { PullHistory } from "@/components/gacha/PullHistory"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Sparkles, History, Loader2 } from "lucide-react"
+import { Sparkles, History } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useGacha, PullResult } from "@/lib/hooks/use-gacha"
+import { LottieLoader } from "@/components/ui/lottie-loader"
 
 export default function SummonPage() {
     const [activeTab, setActiveTab] = useState("summon")
@@ -101,7 +102,7 @@ export default function SummonPage() {
     if (loading && pools.length === 0) {
         return (
             <div className="flex min-h-screen items-center justify-center">
-                <Loader2 className="text-muted-foreground size-8 animate-spin" />
+                <LottieLoader size={48} className="text-muted-foreground" />
             </div>
         )
     }

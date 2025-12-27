@@ -12,7 +12,8 @@ import { Sidebar } from "@/components/sidebar/sidebar"
 import { Tabs } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { RemrinContext } from "@/context/context"
-import { IconSparkles, IconDiamond, IconArrowRight, IconLoader2, IconChevronCompactRight } from "@tabler/icons-react"
+import { IconSparkles, IconDiamond, IconArrowRight, IconChevronCompactRight } from "@tabler/icons-react"
+import { LottieLoader } from "@/components/ui/lottie-loader"
 import { ContentType } from "@/types"
 import { cn } from "@/lib/utils"
 
@@ -227,7 +228,7 @@ export default function HomePage() {
   if (loading) {
     return (
       <div className="bg-rp-base flex min-h-screen items-center justify-center">
-        <IconLoader2 className="text-rp-rose size-12 animate-spin" />
+        <LottieLoader size={64} className="text-rp-rose" />
       </div>
     )
   }

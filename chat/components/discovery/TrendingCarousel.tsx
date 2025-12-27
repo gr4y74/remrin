@@ -57,8 +57,8 @@ export function TrendingCarousel({ personas }: TrendingCarouselProps) {
             {/* Section Header */}
             <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <Star className="text-rp-gold size-5" />
-                    <h2 className="text-rp-text text-xl font-bold">Trending Now</h2>
+                    <Star className="size-5" style={{ color: '#907AA8' }} />
+                    <h2 className="text-2xl font-bold" style={{ color: '#907AA8' }}>Featured Souls</h2>
                 </div>
 
                 {/* Arrow Buttons */}

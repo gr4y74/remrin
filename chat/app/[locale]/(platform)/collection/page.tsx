@@ -5,7 +5,7 @@ import { CollectionGrid } from "@/components/collection/CollectionGrid"
 import { CollectionStats } from "@/components/collection/CollectionStats"
 import { useCollection } from "@/hooks/use-collection"
 import { createClient } from "@/lib/supabase/client"
-import { Loader2 } from "lucide-react"
+import { LottieLoader } from "@/components/ui/lottie-loader"
 
 export default function CollectionPage() {
     const [userId, setUserId] = useState<string | undefined>(undefined)
@@ -24,7 +24,7 @@ export default function CollectionPage() {
     if (loading) {
         return (
             <div className="flex min-h-screen items-center justify-center">
-                <Loader2 className="text-muted-foreground size-8 animate-spin" />
+                <LottieLoader size={48} className="text-muted-foreground" />
             </div>
         )
     }

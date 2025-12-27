@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
-import { Loader2 } from "lucide-react"
+import { LottieLoader } from "@/components/ui/lottie-loader"
 import Image from "next/image"
 
 interface PullRecord {
@@ -75,13 +75,13 @@ export function PullHistory() {
     if (loading) {
         return (
             <div className="flex items-center justify-center py-12">
-                <Loader2 className="text-muted-foreground size-8 animate-spin" />
+                <LottieLoader size={48} className="text-muted-foreground" />
             </div>
         )
     }
 
     return (
-        <div className="space-y-4">
+        <div className="flex max-h-[calc(100vh-300px)] flex-col space-y-4 overflow-y-auto">
             {/* Filter Tabs */}
             <div className="flex gap-2 overflow-x-auto pb-2">
                 {["all", "legendary", "epic", "rare", "uncommon", "common"].map((r) => (

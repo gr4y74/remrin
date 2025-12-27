@@ -114,7 +114,7 @@ export function CharacterCard({
 
                     {/* Stats Badge */}
                     <div className="absolute right-3 top-3">
-                        <Badge className="bg-rp-base/60 text-rp-text flex items-center gap-1 rounded-full border-0 px-2 py-1 text-xs backdrop-blur-sm">
+                        <Badge className="bg-rp-base/60 flex items-center gap-1 rounded-full border-0 px-2 py-1 text-xs backdrop-blur-sm" style={{ color: '#BE8E95' }}>
                             <MessageCircle className="size-3" />
                             <span>{formatCount(totalChats)}</span>
                         </Badge>
@@ -143,10 +143,11 @@ export function CharacterCard({
 
                         {/* Character Name */}
                         <h3 className={cn(
-                            "font-tiempos-headline text-rp-text line-clamp-2 text-lg font-bold leading-tight drop-shadow-lg",
+                            "font-tiempos-headline line-clamp-2 text-lg font-bold leading-tight drop-shadow-lg",
                             "transition-transform duration-300",
                             isHovering && "translate-x-1"
-                        )}>
+                        )}
+                            style={{ color: '#BE8E95' }}>
                             {name}
                         </h3>
                     </div>

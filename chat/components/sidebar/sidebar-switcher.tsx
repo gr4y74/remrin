@@ -45,7 +45,10 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
   const iconHoverClass = "transition-all duration-200 hover:scale-110 hover:text-rp-rose"
 
   return (
-    <div className="flex h-full flex-col justify-between bg-[#f0d7d7] pb-5">
+    <div className={cn(
+      "flex h-full flex-col justify-between pb-5",
+      theme === "light" ? "bg-[#f0d7d7]" : "bg-transparent"
+    )}>
       <TabsList className="grid h-auto gap-1 bg-transparent p-2">
         {/* Remrin Logo - Home button */}
         <WithTooltip
@@ -126,13 +129,13 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
 
         {/* Soul Summons */}
         <WithTooltip
-          display={<div>Soul Summons</div>}
+          display={<div style={{ color: '#EA2E20' }}>Soul Summons</div>}
           trigger={
             <Link
               href="/summon"
               className="hover:bg-rp-overlay mx-auto flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
             >
-              <div className="flex size-6 items-center justify-center">
+              <div className="flex size-6 items-center justify-center" style={{ filter: 'brightness(0) saturate(100%) invert(24%) sepia(93%) saturate(3447%) hue-rotate(350deg) brightness(93%) contrast(96%)' }}>
                 <Image src="/icons/hero_icons/summon.svg" alt="Summon" width={24} height={24} className="size-6 object-contain" style={{ objectFit: 'contain' }} />
               </div>
             </Link>

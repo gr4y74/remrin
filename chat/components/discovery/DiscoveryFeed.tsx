@@ -6,8 +6,9 @@ import { TrendingCarousel } from "./TrendingCarousel"
 import { CharacterCard } from "./CharacterCard"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Loader2, SearchX } from "lucide-react"
+import { SearchX, Compass } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
+import { LottieLoader } from "@/components/ui/lottie-loader"
 
 interface Category {
     id: string
@@ -138,8 +139,12 @@ export function DiscoveryFeed({
                     </section>
                 )}
 
-                {/* Category Tabs */}
+                {/* Explore Souls Section */}
                 <section className="mb-6">
+                    <div className="mb-4 flex items-center gap-2">
+                        <Compass className="size-5" style={{ color: '#907AA8' }} />
+                        <h2 className="text-2xl font-bold" style={{ color: '#907AA8' }}>Explore Souls</h2>
+                    </div>
                     <CategoryTabs
                         categories={categories}
                         selectedCategory={selectedCategory}
@@ -203,7 +208,7 @@ export function DiscoveryFeed({
                                 >
                                     {loadingMore ? (
                                         <>
-                                            <Loader2 className="mr-2 size-4 animate-spin" />
+                                            <LottieLoader size={16} className="mr-2" />
                                             Loading...
                                         </>
                                     ) : (
