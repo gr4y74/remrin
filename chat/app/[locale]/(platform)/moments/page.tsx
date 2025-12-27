@@ -104,7 +104,7 @@ export default async function MomentsPage({ searchParams }: MomentsPageProps) {
             {/* Header */}
             <header className="border-b border-rp-highlight-med bg-rp-base/80 backdrop-blur-xl">
                 <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-                    <h1 className="text-3xl font-bold text-rp-text">
+                    <h1 className="font-tiempos-headline text-3xl font-bold text-rp-text">
                         {personaName ? `${personaName}'s Moments` : "Moments"}
                     </h1>
                     <p className="mt-2 text-rp-subtle">

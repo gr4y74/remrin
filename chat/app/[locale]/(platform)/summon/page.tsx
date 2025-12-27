@@ -109,7 +109,7 @@ export default function SummonPage() {
     return (
         <div className="container mx-auto max-w-6xl px-4 py-8">
             <div className="mb-8 text-center">
-                <h1 className="bg-gradient-to-r from-purple-400 via-pink-500 to-orange-400 bg-clip-text text-4xl font-extrabold tracking-tight text-transparent md:text-5xl">
+                <h1 className="font-tiempos-headline bg-gradient-to-r from-purple-400 via-pink-500 to-orange-400 bg-clip-text text-4xl font-extrabold tracking-tight text-transparent md:text-5xl">
                     Soul Summons
                 </h1>
                 <p className="text-muted-foreground mt-2">

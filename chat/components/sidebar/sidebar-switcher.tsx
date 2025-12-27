@@ -45,7 +45,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
   const iconHoverClass = "transition-all duration-200 hover:scale-110 hover:text-rp-rose"
 
   return (
-    <div className="flex h-full flex-col justify-between border-r border-rp-highlight-med bg-[#f0d7d7] pb-5">
+    <div className="flex h-full flex-col justify-between bg-[#f0d7d7] pb-5">
       <TabsList className="grid h-auto gap-1 bg-transparent p-2">
         {/* Remrin Logo - Home button */}
         <WithTooltip
@@ -67,7 +67,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
         />
 
         {/* Primary: Chats */}
-        <div className="mx-auto">
+        <div className="mx-auto flex size-[40px] items-center justify-center">
           <SidebarSwitchItem
             icon={
               <div className="flex size-6 items-center justify-center">
@@ -176,12 +176,14 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
         <WithTooltip
           display={<div>Tools & Settings</div>}
           trigger={
-            <button
-              onClick={() => setIsToolsOpen(!isToolsOpen)}
-              className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
-            >
-              <IconSettings size={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, isToolsOpen && "text-rp-rose rotate-90")} />
-            </button>
+            <div className="mx-auto flex size-[40px] items-center justify-center">
+              <button
+                onClick={() => setIsToolsOpen(!isToolsOpen)}
+                className="hover:bg-rp-overlay flex size-[40px] cursor-pointer items-center justify-center rounded-lg"
+              >
+                <IconSettings size={SIDEBAR_ICON_SIZE} className={cn(iconHoverClass, isToolsOpen && "text-rp-rose rotate-90")} />
+              </button>
+            </div>
           }
         />
 
@@ -189,42 +191,42 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
         {isToolsOpen && (
           <div className="border-rp-highlight-low animate-fadeIn mt-1 flex flex-col gap-1 border-l-2 pl-1">
             <SidebarSwitchItem
-              icon={<IconAdjustmentsHorizontal size={20} className={iconHoverClass} />}
+              icon={<IconAdjustmentsHorizontal size={20} className="text-rp-iris" />}
               contentType="presets"
               onContentTypeChange={onContentTypeChange}
             />
             <SidebarSwitchItem
-              icon={<IconPencil size={20} className={iconHoverClass} />}
+              icon={<IconPencil size={20} className="text-rp-rose" />}
               contentType="prompts"
               onContentTypeChange={onContentTypeChange}
             />
             <SidebarSwitchItem
-              icon={<IconSparkles size={20} className={iconHoverClass} />}
+              icon={<IconSparkles size={20} className="text-rp-gold" />}
               contentType="models"
               onContentTypeChange={onContentTypeChange}
             />
             <SidebarSwitchItem
-              icon={<IconFile size={20} className={iconHoverClass} />}
+              icon={<IconFile size={20} className="text-rp-foam" />}
               contentType="files"
               onContentTypeChange={onContentTypeChange}
             />
             <SidebarSwitchItem
-              icon={<IconBooks size={20} className={iconHoverClass} />}
+              icon={<IconBooks size={20} className="text-rp-pine" />}
               contentType="collections"
               onContentTypeChange={onContentTypeChange}
             />
             <SidebarSwitchItem
-              icon={<IconRobotFace size={20} className={iconHoverClass} />}
+              icon={<IconRobotFace size={20} className="text-rp-love" />}
               contentType="assistants"
               onContentTypeChange={onContentTypeChange}
             />
             <SidebarSwitchItem
-              icon={<IconBolt size={20} className={iconHoverClass} />}
+              icon={<IconBolt size={20} className="text-rp-gold" />}
               contentType="tools"
               onContentTypeChange={onContentTypeChange}
             />
             <SidebarSwitchItem
-              icon={<IconHeart size={20} className={iconHoverClass} />}
+              icon={<IconHeart size={20} className="text-rp-rose" />}
               contentType="personas"
               onContentTypeChange={onContentTypeChange}
             />

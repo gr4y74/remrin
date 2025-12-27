@@ -320,7 +320,7 @@ export default function HomePage() {
         {/* Hero Section with Carousel */}
         <section className="relative z-10 mt-8">
           <div className="mb-4 px-6 text-center">
-            <h2 className="inline-flex items-center gap-2 text-lg font-semibold text-white/80">
+            <h2 className="font-tiempos-headline inline-flex items-center gap-2 text-lg font-semibold text-rp-text">
               <IconSparkles size={20} className="text-amber-400" />
               Featured Souls
             </h2>
@@ -341,7 +341,7 @@ export default function HomePage() {
         {/* Main Gallery */}
         <section className="relative z-10 mt-8">
           <div className="mb-4 flex flex-col items-center gap-2 px-6">
-            <h2 className="text-lg font-semibold text-white/80">
+            <h2 className="font-tiempos-headline text-lg font-semibold text-rp-text">
               Explore Souls
             </h2>
             <Link
@@ -368,17 +368,17 @@ export default function HomePage() {
         </section>
 
         {/* Quick Actions Footer */}
-        <section className="relative z-10 mt-8 border-t border-rp-highlight-med bg-rp-base py-12">
+        <section className="relative z-10 mt-8 border-t border-rp-highlight-med bg-rp-surface dark:bg-rp-base py-12">
           <div className="mx-auto grid max-w-4xl grid-cols-1 gap-6 px-6 md:grid-cols-3">
             <Link
               href="/summon"
               className="group rounded-2xl border border-amber-500/20 bg-gradient-to-br from-amber-500/10 to-orange-500/10 p-6 transition-colors hover:border-amber-500/40"
             >
               <IconDiamond size={32} className="mb-4 text-amber-400" />
-              <h3 className="mb-2 font-semibold text-white transition-colors group-hover:text-amber-400">
+              <h3 className="font-tiempos-headline mb-2 font-semibold text-rp-text transition-colors group-hover:text-amber-400">
                 Soul Summons
               </h3>
-              <p className="text-sm text-white/50">
+              <p className="text-sm text-rp-muted">
                 Try your luck to summon rare and legendary Souls
               </p>
             </Link>
@@ -388,10 +388,10 @@ export default function HomePage() {
               className="group rounded-2xl border border-purple-500/20 bg-gradient-to-br from-purple-500/10 to-pink-500/10 p-6 transition-colors hover:border-purple-500/40"
             >
               <IconSparkles size={32} className="mb-4 text-purple-400" />
-              <h3 className="mb-2 font-semibold text-white transition-colors group-hover:text-purple-400">
+              <h3 className="font-tiempos-headline mb-2 font-semibold text-rp-text transition-colors group-hover:text-purple-400">
                 Soul Studio
               </h3>
-              <p className="text-sm text-white/50">
+              <p className="text-sm text-rp-muted">
                 Create and customize your own unique Souls
               </p>
             </Link>
@@ -405,10 +405,10 @@ export default function HomePage() {
                 <line x1="3" y1="6" x2="21" y2="6" />
                 <path d="M16 10a4 4 0 0 1-8 0" />
               </svg>
-              <h3 className="mb-2 font-semibold text-white transition-colors group-hover:text-cyan-400">
+              <h3 className="font-tiempos-headline mb-2 font-semibold text-rp-text transition-colors group-hover:text-cyan-400">
                 Soul Bazaar
               </h3>
-              <p className="text-sm text-white/50">
+              <p className="text-sm text-rp-muted">
                 Buy and sell Souls from the community
               </p>
             </Link>

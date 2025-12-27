@@ -103,7 +103,7 @@ export function MarketplacePage({
                         <div className="flex items-center gap-3">
                             <IconShoppingCart className="text-rp-gold size-8" />
                             <div>
-                                <h1 className="text-rp-text text-2xl font-bold">Soul Bazaar</h1>
+                                <h1 className="font-tiempos-headline text-rp-text text-2xl font-bold">Soul Bazaar</h1>
                                 <p className="text-rp-subtle text-sm">
                                     Discover and collect unique AI companions
                                 </p>
