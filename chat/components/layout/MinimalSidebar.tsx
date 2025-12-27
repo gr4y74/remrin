@@ -22,13 +22,11 @@ import {
 const NAV_ITEMS = [
     { icon: IconHome, label: "Home", href: "/" },
     { icon: IconSparkles, label: "Discover", href: "/discover" },
-    { icon: IconMessage, label: "Chats", href: "/en/chat" },
     { icon: IconDice, label: "Summon", href: "/summon" },
     { icon: IconBooks, label: "Collection", href: "/collection" },
     { icon: IconShoppingBag, label: "Marketplace", href: "/marketplace" },
     { icon: IconBrush, label: "Studio", href: "/studio" },
     { icon: IconWallet, label: "Wallet", href: "/wallet" },
-    { icon: IconUser, label: "Profile", href: "/en/profile" },
 ]
 
 export function MinimalSidebar() {
@@ -52,7 +50,7 @@ export function MinimalSidebar() {
             </div>
 
             {/* Nav Items */}
-            <div className="flex-1 space-y-1 overflow-y-auto p-2">
+            <div className="space-y-1 overflow-y-auto p-2">
                 {NAV_ITEMS.map((item) => {
                     const Icon = item.icon
                     const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
