@@ -22,13 +22,13 @@ import {
 const NAV_ITEMS = [
     { icon: IconHome, label: "Home", href: "/" },
     { icon: IconSparkles, label: "Discover", href: "/discover" },
-    { icon: IconMessage, label: "Chats", href: "/chat" },
+    { icon: IconMessage, label: "Chats", href: "/en/chat" },
     { icon: IconDice, label: "Summon", href: "/summon" },
     { icon: IconBooks, label: "Collection", href: "/collection" },
     { icon: IconShoppingBag, label: "Marketplace", href: "/marketplace" },
     { icon: IconBrush, label: "Studio", href: "/studio" },
     { icon: IconWallet, label: "Wallet", href: "/wallet" },
-    { icon: IconUser, label: "Profile", href: "/profile" },
+    { icon: IconUser, label: "Profile", href: "/en/profile" },
 ]
 
 export function MinimalSidebar() {
@@ -52,7 +52,7 @@ export function MinimalSidebar() {
             </div>
 
             {/* Nav Items */}
-            <div className="flex-1 space-y-1 overflow-y-auto p-2">
+            <div className="space-y-1 overflow-y-auto p-2">
                 {NAV_ITEMS.map((item) => {
                     const Icon = item.icon
                     const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
@@ -89,9 +89,9 @@ export function MinimalSidebar() {
             </div>
 
             {/* Settings */}
-            <div className="border-rp-muted/20 border-t p-2">
+            <div className="border-rp-muted/20 mt-auto border-t p-2">
                 <Link
-                    href="/settings"
+                    href="/en/settings"
                     className="text-rp-subtle hover:bg-rp-overlay hover:text-rp-text flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-all"
                 >
                     <IconSettings size={22} className="shrink-0" />

@@ -229,7 +229,7 @@ export default function HomePage() {
         </div>
 
         {/* Header */}
-        <header className="relative z-50 flex items-center justify-between border-b border-rp-highlight-med bg-rp-base px-6 py-4">
+        <header className="relative z-50 flex items-center justify-between border-b border-rp-highlight-med bg-rp-base px-6 py-4 md:pl-20">
           <Link href="/" className="flex items-center">
             <Image
               src={theme === "light" ? "/logo_dark.svg" : "/logo.svg"}
