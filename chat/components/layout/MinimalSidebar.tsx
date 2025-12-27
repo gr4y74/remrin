@@ -51,7 +51,7 @@ export function MinimalSidebar() {
             </div>
 
             {/* Nav Items */}
-            <div className="flex-1 space-y-1 overflow-y-auto p-2">
+            <div className="space-y-1 overflow-y-auto p-2">
                 {NAV_ITEMS.map((item) => {
                     const Icon = item.icon
                     const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
