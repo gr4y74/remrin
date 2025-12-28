@@ -25,6 +25,7 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
     setIsCanvasOpen,
     isCharacterPanelOpen,
     setIsCharacterPanelOpen,
+    selectedPersona,
   } = useContext(RemrinContext)
 
   const [isDragging, setIsDragging] = useState(false)
@@ -59,9 +60,10 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
     <>
       <CommandK />
 
-      {/* Main Content Area - Sidebar is in root layout */}
+      {/* Main Content Area - with dynamic right margin for CharacterPanel */}
       <div
-        className="flex-1 flex flex-col"
+        className="flex-1 flex flex-col transition-[margin-right] duration-300"
+        style={{ marginRight: isCharacterPanelOpen && selectedPersona ? CHARACTER_PANEL_WIDTH : 0 }}
         onDrop={onFileDrop}
         onDragOver={onDragOver}
         onDragEnter={handleDragEnter}

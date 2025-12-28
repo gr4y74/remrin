@@ -6,8 +6,8 @@ export const BREAKPOINTS = {
 } as const
 
 export const SIDEBAR = {
-    collapsed: 64,
-    expanded: 240,
+    collapsed: 80,
+    expanded: 260,
 } as const
 
 export const SPACING = {

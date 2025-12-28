@@ -6,6 +6,9 @@ import { usePathname } from "next/navigation"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { SIDEBAR } from "@/lib/design-system"
+import { SidebarUserSection } from "./SidebarUserSection"
+import { SidebarRecentChats } from "./SidebarRecentChats"
+import { SidebarCreateButton } from "./SidebarCreateButton"
 import {
     IconHome,
     IconSparkles,
@@ -13,7 +16,6 @@ import {
     IconBooks,
     IconShoppingBag,
     IconBrush,
-    IconUser,
     IconWallet,
 } from "@tabler/icons-react"
 
@@ -27,6 +29,12 @@ const NAV_ITEMS = [
     { icon: IconWallet, label: "Wallet", href: "/wallet" },
 ]
 
+/**
+ * MinimalSidebar - Talkie-AI inspired sidebar with:
+ * - Craft a Soul button
+ * - Recent chats list
+ * - User section with avatar + Subscribe CTA
+ */
 export function MinimalSidebar() {
     const [isExpanded, setIsExpanded] = useState(false)
     const [showProfileSettings, setShowProfileSettings] = useState(false)
@@ -41,7 +49,7 @@ export function MinimalSidebar() {
             onMouseEnter={() => setIsExpanded(true)}
             onMouseLeave={() => setIsExpanded(false)}
         >
-            {/* Logo Container - Dual-logo crossfade like Talkie-AI */}
+            {/* Logo Container - Dual-logo crossfade */}
             <div className="border-rp-muted/20 relative flex h-16 shrink-0 items-center justify-center overflow-hidden border-b">
                 {/* Small logo - visible when collapsed */}
                 <img
@@ -63,7 +71,10 @@ export function MinimalSidebar() {
                 />
             </div>
 
-            {/* All Items Container - flex-1 to fill, then Profile uses mt-auto */}
+            {/* Craft a Soul Button */}
+            <SidebarCreateButton isExpanded={isExpanded} />
+
+            {/* All Items Container */}
             <div className="flex flex-1 flex-col p-2">
                 {/* Nav Items */}
                 <div className="space-y-1">
@@ -76,17 +87,28 @@ export function MinimalSidebar() {
                                 key={item.href}
                                 href={item.href}
                                 className={cn(
-                                    "group relative flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-all",
+                                    "group relative flex min-h-[44px] items-center rounded-lg py-3 transition-all",
                                     isActive
                                         ? "bg-rp-iris/20 text-rp-iris"
-                                        : "text-rp-subtle hover:bg-rp-overlay hover:text-rp-text"
+                                        : "text-rp-subtle hover:bg-rp-overlay hover:text-rp-text",
+                                    // Center icons when collapsed, left align when expanded
+                                    isExpanded ? "justify-start gap-3 px-4" : "justify-center px-0"
                                 )}
                             >
-                                <Icon size={22} className="shrink-0" />
+                                {/* Icon container - fixed width for centering */}
+                                <div className={cn(
+                                    "flex shrink-0 items-center justify-center",
+                                    !isExpanded && "w-full"
+                                )}>
+                                    <Icon size={22} />
+                                </div>
                                 <motion.span
-                                    className="font-tiempos-text whitespace-nowrap text-sm font-medium"
+                                    className="font-tiempos-text whitespace-nowrap text-sm font-medium overflow-hidden"
                                     initial={false}
-                                    animate={{ opacity: isExpanded ? 1 : 0 }}
+                                    animate={{
+                                        opacity: isExpanded ? 1 : 0,
+                                        width: isExpanded ? "auto" : 0
+                                    }}
                                     transition={{ duration: 0.2 }}
                                 >
                                     {item.label}
@@ -102,27 +124,23 @@ export function MinimalSidebar() {
                     })}
                 </div>
 
-                {/* Spacer pushes profile to bottom */}
+                {/* Separator Line */}
+                <div className="border-rp-muted/20 -mx-2 my-2 border-t" />
+
+                {/* Recent Chats Section */}
+                <SidebarRecentChats isExpanded={isExpanded} maxChats={8} />
+
+                {/* Spacer pushes user section to bottom */}
                 <div className="flex-1" />
 
-                {/* Separator Line - pure visual, no container */}
+                {/* Separator Line */}
                 <div className="border-rp-muted/20 -mx-2 border-t" />
 
-                {/* Profile Button - same styling as nav items */}
-                <button
-                    onClick={() => setShowProfileSettings(true)}
-                    className="text-rp-subtle hover:bg-rp-overlay hover:text-rp-text group relative flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-all"
-                >
-                    <IconUser size={22} className="shrink-0" />
-                    <motion.span
-                        className="font-tiempos-text whitespace-nowrap text-sm font-medium"
-                        initial={false}
-                        animate={{ opacity: isExpanded ? 1 : 0 }}
-                        transition={{ duration: 0.2 }}
-                    >
-                        Profile
-                    </motion.span>
-                </button>
+                {/* User Section with Avatar + Subscribe CTA */}
+                <SidebarUserSection
+                    isExpanded={isExpanded}
+                    onProfileClick={() => setShowProfileSettings(true)}
+                />
             </div>
 
             {/* Profile Settings Modal */}
