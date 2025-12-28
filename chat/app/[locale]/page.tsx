@@ -2,12 +2,10 @@
 
 import { useEffect, useState, useContext, useMemo } from "react"
 import { useRouter } from "next/navigation"
-import { useTheme } from "next-themes"
 import Link from "next/link"
-import Image from "next/image"
 import { createClient } from "@/lib/supabase/client"
 import { HeroCarousel, DraggableGallery } from "@/components/discovery"
-import { PageTemplate, Footer } from "@/components/layout"
+import { PageTemplate, Footer, HeroHeader } from "@/components/layout"
 import { RemrinContext } from "@/context/context"
 import { IconSparkles, IconDiamond, IconArrowRight } from "@tabler/icons-react"
 import { LottieLoader } from "@/components/ui/lottie-loader"
@@ -51,7 +49,6 @@ const DEMO_DESCRIPTIONS = [
 export default function HomePage() {
   const router = useRouter()
   const { workspaces, profile } = useContext(RemrinContext)
-  const { theme } = useTheme()
   const [personas, setPersonas] = useState<Persona[]>([])
   const [loading, setLoading] = useState(true)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -230,36 +227,28 @@ export default function HomePage() {
       </div>
 
       {/* Header */}
-      <header className="relative z-50 flex items-center justify-between border-b border-rp-highlight-med bg-rp-base/95 backdrop-blur-sm px-4 py-4 md:px-6">
-        <Link href="/" className="flex items-center">
-          <Image
-            src={theme === "light" ? "/logo_dark.svg" : "/logo.svg"}
-            alt="Remrin"
-            width={128}
-            height={40}
-            className="h-8 w-auto drop-shadow-[0_0_12px_rgba(235,188,186,0.4)] transition-transform duration-300 ease-out hover:rotate-[-5deg] hover:scale-105"
-            priority
-          />
-        </Link>
-
-        <div className="flex items-center gap-4">
-          <Link
-            href="/summon"
-            className="flex items-center gap-2 rounded-full border border-amber-500/30 bg-gradient-to-r from-amber-500/20 to-orange-500/20 px-4 py-2 text-amber-400 transition-colors hover:bg-amber-500/30"
-          >
-            <IconDiamond size={18} />
-            <span className="text-sm font-medium text-rp-love">Soul Summons</span>
-          </Link>
-          {!isLoggedIn && (
+      <HeroHeader
+        showLogo
+        actions={
+          <>
             <Link
-              href="/login"
-              className="rounded-full bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-purple-500/25 transition-all hover:from-purple-500 hover:to-pink-500"
+              href="/summon"
+              className="flex items-center gap-2 rounded-full border border-amber-500/30 bg-gradient-to-r from-amber-500/20 to-orange-500/20 px-4 py-2 text-amber-400 transition-colors hover:bg-amber-500/30"
             >
-              Sign In
+              <IconDiamond size={18} />
+              <span className="text-sm font-medium text-rp-love">Soul Summons</span>
             </Link>
-          )}
-        </div>
-      </header>
+            {!isLoggedIn && (
+              <Link
+                href="/login"
+                className="rounded-full bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-purple-500/25 transition-all hover:from-purple-500 hover:to-pink-500"
+              >
+                Sign In
+              </Link>
+            )}
+          </>
+        }
+      />
 
       {/* Hero Section with Carousel */}
       <section className="relative z-10 mt-8">
