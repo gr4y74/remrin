@@ -41,11 +41,26 @@ export function MinimalSidebar() {
             onMouseEnter={() => setIsExpanded(true)}
             onMouseLeave={() => setIsExpanded(false)}
         >
-            {/* Logo */}
-            <div className="border-rp-muted/20 flex h-16 shrink-0 items-center justify-center border-b">
-                <div className="from-rp-iris to-rp-rose flex size-10 items-center justify-center rounded-lg bg-gradient-to-br">
-                    <span className="text-rp-base text-lg font-bold">R</span>
-                </div>
+            {/* Logo Container - Dual-logo crossfade like Talkie-AI */}
+            <div className="border-rp-muted/20 relative flex h-16 shrink-0 items-center justify-center overflow-hidden border-b">
+                {/* Small logo - visible when collapsed */}
+                <img
+                    src="/logo_sm.svg"
+                    alt="Remrin"
+                    className={cn(
+                        "size-10 transition-all duration-300",
+                        isExpanded ? "absolute opacity-0 scale-75" : "opacity-100 scale-100"
+                    )}
+                />
+                {/* Full wordmark - visible when expanded */}
+                <img
+                    src="/remrin_dark.svg"
+                    alt="Remrin.ai"
+                    className={cn(
+                        "h-8 transition-all duration-300",
+                        isExpanded ? "opacity-100 scale-100" : "absolute opacity-0 scale-90"
+                    )}
+                />
             </div>
 
             {/* All Items Container - flex-1 to fill, then Profile uses mt-auto */}

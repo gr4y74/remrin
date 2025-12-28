@@ -1,7 +1,5 @@
 "use client"
 
-import { MinimalSidebar } from "@/components/layout/MinimalSidebar"
-import { MobileNav } from "@/components/layout/MobileNav"
 import { RemrinContext } from "@/context/context"
 import { CharacterPanel } from "@/components/character"
 import { CanvasPanel } from "@/components/canvas"
@@ -57,15 +55,12 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
   }
 
   return (
-    <div className="flex min-h-screen">
+    <>
       <CommandK />
 
-      {/* Minimal Sidebar (Desktop) */}
-      <MinimalSidebar />
-
-      {/* Main Content Area */}
-      <main
-        className="flex-1 md:ml-16 pb-20 md:pb-0"
+      {/* Main Content Area - Sidebar is in root layout */}
+      <div
+        className="flex-1"
         onDrop={onFileDrop}
         onDragOver={onDragOver}
         onDragEnter={handleDragEnter}
@@ -78,17 +73,14 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
         ) : (
           children
         )}
-      </main>
-
-      {/* Mobile Bottom Navigation */}
-      <MobileNav />
+      </div>
 
       {/* Canvas/Artifacts Panel (conditional) */}
       <CanvasPanel width={CANVAS_WIDTH} />
 
       {/* Character Panel (conditional) */}
       <CharacterPanel width={CHARACTER_PANEL_WIDTH} />
-    </div>
+    </>
   )
 }
 
