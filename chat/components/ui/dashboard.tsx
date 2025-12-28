@@ -3,6 +3,7 @@
 import { RemrinContext } from "@/context/context"
 import { CharacterPanel } from "@/components/character"
 import { CanvasPanel } from "@/components/canvas"
+import { Footer } from "@/components/layout/Footer"
 import useHotkey from "@/lib/hooks/use-hotkey"
 import { FC, useContext, useState } from "react"
 import { useSelectFileHandler } from "../chat/chat-hooks/use-select-file-handler"
@@ -60,19 +61,22 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
 
       {/* Main Content Area - Sidebar is in root layout */}
       <div
-        className="flex-1"
+        className="flex-1 flex flex-col"
         onDrop={onFileDrop}
         onDragOver={onDragOver}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
       >
-        {isDragging ? (
-          <div className="flex h-full items-center justify-center bg-black/50 text-2xl text-white">
-            drop file here
-          </div>
-        ) : (
-          children
-        )}
+        <div className="flex-1">
+          {isDragging ? (
+            <div className="flex h-full items-center justify-center bg-black/50 text-2xl text-white">
+              drop file here
+            </div>
+          ) : (
+            children
+          )}
+        </div>
+        <Footer />
       </div>
 
       {/* Canvas/Artifacts Panel (conditional) */}
