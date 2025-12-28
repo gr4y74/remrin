@@ -93,19 +93,13 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
         >
             {/* Full-Bleed Hero Image Section - Talkie Style */}
             <div className="relative flex-1 min-h-[45%] max-h-[55%] w-full overflow-hidden">
-                {selectedPersona.image_url ? (
-                    <Image
-                        src={selectedPersona.image_url}
-                        alt={selectedPersona.name}
-                        fill
-                        className="object-cover"
-                        priority
-                    />
-                ) : (
-                    <div className="from-rp-iris/20 to-rp-rose/20 flex size-full items-center justify-center bg-gradient-to-br">
-                        <IconUser size={80} className="text-rp-muted" />
-                    </div>
-                )}
+                <Image
+                    src={selectedPersona.image_url || "/images/rem_hero.webp"}
+                    alt={selectedPersona.name}
+                    fill
+                    className="object-cover"
+                    priority
+                />
 
                 {/* Gradient overlay at bottom for text readability */}
                 <div className="absolute inset-0 bg-gradient-to-t from-rp-surface via-transparent to-transparent" />
@@ -134,17 +128,11 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                 <div className="flex items-center gap-3">
                     {/* Character Avatar */}
                     <div className="relative shrink-0">
-                        {selectedPersona.image_url ? (
-                            <img
-                                src={selectedPersona.image_url}
-                                alt={selectedPersona.name}
-                                className="size-12 rounded-full object-cover ring-2 ring-rp-highlight-med"
-                            />
-                        ) : (
-                            <div className="flex size-12 items-center justify-center rounded-full bg-rp-iris/20 text-rp-iris ring-2 ring-rp-highlight-med">
-                                <IconUser size={24} />
-                            </div>
-                        )}
+                        <img
+                            src={selectedPersona.image_url || "/images/rem_hero.webp"}
+                            alt={selectedPersona.name}
+                            className="size-12 rounded-full object-cover ring-2 ring-rp-highlight-med"
+                        />
                     </div>
 
                     {/* Name with profile link */}
