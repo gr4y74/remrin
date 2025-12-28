@@ -9,6 +9,7 @@ import { SIDEBAR } from "@/lib/design-system"
 import { SidebarUserSection } from "./SidebarUserSection"
 import { SidebarRecentChats } from "./SidebarRecentChats"
 import { SidebarCreateButton } from "./SidebarCreateButton"
+import { SidebarThemeToggle } from "./SidebarThemeToggle"
 import {
     IconHome,
     IconSparkles,
@@ -132,6 +133,14 @@ export function MinimalSidebar() {
 
                 {/* Spacer pushes user section to bottom */}
                 <div className="flex-1" />
+
+                {/* Separator Line */}
+                <div className="border-rp-muted/20 -mx-2 border-t" />
+
+                {/* Theme Toggle */}
+                <div className="px-2 py-1">
+                    <SidebarThemeToggle isExpanded={isExpanded} />
+                </div>
 
                 {/* Separator Line */}
                 <div className="border-rp-muted/20 -mx-2 border-t" />

@@ -15,7 +15,7 @@ interface SidebarRecentChatsProps {
 
 // Demo data for preview purposes
 const DEMO_CHATS = [
-    { id: "demo-1", name: "Luna", imageUrl: "https://picsum.photos/seed/luna/200", href: "#" },
+    { id: "demo-1", name: "Rem", imageUrl: "/images/rem_hero.webp", href: "#" },
     { id: "demo-2", name: "Marcus", imageUrl: "https://picsum.photos/seed/marcus/200", href: "#" },
     { id: "demo-3", name: "Aria", imageUrl: "https://picsum.photos/seed/aria/200", href: "#" },
     { id: "demo-4", name: "Rex", imageUrl: "https://picsum.photos/seed/rex/200", href: "#" },
