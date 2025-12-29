@@ -1,12 +1,13 @@
 "use client"
 
-import { useContext } from "react"
+import { useContext, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
-import { IconPlus, IconSparkles } from "@tabler/icons-react"
+import { IconSparkles } from "@tabler/icons-react"
 import { RemrinContext } from "@/context/context"
-import { isMotherOfSouls } from "@/lib/forge/is-mother-chat"
+import { isMotherOfSouls, MOTHER_OF_SOULS_ID } from "@/lib/forge/is-mother-chat"
+import { createClient } from "@/lib/supabase/client"
 
 interface SidebarCreateButtonProps {
     isExpanded: boolean
@@ -15,8 +16,8 @@ interface SidebarCreateButtonProps {
 /**
  * SidebarCreateButton - "Craft a Soul" button
  * 
- * Starts the Mother of Souls onboarding ritual by selecting her
- * from the user's persona collection and starting a new chat.
+ * Starts the Mother of Souls onboarding ritual.
+ * The Mother of Souls is a LEGENDARY card that every user has access to.
  */
 export function SidebarCreateButton({ isExpanded }: SidebarCreateButtonProps) {
     const router = useRouter()
@@ -27,11 +28,26 @@ export function SidebarCreateButton({ isExpanded }: SidebarCreateButtonProps) {
         setSelectedChat
     } = useContext(RemrinContext)
 
-    const handleCraftSoul = () => {
-        // Find Mother of Souls in user's persona collection
-        const motherPersona = personas?.find(p => isMotherOfSouls(p))
+    const handleCraftSoul = useCallback(async () => {
+        // First check user's persona collection
+        let motherPersona = personas?.find(p => isMotherOfSouls(p))
 
-        if (motherPersona && selectedWorkspace) {
+        // If not found, fetch the master Mother (PUBLIC official)
+        if (!motherPersona) {
+            console.log("🕯️ [Craft Soul] Fetching Mother of Souls from master template...")
+            const supabase = createClient()
+            const { data: masterMother } = await supabase
+                .from('personas')
+                .select('*')
+                .eq('id', MOTHER_OF_SOULS_ID)
+                .single()
+
+            if (masterMother) {
+                motherPersona = masterMother
+            }
+        }
+
+        if (motherPersona) {
             console.log("🕯️ [Craft Soul] Starting Soul Forge with Mother of Souls...")
 
             // Select Mother as the current persona
@@ -40,18 +56,18 @@ export function SidebarCreateButton({ isExpanded }: SidebarCreateButtonProps) {
             // Clear any existing chat to start fresh
             setSelectedChat(null)
 
-            // Navigate to chat - a new chat will be created with Mother
-            router.push(`/${selectedWorkspace.id}/chat`)
-        } else {
-            // Mother not in collection - go to discover or show message
-            console.log("🕯️ [Craft Soul] Mother not found in collection")
-
+            // Navigate to chat
             if (selectedWorkspace) {
-                // Still navigate to chat, the intro message will guide them
                 router.push(`/${selectedWorkspace.id}/chat`)
+            } else {
+                // For guests, go to login first
+                router.push('/login?redirect=soul-forge')
             }
+        } else {
+            console.log("🕯️ [Craft Soul] Mother not available - redirecting to login")
+            router.push('/login?redirect=soul-forge')
         }
-    }
+    }, [personas, selectedWorkspace, setSelectedPersona, setSelectedChat, router])
 
     return (
         <div className="p-2">
@@ -88,4 +104,5 @@ export function SidebarCreateButton({ isExpanded }: SidebarCreateButtonProps) {
         </div>
     )
 }
+
 

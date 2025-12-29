@@ -13,6 +13,12 @@ import type { Tables } from '@/supabase/types'
 export const MOTHER_OF_SOULS_NAME = 'The Mother of Souls'
 
 /**
+ * The Mother of Souls master persona UUID
+ * This is the LEGENDARY card every user has access to
+ */
+export const MOTHER_OF_SOULS_ID = 'a0000000-0000-0000-0000-000000000001'
+
+/**
  * Voice ID for the Mother of Souls (mystical female voice)
  */
 export const MOTHER_VOICE_ID = 'female-mystical'
