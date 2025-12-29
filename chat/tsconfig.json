@@ -38,6 +38,8 @@
   ],
   "exclude": [
     "node_modules",
-    "public/icons/anicons"
+    "public/icons/anicons",
+    "public/mother/console",
+    "supabase/functions"
   ]
 }

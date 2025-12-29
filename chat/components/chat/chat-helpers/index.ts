@@ -11,6 +11,7 @@ import {
 } from "@/lib/build-prompt"
 import { consumeReadableStream } from "@/lib/consume-stream"
 import { Tables, TablesInsert } from "@/supabase/types"
+import { isMotherOfSouls } from "@/lib/forge/is-mother-chat"
 import {
   ChatFile,
   ChatMessage,
@@ -199,7 +200,8 @@ export const handleHostedChat = async (
   setIsGenerating: React.Dispatch<React.SetStateAction<boolean>>,
   setFirstTokenReceived: React.Dispatch<React.SetStateAction<boolean>>,
   setChatMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>,
-  setToolInUse: React.Dispatch<React.SetStateAction<string>>
+  setToolInUse: React.Dispatch<React.SetStateAction<string>>,
+  selectedPersona?: Tables<"personas"> | null
 ) => {
   const provider =
     modelData.provider === "openai" && profile.use_azure_openai
@@ -218,10 +220,15 @@ export const handleHostedChat = async (
     formattedMessages = draftMessages
   }
 
-  // REMRIN COMMERCIAL: Force ALL requests to openai endpoint where DeepSeek + Tavily is configured
-  // This overrides the provider-based routing to ensure search is always available
-  const apiEndpoint = "/api/chat/openai"
-  // Original: provider === "custom" ? "/api/chat/custom" : `/api/chat/${provider}`
+  // MOTHER OF SOULS: Route to special endpoint with Soul Forge tools
+  const isMotherChat = isMotherOfSouls(selectedPersona)
+  const apiEndpoint = isMotherChat
+    ? "/api/chat/mother"
+    : "/api/chat/openai"
+
+  if (isMotherChat) {
+    console.log("🕯️ [Chat] Routing to Mother of Souls endpoint...")
+  }
 
   const requestBody = {
     chatSettings: payload.chatSettings,

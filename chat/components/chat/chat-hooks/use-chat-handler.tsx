@@ -46,6 +46,7 @@ export const useChatHandler = () => {
     chatSettings,
     newMessageImages,
     selectedAssistant,
+    selectedPersona, // For Mother of Souls detection
     chatMessages,
     chatImages,
     setChatImages,
@@ -333,7 +334,8 @@ export const useChatHandler = () => {
             setIsGenerating,
             setFirstTokenReceived,
             setChatMessages,
-            setToolInUse
+            setToolInUse,
+            selectedPersona // Pass persona for Mother of Souls detection
           )
         }
       }
