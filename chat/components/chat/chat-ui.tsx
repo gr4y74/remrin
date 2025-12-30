@@ -49,6 +49,7 @@ export const ChatUI: FC<ChatUIProps> = ({ }) => {
     setShowFilesDisplay,
     chatFileItems,
     selectedPersona,
+    setSelectedPersona,
     chatBackgroundEnabled,
     setUseRetrieval,
     setSelectedTools,
@@ -177,7 +178,28 @@ export const ChatUI: FC<ChatUIProps> = ({ }) => {
       includeWorkspaceInstructions: chat.include_workspace_instructions,
       embeddingsProvider: chat.embeddings_provider as "openai" | "local"
     })
-  }, [assistants, params.chatid, setChatSettings, setSelectedAssistant, setSelectedChat, setSelectedTools])
+
+    // Try to load persona from chat name (format: "Chat with [PersonaName]")
+    if (chat.name.startsWith("Chat with ")) {
+      const personaName = chat.name.replace("Chat with ", "")
+      try {
+        const supabase = await import("@/lib/supabase/browser-client").then(m => m.supabase)
+        const { data: personas } = await supabase
+          .from("personas")
+          .select("*")
+          .ilike("name", personaName)
+          .limit(1)
+          .single()
+
+        if (personas) {
+          console.log("[ChatUI] Loaded persona from chat name:", personas)
+          setSelectedPersona(personas as any)
+        }
+      } catch (error) {
+        console.error("[ChatUI] Failed to load persona:", error)
+      }
+    }
+  }, [assistants, params.chatid, setChatSettings, setSelectedAssistant, setSelectedChat, setSelectedPersona, setSelectedTools])
 
   useEffect(() => {
     const fetchData = async () => {
