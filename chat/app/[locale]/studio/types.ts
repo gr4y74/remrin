@@ -42,6 +42,7 @@ export interface PersonaConfig {
     brain_params?: BrainParams
     locket_protocol?: { enabled: boolean }
     safety_lock?: boolean
+    [key: string]: unknown  // Allow additional properties
 }
 
 export interface StudioPersona {
