@@ -104,14 +104,12 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                 />
 
                 {/* Gradient overlay at bottom for text readability */}
-                {/* Chat controls (top-right) - Background Toggle and Secondary Buttons */}
+                <div className="absolute inset-0 bg-gradient-to-t from-rp-surface via-transparent to-transparent" />
                 <div className="absolute right-3 top-3 flex items-center gap-2">
                     <ChatBackgroundToggle />
                     <ChatSecondaryButtons />
                 </div>
                     <IconDots size={18} className="text-rp-subtle" />
-                </button>
-
                 {/* Collapse handle - Talkie style (centered at bottom) */}
                 <button
                     onClick={handleClose}
