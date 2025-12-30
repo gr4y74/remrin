@@ -109,7 +109,6 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                     <ChatBackgroundToggle />
                     <ChatSecondaryButtons />
                 </div>
-                    <IconDots size={18} className="text-rp-subtle" />
                 {/* Collapse handle - Talkie style (centered at bottom) */}
                 <button
                     onClick={handleClose}
