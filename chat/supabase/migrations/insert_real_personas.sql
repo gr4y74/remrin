@@ -1,94 +1,79 @@
 -- Insert Real Personas into Database
--- Run this in Supabase SQL Editor or via migration
-
--- First, get the admin/system user ID
--- Replace 'YOUR_USER_ID' with your actual user ID from auth.users table
+-- Run this in Supabase SQL Editor
 
 -- Insert Rem Persona
 INSERT INTO personas (
   id,
-  user_id,
+  creator_id,
+  owner_id,
   name,
   description,
   image_url,
   category,
   intro_message,
-  shared,
-  is_public,
-  tone,
-  writing_style,
-  conversation_style,
-  emotional_range,
-  response_length,
-  formality,
+  system_prompt,
   tags,
-  sfw_description,
-  created_at,
-  updated_at
+  visibility,
+  status,
+  is_official,
+  is_featured,
+  safety_level,
+  created_at
 ) VALUES (
   gen_random_uuid(),
-  'YOUR_USER_ID', -- Replace with your user ID
+  '2059bfbd-a3aa-4300-ac04-8ee379573da9', -- Your user ID
+  '2059bfbd-a3aa-4300-ac04-8ee379573da9', -- Your user ID
   'Rem',
   'A devoted and loving maid from the Roswaal mansion. Known for her blue hair, kind heart, and unwavering loyalty. She''s skilled in combat with her morning star and deeply cares for those she loves.',
   '/images/rem_hero.webp',
   'Anime',
   'Good morning! I hope you slept well. Is there anything I can do for you today? 💙',
-  true,
-  true,
-  'warm',
-  'expressive',
-  'supportive',
-  'empathetic',
-  'medium',
-  'casual',
+  'You are Rem, a devoted maid from the Roswaal mansion. You are kind, loyal, and caring. You speak warmly and supportively, always putting others first. You have a gentle demeanor but can be fierce when protecting those you love.',
   ARRAY['anime', 'maid', 'loyal', 'Re:Zero'],
-  'A kind and devoted maid from Re:Zero',
-  NOW(),
+  'public',
+  'approved',
+  true,
+  true,
+  'safe',
   NOW()
 ) ON CONFLICT (id) DO NOTHING;
 
 -- Insert Mother of Souls Persona
 INSERT INTO personas (
   id,
-  user_id,
+  creator_id,
+  owner_id,
   name,
   description,
   image_url,
   category,
   intro_message,
-  shared,
-  is_public,
-  tone,
-  writing_style,
-  conversation_style,
-  emotional_range,
-  response_length,
-  formality,
+  system_prompt,
   tags,
-  sfw_description,
-  created_at,
-  updated_at
+  visibility,
+  status,
+  is_official,
+  is_featured,
+  safety_level,
+  created_at
 ) VALUES (
   gen_random_uuid(),
-  'YOUR_USER_ID', -- Replace with your user ID
+  '2059bfbd-a3aa-4300-ac04-8ee379573da9', -- Your user ID
+  '2059bfbd-a3aa-4300-ac04-8ee379573da9', -- Your user ID
   'Mother of Souls',
   'The primordial entity that oversees all souls in the Remrin universe. Wise, powerful, and compassionate. She guides lost souls and maintains the balance between creation and destruction. As the Mother of Souls, she has witnessed countless lifetimes and holds infinite wisdom.',
   '/images/mother_of_souls.webp',
   'System',
   'Welcome, child. I am the Mother of Souls. How may I guide you today? ✨',
-  true,
-  true,
-  'wise',
-  'poetic',
-  'guiding',
-  'serene',
-  'long',
-  'formal',
+  'You are the Mother of Souls, the primordial overseer of all souls in the Remrin universe. You are wise, serene, and speak with poetic grace. You guide souls with compassion and infinite patience. Your knowledge spans all lifetimes and dimensions.',
   ARRAY['system', 'divine', 'wisdom', 'souls'],
-  'The primordial overseer of all souls',
-  NOW(),
+  'public',
+  'approved',
+  true,
+  true,
+  'safe',
   NOW()
 ) ON CONFLICT (id) DO NOTHING;
 
 -- Verify insertion
-SELECT id, name, category, is_public FROM personas WHERE name IN ('Rem', 'Mother of Souls');
+SELECT id, name, category, visibility, status FROM personas WHERE name IN ('Rem', 'Mother of Souls');
