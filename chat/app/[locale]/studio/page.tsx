@@ -10,7 +10,9 @@ import { BehaviorTab } from "./components/behavior-tab"
 import { VisualsTab } from "./components/visuals-tab"
 import { VoiceTab } from "./components/voice-tab"
 import { StoreTab } from "./components/store-tab"
-import { MODERATION_STATUS_LABELS } from "./types"
+import { SoulSplicer } from "./components/soul-splicer"
+import { BrainParametersPanel } from "./components/brain-parameters-panel"
+import { MODERATION_STATUS_LABELS, PersonaConfig } from "./types"
 import {
     IconUser,
     IconBrain,
@@ -22,7 +24,9 @@ import {
     IconArrowLeft,
     IconSend,
     IconArrowBack,
-    IconHistory
+    IconHistory,
+    IconDna,
+    IconChartBar
 } from "@tabler/icons-react"
 import Link from "next/link"
 
@@ -226,10 +230,14 @@ export default function StudioPage() {
                 <main className="flex-1 overflow-auto p-6">
                     <div className="mx-auto max-w-4xl">
                         <Tabs defaultValue="identity" className="space-y-6">
-                            <TabsList className="grid w-full grid-cols-5 bg-rp-surface">
+                            <TabsList className="grid w-full grid-cols-7 bg-rp-surface">
                                 <TabsTrigger value="identity" className="flex items-center gap-2">
                                     <IconUser size={16} />
                                     <span className="hidden sm:inline">Identity</span>
+                                </TabsTrigger>
+                                <TabsTrigger value="dna-splicer" className="flex items-center gap-2">
+                                    <IconDna size={16} />
+                                    <span className="hidden sm:inline">DNA</span>
                                 </TabsTrigger>
                                 <TabsTrigger value="behavior" className="flex items-center gap-2">
                                     <IconBrain size={16} />
@@ -247,6 +255,10 @@ export default function StudioPage() {
                                     <IconShoppingBag size={16} />
                                     <span className="hidden sm:inline">Store</span>
                                 </TabsTrigger>
+                                <TabsTrigger value="analytics" className="flex items-center gap-2">
+                                    <IconChartBar size={16} />
+                                    <span className="hidden sm:inline">Analytics</span>
+                                </TabsTrigger>
                             </TabsList>
 
                             <div className="rounded-xl border border-rp-highlight-med bg-rp-surface/50 p-6">
@@ -256,6 +268,37 @@ export default function StudioPage() {
                                         updateField={updateField}
                                         uploadFile={uploadFile}
                                     />
+                                </TabsContent>
+
+                                <TabsContent value="dna-splicer" className="mt-0">
+                                    <SoulSplicer
+                                        config={(persona as any).config || {}}
+                                        updateConfig={(key, value) => {
+                                            const currentConfig = (persona as any).config || {}
+                                            updateField('config' as any, { ...currentConfig, [key]: value })
+                                        }}
+                                        onDistill={async (donors) => {
+                                            const response = await fetch('/api/forge/distill', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({ donors })
+                                            })
+                                            if (!response.ok) {
+                                                const data = await response.json()
+                                                throw new Error(data.error || 'DNA synthesis failed')
+                                            }
+                                            return response.json()
+                                        }}
+                                    />
+                                    <div className="mt-6">
+                                        <BrainParametersPanel
+                                            config={(persona as any).config || {}}
+                                            updateConfig={(key, value) => {
+                                                const currentConfig = (persona as any).config || {}
+                                                updateField('config' as any, { ...currentConfig, [key]: value })
+                                            }}
+                                        />
+                                    </div>
                                 </TabsContent>
 
                                 <TabsContent value="behavior" className="mt-0">
@@ -289,7 +332,48 @@ export default function StudioPage() {
                                     <StoreTab
                                         metadata={persona.metadata}
                                         updateMetadata={updateMetadata}
+                                        config={persona.config || {}}
+                                        updateConfig={(key, value) => {
+                                            const currentConfig = persona.config || {}
+                                            updateField('config' as any, { ...currentConfig, [key]: value })
+                                        }}
                                     />
+                                </TabsContent>
+
+                                <TabsContent value="analytics" className="mt-0">
+                                    <div className="space-y-6">
+                                        <div className="flex items-center gap-3 border-b border-rp-highlight-med pb-4">
+                                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-rp-foam to-rp-iris">
+                                                <IconChartBar size={20} className="text-white" />
+                                            </div>
+                                            <div>
+                                                <h3 className="font-semibold text-rp-text">Soul Health Analytics</h3>
+                                                <p className="text-sm text-rp-subtle">
+                                                    Track engagement and retention metrics
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {/* Placeholder Analytics Cards */}
+                                        <div className="grid gap-4 md:grid-cols-3">
+                                            <div className="rounded-lg border border-rp-highlight-med bg-rp-overlay p-4">
+                                                <div className="text-sm text-rp-subtle">Total Aether Earned</div>
+                                                <div className="mt-1 text-2xl font-bold text-rp-gold">0 ✧</div>
+                                            </div>
+                                            <div className="rounded-lg border border-rp-highlight-med bg-rp-overlay p-4">
+                                                <div className="text-sm text-rp-subtle">Avg. Session Length</div>
+                                                <div className="mt-1 text-2xl font-bold text-rp-foam">-- min</div>
+                                            </div>
+                                            <div className="rounded-lg border border-rp-highlight-med bg-rp-overlay p-4">
+                                                <div className="text-sm text-rp-subtle">Soulmate Bonds</div>
+                                                <div className="mt-1 text-2xl font-bold text-rp-rose">0</div>
+                                            </div>
+                                        </div>
+
+                                        <p className="text-center text-sm text-rp-muted">
+                                            Analytics will populate as users interact with your Soul.
+                                        </p>
+                                    </div>
                                 </TabsContent>
                             </div>
                         </Tabs>

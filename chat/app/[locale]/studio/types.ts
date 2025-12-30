@@ -22,6 +22,28 @@ export interface PersonaMetadata {
     price?: number
 }
 
+// Soul Splicer DNA Config
+export interface DNASplicing {
+    donors: string[]
+    synthesis_logic: string
+    weights: Record<string, number>
+}
+
+// Advanced Brain Parameters
+export interface BrainParams {
+    temperature: number
+    top_p: number
+    frequency_penalty: number
+}
+
+// Persona Config JSON structure (stored in personas.config)
+export interface PersonaConfig {
+    dna_splicing?: DNASplicing
+    brain_params?: BrainParams
+    locket_protocol?: { enabled: boolean }
+    safety_lock?: boolean
+}
+
 export interface StudioPersona {
     id?: string
     name: string
@@ -36,6 +58,7 @@ export interface StudioPersona {
     visibility: 'PUBLIC' | 'PRIVATE'
     owner_id?: string
     metadata: PersonaMetadata
+    config?: PersonaConfig  // Soul Studio v2.0 config (DNA, Brain Params, Safety Lock)
     created_at?: string
     updated_at?: string
     // Moderation fields

@@ -12,16 +12,19 @@ import {
     SelectTrigger,
     SelectValue
 } from "@/components/ui/select"
-import { PersonaMetadata, SwagItem } from "../types"
+import { PersonaMetadata, SwagItem, PersonaConfig } from "../types"
 import { IconPlus, IconTrash, IconShoppingBag } from "@tabler/icons-react"
+import { SafetyLockToggle } from "./safety-lock-toggle"
 import Image from "next/image"
 
 interface StoreTabProps {
     metadata: PersonaMetadata
     updateMetadata: <K extends keyof PersonaMetadata>(field: K, value: PersonaMetadata[K]) => void
+    config?: PersonaConfig
+    updateConfig?: (key: string, value: unknown) => void
 }
 
-export function StoreTab({ metadata, updateMetadata }: StoreTabProps) {
+export function StoreTab({ metadata, updateMetadata, config, updateConfig }: StoreTabProps) {
     const [newItem, setNewItem] = useState<Partial<SwagItem>>({
         name: '',
         url: '',
@@ -53,6 +56,14 @@ export function StoreTab({ metadata, updateMetadata }: StoreTabProps) {
 
     return (
         <div className="space-y-6">
+            {/* IP Safety Lock */}
+            {config !== undefined && updateConfig && (
+                <SafetyLockToggle
+                    config={config || {}}
+                    updateConfig={updateConfig}
+                />
+            )}
+
             {/* Official Toggle */}
             <div className="flex items-center justify-between rounded-lg border border-rp-highlight-med bg-rp-surface/50 p-4">
                 <div>
