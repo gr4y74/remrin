@@ -241,10 +241,6 @@ export const ChatUI: FC<ChatUIProps> = ({ }) => {
         />
       </div>
 
-      <div className="absolute right-4 top-1 flex h-[40px] items-center space-x-2 z-30">
-        <ChatBackgroundToggle />
-        <ChatSecondaryButtons />
-      </div>
 
       {/* Chat Header - Mini Profile Card */}
       {selectedPersona ? (

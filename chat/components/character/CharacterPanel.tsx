@@ -1,6 +1,8 @@
 "use client"
 
 import { RemrinContext } from "@/context/context"
+import { ChatBackgroundToggle } from "@/components/chat/chat-background-toggle"
+import { ChatSecondaryButtons } from "@/components/chat/chat-secondary-buttons"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import {
@@ -102,13 +104,11 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                 />
 
                 {/* Gradient overlay at bottom for text readability */}
-                <div className="absolute inset-0 bg-gradient-to-t from-rp-surface via-transparent to-transparent" />
-
-                {/* More options button (top-right) */}
-                <button
-                    className="absolute right-3 top-3 flex size-10 items-center justify-center rounded-full bg-rp-base/60 backdrop-blur-sm hover:bg-rp-overlay transition-colors"
-                    aria-label="More options"
-                >
+                {/* Chat controls (top-right) - Background Toggle and Secondary Buttons */}
+                <div className="absolute right-3 top-3 flex items-center gap-2">
+                    <ChatBackgroundToggle />
+                    <ChatSecondaryButtons />
+                </div>
                     <IconDots size={18} className="text-rp-subtle" />
                 </button>
 
