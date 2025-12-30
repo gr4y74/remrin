@@ -173,7 +173,7 @@ const CollapsibleHeaderPanel = () => {
             <textarea 
               placeholder="Type your message..."
               className="w-full bg-transparent text-slate-300 placeholder-slate-500 resize-none outline-none"
-              rows="3"
+              rows={3}
             />
             <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-800/50">
               <div className="flex items-center gap-2">
