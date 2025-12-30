@@ -1,0 +1,22 @@
+{
+    "name": "remrin-locket-extension",
+    "version": "1.0.0",
+    "description": "Remrin Locket - Universal Persona Injector for LLM web interfaces",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite build --watch",
+        "build": "vite build",
+        "clean": "rm -rf dist",
+        "package": "npm run build && web-ext build -s . -a releases"
+    },
+    "dependencies": {
+        "@supabase/supabase-js": "^2.39.0"
+    },
+    "devDependencies": {
+        "@types/chrome": "^0.0.260",
+        "typescript": "^5.3.3",
+        "vite": "^5.0.10",
+        "web-ext": "^7.9.0"
+    }
+}

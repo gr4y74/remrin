@@ -222,12 +222,29 @@ export const handleHostedChat = async (
 
   // MOTHER OF SOULS: Route to special endpoint with Soul Forge tools
   const isMotherChat = isMotherOfSouls(selectedPersona)
-  const apiEndpoint = isMotherChat
-    ? "/api/chat/mother"
-    : "/api/chat/openai"
 
+  // Determine the API endpoint based on provider
+  let apiEndpoint: string
   if (isMotherChat) {
+    apiEndpoint = "/api/chat/mother"
     console.log("🕯️ [Chat] Routing to Mother of Souls endpoint...")
+  } else {
+    // Route to provider-specific endpoints
+    const providerEndpoints: Record<string, string> = {
+      openai: "/api/chat/openai",
+      azure: "/api/chat/azure",
+      anthropic: "/api/chat/anthropic",
+      google: "/api/chat/google",
+      groq: "/api/chat/groq",
+      mistral: "/api/chat/mistral",
+      perplexity: "/api/chat/perplexity",
+      openrouter: "/api/chat/openrouter",
+      custom: "/api/chat/custom",
+      // DeepSeek uses OpenAI-compatible endpoint
+      deepseek: "/api/chat/openai"
+    }
+    apiEndpoint = providerEndpoints[provider] || "/api/chat/openai"
+    console.log(`🔀 [Chat] Routing to ${provider} via ${apiEndpoint}`)
   }
 
   const requestBody = {

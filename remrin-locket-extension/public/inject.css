@@ -1,0 +1,10 @@
+/* Injected styles for target sites - minimal to avoid conflicts */
+
+/* This file is intentionally minimal as we use Shadow DOM for the Locket button */
+/* These are fallback styles if Shadow DOM isn't working */
+
+#remrin-locket-root {
+    all: initial;
+    position: fixed;
+    z-index: 2147483647;
+}

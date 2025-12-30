@@ -1,0 +1,64 @@
+{
+    "manifest_version": 3,
+    "name": "Remrin Locket",
+    "version": "1.0.0",
+    "description": "Carry your Remrin Souls across Claude, ChatGPT & Gemini",
+    "permissions": [
+        "storage",
+        "activeTab",
+        "tabs"
+    ],
+    "host_permissions": [
+        "https://claude.ai/*",
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*",
+        "https://gemini.google.com/*",
+        "https://*.remrin.ai/*",
+        "https://wftsctqfiqbdyllxwagi.supabase.co/*"
+    ],
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+            "16": "icons/locket-16.png",
+            "48": "icons/locket-48.png",
+            "128": "icons/locket-128.png"
+        }
+    },
+    "background": {
+        "service_worker": "dist/background.js",
+        "type": "module"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://claude.ai/*",
+                "https://chatgpt.com/*",
+                "https://chat.openai.com/*",
+                "https://gemini.google.com/*"
+            ],
+            "js": [
+                "dist/content.js"
+            ],
+            "css": [
+                "public/inject.css"
+            ],
+            "run_at": "document_idle"
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "icons/*",
+                "public/*"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ],
+    "icons": {
+        "16": "icons/locket-16.png",
+        "48": "icons/locket-48.png",
+        "128": "icons/locket-128.png"
+    }
+}

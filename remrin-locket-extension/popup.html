@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Remrin Locket</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <header class="popup-header">
+      <div class="logo">🔮</div>
+      <h1>Remrin Locket</h1>
+    </header>
+    
+    <!-- Login Section -->
+    <section id="login-section" class="section">
+      <p class="subtitle">Sign in to activate your souls</p>
+      
+      <div class="form-group">
+        <input type="email" id="email" placeholder="Email" />
+      </div>
+      
+      <div class="form-group">
+        <input type="password" id="password" placeholder="Password" />
+      </div>
+      
+      <p id="error-msg" class="error"></p>
+      
+      <button id="login-btn" class="btn primary">Sign In</button>
+      
+      <p class="footer-text">
+        Don't have an account?
+        <a href="https://remrin.ai/signup" target="_blank">Sign up</a>
+      </p>
+    </section>
+    
+    <!-- Main Section -->
+    <section id="main-section" class="section" style="display: none;">
+      <div class="user-bar">
+        <span id="user-name">User</span>
+        <button id="logout-btn" class="btn small">Logout</button>
+      </div>
+      
+      <h3>Your Souls</h3>
+      <div id="souls-list" class="souls-list">
+        <p class="loading">Loading...</p>
+      </div>
+      
+      <a href="https://remrin.ai/studio" target="_blank" class="btn secondary">
+        Create New Soul →
+      </a>
+    </section>
+  </div>
+  
+  <script src="../dist/popup.js" type="module"></script>
+</body>
+</html>

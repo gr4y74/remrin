@@ -2,6 +2,7 @@ import OpenAI from "openai"
 import { NextRequest, NextResponse } from "next/server"
 import { SOUL_FORGE_TOOLS } from "@/lib/tools/soul-forge-tools"
 import { MOTHER_OF_SOULS_PROMPT } from "@/lib/prompts/mother-of-souls"
+import { getActiveModelConfig, getApiKeyForProvider, LLMProvider } from "@/lib/models/model-config"
 
 export const runtime = "edge"
 export const maxDuration = 60
@@ -13,6 +14,7 @@ const MAX_TOOL_ITERATIONS = 5
  * POST /api/chat/mother
  * 
  * Special chat endpoint for The Mother of Souls
+ * Now with dynamic model selection based on llm_config
  * Includes Soul Forge tools for the sacred ritual:
  * - generate_soul_portrait
  * - show_soul_reveal  
@@ -26,13 +28,44 @@ export async function POST(request: NextRequest) {
             chatSettings: any
         }
 
-        // Use DeepSeek as the backend (same as main chat)
+        // Get active model configuration dynamically
+        let modelConfig
+        try {
+            modelConfig = await getActiveModelConfig()
+        } catch (error) {
+            console.warn("[Mother] Failed to get active config, using DeepSeek fallback")
+            modelConfig = {
+                provider: 'deepseek' as LLMProvider,
+                modelId: 'deepseek-chat',
+                baseURL: 'https://api.deepseek.com',
+                apiKeyEnvVar: 'DEEPSEEK_API_KEY'
+            }
+        }
+
+        // Get API key for the provider
+        let apiKey: string
+        try {
+            apiKey = getApiKeyForProvider(modelConfig.provider)
+        } catch (error) {
+            // Fallback to DeepSeek if provider key not available
+            console.warn(`[Mother] No API key for ${modelConfig.provider}, falling back to DeepSeek`)
+            modelConfig = {
+                provider: 'deepseek' as LLMProvider,
+                modelId: 'deepseek-chat',
+                baseURL: 'https://api.deepseek.com',
+                apiKeyEnvVar: 'DEEPSEEK_API_KEY'
+            }
+            apiKey = process.env.DEEPSEEK_API_KEY || process.env.OPENAI_API_KEY || ''
+        }
+
+        // Use OpenAI SDK with dynamic configuration
         const openai = new OpenAI({
-            baseURL: "https://api.deepseek.com",
-            apiKey: process.env.OPENAI_API_KEY
+            baseURL: modelConfig.baseURL,
+            apiKey: apiKey
         })
 
-        console.log("🕯️ [Mother of Souls] Starting ritual chat...")
+        const MODEL = modelConfig.modelId
+        console.log(`🕯️ [Mother of Souls] Starting ritual chat with ${MODEL}...`)
 
         // Build conversation with Mother's system prompt
         const conversationMessages: any[] = [
@@ -49,7 +82,6 @@ export async function POST(request: NextRequest) {
             function: tool.function
         }))
 
-        const MODEL = "deepseek-chat"
         let iteration = 0
 
         // Iterative tool call loop
