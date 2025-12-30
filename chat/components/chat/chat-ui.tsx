@@ -280,6 +280,6 @@ export const ChatUI: FC<ChatUIProps> = ({ }) => {
       </div>
 
 
-    </div>
+    </div >
   )
 }
