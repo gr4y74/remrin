@@ -39,7 +39,7 @@ export function PageHeader({
     showBackButton = false,
     backHref = "/",
 }: PageHeaderProps) {
-    const { theme } = useTheme()
+    const { resolvedTheme } = useTheme()
 
     return (
         <header
@@ -74,7 +74,7 @@ export function PageHeader({
                 ) : showLogo ? (
                     <Link href="/" className="flex items-center">
                         <Image
-                            src={theme === "light" ? "/logo_dark.svg" : "/logo.svg"}
+                            src={resolvedTheme === "light" ? "/logo_dark.svg" : "/logo.svg"}
                             alt="Remrin"
                             width={128}
                             height={40}

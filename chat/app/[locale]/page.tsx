@@ -226,30 +226,6 @@ export default function HomePage() {
         <div className="absolute bottom-0 left-1/2 h-[400px] w-[800px] -translate-x-1/2 rounded-full bg-amber-500/5 blur-[150px]" />
       </div>
 
-      {/* Header */}
-      <HeroHeader
-        showLogo
-        actions={
-          <>
-            <Link
-              href="/summon"
-              className="flex items-center gap-2 rounded-full border border-amber-500/30 bg-gradient-to-r from-amber-500/20 to-orange-500/20 px-4 py-2 text-amber-400 transition-colors hover:bg-amber-500/30"
-            >
-              <IconDiamond size={18} />
-              <span className="text-sm font-medium text-rp-love">Soul Summons</span>
-            </Link>
-            {!isLoggedIn && (
-              <Link
-                href="/login"
-                className="rounded-full bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-purple-500/25 transition-all hover:from-purple-500 hover:to-pink-500"
-              >
-                Sign In
-              </Link>
-            )}
-          </>
-        }
-      />
-
       {/* Hero Section with Carousel */}
       <section className="relative z-10 mt-8">
         <div className="mb-4 px-6 text-center">
@@ -347,6 +323,7 @@ export default function HomePage() {
           </Link>
         </div>
       </section>
+
 
       {/* Footer */}
       <Footer />

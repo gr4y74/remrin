@@ -76,7 +76,7 @@ export function HeroHeader({
     className,
     sticky = false,
 }: HeroHeaderProps) {
-    const { theme } = useTheme()
+    const { resolvedTheme } = useTheme()
 
     return (
         <header
@@ -97,7 +97,7 @@ export function HeroHeader({
                     {showLogo && (
                         <Link href="/" className="flex items-center">
                             <Image
-                                src={theme === "light" ? "/logo_dark.svg" : "/logo.svg"}
+                                src={resolvedTheme === "light" ? "/logo_dark.svg" : "/logo.svg"}
                                 alt="Remrin"
                                 width={128}
                                 height={40}

@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useTheme } from "next-themes"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { motion } from "framer-motion"
@@ -37,9 +38,17 @@ const NAV_ITEMS = [
  * - User section with avatar + Subscribe CTA
  */
 export function MinimalSidebar() {
+    const { resolvedTheme } = useTheme()
+    const [mounted, setMounted] = useState(false)
     const [isExpanded, setIsExpanded] = useState(false)
     const [showProfileSettings, setShowProfileSettings] = useState(false)
     const pathname = usePathname()
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
+    const logoSrc = resolvedTheme === "light" ? "/logo_dark.svg" : "/logo.svg"
 
     return (
         <motion.nav
@@ -52,24 +61,28 @@ export function MinimalSidebar() {
         >
             {/* Logo Container - Dual-logo crossfade */}
             <div className="border-rp-muted/20 relative flex h-16 shrink-0 items-center justify-center overflow-hidden border-b">
-                {/* Small logo - visible when collapsed */}
-                <img
-                    src="/logo_sm.svg"
-                    alt="Remrin"
-                    className={cn(
-                        "size-10 transition-all duration-300",
-                        isExpanded ? "absolute opacity-0 scale-75" : "opacity-100 scale-100"
+                <div className="flex items-center justify-center transition-transform duration-300 ease-out hover:rotate-[-5deg] hover:scale-105">
+                    {/* Small logo - visible when collapsed */}
+                    <img
+                        src="/logo_sm.svg"
+                        alt="Remrin"
+                        className={cn(
+                            "size-10 transition-all duration-300",
+                            isExpanded ? "absolute opacity-0 scale-75" : "opacity-100 scale-100"
+                        )}
+                    />
+                    {/* Full wordmark - visible when expanded */}
+                    {mounted && (
+                        <img
+                            src={logoSrc}
+                            alt="Remrin.ai"
+                            className={cn(
+                                "h-8 transition-all duration-300",
+                                isExpanded ? "opacity-100 scale-100" : "absolute opacity-0 scale-90"
+                            )}
+                        />
                     )}
-                />
-                {/* Full wordmark - visible when expanded */}
-                <img
-                    src="/remrin_dark.svg"
-                    alt="Remrin.ai"
-                    className={cn(
-                        "h-8 transition-all duration-300",
-                        isExpanded ? "opacity-100 scale-100" : "absolute opacity-0 scale-90"
-                    )}
-                />
+                </div>
             </div>
 
             {/* Craft a Soul Button */}
