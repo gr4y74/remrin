@@ -1,58 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Remrin Locket</title>
-  <link rel="stylesheet" href="popup.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="src/popup/popup.css">
 </head>
+
 <body>
   <div class="popup-container">
+    <!-- Header -->
     <header class="popup-header">
-      <div class="logo">🔮</div>
+      <div class="logo">
+        <img src="icons/logo.svg" alt="Remrin" />
+      </div>
       <h1>Remrin Locket</h1>
     </header>
-    
+
     <!-- Login Section -->
     <section id="login-section" class="section">
-      <p class="subtitle">Sign in to activate your souls</p>
-      
+      <p class="subtitle">Sign in to bring your souls everywhere</p>
+
       <div class="form-group">
-        <input type="email" id="email" placeholder="Email" />
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="you@example.com" />
       </div>
-      
+
       <div class="form-group">
-        <input type="password" id="password" placeholder="Password" />
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="••••••••" />
       </div>
-      
+
       <p id="error-msg" class="error"></p>
-      
-      <button id="login-btn" class="btn primary">Sign In</button>
-      
+
+      <button id="login-btn" class="btn primary">
+        <span>Sign In</span>
+      </button>
+
+      <button class="btn secondary" onclick="window.open('https://remrin.ai/signup', '_blank')">
+        Create Account
+      </button>
+
       <p class="footer-text">
-        Don't have an account?
-        <a href="https://remrin.ai/signup" target="_blank">Sign up</a>
+        Need help? <a href="https://remrin.ai/help" target="_blank">Visit support</a>
       </p>
     </section>
-    
+
     <!-- Main Section -->
     <section id="main-section" class="section" style="display: none;">
       <div class="user-bar">
         <span id="user-name">User</span>
-        <button id="logout-btn" class="btn small">Logout</button>
+        <button id="logout-btn" class="btn small">Sign Out</button>
       </div>
-      
+
       <h3>Your Souls</h3>
       <div id="souls-list" class="souls-list">
-        <p class="loading">Loading...</p>
+        <div class="loading">Loading souls...</div>
       </div>
-      
-      <a href="https://remrin.ai/studio" target="_blank" class="btn secondary">
-        Create New Soul →
-      </a>
+
+      <button class="btn secondary" onclick="window.open('https://remrin.ai/studio', '_blank')">
+        ✨ Create New Soul
+      </button>
     </section>
   </div>
-  
-  <script src="../dist/popup.js" type="module"></script>
+
+  <script src="dist/popup.js" type="module"></script>
 </body>
+
 </html>
