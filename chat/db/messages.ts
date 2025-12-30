@@ -22,7 +22,7 @@ export const getMessagesByChatId = async (chatId: string) => {
     .eq("chat_id", chatId)
 
   if (!messages) {
-    throw new Error("Messages not found")
+    return []
   }
 
   return messages

@@ -9,7 +9,7 @@ import { buildFinalMessages } from "@/lib/build-prompt"
 import { Tables } from "@/supabase/types"
 import { ChatMessage, ChatPayload, LLMID, ModelProvider } from "@/types"
 import { useRouter } from "next/navigation"
-import { useContext, useEffect, useRef } from "react"
+import { useCallback, useContext, useEffect, useRef } from "react"
 import { LLM_LIST } from "../../../lib/models/llm/llm-list"
 import {
   createTempMessages,
@@ -78,7 +78,7 @@ export const useChatHandler = () => {
     }
   }, [isPromptPickerOpen, isFilePickerOpen, isToolPickerOpen])
 
-  const handleNewChat = async () => {
+  const handleNewChat = useCallback(async () => {
     if (!selectedWorkspace) return
 
     setUserInput("")
@@ -158,38 +158,23 @@ export const useChatHandler = () => {
           | "local"
       })
     } else if (selectedWorkspace) {
-      // setChatSettings({
-      //   model: (selectedWorkspace.default_model ||
-      //     "gpt-4-1106-preview") as LLMID,
-      //   prompt:
-      //     selectedWorkspace.default_prompt ||
-      //     "You are a friendly, helpful AI assistant.",
-      //   temperature: selectedWorkspace.default_temperature || 0.5,
-      //   contextLength: selectedWorkspace.default_context_length || 4096,
-      //   includeProfileContext:
-      //     selectedWorkspace.include_profile_context || true,
-      //   includeWorkspaceInstructions:
-      //     selectedWorkspace.include_workspace_instructions || true,
-      //   embeddingsProvider:
-      //     (selectedWorkspace.embeddings_provider as "openai" | "local") ||
-      //     "openai"
-      // })
+      // setChatSettings({ ... })
     }
 
     return router.push(`/${selectedWorkspace.id}/chat`)
-  }
+  }, [router, selectedWorkspace, setUserInput, setChatMessages, setSelectedChat, setChatFileItems, setIsGenerating, setFirstTokenReceived, setChatFiles, setChatImages, setNewMessageFiles, setNewMessageImages, setShowFilesDisplay, setIsPromptPickerOpen, setIsFilePickerOpen, setSelectedTools, setToolInUse, selectedAssistant, setChatSettings, selectedPreset])
 
-  const handleFocusChatInput = () => {
+  const handleFocusChatInput = useCallback(() => {
     chatInputRef.current?.focus()
-  }
+  }, [])
 
-  const handleStopMessage = () => {
+  const handleStopMessage = useCallback(() => {
     if (abortController) {
       abortController.abort()
     }
-  }
+  }, [abortController])
 
-  const handleSendMessage = async (
+  const handleSendMessage = useCallback(async (
     messageContent: string,
     chatMessages: ChatMessage[],
     isRegeneration: boolean
@@ -389,9 +374,9 @@ export const useChatHandler = () => {
       setFirstTokenReceived(false)
       setUserInput(startingInput)
     }
-  }
+  }, [setUserInput, setIsGenerating, setIsPromptPickerOpen, setIsFilePickerOpen, setNewMessageImages, setAbortController, models, availableLocalModels, availableOpenRouterModels, chatSettings, profile, selectedWorkspace, selectedChat, newMessageImages, newMessageFiles, chatFiles, useRetrieval, userInput, sourceCount, setChatMessages, selectedAssistant, chatFileItems, chatImages, setFirstTokenReceived, selectedPersona, setSelectedChat, setChats, setChatFiles, setToolInUse])
 
-  const handleSendEdit = async (
+  const handleSendEdit = useCallback(async (
     editedContent: string,
     sequenceNumber: number
   ) => {
@@ -410,7 +395,7 @@ export const useChatHandler = () => {
     setChatMessages(filteredMessages)
 
     handleSendMessage(editedContent, filteredMessages, false)
-  }
+  }, [selectedChat, chatMessages, setChatMessages, handleSendMessage])
 
   return {
     chatInputRef,

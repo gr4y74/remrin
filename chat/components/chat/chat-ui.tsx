@@ -14,6 +14,7 @@ import { useParams } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
 import { FC, useCallback, useContext, useEffect, useState } from "react"
+import { IconChevronUp, IconChevronDown } from "@tabler/icons-react"
 import { ChatHelp } from "./chat-help"
 import { useScroll } from "./chat-hooks/use-scroll"
 import { ChatInput } from "./chat-input"
@@ -22,6 +23,8 @@ import { ChatScrollButtons } from "./chat-scroll-buttons"
 import { ChatSecondaryButtons } from "./chat-secondary-buttons"
 import { TypingIndicator } from "@/components/chat-enhanced"
 import { FollowButton } from "@/components/profile"
+import { ChatHeaderMiniProfile } from "./chat-header-mini-profile"
+import { ChatBackgroundToggle } from "./chat-background-toggle"
 
 interface ChatUIProps { }
 
@@ -34,6 +37,9 @@ export const ChatUI: FC<ChatUIProps> = ({ }) => {
     setChatMessages,
     selectedChat,
     setSelectedChat,
+    chatMessages,
+    userInput,
+    chatSettings,
     setChatSettings,
     setChatImages,
     assistants,
@@ -41,10 +47,12 @@ export const ChatUI: FC<ChatUIProps> = ({ }) => {
     setChatFileItems,
     setChatFiles,
     setShowFilesDisplay,
+    chatFileItems,
+    selectedPersona,
+    chatBackgroundEnabled,
     setUseRetrieval,
     setSelectedTools,
-    isGenerating,
-    selectedPersona
+    isGenerating
   } = useContext(RemrinContext)
 
   const { handleNewChat, handleFocusChatInput } = useChatHandler()
@@ -62,6 +70,7 @@ export const ChatUI: FC<ChatUIProps> = ({ }) => {
   } = useScroll()
 
   const [loading, setLoading] = useState(true)
+  const [showChatHeader, setShowChatHeader] = useState(true)
 
   const fetchMessages = useCallback(async () => {
     const fetchedMessages = await getMessagesByChatId(params.chatid as string)
@@ -111,14 +120,16 @@ export const ChatUI: FC<ChatUIProps> = ({ }) => {
 
     const chatFiles = await getChatFilesByChatId(params.chatid as string)
 
-    setChatFiles(
-      chatFiles.files.map(file => ({
-        id: file.id,
-        name: file.name,
-        type: file.type,
-        file: null
-      }))
-    )
+    if (chatFiles) {
+      setChatFiles(
+        chatFiles.files.map(file => ({
+          id: file.id,
+          name: file.name,
+          type: file.type,
+          file: null
+        }))
+      )
+    }
 
     setUseRetrieval(true)
     setShowFilesDisplay(true)
@@ -170,17 +181,22 @@ export const ChatUI: FC<ChatUIProps> = ({ }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await fetchMessages()
-      await fetchChat()
+      try {
+        await fetchMessages()
+        await fetchChat()
 
-      scrollToBottom()
-      setIsAtBottom(true)
+        scrollToBottom()
+        setIsAtBottom(true)
+      } catch (error) {
+        console.error("Error fetching chat data:", error)
+      } finally {
+        setLoading(false)
+      }
     }
 
     if (params.chatid) {
       fetchData().then(() => {
         handleFocusChatInput()
-        setLoading(false)
       })
     } else {
       setLoading(false)
@@ -203,47 +219,46 @@ export const ChatUI: FC<ChatUIProps> = ({ }) => {
         />
       </div>
 
-      <div className="absolute right-4 top-1 flex h-[40px] items-center space-x-2">
+      <div className="absolute right-4 top-1 flex h-[40px] items-center space-x-2 z-30">
+        <ChatBackgroundToggle />
         <ChatSecondaryButtons />
       </div>
 
-      {/* Chat Header - Enhanced when chatting with a persona */}
+      {/* Chat Header - Mini Profile Card */}
       {selectedPersona ? (
-        <div className="bg-secondary/80 flex max-h-[60px] min-h-[60px] w-full items-center justify-between border-b border-white/10 px-4 font-bold backdrop-blur-sm">
-          <Link
-            href={`/character/${selectedPersona.id}`}
-            className="flex items-center gap-3 transition-opacity hover:opacity-80"
-          >
-            {selectedPersona.image_url && (
-              <Image
-                src={selectedPersona.image_url}
-                alt={selectedPersona.name}
-                width={36}
-                height={36}
-                className="rounded-full ring-2 ring-white/20"
-              />
-            )}
-            <div className="flex flex-col">
-              <span className="text-foreground text-sm font-semibold">
-                {selectedPersona.name}
-              </span>
-              <span className="text-muted-foreground/70 text-xs">
-                View Profile
-              </span>
+        <div className="relative z-20 w-full min-w-[300px] px-2 sm:w-[600px] md:w-[700px] lg:w-[700px] xl:w-[800px]">
+          <ChatHeaderMiniProfile />
+        </div>
+      ) : showChatHeader ? (
+        <div className="bg-secondary flex max-h-[50px] min-h-[50px] w-full items-center justify-between border-b-2 px-4 font-bold">
+          <div className="flex-1 text-center">
+            <div className="mx-auto max-w-[200px] truncate sm:max-w-[400px] md:max-w-[500px] lg:max-w-[600px] xl:max-w-[700px]">
+              {selectedChat?.name || "Chat"}
             </div>
-          </Link>
-          <FollowButton personaId={selectedPersona.id} compact />
+          </div>
+          <button
+            onClick={() => setShowChatHeader(false)}
+            className="text-muted-foreground hover:text-foreground p-1 transition-colors"
+            title="Hide Header"
+          >
+            <IconChevronUp size={20} />
+          </button>
         </div>
       ) : (
-        <div className="bg-secondary flex max-h-[50px] min-h-[50px] w-full items-center justify-center border-b-2 font-bold">
-          <div className="max-w-[200px] truncate sm:max-w-[400px] md:max-w-[500px] lg:max-w-[600px] xl:max-w-[700px]">
-            {selectedChat?.name || "Chat"}
-          </div>
+        <div className="absolute left-1/2 top-0 z-10 -translate-x-1/2">
+          <button
+            onClick={() => setShowChatHeader(true)}
+            className="bg-secondary/40 hover:bg-secondary/60 text-muted-foreground hover:text-foreground flex items-center gap-1 rounded-b-xl px-4 py-1.5 transition-all backdrop-blur-sm"
+            title="Show Header"
+          >
+            <IconChevronDown size={16} />
+            <span className="text-xs font-medium">Show Header</span>
+          </button>
         </div>
       )}
 
       <div
-        className="flex size-full flex-col overflow-auto border-b"
+        className="relative z-10 flex size-full flex-col overflow-auto border-b"
         onScroll={handleScroll}
       >
         <div ref={messagesStartRef} />
@@ -260,7 +275,7 @@ export const ChatUI: FC<ChatUIProps> = ({ }) => {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="relative w-full min-w-[300px] items-end px-2 pb-3 pt-0 sm:w-[600px] sm:pb-8 sm:pt-5 md:w-[700px] lg:w-[700px] xl:w-[800px]">
+      <div className="relative z-20 w-full min-w-[300px] items-end px-2 pb-3 pt-0 sm:w-[600px] sm:pb-8 sm:pt-5 md:w-[700px] lg:w-[700px] xl:w-[800px]">
         <ChatInput />
       </div>
 

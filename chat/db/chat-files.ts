@@ -15,7 +15,7 @@ export const getChatFilesByChatId = async (chatId: string) => {
     .single()
 
   if (!chatFiles) {
-    throw new Error(error.message)
+    return null
   }
 
   return chatFiles

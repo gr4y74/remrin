@@ -135,6 +135,10 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   const [isCharacterPanelOpen, setIsCharacterPanelOpen] = useState<boolean>(true)
   const [artifacts, setArtifacts] = useState<Artifact[]>([])
 
+  // CHAT BACKGROUND STORE
+  const [chatBackgroundEnabled, setChatBackgroundEnabled] = useState<boolean>(false)
+  const [activeBackgroundUrl, setActiveBackgroundUrl] = useState<string | null>(null)
+
   // Demo persona for character panel preview
   useEffect(() => {
     if (!selectedPersona) {
@@ -142,7 +146,7 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         id: "demo-persona",
         name: "Rem",
         description: "A devoted and loving maid from the Roswaal mansion. Known for her blue hair, kind heart, and unwavering loyalty. She's skilled in combat with her morning star and deeply cares for those she loves.",
-        image_url: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=400&h=600&fit=crop",
+        image_url: "/images/rem_hero.webp",
         category: "Anime",
         intro_message: "Good morning! I hope you slept well. Is there anything I can do for you today? 💙",
         creator_id: null,
@@ -387,7 +391,13 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         isCharacterPanelOpen,
         setIsCharacterPanelOpen,
         artifacts,
-        setArtifacts
+        setArtifacts,
+
+        // CHAT BACKGROUND STORE
+        chatBackgroundEnabled,
+        setChatBackgroundEnabled,
+        activeBackgroundUrl,
+        setActiveBackgroundUrl
       }}
     >
       {children}

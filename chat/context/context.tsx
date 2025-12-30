@@ -152,6 +152,12 @@ interface RemrinContext {
   setIsCharacterPanelOpen: Dispatch<SetStateAction<boolean>>
   artifacts: Artifact[]
   setArtifacts: Dispatch<SetStateAction<Artifact[]>>
+
+  // CHAT BACKGROUND STORE
+  chatBackgroundEnabled: boolean
+  setChatBackgroundEnabled: Dispatch<SetStateAction<boolean>>
+  activeBackgroundUrl: string | null
+  setActiveBackgroundUrl: Dispatch<SetStateAction<string | null>>
 }
 
 // Artifact type for Canvas panel
@@ -302,5 +308,11 @@ export const RemrinContext = createContext<RemrinContext>({
   isCharacterPanelOpen: true,
   setIsCharacterPanelOpen: () => { },
   artifacts: [],
-  setArtifacts: () => { }
+  setArtifacts: () => { },
+
+  // CHAT BACKGROUND STORE
+  chatBackgroundEnabled: false,
+  setChatBackgroundEnabled: () => { },
+  activeBackgroundUrl: null,
+  setActiveBackgroundUrl: () => { }
 })
