@@ -8,8 +8,10 @@ import { Brand } from "@/components/ui/brand"
 import { RemrinContext } from "@/context/context"
 import useHotkey from "@/lib/hooks/use-hotkey"
 import { useTheme } from "next-themes"
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 import Image from "next/image"
+import { useSearchParams } from "next/navigation"
+import { getPersonaById } from "@/db/personas"
 
 export default function ChatPage() {
   useHotkey("o", () => handleNewChat())
@@ -17,11 +19,31 @@ export default function ChatPage() {
     handleFocusChatInput()
   })
 
-  const { chatMessages } = useContext(RemrinContext)
+  const searchParams = useSearchParams()
+  const personaId = searchParams.get("persona")
+
+  const { chatMessages, setSelectedPersona } = useContext(RemrinContext)
 
   const { handleNewChat, handleFocusChatInput } = useChatHandler()
 
   const { theme } = useTheme()
+
+  // Load persona from query parameter
+  useEffect(() => {
+    const loadPersona = async () => {
+      if (personaId) {
+        try {
+          const persona = await getPersonaById(personaId)
+          if (persona) {
+            setSelectedPersona(persona as any)
+          }
+        } catch (error) {
+          console.error("Failed to load persona:", error)
+        }
+      }
+    }
+    loadPersona()
+  }, [personaId, setSelectedPersona])
 
   return (
     <>
