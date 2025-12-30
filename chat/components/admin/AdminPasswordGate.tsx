@@ -42,6 +42,8 @@ export function AdminPasswordGate({ children }: AdminPasswordGateProps) {
 
             if (response.ok) {
                 sessionStorage.setItem(ADMIN_SESSION_KEY, "authenticated")
+                // Store password for API calls that need it
+                sessionStorage.setItem("admin_password", password)
                 setIsAuthenticated(true)
             } else {
                 setError(data.error || "Authentication failed")

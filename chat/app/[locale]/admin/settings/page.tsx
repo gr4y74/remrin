@@ -89,7 +89,7 @@ export default function AdminSettingsPage() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('admin_password') || ''}`
+                    'Authorization': `Bearer ${sessionStorage.getItem('admin_password') || ''}`
                 },
                 body: JSON.stringify(body)
             })
@@ -120,7 +120,7 @@ export default function AdminSettingsPage() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('admin_password') || ''}`
+                    'Authorization': `Bearer ${sessionStorage.getItem('admin_password') || ''}`
                 },
                 body: JSON.stringify({ provider, envVar, apiKey: key })
             })
@@ -167,8 +167,8 @@ export default function AdminSettingsPage() {
                         <button
                             onClick={() => setActiveTab('llm')}
                             className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px ${activeTab === 'llm'
-                                    ? 'border-rp-iris text-rp-text'
-                                    : 'border-transparent text-rp-subtle hover:text-rp-text'
+                                ? 'border-rp-iris text-rp-text'
+                                : 'border-transparent text-rp-subtle hover:text-rp-text'
                                 }`}
                         >
                             <IconBrain size={18} />
@@ -177,8 +177,8 @@ export default function AdminSettingsPage() {
                         <button
                             onClick={() => setActiveTab('api-keys')}
                             className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px ${activeTab === 'api-keys'
-                                    ? 'border-rp-iris text-rp-text'
-                                    : 'border-transparent text-rp-subtle hover:text-rp-text'
+                                ? 'border-rp-iris text-rp-text'
+                                : 'border-transparent text-rp-subtle hover:text-rp-text'
                                 }`}
                         >
                             <IconKey size={18} />
@@ -192,8 +192,8 @@ export default function AdminSettingsPage() {
                     {/* Status Message */}
                     {message && (
                         <div className={`mb-4 rounded-lg p-3 flex items-center gap-2 ${message.type === 'success'
-                                ? 'bg-green-500/10 text-green-400 border border-green-500/20'
-                                : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                            ? 'bg-green-500/10 text-green-400 border border-green-500/20'
+                            : 'bg-red-500/10 text-red-400 border border-red-500/20'
                             }`}>
                             {message.type === 'success' ? <IconCheck size={18} /> : <IconX size={18} />}
                             {message.text}
@@ -222,8 +222,8 @@ export default function AdminSettingsPage() {
                                         <div
                                             key={config.id}
                                             className={`rounded-xl border p-4 transition-all ${config.is_default
-                                                    ? 'border-rp-iris bg-rp-iris/5'
-                                                    : 'border-rp-highlight-med bg-rp-surface'
+                                                ? 'border-rp-iris bg-rp-iris/5'
+                                                : 'border-rp-highlight-med bg-rp-surface'
                                                 }`}
                                         >
                                             <div className="flex items-center justify-between">
@@ -256,8 +256,8 @@ export default function AdminSettingsPage() {
                                                         onClick={() => updateConfig('toggle_enabled', config.model_id, !config.is_enabled)}
                                                         disabled={saving === config.model_id}
                                                         className={`px-3 py-1.5 text-xs rounded-lg transition-colors ${config.is_enabled
-                                                                ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30'
-                                                                : 'bg-rp-overlay text-rp-muted hover:bg-rp-highlight-med'
+                                                            ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30'
+                                                            : 'bg-rp-overlay text-rp-muted hover:bg-rp-highlight-med'
                                                             }`}
                                                     >
                                                         {config.is_enabled ? 'Enabled' : 'Disabled'}
@@ -268,8 +268,8 @@ export default function AdminSettingsPage() {
                                                         onClick={() => updateConfig('toggle_search', config.model_id, !config.web_search_enabled)}
                                                         disabled={saving === config.model_id}
                                                         className={`px-3 py-1.5 text-xs rounded-lg transition-colors ${config.web_search_enabled
-                                                                ? 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30'
-                                                                : 'bg-rp-overlay text-rp-muted hover:bg-rp-highlight-med'
+                                                            ? 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30'
+                                                            : 'bg-rp-overlay text-rp-muted hover:bg-rp-highlight-med'
                                                             }`}
                                                     >
                                                         🔍 Search

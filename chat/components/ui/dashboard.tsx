@@ -3,7 +3,7 @@
 import { RemrinContext } from "@/context/context"
 import { CharacterPanel } from "@/components/character"
 import { CanvasPanel } from "@/components/canvas"
-import { Footer } from "@/components/layout/Footer"
+
 import useHotkey from "@/lib/hooks/use-hotkey"
 import { FC, useContext, useState } from "react"
 import { useSelectFileHandler } from "../chat/chat-hooks/use-select-file-handler"
@@ -78,7 +78,6 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
             children
           )}
         </div>
-        <Footer />
       </div>
 
       {/* Canvas/Artifacts Panel (conditional) */}
