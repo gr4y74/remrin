@@ -139,39 +139,6 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   const [chatBackgroundEnabled, setChatBackgroundEnabled] = useState<boolean>(false)
   const [activeBackgroundUrl, setActiveBackgroundUrl] = useState<string | null>(null)
 
-  // Demo persona for character panel preview
-  useEffect(() => {
-    if (!selectedPersona) {
-      setSelectedPersona({
-        id: "demo-persona",
-        name: "Rem",
-        description: "A devoted and loving maid from the Roswaal mansion. Known for her blue hair, kind heart, and unwavering loyalty. She's skilled in combat with her morning star and deeply cares for those she loves.",
-        image_url: "/images/rem_hero.webp",
-        category: "Anime",
-        intro_message: "Good morning! I hope you slept well. Is there anything I can do for you today? 💙",
-        creator_id: null,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        owner_id: null,
-        shared: true,
-        is_public: true,
-        voice_id: null,
-        config: {},
-        behavioral_blueprint: {},
-        chat_count: 0,
-        tone: "warm",
-        writing_style: "expressive",
-        conversation_style: "supportive",
-        emotional_range: "empathetic",
-        response_length: "medium",
-        formality: "casual",
-        tags: ["anime", "maid", "loyal"],
-        scenario: null,
-        sfw_description: "A kind and devoted maid"
-      } as any)
-    }
-  }, [selectedPersona, setSelectedPersona])
-
   const fetchStartingData = useCallback(async () => {
     const session = (await supabase.auth.getSession()).data.session
 
