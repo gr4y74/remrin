@@ -47,11 +47,11 @@ export default function AdminPage() {
         },
         {
             title: "Settings",
-            description: "Configure categories, safety rules, and more",
+            description: "LLM configuration, API keys, and platform settings",
             icon: IconSettings,
             href: "/admin/settings",
             color: "from-rp-muted to-rp-highlight-high",
-            badge: "Coming Soon"
+            badge: null
         }
     ]
 
