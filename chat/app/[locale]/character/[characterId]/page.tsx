@@ -38,7 +38,7 @@ export default async function CharacterPage({ params }: CharacterPageProps) {
     // Only show public/approved personas (or owned by current user)
     const { data: { user } } = await supabase.auth.getUser()
     const isOwner = user?.id === persona.owner_id
-    const isPublic = persona.visibility === "PUBLIC"
+    const isPublic = persona.visibility?.toLowerCase() === "public"
 
     if (!isPublic && !isOwner) {
         notFound()
