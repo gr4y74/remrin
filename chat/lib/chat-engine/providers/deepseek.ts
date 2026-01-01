@@ -56,7 +56,7 @@ export class DeepSeekProvider extends BaseChatProvider {
         messages: ChatMessageContent[],
         systemPrompt: string,
         options: ProviderOptions
-    ): AsyncGenerator<string, void, unknown> {
+    ): AsyncGenerator<ChatChunk, void, unknown> {
         const apiKey = this.getApiKey()
         if (!apiKey) {
             throw new Error('DeepSeek API key not configured')
@@ -75,7 +75,8 @@ export class DeepSeekProvider extends BaseChatProvider {
                 messages: formattedMessages,
                 temperature: options.temperature ?? 0.7,
                 max_tokens: options.maxTokens || this.config.maxTokens,
-                stream: true
+                stream: true,
+                tools: options.tools
             }),
             signal: options.abortSignal
         })
@@ -90,7 +91,15 @@ export class DeepSeekProvider extends BaseChatProvider {
         // Parse SSE stream
         yield* this.parseSSEStream(
             response,
-            (data) => data.choices?.[0]?.delta?.content || null,
+            (data) => {
+                const choice = data.choices?.[0]
+                if (!choice) return null
+
+                return {
+                    content: choice.delta?.content || undefined,
+                    toolCalls: choice.delta?.tool_calls || undefined
+                }
+            },
             options.abortSignal
         )
     }

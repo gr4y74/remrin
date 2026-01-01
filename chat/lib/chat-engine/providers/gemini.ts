@@ -51,7 +51,7 @@ export class GeminiProvider extends BaseChatProvider {
         messages: ChatMessageContent[],
         systemPrompt: string,
         options: ProviderOptions
-    ): AsyncGenerator<string, void, unknown> {
+    ): AsyncGenerator<ChatChunk, void, unknown> {
         const apiKey = this.getApiKey()
         if (!apiKey) {
             throw new Error('Google Gemini API key not configured')
@@ -100,7 +100,7 @@ export class GeminiProvider extends BaseChatProvider {
     private async *parseGeminiStream(
         response: Response,
         abortSignal?: AbortSignal
-    ): AsyncGenerator<string, void, unknown> {
+    ): AsyncGenerator<ChatChunk, void, unknown> {
         const reader = response.body?.getReader()
         if (!reader) throw new Error('No response body')
 
@@ -130,7 +130,7 @@ export class GeminiProvider extends BaseChatProvider {
 
                             // Gemini format: candidates[0].content.parts[0].text
                             const text = json.candidates?.[0]?.content?.parts?.[0]?.text
-                            if (text) yield text
+                            if (text) yield { content: text }
                         } catch {
                             // Skip invalid JSON
                         }

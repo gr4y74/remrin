@@ -39,7 +39,7 @@
   "exclude": [
     "node_modules",
     "public/icons/anicons",
-    "public/mother/console",
+    "lib/chat-engine/console",
     "supabase/functions"
   ]
 }

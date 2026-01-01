@@ -29,45 +29,23 @@ export function SidebarCreateButton({ isExpanded }: SidebarCreateButtonProps) {
     } = useContext(RemrinContext)
 
     const handleCraftSoul = useCallback(async () => {
-        // First check user's persona collection
-        let motherPersona = personas?.find(p => isMotherOfSouls(p))
+        console.log("🕯️ [Craft Soul] Initiating Soul Forge ritual...")
 
-        // If not found, fetch the master Mother (PUBLIC official)
-        if (!motherPersona) {
-            console.log("🕯️ [Craft Soul] Fetching Mother of Souls from master template...")
-            const supabase = createClient()
-            const { data: masterMother } = await supabase
-                .from('personas')
-                .select('*')
-                .eq('id', MOTHER_OF_SOULS_ID)
-                .single()
+        if (selectedWorkspace) {
+            // Set flag so we know to auto-select Mother (backup for URL)
+            sessionStorage.setItem('ftue_start_mother_chat', MOTHER_OF_SOULS_ID)
 
-            if (masterMother) {
-                motherPersona = masterMother
-            }
-        }
+            // Navigate to chat with Mother of Souls pre-selected via URL
+            // This ensures the ritual starts correctly and handles reload/deep-linking
+            router.push(`/${selectedWorkspace.id}/chat?persona=${MOTHER_OF_SOULS_ID}`)
 
-        if (motherPersona) {
-            console.log("🕯️ [Craft Soul] Starting Soul Forge with Mother of Souls...")
-
-            // Select Mother as the current persona
-            setSelectedPersona(motherPersona)
-
-            // Clear any existing chat to start fresh
+            // Also update context for immediate UI feedback if already on the page
             setSelectedChat(null)
-
-            // Navigate to chat
-            if (selectedWorkspace) {
-                router.push(`/${selectedWorkspace.id}/chat`)
-            } else {
-                // For guests, go to login first
-                router.push('/login?redirect=soul-forge')
-            }
         } else {
-            console.log("🕯️ [Craft Soul] Mother not available - redirecting to login")
+            // For guests, go to login first
             router.push('/login?redirect=soul-forge')
         }
-    }, [personas, selectedWorkspace, setSelectedPersona, setSelectedChat, router])
+    }, [selectedWorkspace, router, setSelectedChat])
 
     return (
         <div className="p-2">

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { IconChevronLeft, IconChevronRight, IconDiamond, IconSparkles, IconStar } from "@tabler/icons-react"
 import { GachaPool, GachaPoolItem, SINGLE_PULL_COST, TEN_PULL_COST, RARITY_COLORS } from "@/lib/hooks/use-gacha"
+import { HolographicCard } from "./HolographicCard"
 
 import { TYPOGRAPHY } from "@/lib/design-system"
 import { useSFX } from "@/lib/hooks/use-sfx"
@@ -32,7 +33,8 @@ export function GachaBanner({
     isPulling = false,
     className
 }: GachaBannerProps) {
-    const [currentIndex, setCurrentIndex] = useState(0)
+    const [currentIndex, setCurrentIndex] = useState(0) // Pool index
+    const [cardIndex, setCardIndex] = useState(0) // Card carousel index
 
     const carouselRef = useRef<HTMLDivElement>(null)
     const { playClick, playHover, playSuccess } = useSFX()
@@ -40,6 +42,11 @@ export function GachaBanner({
     const currentPool = pools[currentIndex]
     const currentItems = currentPool ? (poolItems[currentPool.id] || []) : []
     const featuredItems = currentItems.filter(item => item.is_featured)
+
+    // Initialize card index to center when pool or items change
+    useEffect(() => {
+        setCardIndex(Math.floor(featuredItems.length / 2))
+    }, [currentPool, featuredItems.length])
 
     // Notify parent when pool changes
     useEffect(() => {
@@ -50,12 +57,12 @@ export function GachaBanner({
 
     const goToPrevious = () => {
         playClick()
-        setCurrentIndex(prev => (prev === 0 ? pools.length - 1 : prev - 1))
+        setCardIndex(prev => (prev === 0 ? featuredItems.length - 1 : prev - 1))
     }
 
     const goToNext = () => {
         playClick()
-        setCurrentIndex(prev => (prev === pools.length - 1 ? 0 : prev + 1))
+        setCardIndex(prev => (prev === featuredItems.length - 1 ? 0 : prev + 1))
     }
 
     const canAffordSingle = userBalance >= SINGLE_PULL_COST
@@ -77,200 +84,162 @@ export function GachaBanner({
     }
 
     return (
-        <div className={cn("relative", className)}>
-            {/* Carousel Container */}
-            <div
-                ref={carouselRef}
-                className="relative overflow-hidden rounded-3xl"
-            >
-                {/* Banner Image */}
-                <div className="relative aspect-[21/9] w-full overflow-hidden">
-                    {currentPool.banner_image ? (
-                        <Image
-                            src={currentPool.banner_image}
-                            alt={currentPool.name}
-                            fill
-                            className="object-cover"
-                            priority
-                        />
-                    ) : (
-                        <div className="from-rp-iris/50 via-rp-pine/50 to-rp-foam/50 absolute inset-0 bg-gradient-to-br">
-                            {/* Animated background when no image */}
-                            <div className="animate-orb-pulse absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(196,167,231,0.3),transparent_70%)]" />
-                        </div>
-                    )}
-
-                    {/* Banner Content */}
-                    <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">
-                        {/* Pool Name & Description */}
-                        <div className="mb-6">
-                            <h2 className={`${TYPOGRAPHY.heading.h2} text-rp-text mb-2 drop-shadow-lg`}>
-                                {currentPool.name}
-                            </h2>
-                            {currentPool.description && (
-                                <p className="text-rp-text/70 max-w-2xl text-sm md:text-base">
-                                    {currentPool.description}
-                                </p>
-                            )}
-                        </div>
-
-                        {/* Featured Characters */}
-                        {featuredItems.length > 0 && (
-                            <div className="mb-6">
-                                <div className="mb-3 flex items-center gap-2">
-                                    <IconStar size={16} className="text-rp-gold" />
-                                    <span className="text-rp-gold text-sm font-medium">Featured Souls</span>
-                                </div>
-                                <div className="scrollbar-hide flex gap-3 overflow-x-auto pb-2">
-                                    {featuredItems.slice(0, 5).map((item) => (
-                                        <div
-                                            key={item.id}
-                                            className={cn(
-                                                "relative size-[200px] shrink-0 overflow-hidden rounded-xl",
-                                                "border-2 transition-all duration-300 hover:scale-105",
-                                                "shadow-lg"
-                                            )}
-                                            style={{
-                                                borderColor: RARITY_COLORS[item.rarity].primary,
-                                                boxShadow: `0 0 20px ${RARITY_COLORS[item.rarity].glow}`
-                                            }}
-                                        >
-                                            {item.persona?.image_url ? (
-                                                <Image
-                                                    src={item.persona.image_url}
-                                                    alt={item.persona.name}
-                                                    fill
-                                                    className="object-cover"
-                                                />
-                                            ) : (
-                                                <div className="from-rp-iris/50 to-rp-rose/50 flex size-full items-center justify-center bg-gradient-to-br">
-                                                    <span className="text-rp-text/70 text-lg font-bold">
-                                                        {item.persona?.name?.slice(0, 2) || "??"}
-                                                    </span>
-                                                </div>
-                                            )}
-                                            <Badge
-                                                className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full px-2 py-1 text-sm capitalize"
-                                                style={{
-                                                    backgroundColor: RARITY_COLORS[item.rarity].primary,
-                                                    color: item.rarity === "legendary" ? "var(--rp-base)" : "var(--rp-text)"
-                                                }}
-                                            >
-                                                {item.rarity}
-                                            </Badge>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Pull Buttons */}
-                        <div className="flex flex-wrap gap-3">
-                            {/* Single Pull */}
-                            <Button
-                                size="lg"
-                                disabled={!canAffordSingle || isPulling}
-                                onClick={() => {
-                                    playSuccess()
-                                    onSinglePull(currentPool.id)
-                                }}
-                                className={cn(
-                                    "relative overflow-hidden rounded-full px-6 py-3 font-bold",
-                                    "from-rp-iris to-rp-pine bg-gradient-to-r",
-                                    "hover:opacity-90",
-                                    "disabled:cursor-not-allowed disabled:opacity-50",
-                                    "text-rp-base transition-all duration-300 hover:scale-105",
-                                    "shadow-rp-iris/30 shadow-lg"
-                                )}
-                            >
-                                <span className="flex items-center gap-2">
-                                    <span>Single Pull</span>
-                                    <span className="bg-rp-base/30 flex items-center gap-1 rounded-full px-2 py-0.5">
-                                        <IconDiamond size={14} className="text-rp-gold" />
-                                        <span className="text-rp-gold">{SINGLE_PULL_COST}</span>
-                                    </span>
-                                </span>
-                            </Button>
-
-                            {/* 10-Pull */}
-                            <Button
-                                size="lg"
-                                disabled={!canAffordTen || isPulling}
-                                onClick={() => {
-                                    playSuccess()
-                                    onTenPull(currentPool.id)
-                                }}
-                                className={cn(
-                                    "relative overflow-hidden rounded-full px-6 py-3 font-bold",
-                                    "from-rp-gold to-rp-rose bg-gradient-to-r",
-                                    "hover:opacity-90",
-                                    "text-rp-base",
-                                    "disabled:cursor-not-allowed disabled:opacity-50",
-                                    "transition-all duration-300 hover:scale-105",
-                                    "shadow-rp-gold/30 shadow-lg"
-                                )}
-                            >
-                                <span className="flex items-center gap-2">
-                                    <IconSparkles size={18} />
-                                    <span>10-Pull</span>
-                                    <span className="bg-rp-base/20 flex items-center gap-1 rounded-full px-2 py-0.5">
-                                        <IconDiamond size={14} />
-                                        <span>{TEN_PULL_COST}</span>
-                                    </span>
-                                </span>
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Navigation Arrows */}
-                {pools.length > 1 && (
-                    <>
-                        <button
-                            onClick={goToPrevious}
-                            className={cn(
-                                "absolute left-4 top-1/2 z-10 -translate-y-1/2",
-                                "flex size-10 items-center justify-center rounded-full",
-                                "bg-rp-base/50 border-rp-muted/20 border backdrop-blur-sm",
-                                "text-rp-text hover:bg-rp-base/70 transition-all duration-200",
-                                "hover:scale-110"
-                            )}
-                        >
-                            <IconChevronLeft size={24} />
-                        </button>
-                        <button
-                            onClick={goToNext}
-                            className={cn(
-                                "absolute right-4 top-1/2 z-10 -translate-y-1/2",
-                                "flex size-10 items-center justify-center rounded-full",
-                                "bg-rp-base/50 border-rp-muted/20 border backdrop-blur-sm",
-                                "text-rp-text hover:bg-rp-base/70 transition-all duration-200",
-                                "hover:scale-110"
-                            )}
-                        >
-                            <IconChevronRight size={24} />
-                        </button>
-                    </>
+        <div className={cn("relative w-full", className)}>
+            {/* Section Header */}
+            <div className="mb-8 px-6 text-center">
+                <h2 className={`${TYPOGRAPHY.heading.h2} text-rp-text mb-2 inline-flex items-center gap-2`}>
+                    <IconStar className="text-rp-gold" />
+                    {currentPool.name}
+                    <IconStar className="text-rp-gold" />
+                </h2>
+                {currentPool.description && (
+                    <p className="text-rp-text/70 max-w-2xl mx-auto text-sm md:text-base mt-2">
+                        {currentPool.description}
+                    </p>
                 )}
             </div>
 
-            {/* Carousel Indicators */}
-            {pools.length > 1 && (
-                <div className="mt-4 flex justify-center gap-2">
-                    {pools.map((_, index) => (
-                        <button
-                            key={index}
-                            onClick={() => setCurrentIndex(index)}
-                            className={cn(
-                                "h-2 rounded-full transition-all duration-300",
-                                index === currentIndex
-                                    ? "from-rp-iris to-rp-foam w-8 bg-gradient-to-r"
-                                    : "bg-rp-muted/30 hover:bg-rp-muted/50 w-2"
-                            )}
-                        />
-                    ))}
+            {/* 3D Carousel with Holographic Cards - Full Width */}
+            <div className="w-full py-8 px-4 md:px-8">
+                <div className="relative" style={{ perspective: '2000px' }}>
+                    {/* Navigation Buttons */}
+                    <button
+                        onClick={goToPrevious}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-rp-surface text-rp-iris border-2 border-rp-iris hover:bg-rp-iris hover:text-white rounded-full flex items-center justify-center transition-all"
+                        aria-label="Previous"
+                    >
+                        <IconChevronLeft size={32} />
+                    </button>
+
+                    <button
+                        onClick={goToNext}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-rp-surface text-rp-iris border-2 border-rp-iris hover:bg-rp-iris hover:text-white rounded-full flex items-center justify-center transition-all"
+                        aria-label="Next"
+                    >
+                        <IconChevronRight size={32} />
+                    </button>
+
+                    {/* Cards Container with 3D Transform - Responsive (Matches Home Page h-[600px] on Desktop) */}
+                    <div className="relative h-[400px] md:h-[500px] lg:h-[600px] flex items-center justify-center overflow-visible" style={{ transformStyle: 'preserve-3d' }}>
+                        {featuredItems.map((item, index) => {
+                            const diff = index - cardIndex
+                            const absPos = Math.abs(diff)
+
+                            if (absPos > 2) return null
+
+                            const isCenter = diff === 0
+
+                            // Premium responsive spacing to prevent cutoff
+                            const baseSpacing = 160 // mobile
+                            const spacing = diff * baseSpacing
+
+                            const cardStyle = {
+                                transform: isCenter
+                                    ? 'translateX(0) translateZ(0) scale(1)'
+                                    : `translateX(calc(${spacing}px + ${diff * 60}px * ((100vw - 640px) / (1024px - 640px)))) translateZ(-${absPos * 200}px) scale(${1 - absPos * 0.15})`,
+                                opacity: isCenter ? 1 : 1 - absPos * 0.3,
+                                zIndex: isCenter ? 3 : 3 - absPos
+                            }
+
+                            return (
+                                <div
+                                    key={item.id}
+                                    className="absolute transition-all duration-500 ease-out"
+                                    style={cardStyle}
+                                >
+                                    <HolographicCard
+                                        imageUrl={item.persona?.image_url || "/images/placeholder-soul.png"}
+                                        name={item.persona?.name || "Unknown Soul"}
+                                        rarity={item.rarity}
+                                        className="w-[220px] h-[320px] sm:w-[260px] sm:h-[380px] md:w-[300px] md:h-[440px] lg:w-[320px] lg:h-[480px]"
+                                        showBadge={true}
+                                        onClick={() => {
+                                            if (!isCenter) {
+                                                setCardIndex(index)
+                                            }
+                                        }}
+                                    />
+                                </div>
+                            )
+                        })}
+                    </div>
+
+                    {/* Pool Indicators */}
+                    {featuredItems.length > 1 && (
+                        <div className="mt-8 flex justify-center gap-2">
+                            {featuredItems.map((_, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => setCardIndex(index)}
+                                    className={cn(
+                                        "h-2 rounded-full transition-all duration-300",
+                                        index === cardIndex
+                                            ? "from-rp-iris to-rp-foam w-8 bg-gradient-to-r"
+                                            : "bg-rp-muted/30 hover:bg-rp-muted/50 w-2"
+                                    )}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </div>
-            )}
+            </div>
+
+            {/* Pull Buttons */}
+            <div className="flex flex-wrap justify-center gap-4 mt-8">
+                {/* Single Pull */}
+                <Button
+                    size="lg"
+                    disabled={!canAffordSingle || isPulling}
+                    onClick={() => {
+                        playSuccess()
+                        onSinglePull(currentPool.id)
+                    }}
+                    className={cn(
+                        "relative overflow-hidden rounded-full px-8 py-4 font-bold text-lg",
+                        "from-rp-iris to-rp-pine bg-gradient-to-r",
+                        "hover:opacity-90",
+                        "disabled:cursor-not-allowed disabled:opacity-50",
+                        "text-rp-base transition-all duration-300 hover:scale-105",
+                        "shadow-rp-iris/30 shadow-lg"
+                    )}
+                >
+                    <span className="flex items-center gap-2">
+                        <span>Single Pull</span>
+                        <span className="bg-rp-base/30 flex items-center gap-1 rounded-full px-3 py-1">
+                            <IconDiamond size={16} className="text-rp-gold" />
+                            <span className="text-rp-gold">{SINGLE_PULL_COST}</span>
+                        </span>
+                    </span>
+                </Button>
+
+                {/* 10-Pull */}
+                <Button
+                    size="lg"
+                    disabled={!canAffordTen || isPulling}
+                    onClick={() => {
+                        playSuccess()
+                        onTenPull(currentPool.id)
+                    }}
+                    className={cn(
+                        "relative overflow-hidden rounded-full px-8 py-4 font-bold text-lg",
+                        "from-rp-gold to-rp-rose bg-gradient-to-r",
+                        "hover:opacity-90",
+                        "text-rp-base",
+                        "disabled:cursor-not-allowed disabled:opacity-50",
+                        "transition-all duration-300 hover:scale-105",
+                        "shadow-rp-gold/30 shadow-lg"
+                    )}
+                >
+                    <span className="flex items-center gap-2">
+                        <IconSparkles size={20} />
+                        <span>10-Pull</span>
+                        <span className="bg-rp-base/20 flex items-center gap-1 rounded-full px-3 py-1">
+                            <IconDiamond size={16} />
+                            <span>{TEN_PULL_COST}</span>
+                        </span>
+                    </span>
+                </Button>
+            </div>
         </div>
     )
 }

@@ -3,11 +3,11 @@
 import { cn } from "@/lib/utils"
 import { speakText } from "@/lib/voice/tts"
 import { IconVolume } from "@tabler/icons-react"
-import { FC, useEffect, useRef, useState } from "react"
+import React, { FC, useEffect, useRef, useState } from "react"
 
 interface MotherMessageProps {
-    /** The message content from the Mother */
-    message: string
+    /** The message content from the Mother (for TTS) */
+    message?: string
     /** Auto-play TTS when message appears */
     autoPlay?: boolean
     /** Voice ID for TTS (defaults to Mother's voice) */
@@ -16,10 +16,14 @@ interface MotherMessageProps {
     onSpeakComplete?: () => void
     /** Additional CSS classes */
     className?: string
+    /** Content to render */
+    children?: React.ReactNode
+    /** Whether the message is still streaming */
+    isStreaming?: boolean
 }
 
 // Default voice for the Mother of Souls
-const MOTHER_VOICE_ID = "female-3" // Luna - Expressive female voice
+const MOTHER_VOICE_ID = "female-mystical" // Ancient, mystical voice
 
 /**
  * MotherMessage - Special styling for Mother of Souls messages
@@ -27,10 +31,12 @@ const MOTHER_VOICE_ID = "female-3" // Luna - Expressive female voice
  */
 export const MotherMessage: FC<MotherMessageProps> = ({
     message,
-    autoPlay = false,
+    autoPlay = true,
     voiceId = MOTHER_VOICE_ID,
     onSpeakComplete,
-    className
+    className,
+    children,
+    isStreaming = false
 }) => {
     const [isSpeaking, setIsSpeaking] = useState(false)
     const speechControlRef = useRef<{ cancel: () => void } | null>(null)
@@ -106,9 +112,22 @@ export const MotherMessage: FC<MotherMessageProps> = ({
                 )}
 
                 {/* Message content */}
-                <p className="text-rp-text/90 whitespace-pre-wrap text-sm leading-relaxed">
-                    {message}
-                </p>
+                <div className="text-rp-text/90 text-sm leading-relaxed">
+                    {children || (
+                        <p className="whitespace-pre-wrap">
+                            {message}
+                        </p>
+                    )}
+                    {isStreaming && !children && (
+                        <div className="mt-2">
+                            <div className="flex gap-1">
+                                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-rp-pine" style={{ animationDelay: '0ms' }} />
+                                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-rp-pine" style={{ animationDelay: '150ms' }} />
+                                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-rp-pine" style={{ animationDelay: '300ms' }} />
+                            </div>
+                        </div>
+                    )}
+                </div>
 
                 {/* Decorative element */}
                 <div className="from-rp-pine absolute bottom-0 left-4 h-[2px] w-8 rounded-full bg-gradient-to-r to-transparent" />

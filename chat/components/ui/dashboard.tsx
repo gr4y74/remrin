@@ -5,6 +5,7 @@ import { CharacterPanel } from "@/components/character"
 import { CanvasPanel } from "@/components/canvas"
 import Image from "next/image"
 import useHotkey from "@/lib/hooks/use-hotkey"
+import { MOTHER_OF_SOULS_ID } from "@/lib/forge/is-mother-chat"
 import { FC, useContext, useState } from "react"
 // import { useSelectFileHandler } from "../chat/chat-hooks/use-select-file-handler"
 import { CommandK } from "../utility/command-k"
@@ -63,14 +64,27 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
       <CommandK />
 
       {/* Full-Width Background Layer */}
-      {chatBackgroundEnabled && selectedPersona && (
+      {selectedPersona?.id === MOTHER_OF_SOULS_ID ? (
+        <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+          <video
+            src="/images/mother/mos_bg.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="h-full w-full object-cover opacity-40 transition-opacity duration-1000"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/80" />
+          <div className="absolute inset-0 backdrop-blur-[1px]" />
+        </div>
+      ) : chatBackgroundEnabled && selectedPersona && (
         <div className="fixed inset-0 z-0">
           {/* Background Image */}
           <Image
             src={activeBackgroundUrl || "/images/rem_bg.jpg"}
             alt="Chat background"
             fill
-            className="object-cover"
+            className="opacity-100 transition-opacity duration-1000 object-cover"
             priority
           />
           {/* Overlay for readability */}

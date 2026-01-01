@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server"
 import { cookies, headers } from "next/headers"
 import { redirect } from "next/navigation"
 
-export const login = async (formData: FormData) => {
+export const login = async (formData: FormData, redirectTo?: string) => {
     const email = formData.get("email") as string
     const password = formData.get("password") as string
     const cookieStore = cookies()
@@ -27,9 +27,18 @@ export const login = async (formData: FormData) => {
         .single()
 
     if (!homeWorkspace) {
-        // If no workspace found, maybe just redirect to setup or handle error
         return { error: homeWorkspaceError?.message || "No home workspace found" }
     }
 
-    return { redirect: `/${homeWorkspace.id}/chat` }
+    // Default redirect to home chat
+    let target = `/${homeWorkspace.id}/chat`
+
+    // Special case for Soul Forge
+    if (redirectTo === 'soul-forge') {
+        target = `/${homeWorkspace.id}/chat?persona=a0000000-0000-0000-0000-000000000001`
+    } else if (redirectTo && redirectTo.startsWith('/')) {
+        target = redirectTo
+    }
+
+    return { redirect: target }
 }

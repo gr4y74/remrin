@@ -95,7 +95,7 @@ export class ProviderManager {
         messages: ChatMessageContent[],
         systemPrompt: string,
         options: ProviderOptions = {}
-    ): AsyncGenerator<string, void, unknown> {
+    ): AsyncGenerator<ChatChunk, void, unknown> {
         const provider = this.getProvider()
 
         console.log(`🤖 [ChatEngine] Using provider: ${provider.name} for ${this.userTier} tier`)

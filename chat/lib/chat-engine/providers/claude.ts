@@ -51,7 +51,7 @@ export class ClaudeProvider extends BaseChatProvider {
         messages: ChatMessageContent[],
         systemPrompt: string,
         options: ProviderOptions
-    ): AsyncGenerator<string, void, unknown> {
+    ): AsyncGenerator<ChatChunk, void, unknown> {
         const apiKey = this.getApiKey()
         if (!apiKey) {
             throw new Error('Anthropic API key not configured')
@@ -93,7 +93,7 @@ export class ClaudeProvider extends BaseChatProvider {
     private async *parseClaudeStream(
         response: Response,
         abortSignal?: AbortSignal
-    ): AsyncGenerator<string, void, unknown> {
+    ): AsyncGenerator<ChatChunk, void, unknown> {
         const reader = response.body?.getReader()
         if (!reader) throw new Error('No response body')
 
@@ -124,7 +124,7 @@ export class ClaudeProvider extends BaseChatProvider {
                             // Claude uses content_block_delta events
                             if (json.type === 'content_block_delta') {
                                 const text = json.delta?.text
-                                if (text) yield text
+                                if (text) yield { content: text }
                             }
 
                             // Check for stop

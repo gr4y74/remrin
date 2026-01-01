@@ -30,7 +30,7 @@ echo ""
 
 # Step 3: Copy updated Universal Console to Supabase function
 echo "📦 Step 3: Updating Supabase Edge Function..."
-cp /mnt/Data68/remrin/chat/public/mother/console/universal_console_v2.ts \
+cp /mnt/Data68/remrin/chat/lib/chat-engine/console/universal_console_v2.ts \
    /mnt/Data68/remrin/supabase/functions/universal_console/index.ts
 
 echo "✅ Function code updated"

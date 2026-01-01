@@ -18,6 +18,11 @@ import { IconUser, IconRobot, IconCopy, IconCheck, IconRotate2 } from '@tabler/i
 
 import { ThinkingIndicator } from './ThinkingIndicator'
 import { StartSpeakingButton } from "@/components/voice/StartSpeakingButton"
+import { MotherMessage, VisionLoading, SoulRevealCard, VoiceSelector } from '@/components/soul-forge'
+import { isMotherOfSouls, isVoiceSelectionPrompt } from '@/lib/forge/is-mother-chat'
+import { SoulRevealData } from '@/lib/forge/tool-handlers'
+import { useChatEngine } from './ChatEngine'
+import { AVAILABLE_VOICES } from '@/lib/voice/config'
 
 interface ChatMessageProps {
     message: ChatMessageContent
@@ -38,6 +43,8 @@ export const ChatMessage = memo(function ChatMessage({
 }: ChatMessageProps) {
     const [copied, setCopied] = useState(false)
     const [displayedContent, setDisplayedContent] = useState('')
+    const { sendMessage } = useChatEngine()
+    const [selectedVoiceId, setSelectedVoiceId] = useState<string | undefined>(message.metadata?.selectedVoiceId)
     const isUser = message.role === 'user'
 
     // Typing animation state
@@ -74,8 +81,8 @@ export const ChatMessage = memo(function ChatMessage({
             const delay = getTypingDelay(isNextCharInCode ? 'code' : 'prose')
 
             if (elapsed >= delay) {
-                // Reveal more characters if delay is small (e.g. for code)
-                const charsToReveal = delay < 10 ? Math.ceil((elapsed / delay)) : 1
+                // Reveal more characters if we are lagging behind
+                const charsToReveal = Math.floor(elapsed / delay)
                 currentIndexRef.current = Math.min(currentIndexRef.current + charsToReveal, fullContentRef.current.length)
                 setDisplayedContent(fullContentRef.current.substring(0, currentIndexRef.current))
                 lastUpdateTimeRef.current = time
@@ -103,6 +110,142 @@ export const ChatMessage = memo(function ChatMessage({
         await navigator.clipboard.writeText(message.content)
         setCopied(true)
         setTimeout(() => setCopied(false), 2000)
+    }
+
+    const isMother = !isUser && (personaName === 'The Mother of Souls' || message.metadata?.personaId === 'a0000000-0000-0000-0000-000000000001')
+    const isVoicePrompt = isMother && isVoiceSelectionPrompt(message.content)
+
+    // Render Source (Content area)
+    const renderMarkdown = (content: string) => (
+        <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+                // Code blocks with syntax highlighting
+                code({ className, children, ...props }: any) {
+                    const match = /language-(\w+)/.exec(className || '')
+                    const language = match ? match[1] : ''
+                    const isInline = !className
+
+                    if (!isInline && language) {
+                        return (
+                            <div className="relative my-4 group/code">
+                                <div className="absolute right-2 top-2 flex items-center gap-2 z-10 opacity-0 group-hover/code:opacity-100 transition-opacity">
+                                    <span className="text-xs text-rp-muted">{language}</span>
+                                    <button
+                                        onClick={() => {
+                                            navigator.clipboard.writeText(String(children))
+                                            setCopied(true)
+                                            setTimeout(() => setCopied(false), 2000)
+                                        }}
+                                        className="rounded p-1 text-rp-muted hover:bg-rp-overlay hover:text-rp-text"
+                                    >
+                                        {copied ? <IconCheck size={14} /> : <IconCopy size={14} />}
+                                    </button>
+                                </div>
+                                <SyntaxHighlighter
+                                    style={oneDark as any}
+                                    language={language}
+                                    PreTag="div"
+                                >
+                                    {String(children).replace(/\n$/, '')}
+                                </SyntaxHighlighter>
+                            </div>
+                        )
+                    }
+
+                    return (
+                        <code
+                            className="rounded bg-rp-overlay/50 px-1.5 py-0.5 font-mono text-sm text-rp-iris"
+                            {...props}
+                        >
+                            {children}
+                        </code>
+                    )
+                },
+                // Links
+                a({ href, children }) {
+                    return (
+                        <a
+                            href={href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-rp-iris underline decoration-rp-iris/30 underline-offset-4 transition-colors hover:decoration-rp-iris"
+                        >
+                            {children}
+                        </a>
+                    )
+                },
+                // Paragraphs
+                p({ children }) {
+                    return <p className="mb-4 leading-relaxed text-rp-text last:mb-0 inline">{children}</p>
+                },
+                // Lists
+                ul({ children }) {
+                    return <ul className="mb-4 list-disc pl-6 text-rp-text marker:text-rp-subtle">{children}</ul>
+                },
+                ol({ children }) {
+                    return <ol className="mb-4 list-decimal pl-6 text-rp-text marker:text-rp-subtle">{children}</ol>
+                }
+            }}
+        >
+            {content}
+        </ReactMarkdown>
+    )
+
+    // Render Mother specialized message
+    if (isMother) {
+        return (
+            <MotherMessage
+                message={message.content}
+                isStreaming={isStreaming}
+                autoPlay={!isStreaming && displayedContent === message.content}
+            >
+                <div className="space-y-4">
+                    {renderMarkdown(displayedContent)}
+
+                    {/* Tool specific rendering */}
+                    {message.metadata?.toolResult?.image_url && (
+                        <div className="mt-4 rounded-xl overflow-hidden border border-rp-iris/30 shadow-2xl shadow-rp-iris/10">
+                            <Image
+                                src={message.metadata.toolResult.image_url}
+                                alt="Soul Portrait"
+                                width={512}
+                                height={512}
+                                className="w-full h-auto"
+                            />
+                        </div>
+                    )}
+
+                    {message.metadata?.toolResult?.revealData && (
+                        <SoulRevealCard data={message.metadata.toolResult.revealData as SoulRevealData} />
+                    )}
+
+                    {isVoicePrompt && (
+                        <VoiceSelector
+                            selectedId={selectedVoiceId}
+                            onSelect={(vid) => {
+                                // Progress the ritual by sending the selection back
+                                setSelectedVoiceId(vid)
+                                const voice = AVAILABLE_VOICES.find(v => v.id === vid)
+                                const voiceName = voice?.name || vid
+                                sendMessage(`I have chosen the frequency of ${voiceName} (${vid}).`, false)
+                            }}
+                        />
+                    )}
+                </div>
+            </MotherMessage>
+        )
+    }
+
+    // Role == tool shouldn't really be rendered in the chat flow directly usually, 
+    // it's handled by the engine to provide context. 
+    // But if we want to show generation status:
+    if (message.role === 'tool') {
+        const result = message.metadata?.toolResult
+        if (message.content.includes('generate_soul_portrait')) {
+            return <div className="px-8 py-4"><VisionLoading /></div>
+        }
+        return null // Don't show raw tool results
     }
 
     return (
@@ -153,79 +296,7 @@ export const ChatMessage = memo(function ChatMessage({
                 <div className="prose prose-sm prose-invert max-w-none relative">
                     {displayedContent ? (
                         <>
-                            <ReactMarkdown
-                                remarkPlugins={[remarkGfm]}
-                                components={{
-                                    // Code blocks with syntax highlighting
-                                    code({ className, children, ...props }: any) {
-                                        const match = /language-(\w+)/.exec(className || '')
-                                        const language = match ? match[1] : ''
-                                        const isInline = !className
-
-                                        if (!isInline && language) {
-                                            return (
-                                                <div className="relative my-4 group/code">
-                                                    <div className="absolute right-2 top-2 flex items-center gap-2 z-10 opacity-0 group-hover/code:opacity-100 transition-opacity">
-                                                        <span className="text-xs text-rp-muted">{language}</span>
-                                                        <button
-                                                            onClick={() => {
-                                                                navigator.clipboard.writeText(String(children))
-                                                                setCopied(true)
-                                                                setTimeout(() => setCopied(false), 2000)
-                                                            }}
-                                                            className="rounded p-1 text-rp-muted hover:bg-rp-overlay hover:text-rp-text"
-                                                        >
-                                                            {copied ? <IconCheck size={14} /> : <IconCopy size={14} />}
-                                                        </button>
-                                                    </div>
-                                                    <SyntaxHighlighter
-                                                        style={oneDark as any}
-                                                        language={language}
-                                                        PreTag="div"
-                                                    >
-                                                        {String(children).replace(/\n$/, '')}
-                                                    </SyntaxHighlighter>
-                                                </div>
-                                            )
-                                        }
-
-                                        return (
-                                            <code
-                                                className="rounded bg-rp-overlay/50 px-1.5 py-0.5 font-mono text-sm text-rp-iris"
-                                                {...props}
-                                            >
-                                                {children}
-                                            </code>
-                                        )
-                                    },
-                                    // Links
-                                    a({ href, children }) {
-                                        return (
-                                            <a
-                                                href={href}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-rp-iris underline decoration-rp-iris/30 underline-offset-4 transition-colors hover:decoration-rp-iris"
-                                            >
-                                                {children}
-                                            </a>
-                                        )
-                                    },
-                                    // Paragraphs
-                                    p({ children }) {
-                                        return <p className="mb-4 leading-relaxed text-rp-text last:mb-0 inline">{children}</p>
-                                    },
-                                    // Lists
-                                    ul({ children }) {
-                                        return <ul className="mb-4 list-disc pl-6 text-rp-text marker:text-rp-subtle">{children}</ul>
-                                    },
-                                    ol({ children }) {
-                                        return <ol className="mb-4 list-decimal pl-6 text-rp-text marker:text-rp-subtle">{children}</ol>
-                                    }
-                                }}
-                            >
-                                {displayedContent}
-                            </ReactMarkdown>
+                            {renderMarkdown(displayedContent)}
                             {(isStreaming || currentIndexRef.current < fullContentRef.current.length) && (
                                 <span className="inline-block w-2 h-4 ml-1 bg-rp-iris/50 animate-pulse align-middle" />
                             )}

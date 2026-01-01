@@ -26,7 +26,7 @@ export function getTypingDelay(contentType: 'prose' | 'code' | 'other' = 'prose'
         case 'prose':
         default:
             // Prose should feel like natural typing
-            config = { baseDelay: 30, variance: 10 };
+            config = { baseDelay: 12, variance: 4 };
             break;
     }
 

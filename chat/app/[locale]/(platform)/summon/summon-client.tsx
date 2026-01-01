@@ -104,57 +104,61 @@ export default function SummonClient() {
     }
 
     return (
-        <div className="relative min-h-screen w-full overflow-hidden bg-rp-base text-white">
+        <div className="relative min-h-screen w-full bg-rp-base text-white">
             {/* Removed starry background and gradient orbs */}
 
             <div className="relative z-10 container mx-auto px-4 py-8 md:px-8 md:py-12">
                 {/* Header */}
-                <header className="mb-12 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-                    <div>
+                <header className="mb-12 flex flex-col items-center justify-center gap-8 text-center">
+                    <div className="flex flex-col gap-2">
                         <h1 className="font-tiempos-headline text-4xl font-bold text-white md:text-5xl drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
                             Soul Summon
                         </h1>
-                        <p className="mt-2 text-white/50">
+                        <p className="text-white/50 text-lg">
                             Call forth new entities from the Aether.
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
                         {/* History Link */}
                         <Link
                             href="/collection"
-                            className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white/70 hover:bg-white/10 hover:text-white transition-all backdrop-blur-md"
+                            className="flex h-[52px] w-full sm:w-auto sm:min-w-[240px] items-center justify-center gap-3 rounded-xl border border-white/10 bg-white/5 px-8 text-sm font-semibold text-white/70 hover:bg-white/10 hover:text-white transition-all backdrop-blur-md"
                         >
-                            <IconHistory size={16} />
+                            <IconHistory size={20} />
                             <span>My Grimoire</span>
                         </Link>
 
                         {/* Balance Display - Links to Market */}
                         <Link
                             href="/marketplace"
-                            className="flex items-center gap-3 rounded-full border border-rp-gold/20 bg-rp-gold/5 px-4 py-2 backdrop-blur-md shadow-[0_0_15px_rgba(246,193,119,0.1)] hover:bg-rp-gold/10 hover:border-rp-gold/30 transition-all"
+                            className="flex h-[52px] w-full sm:w-auto sm:min-w-[240px] items-center justify-center gap-3 rounded-xl border border-rp-gold/20 bg-rp-gold/5 px-8 backdrop-blur-md shadow-[0_0_15px_rgba(246,193,119,0.1)] hover:bg-rp-gold/10 hover:border-rp-gold/30 transition-all"
                         >
                             <IconStars className="text-rp-gold animate-pulse" size={20} />
-                            <span className="font-mono text-lg font-bold text-rp-gold">
-                                {userBalance.toLocaleString()}
-                            </span>
-                            <span className="text-xs uppercase tracking-wider text-rp-gold/60">Aether</span>
+                            <div className="flex items-baseline gap-2">
+                                <span className="font-mono text-xl font-bold text-rp-gold">
+                                    {userBalance.toLocaleString()}
+                                </span>
+                                <span className="text-[10px] uppercase tracking-[0.2em] text-rp-gold/60 font-black">Aether</span>
+                            </div>
                         </Link>
                     </div>
                 </header>
 
-                {/* Main Gacha Area */}
-                <div className="mx-auto max-w-6xl">
-                    <GachaBanner
-                        pools={pools}
-                        poolItems={poolItems}
-                        userBalance={userBalance}
-                        onSinglePull={handleSinglePull}
-                        onTenPull={handleTenPull}
-                        isPulling={pulling}
-                        className="shadow-[0_0_50px_rgba(196,167,231,0.1)] border-white/5 bg-black/40 backdrop-blur-sm"
-                    />
-                </div>
+                {/* Full-width Gacha Banner - No Container */}
+            </div>
+
+            {/* Banner spans full width outside of container */}
+            <GachaBanner
+                pools={pools}
+                poolItems={poolItems}
+                userBalance={userBalance}
+                onSinglePull={handleSinglePull}
+                onTenPull={handleTenPull}
+                isPulling={pulling}
+            />
+
+            <div className="relative z-10 container mx-auto px-4 py-8 md:px-8 md:py-12">
 
                 {/* Loading / Empty State */}
                 {pools.length === 0 && !gachaError && (

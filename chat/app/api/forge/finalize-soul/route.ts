@@ -5,19 +5,12 @@ import { NextRequest, NextResponse } from "next/server"
 
 export const runtime = "nodejs"
 
-// Rate limiting: max souls per day per user
-const soulCreationCounts = new Map<string, { count: number; resetTime: number }>()
-const MAX_SOULS_PER_DAY = 5
-const DAY_IN_MS = 24 * 60 * 60 * 1000
+import { TIER_CONFIGS } from "@/lib/chat-engine/types"
 
 /**
  * POST /api/forge/finalize-soul
  * 
  * Finalizes soul creation and saves to database
- * Called by the Mother of Souls when the ritual is complete
- * 
- * Request: { name, essence, personality, bond_type, voice_id?, image_url }
- * Response: { persona_id: string, status: 'success' }
  */
 export async function POST(request: NextRequest) {
     try {
@@ -34,24 +27,39 @@ export async function POST(request: NextRequest) {
             )
         }
 
-        // Check rate limit
-        const now = Date.now()
-        const userLimit = soulCreationCounts.get(user.id)
+        // Get user's tier
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('subscription_tier')
+            .eq('id', user.id)
+            .single()
 
-        if (userLimit) {
-            if (now < userLimit.resetTime) {
-                if (userLimit.count >= MAX_SOULS_PER_DAY) {
-                    return NextResponse.json(
-                        { error: `Rate limit exceeded. You can create up to ${MAX_SOULS_PER_DAY} souls per day.` },
-                        { status: 429 }
-                    )
-                }
-            } else {
-                // Reset counter for new day
-                soulCreationCounts.set(user.id, { count: 0, resetTime: now + DAY_IN_MS })
-            }
-        } else {
-            soulCreationCounts.set(user.id, { count: 0, resetTime: now + DAY_IN_MS })
+        const userTier = (profile?.subscription_tier || 'free') as any
+        const tierConfig = TIER_CONFIGS[userTier] || TIER_CONFIGS['free']
+
+        // Check monthly limit
+        const startOfMonth = new Date()
+        startOfMonth.setUTCDate(1)
+        startOfMonth.setUTCHours(0, 0, 0, 0)
+
+        const { count, error: countError } = await supabase
+            .from('personas')
+            .select('*', { count: 'exact', head: true })
+            .eq('owner_id', user.id)
+            .gte('created_at', startOfMonth.toISOString())
+
+        if (countError) {
+            console.error("Count error:", countError)
+        } else if (tierConfig.maxSoulsPerMonth !== -1 && (count || 0) >= tierConfig.maxSoulsPerMonth) {
+            return NextResponse.json(
+                {
+                    error: `Monthly limit reached. Your current tier (${userTier}) allows creating up to ${tierConfig.maxSoulsPerMonth} souls per month.`,
+                    limitReached: true,
+                    max: tierConfig.maxSoulsPerMonth,
+                    current: count
+                },
+                { status: 429 }
+            )
         }
 
         // Parse request body
@@ -155,10 +163,6 @@ export async function POST(request: NextRequest) {
                 { status: 500 }
             )
         }
-
-        // Update rate limit counter
-        const currentLimit = soulCreationCounts.get(user.id)!
-        currentLimit.count++
 
         // Return success
         return NextResponse.json({

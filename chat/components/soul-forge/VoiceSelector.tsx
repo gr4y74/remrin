@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils"
 import { AVAILABLE_VOICES, type VoiceConfig } from "@/lib/voice/config"
 import { speakText } from "@/lib/voice/tts"
 import { IconCheck, IconGenderFemale, IconGenderMale, IconPlayerPlay, IconPlayerStop } from "@tabler/icons-react"
-import { FC, useCallback, useRef, useState } from "react"
+import React, { FC, useCallback, useRef, useState } from "react"
 
 interface VoiceSelectorProps {
     /** Callback when a voice is selected */

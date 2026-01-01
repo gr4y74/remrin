@@ -39,14 +39,6 @@ export default function AdminPage() {
             badge: null
         },
         {
-            title: "Universal Console",
-            description: "Directly edit the AI brain logic (v1/v2)",
-            icon: IconSettings,
-            href: "/admin/universal-console",
-            color: "from-pink-600 to-rose-500",
-            badge: "Advanced"
-        },
-        {
             title: "Content Moderation",
             description: "Review and approve pending Soul submissions",
             icon: IconShield,

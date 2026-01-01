@@ -53,7 +53,7 @@ export abstract class BaseChatProvider implements IChatProvider {
         messages: ChatMessageContent[],
         systemPrompt: string,
         options: ProviderOptions
-    ): AsyncGenerator<string, void, unknown>
+    ): AsyncGenerator<ChatChunk, void, unknown>
 
     /**
      * Estimate token count (rough approximation: ~4 chars per token)
@@ -68,9 +68,9 @@ export abstract class BaseChatProvider implements IChatProvider {
      */
     protected async *parseSSEStream(
         response: Response,
-        extractContent: (data: any) => string | null,
+        extractContent: (data: any) => ChatChunk | null,
         abortSignal?: AbortSignal
-    ): AsyncGenerator<string, void, unknown> {
+    ): AsyncGenerator<ChatChunk, void, unknown> {
         const reader = response.body?.getReader()
         if (!reader) throw new Error('No response body')
 

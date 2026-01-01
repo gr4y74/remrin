@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Brand } from "@/components/ui/brand"
 import { login } from "./actions"
 import { toast } from "sonner"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 
 import { Eye, EyeOff, Loader2 } from "lucide-react"
 import { motion } from "framer-motion"
@@ -18,13 +18,13 @@ import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton"
 export default function LoginForm() {
     const [passwordVisible, setPasswordVisible] = useState(false)
     const [loading, setLoading] = useState(false)
-    const router = useRouter()
-
+    const searchParams = useSearchParams()
+    const redirectTo = searchParams.get("redirect") || undefined
 
     const handleLogin = async (formData: FormData) => {
         setLoading(true)
         try {
-            const result = await login(formData)
+            const result = await login(formData, redirectTo)
             if (result?.error) {
                 toast.error(result.error)
             } else if (result?.redirect) {

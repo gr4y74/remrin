@@ -22,6 +22,7 @@ import { FC, useContext, useState, useMemo } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { TYPOGRAPHY } from "@/lib/design-system"
+import { MOTHER_OF_SOULS_ID } from "@/lib/forge/is-mother-chat"
 
 interface CharacterPanelProps {
     width?: number
@@ -94,13 +95,24 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
         >
             {/* Full-Bleed Hero Image Section - Talkie Style */}
             <div className="relative flex-1 min-h-[45%] max-h-[55%] w-full overflow-hidden">
-                <Image
-                    src={selectedPersona.image_url || "/images/rem_hero.webp"}
-                    alt={selectedPersona.name}
-                    fill
-                    className="object-cover"
-                    priority
-                />
+                {selectedPersona.id === MOTHER_OF_SOULS_ID ? (
+                    <video
+                        src="/images/mother/mos_hero.mp4"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="h-full w-full object-cover"
+                    />
+                ) : (
+                    <Image
+                        src={selectedPersona.image_url || "/images/rem_hero.webp"}
+                        alt={selectedPersona.name}
+                        fill
+                        className="object-cover"
+                        priority
+                    />
+                )}
 
                 {/* Gradient overlay at bottom for text readability */}
                 <div className="absolute inset-0 bg-gradient-to-t from-rp-surface via-transparent to-transparent" />

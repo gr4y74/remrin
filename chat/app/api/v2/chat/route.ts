@@ -16,8 +16,10 @@ import {
     ProviderId
 } from '@/lib/chat-engine/types'
 import { handleApiError } from '@/lib/errors'
-import { CarrotEngine, CarrotPersona } from '@/lib/chat-engine/carrot'
 import { rateLimit } from '@/lib/rate-limit'
+import { isMotherOfSouls } from '@/lib/forge/is-mother-chat'
+import { SOUL_FORGE_TOOLS } from '@/lib/tools/soul-forge-tools'
+import { ToolDescriptor } from '@/lib/chat-engine/types'
 
 export const runtime = 'nodejs' // Use Node.js runtime for streaming
 
@@ -110,9 +112,16 @@ export async function POST(request: NextRequest) {
             preferredProvider as ProviderId | undefined
         )
 
+        // Check if this is the Mother of Souls
+        const isMother = isMotherOfSouls(persona as any)
+        const tools = isMother ? SOUL_FORGE_TOOLS.map(t => ({
+            type: t.type,
+            function: t.function
+        })) : undefined
+
         // Get provider info for logging
         const providerInfo = providerManager.getProviderInfo()
-        console.log(`🚀 [ChatEngine] Request from ${userTier} tier user, using ${providerInfo.name}`)
+        console.log(`🚀 [ChatEngine] Request from ${userTier} tier user, using ${providerInfo.name}${isMother ? ' (Mother Mode)' : ''}`)
 
         // Create streaming response
         const encoder = new TextEncoder()
@@ -132,16 +141,21 @@ export async function POST(request: NextRequest) {
                     for await (const chunk of providerManager.sendMessage(
                         formattedMessages,
                         systemPrompt,
-                        { temperature: 0.7 }
+                        {
+                            temperature: isMother ? 0.8 : 0.7,
+                            tools: tools as ToolDescriptor[]
+                        }
                     )) {
-                        fullContent += chunk // Accumulate
+                        if (chunk.content) fullContent += chunk.content
+
                         // Send chunk as SSE
                         const data = JSON.stringify({
-                            content: chunk,
+                            content: chunk.content,
+                            toolCalls: chunk.toolCalls,
                             provider: providerInfo.id
                         })
                         controller.enqueue(encoder.encode(`data: ${data}\n\n`))
-                        tokenCount += Math.ceil(chunk.length / 4)
+                        tokenCount += Math.ceil((chunk.content?.length || 0) / 4)
                     }
 
                     // Send done signal

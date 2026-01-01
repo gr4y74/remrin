@@ -16,6 +16,7 @@ import { MoodHUD } from './MoodHUD'
 import { MemorySearchModal } from './MemorySearchModal'
 import { UserTier } from '@/lib/chat-engine/types'
 import Image from 'next/image'
+import { MOTHER_OF_SOULS_ID } from '@/lib/forge/is-mother-chat'
 
 interface ChatUIV2Props {
     userId?: string
@@ -23,6 +24,7 @@ interface ChatUIV2Props {
     personaImage?: string
     personaName?: string
     personaSystemPrompt?: string
+    personaIntroMessage?: string
     userTier?: UserTier
     showSoulGallery?: boolean
 }
@@ -252,6 +254,7 @@ export function ChatUIV2({
     personaImage: initialPersonaImage,
     personaName: initialPersonaName,
     personaSystemPrompt: initialPersonaSystemPrompt,
+    personaIntroMessage: initialPersonaIntroMessage,
     userTier = 'free',
     showSoulGallery = false
 }: ChatUIV2Props) {
@@ -260,13 +263,15 @@ export function ChatUIV2({
         image?: string
         name?: string
         systemPrompt?: string
+        introMessage?: string
     } | null>(
         initialPersonaId
             ? {
                 id: initialPersonaId,
                 image: initialPersonaImage,
                 name: initialPersonaName,
-                systemPrompt: initialPersonaSystemPrompt
+                systemPrompt: initialPersonaSystemPrompt,
+                introMessage: initialPersonaIntroMessage
             }
             : null
     )
@@ -275,12 +280,26 @@ export function ChatUIV2({
     const [memorySearchQuery, setMemorySearchQuery] = useState('')
     const [isVisualNovelMode, setIsVisualNovelMode] = useState(false)
 
+    // Sync state with props
+    React.useEffect(() => {
+        if (initialPersonaId) {
+            setSelectedPersona({
+                id: initialPersonaId,
+                image: initialPersonaImage,
+                name: initialPersonaName,
+                systemPrompt: initialPersonaSystemPrompt,
+                introMessage: initialPersonaIntroMessage
+            })
+        }
+    }, [initialPersonaId, initialPersonaImage, initialPersonaName, initialPersonaSystemPrompt, initialPersonaIntroMessage])
+
     const handleSoulSelect = (personaId: string, personaData: any) => {
         setSelectedPersona({
             id: personaId,
             image: personaData.image_url,
             name: personaData.name,
-            systemPrompt: personaData.system_prompt || personaData.description
+            systemPrompt: personaData.system_prompt || personaData.description,
+            introMessage: personaData.intro_message
         })
     }
 
@@ -293,8 +312,10 @@ export function ChatUIV2({
         <>
             <MoodStyles />
             <ChatEngineProvider
+                key={selectedPersona?.id || 'none'}
                 personaId={selectedPersona?.id}
                 initialSystemPrompt={selectedPersona?.systemPrompt}
+                personaIntroMessage={selectedPersona?.introMessage}
                 userTier={userTier}
             >
                 <ChatUIInner

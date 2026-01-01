@@ -16,6 +16,7 @@ export interface TierConfig {
     allowedCapabilities: CapabilityId[]
     rateLimitPerHour: number
     maxContextLength: number
+    maxSoulsPerMonth: number
 }
 
 export const TIER_CONFIGS: Record<UserTier, TierConfig> = {
@@ -24,28 +25,32 @@ export const TIER_CONFIGS: Record<UserTier, TierConfig> = {
         allowedProviders: ['openrouter'], // FREE - no credits needed
         allowedCapabilities: ['basic-search'],
         rateLimitPerHour: 50,
-        maxContextLength: 8000
+        maxContextLength: 8000,
+        maxSoulsPerMonth: 3
     },
     pro: {
         tier: 'pro',
         allowedProviders: ['openrouter', 'deepseek', 'claude'],
         allowedCapabilities: ['basic-search', 'full-search', 'file-upload'],
         rateLimitPerHour: 200,
-        maxContextLength: 32000
+        maxContextLength: 32000,
+        maxSoulsPerMonth: 20
     },
     premium: {
         tier: 'premium',
         allowedProviders: ['openrouter', 'deepseek', 'claude', 'gemini'],
         allowedCapabilities: ['basic-search', 'full-search', 'file-upload', 'reasoning'],
         rateLimitPerHour: 500,
-        maxContextLength: 128000
+        maxContextLength: 128000,
+        maxSoulsPerMonth: 100
     },
     enterprise: {
         tier: 'enterprise',
         allowedProviders: ['openrouter', 'deepseek', 'claude', 'gemini', 'custom'],
         allowedCapabilities: ['basic-search', 'full-search', 'file-upload', 'reasoning', 'custom-api'],
         rateLimitPerHour: -1, // Unlimited
-        maxContextLength: 200000
+        maxContextLength: 200000,
+        maxSoulsPerMonth: -1 // Unlimited
     }
 }
 
@@ -135,7 +140,7 @@ export interface CapabilityConfig {
 // Messages
 // ============================================================================
 
-export type MessageRole = 'user' | 'assistant' | 'system'
+export type MessageRole = 'user' | 'assistant' | 'system' | 'tool'
 
 export interface ChatMessageContent {
     role: MessageRole
@@ -147,7 +152,32 @@ export interface ChatMessageContent {
         tokensUsed?: number
         searchResults?: SearchResult[]
         files?: FileAttachment[]
+        toolCalls?: ToolCall[]
+        toolResult?: any
     }
+}
+
+export interface ToolDescriptor {
+    type: 'function'
+    function: {
+        name: string
+        description?: string
+        parameters: any
+    }
+}
+
+export interface ToolCall {
+    id: string
+    type: 'function'
+    function: {
+        name: string
+        arguments: string
+    }
+}
+
+export interface ToolResponse {
+    tool_call_id: string
+    content: string
 }
 
 export interface SearchResult {
@@ -199,6 +229,12 @@ export interface ChatResponse {
     searchResults?: SearchResult[]
 }
 
+export interface ChatChunk {
+    content?: string
+    toolCalls?: ToolCall[]
+    done?: boolean
+}
+
 // ============================================================================
 // Provider Interface
 // ============================================================================
@@ -214,7 +250,7 @@ export interface IChatProvider {
         messages: ChatMessageContent[],
         systemPrompt: string,
         options: ProviderOptions
-    ): AsyncGenerator<string, void, unknown>
+    ): AsyncGenerator<ChatChunk, void, unknown>
 
     /**
      * Check if this provider is available (API key exists, enabled, etc.)
@@ -232,6 +268,7 @@ export interface ProviderOptions {
     maxTokens?: number
     model?: string
     abortSignal?: AbortSignal
+    tools?: ToolDescriptor[]
 }
 
 // ============================================================================

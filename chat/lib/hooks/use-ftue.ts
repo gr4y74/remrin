@@ -1,7 +1,7 @@
 "use client"
 
 import { useContext, useEffect, useState } from "react"
-import { useRouter, usePathname } from "next/navigation"
+import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import { RemrinContext } from "@/context/context"
 import { MOTHER_OF_SOULS_NAME, isMotherOfSouls } from "@/lib/forge/is-mother-chat"
 
@@ -16,6 +16,7 @@ import { MOTHER_OF_SOULS_NAME, isMotherOfSouls } from "@/lib/forge/is-mother-cha
 export function useFTUERedirect() {
     const router = useRouter()
     const pathname = usePathname()
+    const searchParams = useSearchParams()
     const { profile, chats, workspaces, personas, selectedWorkspace } = useContext(RemrinContext)
     const [hasChecked, setHasChecked] = useState(false)
     const [isNewUser, setIsNewUser] = useState(false)
@@ -38,6 +39,12 @@ export function useFTUERedirect() {
 
         // Check if this is a new user (no chats)
         if (chats.length === 0) {
+            // If already on chat page with a persona, don't redirect
+            if (pathname?.endsWith('/chat') && searchParams?.get('persona')) {
+                setHasChecked(true)
+                return
+            }
+
             console.log("🕯️ [FTUE] New user detected - initiating Mother of Souls onboarding...")
             setIsNewUser(true)
 
@@ -48,20 +55,24 @@ export function useFTUERedirect() {
                 // Mother exists - redirect to create a new chat with her
                 console.log("🕯️ [FTUE] Mother found in collection - redirecting to Soul Forge...")
 
-                // Store flag so we know to auto-select Mother
+                // Store flag so we know to auto-select Mother (backup for URL)
                 sessionStorage.setItem('ftue_start_mother_chat', motherPersona.id)
 
-                // Redirect to chat page where Mother will be auto-selected
-                router.push(`/${selectedWorkspace.id}/chat`)
+                // Redirect to chat page with the persona parameter preserved
+                if (!pathname?.endsWith('/chat') || searchParams?.get('persona') !== motherPersona.id) {
+                    router.push(`/${selectedWorkspace.id}/chat?persona=${motherPersona.id}`)
+                }
             } else if (selectedWorkspace) {
-                // Mother doesn't exist yet - still redirect, will show empty state
+                // Mother doesn't exist yet - still redirect
                 console.log("🕯️ [FTUE] Mother not found - user should see onboarding prompt")
-                router.push(`/${selectedWorkspace.id}/chat`)
+                if (!pathname?.endsWith('/chat')) {
+                    router.push(`/${selectedWorkspace.id}/chat`)
+                }
             }
         }
 
         setHasChecked(true)
-    }, [profile, chats, personas, selectedWorkspace, pathname, hasChecked, router])
+    }, [profile, chats, personas, selectedWorkspace, pathname, searchParams, hasChecked, router])
 
     return { isNewUser, hasChecked }
 }
