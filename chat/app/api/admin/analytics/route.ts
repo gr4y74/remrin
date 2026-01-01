@@ -168,11 +168,31 @@ export async function GET(request: NextRequest) {
             value
         }))
 
+        // 7. Soul Economy Stats
+        // Fetch total pulls and aether spent
+        const { data: pullStats, error: pullError } = await supabase
+            .from("user_pulls")
+            .select("aether_spent, rarity")
+
+        if (pullError) {
+            console.warn("Error fetching pull stats:", pullError)
+            // Non-blocking error
+        }
+
+        const totalSummons = pullStats?.length || 0
+        const totalAetherSpent = pullStats?.reduce((sum, p) => sum + (p.aether_spent || 0), 0) || 0
+        const legendaryCount = pullStats?.filter(p => p.rarity === 'legendary').length || 0
+
         const result = {
             metrics: {
                 totalChats,
                 totalMessages,
-                activeUsers: activeUsers || 0
+                activeUsers: activeUsers || 0,
+                economy: {
+                    totalSummons,
+                    totalAetherSpent,
+                    legendaryCount
+                }
             },
             topSouls: topSouls.map((ts: any) => ({
                 id: ts.personas?.id,

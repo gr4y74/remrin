@@ -103,7 +103,7 @@ export default async function MomentsPage({ searchParams }: MomentsPageProps) {
     return (
         <div className="min-h-screen bg-rp-base">
             {/* Header */}
-            <header className="border-b border-rp-highlight-med bg-rp-base/80 backdrop-blur-xl">
+            <header className="border-b border-white/5 bg-black/50 backdrop-blur-xl sticky top-0 z-40">
                 <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
                     <h1 className={`${TYPOGRAPHY.heading.h1} text-rp-text`}>
                         {personaName ? `${personaName}'s Moments` : "Moments"}
@@ -119,7 +119,7 @@ export default async function MomentsPage({ searchParams }: MomentsPageProps) {
                     {personaId && (
                         <a
                             href="/moments"
-                            className="mt-4 inline-flex items-center gap-2 rounded-full bg-rp-surface px-4 py-2 text-sm text-rp-subtle transition-colors hover:bg-rp-overlay"
+                            className="mt-4 inline-flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm text-rp-text/70 transition-colors hover:bg-white/10 border border-white/5"
                         >
                             <span>Showing: {personaName}</span>
                             <span className="text-rp-muted">×</span>

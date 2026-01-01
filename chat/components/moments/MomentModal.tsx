@@ -96,7 +96,7 @@ export function MomentModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent className="border-rp-muted/20 bg-rp-base/95 flex max-h-[95vh] max-w-5xl flex-col gap-0 overflow-hidden p-0 backdrop-blur-xl sm:rounded-2xl">
+            <DialogContent className="border-white/10 bg-black/80 flex max-h-[95vh] max-w-5xl flex-col gap-0 overflow-hidden p-0 backdrop-blur-2xl sm:rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.5)]">
                 <VisuallyHidden>
                     <DialogTitle>Moment by {moment.persona.name}</DialogTitle>
                 </VisuallyHidden>

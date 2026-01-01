@@ -40,7 +40,7 @@ export function EtherealCard({
 
     return (
         <ElectricCard rarity={rarity} onClick={onClick} className={className}>
-            <div className="relative aspect-[3/4] w-full overflow-hidden rounded-xl">
+            <div className="group relative aspect-[3/4] w-full overflow-hidden rounded-xl">
                 {/* Image */}
                 <div className="absolute inset-0">
                     {imageUrl ? (
@@ -60,8 +60,6 @@ export function EtherealCard({
                     )}
                 </div>
 
-                {/* Gradient overlay */}
-                <div className="from-rp-base/90 via-rp-base/20 absolute inset-0 bg-gradient-to-t to-transparent" />
 
                 {/* Badges */}
                 <div className="absolute left-3 top-3 flex gap-2">
@@ -94,13 +92,17 @@ export function EtherealCard({
 
                 {/* Content */}
                 <div className="absolute inset-x-0 bottom-0 p-4">
-                    <h3 className="mb-1 truncate text-lg font-bold text-white">
+                    <h3 className="mb-1 truncate text-lg font-bold text-white" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.5)' }}>
                         {name}
                     </h3>
+
+                    {/* Description - visible on hover */}
                     {description && (
-                        <p className="mb-3 line-clamp-2 text-xs text-white/60">
-                            {description}
-                        </p>
+                        <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <p className="mb-3 line-clamp-3 text-sm text-white/90 bg-black/40 backdrop-blur-sm rounded-lg p-2">
+                                {description}
+                            </p>
+                        </div>
                     )}
 
                     {/* Stats */}

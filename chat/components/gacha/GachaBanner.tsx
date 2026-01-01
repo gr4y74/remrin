@@ -7,7 +7,9 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { IconChevronLeft, IconChevronRight, IconDiamond, IconSparkles, IconStar } from "@tabler/icons-react"
 import { GachaPool, GachaPoolItem, SINGLE_PULL_COST, TEN_PULL_COST, RARITY_COLORS } from "@/lib/hooks/use-gacha"
+
 import { TYPOGRAPHY } from "@/lib/design-system"
+import { useSFX } from "@/lib/hooks/use-sfx"
 
 interface GachaBannerProps {
     pools: GachaPool[]
@@ -31,7 +33,9 @@ export function GachaBanner({
     className
 }: GachaBannerProps) {
     const [currentIndex, setCurrentIndex] = useState(0)
+
     const carouselRef = useRef<HTMLDivElement>(null)
+    const { playClick, playHover, playSuccess } = useSFX()
 
     const currentPool = pools[currentIndex]
     const currentItems = currentPool ? (poolItems[currentPool.id] || []) : []
@@ -45,10 +49,12 @@ export function GachaBanner({
     }, [currentPool, onPoolChange])
 
     const goToPrevious = () => {
+        playClick()
         setCurrentIndex(prev => (prev === 0 ? pools.length - 1 : prev - 1))
     }
 
     const goToNext = () => {
+        playClick()
         setCurrentIndex(prev => (prev === pools.length - 1 ? 0 : prev + 1))
     }
 
@@ -94,10 +100,6 @@ export function GachaBanner({
                         </div>
                     )}
 
-                    {/* Gradient Overlays */}
-                    <div className="from-rp-base/90 via-rp-base/40 absolute inset-0 bg-gradient-to-t to-transparent" />
-                    <div className="from-rp-base/60 to-rp-base/60 absolute inset-0 bg-gradient-to-r via-transparent" />
-
                     {/* Banner Content */}
                     <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">
                         {/* Pool Name & Description */}
@@ -124,7 +126,7 @@ export function GachaBanner({
                                         <div
                                             key={item.id}
                                             className={cn(
-                                                "relative size-16 shrink-0 overflow-hidden rounded-xl md:size-20",
+                                                "relative size-[200px] shrink-0 overflow-hidden rounded-xl",
                                                 "border-2 transition-all duration-300 hover:scale-105",
                                                 "shadow-lg"
                                             )}
@@ -148,7 +150,7 @@ export function GachaBanner({
                                                 </div>
                                             )}
                                             <Badge
-                                                className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full px-1.5 py-0 text-xs capitalize"
+                                                className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full px-2 py-1 text-sm capitalize"
                                                 style={{
                                                     backgroundColor: RARITY_COLORS[item.rarity].primary,
                                                     color: item.rarity === "legendary" ? "var(--rp-base)" : "var(--rp-text)"
@@ -168,7 +170,10 @@ export function GachaBanner({
                             <Button
                                 size="lg"
                                 disabled={!canAffordSingle || isPulling}
-                                onClick={() => onSinglePull(currentPool.id)}
+                                onClick={() => {
+                                    playSuccess()
+                                    onSinglePull(currentPool.id)
+                                }}
                                 className={cn(
                                     "relative overflow-hidden rounded-full px-6 py-3 font-bold",
                                     "from-rp-iris to-rp-pine bg-gradient-to-r",
@@ -191,7 +196,10 @@ export function GachaBanner({
                             <Button
                                 size="lg"
                                 disabled={!canAffordTen || isPulling}
-                                onClick={() => onTenPull(currentPool.id)}
+                                onClick={() => {
+                                    playSuccess()
+                                    onTenPull(currentPool.id)
+                                }}
                                 className={cn(
                                     "relative overflow-hidden rounded-full px-6 py-3 font-bold",
                                     "from-rp-gold to-rp-rose bg-gradient-to-r",

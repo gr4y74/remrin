@@ -8,12 +8,15 @@
 
 import React, { useState, useRef, KeyboardEvent } from 'react'
 import { useChatEngine, useMood } from './ChatEngine'
-import { IconSend, IconPlayerStop } from '@tabler/icons-react'
+import { IconSend, IconPlayerStop, IconPaperclip, IconMicrophone } from '@tabler/icons-react'
+import { useFileHandler } from './hooks/use-file-handler'
+import { toast } from 'sonner' // Assuming sonner is used for toasts based on other files
 
 interface ChatInputProps {
     placeholder?: string
     disabled?: boolean
     onMemorySearch?: (query: string) => void
+    minimal?: boolean
 }
 
 export function ChatInput({
@@ -23,8 +26,11 @@ export function ChatInput({
 }: ChatInputProps) {
     const [input, setInput] = useState('')
     const textareaRef = useRef<HTMLTextAreaElement>(null)
+    const fileInputRef = useRef<HTMLInputElement>(null)
     const { sendMessage, stopGeneration, isGenerating } = useChatEngine()
     const moodState = useMood()
+    const { handleSelectDeviceFile, filesToAccept } = useFileHandler()
+    const [isListening, setIsListening] = useState(false)
 
     // Check if we should show excited pulse
     const isExcited = moodState.mood === 'excited'
@@ -70,8 +76,93 @@ export function ChatInput({
         textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px'
     }
 
+    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            handleSelectDeviceFile(e.target.files[0])
+        }
+        // Reset input so same file can be selected again
+        e.target.value = ''
+    }
+
+    const toggleVoiceInput = () => {
+        if (isListening) {
+            // Stop listening logic would go here if we had a sustained listener
+            // For simple web speech API, it usually stops on end
+            setIsListening(false)
+            return
+        }
+
+        if (!('webkitSpeechRecognition' in window)) {
+            toast.error("Voice input is not supported in this browser.")
+            return
+        }
+
+        const recognition = new (window as any).webkitSpeechRecognition()
+        recognition.continuous = false
+        recognition.interimResults = false
+        recognition.lang = 'en-US'
+
+        recognition.onstart = () => {
+            setIsListening(true)
+        }
+
+        recognition.onresult = (event: any) => {
+            const transcript = event.results[0][0].transcript
+            setInput(prev => prev + (prev ? ' ' : '') + transcript)
+            // Resize textarea after voice input
+            setTimeout(() => {
+                if (textareaRef.current) {
+                    textareaRef.current.style.height = 'auto'
+                    textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 200) + 'px'
+                }
+            }, 0)
+        }
+
+        recognition.onerror = (event: any) => {
+            console.error('Voice error:', event.error)
+            setIsListening(false)
+        }
+
+        recognition.onend = () => {
+            setIsListening(false)
+        }
+
+        recognition.start()
+    }
+
     return (
         <div className="relative flex w-full items-end gap-2">
+            <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept={filesToAccept}
+                onChange={handleFileSelect}
+            />
+
+            {/* Left Actions: File Upload & Voice */}
+            <div className="flex gap-1 pb-1">
+                <button
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={disabled || isGenerating}
+                    className="flex h-10 w-10 items-center justify-center rounded-xl text-rp-subtle hover:bg-rp-overlay hover:text-rp-text disabled:opacity-50 transition-colors"
+                    title="Upload file"
+                >
+                    <IconPaperclip size={20} />
+                </button>
+                <button
+                    onClick={toggleVoiceInput}
+                    disabled={disabled || isGenerating}
+                    className={`flex h-10 w-10 items-center justify-center rounded-xl transition-colors disabled:opacity-50 ${isListening
+                        ? 'bg-rp-love/20 text-rp-love animate-pulse'
+                        : 'text-rp-subtle hover:bg-rp-overlay hover:text-rp-text'
+                        }`}
+                    title="Voice input"
+                >
+                    <IconMicrophone size={20} />
+                </button>
+            </div>
+
             {/* Input Container */}
             <div className="relative flex-1 overflow-hidden rounded-2xl border border-rp-overlay bg-rp-surface/50 backdrop-blur-md transition-all duration-200 focus-within:border-rp-iris/50 focus-within:bg-rp-surface focus-within:shadow-[0_0_20px_-5px_rgba(196,167,231,0.1)] focus-within:ring-1 focus-within:ring-rp-iris/30">
                 <textarea

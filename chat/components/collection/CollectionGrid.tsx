@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { IconSearch, IconSortAscending, IconSortDescending } from "@tabler/icons-react"
-import { CollectionCard } from "./CollectionCard"
+import { UnifiedCard } from "@/components/cards/UnifiedCard"
 import { CollectionSoul, Rarity } from "@/hooks/use-collection"
 
 interface CollectionGridProps {
@@ -209,11 +209,20 @@ export function CollectionGrid({
             ) : (
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
                     {filteredSouls.map((soul, index) => (
-                        <CollectionCard
+                        <UnifiedCard
                             key={soul.personaId}
-                            soul={soul}
+                            variant="collection"
+                            data={{
+                                id: soul.personaId, // using personaId as id for the card
+                                name: soul.name,
+                                imageUrl: soul.imageUrl,
+                                rarity: soul.rarity,
+                                isOwned: soul.isOwned,
+                                pullCount: soul.pullCount,
+                                personaId: soul.personaId
+                            }}
                             animationIndex={index}
-                            showLocked={activeFilter === "all" || activeFilter === soul.rarity}
+                            className={activeFilter !== "all" && activeFilter !== soul.rarity ? "hidden" : ""}
                         />
                     ))}
                 </div>

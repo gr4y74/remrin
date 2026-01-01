@@ -21,10 +21,10 @@ export const getWorkspaceById = async (workspaceId: string) => {
     .from("workspaces")
     .select("*")
     .eq("id", workspaceId)
-    .single()
+    .maybeSingle()
 
   if (!workspace) {
-    throw new Error(error.message)
+    throw new Error(error?.message || "Workspace not found")
   }
 
   return workspace

@@ -37,7 +37,7 @@ export function DraggableGallery({
     const [expandedItem, setExpandedItem] = useState<GalleryItem | null>(null)
     const [config, setConfig] = useState<GridConfig>({
         columns: 6,
-        gap: 16
+        gap: 32  // Default to 32px
     })
 
     // Click to expand flow
@@ -105,8 +105,8 @@ export function DraggableGallery({
                     className={cn(
                         "fixed bottom-6 right-6 z-40 rounded-full p-3 shadow-lg transition-all",
                         showControls
-                            ? "bg-rp-iris text-rp-base"
-                            : "bg-rp-base/60 border-rp-muted text-rp-subtle hover:text-rp-text border backdrop-blur-md"
+                            ? "bg-rp-iris text-white scale-110"
+                            : "bg-rp-surface text-rp-iris border-2 border-rp-iris hover:bg-rp-iris hover:text-white"
                     )}
                     title="Grid Settings"
                 >
@@ -139,7 +139,7 @@ export function DraggableGallery({
             {/* Expanded view overlay - PORTAL-LIKE: fixed with highest z-index */}
             {expandedItem && (
                 <div
-                    className="bg-rp-base/90 fixed inset-0 z-[9999] flex items-center justify-center backdrop-blur-sm"
+                    className="bg-rp-base/90 fixed inset-0 z-[10000] flex items-center justify-center backdrop-blur-sm"
                     onClick={handleCloseExpanded}
                     style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
                 >

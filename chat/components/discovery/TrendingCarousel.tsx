@@ -98,7 +98,7 @@ export function TrendingCarousel({ personas }: TrendingCarouselProps) {
                     >
                         <div
                             className={cn(
-                                "border-rp-highlight-low bg-rp-surface group relative w-72 overflow-hidden rounded-2xl border transition-all duration-300",
+                                "border-white/5 bg-rp-surface group relative w-72 overflow-hidden rounded-2xl border transition-all duration-300",
                                 "hover:border-rp-gold/30 hover:shadow-rp-gold/20 hover:scale-[1.02] hover:shadow-lg"
                             )}
                         >

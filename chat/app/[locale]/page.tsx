@@ -2,9 +2,10 @@
 
 import { useEffect, useState, useContext, useMemo } from "react"
 import { useRouter } from "next/navigation"
+import { useTheme } from "next-themes"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
-import { HeroCarousel, DraggableGallery } from "@/components/discovery"
+import { FeaturedCarousel, DraggableGallery } from "@/components/discovery"
 import { PageTemplate, Footer, HeroHeader } from "@/components/layout"
 import { RemrinContext } from "@/context/context"
 import { IconSparkles, IconDiamond, IconArrowRight } from "@tabler/icons-react"
@@ -24,35 +25,20 @@ interface Persona {
 
 const SIDEBAR_WIDTH = 350
 
-// Demo names for generating extra cards
-const DEMO_NAMES = [
-  "Crystal Moonweaver", "Shadow Drifter", "Ember Phoenix", "Frost Whisper",
-  "Storm Caller", "Velvet Dream", "Thunder Strike", "Mystic Rose",
-  "Dark Knight", "Silver Star", "Golden Sun", "Ruby Heart",
-  "Sapphire Wave", "Jade Dragon", "Onyx Shadow", "Pearl Mist",
-  "Diamond Edge", "Amethyst Glow", "Topaz Flash", "Opal Shimmer",
-  "Celestia Dawn", "Midnight Raven", "Aurora Sky", "Crimson Wolf",
-  "Emerald Forest", "Violet Storm", "Azure Wind", "Scarlet Flame"
-]
+// Demo content removed
 
-const DEMO_DESCRIPTIONS = [
-  "A mysterious wanderer with ancient wisdom",
-  "Master of the arcane arts",
-  "Guardian of the eternal flame",
-  "Keeper of forgotten secrets",
-  "Born from starlight and shadow",
-  "Traveler between worlds",
-  "Wielder of elemental power",
-  "Protector of the innocent"
-]
 
 export default function HomePage() {
   const router = useRouter()
   const { workspaces, profile } = useContext(RemrinContext)
+  const { resolvedTheme } = useTheme()
   const [personas, setPersonas] = useState<Persona[]>([])
   const [loading, setLoading] = useState(true)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [defaultWorkspaceId, setDefaultWorkspaceId] = useState<string | null>(null)
+
+  // Theme-aware heading color: #faf4ed for dark, #191724 for light
+  const headingColor = resolvedTheme === "light" ? "#191724" : "#faf4ed"
 
   // Get default workspace when available
   useEffect(() => {
@@ -125,70 +111,48 @@ export default function HomePage() {
     fetchPersonas()
   }, [])
 
-  // Generate demo cards to fill the gallery
+  // Featured characters - same as carousel, all legendary
+  const featuredCharacters = [
+    { id: "kess", name: "Kess", image_url: "/images/featured/Kess.png" },
+    { id: "oma", name: "Oma", image_url: "/images/featured/Oma.png" },
+    { id: "silas", name: "Silas", image_url: "/images/featured/Silas.png" },
+    { id: "squee", name: "Squee", image_url: "/images/featured/Squee.png" },
+    { id: "sui", name: "Sui", image_url: "/images/featured/Sui.png" },
+    { id: "volt", name: "Volt", image_url: "/images/featured/Volt.png" },
+    { id: "boon", name: "Boon", image_url: "/images/featured/boon.png" },
+    { id: "cupcake", name: "Cupcake", image_url: "/images/featured/cupcake.png" },
+    { id: "fello-fello", name: "Fello Fello", image_url: "/images/featured/fello_fello.png" },
+    { id: "fen", name: "Fen", image_url: "/images/featured/fen.png" },
+    { id: "fenris", name: "Fenris", image_url: "/images/featured/fenris.png" },
+    { id: "kael", name: "Kael", image_url: "/images/featured/kael.png" },
+    { id: "kilo", name: "Kilo", image_url: "/images/featured/kilo.png" },
+    { id: "krill", name: "Krill", image_url: "/images/featured/krill.png" },
+    { id: "meek", name: "Meek", image_url: "/images/featured/meek.png" },
+    { id: "surge", name: "Surge", image_url: "/images/featured/surge.png" },
+    { id: "vorath", name: "Vorath", image_url: "/images/featured/vorath.png" }
+  ]
+
+  // Generate gallery items - all legendary, no demo stats
   const galleryItems = useMemo(() => {
-    if (personas.length >= 20) return personas
-
-    // Start with real personas
-    const items = [...personas]
-
-    // Add demo cards to reach at least 30 items
-    const demoCount = Math.max(30 - personas.length, 0)
-    for (let i = 0; i < demoCount; i++) {
-      const rarityRoll = Math.random()
-      const rarity: "common" | "rare" | "epic" | "legendary" =
-        rarityRoll < 0.02 ? "legendary" :
-          rarityRoll < 0.10 ? "epic" :
-            rarityRoll < 0.30 ? "rare" : "common"
-
-      items.push({
-        id: `demo-${i}`,
-        name: DEMO_NAMES[i % DEMO_NAMES.length],
-        description: DEMO_DESCRIPTIONS[i % DEMO_DESCRIPTIONS.length],
-        image_url: null, // Will show placeholder
-        rarity,
-        message_count: Math.floor(Math.random() * 50000),
-        follower_count: Math.floor(Math.random() * 10000)
-      })
-    }
-
-    return items
-  }, [personas])
+    return featuredCharacters.map(char => ({
+      ...char,
+      description: null,
+      rarity: "legendary" as const,
+      message_count: undefined,
+      follower_count: undefined
+    }))
+  }, [])
 
   // Generate hero carousel items (mix of real + demo)
+  // Return only real featured personas
   const carouselItems = useMemo(() => {
-    const featured = personas.filter(p => p.is_featured)
-    const items = featured.length > 0 ? featured : personas.slice(0, 3)
-
-    // Add demo items to reach 8 total
-    const demoCount = Math.max(8 - items.length, 0)
-    for (let i = 0; i < demoCount; i++) {
-      items.push({
-        id: `demo-carousel-${i}`,
-        name: DEMO_NAMES[(i + 10) % DEMO_NAMES.length],
-        description: DEMO_DESCRIPTIONS[(i + 3) % DEMO_DESCRIPTIONS.length],
-        image_url: null,
-        rarity: i === 0 ? "legendary" as const : i < 2 ? "epic" as const : "rare" as const,
-        is_featured: true,
-        message_count: Math.floor(Math.random() * 100000),
-        follower_count: Math.floor(Math.random() * 50000)
-      })
-    }
-
-    return items.slice(0, 8)
+    return personas.filter(p => p.is_featured).slice(0, 8)
   }, [personas])
 
   const handlePersonaClick = (persona: { id: string }) => {
     // Only navigate for real personas (not demo)
-    if (persona.id.startsWith("demo-")) {
-      // Demo persona - could show a modal or redirect to signup
-      if (!isLoggedIn) {
-        router.push("/login")
-      } else {
-        router.push("/studio")
-      }
-      return
-    }
+    // Only navigate for real personas
+
 
     // Navigate to chat with proper workspace
     if (defaultWorkspaceId) {
@@ -219,39 +183,48 @@ export default function HomePage() {
       fullBleed
       className="text-rp-text"
     >
-      {/* Ethereal background */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute left-1/4 top-0 size-[600px] rounded-full bg-purple-500/5 blur-[120px]" />
-        <div className="absolute right-1/4 top-1/3 size-[500px] rounded-full bg-pink-500/5 blur-[100px]" />
-        <div className="absolute bottom-0 left-1/2 h-[400px] w-[800px] -translate-x-1/2 rounded-full bg-amber-500/5 blur-[150px]" />
-      </div>
+      {/* Clean background - no gradients */}
 
-      {/* Hero Section with Carousel */}
-      <section className="relative z-10 mt-8">
+      {/* Featured Souls Section with 3D Carousel */}
+      <section className="relative mt-8">
         <div className="mb-4 px-6 text-center">
-          <h2 className="font-tiempos-headline inline-flex items-center gap-2 text-lg font-semibold text-rp-text">
-            <IconSparkles size={20} className="text-amber-400" />
+          <h2 className="font-tiempos-headline inline-flex items-center gap-2 font-semibold" style={{ fontSize: '40px', color: headingColor }}>
+            <IconSparkles size={24} className="text-amber-400" />
             Featured Souls
+            <IconSparkles size={24} className="text-amber-400" />
           </h2>
         </div>
-        <HeroCarousel
-          items={carouselItems.map(p => ({
-            id: p.id,
-            name: p.name,
-            description: p.description,
-            imageUrl: p.image_url,
-            rarity: p.rarity,
-            isFeatured: true
-          }))}
-          onItemClick={handlePersonaClick}
+        <FeaturedCarousel
+          characters={[
+            { id: "kess", name: "Kess", imageUrl: "/images/featured/Kess.png" },
+            { id: "oma", name: "Oma", imageUrl: "/images/featured/Oma.png" },
+            { id: "silas", name: "Silas", imageUrl: "/images/featured/Silas.png" },
+            { id: "squee", name: "Squee", imageUrl: "/images/featured/Squee.png" },
+            { id: "sui", name: "Sui", imageUrl: "/images/featured/Sui.png" },
+            { id: "volt", name: "Volt", imageUrl: "/images/featured/Volt.png" },
+            { id: "boon", name: "Boon", imageUrl: "/images/featured/boon.png" },
+            { id: "cupcake", name: "Cupcake", imageUrl: "/images/featured/cupcake.png" },
+            { id: "fello-fello", name: "Fello Fello", imageUrl: "/images/featured/fello_fello.png" },
+            { id: "fen", name: "Fen", imageUrl: "/images/featured/fen.png" },
+            { id: "fenris", name: "Fenris", imageUrl: "/images/featured/fenris.png" },
+            { id: "kael", name: "Kael", imageUrl: "/images/featured/kael.png" },
+            { id: "kilo", name: "Kilo", imageUrl: "/images/featured/kilo.png" },
+            { id: "krill", name: "Krill", imageUrl: "/images/featured/krill.png" },
+            { id: "meek", name: "Meek", imageUrl: "/images/featured/meek.png" },
+            { id: "surge", name: "Surge", imageUrl: "/images/featured/surge.png" },
+            { id: "vorath", name: "Vorath", imageUrl: "/images/featured/vorath.png" }
+          ]}
+          onCharacterClick={handlePersonaClick}
         />
       </section>
 
       {/* Main Gallery */}
-      <section className="relative z-10 mt-8">
+      <section className="relative mt-8">
         <div className="mb-4 flex flex-col items-center gap-2 px-6">
-          <h2 className="font-tiempos-headline text-lg font-semibold text-rp-iris">
+          <h2 className="font-tiempos-headline font-semibold inline-flex items-center gap-2" style={{ fontSize: '40px', color: headingColor }}>
+            <IconSparkles size={24} className="text-purple-400" />
             Explore Souls
+            <IconSparkles size={24} className="text-purple-400" />
           </h2>
           <Link
             href="/discover"
@@ -277,7 +250,7 @@ export default function HomePage() {
       </section>
 
       {/* Quick Actions Section */}
-      <section className="relative z-10 mt-8 border-t border-rp-highlight-med bg-rp-surface dark:bg-rp-base py-12">
+      <section className="relative mt-8 border-t border-rp-highlight-med bg-rp-surface dark:bg-rp-base py-12">
         <div className="mx-auto grid max-w-4xl grid-cols-1 gap-6 px-6 md:grid-cols-3">
           <Link
             href="/summon"

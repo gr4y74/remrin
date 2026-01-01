@@ -14,21 +14,27 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { oneDark } from 'react-syntax-highlighter/dist/cjs/styles/prism'
-import { IconUser, IconRobot, IconCopy, IconCheck } from '@tabler/icons-react'
+import { IconUser, IconRobot, IconCopy, IconCheck, IconRotate2 } from '@tabler/icons-react'
+
 import { ThinkingIndicator } from './ThinkingIndicator'
+import { StartSpeakingButton } from "@/components/voice/StartSpeakingButton"
 
 interface ChatMessageProps {
     message: ChatMessageContent
     personaImage?: string
     personaName?: string
     isStreaming?: boolean
+    onRewind?: () => void
+    isVisualNovel?: boolean
 }
 
 export const ChatMessage = memo(function ChatMessage({
     message,
     personaImage,
     personaName,
-    isStreaming = false
+    isStreaming = false,
+    onRewind,
+    isVisualNovel = false
 }: ChatMessageProps) {
     const [copied, setCopied] = useState(false)
     const [displayedContent, setDisplayedContent] = useState('')
@@ -101,8 +107,10 @@ export const ChatMessage = memo(function ChatMessage({
 
     return (
         <div
-            className={`group flex animate-in fade-in slide-in-from-bottom-2 duration-300 gap-4 px-4 py-6 md:px-8 ${isUser ? 'bg-transparent' : 'bg-rp-surface/20'
-                }`}
+            className={`group flex animate-in fade-in slide-in-from-bottom-2 duration-300 gap-4 px-4 py-6 md:px-8 
+                ${isUser ? 'bg-transparent' : 'bg-rp-surface/20'}
+                ${isVisualNovel && isUser ? 'opacity-50 hover:opacity-100 transition-opacity' : ''}
+            `}
         >
             {/* Avatar */}
             <div className="flex-shrink-0">
@@ -228,22 +236,45 @@ export const ChatMessage = memo(function ChatMessage({
 
                     {/* Copy button for assistant messages */}
                     {!isUser && message.content && (
-                        <button
-                            onClick={handleCopy}
-                            className="mt-2 flex items-center gap-1 text-xs text-rp-muted opacity-0 transition-opacity group-hover:opacity-100 hover:text-rp-text"
-                        >
-                            {copied ? (
-                                <>
-                                    <IconCheck size={14} />
-                                    <span>Copied!</span>
-                                </>
-                            ) : (
-                                <>
-                                    <IconCopy size={14} />
-                                    <span>Copy</span>
-                                </>
+                        <div className="mt-2 flex items-center gap-3 opacity-0 transition-opacity group-hover:opacity-100">
+                            {/* Copy Button */}
+                            <button
+                                onClick={handleCopy}
+                                className="flex items-center gap-1 text-xs text-rp-muted hover:text-rp-text transition-colors"
+                            >
+                                {copied ? (
+                                    <>
+                                        <IconCheck size={14} />
+                                        <span>Copied</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <IconCopy size={14} />
+                                        <span>Copy</span>
+                                    </>
+                                )}
+                            </button>
+
+                            {/* Rewind Button */}
+                            {onRewind && (
+                                <button
+                                    onClick={onRewind}
+                                    className="flex items-center gap-1 text-xs text-rp-muted hover:text-rp-love transition-colors"
+                                    title="Rewind to here"
+                                >
+                                    <IconRotate2 size={14} />
+                                    <span>Rewind</span>
+                                </button>
                             )}
-                        </button>
+
+
+                            {/* TTS Button */}
+                            <div className="h-4 w-px bg-rp-muted/20" /> {/* Divider */}
+                            <StartSpeakingButton
+                                text={message.content}
+                                className="h-4 w-4 text-rp-muted hover:text-rp-iris hover:bg-transparent p-0"
+                            />
+                        </div>
                     )}
                 </div>
             </div>

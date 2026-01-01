@@ -66,7 +66,7 @@ export function MinimalSidebar() {
         >
             {/* Logo Container - Dual-logo crossfade */}
             <div className="border-rp-muted/20 relative flex h-16 shrink-0 items-center justify-center overflow-hidden border-b">
-                <div className="flex items-center justify-center transition-transform duration-300 ease-out hover:rotate-[-5deg] hover:scale-105">
+                <Link href="/" className="flex items-center justify-center transition-transform duration-300 ease-out hover:rotate-[-5deg] hover:scale-105">
                     {/* Small logo - visible when collapsed */}
                     <img
                         src="/logo_sm.svg"
@@ -87,7 +87,7 @@ export function MinimalSidebar() {
                             )}
                         />
                     )}
-                </div>
+                </Link>
             </div>
 
             {/* Craft a Soul Button */}

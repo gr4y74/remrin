@@ -51,27 +51,27 @@ export function ElectricCard({
                 className
             )}
         >
-            {/* Background glow (only for epic/legendary) */}
+            {/* Background glow (only for epic/legendary) - more subtle */}
             {isAnimated && (
                 <div
-                    className="absolute inset-0 -z-10 animate-pulse rounded-2xl opacity-50 blur-xl"
+                    className="absolute inset-0 -z-10 animate-pulse rounded-2xl opacity-20 blur-md"
                     style={{
-                        background: `linear-gradient(-30deg, ${colors.border}, transparent, ${colors.glow})`,
-                        transform: "scale(1.1)"
+                        background: `radial-gradient(circle at center, ${colors.glow}, transparent 70%)`,
+                        transform: "scale(1.05)"
                     }}
                 />
             )}
 
-            {/* Outer glow layers */}
+            {/* Outer glow layers - more subtle */}
             {isAnimated && (
                 <>
                     <div
-                        className="absolute inset-0 rounded-2xl opacity-60 blur-sm"
-                        style={{ border: `2px solid ${colors.glow}` }}
+                        className="absolute inset-0 rounded-2xl opacity-30 blur-sm"
+                        style={{ border: `1px solid ${colors.glow}` }}
                     />
                     <div
-                        className="absolute inset-0 rounded-2xl opacity-40 blur-md"
-                        style={{ border: `2px solid ${colors.border}` }}
+                        className="absolute inset-0 rounded-2xl opacity-20 blur-md"
+                        style={{ border: `1px solid ${colors.border}` }}
                     />
                 </>
             )}
@@ -94,7 +94,7 @@ export function ElectricCard({
                     className="overflow-hidden rounded-[calc(1rem-2px)]"
                     style={{
                         border: `2px solid ${colors.border}`,
-                        boxShadow: isAnimated ? `0 0 20px ${colors.glow}` : "none"
+                        boxShadow: isAnimated ? `0 0 10px ${colors.glow}` : "none"
                     }}
                 >
                     {/* Card content */}

@@ -13,13 +13,15 @@ import { ChatMessage } from './ChatMessage'
 interface ChatMessagesProps {
     personaImage?: string
     personaName?: string
+    isVisualNovel?: boolean
 }
 
 export function ChatMessages({
     personaImage,
-    personaName
+    personaName,
+    isVisualNovel = false
 }: ChatMessagesProps) {
-    const { messages, isGenerating, error } = useChatEngine()
+    const { messages, isGenerating, error, rewind } = useChatEngine()
     const containerRef = useRef<HTMLDivElement>(null)
     const bottomRef = useRef<HTMLDivElement>(null)
 
@@ -73,11 +75,9 @@ export function ChatMessages({
                                 message={message}
                                 personaImage={personaImage}
                                 personaName={personaName}
-                                isStreaming={
-                                    isGenerating &&
-                                    index === messages.length - 1 &&
-                                    message.role === 'assistant'
-                                }
+                                isStreaming={isGenerating && index === messages.length - 1 && message.role === 'assistant'}
+                                onRewind={() => rewind(index)}
+                                isVisualNovel={isVisualNovel}
                             />
                         ))}
 

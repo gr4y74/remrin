@@ -89,202 +89,170 @@
   height: 6px;
 }
 
-@layer base {
-  :root {
-    /* Rosé Pine Dawn (Light Theme) - Updated Pink/Rose Scheme */
-    --background: 32 57% 95%;
-    /* Main window #faf3eb */
-    --foreground: 248 35% 15%;
-    /* Text #201d2f */
+/* Ethereal Tech Theme (Default Dark) */
+:root {
+  /* Base Variables (Shadcn Mapped) */
+  --background: 249 22% 12%;
+  /* #191724 (New background) */
+  --foreground: 35 100% 98%;
+  /* #faf4ed (New text/icons) */
 
-    --muted: 0 33% 94%;
-    /* Expanded sidebar #f0d7d7 */
-    --muted-foreground: 248 35% 15%;
-    /* Text #201d2f */
+  --card: 250 18% 18%;
+  /* #2c2f40 (New surface) */
+  --card-foreground: 35 100% 98%;
 
-    --popover: 0 33% 94%;
-    /* #f0d7d7 */
-    --popover-foreground: 248 35% 15%;
-    /* Text */
+  --popover: 250 18% 18%;
+  --popover-foreground: 35 100% 98%;
 
-    --card: 0 33% 94%;
-    /* #f0d7d7 */
-    --card-foreground: 248 35% 15%;
-    /* Text */
+  --primary: 267 57% 78%;
+  /* #c4a7e7 (Soul Primary) */
+  --primary-foreground: 249 22% 12%;
 
-    --border: 351 27% 65%;
-    /* Sidebar border #c5818e */
-    --input: 0 33% 94%;
-    /* #f0d7d7 */
+  --secondary: 197 49% 38%;
+  /* #31748f (Tech Accent) */
+  --secondary-foreground: 35 100% 98%;
 
-    --primary: 351 27% 65%;
-    /* Sidebar #c5818e */
-    --primary-foreground: 248 35% 15%;
-    /* Dark text */
+  --muted: 249 19% 15%;
+  /* #232136 (New sidebar) */
+  --muted-foreground: 248 15% 55%;
 
-    --secondary: 0 33% 94%;
-    /* #f0d7d7 */
-    --secondary-foreground: 248 35% 15%;
-    /* Dark text */
+  --accent: 35 88% 72%;
+  /* #f6c177 (Magic/Gold) */
+  --accent-foreground: 249 22% 12%;
 
-    --accent: 351 27% 65%;
-    /* #c5818e */
-    --accent-foreground: 248 35% 15%;
-    /* Dark text */
+  --destructive: 3 82% 52%;
+  /* #eb6f92 */
+  --destructive-foreground: 249 22% 12%;
 
-    --destructive: 3 82% 52%;
-    /* Love */
-    --destructive-foreground: 32 57% 95%;
+  --border: 267 30% 18%;
+  /* Subtle purple border */
+  --input: 250 18% 18%;
+  --ring: 267 57% 78%;
 
-    --ring: 351 27% 65%;
-    /* #c5818e */
+  --radius: 0.75rem;
 
-    --radius: 0.5rem;
+  /* Custom Ethereal Palette */
+  --rp-base: 249 22% 12%;
+  /* #191724 (New background) */
+  --rp-surface: 250 18% 18%;
+  /* #2c2f40 (New surface) */
+  --rp-overlay: 249 19% 15%;
+  /* #232136 (New sidebar) */
+  --rp-muted: 248 15% 50%;
 
-    /* Rosé Pine Dawn Complete Palette - Updated */
-    --rp-base: 32 57% 95%;
-    /* #faf3eb - main window */
-    --rp-surface: 0 33% 94%;
-    /* #f0d7d7 - expanded sidebar/cards */
-    --rp-overlay: 0 33% 94%;
-    /* #f0d7d7 */
-    --rp-muted: 248 25% 40%;
-    /* Muted dark text */
-    --rp-subtle: 248 20% 50%;
-    /* Subtle dark text */
-    --rp-text: 248 35% 15%;
-    /* #201d2f - main text */
-    --rp-love: 3 82% 52%;
-    /* #b4637a */
-    --rp-gold: 22 100% 55%;
-    /* #ea9d34 */
-    --rp-rose: 351 27% 65%;
-    /* #c5818e - sidebar color */
-    --rp-pine: 197 49% 38%;
-    /* #286983 */
-    --rp-foam: 189 30% 48%;
-    /* #56949f */
-    --rp-iris: 268 21% 57%;
-    /* #907aa9 */
-    --rp-highlight-low: 0 33% 94%;
-    /* #f0d7d7 */
-    --rp-highlight-med: 351 27% 65%;
-    /* #c5818e */
-    --rp-highlight-high: 351 20% 55%;
-    /* Darker rose */
+  --rp-love: 343 76% 68%;
+  /* #eb6f92 */
+  --rp-gold: 35 88% 72%;
+  /* #f6c177 */
+  --rp-rose: 2 55% 83%;
+  /* #ebbcba */
+  --rp-pine: 197 49% 38%;
+  /* #31748f */
+  --rp-foam: 189 43% 73%;
+  /* #9ccfd8 */
+  --rp-iris: 267 57% 78%;
+  /* #c4a7e7 */
 
-    /* Sidebar Colors (Light Mode) - New Pink/Rose Scheme */
-    --sidebar-bg: 351 27% 65%;
-    /* #c5818e - dusty rose sidebar */
-    --sidebar-hover: 0 33% 94%;
-    /* #f0d7d7 - light pink hover */
-    --sidebar-border: 351 20% 55%;
-    /* Darker rose border */
-    --sidebar-text: 248 35% 15%;
-    /* #201d2f - dark text on sidebar */
+  --rp-text: 35 100% 98%;
+  /* #faf4ed (New text/icons) */
 
-    /* Rem/Ram Color Palette */
-    --almost-black-blue: 248 100% 4%;
-    --darker-dark-blue: 240 25% 12%;
-    --dark-blue: 240 25% 16%;
-    --ram-pink: 330 68% 61%;
-    --rem-blue: 217 78% 51%;
-    --light-purple: 267 86% 61%;
-    --dark-purple: 287 92% 14%;
-  }
-
-  .dark {
-    /* Rosé Pine Main Theme */
-    --background: 251 23% 12%;
-    /* Base #191724 */
-    --foreground: 245 50% 91%;
-    /* Text #e0def4 */
-
-    --muted: 249 22% 15%;
-    /* Surface #1f1d2e */
-    --muted-foreground: 247 15% 55%;
-    /* Muted #6e6a86 */
-
-    --popover: 251 25% 18%;
-    /* Overlay #26233a */
-    --popover-foreground: 245 50% 91%;
-    /* Text */
-
-    --card: 249 22% 15%;
-    /* Surface */
-    --card-foreground: 245 50% 91%;
-    /* Text */
-
-    --border: 251 20% 25%;
-    /* Highlight Med #403d52 */
-    --input: 249 22% 15%;
-    /* Surface */
-
-    --primary: 245 50% 91%;
-    /* Text */
-    --primary-foreground: 251 23% 12%;
-    /* Base */
-
-    --secondary: 251 25% 18%;
-    /* Overlay */
-    --secondary-foreground: 245 50% 91%;
-    /* Text */
-
-    --accent: 343 76% 68%;
-    /* Rose #ebbcba */
-    --accent-foreground: 251 23% 12%;
-    /* Base */
-
-    --destructive: 343 81% 75%;
-    /* Love #eb6f92 */
-    --destructive-foreground: 251 23% 12%;
-
-    --ring: 343 76% 68%;
-    /* Rose */
-
-    /* Rosé Pine Complete Palette */
-    --rp-base: 249 22% 12%;
-    /* #191724 */
-    --rp-surface: 248 23% 15%;
-    /* #1f1d2e */
-    --rp-overlay: 248 25% 18%;
-    /* #26233a */
-    --rp-muted: 248 11% 47%;
-    /* #6e6a86 */
-    --rp-subtle: 247 16% 61%;
-    /* #908caa */
-    --rp-text: 245 50% 91%;
-    /* #e0def4 */
-    --rp-love: 343 76% 68%;
-    /* #eb6f92 */
-    --rp-gold: 35 88% 72%;
-    /* #f6c177 */
-    --rp-rose: 2 55% 83%;
-    /* #ebbcba */
-    --rp-pine: 197 49% 38%;
-    /* #31748f */
-    --rp-foam: 189 43% 73%;
-    /* #9ccfd8 */
-    --rp-iris: 267 57% 78%;
-    /* #c4a7e7 */
-    --rp-highlight-low: 247 18% 15%;
-    /* #21202e */
-    --rp-highlight-med: 251 13% 29%;
-    /* #403d52 */
-    --rp-highlight-high: 251 13% 36%;
-    /* #524f67 */
-
-    /* Sidebar Colors (Dark Mode) - same as base */
-    --sidebar-bg: 249 22% 12%;
-    /* Same as rp-base */
-    --sidebar-hover: 251 25% 18%;
-    /* Same as rp-overlay */
-    --sidebar-border: 251 20% 25%;
-    /* Same as border */
-    --sidebar-text: 245 50% 91%;
-    /* Same as rp-text */
-  }
+  /* Sidebar specific */
+  --sidebar-bg: 249 19% 15%;
+  /* #232136 */
+  --sidebar-border: 267 20% 15%;
+  --sidebar-hover: 267 30% 15%;
+  --sidebar-text: 35 100% 98%;
+  /* #faf4ed */
 }
+
+.dark {
+  /* Inherits root, kept for compatibility */
+  --background: 249 22% 12%;
+  --foreground: 35 100% 98%;
+}
+
+/* Rose Pine Dawn Light Theme */
+.light {
+  /* Base Variables (Shadcn Mapped) - More muted tones */
+  --background: 35 30% 88%;
+  /* #e8dfd0 (Muted cream) */
+  --foreground: 248 19% 40%;
+  /* #575279 (Dawn text) */
+
+  --card: 35 25% 85%;
+  /* #ded5c4 */
+  --card-foreground: 248 19% 40%;
+
+  --popover: 35 25% 85%;
+  --popover-foreground: 248 19% 40%;
+
+  --primary: 249 22% 52%;
+  /* #907aa9 (Dawn iris) */
+  --primary-foreground: 35 30% 88%;
+
+  --secondary: 187 41% 41%;
+  /* #56949f (Dawn pine) */
+  --secondary-foreground: 35 30% 88%;
+
+  --muted: 35 20% 78%;
+  /* #d4c9b8 */
+  --muted-foreground: 248 15% 50%;
+
+  --accent: 35 81% 56%;
+  /* #ea9d34 (Dawn gold) */
+  --accent-foreground: 35 30% 88%;
+
+  --destructive: 343 72% 52%;
+  /* #b4637a (Dawn love) */
+  --destructive-foreground: 35 30% 88%;
+
+  --border: 249 15% 70%;
+  /* Muted purple border */
+  --input: 35 25% 85%;
+  --ring: 249 22% 52%;
+
+  --radius: 0.75rem;
+
+  /* Custom Rose Pine Dawn Palette - Muted */
+  --rp-base: 35 30% 88%;
+  /* #e8dfd0 (Muted cream) */
+  --rp-surface: 35 25% 85%;
+  /* #ded5c4 */
+  --rp-overlay: 35 20% 78%;
+  /* #d4c9b8 */
+  --rp-muted: 248 12% 68%;
+  /* #9893a5 */
+
+  --rp-love: 343 72% 52%;
+  /* #b4637a */
+  --rp-gold: 35 81% 56%;
+  /* #ea9d34 */
+  --rp-rose: 10 56% 72%;
+  /* #d7827e */
+  --rp-pine: 187 41% 41%;
+  /* #56949f */
+  --rp-foam: 189 30% 48%;
+  /* #286983 */
+  --rp-iris: 249 22% 52%;
+  /* #907aa9 */
+
+  --rp-text: 248 19% 35%;
+  /* #4a4560 (Darker text for better contrast) */
+  --rp-subtle: 248 15% 45%;
+  /* Slightly lighter */
+
+  /* Sidebar specific for light mode */
+  --sidebar-bg: 35 30% 88%;
+  --sidebar-border: 249 15% 70%;
+  --sidebar-hover: 35 20% 78%;
+  --sidebar-text: 249 22% 52%;
+
+  /* Highlight colors for light mode */
+  --rp-highlight-low: 35 20% 78%;
+  --rp-highlight-med: 249 15% 70%;
+  --rp-highlight-high: 249 22% 52%;
+}
+
 
 @layer base {
   * {
@@ -348,6 +316,19 @@
 
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Glassmorphism 2.0 Utilities */
+  .glass-panel {
+    @apply bg-background/60 backdrop-blur-xl border border-white/10 shadow-xl;
+  }
+
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-md border border-white/5 hover:bg-white/10 transition-colors;
+  }
+
+  .neon-glow {
+    box-shadow: 0 0 10px hsla(var(--primary) / 0.5);
   }
 
   /* Safe area insets for mobile devices */

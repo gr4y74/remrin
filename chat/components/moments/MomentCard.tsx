@@ -2,8 +2,9 @@
 
 import Image from "next/image"
 import { cn } from "@/lib/utils"
-import { Heart } from "lucide-react"
+import { IconHeart, IconHeartFilled } from "@tabler/icons-react"
 import { useState, memo } from "react"
+import { TYPOGRAPHY, SPACING } from "@/lib/design-system"
 
 interface MomentCardProps {
     id: string
@@ -73,14 +74,15 @@ export const MomentCard = memo(function MomentCard({
     return (
         <div
             className={cn(
-                "border-rp-muted/10 bg-rp-surface group relative cursor-pointer overflow-hidden rounded-2xl border transition-all duration-300",
-                "hover:border-rp-iris/30 hover:shadow-rp-iris/20 hover:scale-[1.02] hover:shadow-xl",
+                "group relative cursor-pointer overflow-hidden rounded-2xl border transition-all duration-300",
+                "bg-white/5 border-white/10 hover:bg-white/10 hover:border-rp-iris/50",
+                "hover:shadow-[0_0_30px_rgba(196,167,231,0.2)] hover:scale-[1.02]",
                 className
             )}
             onClick={onClick}
         >
             {/* Moment Image */}
-            <div className="relative aspect-[4/5] w-full overflow-hidden">
+            < div className="relative aspect-[4/5] w-full overflow-hidden" >
                 <Image
                     src={imageUrl}
                     alt={caption || "Moment"}
@@ -90,13 +92,13 @@ export const MomentCard = memo(function MomentCard({
                 />
 
                 {/* Gradient Overlay - stronger on hover */}
-                <div className="from-rp-base/80 absolute inset-0 bg-gradient-to-t via-transparent to-transparent opacity-60 transition-opacity duration-300 group-hover:opacity-100" />
+                < div className="from-rp-base/80 absolute inset-0 bg-gradient-to-t via-transparent to-transparent opacity-60 transition-opacity duration-300 group-hover:opacity-100" />
 
                 {/* Glassmorphism overlay on hover */}
-                <div className="bg-rp-base/20 absolute inset-0 opacity-0 backdrop-blur-[2px] transition-opacity duration-300 group-hover:opacity-100" />
+                < div className="bg-rp-base/20 absolute inset-0 opacity-0 backdrop-blur-[2px] transition-opacity duration-300 group-hover:opacity-100" />
 
                 {/* Persona Avatar + Name (top left) */}
-                <div className="absolute left-3 top-3 flex items-center gap-2">
+                < div className="absolute left-3 top-3 flex items-center gap-2" >
                     <div className="border-rp-muted/20 bg-rp-surface/50 relative size-8 overflow-hidden rounded-full border-2 backdrop-blur-sm">
                         {personaImageUrl ? (
                             <Image
@@ -114,16 +116,18 @@ export const MomentCard = memo(function MomentCard({
                     <span className="text-rp-text text-sm font-medium opacity-0 drop-shadow-lg transition-opacity duration-300 group-hover:opacity-100">
                         {personaName}
                     </span>
-                </div>
+                </div >
 
                 {/* Bottom Content */}
-                <div className="absolute inset-x-0 bottom-0 p-4">
+                < div className="absolute inset-x-0 bottom-0 p-4" >
                     {/* Caption - truncated, full on hover */}
-                    {caption && (
-                        <p className="text-rp-text/90 mb-3 line-clamp-2 text-sm drop-shadow-lg transition-all duration-300 group-hover:line-clamp-none">
-                            {caption}
-                        </p>
-                    )}
+                    {
+                        caption && (
+                            <p className="text-rp-text/90 mb-3 line-clamp-2 text-sm drop-shadow-lg transition-all duration-300 group-hover:line-clamp-none">
+                                {caption}
+                            </p>
+                        )
+                    }
 
                     {/* Like Button */}
                     <button
@@ -135,17 +139,17 @@ export const MomentCard = memo(function MomentCard({
                             isLiked ? "text-rp-love" : "text-rp-text/80 hover:text-rp-text"
                         )}
                     >
-                        <Heart
-                            className={cn(
-                                "size-4 transition-transform duration-200",
-                                isLiked && "fill-rp-love scale-110",
-                                isLiking && "animate-pulse"
-                            )}
-                        />
+                        <div className={cn(
+                            "size-4 transition-transform duration-200",
+                            isLiked && "text-rp-love scale-110",
+                            isLiking && "animate-pulse"
+                        )}>
+                            {isLiked ? <IconHeartFilled className="size-full" /> : <IconHeart className="size-full" />}
+                        </div>
                         <span>{formatCount(currentLikes)}</span>
                     </button>
-                </div>
-            </div>
-        </div>
+                </div >
+            </div >
+        </div >
     )
 })

@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react"
 import { CategoryTabs } from "./CategoryTabs"
 import { TrendingCarousel } from "./TrendingCarousel"
-import { CharacterCard } from "./CharacterCard"
+import { UnifiedCard } from "@/components/cards/UnifiedCard"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { SearchX, Compass } from "lucide-react"
@@ -143,7 +143,7 @@ export function DiscoveryFeed({
                 <section className="mb-6">
                     <div className="mb-4 flex items-center gap-2">
                         <Compass className="size-5 text-rp-iris" />
-                        <h2 className="text-2xl font-bold text-rp-iris">Explore Souls</h2>
+                        <h2 className="font-tiempos-headline font-semibold" style={{ fontSize: '75px' }}>Explore Souls</h2>
                     </div>
                     <CategoryTabs
                         categories={categories}
@@ -183,14 +183,17 @@ export function DiscoveryFeed({
                         ) : (
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                                 {personas.map((persona, index) => (
-                                    <CharacterCard
+                                    <UnifiedCard
                                         key={persona.id}
-                                        id={persona.id}
-                                        name={persona.name}
-                                        imageUrl={persona.image_url}
-                                        category={persona.category}
-                                        categoryColor={persona.category ? categoryColors[persona.category] : null}
-                                        totalChats={persona.persona_stats?.total_chats ?? 0}
+                                        variant="character"
+                                        data={{
+                                            id: persona.id,
+                                            name: persona.name,
+                                            imageUrl: persona.image_url,
+                                            category: persona.category,
+                                            categoryColor: persona.category ? categoryColors[persona.category] : null,
+                                            totalChats: persona.persona_stats?.total_chats ?? 0
+                                        }}
                                         animationIndex={index}
                                     />
                                 ))}

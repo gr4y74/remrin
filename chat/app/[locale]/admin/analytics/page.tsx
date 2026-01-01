@@ -9,7 +9,10 @@ import {
     IconMessage,
     IconTrophy,
     IconActivity,
-    IconRefresh
+    IconRefresh,
+    IconSparkles,
+    IconDiamond,
+    IconStar
 } from '@tabler/icons-react'
 import Image from "next/image"
 import { AdminPasswordGate } from '@/components/admin/AdminPasswordGate'
@@ -31,6 +34,11 @@ interface AnalyticsData {
         totalChats: number
         totalMessages: number
         activeUsers: number
+        economy: {
+            totalSummons: number
+            totalAetherSpent: number
+            legendaryCount: number
+        }
     }
     topSouls: {
         id: string
@@ -152,6 +160,31 @@ export default function AdminAnalyticsPage() {
                             icon={<IconUsers size={32} />}
                             color="text-rp-rose"
                             bgColor="bg-rp-rose/10"
+                        />
+                    </div>
+
+                    {/* Economy Stats */}
+                    <div className="grid gap-6 md:grid-cols-3">
+                        <StatCard
+                            title="Total Summons"
+                            value={data?.metrics.economy?.totalSummons.toLocaleString() || '0'}
+                            icon={<IconSparkles size={32} />}
+                            color="text-rp-love"
+                            bgColor="bg-rp-love/10"
+                        />
+                        <StatCard
+                            title="Aether Burnt"
+                            value={data?.metrics.economy?.totalAetherSpent.toLocaleString() || '0'}
+                            icon={<IconDiamond size={32} />}
+                            color="text-rp-gold"
+                            bgColor="bg-rp-gold/10"
+                        />
+                        <StatCard
+                            title="Legendaries Found"
+                            value={data?.metrics.economy?.legendaryCount.toLocaleString() || '0'}
+                            icon={<IconStar size={32} />}
+                            color="text-rp-iris"
+                            bgColor="bg-rp-iris/10"
                         />
                     </div>
 

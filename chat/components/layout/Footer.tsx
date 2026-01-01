@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
+import { useTheme } from "next-themes"
 import {
     IconBrandDiscord,
     IconBrandReddit,
@@ -64,6 +65,8 @@ const overviewLinks = [
 ]
 
 export function Footer() {
+    const { resolvedTheme } = useTheme()
+
     return (
         <footer className="w-full border-t border-rp-highlight-low bg-rp-base/80 backdrop-blur-sm">
             <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -71,7 +74,7 @@ export function Footer() {
                     {/* Brand Column */}
                     <section className="flex flex-col items-start gap-4">
                         <Image
-                            src="/logo.svg"
+                            src={resolvedTheme === "light" ? "/logo_dark.svg" : "/logo.svg"}
                             alt="Remrin logo"
                             width={140}
                             height={40}

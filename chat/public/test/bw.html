@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rosé Pine Dawn Twinkling Blocks</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #faf4ed; /* Rosé Pine Dawn base */
+            overflow: hidden;
+            position: relative;
+        }
+
+        .grid-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 20px);
+            grid-template-rows: repeat(auto-fill, 20px);
+            gap: 8px;
+            padding: 20px;
+            pointer-events: none;
+        }
+
+        .block {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Different Rosé Pine Dawn colors */
+        .block.love { background: #d7827e; }
+        .block.gold { background: #ea9d34; }
+        .block.rose { background: #b4637a; }
+        .block.pine { background: #56949f; }
+        .block.foam { background: #286983; }
+        .block.iris { background: #907aa9; }
+
+        /* Twinkling animation */
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            50% {
+                opacity: 0.6;
+                transform: scale(1);
+            }
+        }
+
+        .block.active {
+            animation: twinkle ease-in-out;
+        }
+
+        /* Content area */
+        .content {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: #575279; /* Rosé Pine Dawn text */
+            pointer-events: auto;
+        }
+
+        .card {
+            background: rgba(250, 244, 237, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(87, 82, 121, 0.15);
+            border: 1px solid rgba(87, 82, 121, 0.1);
+            max-width: 600px;
+        }
+
+        .card h1 {
+            font-family: 'Georgia', serif;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #575279;
+        }
+
+        .card p {
+            font-family: 'Arial', sans-serif;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #797593;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-container" id="gridContainer"></div>
+
+    <div class="content">
+        <div class="card">
+            <h1>Twinkling Dawn</h1>
+            <p>
+                Watch as delicate blocks twinkle like stars across the dawn sky, 
+                creating a peaceful and mesmerizing atmosphere in the gentle Rosé Pine Dawn palette.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const container = document.getElementById('gridContainer');
+        const colors = ['love', 'gold', 'rose', 'pine', 'foam', 'iris'];
+        
+        // Calculate how many blocks we need based on viewport
+        const blocksWide = Math.ceil(window.innerWidth / 28);
+        const blocksHigh = Math.ceil(window.innerHeight / 28);
+        const totalBlocks = blocksWide * blocksHigh;
+        
+        // Create blocks
+        const blocks = [];
+        for (let i = 0; i < totalBlocks; i++) {
+            const block = document.createElement('div');
+            block.className = `block ${colors[Math.floor(Math.random() * colors.length)]}`;
+            container.appendChild(block);
+            blocks.push(block);
+        }
+        
+        // Function to make a random block twinkle
+        function twinkleRandom() {
+            const randomBlock = blocks[Math.floor(Math.random() * blocks.length)];
+            const duration = 1000 + Math.random() * 2000; // 1-3 seconds
+            
+            randomBlock.style.animationDuration = `${duration}ms`;
+            randomBlock.classList.add('active');
+            
+            setTimeout(() => {
+                randomBlock.classList.remove('active');
+            }, duration);
+        }
+        
+        // Start twinkling at random intervals
+        function startTwinkling() {
+            // Twinkle multiple blocks simultaneously
+            const simultaneousTwinkles = 3 + Math.floor(Math.random() * 5); // 3-7 blocks
+            
+            for (let i = 0; i < simultaneousTwinkles; i++) {
+                setTimeout(() => {
+                    twinkleRandom();
+                }, Math.random() * 300);
+            }
+        }
+        
+        // Continuous twinkling
+        setInterval(startTwinkling, 400);
+        
+        // Initial burst
+        for (let i = 0; i < 10; i++) {
+            setTimeout(twinkleRandom, Math.random() * 1000);
+        }
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            location.reload(); // Simple solution to recalculate grid
+        });
+    </script>
+</body>
+</html>

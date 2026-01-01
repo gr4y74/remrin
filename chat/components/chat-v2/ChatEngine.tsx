@@ -40,6 +40,7 @@ interface ChatEngineActions {
     clearMessages: () => void
     setSystemPrompt: (prompt: string) => void
     addSystemMessage: (content: string) => void
+    rewind: (index: number) => void
 }
 
 interface ChatEngineContextValue extends ChatEngineState, ChatEngineActions { }
@@ -269,6 +270,28 @@ export function ChatEngineProvider({
         setMessages(prev => [...prev, systemMsg])
     }, [])
 
+    /**
+     * Rewind conversation to a specific index
+     * Removes all messages AFTER this index.
+     * If the target message is Assistant, it removes it too to trigger regen?
+     * Strategy: "Rewind to here" = User wants to retry from this point.
+     * So we keep messages[0...index].
+     */
+    const rewind = useCallback((index: number) => {
+        setMessages(prev => {
+            // Keep the message at index, remove everything after
+            // If the user clicked "Rewind" on an Assistant message, they usually want to regenerate IT.
+            // If they clicked on a User message, they might want to edit it.
+            // For now, simple slice: keep everything UP TO index.
+            const newHistory = prev.slice(0, index + 1)
+
+            // If the last message is now Assistant, remove it too so we can regen? 
+            // Or just leave it as the 'latest' state.
+            // Let's just slice for now.
+            return newHistory
+        })
+    }, [])
+
     const value: ChatEngineContextValue = useMemo(() => ({
         messages,
         isGenerating,
@@ -282,7 +305,8 @@ export function ChatEngineProvider({
         stopGeneration,
         clearMessages,
         setSystemPrompt,
-        addSystemMessage
+        addSystemMessage,
+        rewind
     }), [
         messages,
         isGenerating,
@@ -296,7 +320,9 @@ export function ChatEngineProvider({
         stopGeneration,
         clearMessages,
         setSystemPrompt,
-        addSystemMessage
+        setSystemPrompt,
+        addSystemMessage,
+        rewind
     ])
 
     return (

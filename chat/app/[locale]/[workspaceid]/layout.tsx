@@ -63,8 +63,14 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
   const fetchWorkspaceData = useCallback(async (workspaceId: string) => {
     setLoading(true)
 
-    const workspace = await getWorkspaceById(workspaceId)
-    setSelectedWorkspace(workspace)
+    let workspace
+    try {
+      workspace = await getWorkspaceById(workspaceId)
+      setSelectedWorkspace(workspace)
+    } catch (e) {
+      console.error("Workspace not found, redirecting to home...")
+      return router.push("/")
+    }
 
     const assistantData = await getAssistantWorkspacesByWorkspaceId(workspaceId)
     setAssistants(assistantData.assistants)

@@ -44,6 +44,9 @@ export const metadata: Metadata = {
     title: APP_DEFAULT_TITLE
     // startUpImage: [],
   },
+  other: {
+    "mobile-web-app-capable": "yes"
+  },
   formatDetection: {
     telephone: false
   },
@@ -99,7 +102,8 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
+      <body className="bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary">
+        {/* Clean background - no effects */}
         <Providers attribute="class" defaultTheme="dark">
           <TranslationsProvider
             namespaces={i18nNamespaces}
@@ -113,7 +117,7 @@ export default async function RootLayout({
 
               {/* Main Content - Offset by sidebar on desktop, full width on mobile */}
               <main className="flex-1 md:ml-20 pb-20 md:pb-0">
-                <div className="bg-background text-foreground flex h-dvh flex-col items-center overflow-x-auto">
+                <div className="flex h-dvh flex-col items-center overflow-x-auto">
                   {session ? <GlobalState>{children}</GlobalState> : children}
                 </div>
               </main>
