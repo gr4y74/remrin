@@ -1,4 +1,4 @@
-import { useChatHandler } from "@/components/chat/chat-hooks/use-chat-handler"
+
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -25,8 +25,7 @@ export const DeleteWorkspace: FC<DeleteWorkspaceProps> = ({
   workspace,
   onDelete
 }) => {
-  const { setWorkspaces, setSelectedWorkspace } = useContext(RemrinContext)
-  const { handleNewChat } = useChatHandler()
+  const { setWorkspaces, setSelectedWorkspace, setChatMessages, setSelectedChat, setIsGenerating, setFirstTokenReceived } = useContext(RemrinContext)
   const router = useRouter()
 
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -54,7 +53,10 @@ export const DeleteWorkspace: FC<DeleteWorkspaceProps> = ({
     setShowWorkspaceDialog(false)
     onDelete()
 
-    handleNewChat()
+    setChatMessages([])
+    setSelectedChat(null)
+    setIsGenerating(false)
+    setFirstTokenReceived(false)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {

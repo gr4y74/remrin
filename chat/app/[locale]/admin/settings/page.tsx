@@ -36,6 +36,7 @@ interface APIKeyConfig {
 }
 
 const API_KEY_CONFIGS: APIKeyConfig[] = [
+    { provider: 'openrouter', envVar: 'OPENROUTER_API_KEY', label: 'OpenRouter (FREE)', placeholder: 'sk-or-v1-...' },
     { provider: 'deepseek', envVar: 'DEEPSEEK_API_KEY', label: 'DeepSeek', placeholder: 'sk-...' },
     { provider: 'openai', envVar: 'OPENAI_API_KEY', label: 'OpenAI', placeholder: 'sk-...' },
     { provider: 'anthropic', envVar: 'ANTHROPIC_API_KEY', label: 'Anthropic', placeholder: 'sk-ant-...' },

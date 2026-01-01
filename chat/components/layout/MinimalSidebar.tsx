@@ -19,13 +19,17 @@ import {
     IconShoppingBag,
     IconBrush,
     IconWallet,
+    IconDatabase,
 } from "@tabler/icons-react"
+import { useContext } from "react"
+import { RemrinContext } from "@/context/context"
 
 const NAV_ITEMS = [
     { icon: IconHome, label: "Home", href: "/" },
     { icon: IconSparkles, label: "Discover", href: "/discover" },
     { icon: IconDice, label: "Summon", href: "/summon" },
     { icon: IconBooks, label: "Collection", href: "/collection" },
+    { icon: IconDatabase, label: "Vault", href: "/knowledge", isWorkspaceSpecific: true },
     { icon: IconShoppingBag, label: "Marketplace", href: "/marketplace" },
     { icon: IconBrush, label: "Studio", href: "/studio" },
     { icon: IconWallet, label: "Wallet", href: "/wallet" },
@@ -43,6 +47,7 @@ export function MinimalSidebar() {
     const [isExpanded, setIsExpanded] = useState(false)
     const [showProfileSettings, setShowProfileSettings] = useState(false)
     const pathname = usePathname()
+    const { selectedWorkspace } = useContext(RemrinContext)
 
     useEffect(() => {
         setMounted(true)
@@ -94,12 +99,16 @@ export function MinimalSidebar() {
                 <div className="space-y-1">
                     {NAV_ITEMS.map((item) => {
                         const Icon = item.icon
-                        const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
+                        let href = item.href
+                        if (item.isWorkspaceSpecific && selectedWorkspace) {
+                            href = `/${pathname.split("/")[1]}/${selectedWorkspace.id}${item.href}`
+                        }
+                        const isActive = pathname === href || pathname.startsWith(href + "/")
 
                         return (
                             <Link
-                                key={item.href}
-                                href={item.href}
+                                key={item.label}
+                                href={href}
                                 className={cn(
                                     "group relative flex min-h-[44px] items-center rounded-lg py-3 transition-all",
                                     isActive

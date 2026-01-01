@@ -20,6 +20,9 @@ export interface PersonaMetadata {
     swag_items?: SwagItem[]
     is_official?: boolean
     price?: number
+    // Soul Splicer
+    vibe_keywords?: string[]
+    linked_knowledge?: string[]
 }
 
 // Soul Splicer DNA Config

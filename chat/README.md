@@ -46,6 +46,32 @@ Discussions are a great place to ask questions, share ideas, and get help.
 
 Odds are if you have a question, someone else has the same question.
 
+## Chat Engine v2
+
+Remrin.ai now uses a custom, modular Chat Engine (v2) replacing the original ChatbotUI logic. This engine supports multi-provider routing, tier-based access, and advanced capabilities like web search and RAG.
+
+### Key API Routes
+- `POST /api/v2/chat`: Unified streaming chat endpoint.
+- `POST /api/v2/upload`: Multi-format file processing and extraction.
+- `POST /api/v2/search`: Integrated web search (Tavily/DuckDuckGo).
+- `POST /api/v2/knowledge`: Sovereign RAG Vault management.
+
+### Required Environment Variables
+Ensure these are set in your `.env.local`:
+```bash
+# LLM Providers
+OPENROUTER_API_KEY=
+DEEPSEEK_API_KEY=
+ANTHROPIC_API_KEY=
+GOOGLE_GEMINI_API_KEY=
+
+# Search
+TAVILY_API_KEY=
+
+# Core
+NEXT_PUBLIC_USE_CHAT_V2=true
+```
+
 ## Legacy Code
 
 Remrin.ai was recently updated to its 2.0 version.

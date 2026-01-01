@@ -19,6 +19,7 @@ export type LLMProvider =
     | 'groq'
     | 'mistral'
     | 'perplexity'
+    | 'openrouter'
 
 // Model configuration for API calls
 export interface ModelConfig {
@@ -95,6 +96,15 @@ const PROVIDER_CONFIGS: Record<LLMProvider, Omit<ModelConfig, 'modelId' | 'displ
         baseURL: 'https://api.perplexity.ai',
         apiKeyEnvVar: 'PERPLEXITY_API_KEY',
         supportsTools: false,
+        supportsStreaming: true,
+        supportsVision: false,
+        maxTokens: 4096
+    },
+    openrouter: {
+        provider: 'openrouter',
+        baseURL: 'https://openrouter.ai/api/v1',
+        apiKeyEnvVar: 'OPENROUTER_API_KEY',
+        supportsTools: true,
         supportsStreaming: true,
         supportsVision: false,
         maxTokens: 4096
@@ -285,7 +295,8 @@ export function getApiEndpointForProvider(provider: LLMProvider): string {
         google: '/api/chat/google',
         groq: '/api/chat/groq',
         mistral: '/api/chat/mistral',
-        perplexity: '/api/chat/perplexity'
+        perplexity: '/api/chat/perplexity',
+        openrouter: '/api/chat/openrouter'
     }
     return endpoints[provider]
 }

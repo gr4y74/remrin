@@ -1237,33 +1237,14 @@ export type Database = {
           tags: string[] | null
           visibility: string | null
           voice_id: string | null
+          follow_up_likelihood: number | null
         }
         Insert: {
-          behavioral_blueprint?: Json | null
-          category?: string | null
-          config?: Json | null
-          created_at?: string | null
-          creator_id?: string | null
-          description?: string | null
-          id?: string
-          image_url?: string | null
-          intro_message?: string | null
-          is_featured?: boolean | null
-          is_official?: boolean | null
-          metadata?: Json | null
-          name: string
-          owner_id?: string | null
-          price?: number | null
-          rejection_reason?: string | null
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          safety_level?: string | null
-          status?: string | null
-          submitted_at?: string | null
           system_prompt: string
-          tags?: string[] | null
-          visibility?: string | null
-          voice_id?: string | null
+          tags: string[] | null
+          visibility: string | null
+          voice_id: string | null
+          follow_up_likelihood?: number | null
         }
         Update: {
           behavioral_blueprint?: Json | null
@@ -1291,6 +1272,7 @@ export type Database = {
           tags?: string[] | null
           visibility?: string | null
           voice_id?: string | null
+          follow_up_likelihood?: number | null
         }
         Relationships: []
       }

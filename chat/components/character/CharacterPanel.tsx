@@ -1,8 +1,7 @@
 "use client"
 
 import { RemrinContext } from "@/context/context"
-import { ChatBackgroundToggle } from "@/components/chat/chat-background-toggle"
-import { ChatSecondaryButtons } from "@/components/chat/chat-secondary-buttons"
+
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import {
@@ -106,8 +105,7 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                 {/* Gradient overlay at bottom for text readability */}
                 <div className="absolute inset-0 bg-gradient-to-t from-rp-surface via-transparent to-transparent" />
                 <div className="absolute right-3 top-3 flex items-center gap-2">
-                    <ChatBackgroundToggle />
-                    <ChatSecondaryButtons />
+
                 </div>
                 {/* Collapse handle - Talkie style (centered at bottom) */}
                 <button
@@ -125,11 +123,15 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                 <div className="flex items-center gap-3">
                     {/* Character Avatar */}
                     <div className="relative shrink-0">
-                        <img
-                            src={selectedPersona.image_url || "/images/rem_hero.webp"}
-                            alt={selectedPersona.name}
-                            className="size-12 rounded-full object-cover ring-2 ring-rp-highlight-med"
-                        />
+                        <div className="relative size-12 shadow-sm">
+                            <Image
+                                src={selectedPersona.image_url || "/images/rem_hero.webp"}
+                                alt={selectedPersona.name}
+                                className="rounded-full object-cover ring-2 ring-rp-highlight-med"
+                                fill
+                                sizes="48px"
+                            />
+                        </div>
                     </div>
 
                     {/* Name with profile link */}
@@ -224,11 +226,15 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                             <div className="flex items-start gap-3 p-3">
                                 {/* User Avatar */}
                                 {profile?.image_url ? (
-                                    <img
-                                        src={profile.image_url}
-                                        alt="You"
-                                        className="size-8 rounded-full object-cover shrink-0"
-                                    />
+                                    <div className="relative size-8 shrink-0">
+                                        <Image
+                                            src={profile.image_url}
+                                            alt="You"
+                                            className="rounded-full object-cover"
+                                            fill
+                                            sizes="32px"
+                                        />
+                                    </div>
                                 ) : (
                                     <div className="size-8 rounded-full bg-rp-iris/20 flex items-center justify-center shrink-0">
                                         <IconUser size={16} className="text-rp-iris" />

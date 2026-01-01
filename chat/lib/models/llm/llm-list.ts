@@ -5,10 +5,12 @@ import { GOOGLE_LLM_LIST } from "./google-llm-list"
 import { MISTRAL_LLM_LIST } from "./mistral-llm-list"
 import { GROQ_LLM_LIST } from "./groq-llm-list"
 import { OPENAI_LLM_LIST } from "./openai-llm-list"
+import { OPENROUTER_LLM_LIST } from "./openrouter-llm-list"
 import { PERPLEXITY_LLM_LIST } from "./perplexity-llm-list"
 
 export const LLM_LIST: LLM[] = [
-  ...DEEPSEEK_LLM_LIST, // REMRIN: DeepSeek first (default)
+  ...OPENROUTER_LLM_LIST, // FREE models first
+  ...DEEPSEEK_LLM_LIST,
   ...OPENAI_LLM_LIST,
   ...GOOGLE_LLM_LIST,
   ...MISTRAL_LLM_LIST,
@@ -19,10 +21,12 @@ export const LLM_LIST: LLM[] = [
 
 export const LLM_LIST_MAP: Record<string, LLM[]> = {
   openai: [...OPENAI_LLM_LIST, ...DEEPSEEK_LLM_LIST], // DeepSeek uses OpenAI-compatible API
+  deepseek: DEEPSEEK_LLM_LIST,
   azure: OPENAI_LLM_LIST,
   google: GOOGLE_LLM_LIST,
   mistral: MISTRAL_LLM_LIST,
   groq: GROQ_LLM_LIST,
   perplexity: PERPLEXITY_LLM_LIST,
-  anthropic: ANTHROPIC_LLM_LIST
+  anthropic: ANTHROPIC_LLM_LIST,
+  openrouter: OPENROUTER_LLM_LIST
 }

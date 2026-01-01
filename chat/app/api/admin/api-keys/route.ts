@@ -12,6 +12,7 @@ const ENV_VAR_MAP: Record<string, string> = {
     groq: 'GROQ_API_KEY',
     mistral: 'MISTRAL_API_KEY',
     perplexity: 'PERPLEXITY_API_KEY',
+    openrouter: 'OPENROUTER_API_KEY',
 }
 
 export async function POST(request: Request) {

@@ -3,7 +3,7 @@
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { Heart } from "lucide-react"
-import { useState } from "react"
+import { useState, memo } from "react"
 
 interface MomentCardProps {
     id: string
@@ -29,7 +29,7 @@ function formatCount(count: number): string {
     return count.toString()
 }
 
-export function MomentCard({
+export const MomentCard = memo(function MomentCard({
     id,
     imageUrl,
     caption,
@@ -148,4 +148,4 @@ export function MomentCard({
             </div>
         </div>
     )
-}
+})

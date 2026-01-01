@@ -2,6 +2,7 @@
 
 import { useEffect } from "react"
 import { useSearchParams } from "next/navigation"
+import { ErrorBoundary } from "@/components/ErrorBoundary"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { useStudioPersona } from "./hooks/use-studio-persona"
@@ -12,6 +13,7 @@ import { VoiceTab } from "./components/voice-tab"
 import { StoreTab } from "./components/store-tab"
 import { SoulSplicer } from "./components/soul-splicer"
 import { BrainParametersPanel } from "./components/brain-parameters-panel"
+import { ImportExportPanel } from "@/components/studio/ImportExportPanel"
 import { MODERATION_STATUS_LABELS, PersonaConfig } from "./types"
 import {
     IconUser,
@@ -228,187 +230,192 @@ export default function StudioPage() {
             {/* Main Content */}
             {!loading && (
                 <main className="flex-1 overflow-auto p-6">
-                    <div className="mx-auto max-w-4xl">
-                        <Tabs defaultValue="identity" className="space-y-6">
-                            <TabsList className="grid w-full grid-cols-7 bg-rp-surface">
-                                <TabsTrigger value="identity" className="flex items-center gap-2">
-                                    <IconUser size={16} />
-                                    <span className="hidden sm:inline">Identity</span>
-                                </TabsTrigger>
-                                <TabsTrigger value="dna-splicer" className="flex items-center gap-2">
-                                    <IconDna size={16} />
-                                    <span className="hidden sm:inline">DNA</span>
-                                </TabsTrigger>
-                                <TabsTrigger value="behavior" className="flex items-center gap-2">
-                                    <IconBrain size={16} />
-                                    <span className="hidden sm:inline">Behavior</span>
-                                </TabsTrigger>
-                                <TabsTrigger value="visuals" className="flex items-center gap-2">
-                                    <IconPalette size={16} />
-                                    <span className="hidden sm:inline">Visuals</span>
-                                </TabsTrigger>
-                                <TabsTrigger value="voice" className="flex items-center gap-2">
-                                    <IconMicrophone size={16} />
-                                    <span className="hidden sm:inline">Voice</span>
-                                </TabsTrigger>
-                                <TabsTrigger value="store" className="flex items-center gap-2">
-                                    <IconShoppingBag size={16} />
-                                    <span className="hidden sm:inline">Store</span>
-                                </TabsTrigger>
-                                <TabsTrigger value="analytics" className="flex items-center gap-2">
-                                    <IconChartBar size={16} />
-                                    <span className="hidden sm:inline">Analytics</span>
-                                </TabsTrigger>
-                            </TabsList>
+                    <ErrorBoundary>
+                        <div className="mx-auto max-w-4xl space-y-8">
+                            {/* Batch Operations */}
+                            <ImportExportPanel />
 
-                            <div className="rounded-xl border border-rp-highlight-med bg-rp-surface/50 p-6">
-                                <TabsContent value="identity" className="mt-0">
-                                    <IdentityTab
-                                        persona={persona}
-                                        updateField={updateField}
-                                        uploadFile={uploadFile}
-                                    />
-                                </TabsContent>
+                            <Tabs defaultValue="identity" className="space-y-6">
+                                <TabsList className="grid w-full grid-cols-7 bg-rp-surface">
+                                    <TabsTrigger value="identity" className="flex items-center gap-2">
+                                        <IconUser size={16} />
+                                        <span className="hidden sm:inline">Identity</span>
+                                    </TabsTrigger>
+                                    <TabsTrigger value="dna-splicer" className="flex items-center gap-2">
+                                        <IconDna size={16} />
+                                        <span className="hidden sm:inline">DNA</span>
+                                    </TabsTrigger>
+                                    <TabsTrigger value="behavior" className="flex items-center gap-2">
+                                        <IconBrain size={16} />
+                                        <span className="hidden sm:inline">Behavior</span>
+                                    </TabsTrigger>
+                                    <TabsTrigger value="visuals" className="flex items-center gap-2">
+                                        <IconPalette size={16} />
+                                        <span className="hidden sm:inline">Visuals</span>
+                                    </TabsTrigger>
+                                    <TabsTrigger value="voice" className="flex items-center gap-2">
+                                        <IconMicrophone size={16} />
+                                        <span className="hidden sm:inline">Voice</span>
+                                    </TabsTrigger>
+                                    <TabsTrigger value="store" className="flex items-center gap-2">
+                                        <IconShoppingBag size={16} />
+                                        <span className="hidden sm:inline">Store</span>
+                                    </TabsTrigger>
+                                    <TabsTrigger value="analytics" className="flex items-center gap-2">
+                                        <IconChartBar size={16} />
+                                        <span className="hidden sm:inline">Analytics</span>
+                                    </TabsTrigger>
+                                </TabsList>
 
-                                <TabsContent value="dna-splicer" className="mt-0">
-                                    <SoulSplicer
-                                        config={(persona as any).config || {}}
-                                        updateConfig={(key, value) => {
-                                            const currentConfig = (persona as any).config || {}
-                                            updateField('config' as any, { ...currentConfig, [key]: value })
-                                        }}
-                                        onDistill={async (donors) => {
-                                            const response = await fetch('/api/forge/distill', {
-                                                method: 'POST',
-                                                headers: { 'Content-Type': 'application/json' },
-                                                body: JSON.stringify({ donors })
-                                            })
-                                            if (!response.ok) {
-                                                const data = await response.json()
-                                                throw new Error(data.error || 'DNA synthesis failed')
-                                            }
-                                            return response.json()
-                                        }}
-                                    />
-                                    <div className="mt-6">
-                                        <BrainParametersPanel
+                                <div className="rounded-xl border border-rp-highlight-med bg-rp-surface/50 p-6">
+                                    <TabsContent value="identity" className="mt-0">
+                                        <IdentityTab
+                                            persona={persona}
+                                            updateField={updateField}
+                                            uploadFile={uploadFile}
+                                        />
+                                    </TabsContent>
+
+                                    <TabsContent value="dna-splicer" className="mt-0">
+                                        <SoulSplicer
                                             config={(persona as any).config || {}}
                                             updateConfig={(key, value) => {
                                                 const currentConfig = (persona as any).config || {}
                                                 updateField('config' as any, { ...currentConfig, [key]: value })
                                             }}
+                                            onDistill={async (donors) => {
+                                                const response = await fetch('/api/forge/distill', {
+                                                    method: 'POST',
+                                                    headers: { 'Content-Type': 'application/json' },
+                                                    body: JSON.stringify({ donors })
+                                                })
+                                                if (!response.ok) {
+                                                    const data = await response.json()
+                                                    throw new Error(data.error || 'DNA synthesis failed')
+                                                }
+                                                return response.json()
+                                            }}
                                         />
-                                    </div>
-                                </TabsContent>
-
-                                <TabsContent value="behavior" className="mt-0">
-                                    <BehaviorTab
-                                        persona={persona}
-                                        updateField={updateField}
-                                        autoCompile={autoCompile}
-                                        loading={loading}
-                                    />
-                                </TabsContent>
-
-                                <TabsContent value="visuals" className="mt-0">
-                                    <VisualsTab
-                                        metadata={persona.metadata}
-                                        updateMetadata={updateMetadata}
-                                        uploadFile={uploadFile}
-                                    />
-                                </TabsContent>
-
-                                <TabsContent value="voice" className="mt-0">
-                                    <VoiceTab
-                                        persona={persona}
-                                        metadata={persona.metadata}
-                                        updateField={updateField}
-                                        updateMetadata={updateMetadata}
-                                        uploadFile={uploadFile}
-                                    />
-                                </TabsContent>
-
-                                <TabsContent value="store" className="mt-0">
-                                    <StoreTab
-                                        metadata={persona.metadata}
-                                        updateMetadata={updateMetadata}
-                                        config={persona.config || {}}
-                                        updateConfig={(key, value) => {
-                                            const currentConfig = persona.config || {}
-                                            updateField('config' as any, { ...currentConfig, [key]: value })
-                                        }}
-                                    />
-                                </TabsContent>
-
-                                <TabsContent value="analytics" className="mt-0">
-                                    <div className="space-y-6">
-                                        <div className="flex items-center gap-3 border-b border-rp-highlight-med pb-4">
-                                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-rp-foam to-rp-iris">
-                                                <IconChartBar size={20} className="text-white" />
-                                            </div>
-                                            <div>
-                                                <h3 className="font-semibold text-rp-text">Soul Health Analytics</h3>
-                                                <p className="text-sm text-rp-subtle">
-                                                    Track engagement and retention metrics
-                                                </p>
-                                            </div>
+                                        <div className="mt-6">
+                                            <BrainParametersPanel
+                                                config={(persona as any).config || {}}
+                                                updateConfig={(key, value) => {
+                                                    const currentConfig = (persona as any).config || {}
+                                                    updateField('config' as any, { ...currentConfig, [key]: value })
+                                                }}
+                                            />
                                         </div>
+                                    </TabsContent>
 
-                                        {/* Placeholder Analytics Cards */}
-                                        <div className="grid gap-4 md:grid-cols-3">
-                                            <div className="rounded-lg border border-rp-highlight-med bg-rp-overlay p-4">
-                                                <div className="text-sm text-rp-subtle">Total Aether Earned</div>
-                                                <div className="mt-1 text-2xl font-bold text-rp-gold">0 ✧</div>
+                                    <TabsContent value="behavior" className="mt-0">
+                                        <BehaviorTab
+                                            persona={persona}
+                                            updateField={updateField}
+                                            autoCompile={autoCompile}
+                                            loading={loading}
+                                        />
+                                    </TabsContent>
+
+                                    <TabsContent value="visuals" className="mt-0">
+                                        <VisualsTab
+                                            metadata={persona.metadata}
+                                            updateMetadata={updateMetadata}
+                                            uploadFile={uploadFile}
+                                        />
+                                    </TabsContent>
+
+                                    <TabsContent value="voice" className="mt-0">
+                                        <VoiceTab
+                                            persona={persona}
+                                            metadata={persona.metadata}
+                                            updateField={updateField}
+                                            updateMetadata={updateMetadata}
+                                            uploadFile={uploadFile}
+                                        />
+                                    </TabsContent>
+
+                                    <TabsContent value="store" className="mt-0">
+                                        <StoreTab
+                                            metadata={persona.metadata}
+                                            updateMetadata={updateMetadata}
+                                            config={persona.config || {}}
+                                            updateConfig={(key, value) => {
+                                                const currentConfig = persona.config || {}
+                                                updateField('config' as any, { ...currentConfig, [key]: value })
+                                            }}
+                                        />
+                                    </TabsContent>
+
+                                    <TabsContent value="analytics" className="mt-0">
+                                        <div className="space-y-6">
+                                            <div className="flex items-center gap-3 border-b border-rp-highlight-med pb-4">
+                                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-rp-foam to-rp-iris">
+                                                    <IconChartBar size={20} className="text-white" />
+                                                </div>
+                                                <div>
+                                                    <h3 className="font-semibold text-rp-text">Soul Health Analytics</h3>
+                                                    <p className="text-sm text-rp-subtle">
+                                                        Track engagement and retention metrics
+                                                    </p>
+                                                </div>
                                             </div>
-                                            <div className="rounded-lg border border-rp-highlight-med bg-rp-overlay p-4">
-                                                <div className="text-sm text-rp-subtle">Avg. Session Length</div>
-                                                <div className="mt-1 text-2xl font-bold text-rp-foam">-- min</div>
+
+                                            {/* Placeholder Analytics Cards */}
+                                            <div className="grid gap-4 md:grid-cols-3">
+                                                <div className="rounded-lg border border-rp-highlight-med bg-rp-overlay p-4">
+                                                    <div className="text-sm text-rp-subtle">Total Aether Earned</div>
+                                                    <div className="mt-1 text-2xl font-bold text-rp-gold">0 ✧</div>
+                                                </div>
+                                                <div className="rounded-lg border border-rp-highlight-med bg-rp-overlay p-4">
+                                                    <div className="text-sm text-rp-subtle">Avg. Session Length</div>
+                                                    <div className="mt-1 text-2xl font-bold text-rp-foam">-- min</div>
+                                                </div>
+                                                <div className="rounded-lg border border-rp-highlight-med bg-rp-overlay p-4">
+                                                    <div className="text-sm text-rp-subtle">Soulmate Bonds</div>
+                                                    <div className="mt-1 text-2xl font-bold text-rp-rose">0</div>
+                                                </div>
                                             </div>
-                                            <div className="rounded-lg border border-rp-highlight-med bg-rp-overlay p-4">
-                                                <div className="text-sm text-rp-subtle">Soulmate Bonds</div>
-                                                <div className="mt-1 text-2xl font-bold text-rp-rose">0</div>
-                                            </div>
+
+                                            <p className="text-center text-sm text-rp-muted">
+                                                Analytics will populate as users interact with your Soul.
+                                            </p>
                                         </div>
+                                    </TabsContent>
+                                </div>
+                            </Tabs>
 
-                                        <p className="text-center text-sm text-rp-muted">
-                                            Analytics will populate as users interact with your Soul.
-                                        </p>
-                                    </div>
-                                </TabsContent>
-                            </div>
-                        </Tabs>
-
-                        {/* Status Bar */}
-                        <div className="mt-6 flex items-center justify-between rounded-lg border border-rp-highlight-med bg-rp-surface/30 px-4 py-3 text-sm">
-                            <div className="flex items-center gap-4">
-                                <span className="text-rp-muted">
-                                    Status:{' '}
-                                    <span className={statusInfo.color}>
-                                        {statusInfo.icon} {statusInfo.label}
+                            {/* Status Bar */}
+                            <div className="mt-6 flex items-center justify-between rounded-lg border border-rp-highlight-med bg-rp-surface/30 px-4 py-3 text-sm">
+                                <div className="flex items-center gap-4">
+                                    <span className="text-rp-muted">
+                                        Status:{' '}
+                                        <span className={statusInfo.color}>
+                                            {statusInfo.icon} {statusInfo.label}
+                                        </span>
                                     </span>
-                                </span>
-                                {persona.visibility === 'PUBLIC' && (
-                                    <span className="text-green-400">• Live</span>
-                                )}
-                                {persona.id && (
+                                    {persona.visibility === 'PUBLIC' && (
+                                        <span className="text-green-400">• Live</span>
+                                    )}
+                                    {persona.id && (
+                                        <span className="text-rp-muted/80">
+                                            ID: {persona.id}
+                                        </span>
+                                    )}
+                                </div>
+                                <div className="flex items-center gap-4">
+                                    {moderationHistory.length > 0 && (
+                                        <button className="flex items-center gap-1 text-rp-muted hover:text-rp-subtle">
+                                            <IconHistory size={14} />
+                                            <span>{moderationHistory.length} moderation events</span>
+                                        </button>
+                                    )}
                                     <span className="text-rp-muted/80">
-                                        ID: {persona.id}
+                                        {persona.created_at && `Created: ${new Date(persona.created_at).toLocaleDateString()}`}
                                     </span>
-                                )}
-                            </div>
-                            <div className="flex items-center gap-4">
-                                {moderationHistory.length > 0 && (
-                                    <button className="flex items-center gap-1 text-rp-muted hover:text-rp-subtle">
-                                        <IconHistory size={14} />
-                                        <span>{moderationHistory.length} moderation events</span>
-                                    </button>
-                                )}
-                                <span className="text-rp-muted/80">
-                                    {persona.created_at && `Created: ${new Date(persona.created_at).toLocaleDateString()}`}
-                                </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </ErrorBoundary>
                 </main>
             )}
         </div>

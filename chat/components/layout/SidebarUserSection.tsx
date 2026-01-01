@@ -1,11 +1,15 @@
 "use client"
 
-import { useContext } from "react"
+import { useContext, useState, useRef, useEffect } from "react"
 import Link from "next/link"
-import { motion } from "framer-motion"
+import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { RemrinContext } from "@/context/context"
-import { IconCrown, IconLogin, IconUser } from "@tabler/icons-react"
+import { IconCrown, IconLogin, IconUser, IconLogout, IconSettings, IconUserCircle } from "@tabler/icons-react"
+import { createClient } from "@/lib/supabase/client"
+import { User } from "@supabase/supabase-js"
 
 interface SidebarUserSectionProps {
     isExpanded: boolean
@@ -21,14 +25,65 @@ interface SidebarUserSectionProps {
  */
 export function SidebarUserSection({ isExpanded, onProfileClick }: SidebarUserSectionProps) {
     const { profile } = useContext(RemrinContext)
+    const [user, setUser] = useState<User | null>(null)
+    const [showDropdown, setShowDropdown] = useState(false)
+    const dropdownRef = useRef<HTMLDivElement>(null)
+    const router = useRouter()
+    const supabase = createClient()
 
-    // Check if user is logged in
-    const isLoggedIn = !!profile
+    // Check auth status directly from Supabase
+    useEffect(() => {
+        // Get initial session
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setUser(session?.user ?? null)
+        })
+
+        // Listen for auth changes
+        const {
+            data: { subscription }
+        } = supabase.auth.onAuthStateChange((_event, session) => {
+            setUser(session?.user ?? null)
+        })
+
+        return () => subscription.unsubscribe()
+    }, [])
+
+    // Check if user is logged in (use Supabase user as source of truth)
+    const isLoggedIn = !!user
 
     // For now, we'll assume all users can see the subscribe CTA
     // This can be connected to a subscription status later
     const isSubscribed = false // TODO: Connect to actual subscription status
     const discountPercent = 50 // Promotional discount
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setShowDropdown(false)
+            }
+        }
+
+        if (showDropdown) {
+            document.addEventListener('mousedown', handleClickOutside)
+            return () => document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [showDropdown])
+
+    const handleSignOut = async () => {
+        try {
+            // Call server-side signout API to properly clear cookies
+            await fetch('/api/auth/signout', { method: 'POST' })
+
+            await supabase.auth.signOut({ scope: 'global' })
+
+            // Redirect to home
+            router.push('/')
+            router.refresh()
+        } catch (error) {
+            console.error('Error signing out:', error)
+        }
+    }
 
     if (!isLoggedIn) {
         // Logged out state - show Sign In button
@@ -59,50 +114,102 @@ export function SidebarUserSection({ isExpanded, onProfileClick }: SidebarUserSe
         )
     }
 
+    // Get display info from profile or user metadata
+    const displayName = profile?.display_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || "User"
+    const avatarUrl = profile?.image_url || user?.user_metadata?.avatar_url
+
     // Logged in state - show avatar + subscribe/upgrade CTA
     return (
         <div className="space-y-2 p-2">
-            {/* User Info Row */}
-            <button
-                onClick={onProfileClick}
-                className={cn(
-                    "flex w-full min-h-[48px] items-center gap-3 rounded-xl px-3 py-2 transition-all",
-                    "text-rp-subtle hover:bg-rp-overlay hover:text-rp-text",
-                    !isExpanded && "justify-center"
-                )}
-            >
-                {/* Avatar */}
-                <div className="relative shrink-0">
-                    {profile.image_url ? (
-                        <img
-                            src={profile.image_url}
-                            alt={profile.display_name || "User"}
-                            className="size-9 rounded-full object-cover ring-2 ring-rp-highlight-med"
-                        />
-                    ) : (
-                        <div className="flex size-9 items-center justify-center rounded-full bg-rp-iris/20 text-rp-iris ring-2 ring-rp-highlight-med">
-                            <IconUser size={18} />
-                        </div>
+            {/* User Info Row with Dropdown */}
+            <div className="relative" ref={dropdownRef}>
+                <button
+                    onClick={() => setShowDropdown(!showDropdown)}
+                    className={cn(
+                        "flex w-full min-h-[48px] items-center rounded-xl transition-all",
+                        "text-rp-subtle hover:bg-rp-overlay hover:text-rp-text",
+                        isExpanded ? "gap-3 px-3 py-2" : "justify-center px-2 py-2",
+                        showDropdown && "bg-rp-overlay text-rp-text"
                     )}
-                    {/* Online indicator */}
-                    <div className="absolute -bottom-0.5 -right-0.5 size-3 rounded-full bg-green-500 ring-2 ring-rp-surface" />
-                </div>
-
-                {/* Username - only show when expanded */}
-                <motion.div
-                    className="flex-1 overflow-hidden text-left"
-                    initial={false}
-                    animate={{
-                        opacity: isExpanded ? 1 : 0,
-                        width: isExpanded ? "auto" : 0
-                    }}
-                    transition={{ duration: 0.2 }}
                 >
-                    <p className="font-tiempos-text truncate text-sm font-medium text-rp-text">
-                        {profile.display_name || profile.username || "User"}
-                    </p>
-                </motion.div>
-            </button>
+                    {/* Avatar */}
+                    <div className={cn(
+                        "relative shrink-0",
+                        !isExpanded && "-translate-x-[2.5px]"
+                    )}>
+                        {avatarUrl ? (
+                            <div className="relative size-9">
+                                <Image
+                                    src={avatarUrl}
+                                    alt={displayName}
+                                    className="rounded-full object-cover ring-2 ring-rp-highlight-med"
+                                    fill
+                                    sizes="36px"
+                                />
+                            </div>
+                        ) : (
+                            <div className="flex size-9 items-center justify-center rounded-full bg-rp-iris/20 text-rp-iris ring-2 ring-rp-highlight-med">
+                                <IconUser size={18} />
+                            </div>
+                        )}
+                        {/* Online indicator */}
+                        <div className="absolute -bottom-0.5 -right-0.5 size-3 rounded-full bg-green-500 ring-2 ring-rp-surface" />
+                    </div>
+
+                    {/* Username - only show when expanded */}
+                    <motion.div
+                        className="flex-1 overflow-hidden text-left"
+                        initial={false}
+                        animate={{
+                            opacity: isExpanded ? 1 : 0,
+                            width: isExpanded ? "auto" : 0
+                        }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <p className="font-tiempos-text truncate text-sm font-medium text-rp-text">
+                            {displayName}
+                        </p>
+                    </motion.div>
+                </button>
+
+                {/* Dropdown Menu */}
+                <AnimatePresence>
+                    {showDropdown && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.15 }}
+                            className={cn(
+                                "absolute bottom-full left-0 right-0 mb-2 overflow-hidden rounded-xl border border-rp-highlight-med bg-rp-surface shadow-xl",
+                                !isExpanded && "left-auto right-auto w-48"
+                            )}
+                        >
+                            <div className="p-1">
+                                <Link
+                                    href="/settings/llm"
+                                    onClick={() => setShowDropdown(false)}
+                                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-rp-text transition-colors hover:bg-rp-overlay"
+                                >
+                                    <IconSettings size={18} />
+                                    <span>Settings</span>
+                                </Link>
+                                <div className="my-1 h-px bg-rp-highlight-med" />
+                                <button
+                                    onClick={() => {
+                                        setShowDropdown(false)
+                                        handleSignOut()
+                                    }}
+                                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-red-500 transition-colors hover:bg-red-500/10"
+                                >
+                                    <IconLogout size={18} />
+                                    <span>Logout</span>
+                                </button>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
 
             {/* Subscribe/Upgrade CTA - Compact size matching profile avatar */}
             {!isSubscribed && (
@@ -113,15 +220,15 @@ export function SidebarUserSection({ isExpanded, onProfileClick }: SidebarUserSe
                         "bg-gradient-to-r from-amber-600/90 to-orange-600/90",
                         "hover:from-amber-500 hover:to-orange-500",
                         "shadow-lg shadow-amber-500/20",
-                        isExpanded ? "gap-2 px-3 py-1.5" : "justify-center p-2"
+                        isExpanded ? "gap-2 px-3 py-1.5" : "justify-center p-1.5"
                     )}
                 >
                     {/* Crown Icon - same size as profile avatar icon */}
                     <div className={cn(
                         "shrink-0 flex items-center justify-center",
-                        isExpanded ? "size-7" : "size-9"
+                        "size-7"
                     )}>
-                        <IconCrown size={isExpanded ? 18 : 20} className="text-amber-100" />
+                        <IconCrown size={18} className="text-amber-100" />
                     </div>
 
                     {/* Subscribe Text + Discount Badge - only when expanded */}

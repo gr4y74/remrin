@@ -47,3 +47,4 @@ workbox-*.js.map
 .env.local
 .env
 .env*.local
+*~

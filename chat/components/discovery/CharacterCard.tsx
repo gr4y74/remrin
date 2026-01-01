@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, memo } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
@@ -31,7 +31,7 @@ function formatCount(count: number): string {
     return count.toString()
 }
 
-export function CharacterCard({
+export const CharacterCard = memo(function CharacterCard({
     id,
     name,
     imageUrl,
@@ -156,4 +156,4 @@ export function CharacterCard({
             </div>
         </Link>
     )
-}
+})

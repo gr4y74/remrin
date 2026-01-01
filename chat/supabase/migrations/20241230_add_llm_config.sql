@@ -4,7 +4,7 @@
 -- 1. Global LLM Configuration Table (Admin-controlled)
 CREATE TABLE IF NOT EXISTS llm_config (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    provider text NOT NULL CHECK (provider IN ('deepseek', 'openai', 'anthropic', 'google', 'groq', 'mistral', 'perplexity')),
+    provider text NOT NULL CHECK (provider IN ('deepseek', 'openai', 'anthropic', 'google', 'groq', 'mistral', 'perplexity', 'openrouter')),
     model_id text NOT NULL,
     display_name text NOT NULL,
     is_default boolean DEFAULT false,
@@ -42,7 +42,9 @@ VALUES
     ('anthropic', 'claude-3-5-sonnet-20240620', 'Claude 3.5 Sonnet', false, true, true, 90),
     ('google', 'gemini-1.5-pro-latest', 'Gemini 1.5 Pro', false, true, true, 80),
     ('openai', 'gpt-4o', 'GPT-4o', false, true, true, 70),
-    ('groq', 'llama3-70b-8192', 'LLaMA3 70B (Groq)', false, true, false, 60)
+    ('groq', 'llama3-70b-8192', 'LLaMA3 70B (Groq)', false, true, false, 60),
+    ('openrouter', 'meta-llama/llama-3.1-8b-instruct:free', 'Llama 3.1 8B (FREE)', false, true, false, 55),
+    ('openrouter', 'mistralai/mistral-7b-instruct:free', 'Mistral 7B (FREE)', false, true, false, 50)
 ON CONFLICT DO NOTHING;
 
 -- 5. RLS Policies

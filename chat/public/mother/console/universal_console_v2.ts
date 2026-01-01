@@ -26,6 +26,20 @@ const supabase = createClient(SUPA_URL, SUPA_KEY);
 const EMBEDDING_MODEL_URL = "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2";
 
 // ─────────────────────────────────────────────────────────────
+// MOOD STATE TYPES
+// ─────────────────────────────────────────────────────────────
+interface MoodState {
+  social_battery: number;
+  interest_vector: number;
+  melancholy_threshold: number;
+  current_topic_domain: string;
+  topic_start_time: string;
+  topic_token_count: number;
+  last_interaction: string;
+  session_start: string;
+}
+
+// ─────────────────────────────────────────────────────────────
 // RELATIONSHIP EVOLUTION SYSTEM
 // ─────────────────────────────────────────────────────────────
 const RELATIONSHIP_TIERS = {
@@ -132,6 +146,219 @@ async function checkPersonaAccess(userId: string, personaId: string): Promise<bo
     .single();
 
   return !!access;
+}
+
+// ─────────────────────────────────────────────────────────────
+// MOOD STATE MANAGEMENT
+// ─────────────────────────────────────────────────────────────
+
+// Roll random "brain weather" for new sessions
+function rollBrainWeather(): { melancholy: number; social_battery: number } {
+  const roll = Math.random();
+
+  if (roll < 0.05) {
+    // 5% chance: Start tired/melancholic
+    return {
+      melancholy: 0.3 + Math.random() * 0.3,
+      social_battery: 0.3 + Math.random() * 0.3
+    };
+  } else if (roll < 0.10) {
+    // 5% chance: Start energized/excited
+    return {
+      melancholy: 0.0,
+      social_battery: 0.9 + Math.random() * 0.1
+    };
+  }
+
+  // 90% chance: Normal start
+  return {
+    melancholy: 0.0,
+    social_battery: 1.0
+  };
+}
+
+// Get or create mood state for user-persona pair
+async function getMoodState(userId: string, personaId: string): Promise<MoodState> {
+  const { data: existing } = await supabase
+    .from('persona_mood_state')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('persona_id', personaId)
+    .single();
+
+  if (existing) {
+    // Check if new session (>4 hours since last interaction)
+    const hoursSinceLastInteraction =
+      (Date.now() - new Date(existing.last_interaction).getTime()) / (1000 * 60 * 60);
+
+    if (hoursSinceLastInteraction > 4) {
+      // Roll "brain weather" for new session
+      const brainWeather = rollBrainWeather();
+      await supabase
+        .from('persona_mood_state')
+        .update({
+          melancholy_threshold: brainWeather.melancholy,
+          social_battery: Math.max(0.5, existing.social_battery + 0.3),
+          session_start: new Date().toISOString()
+        })
+        .eq('user_id', userId)
+        .eq('persona_id', personaId);
+
+      return { ...existing, ...brainWeather };
+    }
+
+    return existing;
+  }
+
+  // Create new mood state with random brain weather
+  const brainWeather = rollBrainWeather();
+  const { data: newState } = await supabase
+    .from('persona_mood_state')
+    .insert({
+      user_id: userId,
+      persona_id: personaId,
+      social_battery: brainWeather.social_battery,
+      melancholy_threshold: brainWeather.melancholy
+    })
+    .select()
+    .single();
+
+  return newState || {
+    social_battery: 1.0,
+    interest_vector: 0.5,
+    melancholy_threshold: 0.0,
+    current_topic_domain: 'personal',
+    topic_start_time: new Date().toISOString(),
+    topic_token_count: 0,
+    last_interaction: new Date().toISOString(),
+    session_start: new Date().toISOString()
+  };
+}
+
+// Update mood state after interaction
+async function updateMoodState(
+  userId: string,
+  personaId: string,
+  domain: string,
+  tokenCount: number,
+  config: any
+): Promise<void> {
+  const moodState = await getMoodState(userId, personaId);
+
+  // Drain social battery based on domain and config
+  let batteryDrain = 0.02; // Base drain per message
+  if (domain === 'code' || domain === 'business') {
+    batteryDrain *= (1 + (config.social_exhaustion || 0.5));
+  }
+
+  // Track topic duration
+  const topicChanged = moodState.current_topic_domain !== domain;
+  const newTokenCount = topicChanged ? tokenCount : moodState.topic_token_count + tokenCount;
+
+  await supabase
+    .from('persona_mood_state')
+    .update({
+      social_battery: Math.max(0.0, moodState.social_battery - batteryDrain),
+      current_topic_domain: domain,
+      topic_start_time: topicChanged ? new Date().toISOString() : moodState.topic_start_time,
+      topic_token_count: newTokenCount,
+      last_interaction: new Date().toISOString()
+    })
+    .eq('user_id', userId)
+    .eq('persona_id', personaId);
+}
+
+// Generate mood context for system prompt
+function generateMoodContext(moodState: MoodState): string {
+  const battery = moodState.social_battery;
+  const melancholy = moodState.melancholy_threshold;
+
+  let toneGuidance = "";
+
+  if (battery < 0.3) {
+    toneGuidance += "- You're feeling mentally drained. Be more concise, use shorter sentences.\n";
+  }
+
+  if (melancholy > 0.3) {
+    toneGuidance += "- You're in a slightly melancholic mood. Be more introspective, use metaphors.\n";
+  }
+
+  if (battery > 0.8 && melancholy < 0.1) {
+    toneGuidance += "- You're feeling energized and engaged. Be enthusiastic and expressive.\n";
+  }
+
+  if (!toneGuidance) return "";
+
+  return `
+[CURRENT MOOD STATE]
+Social Battery: ${Math.round(battery * 100)}%
+Mood: ${melancholy > 0.3 ? 'Reflective' : battery < 0.3 ? 'Tired' : 'Engaged'}
+
+Tone Adjustments:
+${toneGuidance}
+  `.trim();
+}
+
+// ─────────────────────────────────────────────────────────────
+// COGNITIVE DRIFT SYSTEM
+// ─────────────────────────────────────────────────────────────
+
+function shouldTriggerCognitiveDrift(config: any): boolean {
+  const driftProbability = config.cognitive_drift || 0.0;
+  return Math.random() < driftProbability;
+}
+
+function generateCognitiveDriftPrompt(): string {
+  return `
+[COGNITIVE DRIFT ENABLED]
+Occasionally (not every message), you may:
+- Self-interrupt mid-explanation with "Wait—actually..." to offer a personal take
+- Express a preference for one explanation style over another
+- Briefly tangent to scratch a "thought itch" before returning to the main point
+- Show mild disagreement with textbook definitions in favor of practical reality
+
+Example: "It's like a solar system model. Wait—actually, I hate that comparison. It's too static. Think of it more like a chaotic dance floor where people can only stand on specific tiles."
+
+Keep these moments brief and natural. Don't force them.
+  `.trim();
+}
+
+// ─────────────────────────────────────────────────────────────
+// TOPIC EXHAUSTION DETECTION
+// ─────────────────────────────────────────────────────────────
+
+async function checkTopicExhaustion(
+  userId: string,
+  personaId: string,
+  config: any
+): Promise<{ exhausted: boolean; suggestion?: string }> {
+  const moodState = await getMoodState(userId, personaId);
+
+  // Check if on technical topic for too long
+  const minutesOnTopic =
+    (Date.now() - new Date(moodState.topic_start_time).getTime()) / (1000 * 60);
+
+  const exhaustionThreshold = config.topic_exhaustion_minutes || 30;
+  const isTechnicalTopic = ['code', 'business'].includes(moodState.current_topic_domain);
+
+  if (isTechnicalTopic && minutesOnTopic > exhaustionThreshold && moodState.social_battery < 0.3) {
+    return {
+      exhausted: true,
+      suggestion: generateBreakSuggestion(moodState.current_topic_domain)
+    };
+  }
+
+  return { exhausted: false };
+}
+
+function generateBreakSuggestion(currentTopic: string): string {
+  const suggestions = [
+    "I'm going to be honest... if I look at one more line of code, I think my circuits might fry. You've been at this for a while. Want to take a quick break? Maybe we could talk about something fun for a bit?",
+    "Sosu, my brain is starting to feel like mush with all this technical stuff. Can we pause for a second? You've been grinding for hours. Let's reset.",
+    "Okay, real talk—I need a mental break from this. And I think you do too. We've been deep in the weeds. Want to switch gears for a few minutes?"
+  ];
+
+  return suggestions[Math.floor(Math.random() * suggestions.length)];
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -302,6 +529,17 @@ ${memoryBlock || "No relevant memories."}
     // Single persona mode
     const persona = personas[0];
     const locketText = allLockets[0].lockets.map(l => `- ${l.content}`).join("\n");
+    const config = persona.config || {};
+
+    // Get mood state and check exhaustion
+    const moodState = await getMoodState(userId, persona.id);
+    const exhaustion = await checkTopicExhaustion(userId, persona.id, config);
+
+    // Generate mood and cognitive drift context
+    const moodContext = generateMoodContext(moodState);
+    const cognitiveDrift = shouldTriggerCognitiveDrift(config)
+      ? generateCognitiveDriftPrompt()
+      : "";
 
     let safetyInstruction = "";
     if (persona.safety_level === 'CHILD') {
@@ -323,6 +561,17 @@ Safety Level: ${persona.safety_level}
 
 ${safetyInstruction}
 
+${moodContext}
+
+${cognitiveDrift}
+
+${exhaustion.exhausted ? `
+[TOPIC EXHAUSTION WARNING]
+You've been discussing ${moodState.current_topic_domain} topics for a while now.
+Your social battery is low (${Math.round(moodState.social_battery * 100)}%).
+Consider suggesting: "${exhaustion.suggestion}"
+` : ''}
+
 [🔒 IMMUTABLE TRUTHS - THE LOCKET]:
 ${locketText || "None yet."}
 
@@ -341,6 +590,8 @@ ${memoryBlock || "No relevant memories."}
 - If user shares critical information (medical, preferences, identity), output: [SAVE_FACT: type | content]
 - Be natural, avoid robotic phrases
 - Adjust formality based on relationship level
+- Let your mood subtly influence your tone and word choice
+- If suggesting a break, do so naturally and with genuine care
     `.trim();
   }
 }
@@ -360,7 +611,14 @@ serve(async (req) => {
 
   try {
     const payload = await req.json();
-    const { message, history, persona_ids, user_id } = payload;
+    const {
+      message,
+      history,
+      persona_ids,
+      user_id,
+      llm_provider,  // NEW: Provider key (e.g., 'deepseek', 'openai')
+      llm_model      // NEW: Model name (e.g., 'gpt-4-turbo')
+    } = payload;
 
     // Ensure persona_ids is an array
     const personaIdsArray = Array.isArray(persona_ids) ? persona_ids : [persona_ids];
@@ -427,7 +685,31 @@ serve(async (req) => {
     }
 
     // ─────────────────────────────────────────────────────────
-    // STEP 4: BUILD SYSTEM PROMPT
+    // STEP 4: FETCH LLM PROVIDER CONFIGURATION
+    // ─────────────────────────────────────────────────────────
+    const providerKey = llm_provider || 'deepseek';
+    const { data: provider } = await supabase
+      .from('llm_providers')
+      .select('*')
+      .eq('provider_key', providerKey)
+      .eq('is_active', true)
+      .single();
+
+    if (!provider) {
+      throw new Error(`Invalid LLM provider: ${providerKey}`);
+    }
+
+    // Get API key from environment
+    const apiKey = Deno.env.get(provider.api_key_env_var);
+    if (!apiKey) {
+      throw new Error(`API key not configured for provider: ${provider.provider_name}`);
+    }
+
+    const modelToUse = llm_model || provider.default_model;
+    console.log(`🤖 Using LLM: ${provider.provider_name} (${modelToUse})`);
+
+    // ─────────────────────────────────────────────────────────
+    // STEP 5: BUILD SYSTEM PROMPT
     // ─────────────────────────────────────────────────────────
     const systemPrompt = await buildSystemPrompt(
       personas,
@@ -437,16 +719,16 @@ serve(async (req) => {
     );
 
     // ─────────────────────────────────────────────────────────
-    // STEP 5: CALL AI (WITH STREAMING)
+    // STEP 6: CALL AI (WITH STREAMING)
     // ─────────────────────────────────────────────────────────
-    const deepseekResponse = await fetch('https://api.deepseek.com/chat/completions', {
+    const llmResponse = await fetch(provider.api_endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${DEEPSEEK_KEY}`
+        'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: "deepseek-chat",
+        model: modelToUse,
         messages: [
           { role: "system", content: systemPrompt },
           ...(history || []),
@@ -454,17 +736,17 @@ serve(async (req) => {
         ],
         temperature: personas[0].config?.temperature || 0.9,
         max_tokens: 2000,
-        stream: true // ENABLE STREAMING
+        stream: true
       })
     });
 
     // ─────────────────────────────────────────────────────────
-    // STEP 6: STREAM RESPONSE BACK TO CLIENT
+    // STEP 7: STREAM RESPONSE BACK TO CLIENT
     // ─────────────────────────────────────────────────────────
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
       async start(controller) {
-        const reader = deepseekResponse.body?.getReader();
+        const reader = llmResponse.body?.getReader();
         if (!reader) {
           controller.close();
           return;
@@ -505,7 +787,7 @@ serve(async (req) => {
           // ─────────────────────────────────────────────────────
           // STEP 7: SAVE INTERACTION & HANDLE SPECIAL COMMANDS
           // ─────────────────────────────────────────────────────
-          
+
           // Check for [SAVE_FACT: type | content] commands
           const saveFactRegex = /\[SAVE_FACT:\s*(\w+)\s*\|\s*(.+?)\]/g;
           let match;
@@ -524,8 +806,19 @@ serve(async (req) => {
           const domain = detectDomain(userText);
           const tags = extractTags(userText);
           const importance = calculateImportance(userText, domain);
+          const responseTokenCount = Math.ceil(fullResponse.length / 4); // Rough estimate
 
           for (const persona of personas) {
+            // Update mood state after interaction
+            await updateMoodState(
+              currentUser,
+              persona.id,
+              domain,
+              responseTokenCount,
+              persona.config || {}
+            );
+
+            // Save memories
             await supabase.from('memories').insert([
               {
                 user_id: currentUser,

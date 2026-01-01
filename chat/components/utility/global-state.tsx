@@ -83,7 +83,7 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   const [userInput, setUserInput] = useState<string>("")
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
   const [chatSettings, setChatSettings] = useState<ChatSettings>({
-    model: "deepseek-chat",
+    model: "mistralai/mistral-7b-instruct:free", // FREE OpenRouter model
     prompt: "You are a helpful AI assistant.",
     temperature: 0.5,
     contextLength: 4000,

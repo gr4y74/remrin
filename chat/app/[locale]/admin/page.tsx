@@ -7,7 +7,8 @@ import {
     IconChartBar,
     IconSettings,
     IconArrowLeft,
-    IconStar
+    IconStar,
+    IconDiamond
 } from "@tabler/icons-react"
 import { AdminPasswordGate } from "@/components/admin/AdminPasswordGate"
 
@@ -20,6 +21,30 @@ export default function AdminPage() {
             href: "/admin/featured",
             color: "from-amber-600 to-orange-500",
             badge: null
+        },
+        {
+            title: "Tier Management",
+            description: "Configure features, limits, and LLM providers per tier",
+            icon: IconDiamond,
+            href: "/admin/tiers",
+            color: "from-violet-600 to-purple-500",
+            badge: null
+        },
+        {
+            title: "Chat Engine Config",
+            description: "Configure LLM providers, search, and API keys",
+            icon: IconSettings,
+            href: "/admin/chat-config",
+            color: "from-cyan-600 to-blue-500",
+            badge: null
+        },
+        {
+            title: "Universal Console",
+            description: "Directly edit the AI brain logic (v1/v2)",
+            icon: IconSettings,
+            href: "/admin/universal-console",
+            color: "from-pink-600 to-rose-500",
+            badge: "Advanced"
         },
         {
             title: "Content Moderation",
@@ -43,7 +68,7 @@ export default function AdminPage() {
             icon: IconChartBar,
             href: "/admin/analytics",
             color: "from-green-600 to-emerald-500",
-            badge: "Coming Soon"
+            badge: null
         },
         {
             title: "Settings",

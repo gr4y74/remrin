@@ -6,7 +6,7 @@ import { CanvasPanel } from "@/components/canvas"
 import Image from "next/image"
 import useHotkey from "@/lib/hooks/use-hotkey"
 import { FC, useContext, useState } from "react"
-import { useSelectFileHandler } from "../chat/chat-hooks/use-select-file-handler"
+// import { useSelectFileHandler } from "../chat/chat-hooks/use-select-file-handler"
 import { CommandK } from "../utility/command-k"
 
 // Panel widths
@@ -18,7 +18,7 @@ interface DashboardProps {
 }
 
 export const Dashboard: FC<DashboardProps> = ({ children }) => {
-  const { handleSelectDeviceFile } = useSelectFileHandler()
+  // const { handleSelectDeviceFile } = useSelectFileHandler()
 
   const {
     isCanvasOpen,
@@ -38,9 +38,9 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
 
   const onFileDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault()
-    const files = event.dataTransfer.files
-    const file = files[0]
-    handleSelectDeviceFile(file)
+    // const files = event.dataTransfer.files
+    // const file = files[0]
+    // handleSelectDeviceFile(file)
     setIsDragging(false)
   }
 

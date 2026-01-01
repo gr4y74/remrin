@@ -3,6 +3,7 @@
 import { useContext, useMemo } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
+import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { RemrinContext } from "@/context/context"
 import { IconMessage } from "@tabler/icons-react"
@@ -114,11 +115,12 @@ export function SidebarRecentChats({ isExpanded, maxChats = 8, showDemo = false 
                             isExpanded ? "size-8" : "size-9"
                         )}>
                             {chat.imageUrl ? (
-                                <img
+                                <Image
                                     src={chat.imageUrl}
                                     alt={chat.name}
-                                    className="size-full object-cover"
-                                    loading="lazy"
+                                    className="object-cover"
+                                    fill
+                                    sizes="36px"
                                 />
                             ) : (
                                 <div className="flex size-full items-center justify-center bg-rp-iris/20 text-rp-iris">

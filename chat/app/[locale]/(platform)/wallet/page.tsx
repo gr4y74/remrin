@@ -86,7 +86,8 @@ export default function WalletPage() {
                                 <IconCoins size={20} className="text-rp-foam" />
                                 <span className="text-rp-text font-semibold">1,000 Aether</span>
                             </div>
-                            <p className="text-rp-text mb-3 text-2xl font-bold">$9.99</p>
+                            <p className="text-rp-text mb-1 text-2xl font-bold">$9.99</p>
+                            <p className="text-rp-iris mb-2 text-xs">Best Buy</p>
                             <Button
                                 onClick={handleTopUp}
                                 className="bg-rp-iris hover:bg-rp-iris/80 w-full"

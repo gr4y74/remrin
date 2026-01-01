@@ -1,32 +1,23 @@
 "use client"
 
-import { ChatHelp } from "@/components/chat/chat-help"
-import { useChatHandler } from "@/components/chat/chat-hooks/use-chat-handler"
-import { ChatInput } from "@/components/chat/chat-input"
-import { ChatUI } from "@/components/chat/chat-ui"
-import { Brand } from "@/components/ui/brand"
+import { ChatUIV2 } from "@/components/chat-v2"
+import { ErrorBoundary } from "@/components/ErrorBoundary"
 import { RemrinContext } from "@/context/context"
-import useHotkey from "@/lib/hooks/use-hotkey"
-import { useTheme } from "next-themes"
-import { useContext, useEffect } from "react"
-import Image from "next/image"
-import { useSearchParams } from "next/navigation"
 import { getPersonaById } from "@/db/personas"
-
+import { UserTier } from "@/lib/chat-engine/types"
+import { useSearchParams } from "next/navigation"
+import { useContext, useEffect } from "react"
 export default function ChatPage() {
-  useHotkey("o", () => handleNewChat())
-  useHotkey("l", () => {
-    handleFocusChatInput()
-  })
+  // Chat V2 handles its own state and hotkeys internally
+
+
 
   const searchParams = useSearchParams()
   const personaId = searchParams.get("persona")
 
-  const { chatMessages, setSelectedPersona } = useContext(RemrinContext)
+  const { setSelectedPersona, profile } = useContext(RemrinContext)
 
-  const { handleNewChat, handleFocusChatInput } = useChatHandler()
-
-  const { theme } = useTheme()
+  const userTier = ((profile as any)?.subscription_tier as UserTier) || "free"
 
   // Load persona from query parameter
   useEffect(() => {
@@ -45,32 +36,17 @@ export default function ChatPage() {
     loadPersona()
   }, [personaId, setSelectedPersona])
 
+  const selectedPersona = (useContext(RemrinContext) as any).selectedPersona
+
   return (
-    <>
-      {chatMessages.length === 0 ? (
-        <div className="relative flex h-full flex-col items-center justify-center">
-          {/* Centered Brand Logo with Tilt Animation - Fixed center position */}
-          <div className="absolute left-1/2 top-1/2 -mt-16 -translate-x-1/2 -translate-y-1/2">
-            <Image
-              src="/logo.svg"
-              alt="Remrin"
-              width={150}
-              height={150}
-              className="cursor-pointer drop-shadow-[0_0_25px_rgba(235,188,186,0.4)] transition-transform duration-300 ease-out hover:rotate-[-5deg] hover:scale-105"
-            />
-          </div>
-
-          <div className="flex grow flex-col items-center justify-center" />
-
-          <div className="w-full min-w-[300px] items-end px-2 pb-3 pt-0 sm:w-[600px] sm:pb-8 sm:pt-5 md:w-[700px] lg:w-[700px] xl:w-[800px]">
-            <ChatInput />
-          </div>
-
-
-        </div>
-      ) : (
-        <ChatUI />
-      )}
-    </>
+    <ErrorBoundary>
+      <ChatUIV2
+        personaId={selectedPersona?.id || undefined}
+        personaImage={selectedPersona?.image_url || undefined}
+        personaName={selectedPersona?.name || undefined}
+        personaSystemPrompt={selectedPersona?.system_prompt || undefined}
+        userTier={userTier}
+      />
+    </ErrorBoundary>
   )
 }

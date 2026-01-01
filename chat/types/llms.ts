@@ -8,6 +8,7 @@ export type LLMID =
   | GroqLLMID
   | PerplexityLLMID
   | DeepSeekLLMID
+  | OpenRouterLLMID
 
 // DeepSeek Models (REMRIN)
 export type DeepSeekLLMID =
@@ -66,6 +67,11 @@ export type PerplexityLLMID =
   | "sonar-small-online" // Sonar Small Online
   | "sonar-medium-chat" // Sonar Medium Chat
   | "sonar-medium-online" // Sonar Medium Online
+
+// OpenRouter Free Models
+export type OpenRouterLLMID =
+  | "mistralai/mistral-7b-instruct:free" // Mistral 7B (FREE)
+  | "meta-llama/llama-3.1-8b-instruct:free" // Llama 3.1 8B (FREE)
 
 export interface LLM {
   modelId: LLMID

@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { cookies } from "next/headers"
 import { NextResponse } from "next/server"
+import { handleApiError } from "@/lib/errors"
 
 export async function POST() {
     try {
@@ -34,7 +35,6 @@ export async function POST() {
 
         return response
     } catch (error) {
-        console.error("Sign out API error:", error)
-        return NextResponse.json({ success: false, error: String(error) }, { status: 500 })
+        return handleApiError(error)
     }
 }
