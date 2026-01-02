@@ -2,11 +2,20 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: '2025-12-15.clover' as any,
-});
+// Lazy initialization to avoid build-time errors
+let _stripe: Stripe | null = null;
+function getStripe(): Stripe {
+    if (!_stripe) {
+        _stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+            apiVersion: '2025-12-15.clover' as any,
+        });
+    }
+    return _stripe;
+}
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+function getWebhookSecret(): string {
+    return process.env.STRIPE_WEBHOOK_SECRET!;
+}
 
 // POST /api/webhooks/stripe - Handle Stripe webhook events
 export async function POST(req: NextRequest) {
@@ -20,7 +29,7 @@ export async function POST(req: NextRequest) {
     let event: Stripe.Event;
 
     try {
-        event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+        event = getStripe().webhooks.constructEvent(body, signature, getWebhookSecret());
     } catch (err: any) {
         console.error('Webhook signature verification failed:', err.message);
         return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
