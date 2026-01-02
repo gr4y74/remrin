@@ -1,0 +1,20 @@
+app/[locale]/login/login-form.tsx(32,17): error TS2304: Cannot find name 'router'.
+app/api/forge/finalize-soul/route.ts(38,28): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Record<UserTier, TierConfig>'.
+app/api/v2/chat/route.ts(53,67): error TS2304: Cannot find name 'CarrotPersona'.
+app/api/v2/chat/route.ts(65,23): error TS2304: Cannot find name 'CarrotPersona'.
+app/api/v2/chat/route.ts(167,36): error TS2304: Cannot find name 'CarrotEngine'.
+app/api/v2/chat/route.ts(179,48): error TS2304: Cannot find name 'CarrotEngine'.
+components/chat-v2/ChatMessage.tsx(47,98): error TS2339: Property 'selectedVoiceId' does not exist on type '{ model?: string | undefined; provider?: ProviderId | undefined; tokensUsed?: number | undefined; searchResults?: SearchResult[] | undefined; files?: FileAttachment[] | undefined; toolCalls?: ToolCall[] | undefined; toolResult?: any; }'.
+components/chat-v2/ChatMessage.tsx(115,93): error TS2339: Property 'personaId' does not exist on type '{ model?: string | undefined; provider?: ProviderId | undefined; tokensUsed?: number | undefined; searchResults?: SearchResult[] | undefined; files?: FileAttachment[] | undefined; toolCalls?: ToolCall[] | undefined; toolResult?: any; }'.
+components/chat-v2/ChatMessage.tsx(231,102): error TS2554: Expected 1 arguments, but got 2.
+components/chat-v2/ChatMessage.tsx(246,48): error TS2741: Property 'status' is missing in type '{}' but required in type 'VisionLoadingProps'.
+lib/chat-engine/providers/base.ts(56,23): error TS2304: Cannot find name 'ChatChunk'.
+lib/chat-engine/providers/base.ts(71,40): error TS2304: Cannot find name 'ChatChunk'.
+lib/chat-engine/providers/base.ts(73,23): error TS2304: Cannot find name 'ChatChunk'.
+lib/chat-engine/providers/claude.ts(54,23): error TS2304: Cannot find name 'ChatChunk'.
+lib/chat-engine/providers/claude.ts(96,23): error TS2304: Cannot find name 'ChatChunk'.
+lib/chat-engine/providers/deepseek.ts(59,23): error TS2304: Cannot find name 'ChatChunk'.
+lib/chat-engine/providers/gemini.ts(54,23): error TS2304: Cannot find name 'ChatChunk'.
+lib/chat-engine/providers/gemini.ts(103,23): error TS2304: Cannot find name 'ChatChunk'.
+lib/chat-engine/providers/index.ts(98,23): error TS2304: Cannot find name 'ChatChunk'.
+lib/chat-engine/providers/openrouter.ts(68,23): error TS2304: Cannot find name 'ChatChunk'.

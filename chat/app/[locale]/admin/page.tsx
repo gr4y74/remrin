@@ -8,12 +8,21 @@ import {
     IconSettings,
     IconArrowLeft,
     IconStar,
-    IconDiamond
+    IconDiamond,
+    IconRocket
 } from "@tabler/icons-react"
 import { AdminPasswordGate } from "@/components/admin/AdminPasswordGate"
 
 export default function AdminPage() {
     const adminModules = [
+        {
+            title: "Mission Control",
+            description: "System State Audit & Feature Manifest",
+            icon: IconRocket,
+            href: "/admin/mission-control",
+            color: "from-rp-rose to-purple-600",
+            badge: "NEW"
+        },
         {
             title: "Featured Content",
             description: "Manage Hero Carousel and Gallery visibility",

@@ -1,0 +1,1 @@
+/mnt/Data68/remrin/chat/docs/UI_REDESIGN_WORK_ASSIGNMENT.md
