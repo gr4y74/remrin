@@ -66,7 +66,7 @@ export function ChatMessages({
                 className="h-full overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-rp-muted/20"
             >
                 {/* Messages */}
-                <div className="mx-auto flex w-full max-w-3xl flex-col pb-8">
+                <div className="flex w-full flex-col space-y-1 pb-8">
                     {messages
                         .filter(m => m.role !== 'system')
                         .map((message, index) => (

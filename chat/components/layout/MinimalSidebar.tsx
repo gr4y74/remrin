@@ -151,7 +151,7 @@ export function MinimalSidebar() {
                 <div className="border-rp-muted/20 -mx-2 my-2 border-t" />
 
                 {/* Recent Chats Section */}
-                <SidebarRecentChats isExpanded={isExpanded} maxChats={8} />
+                <SidebarRecentChats isExpanded={isExpanded} maxChats={8} showDemo={true} />
 
                 {/* Spacer pushes user section to bottom */}
                 <div className="flex-1" />

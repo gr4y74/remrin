@@ -90,7 +90,7 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
 
     return (
         <div
-            className="border-rp-highlight-low bg-rp-surface fixed right-0 top-0 z-30 flex h-screen flex-col border-l"
+            className="bg-rp-surface fixed right-0 top-0 z-30 flex h-screen flex-col"
             style={{ width: `${width}px` }}
         >
             {/* Full-Bleed Hero Image Section - Talkie Style */}
@@ -140,7 +140,7 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                             <Image
                                 src={selectedPersona.image_url || "/images/rem_hero.webp"}
                                 alt={selectedPersona.name}
-                                className="rounded-full object-cover ring-2 ring-rp-highlight-med"
+                                className="rounded-full object-cover"
                                 fill
                                 sizes="48px"
                             />
@@ -190,10 +190,33 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                         </div>
                     </Link>
                 </div>
+
+                {/* Follow Button */}
+                <button
+                    onClick={() => setIsFollowing(!isFollowing)}
+                    className={cn(
+                        "mt-3 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-medium text-sm transition-all",
+                        isFollowing
+                            ? "bg-rp-love/20 text-rp-love hover:bg-rp-love/30"
+                            : "bg-rp-overlay/40 text-rp-text hover:bg-rp-overlay"
+                    )}
+                >
+                    {isFollowing ? (
+                        <>
+                            <IconHeartFilled size={18} />
+                            <span>Following</span>
+                        </>
+                    ) : (
+                        <>
+                            <IconHeart size={18} />
+                            <span>Follow</span>
+                        </>
+                    )}
+                </button>
             </div>
 
             {/* Icon-Only Tabs with Sliding Indicator - Talkie Style */}
-            <div className="relative flex border-b border-rp-highlight-low bg-rp-surface">
+            <div className="relative flex bg-rp-surface">
                 {TABS.map((tab) => (
                     <button
                         key={tab.id}
@@ -220,8 +243,7 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                 />
             </div>
 
-            {/* Split Line */}
-            <div className="border-t border-rp-highlight-low" />
+            {/* Split Line - Removed for seamless design */}
 
             {/* Tab Content - Scrollable */}
             <div className="flex-1 overflow-auto">
@@ -235,7 +257,7 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                         </div>
 
                         {/* Comment Input Area - Talkie Style */}
-                        <div className="bg-rp-base/50 rounded-xl border border-rp-highlight-low">
+                        <div className="bg-rp-base/50 rounded-xl">
                             <div className="flex items-start gap-3 p-3">
                                 {/* User Avatar */}
                                 {profile?.image_url ? (
@@ -322,10 +344,47 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                 {/* Settings Tab */}
                 {activeTab === "settings" && (
                     <div className="p-4 space-y-4">
-                        <h3 className={`${TYPOGRAPHY.heading.h4} text-rp-text`}>Chat Settings</h3>
-                        <p className="text-rp-subtle text-sm">
-                            Settings for this chat session will appear here.
-                        </p>
+                        <h3 className={`${TYPOGRAPHY.heading.h4} text-rp-text mb-4`}>Chat Settings</h3>
+
+                        {/* Settings Buttons */}
+                        <div className="space-y-3">
+                            {/* Chat Settings Button */}
+                            <button
+                                onClick={() => {
+                                    // TODO: Open chat settings modal
+                                    alert("Chat Settings coming soon!")
+                                }}
+                                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-rp-overlay/40 hover:bg-rp-overlay transition-colors group"
+                            >
+                                <div className="flex items-center justify-center size-10 rounded-lg bg-rp-iris/20">
+                                    <IconSettings size={20} className="text-rp-iris" />
+                                </div>
+                                <div className="flex-1 text-left">
+                                    <div className="text-sm font-medium text-rp-text">Chat Settings</div>
+                                    <div className="text-xs text-rp-muted">Configure chat preferences</div>
+                                </div>
+                                <IconArrowNarrowRight size={18} className="text-rp-subtle group-hover:text-rp-text transition-colors" />
+                            </button>
+
+                            {/* Change Background Button */}
+                            <button
+                                onClick={() => {
+                                    // Trigger file input from MiniProfile
+                                    const fileInput = document.querySelector('input[type="file"][accept="image/*"]') as HTMLInputElement
+                                    fileInput?.click()
+                                }}
+                                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-rp-overlay/40 hover:bg-rp-overlay transition-colors group"
+                            >
+                                <div className="flex items-center justify-center size-10 rounded-lg bg-rp-love/20">
+                                    <IconPhoto size={20} className="text-rp-love" />
+                                </div>
+                                <div className="flex-1 text-left">
+                                    <div className="text-sm font-medium text-rp-text">Change Background</div>
+                                    <div className="text-xs text-rp-muted">Upload custom chat background</div>
+                                </div>
+                                <IconArrowNarrowRight size={18} className="text-rp-subtle group-hover:text-rp-text transition-colors" />
+                            </button>
+                        </div>
                     </div>
                 )}
             </div>

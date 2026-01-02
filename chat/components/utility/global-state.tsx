@@ -135,9 +135,37 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   const [isCharacterPanelOpen, setIsCharacterPanelOpen] = useState<boolean>(true)
   const [artifacts, setArtifacts] = useState<Artifact[]>([])
 
-  // CHAT BACKGROUND STORE
-  const [chatBackgroundEnabled, setChatBackgroundEnabled] = useState<boolean>(false)
-  const [activeBackgroundUrl, setActiveBackgroundUrl] = useState<string | null>(null)
+  // CHAT BACKGROUND STORE - with localStorage persistence
+  const [chatBackgroundEnabled, setChatBackgroundEnabled] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('chatBackgroundEnabled')
+      return saved ? JSON.parse(saved) : false
+    }
+    return false
+  })
+  const [activeBackgroundUrl, setActiveBackgroundUrl] = useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('activeBackgroundUrl')
+    }
+    return null
+  })
+
+  // Persist background settings to localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('chatBackgroundEnabled', JSON.stringify(chatBackgroundEnabled))
+    }
+  }, [chatBackgroundEnabled])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (activeBackgroundUrl) {
+        localStorage.setItem('activeBackgroundUrl', activeBackgroundUrl)
+      } else {
+        localStorage.removeItem('activeBackgroundUrl')
+      }
+    }
+  }, [activeBackgroundUrl])
 
   const fetchStartingData = useCallback(async () => {
     const session = (await supabase.auth.getSession()).data.session
@@ -183,6 +211,18 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
       // Fetch Soul Forge personas owned by this user
       const userPersonas = await getPersonasByOwnerId(user.id)
       setPersonas(userPersonas)
+
+      // Fetch user's chats for recent chats sidebar
+      const { data: userChats, error } = await supabase
+        .from('chats')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('updated_at', { ascending: false })
+        .limit(20)
+
+      if (!error && userChats) {
+        setChats(userChats)
+      }
 
       return profile
     }

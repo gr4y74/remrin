@@ -148,22 +148,8 @@ function ChatUIInner({
 
     // Classic Layout
     return (
-        <div
-            className={`flex h-full flex-col relative ${isLowBattery ? 'low-battery-mode' : ''}`}
-            style={chatBackgroundEnabled && activeBackgroundUrl ? {
-                backgroundImage: `url(${activeBackgroundUrl})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-            } : {}}
-        >
-            {/* Background Overlay for readability */}
-            {chatBackgroundEnabled && activeBackgroundUrl && (
-                <div className="absolute inset-0 bg-rp-base/40 backdrop-blur-[2px] z-0 pointer-events-none" />
-            )}
-
-
-
-            {/* Legacy Feature: Mini Profile Card */}
+        <div className={`flex h-full flex-col relative ${isLowBattery ? 'low-battery-mode' : ''}`}>
+            {/* Mini Profile Card */}
             {personaId && (
                 <div className="relative z-10">
                     <MiniProfile
@@ -191,41 +177,43 @@ function ChatUIInner({
             )}
 
 
-            {/* Messages or Empty State */}
-            {messages.length === 0 ? (
-                <div className="flex flex-1 flex-col items-center justify-center overflow-y-auto px-4 py-8">
-                    {showSoulGallery && userId ? (
-                        // Show Soul Gallery for persona selection
-                        <SoulGallery
-                            userId={userId}
-                            onSoulSelect={onSoulSelect}
-                            selectedSoulId={personaId}
-                        />
-                    ) : (
-                        // Show default welcome screen
-                        <div className="flex max-w-sm flex-col items-center text-center animate-in fade-in zoom-in duration-500">
-                            <h2 className="mb-2 text-2xl font-bold text-rp-text">
-                                Speak with {personaName || 'the Soul'}
-                            </h2>
-                            <p className="mb-8 text-rp-muted">
-                                {personaId
-                                    ? `Connecting with the frequency of ${personaName}...`
-                                    : "Choose a Soul from the library or gallery to begin your journey."
-                                }
-                            </p>
-                        </div>
-                    )}
-                </div>
-            ) : (
-                <ChatMessages
-                    personaImage={personaImage}
-                    personaName={personaName}
-                />
-            )}
+            {/* Messages Area - No container, bubbles sit directly on background */}
+            <div className="flex flex-1 flex-col relative z-10">
+                {messages.length === 0 ? (
+                    <div className="flex flex-1 flex-col items-center justify-center px-4 py-8">
+                        {showSoulGallery && userId ? (
+                            // Show Soul Gallery for persona selection
+                            <SoulGallery
+                                userId={userId}
+                                onSoulSelect={onSoulSelect}
+                                selectedSoulId={personaId}
+                            />
+                        ) : (
+                            // Show default welcome screen
+                            <div className="flex max-w-sm flex-col items-center text-center animate-in fade-in zoom-in duration-500">
+                                <h2 className="mb-2 text-2xl font-bold text-rp-text">
+                                    Speak with {personaName || 'the Soul'}
+                                </h2>
+                                <p className="mb-8 text-rp-muted">
+                                    {personaId
+                                        ? `Connecting with the frequency of ${personaName}...`
+                                        : "Choose a Soul from the library or gallery to begin your journey."
+                                    }
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <ChatMessages
+                        personaImage={personaImage}
+                        personaName={personaName}
+                    />
+                )}
+            </div>
 
-            {/* Input area */}
-            <div className="px-4 py-4 pb-8">
-                <div className="mx-auto max-w-3xl">
+            {/* Input area with glassmorphic styling */}
+            <div className="px-4 pb-6 relative z-10">
+                <div className="mx-auto max-w-3xl rounded-xl bg-rp-base/20 backdrop-blur-md border border-white/10 p-3 shadow-lg">
                     <ChatInput
                         placeholder={personaName ? `Message ${personaName}...` : 'Message Remrin...'}
                         onMemorySearch={onMemorySearchTrigger}

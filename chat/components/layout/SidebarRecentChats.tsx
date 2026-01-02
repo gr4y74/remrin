@@ -53,17 +53,17 @@ export function SidebarRecentChats({ isExpanded, maxChats = 8, showDemo = false 
 
         // Map to include persona info for avatars
         return sorted.slice(0, maxChats).map(chat => {
-            // Try to find persona by matching chat name or assistant_id
-            const persona = personas?.find(p =>
-                p.name === chat.name || p.id === chat.assistant_id
-            )
+            // Find persona by persona_id from the chat metadata
+            const personaId = (chat as any).persona_id
+            const persona = personas?.find(p => p.id === personaId)
+
             return {
                 id: chat.id,
-                name: chat.name,
+                name: persona?.name || chat.name || 'Chat',
                 imageUrl: persona?.image_url || null,
-                href: `/chat/${chat.id}`
+                href: `/${chat.workspace_id}/chat?persona=${personaId || ''}`
             }
-        })
+        }).filter(chat => chat.name !== 'Chat') // Filter out chats without valid names
     }, [chats, personas, maxChats, showDemo])
 
     // Don't render if no recent chats (and not in demo mode)
@@ -110,17 +110,15 @@ export function SidebarRecentChats({ isExpanded, maxChats = 8, showDemo = false 
                     >
                         {/* Avatar - centered */}
                         <div className={cn(
-                            "shrink-0 overflow-hidden rounded-lg transition-transform",
+                            "relative shrink-0 overflow-hidden rounded-lg transition-transform",
                             "group-hover:scale-105",
                             isExpanded ? "size-8" : "size-9"
                         )}>
                             {chat.imageUrl ? (
-                                <Image
+                                <img
                                     src={chat.imageUrl}
                                     alt={chat.name}
-                                    className="object-cover"
-                                    fill
-                                    sizes="36px"
+                                    className="w-full h-full object-cover"
                                 />
                             ) : (
                                 <div className="flex size-full items-center justify-center bg-rp-iris/20 text-rp-iris">

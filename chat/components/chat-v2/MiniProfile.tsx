@@ -97,7 +97,7 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
   }
 
   return (
-    <div className="w-full border-b border-rp-overlay/50 bg-rp-surface/30 backdrop-blur-sm transition-all overflow-hidden z-50">
+    <div className="w-full border-b border-rp-overlay/50 bg-rp-surface/30 backdrop-blur-sm transition-all overflow-hidden z-50 rounded-2xl mx-4 my-2">
       {/* Collapsed State Header / Toggle Area */}
       <div className="flex items-center justify-between px-4 py-2">
         <div className="flex items-center gap-3">
@@ -157,46 +157,44 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
 
         {/* Right Actions Wrapper */}
         <div className="flex items-center gap-2">
-          {/* Mood & VN Toggle (Visible when collapsed) */}
+          {/* Mood (Visible when collapsed) - No pill, just emoji + battery */}
           {!isExpanded && moodState && (
-            <div className="flex items-center gap-2 mr-2">
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-rp-overlay/40 border border-rp-highlight-low/20 backdrop-blur-md">
-                <span className="text-lg leading-none">{moodState.emoji}</span>
-                <div className="w-8 h-1.5 bg-rp-surface rounded-full overflow-hidden">
-                  <div
-                    className={cn(
-                      "h-full transition-all duration-500 rounded-full",
-                      moodState.battery > 70 ? "bg-rp-iris" :
-                        moodState.battery > 30 ? "bg-rp-gold" : "bg-rp-love"
-                    )}
-                    style={{ width: `${moodState.battery}%` }}
-                  />
-                </div>
+            <div className="flex items-center gap-2 mr-1">
+              <span className="text-lg leading-none">{moodState.emoji}</span>
+              <div className="w-8 h-1.5 bg-rp-surface/50 rounded-full overflow-hidden">
+                <div
+                  className={cn(
+                    "h-full transition-all duration-500 rounded-full",
+                    moodState.battery > 70 ? "bg-rp-iris" :
+                      moodState.battery > 30 ? "bg-rp-gold" : "bg-rp-love"
+                  )}
+                  style={{ width: `${moodState.battery}%` }}
+                />
               </div>
             </div>
           )}
 
+          {/* VN Toggle - Icon only, no pill */}
           {!isExpanded && onToggleVisualNovel && (
             <button
               onClick={onToggleVisualNovel}
-              className="p-2 rounded-xl bg-rp-overlay/40 border border-rp-highlight-low/20 text-rp-muted hover:text-rp-text hover:bg-rp-overlay transition-all"
+              className="p-2 text-rp-muted hover:text-rp-text transition-colors"
               title={isVisualNovelMode ? "Switch to Classic Mode" : "Switch to Visual Novel Mode"}
             >
               {isVisualNovelMode ? <IconMessage size={18} /> : <IconBook size={18} />}
             </button>
           )}
 
+          {/* Details Toggle - Icon only */}
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rp-overlay/60 text-rp-muted hover:text-rp-text hover:bg-rp-overlay transition-all border border-rp-highlight-low/20 shadow-sm"
+            className="p-2 text-rp-muted hover:text-rp-text transition-colors"
+            title={isExpanded ? 'Hide Details' : 'Show Details'}
           >
-            <span className="text-[10px] font-bold uppercase tracking-widest hidden sm:inline">
-              {isExpanded ? 'Hide' : 'Details'}
-            </span>
-            {isExpanded ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
+            {isExpanded ? <IconChevronUp size={18} /> : <IconChevronDown size={18} />}
           </button>
 
-          {/* Quick Settings Dropdown */}
+          {/* Quick Settings Dropdown - Icon only */}
           <div className="relative">
             <input
               type="file"
@@ -208,8 +206,8 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex size-9 items-center justify-center rounded-xl bg-rp-overlay/40 text-rp-muted hover:text-rp-text hover:bg-rp-overlay border border-rp-highlight-low/20 transition-all">
-                  <IconDotsVertical size={20} />
+                <button className="p-2 text-rp-muted hover:text-rp-text transition-colors">
+                  <IconDotsVertical size={18} />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 bg-rp-surface border-rp-overlay shadow-2xl">
@@ -240,15 +238,15 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
         isExpanded ? "max-h-[600px] opacity-100 pb-5" : "max-h-0 opacity-0 pointer-events-none"
       )}>
         <div className="pt-5 border-t border-rp-highlight-low/10 flex flex-col md:flex-row gap-8">
-          {/* Large Representative Image / Portrait */}
+          {/* Large Representative Image / Portrait - Increased size */}
           <div className="hidden md:block relative flex-shrink-0">
-            <div className="size-32 rounded-3xl overflow-hidden ring-1 ring-rp-highlight-med/50 shadow-2xl group relative">
+            <div className="size-40 rounded-3xl overflow-hidden ring-1 ring-rp-highlight-med/50 shadow-2xl group relative">
               {personaImage ? (
                 <Image
                   src={personaImage || "/images/mother/mother_avatar.png"}
                   alt={personaName}
                   fill
-                  sizes="128px"
+                  sizes="160px"
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
               ) : (
@@ -264,15 +262,15 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
               {/* Stats & Bio */}
               <div className="space-y-5">
                 <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2 bg-rp-iris/10 text-rp-iris px-4 py-2 rounded-2xl ring-1 ring-rp-iris/20 shadow-inner">
+                  <div className="flex items-center gap-2 bg-rp-iris/20 backdrop-blur-md border border-rp-iris/30 text-white px-4 py-2 rounded-2xl shadow-lg">
                     <IconMessageCircle size={16} />
                     <span className="text-sm font-black">{stats.chats}</span>
-                    <span className="text-[10px] uppercase font-bold tracking-widest opacity-70">Chats</span>
+                    <span className="text-[10px] uppercase font-bold tracking-widest">Chats</span>
                   </div>
-                  <div className="flex items-center gap-2 bg-rp-love/10 text-rp-love px-4 py-2 rounded-2xl ring-1 ring-rp-love/20 shadow-inner">
+                  <div className="flex items-center gap-2 bg-rp-love/20 backdrop-blur-md border border-rp-love/30 text-white px-4 py-2 rounded-2xl shadow-lg">
                     <IconUsers size={16} />
                     <span className="text-sm font-black">{stats.followers}</span>
-                    <span className="text-[10px] uppercase font-bold tracking-widest opacity-70">Follows</span>
+                    <span className="text-[10px] uppercase font-bold tracking-widest">Follows</span>
                   </div>
                 </div>
 
@@ -285,15 +283,12 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
                 )}
               </div>
 
-              {/* Traits Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3">
+              {/* Traits - Simplified, no pills */}
+              <div className="flex items-center gap-4">
                 {traits.map((trait, i) => (
-                  <div key={i} className="flex items-center gap-3.5 p-3 rounded-2xl bg-rp-overlay/30 border border-rp-highlight-low/10 hover:bg-rp-overlay/40 transition-colors group">
-                    <span className="text-2xl transition-transform group-hover:scale-110 duration-300">{trait.emoji}</span>
-                    <div className="flex flex-col">
-                      <span className="text-rp-text text-[11px] font-black uppercase tracking-wider mb-0.5">{trait.title}</span>
-                      <span className="text-rp-muted text-[10px] leading-tight font-medium opacity-80">{trait.subtitle}</span>
-                    </div>
+                  <div key={i} className="flex items-center gap-2">
+                    <span className="text-xl">{trait.emoji}</span>
+                    <span className="text-rp-text text-xs font-medium">{trait.title}</span>
                   </div>
                 ))}
               </div>
@@ -303,18 +298,18 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
             <div className="flex items-center gap-4 pt-2">
               <button
                 onClick={onViewProfile}
-                className="flex-1 flex items-center justify-center gap-2.5 py-3 rounded-2xl bg-rp-iris text-rp-base text-[11px] font-black uppercase tracking-[0.2em] hover:brightness-110 hover:shadow-[0_0_20px_rgba(196,167,231,0.3)] transition-all active:scale-95 group"
+                className="flex-1 flex items-center justify-center gap-2.5 py-3 rounded-2xl bg-rp-iris/20 backdrop-blur-md border border-rp-iris/30 text-white text-[11px] font-black uppercase tracking-[0.2em] hover:bg-rp-iris/30 hover:shadow-[0_0_20px_rgba(196,167,231,0.3)] transition-all active:scale-95 group"
               >
                 Launch Soul Bio
                 <IconArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
               </button>
 
-              {/* VN Mode Toggle in Expanded View */}
+              {/* VN Mode Toggle in Expanded View - Matches stats styling */}
               <button
                 onClick={onToggleVisualNovel}
-                className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-rp-overlay/60 text-rp-subtle hover:text-rp-text hover:bg-rp-overlay border border-rp-highlight-low/20 transition-all font-bold text-[10px] uppercase tracking-widest"
+                className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-rp-base/20 backdrop-blur-md border border-white/10 text-white hover:bg-rp-base/30 transition-all font-bold text-[10px] uppercase tracking-widest shadow-lg"
               >
-                {isVisualNovelMode ? <IconMessage size={18} /> : <IconBook size={18} />}
+                {isVisualNovelMode ? <IconMessage size={16} /> : <IconBook size={16} />}
                 <span>{isVisualNovelMode ? "Classic" : "V.Novel"}</span>
               </button>
             </div>

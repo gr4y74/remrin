@@ -250,50 +250,58 @@ export const ChatMessage = memo(function ChatMessage({
 
     return (
         <div
-            className={`group flex animate-in fade-in slide-in-from-bottom-2 duration-300 gap-4 px-4 py-6 md:px-8 
-                ${isUser ? 'bg-transparent' : 'bg-rp-surface/20'}
-                ${isVisualNovel && isUser ? 'opacity-50 hover:opacity-100 transition-opacity' : ''}
+            className={`group flex animate-in fade-in slide-in-from-bottom-2 duration-300 gap-3 px-4 py-2 md:px-8 
+                ${isUser ? 'justify-end' : 'justify-start'}
             `}
         >
-            {/* Avatar */}
-            <div className="flex-shrink-0">
-                {isUser ? (
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-rp-iris/20 text-rp-iris">
-                        <IconUser size={18} />
-                    </div>
-                ) : personaImage ? (
-                    <div className="relative h-8 w-8">
-                        <Image
-                            src={personaImage}
-                            alt={personaName || 'AI'}
-                            className="rounded-full object-cover"
-                            fill
-                            sizes="32px"
-                        />
-                    </div>
-                ) : (
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-rp-foam/20 text-rp-foam">
-                        <IconRobot size={18} />
-                    </div>
-                )}
-            </div>
-
-            {/* Content */}
-            <div className="flex-1 space-y-2 overflow-hidden">
-                {/* Name */}
-                <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-rp-text">
-                        {isUser ? 'You' : (personaName || 'Remrin')}
-                    </span>
-                    {message.metadata?.provider && !isUser && (
-                        <span className="text-xs text-rp-muted">
-                            via {message.metadata.provider}
-                        </span>
+            {/* Avatar - Only show for assistant */}
+            {!isUser && (
+                <div className="flex-shrink-0 self-end mb-1">
+                    {personaImage ? (
+                        <div className="relative h-8 w-8">
+                            <Image
+                                src={personaImage}
+                                alt={personaName || 'AI'}
+                                className="rounded-full object-cover"
+                                fill
+                                sizes="32px"
+                            />
+                        </div>
+                    ) : (
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-rp-foam/20 text-rp-foam">
+                            <IconRobot size={18} />
+                        </div>
                     )}
                 </div>
+            )}
+
+            {/* Glassmorphic Chat Bubble */}
+            <div
+                className={`
+                    max-w-[75%] md:max-w-[65%] rounded-2xl px-4 py-3
+                    backdrop-blur-xl border shadow-lg
+                    ${isUser
+                        ? 'bg-rp-iris/20 border-rp-iris/30 rounded-br-sm'
+                        : 'bg-rp-base/40 border-white/10 rounded-bl-sm'
+                    }
+                `}
+            >
+                {/* Name - Only for assistant */}
+                {!isUser && (
+                    <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs font-medium text-rp-text/80">
+                            {personaName || 'Remrin'}
+                        </span>
+                        {message.metadata?.provider && (
+                            <span className="text-xs text-rp-muted/60">
+                                via {message.metadata.provider}
+                            </span>
+                        )}
+                    </div>
+                )}
 
                 {/* Message Content */}
-                <div className="prose prose-sm prose-invert max-w-none relative">
+                <div className="prose prose-sm prose-invert max-w-none">
                     {displayedContent ? (
                         <>
                             {renderMarkdown(displayedContent)}
@@ -304,51 +312,59 @@ export const ChatMessage = memo(function ChatMessage({
                     ) : isStreaming ? (
                         <ThinkingIndicator />
                     ) : null}
-
-                    {/* Copy button for assistant messages */}
-                    {!isUser && message.content && (
-                        <div className="mt-2 flex items-center gap-3 opacity-0 transition-opacity group-hover:opacity-100">
-                            {/* Copy Button */}
-                            <button
-                                onClick={handleCopy}
-                                className="flex items-center gap-1 text-xs text-rp-muted hover:text-rp-text transition-colors"
-                            >
-                                {copied ? (
-                                    <>
-                                        <IconCheck size={14} />
-                                        <span>Copied</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <IconCopy size={14} />
-                                        <span>Copy</span>
-                                    </>
-                                )}
-                            </button>
-
-                            {/* Rewind Button */}
-                            {onRewind && (
-                                <button
-                                    onClick={onRewind}
-                                    className="flex items-center gap-1 text-xs text-rp-muted hover:text-rp-love transition-colors"
-                                    title="Rewind to here"
-                                >
-                                    <IconRotate2 size={14} />
-                                    <span>Rewind</span>
-                                </button>
-                            )}
-
-
-                            {/* TTS Button */}
-                            <div className="h-4 w-px bg-rp-muted/20" /> {/* Divider */}
-                            <StartSpeakingButton
-                                text={message.content}
-                                className="h-4 w-4 text-rp-muted hover:text-rp-iris hover:bg-transparent p-0"
-                            />
-                        </div>
-                    )}
                 </div>
+
+                {/* Action buttons for assistant messages */}
+                {!isUser && message.content && (
+                    <div className="mt-2 flex items-center gap-3 opacity-0 transition-opacity group-hover:opacity-100">
+                        {/* Copy Button */}
+                        <button
+                            onClick={handleCopy}
+                            className="flex items-center gap-1 text-xs text-rp-muted hover:text-rp-text transition-colors"
+                        >
+                            {copied ? (
+                                <>
+                                    <IconCheck size={12} />
+                                    <span>Copied</span>
+                                </>
+                            ) : (
+                                <>
+                                    <IconCopy size={12} />
+                                    <span>Copy</span>
+                                </>
+                            )}
+                        </button>
+
+                        {/* Rewind Button */}
+                        {onRewind && (
+                            <button
+                                onClick={onRewind}
+                                className="flex items-center gap-1 text-xs text-rp-muted hover:text-rp-love transition-colors"
+                                title="Rewind to here"
+                            >
+                                <IconRotate2 size={12} />
+                                <span>Rewind</span>
+                            </button>
+                        )}
+
+                        {/* TTS Button */}
+                        <div className="h-3 w-px bg-rp-muted/20" /> {/* Divider */}
+                        <StartSpeakingButton
+                            text={message.content}
+                            className="h-3 w-3 text-rp-muted hover:text-rp-iris hover:bg-transparent p-0"
+                        />
+                    </div>
+                )}
             </div>
+
+            {/* Avatar - Only show for user on right side */}
+            {isUser && (
+                <div className="flex-shrink-0 self-end mb-1">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-rp-iris/30 text-rp-iris border border-rp-iris/40">
+                        <IconUser size={18} />
+                    </div>
+                </div>
+            )}
         </div>
     )
 })
