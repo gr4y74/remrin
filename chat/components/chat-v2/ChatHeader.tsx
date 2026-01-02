@@ -1,11 +1,11 @@
-"use client"
-
-import { FC, useContext } from "react"
+import React, { FC, useContext, useRef } from "react"
 import { IconPhoto, IconDotsVertical, IconArrowLeft, IconUser } from "@tabler/icons-react"
 import { RemrinContext } from "@/context/context"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
+import { uploadChatBackground, getChatBackgroundFromStorage } from "@/db/storage/chat-backgrounds"
+import { toast } from "sonner"
 
 interface ChatHeaderProps {
     personaName?: string
@@ -18,7 +18,36 @@ export const ChatHeader: FC<ChatHeaderProps> = ({
     personaImage,
     onBack
 }) => {
-    const { chatBackgroundEnabled, setChatBackgroundEnabled, setIsCharacterPanelOpen } = useContext(RemrinContext)
+    const {
+        chatBackgroundEnabled,
+        setChatBackgroundEnabled,
+        setActiveBackgroundUrl,
+        setIsCharacterPanelOpen,
+        profile
+    } = useContext(RemrinContext)
+
+    const fileInputRef = useRef<HTMLInputElement>(null)
+
+    const handleBackgroundUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files?.[0] || !profile) return
+        const file = e.target.files[0]
+
+        const loadingToast = toast.loading("Uploading background...")
+
+        try {
+            const path = `${profile.id}/${Date.now()}_${file.name.replace(/\s+/g, '_')}`
+            const uploadedPath = await uploadChatBackground(path, file)
+            const url = await getChatBackgroundFromStorage(uploadedPath)
+
+            setActiveBackgroundUrl(url)
+            setChatBackgroundEnabled(true)
+
+            toast.success("Background updated!", { id: loadingToast })
+        } catch (error: any) {
+            console.error("Upload error:", error)
+            toast.error(error.message || "Failed to upload background", { id: loadingToast })
+        }
+    }
 
     return (
         <div className="sticky top-0 z-10 flex h-16 w-full items-center justify-between border-b border-rp-overlay/50 bg-rp-base/80 px-4 backdrop-blur-md transition-all">
@@ -90,6 +119,15 @@ export const ChatHeader: FC<ChatHeaderProps> = ({
                     <IconPhoto size={20} />
                 </button>
 
+                {/* Hidden File Input for Backgrounds */}
+                <input
+                    type="file"
+                    ref={fileInputRef}
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleBackgroundUpload}
+                />
+
                 {/* Settings / More */}
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -106,6 +144,13 @@ export const ChatHeader: FC<ChatHeaderProps> = ({
                         </DropdownMenuItem>
                         <DropdownMenuItem className="text-rp-text focus:bg-rp-overlay focus:text-rp-text cursor-pointer">
                             Chat Settings
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator className="bg-rp-highlight-low/20" />
+                        <DropdownMenuItem
+                            className="text-rp-text focus:bg-rp-overlay focus:text-rp-text cursor-pointer"
+                            onClick={() => fileInputRef.current?.click()}
+                        >
+                            Change Background
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

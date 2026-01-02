@@ -165,6 +165,7 @@ export function DraggableGallery({
                                         src={expandedItem.imageUrl}
                                         alt={expandedItem.name}
                                         fill
+                                        sizes="(max-width: 768px) 100vw, 800px"
                                         className="object-cover"
                                     />
                                 ) : (

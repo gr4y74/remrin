@@ -109,6 +109,7 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                         src={selectedPersona.image_url || "/images/rem_hero.webp"}
                         alt={selectedPersona.name}
                         fill
+                        sizes="(max-width: 768px) 100vw, 350px"
                         className="object-cover"
                         priority
                     />

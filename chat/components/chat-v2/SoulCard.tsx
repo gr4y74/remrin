@@ -73,6 +73,7 @@ export function SoulCard({
                         src={imageUrl}
                         alt={name}
                         fill
+                        sizes="(max-width: 768px) 50vw, 20vw"
                         className="object-cover"
                     />
                 ) : (

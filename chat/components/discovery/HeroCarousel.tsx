@@ -169,6 +169,7 @@ export function HeroCarousel({
                                         src={item.imageUrl}
                                         alt={item.name}
                                         fill
+                                        sizes="(max-width: 768px) 100vw, 220px"
                                         className="object-cover"
                                         priority={index < 3}
                                     />

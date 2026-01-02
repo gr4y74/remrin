@@ -6,8 +6,10 @@
 
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { ChatEngineProvider, useChatEngine, useMood } from './ChatEngine'
+import { RemrinContext } from '@/context/context'
+import { MiniProfile } from './MiniProfile'
 import { IconBook, IconMessage } from '@tabler/icons-react'
 import { ChatInput } from './ChatInput'
 import { ChatMessages } from './ChatMessages'
@@ -29,7 +31,6 @@ interface ChatUIV2Props {
     showSoulGallery?: boolean
 }
 
-import { ChatHeader } from './ChatHeader'
 
 /**
  * Inner component that uses the chat engine context
@@ -55,32 +56,46 @@ function ChatUIInner({
 }) {
     const { messages, personaId } = useChatEngine()
     const moodState = useMood()
+    const {
+        chatBackgroundEnabled,
+        activeBackgroundUrl,
+        setIsCharacterPanelOpen,
+        personas,
+        profile,
+        setChatBackgroundEnabled,
+        setActiveBackgroundUrl
+    } = useContext(RemrinContext)
+
+    // Find current persona details from context if possible
+    const currentPersona = personas.find(p => p.id === personaId)
 
     // Determine if we should show desaturation (low battery)
     const isLowBattery = moodState.battery < 30
 
     // Visual Novel Layout
-    if (isVisualNovelMode && personaId) {
-        return (
-            <div className={`relative h-full w-full overflow-hidden bg-black ${isLowBattery ? 'low-battery-mode' : ''}`}>
-                {/* Visual Novel Background/Sprite Area */}
-                <div className="absolute inset-0 z-0 flex items-end justify-center pb-0">
-                    {/* Background effect */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
+    if (isVisualNovelMode) {
+        const spriteUrl = personaImage || "/images/mother/mother_avatar.png"
 
-                    {/* Character Sprite - Scaled and Centered */}
-                    {personaImage && (
-                        <div className="relative h-[85%] w-auto aspect-[1/2] animate-in fade-in slide-in-from-bottom-10 duration-700">
-                            <Image
-                                src={personaImage}
-                                alt={personaName || "Character"}
-                                fill
-                                className="object-contain object-bottom drop-shadow-[0_0_50px_rgba(0,0,0,0.5)]"
-                                priority
-                            />
-                        </div>
-                    )}
+        return (
+            <div className={`fixed inset-0 z-40 overflow-hidden bg-black ${isLowBattery ? 'low-battery-mode' : ''}`}>
+                {/* Background gradient overlay */}
+                <div className="absolute inset-0 z-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+
+                {/* Character Sprite - Using viewport units and transform centering */}
+                <div
+                    className="absolute bottom-[200px] left-1/2 -translate-x-1/2 z-10 pointer-events-none animate-in fade-in slide-in-from-bottom-10 duration-700"
+                    style={{ width: '50vw', maxWidth: '400px', height: '70vh' }}
+                >
+                    <Image
+                        src={spriteUrl}
+                        alt={personaName || "Character"}
+                        fill
+                        sizes="(max-width: 768px) 80vw, 400px"
+                        className="object-contain object-bottom drop-shadow-[0_0_50px_rgba(0,0,0,0.8)]"
+                        priority
+                    />
                 </div>
+
 
                 {/* VN Mode Header Controls (Minimal) */}
                 <div className="absolute top-4 right-4 z-50 flex gap-2">
@@ -134,29 +149,42 @@ function ChatUIInner({
     return (
         <div
             className={`flex h-full flex-col relative ${isLowBattery ? 'low-battery-mode' : ''}`}
+            style={chatBackgroundEnabled && activeBackgroundUrl ? {
+                backgroundImage: `url(${activeBackgroundUrl})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+            } : {}}
         >
-            {/* Header */}
+            {/* Background Overlay for readability */}
+            {chatBackgroundEnabled && activeBackgroundUrl && (
+                <div className="absolute inset-0 bg-rp-base/40 backdrop-blur-[2px] z-0 pointer-events-none" />
+            )}
+
+
+
+            {/* Legacy Feature: Mini Profile Card */}
             {personaId && (
-                <div className="absolute top-4 right-4 z-50">
-                    <button
-                        onClick={toggleVisualNovelMode}
-                        className="p-2 rounded-full bg-rp-surface/50 backdrop-blur-md border border-rp-highlight-med/20 text-rp-muted hover:text-rp-text hover:bg-rp-surface/80 transition-all"
-                        title="Switch to Visual Novel Mode"
-                    >
-                        <IconBook size={20} />
-                    </button>
+                <div className="relative z-10">
+                    <MiniProfile
+                        personaName={personaName}
+                        personaImage={personaImage}
+                        description={currentPersona?.description || ""}
+                        creatorName={currentPersona?.user_id === 'system' ? 'System' : 'Creator'}
+                        onViewProfile={() => setIsCharacterPanelOpen(true)}
+                        onSettings={() => {
+                            // TODO: Implement Chat Settings Modal
+                            alert("Chat Settings coming soon!")
+                        }}
+                        moodState={moodState}
+                        isVisualNovelMode={isVisualNovelMode}
+                        onToggleVisualNovel={toggleVisualNovelMode}
+                        profile={profile}
+                        setChatBackgroundEnabled={setChatBackgroundEnabled}
+                        setActiveBackgroundUrl={setActiveBackgroundUrl}
+                    />
                 </div>
             )}
 
-            {personaId && (
-                <ChatHeader
-                    personaName={personaName}
-                    personaImage={personaImage}
-                />
-            )}
-
-            {/* Mood HUD */}
-            <MoodHUD moodState={moodState} visible={messages.length > 0} />
 
             {/* Messages or Empty State */}
             {messages.length === 0 ? (
@@ -171,25 +199,14 @@ function ChatUIInner({
                     ) : (
                         // Show default welcome screen
                         <div className="flex max-w-sm flex-col items-center text-center animate-in fade-in zoom-in duration-500">
-                            {/* Logo */}
-                            <div className="mb-8">
-                                <Image
-                                    src="/logo.svg"
-                                    alt="Remrin"
-                                    width={120}
-                                    height={120}
-                                    className="drop-shadow-[0_0_25px_rgba(235,188,186,0.3)] transition-transform duration-500 hover:rotate-[-5deg] hover:scale-110"
-                                    priority
-                                />
-                            </div>
-
-                            {/* Welcome text */}
-                            <h1 className="mb-3 text-3xl font-bold bg-gradient-to-br from-rp-text to-rp-muted bg-clip-text text-transparent">
-                                {personaName ? `Chat with ${personaName}` : 'Welcome to Remrin'}
-                            </h1>
-                            <p className="text-rp-subtle leading-relaxed">
-                                Experience the new Soul Engine. <br />
-                                Start a conversation to begin.
+                            <h2 className="mb-2 text-2xl font-bold text-rp-text">
+                                Speak with {personaName || 'the Soul'}
+                            </h2>
+                            <p className="mb-8 text-rp-muted">
+                                {personaId
+                                    ? `Connecting with the frequency of ${personaName}...`
+                                    : "Choose a Soul from the library or gallery to begin your journey."
+                                }
                             </p>
                         </div>
                     )}
@@ -320,8 +337,8 @@ export function ChatUIV2({
             >
                 <ChatUIInner
                     userId={userId}
-                    personaImage={selectedPersona?.image}
-                    personaName={selectedPersona?.name}
+                    personaImage={selectedPersona?.image || initialPersonaImage}
+                    personaName={selectedPersona?.name || initialPersonaName}
                     showSoulGallery={showSoulGallery}
                     onSoulSelect={handleSoulSelect}
                     onMemorySearchTrigger={handleMemorySearchTrigger}

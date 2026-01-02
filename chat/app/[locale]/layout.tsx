@@ -102,7 +102,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary">
+      <body suppressHydrationWarning className="bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary">
         {/* Clean background - no effects */}
         <Providers attribute="class" defaultTheme="dark">
           <TranslationsProvider

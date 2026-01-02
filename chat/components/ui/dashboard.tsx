@@ -65,43 +65,45 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
 
       {/* Full-Width Background Layer */}
       {selectedPersona?.id === MOTHER_OF_SOULS_ID ? (
-        <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+        <div className="absolute inset-0 z-0 transform-gpu overflow-hidden">
           <video
-            src="/images/mother/mos_bg.mp4"
             autoPlay
-            loop
             muted
+            loop
             playsInline
-            className="size-full object-cover opacity-40 transition-opacity duration-1000"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/80" />
-          <div className="absolute inset-0 backdrop-blur-[1px]" />
+            className="size-full object-cover opacity-40 transition-opacity duration-1000 will-change-transform"
+          >
+            <source src="/videos/mother_bg.mp4" type="video/mp4" />
+          </video>
+          {/* Overlay for readability - Lightened for better vibrancy */}
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px]" />
         </div>
       ) : chatBackgroundEnabled && selectedPersona && (
-        <div className="fixed inset-0 z-0">
+        <div className="fixed inset-0 z-0 transform-gpu">
           {/* Background Image */}
           <Image
             src={activeBackgroundUrl || "/images/rem_bg.jpg"}
             alt="Chat background"
             fill
-            className="object-cover opacity-100 transition-opacity duration-1000"
+            sizes="100vw"
+            className="object-cover opacity-100 transition-opacity duration-1000 will-change-opacity"
             priority
           />
-          {/* Overlay for readability */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70 backdrop-blur-[2px]" />
+          {/* Overlay for readability - Lightened for better vibrancy */}
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
         </div>
       )}
 
       {/* Main Content Area - with dynamic right margin for CharacterPanel */}
       <div
-        className="flex flex-1 flex-col transition-[margin-right] duration-300"
+        className="flex flex-1 h-full flex-col transition-[margin-right] duration-300"
         style={{ marginRight: isCharacterPanelOpen && selectedPersona ? CHARACTER_PANEL_WIDTH : 0 }}
         onDrop={onFileDrop}
         onDragOver={onDragOver}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
       >
-        <div className="flex-1">
+        <div className="flex-1 h-full">
           {isDragging ? (
             <div className="flex h-full items-center justify-center bg-black/50 text-2xl text-white">
               drop file here

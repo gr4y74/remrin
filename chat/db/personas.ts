@@ -16,16 +16,27 @@ export const getPersonasByOwnerId = async (ownerId: string) => {
     return personas || []
 }
 
-// Fetch a single persona by ID
+// Fetch a single persona by ID or Slug
 export const getPersonaById = async (personaId: string) => {
-    const { data: persona, error } = await supabase
+    // Basic UUID regex
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(personaId)
+
+    const query = supabase
         .from("personas")
         .select("*")
-        .eq("id", personaId)
-        .single()
+
+    if (isUUID) {
+        query.eq("id", personaId)
+    } else {
+        // Fallback to name if it's a short identifier
+        query.ilike("name", personaId)
+    }
+
+    const { data: persona, error } = await query.single()
 
     if (error) {
-        throw new Error(error.message)
+        console.warn(`[getPersonaById] Error fetching persona with identifier '${personaId}':`, error.message)
+        return null
     }
 
     return persona

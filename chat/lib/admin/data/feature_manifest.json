@@ -1,0 +1,95 @@
+{
+    "project": "Remrin.ai",
+    "audit_version": "1.1",
+    "agent_directives": {
+        "global_instruction": "You are assisting a solo developer. Prioritize stability and clear documentation. Use the Root Cause Pillars in SYSTEM_STATE.md to guide refactoring."
+    },
+    "waves": {
+        "Wave 1: Foundation": {
+            "features": [
+                {
+                    "name": "Database Schema (Base)",
+                    "status": "Stable",
+                    "description": "Core PostgreSQL schema using Supabase. Handles authentication, workspace management, and basic persona storage.",
+                    "objective": "Establish a scalable multi-tenant foundation for AI companions.",
+                    "core_logic": [
+                        "supabase/migrations/"
+                    ],
+                    "docs": [
+                        "docs/AGENT_PROMPTS_SESSION_1.md"
+                    ],
+                    "agent_advice": "Ensure all table relationships use proper RLS policies. Avoid manual schema edits; always use migration files.",
+                    "fix_command": {
+                        "mission": "AUDIT_RLS",
+                        "instruction": "Scan all tables in public schema and ensure RLS is enabled and policies are non-permissive except where explicitly public."
+                    }
+                }
+            ]
+        },
+        "Wave 2: Character Discovery": {
+            "features": [
+                {
+                    "name": "Discovery Feed & Profile Pages",
+                    "status": "Stable",
+                    "description": "The front-end marketplace for personas. Includes trending feeds, category filtering, and detailed profile views with stats.",
+                    "objective": "Create an immersive gateway for users to find and follow AI entities.",
+                    "core_logic": [
+                        "components/profile/",
+                        "app/[locale]/character/[characterId]/page.tsx"
+                    ],
+                    "docs": [
+                        "docs/AGENT_PROMPTS_SESSION_1.md"
+                    ],
+                    "agent_advice": "The trending_score calculation in persona_stats is currently static. Implement a cron trigger or Supabase Edge Function to calculate decay-based popularity.",
+                    "fix_command": {
+                        "mission": "IMPLEMENT_TRENDING_ALGO",
+                        "instruction": "Create a PostgreSQL function that updates trending_score based on (chats_last_24h * 10) + (follows_last_24h * 50) with a time-based decay."
+                    }
+                }
+            ]
+        },
+        "Wave 3: Chat Engine V2": {
+            "features": [
+                {
+                    "name": "Modular Chat Architecture",
+                    "status": "Buggy (Type Errors)",
+                    "description": "A provider-agnostic streaming chat engine supporting OpenAI, Anthropic, Gemini, and DeepSeek.",
+                    "objective": "Allow seamless context-aware conversations with high performance and provider fallback.",
+                    "core_logic": [
+                        "lib/chat-engine/providers/",
+                        "components/chat-v2/"
+                    ],
+                    "docs": [
+                        "docs/CHAT_ENGINE.md"
+                    ],
+                    "agent_advice": "Pillar A: Missing ChatChunk types are causing noise. Refactor the BaseProvider to enforce a strict return type for the fetchStream method.",
+                    "fix_command": {
+                        "mission": "FIX_PILLAR_A",
+                        "instruction": "Define a global 'ChatChunk' type in lib/chat-engine/types.ts and apply it to all provider implementations. Ensure ChatMessage.tsx correctly handles this type."
+                    }
+                }
+            ]
+        },
+        "Wave 7: 4-Panel Redesign": {
+            "features": [
+                {
+                    "name": "4-Panel Layout Skeleton",
+                    "status": "Incomplete (Style Noise)",
+                    "description": "A modern multi-panel interface: Icon Sidebar, Chat Main, Artifacts Canvas, and Character Details.",
+                    "objective": "Maximize productivity and immersion by providing persistent access to character context and generated artifacts.",
+                    "core_logic": [
+                        "components/ui/dashboard.tsx"
+                    ],
+                    "docs": [
+                        "docs/UI_REDESIGN_WORK_ASSIGNMENT.md"
+                    ],
+                    "agent_advice": "Pillar D: The 10k linting warnings are mostly Tailwind class ordering. Run a global prettier-plugin-tailwindcss fix to silence the noise.",
+                    "fix_command": {
+                        "mission": "CLEAN_PULSE_CSS",
+                        "instruction": "Install and run prettier-plugin-tailwindcss across the entire /app and /components directories to fix class order warnings."
+                    }
+                }
+            ]
+        }
+    }
+}
