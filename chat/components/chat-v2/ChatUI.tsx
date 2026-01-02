@@ -202,7 +202,7 @@ function ChatUIInner({
             )}
 
             {/* Input area */}
-            <div className="border-t border-rp-overlay/50 bg-rp-base/80 px-4 py-4 backdrop-blur-sm">
+            <div className="px-4 py-4 pb-8">
                 <div className="mx-auto max-w-3xl">
                     <ChatInput
                         placeholder={personaName ? `Message ${personaName}...` : 'Message Remrin...'}

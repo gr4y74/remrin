@@ -65,14 +65,14 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
 
       {/* Full-Width Background Layer */}
       {selectedPersona?.id === MOTHER_OF_SOULS_ID ? (
-        <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
           <video
             src="/images/mother/mos_bg.mp4"
             autoPlay
             loop
             muted
             playsInline
-            className="h-full w-full object-cover opacity-40 transition-opacity duration-1000"
+            className="size-full object-cover opacity-40 transition-opacity duration-1000"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/80" />
           <div className="absolute inset-0 backdrop-blur-[1px]" />
@@ -84,7 +84,7 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
             src={activeBackgroundUrl || "/images/rem_bg.jpg"}
             alt="Chat background"
             fill
-            className="opacity-100 transition-opacity duration-1000 object-cover"
+            className="object-cover opacity-100 transition-opacity duration-1000"
             priority
           />
           {/* Overlay for readability */}
@@ -94,7 +94,7 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
 
       {/* Main Content Area - with dynamic right margin for CharacterPanel */}
       <div
-        className="flex-1 flex flex-col transition-[margin-right] duration-300"
+        className="flex flex-1 flex-col transition-[margin-right] duration-300"
         style={{ marginRight: isCharacterPanelOpen && selectedPersona ? CHARACTER_PANEL_WIDTH : 0 }}
         onDrop={onFileDrop}
         onDragOver={onDragOver}

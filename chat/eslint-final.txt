@@ -1,0 +1,1077 @@
+
+> remrin@2.0.0 lint
+> next lint
+
+
+./app/[locale]/(platform)/collection/grimoire-client.tsx
+37:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+38:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+46:34  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+70:37  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./app/[locale]/(platform)/moments/page.tsx
+104:14  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+106:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+111:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+122:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./app/[locale]/(platform)/summon/summon-client.tsx
+107:14  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+110:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+114:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+117:28  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+122:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+126:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+135:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+139:39  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+142:39  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+161:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+172:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./app/[locale]/(platform)/wallet/page.tsx
+145:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./app/[locale]/[workspaceid]/chat-v2/page.tsx
+56:14  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+56:14  Warning: Classnames 'h-full, w-full' could be replaced by the 'size-full' shorthand!  tailwindcss/enforces-shorthand
+58:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./app/[locale]/[workspaceid]/knowledge/page.tsx
+6:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./app/[locale]/[workspaceid]/layout.tsx
+154:6  Warning: React Hook useCallback has a missing dependency: 'router'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./app/[locale]/admin/analytics/page.tsx
+24:27  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+28:27  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+94:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+96:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+96:30  Warning: Classnames 'h-12, w-12' could be replaced by the 'size-12' shorthand!  tailwindcss/enforces-shorthand
+106:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+108:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+109:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+113:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+118:34  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+119:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+126:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+134:23  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+136:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+194:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+203:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+213:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+214:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+218:34  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+219:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+221:60  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+222:50  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+222:50  Warning: Classname 'flex-shrink-0' should be updated to 'shrink-0' in Tailwind CSS v3!  tailwindcss/migration-from-tailwind-2
+225:50  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+225:50  Warning: Classnames 'h-10, w-10' could be replaced by the 'size-10' shorthand!  tailwindcss/enforces-shorthand
+235:58  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+235:58  Warning: Classnames 'h-full, w-full' could be replaced by the 'size-full' shorthand!  tailwindcss/enforces-shorthand
+240:50  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+241:54  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+242:54  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+247:46  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+254:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+255:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+259:34  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+260:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+262:54  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+263:50  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+265:59  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+267:59  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+269:55  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+273:48  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+279:46  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+293:14  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+296:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+297:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./app/[locale]/admin/chat-config/page.tsx
+134:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+136:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+136:30  Warning: Classnames 'h-12, w-12' could be replaced by the 'size-12' shorthand!  tailwindcss/enforces-shorthand
+146:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+148:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+149:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+153:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+158:34  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+159:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+166:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+174:23  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+176:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+184:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+206:53  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+208:73  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+208:73  Warning: Classnames 'h-2, w-2' could be replaced by the 'size-2' shorthand!  tailwindcss/enforces-shorthand
+210:52  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+220:64  Warning: Classnames 'h-4, w-4' could be replaced by the 'size-4' shorthand!  tailwindcss/enforces-shorthand
+220:64  Warning: Classname 'transform' is not needed in Tailwind CSS v3!  tailwindcss/migration-from-tailwind-2
+227:46  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+229:54  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+234:54  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+248:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+253:34  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+254:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+256:54  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+263:36  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+264:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+269:34  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+270:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+272:43  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+276:36  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+277:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+295:37  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+302:49  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+308:42  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+320:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+324:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+324:30  Warning: Classname 'bg-opacity-50' should be replaced by an opacity suffix (eg. '/50')  tailwindcss/migration-from-tailwind-2
+333:56  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+337:55  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+344:49  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+350:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+352:48  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+353:47  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+360:41  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+364:34  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+365:60  Warning: Classname 'flex-shrink-0' should be updated to 'shrink-0' in Tailwind CSS v3!  tailwindcss/migration-from-tailwind-2
+
+./app/[locale]/admin/featured/page.tsx
+11:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+13:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+17:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+22:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./app/[locale]/admin/llm-config/page.tsx
+77:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+78:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+79:39  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+79:39  Warning: Classnames 'w-12, h-12' could be replaced by the 'size-12' shorthand!  tailwindcss/enforces-shorthand
+81:28  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+89:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+89:29  Warning: Classname 'placeholder-gray-500' should be updated to 'placeholder:text-gray-500' in Tailwind CSS v3!  tailwindcss/migration-from-tailwind-2
+93:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+107:34  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+107:34  Warning: Classnames 'w-8, h-8' could be replaced by the 'size-8' shorthand!  tailwindcss/enforces-shorthand
+115:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+117:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+119:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+120:40  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+120:40  Warning: Classnames 'w-8, h-8' could be replaced by the 'size-8' shorthand!  tailwindcss/enforces-shorthand
+123:28  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+127:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+129:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+129:38  Warning: Classnames 'w-5, h-5' could be replaced by the 'size-5' shorthand!  tailwindcss/enforces-shorthand
+138:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+138:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+138:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+138:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+148:42  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+153:51  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+158:51  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+159:60  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+159:60  Warning: Classnames 'w-3, h-3' could be replaced by the 'size-3' shorthand!  tailwindcss/enforces-shorthand
+180:45  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+189:41  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+195:53  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+195:53  Warning: Classnames 'w-5, h-5' could be replaced by the 'size-5' shorthand!  tailwindcss/enforces-shorthand
+201:41  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+207:52  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+207:52  Warning: Classnames 'w-5, h-5' could be replaced by the 'size-5' shorthand!  tailwindcss/enforces-shorthand
+213:41  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+219:73  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+219:73  Warning: Classnames 'w-5, h-5' could be replaced by the 'size-5' shorthand!  tailwindcss/enforces-shorthand
+219:105  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+219:105  Warning: Classnames 'w-5, h-5' could be replaced by the 'size-5' shorthand!  tailwindcss/enforces-shorthand
+228:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+229:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+230:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+232:41  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+232:41  Warning: Classnames 'w-4, h-4' could be replaced by the 'size-4' shorthand!  tailwindcss/enforces-shorthand
+236:40  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+236:40  Warning: Classnames 'w-4, h-4' could be replaced by the 'size-4' shorthand!  tailwindcss/enforces-shorthand
+240:40  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+240:40  Warning: Classnames 'w-4, h-4' could be replaced by the 'size-4' shorthand!  tailwindcss/enforces-shorthand
+
+./app/[locale]/admin/moderation/page.tsx
+181:14  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+183:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+188:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+193:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+220:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+226:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+231:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+252:50  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+260:59  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+265:59  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+270:48  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+273:50  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+310:42  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+316:40  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+318:47  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+321:47  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+325:61  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+335:37  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+336:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+359:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+360:41  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+364:48  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+369:45  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+404:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+405:41  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+428:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./app/[locale]/admin/page.tsx
+77:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+79:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+83:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+88:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+109:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+116:36  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+119:43  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+128:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+132:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+133:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+136:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+137:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+140:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+141:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+144:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+145:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+148:28  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./app/[locale]/admin/settings/page.tsx
+146:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+148:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+152:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+157:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+158:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+166:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+167:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+170:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+170:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+180:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+180:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+195:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+195:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+195:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+211:37  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+219:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+232:58  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+232:58  Warning: Classnames 'w-2, h-2' could be replaced by the 'size-2' shorthand!  tailwindcss/enforces-shorthand
+235:62  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+238:71  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+243:71  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+248:62  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+259:57  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+271:57  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+284:61  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+303:36  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+308:34  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+309:36  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+323:45  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+325:50  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+327:58  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+327:58  Warning: Classnames 'w-2, h-2' could be replaced by the 'size-2' shorthand!  tailwindcss/enforces-shorthand
+330:59  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+347:57  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+347:57  Warning: Classname 'placeholder-rp-muted' should be updated to 'placeholder:text-rp-muted' in Tailwind CSS v3!  tailwindcss/migration-from-tailwind-2
+355:57  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+367:53  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./app/[locale]/admin/tiers/page.tsx
+93:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+102:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+104:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+109:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+114:34  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+174:62  Warning: Classnames 'h-3, w-3' could be replaced by the 'size-3' shorthand!  tailwindcss/enforces-shorthand
+194:68  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+273:42  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+278:62  Warning: Classnames 'h-2, w-2' could be replaced by the 'size-2' shorthand!  tailwindcss/enforces-shorthand
+283:62  Warning: Classnames 'h-2, w-2' could be replaced by the 'size-2' shorthand!  tailwindcss/enforces-shorthand
+287:54  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+307:42  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+321:55  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+343:54  Warning: Classnames 'h-3, w-3' could be replaced by the 'size-3' shorthand!  tailwindcss/enforces-shorthand
+346:56  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./app/[locale]/layout.tsx
+105:13  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+119:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./app/[locale]/not-found.tsx
+7:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+7:18  Warning: Classnames 'h-24, w-24' could be replaced by the 'size-24' shorthand!  tailwindcss/enforces-shorthand
+10:17  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+11:17  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+17:17  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./app/[locale]/page.tsx
+144:6  Warning: React Hook useMemo has a missing dependency: 'featuredCharacters'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+224:15  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+253:16  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+260:17  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+263:16  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+273:17  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+276:16  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+290:17  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+293:16  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./app/[locale]/settings/llm/page.tsx
+64:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+73:14  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+78:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+82:30  Warning: Classnames 'h-3, w-3' could be replaced by the 'size-3' shorthand!  tailwindcss/enforces-shorthand
+97:37  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+97:37  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+111:53  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+133:46  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+163:37  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+164:36  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+177:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./app/[locale]/studio/analytics/page.tsx
+21:27  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+25:27  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+79:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+81:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+81:26  Warning: Classnames 'h-12, w-12' could be replaced by the 'size-12' shorthand!  tailwindcss/enforces-shorthand
+89:14  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+91:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+92:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+96:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+101:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+102:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+109:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+117:19  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+119:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+125:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+126:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+128:31  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+163:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+172:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+182:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+183:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+187:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+188:34  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+190:56  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+191:46  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+191:46  Warning: Classname 'flex-shrink-0' should be updated to 'shrink-0' in Tailwind CSS v3!  tailwindcss/migration-from-tailwind-2
+194:46  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+194:46  Warning: Classnames 'h-10, w-10' could be replaced by the 'size-10' shorthand!  tailwindcss/enforces-shorthand
+204:54  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+204:54  Warning: Classnames 'h-full, w-full' could be replaced by the 'size-full' shorthand!  tailwindcss/enforces-shorthand
+209:46  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+210:50  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+211:50  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+216:42  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+223:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+224:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+228:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+229:34  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+231:50  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+232:46  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+234:55  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+236:55  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+238:51  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+242:44  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+248:42  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+261:14  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+264:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+265:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./app/[locale]/studio/components/behavior-tab.tsx
+39:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+56:20  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+64:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+71:20  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+91:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./app/[locale]/studio/components/brain-parameters-panel.tsx
+57:14  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+59:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+60:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+60:22  Warning: Classnames 'h-10, w-10' could be replaced by the 'size-10' shorthand!  tailwindcss/enforces-shorthand
+64:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+65:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+78:27  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+90:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+92:27  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+104:27  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+116:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+118:27  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+130:27  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+142:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+144:27  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+150:16  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./app/[locale]/studio/components/identity-tab.tsx
+54:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+67:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+114:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./app/[locale]/studio/components/safety-lock-toggle.tsx
+29:26  Warning: Classnames 'h-10, w-10' could be replaced by the 'size-10' shorthand!  tailwindcss/enforces-shorthand
+41:28  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+57:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+58:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+62:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./app/[locale]/studio/components/soul-splicer.tsx
+92:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+93:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+93:22  Warning: Classnames 'h-10, w-10' could be replaced by the 'size-10' shorthand!  tailwindcss/enforces-shorthand
+97:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+98:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+108:27  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+112:20  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+124:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+129:37  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+134:35  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+144:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+153:17  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+170:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+171:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+178:31  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+185:37  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+187:43  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+188:43  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+198:31  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+201:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+231:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+235:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./app/[locale]/studio/components/store-tab.tsx
+68:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+71:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+85:27  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+97:20  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+115:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+129:42  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+154:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+155:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./app/[locale]/studio/components/visuals-tab.tsx
+36:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+47:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+73:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+75:20  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+88:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+90:20  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./app/[locale]/studio/components/voice-tab.tsx
+36:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+47:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+72:20  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./app/[locale]/studio/edit/[id]/page.tsx
+13:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+15:44  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+16:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+165:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+167:44  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+176:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+191:14  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+193:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+205:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+208:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+219:60  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+254:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+254:18  Warning: Classnames 'left-0, right-0' could be replaced by the 'inset-x-0' shorthand!  tailwindcss/enforces-shorthand
+255:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+256:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./app/[locale]/studio/page.tsx
+100:14  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+102:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+106:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+111:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+115:35  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+123:31  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+195:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+214:36  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+239:43  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+270:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+351:50  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+352:54  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+352:54  Warning: Classnames 'h-10, w-10' could be replaced by the 'size-10' shorthand!  tailwindcss/enforces-shorthand
+356:57  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+357:56  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+365:54  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+366:58  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+367:58  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+369:54  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+370:58  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+371:58  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+373:54  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+374:58  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+375:58  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+379:48  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+388:34  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+407:49  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/ErrorBoundary.tsx
+47:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+48:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+49:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+49:38  Warning: Classnames 'w-12, h-12' could be replaced by the 'size-12' shorthand!  tailwindcss/enforces-shorthand
+51:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+56:36  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+56:36  Warning: Classnames 'w-4, h-4' could be replaced by the 'size-4' shorthand!  tailwindcss/enforces-shorthand
+
+./components/_deprecated_chat/chat-background-toggle.tsx
+27:24  Warning: Classnames 'h-[36px], w-[36px]' could be replaced by the 'size-[36px]' shorthand!  tailwindcss/enforces-shorthand
+46:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+46:22  Warning: Classnames 'h-2, w-2' could be replaced by the 'size-2' shorthand!  tailwindcss/enforces-shorthand
+
+./components/_deprecated_chat/chat-hooks/use-chat-handler.tsx
+382:6  Warning: React Hook useCallback has missing dependencies: 'selectedTools', 'setChatFileItems', and 'setChatImages'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/admin/AnalyticsCharts.tsx
+20:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+38:14  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+39:53  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+91:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+112:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+119:14  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+120:17  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+133:34  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/cards/UnifiedCard.tsx
+249:40  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+263:40  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+276:40  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+290:36  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+303:40  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+392:48  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+392:48  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+415:17  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+427:17  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/character/CharacterPanel.tsx
+97:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+105:25  Warning: Classnames 'h-full, w-full' could be replaced by the 'size-full' shorthand!  tailwindcss/enforces-shorthand
+118:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+125:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+133:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+142:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+152:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+154:31  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+162:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+170:27  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+179:27  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+184:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+187:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+195:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+200:36  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+214:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+223:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+231:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+232:35  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+237:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+251:42  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+261:37  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+270:45  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+273:45  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+300:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+301:34  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+312:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+313:34  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+323:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/character/CharacterPanelMobile.tsx
+38:33  Warning: Classnames 'left-0, right-0' could be replaced by the 'inset-x-0' shorthand!  tailwindcss/enforces-shorthand
+40:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+40:26  Warning: Classname 'flex-shrink-0' should be updated to 'shrink-0' in Tailwind CSS v3!  tailwindcss/migration-from-tailwind-2
+43:26  Warning: Classname 'flex-shrink-0' should be updated to 'shrink-0' in Tailwind CSS v3!  tailwindcss/migration-from-tailwind-2
+
+./components/chat-v2/ChatEngine.tsx
+327:8  Warning: React Hook useCallback has a missing dependency: 'moodState.battery'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+397:9  Warning: React Hook useMemo has a duplicate dependency: 'setSystemPrompt'. Either omit it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/chat-v2/ChatHeader.tsx
+24:14  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+30:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+30:25  Warning: Classnames 'h-8, w-8' could be replaced by the 'size-8' shorthand!  tailwindcss/enforces-shorthand
+38:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+39:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+48:31  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+49:34  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+53:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+59:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+61:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+66:31  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+67:35  Warning: Classnames 'h-2, w-2' could be replaced by the 'size-2' shorthand!  tailwindcss/enforces-shorthand
+68:39  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+68:39  Warning: Classnames 'h-full, w-full' could be replaced by the 'size-full' shorthand!  tailwindcss/enforces-shorthand
+69:39  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+69:39  Warning: Classnames 'h-2, w-2' could be replaced by the 'size-2' shorthand!  tailwindcss/enforces-shorthand
+82:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+82:32  Warning: Classnames 'h-9, w-9' could be replaced by the 'size-9' shorthand!  tailwindcss/enforces-shorthand
+96:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+96:33  Warning: Classnames 'h-9, w-9' could be replaced by the 'size-9' shorthand!  tailwindcss/enforces-shorthand
+
+./components/chat-v2/ChatInput.tsx
+148:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+148:21  Warning: Classnames 'h-10, w-10' could be replaced by the 'size-10' shorthand!  tailwindcss/enforces-shorthand
+156:21  Warning: Classnames 'h-10, w-10' could be replaced by the 'size-10' shorthand!  tailwindcss/enforces-shorthand
+167:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+176:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+176:21  Warning: Classname 'placeholder-rp-subtle/70' should be updated to 'placeholder:text-rp-subtle/70' in Tailwind CSS v3!  tailwindcss/migration-from-tailwind-2
+184:17  Warning: Classnames 'h-[52px], w-[52px]' could be replaced by the 'size-[52px]' shorthand!  tailwindcss/enforces-shorthand
+
+./components/chat-v2/ChatMessage.tsx
+107:8  Warning: React Hook useEffect has a missing dependency: 'displayedContent'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+131:34  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+132:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+133:43  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+140:41  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+158:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+172:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+180:31  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+184:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+187:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+208:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+214:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+253:13  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+253:13  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+259:18  Warning: Classname 'flex-shrink-0' should be updated to 'shrink-0' in Tailwind CSS v3!  tailwindcss/migration-from-tailwind-2
+261:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+261:26  Warning: Classnames 'h-8, w-8' could be replaced by the 'size-8' shorthand!  tailwindcss/enforces-shorthand
+265:26  Warning: Classnames 'h-8, w-8' could be replaced by the 'size-8' shorthand!  tailwindcss/enforces-shorthand
+275:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+275:26  Warning: Classnames 'h-8, w-8' could be replaced by the 'size-8' shorthand!  tailwindcss/enforces-shorthand
+285:27  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+289:31  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+296:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+301:39  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+314:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+333:37  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+343:34  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+346:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+346:33  Warning: Classnames 'h-4, w-4' could be replaced by the 'size-4' shorthand!  tailwindcss/enforces-shorthand
+
+./components/chat-v2/ChatMessages.tsx
+66:17  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+86:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+86:30  Warning: Classnames 'mx-4, my-4' could be replaced by the 'm-4' shorthand!  tailwindcss/enforces-shorthand
+87:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+90:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+105:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+105:21  Warning: Classnames 'h-10, w-10' could be replaced by the 'size-10' shorthand!  tailwindcss/enforces-shorthand
+
+./components/chat-v2/ChatUI.tsx
+65:18  Warning: Classnames 'h-full, w-full' could be replaced by the 'size-full' shorthand!  tailwindcss/enforces-shorthand
+73:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+86:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+89:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+97:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+97:22  Warning: Classnames 'left-0, right-0' could be replaced by the 'inset-x-0' shorthand!  tailwindcss/enforces-shorthand
+98:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+100:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+105:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+107:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+136:13  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+140:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+143:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+173:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+187:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+205:18  Warning: Classnames 'px-4, py-4' could be replaced by the 'p-4' shorthand!  tailwindcss/enforces-shorthand
+
+./components/chat-v2/MemorySearchModal.tsx
+42:8  Warning: React Hook useEffect has a missing dependency: 'handleSearch'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+84:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+92:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+95:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+96:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+102:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+111:45  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+124:37  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+124:37  Warning: Classname 'placeholder-rp-subtle' should be updated to 'placeholder:text-rp-subtle' in Tailwind CSS v3!  tailwindcss/migration-from-tailwind-2
+128:64  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+135:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+142:45  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+145:54  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+145:54  Warning: Classnames 'h-10, w-10' could be replaced by the 'size-10' shorthand!  tailwindcss/enforces-shorthand
+149:56  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+150:56  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+153:50  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+164:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/chat-v2/SoulCard.tsx
+49:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+49:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+58:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+58:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+58:29  Warning: Classnames 'h-24, w-24' could be replaced by the 'size-24' shorthand!  tailwindcss/enforces-shorthand
+79:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+79:26  Warning: Classnames 'h-full, w-full' could be replaced by the 'size-full' shorthand!  tailwindcss/enforces-shorthand
+94:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+102:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+102:22  Warning: Classnames 'h-6, w-6' could be replaced by the 'size-6' shorthand!  tailwindcss/enforces-shorthand
+104:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+104:25  Warning: Classnames 'h-4, w-4' could be replaced by the 'size-4' shorthand!  tailwindcss/enforces-shorthand
+
+./components/chat-v2/SoulGallery.tsx
+49:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+49:22  Warning: Classnames 'h-12, w-12' could be replaced by the 'size-12' shorthand!  tailwindcss/enforces-shorthand
+58:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+62:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+77:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/chat-v2/ThinkingIndicator.tsx
+13:14  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+14:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+14:18  Warning: Classnames 'h-2, w-2' could be replaced by the 'size-2' shorthand!  tailwindcss/enforces-shorthand
+15:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+15:18  Warning: Classnames 'h-2, w-2' could be replaced by the 'size-2' shorthand!  tailwindcss/enforces-shorthand
+16:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+16:18  Warning: Classnames 'h-2, w-2' could be replaced by the 'size-2' shorthand!  tailwindcss/enforces-shorthand
+
+./components/chat-v2/hooks/use-file-handler.ts
+45:8  Warning: React Hook useCallback has a missing dependency: 'chatSettings'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/collection/CollectionCard.tsx
+162:22  Warning: Classnames '' could be replaced by the 'inset-x-0' shorthand!  tailwindcss/enforces-shorthand
+
+./components/discovery/CharacterCard.tsx
+118:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+125:26  Warning: Classnames '' could be replaced by the 'inset-x-0' shorthand!  tailwindcss/enforces-shorthand
+146:40  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/discovery/DiscoveryFeed.tsx
+145:34  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/discovery/DraggableGallery.tsx
+105:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+105:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/discovery/EtherealCard.tsx
+101:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+102:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/discovery/FeaturedCarousel.tsx
+84:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+90:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+90:25  Warning: Classnames 'w-12, h-12' could be replaced by the 'size-12' shorthand!  tailwindcss/enforces-shorthand
+98:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+98:25  Warning: Classnames 'w-12, h-12' could be replaced by the 'size-12' shorthand!  tailwindcss/enforces-shorthand
+105:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+111:37  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+116:53  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+132:46  Warning: Classnames 'left-0, right-0' could be replaced by the 'inset-x-0' shorthand!  tailwindcss/enforces-shorthand
+133:49  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+140:64  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+140:64  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+140:64  Warning: Classname 'transform' is not needed in Tailwind CSS v3!  tailwindcss/migration-from-tailwind-2
+168:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/discovery/TrendingCarousel.tsx
+60:27  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+61:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+100:40  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/gacha/GachaBanner.tsx
+96:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+103:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+108:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+108:25  Warning: Classnames 'w-12, h-12' could be replaced by the 'size-12' shorthand!  tailwindcss/enforces-shorthand
+116:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+116:25  Warning: Classnames 'w-12, h-12' could be replaced by the 'size-12' shorthand!  tailwindcss/enforces-shorthand
+123:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+154:41  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+188:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+197:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+223:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/gacha/HolographicCard.tsx
+90:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+100:17  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+100:17  Warning: Classnames 'w-full, h-full' could be replaced by the 'size-full' shorthand!  tailwindcss/enforces-shorthand
+115:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+115:26  Warning: Classnames 'w-full, h-full' could be replaced by the 'size-full' shorthand!  tailwindcss/enforces-shorthand
+117:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+117:30  Warning: Classnames 'w-full, h-full' could be replaced by the 'size-full' shorthand!  tailwindcss/enforces-shorthand
+128:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+159:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+173:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+193:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/gacha/PullResult.tsx
+31:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/knowledge/MemorySharing.tsx
+91:14  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+104:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+107:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+111:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+111:26  Warning: Classnames 'after:h-5, after:w-5' could be replaced by the 'after:size-5' shorthand!  tailwindcss/enforces-shorthand
+126:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+141:37  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+143:42  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+149:49  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+160:49  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+162:54  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+162:54  Warning: Classnames 'w-8, h-8' could be replaced by the 'size-8' shorthand!  tailwindcss/enforces-shorthand
+164:57  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+164:105  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+164:105  Warning: Classnames 'w-full, h-full' could be replaced by the 'size-full' shorthand!  tailwindcss/enforces-shorthand
+169:54  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+170:56  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+173:58  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+173:58  Warning: Classnames 'w-5, h-5' could be replaced by the 'size-5' shorthand!  tailwindcss/enforces-shorthand
+180:50  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+193:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+194:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+194:26  Warning: Classnames 'w-1, h-1' could be replaced by the 'size-1' shorthand!  tailwindcss/enforces-shorthand
+
+./components/knowledge/MemoryVault.tsx
+129:14  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+131:23  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+131:23  Warning: Classnames 'w-8, h-8' could be replaced by the 'size-8' shorthand!  tailwindcss/enforces-shorthand
+132:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+141:17  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+141:17  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+141:17  Warning: Classname 'bg-opacity-5' should be replaced by an opacity suffix (eg. '/5')  tailwindcss/migration-from-tailwind-2
+148:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+154:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+155:34  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+155:34  Warning: Classnames 'w-12, h-12' could be replaced by the 'size-12' shorthand!  tailwindcss/enforces-shorthand
+156:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+163:28  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+167:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+167:30  Warning: Classnames 'w-16, h-16' could be replaced by the 'size-16' shorthand!  tailwindcss/enforces-shorthand
+168:37  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+168:37  Warning: Classnames 'w-8, h-8' could be replaced by the 'size-8' shorthand!  tailwindcss/enforces-shorthand
+172:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+179:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+180:31  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+180:31  Warning: Classnames 'w-5, h-5' could be replaced by the 'size-5' shorthand!  tailwindcss/enforces-shorthand
+187:42  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+190:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+191:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+202:37  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+206:50  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+206:50  Warning: Classnames 'w-10, h-10' could be replaced by the 'size-10' shorthand!  tailwindcss/enforces-shorthand
+207:95  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+207:95  Warning: Classnames 'w-5, h-5' could be replaced by the 'size-5' shorthand!  tailwindcss/enforces-shorthand
+213:64  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+213:64  Warning: Classnames 'w-3.5, h-3.5' could be replaced by the 'size-3.5' shorthand!  tailwindcss/enforces-shorthand
+215:65  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+215:65  Warning: Classnames 'w-3.5, h-3.5' could be replaced by the 'size-3.5' shorthand!  tailwindcss/enforces-shorthand
+217:63  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+217:63  Warning: Classnames 'w-3.5, h-3.5' could be replaced by the 'size-3.5' shorthand!  tailwindcss/enforces-shorthand
+231:49  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+231:49  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+236:60  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+236:60  Warning: Classnames 'w-5, h-5' could be replaced by the 'size-5' shorthand!  tailwindcss/enforces-shorthand
+240:49  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+243:57  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+243:57  Warning: Classnames 'w-5, h-5' could be replaced by the 'size-5' shorthand!  tailwindcss/enforces-shorthand
+
+./components/layout/Footer.tsx
+71:17  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+100:28  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+107:28  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+110:51  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+119:37  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+127:37  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+137:28  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+142:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+151:28  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+159:37  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+167:37  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+173:31  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/layout/HeroHeader.tsx
+94:18  Warning: Classnames 'px-4, py-4' could be replaced by the 'p-4' shorthand!  tailwindcss/enforces-shorthand
+112:41  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+114:37  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+119:36  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/layout/MinimalSidebar.tsx
+71:21  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+74:36  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+74:36  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+81:25  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+84:40  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+84:40  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+129:37  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/layout/MobileNav.tsx
+26:14  Warning: Classnames 'left-0, right-0' could be replaced by the 'inset-x-0' shorthand!  tailwindcss/enforces-shorthand
+36:40  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/layout/PageContainer.tsx
+25:24  Warning: Classnames 'md:px-8, md:py-8' could be replaced by the 'md:p-8' shorthand!  tailwindcss/enforces-shorthand
+
+./components/layout/PageHeader.tsx
+46:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+46:24  Warning: Classnames 'px-4, py-4' could be replaced by the 'p-4' shorthand!  tailwindcss/enforces-shorthand
+61:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+89:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/layout/PageTemplate.tsx
+89:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+95:28  Warning: Classnames 'md:px-8, md:py-8' could be replaced by the 'md:p-8' shorthand!  tailwindcss/enforces-shorthand
+
+./components/layout/SidebarCreateButton.tsx
+54:28  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+62:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+62:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+71:21  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/layout/SidebarRecentChats.tsx
+77:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+98:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+103:36  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+126:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+134:35  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/layout/SidebarThemeToggle.tsx
+37:28  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+51:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+75:17  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/layout/SidebarUserSection.tsx
+49:8  Warning: React Hook useEffect has a missing dependency: 'supabase.auth'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+94:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+94:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+94:32  Warning: Classnames 'px-3, py-3' could be replaced by the 'p-3' shorthand!  tailwindcss/enforces-shorthand
+128:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+128:32  Warning: Classnames 'px-2, py-2' could be replaced by the 'p-2' shorthand!  tailwindcss/enforces-shorthand
+136:37  Warning: Arbitrary value classname '-translate-x-[2.5px]' should not start with a dash (-)  tailwindcss/enforces-negative-arbitrary-values
+145:37  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+151:34  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+156:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+169:28  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+183:40  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+183:40  Warning: Classnames 'left-0, right-0' could be replaced by the 'inset-x-0' shorthand!  tailwindcss/enforces-shorthand
+183:40  Warning: Classnames 'left-auto, right-auto' could be replaced by the 'inset-x-auto' shorthand!  tailwindcss/enforces-shorthand
+192:37  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+197:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+218:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+227:37  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+237:35  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+241:39  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+253:32  Warning: Classnames 'px-3, py-3' could be replaced by the 'p-3' shorthand!  tailwindcss/enforces-shorthand
+262:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/marketplace/ListingCard.tsx
+157:22  Warning: Classnames '' could be replaced by the 'inset-x-0' shorthand!  tailwindcss/enforces-shorthand
+
+./components/moments/MomentCard.tsx
+76:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+76:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/moments/MomentModal.tsx
+99:28  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/soul-forge/MotherMessage.tsx
+124:39  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+124:39  Warning: Classnames 'h-1.5, w-1.5' could be replaced by the 'size-1.5' shorthand!  tailwindcss/enforces-shorthand
+125:39  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+125:39  Warning: Classnames 'h-1.5, w-1.5' could be replaced by the 'size-1.5' shorthand!  tailwindcss/enforces-shorthand
+126:39  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+126:39  Warning: Classnames 'h-1.5, w-1.5' could be replaced by the 'size-1.5' shorthand!  tailwindcss/enforces-shorthand
+
+./components/studio/ImportExportPanel.tsx
+108:14  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+111:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+112:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+123:41  Warning: Classnames 'h-4, w-4' could be replaced by the 'size-4' shorthand!  tailwindcss/enforces-shorthand
+125:43  Warning: Classnames 'h-4, w-4' could be replaced by the 'size-4' shorthand!  tailwindcss/enforces-shorthand
+133:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+136:41  Warning: Classnames 'h-4, w-4' could be replaced by the 'size-4' shorthand!  tailwindcss/enforces-shorthand
+138:41  Warning: Classnames 'h-4, w-4' could be replaced by the 'size-4' shorthand!  tailwindcss/enforces-shorthand
+154:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+158:54  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/studio/SoulSplicer.tsx
+47:11  Warning: The 'linkedKnowledge' logical expression could make the dependencies of useCallback Hook (at line 85) change on every render. To fix this, wrap the initialization of 'linkedKnowledge' in its own useMemo() Hook.  react-hooks/exhaustive-deps
+90:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+91:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+91:22  Warning: Classnames 'h-12, w-12' could be replaced by the 'size-12' shorthand!  tailwindcss/enforces-shorthand
+95:25  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+96:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+104:27  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+136:47  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+144:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+155:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+166:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+171:42  Warning: Classnames 'h-32, w-32' could be replaced by the 'size-32' shorthand!  tailwindcss/enforces-shorthand
+175:45  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+190:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+198:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+210:45  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+215:38  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+217:43  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+226:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+229:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+248:47  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+267:47  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+286:47  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+293:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+294:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+305:50  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+309:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+323:43  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+331:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+345:43  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+353:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+367:43  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+373:30  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+374:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+384:48  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+388:32  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+394:34  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+395:53  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+396:36  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+399:36  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+408:41  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+411:50  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+411:50  Warning: Classnames 'h-10, w-10' could be replaced by the 'size-10' shorthand!  tailwindcss/enforces-shorthand
+415:52  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+418:52  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+433:34  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+434:36  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/studio/VibeSelector.tsx
+85:22  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+86:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+93:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+95:39  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+100:37  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+100:37  Warning: Classnames 'h-4, w-4' could be replaced by the 'size-4' shorthand!  tailwindcss/enforces-shorthand
+113:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+128:33  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+138:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+139:20  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/tier/FeatureGate.tsx
+44:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+55:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/ui/button.tsx
+7:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+7:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+7:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+7:24  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/ui/skeleton.tsx
+10:18  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/utility/profile-settings.tsx
+345:47  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+./components/voice/StartSpeakingButton.tsx
+32:13  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+38:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+40:29  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+42:26  Warning: Invalid Tailwind CSS classnames order  tailwindcss/classnames-order
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules

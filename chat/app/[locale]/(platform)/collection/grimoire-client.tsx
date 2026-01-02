@@ -33,24 +33,24 @@ export default function GrimoireClient() {
     return (
         <div className="min-h-screen w-full bg-[#050505] text-white">
             {/* Background Effects */}
-            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-                <div className="absolute top-[-10%] right-[-10%] h-[600px] w-[600px] rounded-full bg-rp-iris/5 blur-[100px]" />
-                <div className="absolute bottom-[10%] left-[-10%] h-[500px] w-[500px] rounded-full bg-rp-rose/5 blur-[100px]" />
+            <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+                <div className="absolute right-[-10%] top-[-10%] size-[600px] rounded-full bg-rp-iris/5 blur-[100px]" />
+                <div className="absolute bottom-[10%] left-[-10%] size-[500px] rounded-full bg-rp-rose/5 blur-[100px]" />
             </div>
 
-            <div className="relative z-10 container mx-auto max-w-7xl px-4 py-8 md:px-8">
+            <div className="container relative z-10 mx-auto max-w-7xl px-4 py-8 md:px-8">
                 {/* Header */}
                 <div className="mb-8 flex items-center justify-between border-b border-white/5 pb-6">
                     <div>
-                        <div className="flex items-center gap-3 mb-2">
-                            <div className="p-2 rounded-lg bg-rp-iris/10 text-rp-iris">
+                        <div className="mb-2 flex items-center gap-3">
+                            <div className="rounded-lg bg-rp-iris/10 p-2 text-rp-iris">
                                 <IconBook size={28} />
                             </div>
                             <h1 className={`${TYPOGRAPHY.heading.h1} bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent`}>
                                 Grimoire
                             </h1>
                         </div>
-                        <p className="text-white/50 pl-1">
+                        <p className="pl-1 text-white/50">
                             {loading ? "Opening the tome..." : `You have collected ${souls.length} soul fragments.`}
                         </p>
                     </div>
@@ -67,9 +67,9 @@ export default function GrimoireClient() {
 
                             {/* Lore snippet or extra decorative element */}
                             <div className="rounded-2xl border border-white/5 bg-white/5 p-6 backdrop-blur-sm">
-                                <h3 className="mb-2 font-tiempos-headline text-lg font-bold text-rp-gold">Archivist's Note</h3>
-                                <p className="text-sm italic text-white/40 leading-relaxed">
-                                    "The souls you summon are bound to this Grimoire. As you deepen your bond, their true power will manifest."
+                                <h3 className="mb-2 font-tiempos-headline text-lg font-bold text-rp-gold">Archivist&apos;s Note</h3>
+                                <p className="text-sm italic leading-relaxed text-white/40">
+                                    &quot;The souls you summon are bound to this Grimoire. As you deepen your bond, their true power will manifest.&quot;
                                 </p>
                             </div>
                         </div>

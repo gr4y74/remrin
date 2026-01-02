@@ -164,7 +164,7 @@ export function ChatInput({
             </div>
 
             {/* Input Container */}
-            <div className="relative flex-1 overflow-hidden rounded-2xl border border-rp-overlay bg-rp-surface/50 backdrop-blur-md transition-all duration-200 focus-within:border-rp-iris/50 focus-within:bg-rp-surface focus-within:shadow-[0_0_20px_-5px_rgba(196,167,231,0.1)] focus-within:ring-1 focus-within:ring-rp-iris/30">
+            <div className="relative flex-1 overflow-hidden transition-all duration-200 focus-within:ring-1 focus-within:ring-rp-iris/20 rounded-2xl">
                 <textarea
                     ref={textareaRef}
                     value={input}
