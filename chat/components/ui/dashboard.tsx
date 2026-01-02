@@ -86,7 +86,7 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
             alt="Chat background"
             fill
             sizes="100vw"
-            className="object-cover opacity-100 transition-opacity duration-1000 will-change-opacity"
+            className="opacity-100 object-cover transition-opacity duration-1000 will-change-opacity"
             priority
           />
           {/* Overlay for readability - Lightened for better vibrancy */}
@@ -96,14 +96,14 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
 
       {/* Main Content Area - with dynamic right margin for CharacterPanel */}
       <div
-        className="flex flex-1 h-full flex-col transition-[margin-right] duration-300"
+        className="flex h-full flex-1 flex-col transition-[margin-right] duration-300"
         style={{ marginRight: isCharacterPanelOpen && selectedPersona ? CHARACTER_PANEL_WIDTH : 0 }}
         onDrop={onFileDrop}
         onDragOver={onDragOver}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
       >
-        <div className="flex-1 h-full">
+        <div className="h-full flex-1">
           {isDragging ? (
             <div className="flex h-full items-center justify-center bg-black/50 text-2xl text-white">
               drop file here

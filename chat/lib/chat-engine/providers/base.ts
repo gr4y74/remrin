@@ -9,7 +9,8 @@ import {
     ProviderId,
     ChatMessageContent,
     ProviderOptions,
-    ProviderConfig
+    ProviderConfig,
+    ChatChunk
 } from '../types'
 
 export abstract class BaseChatProvider implements IChatProvider {

@@ -11,7 +11,8 @@ import {
     UserTier,
     TIER_CONFIGS,
     ChatMessageContent,
-    ProviderOptions
+    ProviderOptions,
+    ChatChunk
 } from '../types'
 import { openrouterProvider } from './openrouter'
 import { deepseekProvider } from './deepseek'

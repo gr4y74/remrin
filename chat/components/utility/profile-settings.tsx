@@ -342,7 +342,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ }) => {
             alt={"Image"}
           />
         ) : (
-          <Button size="icon" variant="ghost" className="transition-all duration-200 hover:scale-110 hover:text-rp-rose">
+          <Button size="icon" variant="ghost" className="duration-200 transition-all hover:scale-110 hover:text-rp-rose">
             <IconUser size={SIDEBAR_ICON_SIZE} />
           </Button>
         )}

@@ -17,6 +17,7 @@ import { SoulGallery } from './SoulGallery'
 import { MoodHUD } from './MoodHUD'
 import { MemorySearchModal } from './MemorySearchModal'
 import { UserTier } from '@/lib/chat-engine/types'
+import { MOOD_EMOJI, MoodType } from '@/lib/chat-engine/mood'
 import Image from 'next/image'
 import { MOTHER_OF_SOULS_ID } from '@/lib/forge/is-mother-chat'
 
@@ -169,13 +170,17 @@ function ChatUIInner({
                         personaName={personaName}
                         personaImage={personaImage}
                         description={currentPersona?.description || ""}
-                        creatorName={currentPersona?.user_id === 'system' ? 'System' : 'Creator'}
+                        creatorName={currentPersona?.creator_id === 'system' ? 'System' : 'Creator'}
                         onViewProfile={() => setIsCharacterPanelOpen(true)}
                         onSettings={() => {
                             // TODO: Implement Chat Settings Modal
                             alert("Chat Settings coming soon!")
                         }}
-                        moodState={moodState}
+                        moodState={{
+                            mood: moodState.mood,
+                            emoji: MOOD_EMOJI[moodState.mood as MoodType] || '😊',
+                            battery: moodState.battery
+                        }}
                         isVisualNovelMode={isVisualNovelMode}
                         onToggleVisualNovel={toggleVisualNovelMode}
                         profile={profile}

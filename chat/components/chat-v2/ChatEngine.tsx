@@ -38,7 +38,7 @@ interface ChatEngineState {
 }
 
 interface ChatEngineActions {
-    sendMessage: (content: string) => Promise<void>
+    sendMessage: (content: string, skipUserMessage?: boolean) => Promise<void>
     stopGeneration: () => void
     clearMessages: () => void
     setSystemPrompt: (prompt: string) => void

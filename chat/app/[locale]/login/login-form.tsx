@@ -18,6 +18,7 @@ import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton"
 export default function LoginForm() {
     const [passwordVisible, setPasswordVisible] = useState(false)
     const [loading, setLoading] = useState(false)
+    const router = useRouter()
     const searchParams = useSearchParams()
     const redirectTo = searchParams.get("redirect") || undefined
 

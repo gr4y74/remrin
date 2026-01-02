@@ -29,17 +29,17 @@ export function StartSpeakingButton({ text, voiceId, className }: StartSpeakingB
         <Button
             variant="ghost"
             size="icon"
-            className={`rounded-full hover:bg-rp-iris/20 ${className}`}
+            className={`hover:bg-rp-iris/20 rounded-full ${className}`}
             onClick={handleClick}
             disabled={isLoading || !text}
             title={isPlaying ? "Stop Speaking" : "Read Aloud"}
         >
             {isLoading ? (
-                <Loader2 className="size-4 animate-spin text-rp-iris" />
+                <Loader2 className="size-4 text-rp-iris animate-spin" />
             ) : isPlaying ? (
-                <StopCircle className="size-4 text-rp-love animate-pulse" />
+                <StopCircle className="size-4 animate-pulse text-rp-love" />
             ) : (
-                <Volume2 className="size-4 text-rp-subtle hover:text-rp-iris" />
+                <Volume2 className="size-4 hover:text-rp-iris text-rp-subtle" />
             )}
         </Button>
     )

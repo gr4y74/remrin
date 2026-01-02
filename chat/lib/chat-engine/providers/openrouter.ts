@@ -9,7 +9,8 @@ import { BaseChatProvider } from './base'
 import {
     ProviderId,
     ChatMessageContent,
-    ProviderOptions
+    ProviderOptions,
+    ChatChunk
 } from '../types'
 
 const OPENROUTER_CONFIG = {

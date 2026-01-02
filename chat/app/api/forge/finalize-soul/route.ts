@@ -34,8 +34,18 @@ export async function POST(request: NextRequest) {
             .eq('id', user.id)
             .single()
 
-        const userTier = (profile?.subscription_tier || 'free') as any
-        const tierConfig = TIER_CONFIGS[userTier] || TIER_CONFIGS['free']
+        const rawTier = profile?.subscription_tier || 'free'
+        // Map database tier values to our UserTier type
+        const tierMap: Record<string, 'free' | 'pro' | 'premium' | 'enterprise'> = {
+            'free': 'free',
+            'pro': 'pro',
+            'premium': 'premium',
+            'enterprise': 'enterprise',
+            'architect': 'premium',
+            'titan': 'enterprise'
+        }
+        const userTier = tierMap[rawTier] || 'free'
+        const tierConfig = TIER_CONFIGS[userTier]
 
         // Check monthly limit
         const startOfMonth = new Date()

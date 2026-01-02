@@ -44,7 +44,7 @@ export const ChatMessage = memo(function ChatMessage({
     const [copied, setCopied] = useState(false)
     const [displayedContent, setDisplayedContent] = useState('')
     const { sendMessage } = useChatEngine()
-    const [selectedVoiceId, setSelectedVoiceId] = useState<string | undefined>(message.metadata?.selectedVoiceId)
+    const [selectedVoiceId, setSelectedVoiceId] = useState<string | undefined>((message.metadata as any)?.selectedVoiceId)
     const isUser = message.role === 'user'
 
     // Typing animation state
@@ -112,7 +112,7 @@ export const ChatMessage = memo(function ChatMessage({
         setTimeout(() => setCopied(false), 2000)
     }
 
-    const isMother = !isUser && (personaName === 'The Mother of Souls' || message.metadata?.personaId === 'a0000000-0000-0000-0000-000000000001')
+    const isMother = !isUser && (personaName === 'The Mother of Souls' || (message.metadata as any)?.personaId === 'a0000000-0000-0000-0000-000000000001')
     const isVoicePrompt = isMother && isVoiceSelectionPrompt(message.content)
 
     // Render Source (Content area)
@@ -243,7 +243,7 @@ export const ChatMessage = memo(function ChatMessage({
     if (message.role === 'tool') {
         const result = message.metadata?.toolResult
         if (message.content.includes('generate_soul_portrait')) {
-            return <div className="px-8 py-4"><VisionLoading /></div>
+            return <div className="px-8 py-4"><VisionLoading status="loading" /></div>
         }
         return null // Don't show raw tool results
     }

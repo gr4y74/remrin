@@ -20,6 +20,7 @@ import { rateLimit } from '@/lib/rate-limit'
 import { isMotherOfSouls } from '@/lib/forge/is-mother-chat'
 import { SOUL_FORGE_TOOLS } from '@/lib/tools/soul-forge-tools'
 import { ToolDescriptor } from '@/lib/chat-engine/types'
+import { CarrotEngine, CarrotPersona } from '@/lib/chat-engine/carrot'
 
 export const runtime = 'nodejs' // Use Node.js runtime for streaming
 

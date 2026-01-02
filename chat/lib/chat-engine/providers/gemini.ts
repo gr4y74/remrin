@@ -9,7 +9,8 @@ import {
     ProviderId,
     ChatMessageContent,
     ProviderOptions,
-    PROVIDER_CONFIGS
+    PROVIDER_CONFIGS,
+    ChatChunk
 } from '../types'
 
 export class GeminiProvider extends BaseChatProvider {

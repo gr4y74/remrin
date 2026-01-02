@@ -10,7 +10,8 @@ import {
     ProviderId,
     ChatMessageContent,
     ProviderOptions,
-    PROVIDER_CONFIGS
+    PROVIDER_CONFIGS,
+    ChatChunk
 } from '../types'
 
 export class DeepSeekProvider extends BaseChatProvider {

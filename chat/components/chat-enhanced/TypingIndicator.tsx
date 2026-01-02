@@ -30,15 +30,15 @@ export const TypingIndicator: FC<TypingIndicatorProps> = ({
             {/* Three animated dots */}
             <div className="flex items-center gap-1">
                 <span
-                    className="bg-foreground/60 animate-pulse-dot size-2 rounded-full"
+                    className="size-2 animate-pulse-dot rounded-full bg-foreground/60"
                     style={{ animationDelay: "0ms" }}
                 />
                 <span
-                    className="bg-foreground/60 animate-pulse-dot size-2 rounded-full"
+                    className="size-2 animate-pulse-dot rounded-full bg-foreground/60"
                     style={{ animationDelay: "160ms" }}
                 />
                 <span
-                    className="bg-foreground/60 animate-pulse-dot size-2 rounded-full"
+                    className="size-2 animate-pulse-dot rounded-full bg-foreground/60"
                     style={{ animationDelay: "320ms" }}
                 />
             </div>

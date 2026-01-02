@@ -279,7 +279,7 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
                 {description && (
                   <div className="bg-rp-overlay/10 rounded-2xl p-4 border border-rp-highlight-low/10">
                     <p className="text-rp-subtle text-xs leading-relaxed italic line-clamp-4">
-                      "{description}"
+                      {`"${description}"`}
                     </p>
                   </div>
                 )}
