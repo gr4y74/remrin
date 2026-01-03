@@ -121,7 +121,7 @@ export function SearchSouls({ onResultClick, className }: SearchSoulsProps) {
                         } else if (persona.name.toLowerCase().includes(searchTerm.toLowerCase())) {
                             match_type = 'name'
                             relevance_score = 3
-                        } else if (persona.config?.hashtags?.some(tag =>
+                        } else if (persona.config?.hashtags?.some((tag: string) =>
                             tag.toLowerCase().includes(searchTerm.toLowerCase())
                         )) {
                             match_type = 'hashtag'

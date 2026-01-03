@@ -6,7 +6,6 @@ export default function ProfilePage() {
         <PageTemplate
             showHeader={true}
             showFooter={false}
-            showSidebar={true}
         >
             <UserProfileSettings />
         </PageTemplate>
