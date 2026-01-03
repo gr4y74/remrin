@@ -19,6 +19,7 @@ import { handleApiError } from '@/lib/errors'
 import { rateLimit } from '@/lib/rate-limit'
 import { isMotherOfSouls } from '@/lib/forge/is-mother-chat'
 import { SOUL_FORGE_TOOLS } from '@/lib/tools/soul-forge-tools'
+import { SEARCH_TOOLS } from '@/lib/tools/search-tools'
 import { ToolDescriptor } from '@/lib/chat-engine/types'
 import { CarrotEngine, CarrotPersona } from '@/lib/chat-engine/carrot'
 
@@ -115,10 +116,21 @@ export async function POST(request: NextRequest) {
 
         // Check if this is the Mother of Souls
         const isMother = isMotherOfSouls(persona as any)
-        const tools = isMother ? SOUL_FORGE_TOOLS.map(t => ({
-            type: t.type,
-            function: t.function
-        })) : undefined
+
+        // Build tools array - all personas get search, Mother gets additional Soul Forge tools
+        const tools: ToolDescriptor[] = [
+            ...SEARCH_TOOLS.map(t => ({
+                type: t.type,
+                function: t.function
+            }))
+        ]
+
+        if (isMother) {
+            tools.push(...SOUL_FORGE_TOOLS.map(t => ({
+                type: t.type,
+                function: t.function
+            })))
+        }
 
         // Get provider info for logging
         const providerInfo = providerManager.getProviderInfo()

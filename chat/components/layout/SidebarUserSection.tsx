@@ -187,12 +187,20 @@ export function SidebarUserSection({ isExpanded, onProfileClick }: SidebarUserSe
                         >
                             <div className="p-1">
                                 <Link
-                                    href="/settings/llm"
+                                    href={`/profile/${user?.id}`}
+                                    onClick={() => setShowDropdown(false)}
+                                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-rp-text transition-colors hover:bg-rp-overlay"
+                                >
+                                    <IconUserCircle size={18} />
+                                    <span>View Profile</span>
+                                </Link>
+                                <Link
+                                    href="/settings/profile"
                                     onClick={() => setShowDropdown(false)}
                                     className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-rp-text transition-colors hover:bg-rp-overlay"
                                 >
                                     <IconSettings size={18} />
-                                    <span>Settings</span>
+                                    <span>Profile Settings</span>
                                 </Link>
                                 <div className="my-1 h-px bg-rp-highlight-med" />
                                 <button

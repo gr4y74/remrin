@@ -13,6 +13,7 @@ interface EtherealCardProps {
     rarity?: "common" | "rare" | "epic" | "legendary"
     messageCount?: number
     followersCount?: number
+    hashtags?: string[]
     isNew?: boolean
     isFeatured?: boolean
     onClick?: () => void
@@ -27,6 +28,7 @@ export function EtherealCard({
     rarity = "common",
     messageCount = 0,
     followersCount = 0,
+    hashtags = [],
     isNew = false,
     isFeatured = false,
     onClick,
@@ -102,6 +104,20 @@ export function EtherealCard({
                             <p className="mb-3 line-clamp-3 text-sm text-white/90 bg-black/40 backdrop-blur-sm rounded-lg p-2">
                                 {description}
                             </p>
+                        </div>
+                    )}
+
+                    {/* Hashtags - show first 2 */}
+                    {hashtags.length > 0 && (
+                        <div className="mb-2 flex flex-wrap gap-1">
+                            {hashtags.slice(0, 2).map(tag => (
+                                <span
+                                    key={tag}
+                                    className="rounded-full bg-black/60 backdrop-blur-sm px-2 py-0.5 text-xs text-white/80"
+                                >
+                                    #{tag}
+                                </span>
+                            ))}
                         </div>
                     )}
 

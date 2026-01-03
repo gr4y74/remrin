@@ -41,10 +41,35 @@ export class DeepSeekProvider extends BaseChatProvider {
 
         // Add conversation messages
         for (const msg of messages) {
-            formatted.push({
+            const formattedMsg: any = {
                 role: msg.role,
                 content: msg.content
-            })
+            }
+
+            // Handle tool responses
+            if (msg.role === 'tool' && msg.tool_call_id) {
+                formattedMsg.tool_call_id = msg.tool_call_id
+                // For tool role, content MUST be a string
+                if (typeof formattedMsg.content !== 'string') {
+                    formattedMsg.content = JSON.stringify(formattedMsg.content)
+                }
+            }
+
+            // Handle assistant messages with tool calls
+            if (msg.role === 'assistant' && msg.metadata?.toolCalls) {
+                formattedMsg.tool_calls = msg.metadata.toolCalls.map(tc => ({
+                    id: tc.id,
+                    type: 'function',
+                    function: tc.function
+                }))
+
+                // If there's no content but there are tool calls, OpenAI still likes an empty string
+                if (!formattedMsg.content) {
+                    formattedMsg.content = null
+                }
+            }
+
+            formatted.push(formattedMsg)
         }
 
         return formatted

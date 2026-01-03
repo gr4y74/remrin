@@ -192,19 +192,26 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         }
 
         if (workspaceImageUrl) {
-          const response = await fetch(workspaceImageUrl)
-          const blob = await response.blob()
-          const base64 = await convertBlobToBase64(blob)
-
-          setWorkspaceImages(prev => [
-            ...prev,
-            {
-              workspaceId: workspace.id,
-              path: workspace.image_path,
-              base64: base64,
-              url: workspaceImageUrl
+          try {
+            const response = await fetch(workspaceImageUrl)
+            if (!response.ok) {
+              throw new Error(`Failed to fetch image: ${response.statusText}`)
             }
-          ])
+            const blob = await response.blob()
+            const base64 = await convertBlobToBase64(blob)
+
+            setWorkspaceImages(prev => [
+              ...prev,
+              {
+                workspaceId: workspace.id,
+                path: workspace.image_path,
+                base64: base64,
+                url: workspaceImageUrl
+              }
+            ])
+          } catch (error) {
+            console.warn(`[GlobalState] Failed to process workspace image for ${workspace.id}:`, error)
+          }
         }
       }
 

@@ -146,13 +146,14 @@ export interface ChatMessageContent {
     role: MessageRole
     content: string
     timestamp: Date
+    tool_call_id?: string // For tool responses
     metadata?: {
         model?: string
         provider?: ProviderId
         tokensUsed?: number
         searchResults?: SearchResult[]
         files?: FileAttachment[]
-        toolCalls?: ToolCall[]
+        toolCalls?: ToolCall[] // For assistant messages requesting tools
         toolResult?: any
     }
 }

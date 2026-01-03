@@ -1,11 +1,10 @@
 "use client"
 
-import { useContext, useMemo } from "react"
+import { useState, useEffect, useMemo } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
-import { RemrinContext } from "@/context/context"
 import { IconMessage } from "@tabler/icons-react"
 
 interface SidebarRecentChatsProps {
@@ -33,38 +32,55 @@ const DEMO_CHATS = [
  * and full names when expanded.
  */
 export function SidebarRecentChats({ isExpanded, maxChats = 8, showDemo = false }: SidebarRecentChatsProps) {
-    const { chats, personas } = useContext(RemrinContext)
+    // Use state to prevent hydration errors
+    const [mounted, setMounted] = useState(false)
+    const [recentChatsData, setRecentChatsData] = useState<Array<{
+        personaId: string
+        personaName: string
+        personaImage: string
+        lastChatAt: string
+        workspaceId: string
+    }>>([])
 
-    // Get recent chats sorted by updated_at, with persona info
+    // Load recent chats from localStorage only on client side
+    useEffect(() => {
+        setMounted(true)
+
+        if (showDemo) return
+
+        try {
+            const stored = localStorage.getItem('recentChats')
+            if (stored) {
+                setRecentChatsData(JSON.parse(stored))
+            }
+        } catch (error) {
+            console.error('Error loading recent chats:', error)
+        }
+    }, [showDemo])
+
+    // Get recent chats
     const recentChats = useMemo(() => {
         // If showDemo is true, return demo data
         if (showDemo) {
             return DEMO_CHATS.slice(0, maxChats)
         }
 
-        if (!chats || chats.length === 0) return []
+        // Don't render until mounted to prevent hydration errors
+        if (!mounted) return []
 
-        // Sort by updated_at (most recent first)
-        const sorted = [...chats].sort((a, b) => {
-            const dateA = new Date(a.updated_at || a.created_at).getTime()
-            const dateB = new Date(b.updated_at || b.created_at).getTime()
-            return dateB - dateA
-        })
+        // Sort by most recent
+        const sorted = [...recentChatsData].sort((a, b) =>
+            new Date(b.lastChatAt).getTime() - new Date(a.lastChatAt).getTime()
+        )
 
-        // Map to include persona info for avatars
-        return sorted.slice(0, maxChats).map(chat => {
-            // Find persona by persona_id from the chat metadata
-            const personaId = (chat as any).persona_id
-            const persona = personas?.find(p => p.id === personaId)
-
-            return {
-                id: chat.id,
-                name: persona?.name || chat.name || 'Chat',
-                imageUrl: persona?.image_url || null,
-                href: `/${chat.workspace_id}/chat?persona=${personaId || ''}`
-            }
-        }).filter(chat => chat.name !== 'Chat') // Filter out chats without valid names
-    }, [chats, personas, maxChats, showDemo])
+        // Map to sidebar format
+        return sorted.slice(0, maxChats).map(chat => ({
+            id: chat.personaId,
+            name: chat.personaName,
+            imageUrl: chat.personaImage,
+            href: `/ ${chat.workspaceId}/chat?persona=${chat.personaId}`
+        }))
+    }, [maxChats, showDemo, mounted, recentChatsData])
 
     // Don't render if no recent chats (and not in demo mode)
     if (recentChats.length === 0) {

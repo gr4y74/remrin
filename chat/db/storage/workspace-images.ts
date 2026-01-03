@@ -41,16 +41,22 @@ export const uploadWorkspaceImage = async (
 
 export const getWorkspaceImageFromStorage = async (filePath: string) => {
   try {
+    if (!filePath || filePath.trim() === '') return undefined
+
     const { data, error } = await supabase.storage
       .from("workspace_images")
       .createSignedUrl(filePath, 60 * 60 * 24) // 24hrs
 
     if (error) {
-      throw new Error("Error downloading workspace image")
+      console.warn(`[WorkspaceImages] Error verifying image path "${filePath}":`, error)
+      return undefined
     }
 
     return data.signedUrl
+
   } catch (error) {
-    console.error(error)
+    // Silently fail for workspace images to avoid blocking the UI
+    console.warn(`[WorkspaceImages] Failed to load image: ${filePath}`, error)
+    return undefined
   }
 }

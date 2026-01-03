@@ -6,7 +6,7 @@
 
 "use client"
 
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { ChatEngineProvider, useChatEngine, useMood } from './ChatEngine'
 import { RemrinContext } from '@/context/context'
 import { MiniProfile } from './MiniProfile'
@@ -20,6 +20,7 @@ import { UserTier } from '@/lib/chat-engine/types'
 import { MOOD_EMOJI, MoodType } from '@/lib/chat-engine/mood'
 import Image from 'next/image'
 import { MOTHER_OF_SOULS_ID } from '@/lib/forge/is-mother-chat'
+import { useRecentChats } from '@/hooks/useRecentChats'
 
 interface ChatUIV2Props {
     userId?: string
@@ -57,18 +58,28 @@ function ChatUIInner({
 }) {
     const { messages, personaId } = useChatEngine()
     const moodState = useMood()
+    const { trackChat } = useRecentChats()
     const {
         chatBackgroundEnabled,
         activeBackgroundUrl,
         setIsCharacterPanelOpen,
         personas,
         profile,
+        selectedWorkspace,
         setChatBackgroundEnabled,
         setActiveBackgroundUrl
     } = useContext(RemrinContext)
 
     // Find current persona details from context if possible
     const currentPersona = personas.find(p => p.id === personaId)
+
+    // Track chat when user sends a message
+    useEffect(() => {
+        if (messages.length > 0 && personaId && personaName && personaImage && selectedWorkspace) {
+            // Track this chat in recent chats
+            trackChat(personaId, personaName, personaImage, selectedWorkspace.id)
+        }
+    }, [messages.length, personaId, personaName, personaImage, selectedWorkspace, trackChat])
 
     // Determine if we should show desaturation (low battery)
     const isLowBattery = moodState.battery < 30

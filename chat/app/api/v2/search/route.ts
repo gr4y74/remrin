@@ -5,7 +5,7 @@
  */
 
 import { NextRequest } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers'
 import { searchManager } from '@/lib/chat-engine/capabilities/search'
 
@@ -24,14 +24,56 @@ export async function POST(request: NextRequest) {
 
         // Parse request
         const body = await request.json()
-        const { query, maxResults = 5 } = body
+        const { query, maxResults: maxResultsCamel, max_results: maxResultsSnake } = body
+        const maxResults = maxResultsCamel || maxResultsSnake || 5
 
         if (!query || typeof query !== 'string') {
             return new Response('Query is required', { status: 400 })
         }
 
         // Perform search
+        const startTime = Date.now()
         const response = await searchManager.search(query.trim(), maxResults)
+        const duration = Date.now() - startTime
+
+        // Record statistics (non-blocking)
+        try {
+            const adminSupabase = createAdminClient()
+            adminSupabase.from('search_stats').insert({
+                provider_name: response.provider,
+                query: query.trim(),
+                success: response.results.length > 0,
+                response_time_ms: duration,
+                results_count: response.results.length,
+                user_id: user.id
+            }).then(({ error }) => {
+                if (error) console.error('[Search API] Error recording stats:', error)
+            })
+
+            // Update provider health
+            adminSupabase.from('search_provider_config')
+                .select('success_count, total_response_time_ms, failure_count')
+                .eq('provider_name', response.provider)
+                .single()
+                .then(({ data: current }) => {
+                    if (current) {
+                        adminSupabase.from('search_provider_config')
+                            .update({
+                                success_count: response.results.length > 0 ? current.success_count + 1 : current.success_count,
+                                failure_count: response.results.length === 0 ? current.failure_count + 1 : current.failure_count,
+                                total_response_time_ms: current.total_response_time_ms + duration,
+                                last_success_at: response.results.length > 0 ? new Date().toISOString() : undefined,
+                                last_failure_at: response.results.length === 0 ? new Date().toISOString() : undefined
+                            })
+                            .eq('provider_name', response.provider)
+                            .then(({ error }) => {
+                                if (error) console.error('[Search API] Error updating provider health:', error)
+                            })
+                    }
+                })
+        } catch (statsError) {
+            console.error('[Search API] Stats recording failed:', statsError)
+        }
 
         return new Response(JSON.stringify(response), {
             status: 200,

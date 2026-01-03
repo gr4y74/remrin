@@ -26,7 +26,7 @@ export interface SearchResponse {
 // Search Provider Types
 // ============================================================================
 
-export type SearchProviderId = 'tavily' | 'duckduckgo' | 'google' | 'serper'
+export type SearchProviderId = 'tavily' | 'duckduckgo' | 'google' | 'brave' | 'serper'
 
 export interface SearchProviderConfig {
     id: SearchProviderId
@@ -58,7 +58,15 @@ export const SEARCH_PROVIDER_CONFIGS: Record<SearchProviderId, SearchProviderCon
         id: 'google',
         name: 'Google Custom Search',
         apiEndpoint: 'https://www.googleapis.com/customsearch/v1',
-        apiKeyEnv: 'GOOGLE_CUSTOM_SEARCH_API_KEY',
+        apiKeyEnv: 'GOOGLE_SEARCH_API_KEY',
+        isEnabled: true,
+        maxResults: 5
+    },
+    brave: {
+        id: 'brave',
+        name: 'Brave Search',
+        apiEndpoint: 'https://api.search.brave.com/res/v1/web/search',
+        apiKeyEnv: 'BRAVE_SEARCH_API_KEY',
         isEnabled: true,
         maxResults: 5
     },

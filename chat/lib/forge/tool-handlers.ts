@@ -13,6 +13,7 @@ import type {
     ShowSoulRevealParams,
     ShowSoulRevealResult
 } from '@/lib/tools/soul-forge-tools'
+import { type SearchToolArgs, type SearchToolResult } from '@/lib/types/search-tools'
 
 /**
  * Portrait generation state for UI tracking
@@ -161,6 +162,39 @@ export async function routeForgeToolCall(
 ): Promise<{ success: boolean; result: unknown; error?: string }> {
     try {
         switch (toolName) {
+            case 'web_search': {
+                console.log('🔍 [Antigravity] Web Search Triggered via Tool Router')
+                console.log('🔍 [Tool Router] Executing web search...')
+                try {
+                    const response = await fetch('/api/v2/search', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(params)
+                    })
+
+                    if (!response.ok) {
+                        const error = await response.json().catch(() => ({}))
+                        return {
+                            success: false,
+                            result: null,
+                            error: error.error || 'Search failed'
+                        }
+                    }
+
+                    const result = await response.json()
+                    return { success: true, result }
+                } catch (error) {
+                    console.error('[Tool Router] Search failed:', error)
+                    return {
+                        success: false,
+                        result: null,
+                        error: error instanceof Error ? error.message : 'Search failed'
+                    }
+                }
+            }
+
             case 'generate_soul_portrait': {
                 // Notify UI that portrait generation is starting
                 onPortraitStart?.()

@@ -9,7 +9,8 @@ import {
     IconArrowLeft,
     IconStar,
     IconDiamond,
-    IconRocket
+    IconRocket,
+    IconSearch
 } from "@tabler/icons-react"
 import { AdminPasswordGate } from "@/components/admin/AdminPasswordGate"
 
@@ -70,6 +71,14 @@ export default function AdminPage() {
             href: "/admin/analytics",
             color: "from-green-600 to-emerald-500",
             badge: null
+        },
+        {
+            title: "Search Management",
+            description: "Configure search providers and monitor success rates",
+            icon: IconSearch,
+            href: "/admin/search",
+            color: "from-blue-500 to-indigo-600",
+            badge: "NEW"
         },
         {
             title: "Settings",

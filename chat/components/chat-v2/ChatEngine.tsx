@@ -80,6 +80,12 @@ export function ChatEngineProvider({
     const [toolState, setToolState] = useState<{ name: string; status: 'idle' | 'running' | 'complete' | 'error' } | null>(null)
 
     const abortControllerRef = useRef<AbortController | null>(null)
+    const messagesRef = useRef<ChatMessageContent[]>([])
+
+    // Keep ref in sync
+    useEffect(() => {
+        messagesRef.current = messages
+    }, [messages])
 
     /**
      * Handle intro message for new chats
@@ -105,7 +111,8 @@ export function ChatEngineProvider({
         setError(null)
         setIsGenerating(true)
 
-        let currentMessages = [...messages]
+        // Use ref to get latest messages to avoid staleness in closures
+        let currentMessages = [...messagesRef.current]
 
         if (!skipUserMessage) {
             // Add user message
@@ -114,7 +121,9 @@ export function ChatEngineProvider({
                 content: content.trim(),
                 timestamp: new Date()
             }
+            // Update both Ref and State immediately for optimistic update
             currentMessages.push(userMessage)
+            messagesRef.current = currentMessages
             setMessages(currentMessages)
         }
 
@@ -125,6 +134,7 @@ export function ChatEngineProvider({
             timestamp: new Date()
         }
 
+        // We don't add this to currentMessages for the API call (API doesn't want empty assistant msg at end)
         setMessages(prev => [...prev, assistantMessage])
 
         // Create abort controller
@@ -138,7 +148,13 @@ export function ChatEngineProvider({
                     messages: currentMessages.map(m => ({
                         role: m.role,
                         content: m.content,
-                        metadata: m.metadata
+                        tool_call_id: m.tool_call_id,
+                        name: m.role === 'tool' ? 'tool_response' : undefined,
+                        tool_calls: m.metadata?.toolCalls?.map(tc => ({
+                            id: tc.id,
+                            type: tc.type,
+                            function: tc.function
+                        }))
                     })),
                     personaId,
                     systemPrompt
@@ -190,6 +206,9 @@ export function ChatEngineProvider({
                                         accumulatedToolCalls[tc.index] = tc
                                     } else {
                                         // Merge delta
+                                        if (tc.id) {
+                                            accumulatedToolCalls[tc.index].id = tc.id
+                                        }
                                         if (tc.function?.arguments) {
                                             accumulatedToolCalls[tc.index].function.arguments += tc.function.arguments
                                         }
@@ -255,7 +274,7 @@ export function ChatEngineProvider({
                                 }, 500)
                             }
                         } catch (e) {
-                            // Skip parse errors
+                            console.error(`[ChatEngine] Failed to parse SSE data: ${e}`, data)
                         }
                     }
                 }
@@ -266,9 +285,16 @@ export function ChatEngineProvider({
             if (finalToolCalls.length > 0) {
                 console.log(`🔧 [ChatEngine] Executing ${finalToolCalls.length} tool calls`)
 
+                const toolResults: ChatMessageContent[] = []
+
                 for (const toolCall of finalToolCalls) {
                     const toolName = toolCall.function.name
-                    const args = JSON.parse(toolCall.function.arguments || '{}')
+                    let args = {}
+                    try {
+                        args = JSON.parse(toolCall.function.arguments || '{}')
+                    } catch (e) {
+                        console.error(`[ChatEngine] Failed to parse tool arguments for ${toolName}:`, e)
+                    }
 
                     setToolState({ name: toolName, status: 'running' })
 
@@ -283,21 +309,22 @@ export function ChatEngineProvider({
                     )
 
                     // Add tool response to history
-                    const toolMessage: ChatMessageContent = {
+                    toolResults.push({
                         role: 'tool',
-                        content: JSON.stringify(result.result),
+                        content: typeof result.result === 'string' ? result.result : JSON.stringify(result.result),
+                        tool_call_id: toolCall.id,
                         timestamp: new Date(),
                         metadata: { toolResult: result.result }
-                    }
-
-                    // We need to re-fetch the latest messages since tool calls can happen in sequence
-                    setMessages(prev => {
-                        const nextMessages = [...prev, toolMessage]
-                        // Trigger next pass
-                        setTimeout(() => sendMessage('', true), 100)
-                        return nextMessages
                     })
                 }
+
+                // Add all tool responses to history and trigger ONE next pass
+                setMessages(prev => {
+                    const nextMessages = [...prev, ...toolResults]
+                    // Trigger next pass to get final answer
+                    setTimeout(() => sendMessage('', true), 100)
+                    return nextMessages
+                })
             }
 
             // Update mood state after message exchange

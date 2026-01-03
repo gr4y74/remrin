@@ -50,11 +50,31 @@ Odds are if you have a question, someone else has the same question.
 
 Remrin.ai now uses a custom, modular Chat Engine (v2) replacing the original ChatbotUI logic. This engine supports multi-provider routing, tier-based access, and advanced capabilities like web search and RAG.
 
+### Key Features
+
+#### 🔍 Multi-Provider Web Search
+- **4 Search Providers**: Tavily, Google Custom Search, Brave Search, DuckDuckGo
+- **Automatic Failover**: Seamless fallback if primary provider fails
+- **Circuit Breaker**: Prevents cascading failures
+- **Rate Limiting**: Protects API quotas
+- **Admin Dashboard**: Monitor and configure providers at `/admin/search`
+
+#### 🤖 AI Tool Calling
+- Web search integration via `web_search` tool
+- Automatic search triggering for current events
+- Citation support in responses
+
+#### 📚 Sovereign RAG Vault
+- Personal knowledge management
+- Memory sharing between personas
+- Semantic search capabilities
+
 ### Key API Routes
-- `POST /api/v2/chat`: Unified streaming chat endpoint.
-- `POST /api/v2/upload`: Multi-format file processing and extraction.
-- `POST /api/v2/search`: Integrated web search (Tavily/DuckDuckGo).
-- `POST /api/v2/knowledge`: Sovereign RAG Vault management.
+- `POST /api/v2/chat`: Unified streaming chat endpoint with tool calling
+- `POST /api/v2/upload`: Multi-format file processing and extraction
+- `POST /api/v2/search`: Multi-provider web search with failover
+- `POST /api/v2/knowledge`: Sovereign RAG Vault management
+- `GET /api/v2/search`: Provider status and health monitoring
 
 ### Required Environment Variables
 Ensure these are set in your `.env.local`:
@@ -65,12 +85,37 @@ DEEPSEEK_API_KEY=
 ANTHROPIC_API_KEY=
 GOOGLE_GEMINI_API_KEY=
 
-# Search
-TAVILY_API_KEY=
+# Search Providers (Optional - DuckDuckGo works without keys)
+TAVILY_API_KEY=                    # Recommended - Best quality
+GOOGLE_SEARCH_API_KEY=             # Optional - High quality
+GOOGLE_SEARCH_ENGINE_ID=           # Required if using Google
+BRAVE_SEARCH_API_KEY=              # Optional - Privacy-focused
 
 # Core
 NEXT_PUBLIC_USE_CHAT_V2=true
 ```
+
+### Search Provider Setup
+
+**Minimum Setup** (Free):
+- No API keys needed
+- DuckDuckGo provides free fallback search
+
+**Recommended Setup**:
+1. Get Tavily API key from https://tavily.com (1,000 free searches/month)
+2. Add to `.env.local`: `TAVILY_API_KEY=your_key_here`
+3. Restart server
+4. Verify at `/admin/search`
+
+**Full Setup** (Maximum Reliability):
+- Configure all 4 providers for redundancy
+- See `/docs/ADMIN_SEARCH_GUIDE.md` for details
+
+### Documentation
+- **Search Integration**: `/docs/SEARCH_INTEGRATION.md` - Architecture and technical details
+- **Admin Guide**: `/docs/ADMIN_SEARCH_GUIDE.md` - Dashboard usage and configuration
+- **Chat Engine**: `/docs/CHAT_ENGINE.md` - Core engine documentation
+
 
 ## Legacy Code
 

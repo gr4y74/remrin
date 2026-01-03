@@ -21,7 +21,7 @@ export async function GET() {
 
         const { data: personas, error } = await supabase
             .from("personas")
-            .select("id, name, description, image_url, visibility, is_featured, created_at")
+            .select("id, name, description, image_url, visibility, is_featured, is_premium, category, created_at")
             .order("created_at", { ascending: false })
 
         if (error) {
@@ -39,11 +39,11 @@ export async function GET() {
     }
 }
 
-// PATCH: Batch update personas (featured status or visibility)
+// PATCH: Batch update personas (featured status, visibility, or premium)
 export async function PATCH(request: Request) {
     try {
         const { updates } = await request.json()
-        // updates: Array<{ id: string, is_featured?: boolean, visibility?: string }>
+        // updates: Array<{ id: string, is_featured?: boolean, visibility?: string, is_premium?: boolean }>
 
         if (!updates || !Array.isArray(updates)) {
             return NextResponse.json(
@@ -67,13 +67,21 @@ export async function PATCH(request: Request) {
 
         // Process each update
         const results = await Promise.all(
-            updates.map(async (update: { id: string; is_featured?: boolean; visibility?: string }) => {
+            updates.map(async (update: {
+                id: string
+                is_featured?: boolean
+                visibility?: string
+                is_premium?: boolean
+            }) => {
                 const updateData: Record<string, unknown> = {}
                 if (update.is_featured !== undefined) {
                     updateData.is_featured = update.is_featured
                 }
                 if (update.visibility !== undefined) {
                     updateData.visibility = update.visibility
+                }
+                if (update.is_premium !== undefined) {
+                    updateData.is_premium = update.is_premium
                 }
 
                 const { error } = await supabase
@@ -104,6 +112,59 @@ export async function PATCH(request: Request) {
         console.error("Admin personas update error:", error)
         return NextResponse.json(
             { error: "Failed to update personas" },
+            { status: 500 }
+        )
+    }
+}
+
+// DELETE: Delete a persona
+export async function DELETE(request: Request) {
+    try {
+        const { searchParams } = new URL(request.url)
+        const id = searchParams.get('id')
+
+        if (!id) {
+            return NextResponse.json(
+                { error: "Persona ID is required" },
+                { status: 400 }
+            )
+        }
+
+        const cookieStore = cookies()
+        const supabase = createServerClient<Database>(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_ROLE_KEY!,
+            {
+                cookies: {
+                    get(name: string) {
+                        return cookieStore.get(name)?.value
+                    }
+                }
+            }
+        )
+
+        // Delete the persona (cascading deletes will handle related data)
+        const { error } = await supabase
+            .from("personas")
+            .delete()
+            .eq("id", id)
+
+        if (error) {
+            console.error("Error deleting persona:", error)
+            return NextResponse.json(
+                { error: error.message },
+                { status: 500 }
+            )
+        }
+
+        return NextResponse.json({
+            success: true,
+            message: "Persona deleted successfully"
+        })
+    } catch (error) {
+        console.error("Admin persona delete error:", error)
+        return NextResponse.json(
+            { error: "Failed to delete persona" },
             { status: 500 }
         )
     }

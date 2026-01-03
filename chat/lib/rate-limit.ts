@@ -11,7 +11,7 @@ interface RateLimitConfig {
 
 const rateLimits = new Map<string, number[]>()
 
-export function rateLimit(ip: string, config: RateLimitConfig = { interval: 60000, limit: 20 }): boolean {
+export function rateLimit(ip: string, config: RateLimitConfig = { interval: 60000, limit: 100 }): boolean {
     const now = Date.now()
     const windowStart = now - config.interval
 

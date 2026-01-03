@@ -5,8 +5,13 @@ import { useRouter } from "next/navigation"
 import { useTheme } from "next-themes"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
-import { FeaturedCarousel, DraggableGallery } from "@/components/discovery"
-import { PageTemplate, Footer, HeroHeader } from "@/components/layout"
+import {
+  FeaturedCarousel,
+  DraggableGallery,
+  TrendingSoulsList,
+  FeaturedPremiumRow
+} from "@/components/discovery"
+import { PageTemplate, Footer, FrontPageHeader } from "@/components/layout"
 import { RemrinContext } from "@/context/context"
 import { IconSparkles, IconDiamond, IconArrowRight } from "@tabler/icons-react"
 import { LottieLoader } from "@/components/ui/lottie-loader"
@@ -149,14 +154,12 @@ export default function HomePage() {
     return personas.filter(p => p.is_featured).slice(0, 8)
   }, [personas])
 
-  const handlePersonaClick = (persona: { id: string }) => {
-    // Only navigate for real personas (not demo)
-    // Only navigate for real personas
-
+  const handlePersonaClick = (persona: { id: string } | string) => {
+    const personaId = typeof persona === "string" ? persona : persona.id
 
     // Navigate to chat with proper workspace
     if (defaultWorkspaceId) {
-      router.push(`/${defaultWorkspaceId}/chat?persona=${persona.id}`)
+      router.push(`/${defaultWorkspaceId}/chat?persona=${personaId}`)
     } else if (isLoggedIn) {
       // User is logged in but we don't have workspace yet, redirect to setup
       router.push("/setup")
@@ -183,9 +186,12 @@ export default function HomePage() {
       fullBleed
       className="text-rp-text"
     >
-      {/* Clean background - no gradients */}
+      {/* Section 2: Header with Extension Banner, Search, Categories, Auth Buttons */}
+      <FrontPageHeader
+        onSearchResultClick={handlePersonaClick}
+      />
 
-      {/* Featured Souls Section with 3D Carousel */}
+      {/* Section 3: Featured Souls with 3D Carousel - KEEP AS IS */}
       <section className="relative mt-8">
         <div className="mb-4 px-6 text-center">
           <h2 className="font-tiempos-headline inline-flex items-center gap-2 font-semibold" style={{ fontSize: '40px', color: headingColor }}>
@@ -218,8 +224,14 @@ export default function HomePage() {
         />
       </section>
 
-      {/* Main Gallery */}
-      <section className="relative mt-8">
+      {/* Section 4: Trending Souls - NEW */}
+      <TrendingSoulsList onPersonaClick={handlePersonaClick} />
+
+      {/* Section 5: Featured Premium - NEW */}
+      <FeaturedPremiumRow onPersonaClick={handlePersonaClick} />
+
+      {/* Section 6: Explore All Souls - Updated with gacha-style cards */}
+      <section className="relative mt-8" data-section="explore-souls">
         <div className="mb-4 flex flex-col items-center gap-2 px-6">
           <h2 className="font-tiempos-headline font-semibold inline-flex items-center gap-2" style={{ fontSize: '40px', color: headingColor }}>
             <IconSparkles size={24} className="text-purple-400" />
@@ -298,7 +310,7 @@ export default function HomePage() {
       </section>
 
 
-      {/* Footer */}
+      {/* Section 7: Footer - KEEP AS IS */}
       <Footer />
     </PageTemplate>
   )
