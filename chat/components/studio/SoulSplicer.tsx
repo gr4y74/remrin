@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { useState, useCallback } from "react"
+import { useState, useCallback, useMemo } from "react"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -44,7 +44,7 @@ export function SoulSplicer({ persona, onUpdate, knowledgeItems = [] }: SoulSpli
     const sarcasm = (persona.behavioral_blueprint?.sarcasm as number) ?? 50
 
     // Knowledge vault integration
-    const linkedKnowledge = (persona.metadata?.linked_knowledge as string[]) ?? []
+    const linkedKnowledge = useMemo(() => (persona.metadata?.linked_knowledge as string[]) ?? [], [persona.metadata?.linked_knowledge])
 
     const updateBrainParams = useCallback((key: string, value: number) => {
         onUpdate({

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import {
@@ -52,13 +52,7 @@ export function UserProfileSettings() {
     const avatarInputRef = useRef<HTMLInputElement>(null)
     const backgroundInputRef = useRef<HTMLInputElement>(null)
 
-    // Load user profile
-    useEffect(() => {
-        loadProfile()
-        loadBackgrounds()
-    }, [])
-
-    const loadProfile = async () => {
+    const loadProfile = useCallback(async () => {
         try {
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) {
@@ -91,9 +85,9 @@ export function UserProfileSettings() {
         } finally {
             setLoading(false)
         }
-    }
+    }, [router, supabase])
 
-    const loadBackgrounds = async () => {
+    const loadBackgrounds = useCallback(async () => {
         try {
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) return
@@ -120,7 +114,13 @@ export function UserProfileSettings() {
         } catch (error) {
             console.error('Error loading backgrounds:', error)
         }
-    }
+    }, [supabase])
+
+    // Load user profile
+    useEffect(() => {
+        loadProfile()
+        loadBackgrounds()
+    }, [loadProfile, loadBackgrounds])
 
     const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]

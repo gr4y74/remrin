@@ -59,11 +59,7 @@ export function PublicProfile() {
     })
     const [isOwnProfile, setIsOwnProfile] = useState(false)
 
-    useEffect(() => {
-        loadProfile()
-    }, [userId])
-
-    const loadProfile = async () => {
+    const loadProfile = useCallback(async () => {
         try {
             // Check if viewing own profile
             const { data: { user } } = await supabase.auth.getUser()
@@ -106,7 +102,11 @@ export function PublicProfile() {
         } finally {
             setLoading(false)
         }
-    }
+    }, [userId, supabase])
+
+    useEffect(() => {
+        loadProfile()
+    }, [loadProfile])
 
     if (loading) {
         return (
@@ -122,7 +122,7 @@ export function PublicProfile() {
                 <div className="text-center">
                     <IconUser className="mx-auto mb-4 size-16 text-rp-muted/50" />
                     <h2 className="text-2xl font-bold text-rp-text">Profile Not Found</h2>
-                    <p className="text-rp-muted mt-2">This user doesn't exist or hasn't set up their profile yet.</p>
+                    <p className="text-rp-muted mt-2">This user doesn&apos;t exist or hasn&apos;t set up their profile yet.</p>
                 </div>
             </div>
         )
