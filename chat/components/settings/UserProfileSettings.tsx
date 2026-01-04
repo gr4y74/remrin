@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef, useCallback } from "react"
+import { useState, useEffect, useRef, useCallback, useContext } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import {
@@ -16,6 +16,7 @@ import {
 import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
+import { RemrinContext } from "@/context/context"
 
 interface UserProfile {
     id: string
@@ -36,6 +37,7 @@ interface UploadedBackground {
 export function UserProfileSettings() {
     const router = useRouter()
     const supabase = createClient()
+    const { profile: globalProfile, setProfile: setGlobalProfile } = useContext(RemrinContext)
 
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
@@ -245,9 +247,11 @@ export function UserProfileSettings() {
 
             toast.success('Profile updated successfully!')
 
-            // Update local state
+            // Update local state AND global context
             if (data) {
                 setProfile(data)
+                // Sync to global context so sidebar/other components update instantly
+                setGlobalProfile(data as any)
             }
         } catch (error: any) {
             console.error('Error saving profile:', error)

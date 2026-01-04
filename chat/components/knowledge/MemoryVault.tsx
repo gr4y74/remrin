@@ -138,7 +138,7 @@ export const MemoryVault: React.FC = () => {
                 onDragOver={(e) => { e.preventDefault(); setIsDragActive(true); }}
                 onDragLeave={() => setIsDragActive(false)}
                 onDrop={onDrop}
-                className={`relative border-2 border-dashed rounded-2xl p-12 transition-all duration-300 flex flex-col items-center justify-center gap-4 bg-opacity-5 ${isDragActive
+                className={`relative border-2 border-dashed rounded-2xl p-12 transition-all duration-300 flex flex-col items-center justify-center gap-4 bg-white/5 ${isDragActive
                     ? 'border-blue-500 bg-blue-500/10 scale-[1.02] shadow-[0_0_20px_rgba(59,130,246,0.5)]'
                     : 'border-white/20 bg-white/5 hover:border-white/40'
                     }`}

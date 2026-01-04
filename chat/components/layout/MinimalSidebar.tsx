@@ -3,6 +3,7 @@
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
@@ -68,21 +69,25 @@ export function MinimalSidebar() {
             <div className="border-rp-muted/20 relative flex h-16 shrink-0 items-center justify-center overflow-hidden border-b">
                 <Link href="/" className="flex items-center justify-center transition-transform duration-300 ease-out hover:rotate-[-5deg] hover:scale-105">
                     {/* Small logo - visible when collapsed */}
-                    <img
+                    <Image
                         src="/logo_sm.svg"
                         alt="Remrin"
+                        width={40}
+                        height={40}
                         className={cn(
-                            "size-10 transition-all duration-300",
+                            "transition-all duration-300",
                             isExpanded ? "absolute opacity-0 scale-75" : "opacity-100 scale-100"
                         )}
                     />
                     {/* Full wordmark - visible when expanded */}
                     {mounted && (
-                        <img
+                        <Image
                             src={logoSrc}
                             alt="Remrin.ai"
+                            width={120}
+                            height={32}
                             className={cn(
-                                "h-8 transition-all duration-300",
+                                "h-8 w-auto transition-all duration-300",
                                 isExpanded ? "opacity-100 scale-100" : "absolute opacity-0 scale-90"
                             )}
                         />

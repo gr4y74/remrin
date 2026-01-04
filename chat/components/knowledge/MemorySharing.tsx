@@ -10,6 +10,7 @@ import {
     IconSearch
 } from '@tabler/icons-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 import { getPersonasByOwnerId } from '@/db/personas';
 import { toast } from 'sonner';
 
@@ -161,7 +162,7 @@ export const MemorySharing: React.FC<MemorySharingProps> = ({
                                             >
                                                 <div className="relative w-8 h-8 rounded-full overflow-hidden bg-white/10">
                                                     {persona.image_url ? (
-                                                        <img src={persona.image_url} alt={persona.name} className="w-full h-full object-cover" />
+                                                        <Image src={persona.image_url} alt={persona.name} fill sizes="32px" className="object-cover" />
                                                     ) : (
                                                         <IconUser size={16} className="absolute inset-0 m-auto text-white/20" />
                                                     )}

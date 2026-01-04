@@ -131,10 +131,12 @@ export function SidebarRecentChats({ isExpanded, maxChats = 8, showDemo = false 
                             isExpanded ? "size-8" : "size-9"
                         )}>
                             {chat.imageUrl ? (
-                                <img
+                                <Image
                                     src={chat.imageUrl}
                                     alt={chat.name}
-                                    className="w-full h-full object-cover"
+                                    fill
+                                    sizes="36px"
+                                    className="object-cover"
                                 />
                             ) : (
                                 <div className="flex size-full items-center justify-center bg-rp-iris/20 text-rp-iris">

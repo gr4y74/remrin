@@ -154,7 +154,7 @@ export function FeaturedPremiumRow({ onPersonaClick, className }: FeaturedPremiu
                         <div
                             key={persona.id}
                             onClick={() => onPersonaClick(persona.id)}
-                            className="group relative flex-shrink-0 cursor-pointer overflow-hidden rounded-xl border border-rp-highlight-med shadow-lg transition-all hover:-translate-y-1 hover:shadow-2xl"
+                            className="group relative shrink-0 cursor-pointer overflow-hidden rounded-xl border border-rp-highlight-med shadow-lg transition-all hover:-translate-y-1 hover:shadow-2xl"
                             style={{ width: "300px", height: "200px" }}
                         >
                             {/* Background Image */}

@@ -37,10 +37,10 @@ export const CharacterPanelMobile: FC = () => {
                 <Drawer.Overlay className="fixed inset-0 z-40 bg-black/40" />
                 <Drawer.Content className="bg-rp-surface fixed bottom-0 left-0 right-0 z-50 flex max-h-[90vh] flex-col rounded-t-2xl">
                     {/* Drawer Handle */}
-                    <div className="mx-auto mt-4 h-1.5 w-12 flex-shrink-0 rounded-full bg-rp-muted/30" />
+                    <div className="mx-auto mt-4 h-1.5 w-12 shrink-0 rounded-full bg-rp-muted/30" />
 
                     {/* Hero Image Section */}
-                    <div className="relative h-64 w-full flex-shrink-0 overflow-hidden">
+                    <div className="relative h-64 w-full shrink-0 overflow-hidden">
                         {selectedPersona.image_url ? (
                             <Image
                                 src={selectedPersona.image_url}

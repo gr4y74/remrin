@@ -239,7 +239,7 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
       )}>
         <div className="pt-5 border-t border-rp-highlight-low/10 flex flex-col md:flex-row gap-8">
           {/* Large Representative Image / Portrait - Increased size */}
-          <div className="hidden md:block relative flex-shrink-0">
+          <div className="hidden md:block relative shrink-0">
             <div className="size-40 rounded-3xl overflow-hidden ring-1 ring-rp-highlight-med/50 shadow-2xl group relative">
               {personaImage ? (
                 <Image

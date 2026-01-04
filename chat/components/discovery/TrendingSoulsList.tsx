@@ -111,7 +111,7 @@ export function TrendingSoulsList({ onPersonaClick, className }: TrendingSoulsLi
                             onClick={() => onPersonaClick(persona.id)}
                         >
                             {/* Rank Badge */}
-                            <div className="flex size-8 flex-shrink-0 items-center justify-center">
+                            <div className="flex size-8 shrink-0 items-center justify-center">
                                 {index < 3 ? (
                                     <IconTrendingUp
                                         size={20}
@@ -127,7 +127,7 @@ export function TrendingSoulsList({ onPersonaClick, className }: TrendingSoulsLi
                             </div>
 
                             {/* Avatar */}
-                            <div className="relative size-12 flex-shrink-0 overflow-hidden rounded-full ring-2 ring-rp-highlight-med transition-all group-hover:ring-rp-iris">
+                            <div className="relative size-12 shrink-0 overflow-hidden rounded-full ring-2 ring-rp-highlight-med transition-all group-hover:ring-rp-iris">
                                 {persona.image_url ? (
                                     <Image
                                         src={persona.image_url}
@@ -170,7 +170,7 @@ export function TrendingSoulsList({ onPersonaClick, className }: TrendingSoulsLi
 
                             {/* View Button */}
                             <button
-                                className="flex-shrink-0 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-blue-500/25 transition-all hover:shadow-blue-500/40"
+                                className="shrink-0 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-blue-500/25 transition-all hover:shadow-blue-500/40"
                                 onClick={(e) => {
                                     e.stopPropagation()
                                     onPersonaClick(persona.id)

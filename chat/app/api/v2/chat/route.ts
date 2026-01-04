@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
                         content: msg.content,
                         tool_call_id: msg.tool_call_id,
                         timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date(),
-                        metadata: msg.tool_calls ? { toolCalls: msg.tool_calls } : undefined
+                        metadata: (msg as any).tool_calls ? { toolCalls: (msg as any).tool_calls } : undefined
                     }))
 
                     // Stream response from provider

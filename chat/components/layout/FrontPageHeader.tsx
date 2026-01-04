@@ -61,7 +61,7 @@ export function FrontPageHeader({
             {showBanner && (
                 <div className="relative border-b border-blue-500/30 bg-blue-500/10 px-4 py-3">
                     <div className="mx-auto flex max-w-7xl items-center justify-center gap-3">
-                        <IconPuzzle size={20} className="flex-shrink-0 text-blue-400" />
+                        <IconPuzzle size={20} className="shrink-0 text-blue-400" />
                         <p className="text-center text-sm text-rp-text">
                             <span className="font-medium">Bring your Souls everywhere</span> - Get the{" "}
                             <Link
@@ -74,7 +74,7 @@ export function FrontPageHeader({
                         </p>
                         <button
                             onClick={handleDismissBanner}
-                            className="flex-shrink-0 text-rp-muted transition-colors hover:text-rp-text"
+                            className="shrink-0 text-rp-muted transition-colors hover:text-rp-text"
                             aria-label="Dismiss banner"
                         >
                             <IconX size={18} />

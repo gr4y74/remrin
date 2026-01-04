@@ -256,7 +256,7 @@ export const ChatMessage = memo(function ChatMessage({
         >
             {/* Avatar - Only show for assistant */}
             {!isUser && (
-                <div className="flex-shrink-0 self-end mb-1">
+                <div className="shrink-0 self-end mb-1">
                     {personaImage ? (
                         <div className="relative h-8 w-8">
                             <Image
@@ -359,7 +359,7 @@ export const ChatMessage = memo(function ChatMessage({
 
             {/* Avatar - Only show for user on right side */}
             {isUser && (
-                <div className="flex-shrink-0 self-end mb-1">
+                <div className="shrink-0 self-end mb-1">
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-rp-iris/30 text-rp-iris border border-rp-iris/40">
                         <IconUser size={18} />
                     </div>
