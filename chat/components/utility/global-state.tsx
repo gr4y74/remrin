@@ -173,8 +173,14 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
     if (session) {
       const user = session.user
 
-      const profile = await getProfileByUserId(user.id)
-      setProfile(profile)
+      let profile
+      try {
+        profile = await getProfileByUserId(user.id)
+        setProfile(profile)
+      } catch (error) {
+        console.warn("[GlobalState] Profile not found, may still be creating:", error)
+        return
+      }
 
       if (!profile.has_onboarded) {
         return router.push("/setup")

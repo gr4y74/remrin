@@ -12,6 +12,7 @@ import { SidebarUserSection } from "./SidebarUserSection"
 import { SidebarRecentChats } from "./SidebarRecentChats"
 import { SidebarCreateButton } from "./SidebarCreateButton"
 import { SidebarThemeToggle } from "./SidebarThemeToggle"
+import { toast } from "sonner"
 import {
     IconHome,
     IconSparkles,
@@ -105,20 +106,35 @@ export function MinimalSidebar() {
                     {NAV_ITEMS.map((item) => {
                         const Icon = item.icon
                         let href = item.href
-                        if (item.isWorkspaceSpecific && selectedWorkspace) {
-                            href = `/${pathname.split("/")[1]}/${selectedWorkspace.id}${item.href}`
+                        let isDisabled = false
+
+                        if (item.isWorkspaceSpecific) {
+                            if (selectedWorkspace) {
+                                href = `/${pathname.split("/")[1]}/${selectedWorkspace.id}${item.href}`
+                            } else {
+                                // If workspace-specific but no workspace selected, disable it or point to home
+                                isDisabled = true
+                                href = "#"
+                            }
                         }
-                        const isActive = pathname === href || pathname.startsWith(href + "/")
+                        const isActive = href !== "#" && (pathname === href || pathname.startsWith(href + "/"))
 
                         return (
                             <Link
                                 key={item.label}
                                 href={href}
+                                onClick={(e) => {
+                                    if (isDisabled) {
+                                        e.preventDefault()
+                                        toast.info("Please select or create a workspace first.")
+                                    }
+                                }}
                                 className={cn(
                                     "group relative flex min-h-[44px] items-center rounded-lg py-3 transition-all",
                                     isActive
                                         ? "bg-rp-iris/20 text-rp-iris"
                                         : "text-rp-subtle hover:bg-rp-overlay hover:text-rp-text",
+                                    isDisabled && "opacity-50 cursor-not-allowed",
                                     // Center icons when collapsed, left align when expanded
                                     isExpanded ? "justify-start gap-3 px-4" : "justify-center px-0"
                                 )}

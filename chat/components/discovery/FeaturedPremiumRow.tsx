@@ -29,12 +29,12 @@ export function FeaturedPremiumRow({ onPersonaClick, className }: FeaturedPremiu
             try {
                 const supabase = createClient()
 
-                // Try to get featured premium personas
+                // Try to get featured personas (using price as a proxy for premium)
                 const { data, error } = await supabase
                     .from("personas")
                     .select("id, name, description, image_url")
                     .eq("visibility", "PUBLIC")
-                    .eq("is_premium", true)
+                    .not("price", "is", null)
                     .limit(6)
 
                 if (!error && data && data.length > 0) {

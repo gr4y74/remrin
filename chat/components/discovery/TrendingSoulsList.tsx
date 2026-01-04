@@ -31,9 +31,8 @@ export function TrendingSoulsList({ onPersonaClick, className }: TrendingSoulsLi
 
                 const { data, error } = await supabase
                     .from("personas")
-                    .select("id, name, description, image_url, message_count, follower_count")
+                    .select("id, name, description, image_url")
                     .eq("visibility", "PUBLIC")
-                    .order("message_count", { ascending: false })
                     .limit(8)
 
                 if (!error && data) {

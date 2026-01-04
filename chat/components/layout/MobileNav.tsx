@@ -10,6 +10,8 @@ import {
     IconBooks,
     IconUser,
 } from "@tabler/icons-react"
+import { useContext } from "react"
+import { RemrinContext } from "@/context/context"
 
 const MOBILE_NAV = [
     { icon: IconHome, label: "Home", href: "/" },
@@ -21,21 +23,40 @@ const MOBILE_NAV = [
 
 export function MobileNav() {
     const pathname = usePathname()
+    const { selectedWorkspace } = useContext(RemrinContext)
 
     return (
         <nav className="bg-rp-surface/95 border-rp-muted/20 fixed bottom-0 left-0 right-0 z-50 border-t backdrop-blur-lg md:hidden">
             <div className="flex items-center justify-around">
                 {MOBILE_NAV.map((item) => {
                     const Icon = item.icon
-                    const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
+                    let href = item.href
+                    let isDisabled = false
+
+                    if (item.label === "Chat") {
+                        if (selectedWorkspace) {
+                            href = `/${pathname.split("/")[1]}/${selectedWorkspace.id}/chat`
+                        } else {
+                            isDisabled = true
+                            href = "#"
+                        }
+                    }
+
+                    const isActive = href !== "#" && (pathname === href || pathname.startsWith(href + "/"))
 
                     return (
                         <Link
                             key={item.href}
-                            href={item.href}
+                            href={href}
+                            onClick={(e) => {
+                                if (isDisabled) {
+                                    e.preventDefault()
+                                }
+                            }}
                             className={cn(
                                 "flex flex-1 flex-col items-center gap-1 py-3 transition-colors min-h-[44px]",
-                                isActive ? "text-rp-iris" : "text-rp-subtle active:text-rp-text"
+                                isActive ? "text-rp-iris" : "text-rp-subtle active:text-rp-text",
+                                isDisabled && "opacity-50 cursor-not-allowed"
                             )}
                         >
                             <Icon size={24} className="shrink-0" />
