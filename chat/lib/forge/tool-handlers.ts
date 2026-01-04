@@ -164,13 +164,14 @@ export async function routeForgeToolCall(
         switch (toolName) {
             case 'web_search': {
                 console.log('🔍 [Antigravity] Web Search Triggered via Tool Router')
-                console.log('🔍 [Tool Router] Executing web search...')
+                console.log('🔍 [Tool Router] Executing web search with params:', JSON.stringify(params))
                 try {
                     const response = await fetch('/api/v2/search', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
+                        credentials: 'include', // Ensure cookies are sent
                         body: JSON.stringify(params)
                     })
 

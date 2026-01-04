@@ -19,7 +19,7 @@ const OPENROUTER_CONFIG = {
     apiEndpoint: 'https://openrouter.ai/api/v1/chat/completions',
     apiKeyEnv: 'OPENROUTER_API_KEY',
     isEnabled: true,
-    defaultModel: 'meta-llama/llama-3-8b-instruct:free', // Better for tool calling
+    defaultModel: 'mistralai/mistral-small-3.1-24b-instruct:free', // FREE with tool calling support
     maxTokens: 4096
 }
 

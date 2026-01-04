@@ -141,21 +141,23 @@ export function ChatEngineProvider({
         abortControllerRef.current = new AbortController()
 
         try {
+            // Build messages to send
+            const messagesToSend = currentMessages.map(m => ({
+                role: m.role,
+                content: m.content,
+                tool_call_id: m.role === 'tool' ? m.tool_call_id : undefined,
+                tool_calls: m.metadata?.toolCalls?.map(tc => ({
+                    id: tc.id,
+                    type: tc.type,
+                    function: tc.function
+                }))
+            }))
+
             const response = await fetch('/api/v2/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    messages: currentMessages.map(m => ({
-                        role: m.role,
-                        content: m.content,
-                        tool_call_id: m.tool_call_id,
-                        name: m.role === 'tool' ? 'tool_response' : undefined,
-                        tool_calls: m.metadata?.toolCalls?.map(tc => ({
-                            id: tc.id,
-                            type: tc.type,
-                            function: tc.function
-                        }))
-                    })),
+                    messages: messagesToSend,
                     personaId,
                     systemPrompt
                 }),
@@ -202,15 +204,34 @@ export function ChatEngineProvider({
                             if (json.toolCalls) {
                                 // Collect tool calls
                                 for (const tc of json.toolCalls) {
-                                    if (!accumulatedToolCalls[tc.index]) {
-                                        accumulatedToolCalls[tc.index] = tc
+                                    const idx = tc.index ?? 0
+                                    if (!accumulatedToolCalls[idx]) {
+                                        // Initialize new tool call
+                                        accumulatedToolCalls[idx] = {
+                                            id: tc.id || '',
+                                            type: tc.type || 'function',
+                                            function: {
+                                                name: tc.function?.name || '',
+                                                arguments: tc.function?.arguments || ''
+                                            }
+                                        }
                                     } else {
                                         // Merge delta
                                         if (tc.id) {
-                                            accumulatedToolCalls[tc.index].id = tc.id
+                                            accumulatedToolCalls[idx].id = tc.id
+                                        }
+                                        if (tc.function?.name) {
+                                            accumulatedToolCalls[idx].function.name = tc.function.name
                                         }
                                         if (tc.function?.arguments) {
-                                            accumulatedToolCalls[tc.index].function.arguments += tc.function.arguments
+                                            const currentArgs = accumulatedToolCalls[idx].function.arguments
+                                            // Handle edge case: if current args are just "{}" and new args start with "{",
+                                            // replace instead of append to avoid "{}{...}" malformed JSON
+                                            if (currentArgs === '{}' && tc.function.arguments.startsWith('{')) {
+                                                accumulatedToolCalls[idx].function.arguments = tc.function.arguments
+                                            } else {
+                                                accumulatedToolCalls[idx].function.arguments += tc.function.arguments
+                                            }
                                         }
                                     }
                                 }
@@ -296,6 +317,7 @@ export function ChatEngineProvider({
                         console.error(`[ChatEngine] Failed to parse tool arguments for ${toolName}:`, e)
                     }
 
+                    console.log(`🔍 [ChatEngine] Executing tool: ${toolName}`, args)
                     setToolState({ name: toolName, status: 'running' })
 
                     // Route tool call to specialized handlers
@@ -308,6 +330,8 @@ export function ChatEngineProvider({
                         }
                     )
 
+                    console.log(`✅ [ChatEngine] Tool ${toolName} completed:`, result.success)
+
                     // Add tool response to history
                     toolResults.push({
                         role: 'tool',
@@ -319,12 +343,22 @@ export function ChatEngineProvider({
                 }
 
                 // Add all tool responses to history and trigger ONE next pass
+                // IMPORTANT: We must NOT let the finally block run, so we handle cleanup here
                 setMessages(prev => {
                     const nextMessages = [...prev, ...toolResults]
-                    // Trigger next pass to get final answer
-                    setTimeout(() => sendMessage('', true), 100)
                     return nextMessages
                 })
+
+                // Reset generating state so the follow-up can run
+                setIsGenerating(false)
+                setToolState(null)
+                abortControllerRef.current = null
+
+                // Schedule the follow-up call to get the final answer
+                setTimeout(() => sendMessage('', true), 100)
+
+                // Return early to prevent the finally block from running again
+                return
             }
 
             // Update mood state after message exchange

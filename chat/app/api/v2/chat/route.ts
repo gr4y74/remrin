@@ -141,11 +141,13 @@ export async function POST(request: NextRequest) {
         const stream = new ReadableStream({
             async start(controller) {
                 try {
-                    // Convert messages to the expected format
+                    // Convert messages to the expected format - PRESERVE tool fields!
                     const formattedMessages: ChatMessageContent[] = messages.map(msg => ({
                         role: msg.role,
                         content: msg.content,
-                        timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date()
+                        tool_call_id: msg.tool_call_id,
+                        timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date(),
+                        metadata: msg.tool_calls ? { toolCalls: msg.tool_calls } : undefined
                     }))
 
                     // Stream response from provider
