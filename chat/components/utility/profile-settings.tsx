@@ -7,7 +7,7 @@ import {
 } from "@/db/limits"
 import { updateProfile } from "@/db/profile"
 import { uploadProfileImage } from "@/db/storage/profile-images"
-import { exportLocalStorageAsJSON } from "@/lib/export-old-data"
+
 import { fetchOpenRouterModels } from "@/lib/models/fetch-models"
 import { LLM_LIST_MAP } from "@/lib/models/llm/llm-list"
 import { supabase } from "@/lib/supabase/browser-client"
@@ -29,7 +29,7 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { FC, useCallback, useContext, useEffect, useRef, useState, useMemo } from "react"
 import { toast } from "sonner"
-import { SIDEBAR_ICON_SIZE } from "@/lib/legacy-constants"
+const SIDEBAR_ICON_SIZE = 28
 import { Button } from "../ui/button"
 import ImagePicker from "../ui/image-picker"
 import { Input } from "../ui/input"
@@ -862,20 +862,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ }) => {
           <div className="flex items-center space-x-1">
             <ThemeSwitcher />
 
-            <WithTooltip
-              display={
-                <div>
-                  Download Remrin.ai 1.0 data as JSON. Import coming soon!
-                </div>
-              }
-              trigger={
-                <IconFileDownload
-                  className="cursor-pointer hover:opacity-50"
-                  size={32}
-                  onClick={exportLocalStorageAsJSON}
-                />
-              }
-            />
+
           </div>
 
           <div className="ml-auto space-x-2">

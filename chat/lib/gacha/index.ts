@@ -460,6 +460,13 @@ export async function performPull(
 
         // Update pity counters in DB
         await updatePity(supabase, userId, poolId, rarity, 1)
+
+        // Grant ownership (Follow)
+        await supabase.from("character_follows").upsert({
+            user_id: userId,
+            persona_id: selectedItem.persona_id,
+            followed_at: new Date().toISOString()
+        })
     }
 
     return { data: results, error: null, aetherSpent: cost }

@@ -351,7 +351,7 @@ export function ChatEngineProvider({
             setToolState(null)
             abortControllerRef.current = null
         }
-    }, [messages, isGenerating, personaId, systemPrompt])
+    }, [messages, isGenerating, personaId, systemPrompt, moodState])
 
     /**
      * Stop the current generation

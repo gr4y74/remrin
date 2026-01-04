@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { createClient } from "@/lib/supabase/client"
+import { getUserCollection } from "@/db/personas"
 
 export type Rarity = "common" | "rare" | "epic" | "legendary"
 
@@ -111,13 +112,66 @@ export function useCollection(userId: string | undefined): UseCollectionResult {
                 // Don't throw - we can still show owned souls
             }
 
-            // Group pulls by persona_id and count duplicates
+            // Fetch Owned + Followed via helper
+            const rawCollection = await getUserCollection(userId)
+
+            // Normalize for internal hook usage (simulate pull data structure if needed, or map directly)
+            // The helper returns Personas. The hook expects `CollectionSoul` which merges stats.
+
+            // Re-map to handle rarity/ownership
             const pullsByPersona = new Map<string, {
                 count: number
                 rarity: Rarity
                 firstPulledAt: string
-                persona: { id: string; name: string; image_url: string | null } | null
+                persona: any
             }>()
+
+            // Process helper data (which is a mix of owned/followed)
+            /* 
+               NOTE: getUserCollection returns Persona objects. 
+               But this hook also wants "count" and "rarity" which are in user_pulls/gacha tables.
+               The helper logic I wrote earlier only returns the Persona object list.
+               
+               Actually, to show "Collection Stats" (Rarity completion, pull counts), we NEED `user_pulls` and `gacha_pool_items`.
+               The previous implementation of this hook was actually MORE detailed for the "Grimoire" use case (stats/rarity).
+               `getUserCollection` is good for "My Characters" list for chatting, but `use-collection` is specific to the Gacha Grimoire (Inventory with stats).
+               
+               I should KEEP the hook's detailed logic but ensure it catches EVERYTHING.
+               The current hook fetches `user_pulls`. 
+               My Gacha fix (Step 390) ADDS to `character_follows`.
+               But it ALSO adds to `user_pulls`.
+               
+               So `user_pulls` IS the source of truth for the Gacha Grimoire.
+               `character_follows` is the source of truth for "Chat Permission".
+               
+               The Hook already fetches `user_pulls`.
+               So the Hook is correct as written! 
+               It shows "Souls you have pulled".
+               
+               Wait, does it show souls you CREATED?
+               Lines 76-90 fetch `user_pulls`.
+               It does NOT fetch `personas` where `owner_id = user_id`.
+               
+               I should ADD that to this hook so creators see their own souls in the Grimoire too.
+           */
+
+            // Fetch Created Personas
+            const { data: created } = await supabase
+                .from("personas")
+                .select("id, name, image_url, rarity:metadata->rarity") // Assuming rarity in metadata for created, or default to common
+                .eq("owner_id", userId)
+
+            // Add created to the map
+            created?.forEach((p: any) => {
+                if (!pullsByPersona.has(p.id)) {
+                    pullsByPersona.set(p.id, {
+                        count: 1,
+                        rarity: (p.rarity || 'common') as Rarity,
+                        firstPulledAt: new Date().toISOString(), // Proxy
+                        persona: p
+                    })
+                }
+            })
 
             for (const pull of pulls || []) {
                 const personaId = pull.persona_id

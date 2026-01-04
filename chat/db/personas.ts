@@ -16,6 +16,37 @@ export const getPersonasByOwnerId = async (ownerId: string) => {
     return personas || []
 }
 
+// Fetch all personas in a user's collection (Owned + Followed)
+export const getUserCollection = async (userId: string) => {
+    // 1. Get Owned
+    const { data: owned, error: ownedError } = await supabase
+        .from("personas")
+        .select("*")
+        .eq("owner_id", userId)
+
+    if (ownedError) console.error("Error fetching owned personas:", ownedError.message)
+
+    // 2. Get Followed (Summoned)
+    const { data: follows, error: followError } = await supabase
+        .from("character_follows")
+        .select("persona_id, personas(*)")
+        .eq("user_id", userId)
+
+    if (followError) console.error("Error fetching followed personas:", followError.message)
+
+    // 3. Merge and Deduplicate
+    const collection = [...(owned || [])]
+
+    // Add followed personas if they aren't already in the list (though unlikely to be both owner and follower, possible)
+    follows?.forEach((item: any) => {
+        if (item.personas && !collection.find(p => p.id === item.personas.id)) {
+            collection.push(item.personas)
+        }
+    })
+
+    return collection
+}
+
 // Fetch a single persona by ID or Slug
 export const getPersonaById = async (personaId: string) => {
     // Basic UUID regex

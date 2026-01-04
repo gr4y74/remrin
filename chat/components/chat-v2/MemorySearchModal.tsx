@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { IconSearch, IconX, IconFileText, IconLoader2, IconCheck } from '@tabler/icons-react'
 import { toast } from 'sonner'
@@ -30,18 +30,7 @@ export function MemorySearchModal({
     const [loading, setLoading] = useState(false)
     const { addSystemMessage, personaId } = useChatEngine()
 
-    useEffect(() => {
-        if (isOpen) {
-            setQuery(initialQuery)
-            if (initialQuery) {
-                handleSearch(initialQuery)
-            } else {
-                setResults([])
-            }
-        }
-    }, [isOpen, initialQuery])
-
-    const handleSearch = async (searchQuery: string) => {
+    const handleSearch = useCallback(async (searchQuery: string) => {
         if (!searchQuery.trim()) return
         setLoading(true)
         try {
@@ -62,7 +51,18 @@ export function MemorySearchModal({
         } finally {
             setLoading(false)
         }
-    }
+    }, [personaId])
+
+    useEffect(() => {
+        if (isOpen) {
+            setQuery(initialQuery)
+            if (initialQuery) {
+                handleSearch(initialQuery)
+            } else {
+                setResults([])
+            }
+        }
+    }, [isOpen, initialQuery, handleSearch])
 
     const handleSelect = (memory: MemoryItem) => {
         const contextMsg = `[Memory Retrieval: ${memory.file_name}]\n\n${memory.content}`

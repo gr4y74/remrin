@@ -1,6 +1,6 @@
 "use client"
 
-import { useContext, useState, useRef, useEffect } from "react"
+import { useContext, useState, useRef, useEffect, useMemo } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
@@ -29,7 +29,7 @@ export function SidebarUserSection({ isExpanded, onProfileClick }: SidebarUserSe
     const [showDropdown, setShowDropdown] = useState(false)
     const dropdownRef = useRef<HTMLDivElement>(null)
     const router = useRouter()
-    const supabase = createClient()
+    const supabase = useMemo(() => createClient(), [])
 
     // Check auth status directly from Supabase
     useEffect(() => {
@@ -46,7 +46,7 @@ export function SidebarUserSection({ isExpanded, onProfileClick }: SidebarUserSe
         })
 
         return () => subscription.unsubscribe()
-    }, [])
+    }, [supabase])
 
     // Check if user is logged in (use Supabase user as source of truth)
     const isLoggedIn = !!user

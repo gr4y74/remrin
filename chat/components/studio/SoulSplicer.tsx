@@ -15,8 +15,11 @@ import {
     IconMoodHappy,
     IconBook,
     IconSparkles,
-    IconAlertCircle
+    IconAlertCircle,
+    IconMicrophone,
+    IconUpload
 } from "@tabler/icons-react"
+import { createClient } from "@/lib/supabase/client"
 import { StudioPersona } from "@/app/[locale]/studio/types"
 import { VibeSelector } from "./VibeSelector"
 
@@ -84,6 +87,35 @@ export function SoulSplicer({ persona, onUpdate, knowledgeItems = [] }: SoulSpli
         })
     }, [linkedKnowledge, persona.metadata, onUpdate])
 
+    const handleAudioUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+
+        const supabase = createClient()
+        const fileExt = file.name.split('.').pop()
+        const fileName = `${persona.id}/${Math.random()}.${fileExt}`
+
+        const { data, error } = await supabase.storage
+            .from('soul_audio')
+            .upload(fileName, file)
+
+        if (error) {
+            console.error('Upload failed:', error)
+            return
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+            .from('soul_audio')
+            .getPublicUrl(fileName)
+
+        onUpdate({
+            metadata: {
+                ...persona.metadata,
+                voice_sample_url: publicUrl
+            }
+        })
+    }, [persona.id, persona.metadata, onUpdate])
+
     return (
         <div className="space-y-6">
             {/* Header */}
@@ -101,7 +133,7 @@ export function SoulSplicer({ persona, onUpdate, knowledgeItems = [] }: SoulSpli
 
             {/* Multi-Panel Tabs */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-4 bg-rp-surface">
+                <TabsList className="grid w-full grid-cols-5 bg-rp-surface">
                     <TabsTrigger
                         value="identity"
                         className="data-[state=active]:bg-rp-overlay data-[state=active]:text-rp-iris"
@@ -129,6 +161,13 @@ export function SoulSplicer({ persona, onUpdate, knowledgeItems = [] }: SoulSpli
                     >
                         <IconBook size={16} className="mr-2" />
                         Knowledge
+                    </TabsTrigger>
+                    <TabsTrigger
+                        value="voice"
+                        className="data-[state=active]:bg-rp-overlay data-[state=active]:text-rp-iris"
+                    >
+                        <IconMicrophone size={16} className="mr-2" />
+                        Voice
                     </TabsTrigger>
                 </TabsList>
 
@@ -439,7 +478,79 @@ export function SoulSplicer({ persona, onUpdate, knowledgeItems = [] }: SoulSpli
                         )}
                     </div>
                 </TabsContent>
+
+                {/* Panel E: Voice Studio */}
+                <TabsContent value="voice" className="space-y-6 rounded-lg border border-rp-highlight-med bg-rp-base p-6">
+                    <div className="space-y-6">
+                        {/* Voice Sample Upload */}
+                        <div className="space-y-2">
+                            <Label className="text-rp-text">Voice Sample (for preview)</Label>
+                            <div className="relative flex h-24 w-full cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-rp-highlight-med bg-rp-surface/50 transition-colors hover:border-rp-love">
+                                {persona.metadata?.voice_sample_url ? (
+                                    <div className="flex items-center gap-4 px-4">
+                                        <IconMicrophone size={24} className="text-orange-400" />
+                                        <audio controls className="h-10">
+                                            <source src={persona.metadata.voice_sample_url as string} />
+                                        </audio>
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col items-center gap-2 text-rp-muted">
+                                        <IconUpload size={24} />
+                                        <span className="text-sm">Upload audio sample (mp3/wav)</span>
+                                    </div>
+                                )}
+                                <input
+                                    type="file"
+                                    accept="audio/mp3,audio/wav,audio/mpeg"
+                                    className="absolute inset-0 opacity-0 cursor-pointer"
+                                    onChange={handleAudioUpload}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Voice ID */}
+                        <div className="space-y-2">
+                            <Label htmlFor="voice_id" className="text-rp-text">Voice ID (ElevenLabs / OpenAI)</Label>
+                            <Input
+                                id="voice_id"
+                                value={persona.voice_id || ''}
+                                onChange={(e) => onUpdate({ voice_id: e.target.value })}
+                                placeholder="e.g., ThT5KcBeYtu3NO4 or alloy"
+                                className="border-rp-highlight-med bg-rp-surface font-mono text-rp-text"
+                            />
+                            <p className="text-xs text-rp-subtle">
+                                The voice synthesis ID for text-to-speech. Leave blank to use default.
+                            </p>
+                        </div>
+
+                        {/* Voice Presets */}
+                        <div className="space-y-2">
+                            <Label className="text-rp-text">Quick Presets</Label>
+                            <div className="flex flex-wrap gap-2">
+                                {[
+                                    { id: 'alloy', name: 'Alloy (Neutral)' },
+                                    { id: 'echo', name: 'Echo (Male)' },
+                                    { id: 'fable', name: 'Fable (Expressive)' },
+                                    { id: 'nova', name: 'Nova (Female)' },
+                                    { id: 'shimmer', name: 'Shimmer (Soft)' }
+                                ].map((preset) => (
+                                    <button
+                                        key={preset.id}
+                                        type="button"
+                                        onClick={() => onUpdate({ voice_id: preset.id })}
+                                        className={`rounded-lg border px-3 py-1.5 text-sm transition-colors ${persona.voice_id === preset.id
+                                            ? 'border-orange-500 bg-orange-500/20 text-orange-300'
+                                            : 'border-rp-highlight-med bg-rp-surface text-rp-subtle hover:border-rp-muted'
+                                            }`}
+                                    >
+                                        {preset.name}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </TabsContent>
             </Tabs>
-        </div>
+        </div >
     )
 }

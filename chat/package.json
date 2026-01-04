@@ -113,7 +113,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@next/bundle-analyzer": "^14.0.2",
+    "@next/bundle-analyzer": "^14.2.35",
     "@tailwindcss/typography": "^0.5.10",
     "@testing-library/jest-dom": "^6.2.0",
     "@testing-library/react": "^14.1.2",
@@ -126,6 +126,7 @@
     "@types/uuid": "^9.0.7",
     "autoprefixer": "^10.4.16",
     "clsx": "^2.0.0",
+    "cross-env": "^10.1.0",
     "eslint": "^8",
     "eslint-config-next": "^14.0.2",
     "eslint-config-prettier": "^9.1.0",

@@ -101,6 +101,7 @@ export default function SoulSplicerPage() {
                     category: personaData.category,
                     metadata: personaData.metadata as any,
                     config: personaData.config as any,
+                    voice_id: personaData.voice_id,
                     updated_at: new Date().toISOString()
                 })
                 .eq("id", personaId)

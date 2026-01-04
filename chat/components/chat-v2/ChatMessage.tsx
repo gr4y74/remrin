@@ -104,7 +104,7 @@ export const ChatMessage = memo(function ChatMessage({
                 rafIdRef.current = null
             }
         }
-    }, [message.content, isStreaming, isUser])
+    }, [message.content, isStreaming, isUser, displayedContent])
 
     const handleCopy = async () => {
         await navigator.clipboard.writeText(message.content)

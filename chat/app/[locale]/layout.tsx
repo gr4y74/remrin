@@ -19,9 +19,9 @@ export const dynamic = "force-dynamic"
 
 // const inter = Inter({ subsets: ["latin"] })
 const APP_NAME = "Remrin.ai"
-const APP_DEFAULT_TITLE = "Remrin.ai"
-const APP_TITLE_TEMPLATE = "%s - Remrin.ai"
-const APP_DESCRIPTION = "Remrin.ai - Your Advanced AI Assistant"
+const APP_DEFAULT_TITLE = "Remrin.ai - Your Soulbound AI Companion"
+const APP_TITLE_TEMPLATE = "%s | Remrin.ai"
+const APP_DESCRIPTION = "Forge deep connections with unique AI souls. Create, summon, and chat with evolving personas in an immersive, collaborative universe."
 
 interface RootLayoutProps {
   children: ReactNode

@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/popover"
 import { IconBell } from "@tabler/icons-react"
 import { FC } from "react"
-import { SIDEBAR_ICON_SIZE } from "@/lib/legacy-constants"
+const SIDEBAR_ICON_SIZE = 28
 
 interface AlertsProps { }
 
