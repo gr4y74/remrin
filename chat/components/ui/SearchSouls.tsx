@@ -189,23 +189,22 @@ export function SearchSouls({ onResultClick, className }: SearchSoulsProps) {
 
     return (
         <div ref={searchRef} className={cn("relative w-full", className)}>
-            {/* Search Input */}
             <div className="relative">
                 <IconSearch
-                    size={20}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-rp-muted"
+                    size={16}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-rp-muted"
                 />
                 <input
                     type="text"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Search souls by name or #hashtag..."
-                    className="w-full rounded-lg border border-rp-highlight-med bg-rp-surface px-10 py-2.5 text-sm text-rp-text placeholder:text-rp-muted focus:border-rp-iris focus:outline-none focus:ring-2 focus:ring-rp-iris/20"
+                    placeholder="Search Souls"
+                    className="w-full h-[44px] pl-11 pr-10 bg-rp-overlay text-rp-text text-sm caret-rp-iris border-0 rounded-xl focus:border-0 focus:bg-rp-surface hover:bg-rp-surface transition-all placeholder:text-rp-muted focus:outline-none focus:ring-2 focus:ring-rp-iris/20"
                 />
                 {query && (
                     <button
                         onClick={handleClear}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-rp-muted hover:text-rp-text"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-rp-muted hover:text-rp-text transition-colors"
                     >
                         <IconX size={18} />
                     </button>
@@ -234,86 +233,89 @@ export function SearchSouls({ onResultClick, className }: SearchSoulsProps) {
                         ))}
                     </div>
                 </div>
-            )}
+            )
+            }
 
             {/* Results Dropdown */}
-            {isOpen && !showSuggestions && (
-                <div className="absolute top-full z-50 mt-2 w-full rounded-lg border border-rp-highlight-med bg-rp-surface shadow-xl">
-                    {isLoading ? (
-                        <div className="p-4 text-center text-sm text-rp-muted">
-                            Searching...
-                        </div>
-                    ) : results.length > 0 ? (
-                        <div className="max-h-96 overflow-y-auto">
-                            {results.map((result) => (
-                                <button
-                                    key={result.id}
-                                    onClick={() => handleResultClick(
-                                        result.id,
-                                        isHashtagSearch ? searchTerm : undefined
-                                    )}
-                                    className="flex w-full items-center gap-3 border-b border-rp-highlight-low p-3 text-left transition-colors hover:bg-rp-base last:border-b-0"
-                                >
-                                    {/* Avatar */}
-                                    <div className="relative size-10 shrink-0 overflow-hidden rounded-full">
-                                        {result.image_url ? (
-                                            <Image
-                                                src={result.image_url}
-                                                alt={result.name}
-                                                fill
-                                                className="object-cover"
-                                            />
-                                        ) : (
-                                            <div className="flex size-full items-center justify-center bg-gradient-to-br from-rp-iris/50 to-rp-rose/50">
-                                                <span className="text-xs font-bold text-rp-text">
-                                                    {result.name.slice(0, 2).toUpperCase()}
-                                                </span>
-                                            </div>
+            {
+                isOpen && !showSuggestions && (
+                    <div className="absolute top-full z-50 mt-2 w-full rounded-lg border border-rp-highlight-med bg-rp-surface shadow-xl">
+                        {isLoading ? (
+                            <div className="p-4 text-center text-sm text-rp-muted">
+                                Searching...
+                            </div>
+                        ) : results.length > 0 ? (
+                            <div className="max-h-96 overflow-y-auto">
+                                {results.map((result) => (
+                                    <button
+                                        key={result.id}
+                                        onClick={() => handleResultClick(
+                                            result.id,
+                                            isHashtagSearch ? searchTerm : undefined
                                         )}
-                                    </div>
-
-                                    {/* Info */}
-                                    <div className="flex-1 overflow-hidden">
-                                        <p className="truncate text-sm font-medium text-rp-text">
-                                            {result.name}
-                                            {result.match_type === 'hashtag' && (
-                                                <span className="ml-2 text-xs text-rp-iris">
-                                                    #{isHashtagSearch ? searchTerm : 'match'}
-                                                </span>
-                                            )}
-                                        </p>
-                                        {result.description && (
-                                            <p className="truncate text-xs text-rp-muted">
-                                                {result.description}
-                                            </p>
-                                        )}
-                                        {/* Show hashtags */}
-                                        {result.config?.hashtags && result.config.hashtags.length > 0 && (
-                                            <div className="mt-1 flex flex-wrap gap-1">
-                                                {result.config.hashtags.slice(0, 3).map(tag => (
-                                                    <span
-                                                        key={tag}
-                                                        className="rounded-full bg-rp-base px-2 py-0.5 text-xs text-rp-muted"
-                                                    >
-                                                        #{tag}
+                                        className="flex w-full items-center gap-3 border-b border-rp-highlight-low p-3 text-left transition-colors hover:bg-rp-base last:border-b-0"
+                                    >
+                                        {/* Avatar */}
+                                        <div className="relative size-10 shrink-0 overflow-hidden rounded-full">
+                                            {result.image_url ? (
+                                                <Image
+                                                    src={result.image_url}
+                                                    alt={result.name}
+                                                    fill
+                                                    className="object-cover"
+                                                />
+                                            ) : (
+                                                <div className="flex size-full items-center justify-center bg-gradient-to-br from-rp-iris/50 to-rp-rose/50">
+                                                    <span className="text-xs font-bold text-rp-text">
+                                                        {result.name.slice(0, 2).toUpperCase()}
                                                     </span>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                </button>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="p-4 text-center text-sm text-rp-muted">
-                            {isHashtagSearch
-                                ? `No souls found with #${searchTerm}`
-                                : "No souls found matching your search"
-                            }
-                        </div>
-                    )}
-                </div>
-            )}
-        </div>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Info */}
+                                        <div className="flex-1 overflow-hidden">
+                                            <p className="truncate text-sm font-medium text-rp-text">
+                                                {result.name}
+                                                {result.match_type === 'hashtag' && (
+                                                    <span className="ml-2 text-xs text-rp-iris">
+                                                        #{isHashtagSearch ? searchTerm : 'match'}
+                                                    </span>
+                                                )}
+                                            </p>
+                                            {result.description && (
+                                                <p className="truncate text-xs text-rp-muted">
+                                                    {result.description}
+                                                </p>
+                                            )}
+                                            {/* Show hashtags */}
+                                            {result.config?.hashtags && result.config.hashtags.length > 0 && (
+                                                <div className="mt-1 flex flex-wrap gap-1">
+                                                    {result.config.hashtags.slice(0, 3).map(tag => (
+                                                        <span
+                                                            key={tag}
+                                                            className="rounded-full bg-rp-base px-2 py-0.5 text-xs text-rp-muted"
+                                                        >
+                                                            #{tag}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="p-4 text-center text-sm text-rp-muted">
+                                {isHashtagSearch
+                                    ? `No souls found with #${searchTerm}`
+                                    : "No souls found matching your search"
+                                }
+                            </div>
+                        )}
+                    </div>
+                )
+            }
+        </div >
     )
 }
