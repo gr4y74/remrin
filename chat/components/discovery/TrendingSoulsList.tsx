@@ -31,16 +31,19 @@ export function TrendingSoulsList({ onPersonaClick, className }: TrendingSoulsLi
 
                 const { data, error } = await supabase
                     .from("personas")
-                    .select("id, name, description, image_url")
+                    .select("id, name, description, image_url, message_count, follower_count")
                     .eq("visibility", "PUBLIC")
                     .limit(8)
 
                 if (!error && data) {
-                    // Add random counts for demo if needed
-                    const withCounts = data.map(p => ({
-                        ...p,
-                        message_count: p.message_count || Math.floor(Math.random() * 50000),
-                        follower_count: p.follower_count || Math.floor(Math.random() * 10000)
+                    // Add random counts for demo if fields are missing
+                    const withCounts: TrendingPersona[] = data.map(p => ({
+                        id: p.id,
+                        name: p.name,
+                        description: p.description,
+                        image_url: p.image_url,
+                        message_count: (p.message_count as number | null) || Math.floor(Math.random() * 50000),
+                        follower_count: (p.follower_count as number | null) || Math.floor(Math.random() * 10000)
                     }))
                     setTrending(withCounts)
                 }
