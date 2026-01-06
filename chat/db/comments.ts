@@ -24,7 +24,7 @@ export const getCommentsByPersonaId = async (personaId: string) => {
 
 export const postComment = async (userId: string, personaId: string, text: string) => {
     const { data, error } = await supabase
-        .from("persona_comments")
+        .from("persona_comments" as any)
         .insert([{
             user_id: userId,
             persona_id: personaId,
