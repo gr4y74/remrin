@@ -45,7 +45,7 @@ export const NotificationsSidebar: FC<NotificationsSidebarProps> = ({
 
     const markAsRead = async (notificationId: string) => {
         await supabase
-            .from("system_notifications")
+            .from("system_notifications" as any)
             .update({ is_read: true })
             .eq("id", notificationId)
         system.refetch()
@@ -53,7 +53,7 @@ export const NotificationsSidebar: FC<NotificationsSidebarProps> = ({
 
     const markAllAsRead = async () => {
         await supabase
-            .from("system_notifications")
+            .from("system_notifications" as any)
             .update({ is_read: true })
             .eq("user_id", userId)
             .eq("is_read", false)
