@@ -28,7 +28,14 @@ import {
 import { useContext } from "react"
 import { RemrinContext } from "@/context/context"
 
-const NAV_ITEMS = [
+interface NavItem {
+    icon: typeof IconHome
+    label: string
+    href: string
+    isWorkspaceSpecific?: boolean
+}
+
+const NAV_ITEMS: NavItem[] = [
     { icon: IconHome, label: "Discover", href: "/" },
     { icon: IconSparkles, label: "Feed", href: "/feed" },
     { icon: IconDice, label: "Summon", href: "/summon" },
