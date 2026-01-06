@@ -44,7 +44,7 @@ export const useNotifications = (userId: string | undefined, type: string) => {
         const selectQuery = getSelectQuery(type)
 
         let query = supabase
-            .from(tableName)
+            .from(tableName as any)
             .select(selectQuery)
             .order('created_at', { ascending: false })
             .limit(50)
