@@ -2,6 +2,8 @@ import { createClient } from "@/lib/supabase/server"
 import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import Replicate from "replicate"
+import fs from "fs"
+import path from "path"
 
 const COST_AETHER = 50
 
@@ -16,10 +18,35 @@ export async function POST(request: Request) {
         }
 
         const json = await request.json()
-        const { persona_id, image_url } = json
+        let { persona_id, image_url } = json
 
         if (!persona_id || !image_url) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
+        }
+
+        // Handle local images (for default characters like Kess)
+        // Replicate cannot access localhost URLs, so we convert local files to Data URIs
+        if (image_url.startsWith("/")) {
+            try {
+                const imagePath = path.join(process.cwd(), "public", image_url)
+                if (fs.existsSync(imagePath)) {
+                    const fileBuffer = fs.readFileSync(imagePath)
+                    const base64Image = fileBuffer.toString("base64")
+                    // Determine mime type
+                    const ext = path.extname(image_url).toLowerCase()
+                    const mimeType = ext === ".png" ? "image/png" :
+                        ext === ".jpg" || ext === ".jpeg" ? "image/jpeg" : "image/webp"
+
+                    image_url = `data:${mimeType};base64,${base64Image}`
+                    console.log(`Converted local (${mimeType}) image to Data URI for Replicate`)
+                } else {
+                    console.warn(`Local image not found at ${imagePath}`)
+                    // If not found, we let the URL pass through, usually failing at Replicate 
+                    // unless it acts as a relative path that fails anyway.
+                }
+            } catch (err) {
+                console.error("Error converting local image:", err)
+            }
         }
 
         // 1. Check Ownership
@@ -64,7 +91,7 @@ export async function POST(request: Request) {
         })
 
         const prediction = await replicate.predictions.create({
-            version: "39ed52f2a71e648ead4dffd7a284392cbb9f07db96a1e808eb94344eb7943c86", // SVD XT 1.1
+            version: "3f0457e4619daac51203dedb472816fd4af51f3149fa7a9e0b5ffcf1b8172438", // Stable Video Diffusion (standard)
             input: {
                 input_image: image_url,
                 video_length: "25_frames_with_svd_xt",

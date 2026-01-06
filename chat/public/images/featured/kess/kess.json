@@ -1,0 +1,31 @@
+{
+  "completed_at": "2026-01-06T22:27:27.184507Z",
+  "created_at": "2026-01-06T22:25:34.067000Z",
+  "data_removed": false,
+  "error": null,
+  "id": "9qrtm62vedrmy0cvjnnavkt08g",
+  "input": {
+    "fps": 24,
+    "image": "https://replicate.delivery/pbxt/OMm6tDatd0jUePQax9gHIX5ZfrCOeaTrC9v6Ti71QLIVjGVp/Kess.png",
+    "prompt": "Animage this image. She should close her eyes, turn her head to the side then look back at the user. The bees should be flying around her while the flower at the bottom pulses. ",
+    "duration": 12,
+    "resolution": "1080p",
+    "aspect_ratio": "16:9",
+    "camera_fixed": false
+  },
+  "logs": "Using seed: 186856187\nGenerating video...\nGenerated video in 103.4sec\nDownloading 30403394 bytes\nDownloaded 28.99MB in 5.33sec",
+  "metrics": {
+    "predict_time": 113.108072252,
+    "total_time": 113.117507418
+  },
+  "output": "https://replicate.delivery/xezq/KXM9se3qmMV2di1CRt9dzSClLReBb2HjmWWs55T0EAwL5z6VA/tmpe0fj5kd9.mp4",
+  "started_at": "2026-01-06T22:25:34.076435Z",
+  "status": "succeeded",
+  "urls": {
+    "stream": "https://stream.replicate.com/v1/files/jbxs-sbnbzbtvnjvuypyl5t22m26gtaszvkv4fkyuzlyk7rjdzhv4ciya",
+    "get": "https://api.replicate.com/v1/predictions/9qrtm62vedrmy0cvjnnavkt08g",
+    "cancel": "https://api.replicate.com/v1/predictions/9qrtm62vedrmy0cvjnnavkt08g/cancel",
+    "web": "https://replicate.com/p/9qrtm62vedrmy0cvjnnavkt08g"
+  },
+  "version": "hidden"
+}
