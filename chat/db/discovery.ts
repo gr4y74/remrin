@@ -10,7 +10,7 @@ export const getSimilarPersonas = async (personaId: string, limit = 5) => {
 
     if (fetchError || !currentPersona) return []
 
-    const hashtags = currentPersona.config?.hashtags || []
+    const hashtags = (currentPersona.config as any)?.hashtags || []
     const category = currentPersona.category
 
     // 2. Query for personas with similar hashtags or same category
