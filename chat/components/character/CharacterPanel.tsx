@@ -112,6 +112,8 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
             return
         }
 
+        if (!profile.user_id) return
+
         setIsFollowLoading(true)
         try {
             if (isFollowing) {
