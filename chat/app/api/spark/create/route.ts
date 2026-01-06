@@ -36,7 +36,7 @@ export async function POST(request: Request) {
         // 2. Check & Deduct Balance
         const { data: wallet } = await supabase
             .from("wallets")
-            .select("balance_aether")
+            .select("balance_aether, total_spent")
             .eq("user_id", user.id)
             .single()
 
