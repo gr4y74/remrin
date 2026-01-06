@@ -17,6 +17,7 @@ import Link from "next/link"
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton"
 
 export default function LoginForm() {
+    const router = useRouter()
     const [passwordVisible, setPasswordVisible] = useState(false)
     const [loading, setLoading] = useState(false)
     const params = useParams()
