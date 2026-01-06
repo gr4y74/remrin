@@ -319,6 +319,5 @@ export function PublicProfile() {
 
             </div>
         </div>
-        </div >
     )
 }
