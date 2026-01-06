@@ -83,7 +83,7 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
 
         const fetchData = async () => {
             // Check follow status
-            if (profile) {
+            if (profile && profile.user_id) {
                 const following = await getIsFollowing(profile.user_id, selectedPersona.id)
                 setIsFollowing(following)
             }
