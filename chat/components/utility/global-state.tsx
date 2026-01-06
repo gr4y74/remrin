@@ -4,7 +4,7 @@
 
 import { RemrinContext, Artifact } from "@/context/context"
 import { getProfileByUserId } from "@/db/profile"
-import { getPersonasByOwnerId } from "@/db/personas"
+import { getPersonasByOwnerId, getUserCollection } from "@/db/personas"
 import { getWorkspaceImageFromStorage } from "@/db/storage/workspace-images"
 import { getWorkspacesByUserId } from "@/db/workspaces"
 import { convertBlobToBase64 } from "@/lib/blob-to-b64"
@@ -136,39 +136,61 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   const [artifacts, setArtifacts] = useState<Artifact[]>([])
 
   // CHAT BACKGROUND STORE - with localStorage persistence
+  // CHAT BACKGROUND STORE - with persona-specific persistence
   const [chatBackgroundEnabled, setChatBackgroundEnabled] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('chatBackgroundEnabled')
-      return saved ? JSON.parse(saved) : false
+      return saved ? JSON.parse(saved) : true
     }
-    return false
-  })
-  const [activeBackgroundUrl, setActiveBackgroundUrl] = useState<string | null>(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('activeBackgroundUrl')
-    }
-    return null
+    return true
   })
 
-  // Persist background settings to localStorage
+  const [activeBackgroundUrl, setActiveBackgroundUrlState] = useState<string | null>(null)
+
+  // Wrapper to save to localStorage when updating
+  const setActiveBackgroundUrl = useCallback((url: string | null | ((prev: string | null) => string | null)) => {
+    setActiveBackgroundUrlState(prev => {
+      const newUrl = typeof url === 'function' ? url(prev) : url
+
+      // Persist to current persona if one is selected
+      if (selectedPersona?.id && typeof window !== 'undefined') {
+        const key = `chat_bg_${selectedPersona.id}`
+        if (newUrl) {
+          localStorage.setItem(key, newUrl)
+        } else {
+          localStorage.removeItem(key)
+        }
+      }
+      return newUrl
+    })
+  }, [selectedPersona?.id])
+
+
+  // Load background when persona changes
+  useEffect(() => {
+    if (selectedPersona?.id && typeof window !== 'undefined') {
+      const key = `chat_bg_${selectedPersona.id}`
+      const saved = localStorage.getItem(key)
+      // Only update if different to avoid loops, though strict diff check is fine
+      setActiveBackgroundUrlState(saved)
+    } else {
+      setActiveBackgroundUrlState(null)
+    }
+  }, [selectedPersona?.id])
+
+
+  // Persist enabled toggle
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('chatBackgroundEnabled', JSON.stringify(chatBackgroundEnabled))
     }
   }, [chatBackgroundEnabled])
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      if (activeBackgroundUrl) {
-        localStorage.setItem('activeBackgroundUrl', activeBackgroundUrl)
-      } else {
-        localStorage.removeItem('activeBackgroundUrl')
-      }
-    }
-  }, [activeBackgroundUrl])
+  // NOTIFICATIONS STORE
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState<boolean>(false)
 
   const fetchStartingData = useCallback(async () => {
-    const session = (await supabase.auth.getSession()).data.session
+    const { data: { session } } = await supabase.auth.getSession()
 
     if (session) {
       const user = session.user
@@ -189,13 +211,20 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
       const workspaces = await getWorkspacesByUserId(user.id)
       setWorkspaces(workspaces)
 
+      // Get home workspace to select it
+      const homeWorkspace = workspaces.find(w => w.is_home)
+      if (homeWorkspace && !selectedWorkspace) {
+        setSelectedWorkspace(homeWorkspace)
+      }
+
       for (const workspace of workspaces) {
         let workspaceImageUrl = ""
 
-        if (workspace.image_path) {
+        if (workspace.image_path && workspace.image_path.includes('/')) {
           workspaceImageUrl =
             (await getWorkspaceImageFromStorage(workspace.image_path)) || ""
         }
+
 
         if (workspaceImageUrl) {
           try {
@@ -206,23 +235,26 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
             const blob = await response.blob()
             const base64 = await convertBlobToBase64(blob)
 
-            setWorkspaceImages(prev => [
-              ...prev,
-              {
-                workspaceId: workspace.id,
-                path: workspace.image_path,
-                base64: base64,
-                url: workspaceImageUrl
-              }
-            ])
+            setWorkspaceImages(prev => {
+              if (prev.some(img => img.workspaceId === workspace.id)) return prev
+              return [
+                ...prev,
+                {
+                  workspaceId: workspace.id,
+                  path: workspace.image_path,
+                  base64: base64,
+                  url: workspaceImageUrl
+                }
+              ]
+            })
           } catch (error) {
             console.warn(`[GlobalState] Failed to process workspace image for ${workspace.id}:`, error)
           }
         }
       }
 
-      // Fetch Soul Forge personas owned by this user
-      const userPersonas = await getPersonasByOwnerId(user.id)
+      // Fetch Soul Forge personas owned by this user AND followed (e.g. Mother of Souls)
+      const userPersonas = await getUserCollection(user.id)
       setPersonas(userPersonas)
 
       // Fetch user's chats for recent chats sidebar
@@ -238,13 +270,41 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
       }
 
       return profile
+    } else {
+      // Clear state on logout
+      setProfile(null)
+      setWorkspaces([])
+      setChats([])
+      setPersonas([])
+      setSelectedWorkspace(null)
     }
-  }, [router])
+  }, [router, selectedWorkspace])
+
+  useEffect(() => {
+    fetchStartingData()
+
+    // Listen for auth changes
+    const {
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
+        fetchStartingData()
+      } else if (event === 'SIGNED_OUT') {
+        setProfile(null)
+        setWorkspaces([])
+        setChats([])
+        setPersonas([])
+        setSelectedWorkspace(null)
+      }
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [fetchStartingData])
 
   useEffect(() => {
     ; (async () => {
-      const profile = await fetchStartingData()
-
       if (profile) {
         const hostedModelRes = await fetchHostedModels(profile)
         if (!hostedModelRes) return
@@ -268,7 +328,8 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         setAvailableLocalModels(localModels)
       }
     })()
-  }, [fetchStartingData])
+  }, [profile])
+
 
   return (
     <RemrinContext.Provider
@@ -417,7 +478,11 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         chatBackgroundEnabled,
         setChatBackgroundEnabled,
         activeBackgroundUrl,
-        setActiveBackgroundUrl
+        setActiveBackgroundUrl,
+
+        // NOTIFICATIONS STORE
+        isNotificationsOpen,
+        setIsNotificationsOpen
       }}
     >
       {children}

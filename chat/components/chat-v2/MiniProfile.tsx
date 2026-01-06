@@ -21,6 +21,8 @@ import Image from "next/image"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
 import { uploadChatBackground, getChatBackgroundFromStorage } from "@/db/storage/chat-backgrounds"
 import { toast } from "sonner"
+import { WithTooltip } from "@/components/ui/with-tooltip"
+
 
 interface MiniProfileProps {
   personaName?: string
@@ -104,10 +106,11 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
           {onBack && (
             <button
               onClick={onBack}
-              className="p-1 -ml-1 text-rp-muted hover:text-rp-text transition-colors"
+              className="p-1 -ml-1 text-white hover:text-white/80 transition-colors"
             >
               <IconArrowLeft size={20} />
             </button>
+
           )}
 
           <button
@@ -149,7 +152,8 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
               <p className="text-rp-muted text-[10px]">Created by @{creatorName}</p>
             ) : (
               <div className="flex items-center gap-2">
-                <p className="text-rp-muted text-[10px]">@{creatorName}</p>
+                <p className="text-white text-[10px]">@{creatorName}</p>
+
               </div>
             )}
           </div>
@@ -160,39 +164,57 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
           {/* Mood (Visible when collapsed) - No pill, just emoji + battery */}
           {!isExpanded && moodState && (
             <div className="flex items-center gap-2 mr-1">
-              <span className="text-lg leading-none">{moodState.emoji}</span>
-              <div className="w-8 h-1.5 bg-rp-surface/50 rounded-full overflow-hidden">
-                <div
-                  className={cn(
-                    "h-full transition-all duration-500 rounded-full",
-                    moodState.battery > 70 ? "bg-rp-iris" :
-                      moodState.battery > 30 ? "bg-rp-gold" : "bg-rp-love"
-                  )}
-                  style={{ width: `${moodState.battery}%` }}
-                />
-              </div>
+              <WithTooltip
+                display={
+                  <div className="p-2 max-w-xs">
+                    <p className="font-bold mb-1">Soul Mood: {moodState.mood}</p>
+                    <p className="text-xs text-rp-subtle">
+                      The mood icons reflect the current emotional state and energy level of the Soul.
+                      High battery means the Soul is alert and engaged, while low battery may lead to shorter or more distant responses.
+                    </p>
+                  </div>
+                }
+                trigger={
+                  <div className="flex items-center gap-2 cursor-help">
+                    <span className="text-lg leading-none">{moodState.emoji}</span>
+                    <div className="w-8 h-1.5 bg-rp-surface/50 rounded-full overflow-hidden">
+                      <div
+                        className={cn(
+                          "h-full transition-all duration-500 rounded-full",
+                          moodState.battery > 70 ? "bg-rp-iris" :
+                            moodState.battery > 30 ? "bg-rp-gold" : "bg-rp-love"
+                        )}
+                        style={{ width: `${moodState.battery}%` }}
+                      />
+                    </div>
+                  </div>
+                }
+              />
             </div>
           )}
+
 
           {/* VN Toggle - Icon only, no pill */}
           {!isExpanded && onToggleVisualNovel && (
             <button
               onClick={onToggleVisualNovel}
-              className="p-2 text-rp-muted hover:text-rp-text transition-colors"
+              className="p-2 text-white hover:text-white/80 transition-colors"
               title={isVisualNovelMode ? "Switch to Classic Mode" : "Switch to Visual Novel Mode"}
             >
               {isVisualNovelMode ? <IconMessage size={18} /> : <IconBook size={18} />}
             </button>
           )}
 
+
           {/* Details Toggle - Icon only */}
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="p-2 text-rp-muted hover:text-rp-text transition-colors"
+            className="p-2 text-white hover:text-white/80 transition-colors"
             title={isExpanded ? 'Hide Details' : 'Show Details'}
           >
             {isExpanded ? <IconChevronUp size={18} /> : <IconChevronDown size={18} />}
           </button>
+
 
           {/* Quick Settings Dropdown - Icon only */}
           <div className="relative">
@@ -206,10 +228,11 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="p-2 text-rp-muted hover:text-rp-text transition-colors">
+                <button className="p-2 text-white hover:text-white/80 transition-colors">
                   <IconDotsVertical size={18} />
                 </button>
               </DropdownMenuTrigger>
+
               <DropdownMenuContent align="end" className="w-48 bg-rp-surface border-rp-overlay shadow-2xl">
                 <DropdownMenuItem
                   className="text-rp-text focus:bg-rp-overlay focus:text-rp-text cursor-pointer py-2.5"

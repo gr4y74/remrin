@@ -3,7 +3,8 @@
 import { useContext, useState, useRef, useEffect, useMemo } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
+
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { RemrinContext } from "@/context/context"
@@ -70,6 +71,9 @@ export function SidebarUserSection({ isExpanded, onProfileClick }: SidebarUserSe
         }
     }, [showDropdown])
 
+    const pathname = usePathname()
+    const locale = pathname.split("/")[1] || "en"
+
     const handleSignOut = async () => {
         try {
             // Call server-side signout API to properly clear cookies
@@ -77,11 +81,11 @@ export function SidebarUserSection({ isExpanded, onProfileClick }: SidebarUserSe
 
             await supabase.auth.signOut({ scope: 'global' })
 
-            // Redirect to home
-            router.push('/')
-            router.refresh()
+            // Hard reset to clear all in-memory states
+            window.location.href = `/${locale}`
         } catch (error) {
             console.error('Error signing out:', error)
+            window.location.href = `/${locale}`
         }
     }
 
@@ -90,7 +94,7 @@ export function SidebarUserSection({ isExpanded, onProfileClick }: SidebarUserSe
         return (
             <div className="p-2">
                 <Link
-                    href="/login"
+                    href={`/${locale}/login`}
                     className={cn(
                         "flex min-h-[48px] items-center justify-center gap-3 rounded-xl px-3 py-3 transition-all",
                         "bg-gradient-to-r from-rp-iris to-rp-love text-white",
@@ -187,7 +191,7 @@ export function SidebarUserSection({ isExpanded, onProfileClick }: SidebarUserSe
                         >
                             <div className="p-1">
                                 <Link
-                                    href={`/profile/${user?.id}`}
+                                    href={`/${locale}/profile/${user?.id}`}
                                     onClick={() => setShowDropdown(false)}
                                     className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-rp-text transition-colors hover:bg-rp-overlay"
                                 >
@@ -195,7 +199,7 @@ export function SidebarUserSection({ isExpanded, onProfileClick }: SidebarUserSe
                                     <span>View Profile</span>
                                 </Link>
                                 <Link
-                                    href="/settings/profile"
+                                    href={`/${locale}/settings/profile`}
                                     onClick={() => setShowDropdown(false)}
                                     className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-rp-text transition-colors hover:bg-rp-overlay"
                                 >
@@ -218,6 +222,7 @@ export function SidebarUserSection({ isExpanded, onProfileClick }: SidebarUserSe
                     )}
                 </AnimatePresence>
             </div>
+
 
             {/* Subscribe/Upgrade CTA - Compact size matching profile avatar */}
             {!isSubscribed && (

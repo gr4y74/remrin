@@ -155,7 +155,7 @@ export const CharacterPanelMobile: FC = () => {
                                 <div className="bg-rp-base/50 rounded-lg p-4">
                                     <input
                                         type="text"
-                                        placeholder="Type your comment about this Talkie..."
+                                        placeholder="Type your comment about this soul..."
                                         className="text-rp-text placeholder:text-rp-muted min-h-[44px] w-full bg-transparent text-sm focus:outline-none"
                                     />
                                 </div>

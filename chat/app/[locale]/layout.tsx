@@ -112,19 +112,22 @@ export default async function RootLayout({
           >
             <Toaster richColors position="top-center" duration={3000} />
             <div className="flex min-h-screen">
-              {/* Desktop Sidebar - Hidden on mobile */}
-              <MinimalSidebar />
+              <GlobalState>
+                {/* Desktop Sidebar - Hidden on mobile */}
+                <MinimalSidebar />
 
-              {/* Main Content - Offset by sidebar on desktop, full width on mobile */}
-              <main className="flex-1 md:ml-20 pb-20 md:pb-0">
-                <div className="flex h-dvh flex-col items-center overflow-x-auto">
-                  {session ? <GlobalState>{children}</GlobalState> : children}
-                </div>
-              </main>
+                {/* Main Content - Offset by sidebar on desktop, full width on mobile */}
+                <main className="flex-1 md:ml-20 pb-20 md:pb-0">
+                  <div className="flex h-dvh flex-col items-center overflow-x-auto">
+                    {children}
+                  </div>
+                </main>
 
-              {/* Mobile Bottom Navigation - Hidden on desktop */}
-              <MobileNav />
+                {/* Mobile Bottom Navigation - Hidden on desktop */}
+                <MobileNav />
+              </GlobalState>
             </div>
+
           </TranslationsProvider>
         </Providers>
       </body>

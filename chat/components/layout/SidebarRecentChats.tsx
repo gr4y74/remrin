@@ -26,7 +26,7 @@ const DEMO_CHATS = [
 ]
 
 /**
- * SidebarRecentChats - Talkie-AI inspired recent chats list
+ * SidebarRecentChats - Recent chats list
  * 
  * Shows avatars of recent chat sessions when collapsed,
  * and full names when expanded.
@@ -78,7 +78,7 @@ export function SidebarRecentChats({ isExpanded, maxChats = 8, showDemo = false 
             id: chat.personaId,
             name: chat.personaName,
             imageUrl: chat.personaImage,
-            href: `/ ${chat.workspaceId}/chat?persona=${chat.personaId}`
+            href: `/${chat.workspaceId}/chat?persona=${chat.personaId}`
         }))
     }, [maxChats, showDemo, mounted, recentChatsData])
 

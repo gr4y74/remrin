@@ -12,6 +12,7 @@ import { SidebarUserSection } from "./SidebarUserSection"
 import { SidebarRecentChats } from "./SidebarRecentChats"
 import { SidebarCreateButton } from "./SidebarCreateButton"
 import { SidebarThemeToggle } from "./SidebarThemeToggle"
+import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
 import {
     IconHome,
@@ -22,20 +23,21 @@ import {
     IconBrush,
     IconWallet,
     IconDatabase,
+    IconBell,
 } from "@tabler/icons-react"
 import { useContext } from "react"
 import { RemrinContext } from "@/context/context"
 
 const NAV_ITEMS = [
-    { icon: IconHome, label: "Home", href: "/" },
-    { icon: IconSparkles, label: "Discover", href: "/discover" },
+    { icon: IconHome, label: "Discover", href: "/" },
+    { icon: IconSparkles, label: "Feed", href: "/feed" },
     { icon: IconDice, label: "Summon", href: "/summon" },
     { icon: IconBooks, label: "Collection", href: "/collection" },
-    { icon: IconDatabase, label: "Vault", href: "/knowledge", isWorkspaceSpecific: true },
     { icon: IconShoppingBag, label: "Marketplace", href: "/marketplace" },
     { icon: IconBrush, label: "Studio", href: "/studio" },
     { icon: IconWallet, label: "Wallet", href: "/wallet" },
 ]
+
 
 /**
  * MinimalSidebar - Talkie-AI inspired sidebar with:
@@ -67,14 +69,15 @@ export function MinimalSidebar() {
             onMouseLeave={() => setIsExpanded(false)}
         >
             {/* Logo Container - Dual-logo crossfade */}
-            <div className="border-rp-muted/20 relative flex h-16 shrink-0 items-center justify-center overflow-hidden border-b">
+            <div className="border-rp-muted/20 relative flex h-14 shrink-0 items-center justify-center overflow-hidden border-b">
                 <Link href="/" className="flex items-center justify-center transition-transform duration-300 ease-out hover:rotate-[-5deg] hover:scale-105">
                     {/* Small logo - visible when collapsed */}
                     <Image
                         src="/logo_sm.svg"
                         alt="Remrin"
-                        width={40}
-                        height={40}
+                        width={32}
+                        height={32}
+                        priority
                         className={cn(
                             "transition-all duration-300",
                             isExpanded ? "absolute opacity-0 scale-75" : "opacity-100 scale-100"
@@ -85,16 +88,20 @@ export function MinimalSidebar() {
                         <Image
                             src={logoSrc}
                             alt="Remrin.ai"
-                            width={120}
-                            height={32}
+                            width={96}
+                            height={26}
+                            priority
                             className={cn(
-                                "h-8 w-auto transition-all duration-300",
+                                "h-[26px] w-auto transition-all duration-300",
                                 isExpanded ? "opacity-100 scale-100" : "absolute opacity-0 scale-90"
                             )}
                         />
                     )}
+
                 </Link>
             </div>
+
+
 
             {/* Craft a Soul Button */}
             <SidebarCreateButton isExpanded={isExpanded} />
@@ -168,6 +175,11 @@ export function MinimalSidebar() {
                     })}
                 </div>
 
+                {/* Notification Bell */}
+                <div className="mt-1">
+                    <NotificationBellItem isExpanded={isExpanded} />
+                </div>
+
                 {/* Separator Line */}
                 <div className="border-rp-muted/20 -mx-2 my-2 border-t" />
 
@@ -217,5 +229,78 @@ export function MinimalSidebar() {
                 </div>
             )}
         </motion.nav>
+    )
+}
+
+function NotificationBellItem({ isExpanded }: { isExpanded: boolean }) {
+    const supabase = createClient()
+    const { profile, setIsNotificationsOpen } = useContext(RemrinContext)
+    const [unreadCount, setUnreadCount] = useState(0)
+
+    useEffect(() => {
+        if (!profile) return
+
+        const fetchUnread = async () => {
+            const { count } = await supabase
+                .from("system_notifications")
+                .select("*", { count: "exact", head: true })
+                .eq("user_id", profile.user_id)
+                .eq("is_read", false)
+
+            setUnreadCount(count || 0)
+        }
+
+        fetchUnread()
+
+        // Subscribe to changes
+        const channel = supabase
+            .channel(`sidebar-notifications-${profile.user_id}`)
+            .on("postgres_changes", {
+                event: "*",
+                schema: "public",
+                table: "system_notifications",
+                filter: `user_id=eq.${profile.user_id}`
+            }, () => {
+                fetchUnread()
+            })
+            .subscribe()
+
+        return () => {
+            supabase.removeChannel(channel)
+        }
+    }, [profile, supabase])
+
+    return (
+        <button
+            onClick={() => setIsNotificationsOpen(true)}
+            className={cn(
+                "group relative flex min-h-[44px] w-full items-center rounded-lg py-3 transition-all",
+                "text-rp-subtle hover:bg-rp-overlay hover:text-rp-text",
+                isExpanded ? "justify-start gap-3 px-4" : "justify-center px-0"
+            )}
+        >
+            <div className={cn(
+                "flex shrink-0 items-center justify-center relative",
+                !isExpanded && "w-full"
+            )}>
+                <IconBell size={22} />
+                {unreadCount > 0 && (
+                    <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-rp-love text-[10px] font-bold text-white shadow-lg shadow-rp-love/20">
+                        {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                )}
+            </div>
+            <motion.span
+                className="font-tiempos-text whitespace-nowrap text-sm font-medium overflow-hidden"
+                initial={false}
+                animate={{
+                    opacity: isExpanded ? 1 : 0,
+                    width: isExpanded ? "auto" : 0
+                }}
+                transition={{ duration: 0.2 }}
+            >
+                Notifications
+            </motion.span>
+        </button>
     )
 }

@@ -10,7 +10,8 @@ import {
     IconStar,
     IconDiamond,
     IconRocket,
-    IconSearch
+    IconSearch,
+    IconPhoto
 } from "@tabler/icons-react"
 import { AdminPasswordGate } from "@/components/admin/AdminPasswordGate"
 
@@ -63,6 +64,14 @@ export default function AdminPage() {
             href: "/admin/users",
             color: "from-blue-600 to-cyan-500",
             badge: "Coming Soon"
+        },
+        {
+            title: "Media Manager",
+            description: "Upload videos and manage hero assets",
+            icon: IconPhoto,
+            href: "/admin/media",
+            color: "from-pink-600 to-rose-500",
+            badge: "NEW"
         },
         {
             title: "Analytics",

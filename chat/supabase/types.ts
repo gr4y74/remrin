@@ -1237,6 +1237,7 @@ export type Database = {
           tags: string[] | null
           visibility: string | null
           voice_id: string | null
+          video_url: string | null
           follow_up_likelihood: number | null
         }
         Insert: {
@@ -1244,6 +1245,7 @@ export type Database = {
           tags: string[] | null
           visibility: string | null
           voice_id: string | null
+          video_url?: string | null
           follow_up_likelihood?: number | null
         }
         Update: {
@@ -1272,6 +1274,7 @@ export type Database = {
           tags?: string[] | null
           visibility?: string | null
           voice_id?: string | null
+          video_url?: string | null
           follow_up_likelihood?: number | null
         }
         Relationships: []

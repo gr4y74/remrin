@@ -6,9 +6,11 @@ import { CanvasPanel } from "@/components/canvas"
 import Image from "next/image"
 import useHotkey from "@/lib/hooks/use-hotkey"
 import { MOTHER_OF_SOULS_ID } from "@/lib/forge/is-mother-chat"
-import { FC, useContext, useState } from "react"
+import { FC, useContext, useState, useEffect } from "react"
 // import { useSelectFileHandler } from "../chat/chat-hooks/use-select-file-handler"
 import { CommandK } from "../utility/command-k"
+import { NotificationsSidebar } from "@/components/notifications/NotificationsSidebar"
+import { createClient } from "@/lib/supabase/client"
 
 // Panel widths
 export const CANVAS_WIDTH = 450
@@ -28,8 +30,19 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
     setIsCharacterPanelOpen,
     selectedPersona,
     chatBackgroundEnabled,
-    activeBackgroundUrl
+    activeBackgroundUrl,
+    isNotificationsOpen,
+    setIsNotificationsOpen
   } = useContext(RemrinContext)
+
+  const [userId, setUserId] = useState<string>("")
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) setUserId(data.user.id)
+    })
+  }, [])
 
   const [isDragging, setIsDragging] = useState(false)
 
@@ -119,6 +132,15 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
 
       {/* Character Panel (conditional) */}
       <CharacterPanel width={CHARACTER_PANEL_WIDTH} />
+
+      {/* Notifications Sidebar (conditional) */}
+      {userId && (
+        <NotificationsSidebar
+          userId={userId}
+          isOpen={isNotificationsOpen}
+          onClose={() => setIsNotificationsOpen(false)}
+        />
+      )}
     </>
   )
 }

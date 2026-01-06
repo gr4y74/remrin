@@ -1,9 +1,12 @@
+require('dotenv').config({ path: '.env.local' });
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+
 const { createClient } = require('@supabase/supabase-js');
 const fs = require('fs');
 const path = require('path');
-
-const supabaseUrl = 'https://wftsctqfiqbdyllxwagi.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmdHNjdHFmaXFiZHlsbHh3YWdpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNDk1Njc3MCwiZXhwIjoyMDUwNTMyNzcwfQ.xWyPAqfZEQBGLNjlJMBZqwVLvCjQJkTbpZKrJRNNqRs';
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -57,7 +60,11 @@ async function main() {
         // Migration 2
         await runMigration('supabase/migrations/20241230_tier_auto_update.sql');
 
+        // Migration 3 - Persona Comments Fix
+        await runMigration('supabase/migrations/20260106_add_persona_comments.sql');
+
         console.log('\n🎉 All migrations completed successfully!');
+
         process.exit(0);
     } catch (error) {
         console.error('\n💥 Migration failed:', error);

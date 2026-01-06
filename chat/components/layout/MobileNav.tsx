@@ -14,12 +14,13 @@ import { useContext } from "react"
 import { RemrinContext } from "@/context/context"
 
 const MOBILE_NAV = [
-    { icon: IconHome, label: "Home", href: "/" },
-    { icon: IconSparkles, label: "Discover", href: "/discover" },
+    { icon: IconHome, label: "Discover", href: "/" },
+    { icon: IconSparkles, label: "Feed", href: "/feed" },
     { icon: IconMessage, label: "Chat", href: "/chat" },
     { icon: IconBooks, label: "Collection", href: "/collection" },
     { icon: IconUser, label: "Profile", href: "/profile" },
 ]
+
 
 export function MobileNav() {
     const pathname = usePathname()

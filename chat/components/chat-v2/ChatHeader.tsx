@@ -56,7 +56,8 @@ export const ChatHeader: FC<ChatHeaderProps> = ({
                 {onBack && (
                     <button
                         onClick={onBack}
-                        className="mr-1 flex h-8 w-8 items-center justify-center rounded-full text-rp-subtle hover:bg-rp-overlay hover:text-rp-text transition-colors"
+                        className="mr-1 flex h-8 w-8 items-center justify-center rounded-full text-white hover:bg-rp-overlay hover:text-white/80 transition-colors"
+
                     >
                         <IconArrowLeft size={20} />
                     </button>
@@ -80,8 +81,9 @@ export const ChatHeader: FC<ChatHeaderProps> = ({
                     </div>
                 ) : (
                     <div className="flex size-10 items-center justify-center rounded-full bg-rp-overlay ring-2 ring-rp-highlight-med">
-                        <IconUser size={20} className="text-rp-subtle" />
+                        <IconUser size={20} className="text-white" />
                     </div>
+
                 )}
 
                 {/* Name & Status */}
@@ -112,9 +114,10 @@ export const ChatHeader: FC<ChatHeaderProps> = ({
                         "flex h-9 w-9 items-center justify-center rounded-xl transition-all",
                         chatBackgroundEnabled
                             ? "bg-rp-iris/20 text-rp-iris ring-1 ring-rp-iris/50"
-                            : "text-rp-subtle hover:bg-rp-overlay hover:text-rp-text"
+                            : "text-white hover:bg-rp-overlay hover:text-white/80"
                     )}
                     title={chatBackgroundEnabled ? "Hide Background" : "Show Background"}
+
                 >
                     <IconPhoto size={20} />
                 </button>
@@ -131,10 +134,11 @@ export const ChatHeader: FC<ChatHeaderProps> = ({
                 {/* Settings / More */}
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <button className="flex h-9 w-9 items-center justify-center rounded-xl text-rp-subtle hover:bg-rp-overlay hover:text-rp-text transition-colors">
+                        <button className="flex h-9 w-9 items-center justify-center rounded-xl text-white hover:bg-rp-overlay hover:text-white/80 transition-colors">
                             <IconDotsVertical size={20} />
                         </button>
                     </DropdownMenuTrigger>
+
                     <DropdownMenuContent align="end" className="bg-rp-surface border-rp-highlight-low">
                         <DropdownMenuItem
                             className="text-rp-text focus:bg-rp-overlay focus:text-rp-text cursor-pointer"

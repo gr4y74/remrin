@@ -40,6 +40,35 @@ export function FeaturedCarousel({ characters, onCharacterClick }: FeaturedCarou
         )
     }
 
+    const [touchStart, setTouchStart] = useState<number | null>(null)
+    const [touchEnd, setTouchEnd] = useState<number | null>(null)
+
+    // Minimum swipe distance
+    const minSwipeDistance = 50
+
+    const onTouchStart = (e: React.TouchEvent) => {
+        setTouchEnd(null)
+        setTouchStart(e.targetTouches[0].clientX)
+    }
+
+    const onTouchMove = (e: React.TouchEvent) => {
+        setTouchEnd(e.targetTouches[0].clientX)
+    }
+
+    const onTouchEnd = () => {
+        if (!touchStart || !touchEnd) return
+
+        const distance = touchStart - touchEnd
+        const isLeftSwipe = distance > minSwipeDistance
+        const isRightSwipe = distance < -minSwipeDistance
+
+        if (isLeftSwipe) {
+            goToNext()
+        } else if (isRightSwipe) {
+            goToPrevious()
+        }
+    }
+
     const getCardStyle = (index: number) => {
         const diff = index - currentIndex
         const absPos = Math.abs(diff)
@@ -63,17 +92,62 @@ export function FeaturedCarousel({ characters, onCharacterClick }: FeaturedCarou
         }
     }
 
-    const handleCardClick = (character: FeaturedCharacter, isCenter: boolean) => {
-        if (isCenter) {
-            if (onCharacterClick) {
-                onCharacterClick(character)
-            } else {
-                router.push(`/character/${character.id}`)
+    // Mouse Drag Logic
+    const [isDragging, setIsDragging] = useState(false)
+    const [startX, setStartX] = useState<number | null>(null)
+
+    const onMouseDown = (e: React.MouseEvent) => {
+        setStartX(e.clientX)
+        setIsDragging(false)
+    }
+
+    const onMouseMove = (e: React.MouseEvent) => {
+        if (startX !== null) {
+            // If moved more than small threshold, it's a drag
+            if (Math.abs(e.clientX - startX!) > 5) {
+                setIsDragging(true)
             }
+        }
+    }
+
+    const onMouseUp = (e: React.MouseEvent) => {
+        if (startX === null) return
+
+        const distance = e.clientX - startX
+        setStartX(null)
+
+        // Reset dragging state after a layout tick to allowing onClick to fire if it wasn't a drag
+        // However, if isDragging is true, we SWIPED.
+        if (isDragging) {
+            // Handle Swipe
+            if (distance > minSwipeDistance) {
+                goToPrevious() // Left to Right = Previous 
+            } else if (distance < -minSwipeDistance) {
+                goToNext() // Right to Left = Next
+            }
+
+            // Prevent click propagation immediately?
+            // The click event fires after mouseup.
+        }
+
+        // We delay resetting isDragging slightly so onClick can read it
+        setTimeout(() => setIsDragging(false), 50)
+    }
+
+    const onMouseLeave = () => {
+        setStartX(null)
+        setIsDragging(false)
+    }
+
+    const handleCardClick = (character: FeaturedCharacter, isCenter: boolean) => {
+        // If we were dragging/swiping, IGNORE the click
+        if (isDragging) return
+
+        // User requested immediate activation on click/touch
+        if (onCharacterClick) {
+            onCharacterClick(character)
         } else {
-            // Navigate to this card
-            const index = characters.findIndex(c => c.id === character.id)
-            if (index !== -1) setCurrentIndex(index)
+            router.push(`/chat?persona=${character.id}`)
         }
     }
 
@@ -102,7 +176,17 @@ export function FeaturedCarousel({ characters, onCharacterClick }: FeaturedCarou
                     </button>
 
                     {/* Cards Container */}
-                    <div className="relative h-[600px] flex items-center justify-center" style={{ transformStyle: 'preserve-3d' }}>
+                    <div
+                        className="relative h-[600px] flex items-center justify-center touch-pan-y cursor-grab active:cursor-grabbing"
+                        style={{ transformStyle: 'preserve-3d' }}
+                        onTouchStart={onTouchStart}
+                        onTouchMove={onTouchMove}
+                        onTouchEnd={onTouchEnd}
+                        onMouseDown={onMouseDown}
+                        onMouseMove={onMouseMove}
+                        onMouseUp={onMouseUp}
+                        onMouseLeave={onMouseLeave}
+                    >
                         {characters.map((character, index) => {
                             const isCenter = index === currentIndex
                             return (

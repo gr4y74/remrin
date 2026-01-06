@@ -158,6 +158,10 @@ interface RemrinContext {
   setChatBackgroundEnabled: Dispatch<SetStateAction<boolean>>
   activeBackgroundUrl: string | null
   setActiveBackgroundUrl: Dispatch<SetStateAction<string | null>>
+
+  // NOTIFICATIONS STORE
+  isNotificationsOpen: boolean
+  setIsNotificationsOpen: Dispatch<SetStateAction<boolean>>
 }
 
 // Artifact type for Canvas panel
@@ -314,5 +318,9 @@ export const RemrinContext = createContext<RemrinContext>({
   chatBackgroundEnabled: false,
   setChatBackgroundEnabled: () => { },
   activeBackgroundUrl: null,
-  setActiveBackgroundUrl: () => { }
+  setActiveBackgroundUrl: () => { },
+
+  // NOTIFICATIONS STORE
+  isNotificationsOpen: false,
+  setIsNotificationsOpen: () => { }
 })

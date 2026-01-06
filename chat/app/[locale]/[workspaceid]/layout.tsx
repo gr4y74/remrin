@@ -154,16 +154,26 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
   }, [searchParams, setAssistantImages, setAssistants, setChatSettings, setChats, setCollections, setFiles, setFolders, setModels, setPresets, setPrompts, setSelectedWorkspace, setTools])
 
   useEffect(() => {
-    ; (async () => {
-      const session = (await supabase.auth.getSession()).data.session
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
 
-      if (!session) {
+      if (!user) {
         return router.push("/login")
-      } else {
-        await fetchWorkspaceData(workspaceId)
       }
-    })()
-  }, [fetchWorkspaceData, router, workspaceId])
+
+      // Basic UUID validation to prevent 400 errors from Supabase
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(workspaceId)
+      if (!isUuid) {
+        console.warn(`[WorkspaceLayout] Invalid workspace ID: ${workspaceId}, redirecting home...`)
+        return router.push("/")
+      }
+
+      await fetchWorkspaceData(workspaceId)
+    }
+
+    checkAuth()
+  }, [fetchWorkspaceData, router, workspaceId, supabase.auth])
+
 
   useEffect(() => {
     ; (async () => await fetchWorkspaceData(workspaceId))()

@@ -16,13 +16,21 @@ import {
     IconUsers,
     IconPaperclip,
     IconPhoto,
-    IconArrowNarrowRight
+    IconArrowNarrowRight,
+    IconSparkles
 } from "@tabler/icons-react"
 import { FC, useContext, useState, useMemo } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { TYPOGRAPHY } from "@/lib/design-system"
 import { MOTHER_OF_SOULS_ID } from "@/lib/forge/is-mother-chat"
+import { useParams } from "next/navigation"
+import { useEffect as useReactEffect } from "react"
+import { toast } from "sonner"
+import { getIsFollowing, followPersona, unfollowPersona } from "@/db/character-follows"
+import { getCommentsByPersonaId, postComment } from "@/db/comments"
+import { getSimilarPersonas } from "@/db/discovery"
+
 
 interface CharacterPanelProps {
     width?: number
@@ -42,9 +50,20 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
     onClose
 }) => {
     const { selectedPersona, setIsCharacterPanelOpen, isCharacterPanelOpen, profile } = useContext(RemrinContext)
+    const params = useParams()
+    const locale = params.locale as string
+
     const [activeTab, setActiveTab] = useState<TabId>("comments")
     const [isFollowing, setIsFollowing] = useState(false)
+    const [isFollowLoading, setIsFollowLoading] = useState(false)
     const [commentText, setCommentText] = useState("")
+    const [comments, setComments] = useState<any[]>([])
+    const [isLoadingComments, setIsLoadingComments] = useState(false)
+    const [similarPersonas, setSimilarPersonas] = useState<any[]>([])
+    const [isLoadingSimilar, setIsLoadingSimilar] = useState(false)
+    const [commentCount, setCommentCount] = useState(0)
+    const [isSparking, setIsSparking] = useState(false)
+
 
     const handleClose = () => {
         if (onClose) {
@@ -57,6 +76,143 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
     const handleOpen = () => {
         setIsCharacterPanelOpen(true)
     }
+
+    // Fetch initial data
+    useReactEffect(() => {
+        if (!selectedPersona || !isCharacterPanelOpen) return
+
+        const fetchData = async () => {
+            // Check follow status
+            if (profile) {
+                const following = await getIsFollowing(profile.user_id, selectedPersona.id)
+                setIsFollowing(following)
+            }
+
+
+            // Fetch comments
+            setIsLoadingComments(true)
+            const personaComments = await getCommentsByPersonaId(selectedPersona.id)
+            setComments(personaComments)
+            setCommentCount(personaComments.length)
+            setIsLoadingComments(false)
+
+            // Fetch similar personas
+            setIsLoadingSimilar(true)
+            const similar = await getSimilarPersonas(selectedPersona.id)
+            setSimilarPersonas(similar)
+            setIsLoadingSimilar(false)
+        }
+
+        fetchData()
+    }, [selectedPersona?.id, isCharacterPanelOpen, profile?.id])
+
+    const handleFollowClick = async () => {
+        if (!profile || !selectedPersona) {
+            toast.error("Please log in to follow characters")
+            return
+        }
+
+        setIsFollowLoading(true)
+        try {
+            if (isFollowing) {
+                await unfollowPersona(profile.user_id, selectedPersona.id)
+                setIsFollowing(false)
+                toast.success(`Unfollowed ${selectedPersona.name}`)
+            } else {
+                await followPersona(profile.user_id, selectedPersona.id)
+                setIsFollowing(true)
+                toast.success(`Following ${selectedPersona.name}!`)
+            }
+        } catch (error: any) {
+
+            toast.error(error.message || "Failed to update follow status")
+        } finally {
+            setIsFollowLoading(false)
+        }
+    }
+
+    const handlePostComment = async () => {
+        if (!profile || !selectedPersona || !commentText.trim()) return
+
+        const loadingToast = toast.loading("Posting comment...")
+        try {
+            const newComment = await postComment(
+                profile.user_id,
+                selectedPersona.id,
+                commentText.trim()
+            )
+
+            // Refetch comments to show the new one with user profile
+            const personaComments = await getCommentsByPersonaId(selectedPersona.id)
+
+            setComments(personaComments)
+            setCommentCount(personaComments.length)
+            setCommentText("")
+            toast.success("Comment posted!", { id: loadingToast })
+        } catch (error: any) {
+            toast.error(error.message || "Failed to post comment", { id: loadingToast })
+        }
+    }
+
+
+    const handleSparkOfLife = async () => {
+        if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY && !profile) {
+            // Actually we check profile in generic way
+        }
+        if (!profile || !selectedPersona) return;
+
+        if (!confirm(`Ignite the Spark of Life for 50 Aether?\n\nThis will generate a living video portrait for ${selectedPersona.name}.`)) return;
+
+        setIsSparking(true)
+        const toastId = toast.loading("Igniting Spark of Life...")
+
+        try {
+            // 1. Create Prediction
+            const response = await fetch("/api/spark/create", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    persona_id: selectedPersona.id,
+                    image_url: selectedPersona.image_url
+                })
+            })
+
+            const data = await response.json()
+
+            if (!response.ok) throw new Error(data.error || "Failed to start generation")
+
+            toast.message("Spark ignited! Breathing life into soul...", { id: toastId })
+
+            // 2. Poll for Status
+            const predictionId = data.predictionId
+
+            const pollInterval = setInterval(async () => {
+                try {
+                    const statusRes = await fetch(`/api/spark/status?id=${predictionId}&personaId=${selectedPersona.id}`)
+                    const statusData = await statusRes.json()
+
+                    if (statusData.status === "succeeded") {
+                        clearInterval(pollInterval)
+                        setIsSparking(false)
+                        toast.success("It is alive! refresh to see changes.", { id: toastId })
+                        // Soft reload or update context would be better, but force refresh works 
+                        window.location.reload()
+                    } else if (statusData.status === "failed") {
+                        clearInterval(pollInterval)
+                        setIsSparking(false)
+                        toast.error("The spark faded. Please try again.", { id: toastId })
+                    }
+                } catch (e) {
+                    console.error("Polling error", e)
+                }
+            }, 3000)
+
+        } catch (error: any) {
+            setIsSparking(false)
+            toast.error(error.message, { id: toastId })
+        }
+    }
+
 
     // Get active tab index for sliding indicator
     const activeTabIndex = useMemo(() => {
@@ -87,6 +243,7 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
     const followers = ((selectedPersona as any).followers_count || 0).toLocaleString()
     const creatorUsername = (selectedPersona as any).creator_username || "remrin"
     const creatorId = (selectedPersona as any).creator_id || null
+    const isOwner = profile?.user_id === (selectedPersona as any).owner_id
 
     return (
         <div
@@ -95,9 +252,9 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
         >
             {/* Full-Bleed Hero Image Section - Talkie Style */}
             <div className="relative flex-1 min-h-[45%] max-h-[55%] w-full overflow-hidden">
-                {selectedPersona.id === MOTHER_OF_SOULS_ID ? (
+                {selectedPersona.id === MOTHER_OF_SOULS_ID || (selectedPersona as any).video_url ? (
                     <video
-                        src="/images/mother/mos_hero.mp4"
+                        src={selectedPersona.id === MOTHER_OF_SOULS_ID ? "/images/mother/mos_hero.mp4" : (selectedPersona as any).video_url}
                         autoPlay
                         loop
                         muted
@@ -149,7 +306,7 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
 
                     {/* Name with profile link */}
                     <Link
-                        href={`/character/${selectedPersona.id}`}
+                        href={`/${locale}/character/${selectedPersona.id}`}
                         className="flex items-center gap-1 group"
                     >
                         <span className="font-tiempos-headline text-lg font-semibold text-rp-text group-hover:text-rp-iris transition-colors">
@@ -158,6 +315,7 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                         <IconArrowNarrowRight size={18} className="text-rp-subtle group-hover:text-rp-iris transition-colors" />
                     </Link>
                 </div>
+
 
                 {/* Stats Row with Dividers - Talkie Style */}
                 <div className="flex items-center gap-2 mt-2 text-sm text-rp-subtle">
@@ -181,7 +339,7 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
 
                     {/* Creator link */}
                     <Link
-                        href={creatorId ? `/profile/${creatorId}` : "#"}
+                        href={creatorId ? `/${locale}/profile/${creatorId}` : "#"}
                         className="flex items-center gap-1 hover:text-rp-text transition-colors"
                     >
                         <span>By @{creatorUsername}</span>
@@ -191,14 +349,17 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                     </Link>
                 </div>
 
+
                 {/* Follow Button */}
                 <button
-                    onClick={() => setIsFollowing(!isFollowing)}
+                    onClick={handleFollowClick}
+                    disabled={isFollowLoading}
                     className={cn(
                         "mt-3 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-medium text-sm transition-all",
                         isFollowing
                             ? "bg-rp-love/20 text-rp-love hover:bg-rp-love/30"
-                            : "bg-rp-overlay/40 text-rp-text hover:bg-rp-overlay"
+                            : "bg-rp-overlay/40 text-rp-text hover:bg-rp-overlay",
+                        isFollowLoading && "opacity-50 cursor-not-allowed"
                     )}
                 >
                     {isFollowing ? (
@@ -213,6 +374,7 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                         </>
                     )}
                 </button>
+
             </div>
 
             {/* Icon-Only Tabs with Sliding Indicator - Talkie Style */}
@@ -253,8 +415,9 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                         {/* Comments Header */}
                         <div className="flex items-center gap-2 mb-4">
                             <span className="font-medium text-rp-text">Comments</span>
-                            <span className="text-rp-subtle text-sm">0</span>
+                            <span className="text-rp-subtle text-sm">{commentCount}</span>
                         </div>
+
 
                         {/* Comment Input Area - Talkie Style */}
                         <div className="bg-rp-base/50 rounded-xl">
@@ -280,7 +443,7 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                                 <textarea
                                     value={commentText}
                                     onChange={(e) => setCommentText(e.target.value)}
-                                    placeholder="Type your comment about this Talkie..."
+                                    placeholder="Type your comment about this soul..."
                                     className="flex-1 bg-transparent resize-none text-sm text-rp-text placeholder:text-rp-muted focus:outline-none min-h-[22px]"
                                     rows={1}
                                 />
@@ -290,13 +453,20 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                             <div className="flex items-center justify-between px-3 pb-3">
                                 {/* Left: Media buttons */}
                                 <div className="flex gap-1">
-                                    <button className="p-2 hover:bg-rp-overlay rounded-lg transition-colors">
+                                    <button
+                                        onClick={() => toast.info("File sharing coming soon!")}
+                                        className="p-2 hover:bg-rp-overlay rounded-lg transition-colors"
+                                    >
                                         <IconPaperclip size={18} className="text-rp-subtle" />
                                     </button>
-                                    <button className="p-2 hover:bg-rp-overlay rounded-lg transition-colors">
+                                    <button
+                                        onClick={() => toast.info("Image sharing coming soon!")}
+                                        className="p-2 hover:bg-rp-overlay rounded-lg transition-colors"
+                                    >
                                         <IconPhoto size={18} className="text-rp-subtle" />
                                     </button>
                                 </div>
+
 
                                 {/* Right: Cancel/Post buttons */}
                                 <div className="flex gap-2">
@@ -312,34 +482,110 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                                         size="sm"
                                         disabled={!commentText.trim()}
                                         className="bg-rp-iris hover:bg-rp-iris/80"
+                                        onClick={handlePostComment}
                                     >
                                         Post
                                     </Button>
                                 </div>
+
                             </div>
                         </div>
 
-                        {/* Empty State */}
-                        <div className="text-center py-12">
-                            <div className="inline-flex items-center justify-center size-16 rounded-full bg-rp-overlay mb-3">
-                                <IconMessage size={28} className="text-rp-muted" />
-                            </div>
-                            <p className="text-rp-muted text-sm">No comments yet.</p>
+                        {/* Comments List */}
+                        <div className="mt-6 space-y-4">
+                            {isLoadingComments ? (
+                                <div className="flex justify-center py-4">
+                                    <div className="size-6 border-2 border-rp-iris border-t-transparent rounded-full animate-spin" />
+                                </div>
+                            ) : comments.length > 0 ? (
+                                comments.map((comment) => (
+                                    <div key={comment.id} className="flex gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                                        <div className="relative size-8 shrink-0">
+                                            {comment.profiles?.image_url ? (
+                                                <Image
+                                                    src={comment.profiles.image_url}
+                                                    alt={comment.profiles.username}
+                                                    fill
+                                                    sizes="32px"
+                                                    className="rounded-full object-cover"
+                                                />
+                                            ) : (
+                                                <div className="size-8 rounded-full bg-rp-overlay flex items-center justify-center">
+                                                    <IconUser size={16} className="text-rp-subtle" />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="flex-1">
+                                            <div className="flex items-center gap-2 mb-0.5">
+                                                <span className="text-xs font-bold text-rp-text">
+                                                    {comment.profiles?.display_name || comment.profiles?.username || "Researcher"}
+                                                </span>
+                                                <span className="text-[10px] text-rp-muted">
+                                                    {new Date(comment.created_at).toLocaleDateString()}
+                                                </span>
+                                            </div>
+                                            <p className="text-xs text-rp-subtle bg-rp-overlay/30 p-2 rounded-lg rounded-tl-none">
+                                                {comment.comment_text}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                ))
+                            ) : (
+                                /* Empty State */
+                                <div className="text-center py-8">
+                                    <div className="inline-flex items-center justify-center size-12 rounded-full bg-rp-overlay mb-3">
+                                        <IconMessage size={20} className="text-rp-muted" />
+                                    </div>
+                                    <p className="text-rp-muted text-xs">No comments yet.</p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}
+
 
                 {/* Similar Characters Tab */}
                 {activeTab === "similar" && (
                     <div className="p-4">
-                        <div className="text-center py-12">
-                            <div className="inline-flex items-center justify-center size-16 rounded-full bg-rp-overlay mb-3">
-                                <IconUsers size={28} className="text-rp-muted" />
+                        {isLoadingSimilar ? (
+                            <div className="flex justify-center py-12">
+                                <div className="size-8 border-2 border-rp-iris border-t-transparent rounded-full animate-spin" />
                             </div>
-                            <p className="text-rp-muted text-sm">Similar characters will appear here.</p>
-                        </div>
+                        ) : similarPersonas.length > 0 ? (
+                            <div className="grid grid-cols-2 gap-3">
+                                {similarPersonas.map((p) => (
+                                    <Link
+                                        key={p.id}
+                                        href={`/${locale}/chat/${p.id}`}
+                                        className="group relative aspect-[3/4] rounded-xl overflow-hidden bg-rp-overlay transition-all hover:ring-2 hover:ring-rp-iris shadow-lg"
+                                    >
+                                        <Image
+                                            src={p.image_url || "/images/rem_hero.webp"}
+                                            alt={p.name}
+                                            fill
+                                            sizes="150px"
+                                            className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                                        <div className="absolute bottom-2 left-2 right-2">
+                                            <div className="text-[10px] font-bold text-white truncate">{p.name}</div>
+                                            <div className="text-[8px] text-white/70 truncate">{p.category || "Soul"}</div>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-12">
+                                <div className="inline-flex items-center justify-center size-16 rounded-full bg-rp-overlay mb-3">
+                                    <IconUsers size={28} className="text-rp-muted" />
+                                </div>
+                                <p className="text-rp-muted text-sm">Similar characters will appear here.</p>
+                            </div>
+                        )}
                     </div>
                 )}
+
 
                 {/* Settings Tab */}
                 {activeTab === "settings" && (
@@ -348,6 +594,36 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
 
                         {/* Settings Buttons */}
                         <div className="space-y-3">
+                            {/* Spark of Life - ONLY FOR OWNER AND IF NO VIDEO */}
+                            {isOwner && !(selectedPersona as any).video_url && (
+                                <button
+                                    onClick={handleSparkOfLife}
+                                    disabled={isSparking}
+                                    className="w-full relative overflow-hidden flex items-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-r from-rp-rose/20 to-rp-iris/20 border border-rp-rose/20 hover:border-rp-iris/50 transition-all group"
+                                >
+                                    <div className="flex items-center justify-center size-10 rounded-lg bg-rp-rose/20 shadow-inner">
+                                        <IconSparkles size={20} className={isSparking ? "text-rp-rose animate-spin" : "text-rp-rose"} />
+                                    </div>
+                                    <div className="flex-1 text-left">
+                                        <div className="flex items-center gap-2">
+                                            <div className="text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-rp-rose to-rp-iris">
+                                                Spark of Life
+                                            </div>
+                                            <span className="text-[10px] bg-rp-overlay px-1.5 py-0.5 rounded text-rp-muted">50 Aether</span>
+                                        </div>
+                                        <div className="text-xs text-rp-muted">Animate this portrait with AI</div>
+                                    </div>
+                                    {isSparking ? (
+                                        <div className="size-4 border-2 border-rp-iris border-t-transparent rounded-full animate-spin" />
+                                    ) : (
+                                        <IconArrowNarrowRight size={18} className="text-rp-subtle group-hover:text-rp-text transition-colors" />
+                                    )}
+
+                                    {/* Shimmer effect */}
+                                    <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                                </button>
+                            )}
+
                             {/* Chat Settings Button */}
                             <button
                                 onClick={() => {

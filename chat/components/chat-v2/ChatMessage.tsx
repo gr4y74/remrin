@@ -23,6 +23,10 @@ import { isMotherOfSouls, isVoiceSelectionPrompt } from '@/lib/forge/is-mother-c
 import { SoulRevealData } from '@/lib/forge/tool-handlers'
 import { useChatEngine } from './ChatEngine'
 import { AVAILABLE_VOICES } from '@/lib/voice/config'
+import { RemrinContext } from '@/context/context'
+import { useContext } from 'react'
+import Link from 'next/link'
+
 
 interface ChatMessageProps {
     message: ChatMessageContent
@@ -44,8 +48,10 @@ export const ChatMessage = memo(function ChatMessage({
     const [copied, setCopied] = useState(false)
     const [displayedContent, setDisplayedContent] = useState('')
     const { sendMessage } = useChatEngine()
+    const { profile } = useContext(RemrinContext)
     const [selectedVoiceId, setSelectedVoiceId] = useState<string | undefined>((message.metadata as any)?.selectedVoiceId)
     const isUser = message.role === 'user'
+
 
     // Typing animation state
     const fullContentRef = useRef(message.content)
@@ -286,8 +292,18 @@ export const ChatMessage = memo(function ChatMessage({
                     }
                 `}
             >
+                {/* User Name - Show for user messages */}
+                {isUser && (
+                    <div className="flex items-center justify-end gap-2 mb-1">
+                        <span className="text-[10px] font-bold text-rp-iris uppercase tracking-widest">
+                            {profile?.display_name || profile?.username || "You"}
+                        </span>
+                    </div>
+                )}
+
                 {/* Name - Only for assistant */}
                 {!isUser && (
+
                     <div className="flex items-center gap-2 mb-1">
                         <span className="text-xs font-medium text-rp-text/80">
                             {personaName || 'Remrin'}
@@ -360,11 +376,26 @@ export const ChatMessage = memo(function ChatMessage({
             {/* Avatar - Only show for user on right side */}
             {isUser && (
                 <div className="shrink-0 self-end mb-1">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-rp-iris/30 text-rp-iris border border-rp-iris/40">
-                        <IconUser size={18} />
-                    </div>
+                    <Link href={profile ? `/profile/${profile.id}` : "#"}>
+                        {profile?.image_url ? (
+                            <div className="relative h-8 w-8 overflow-hidden rounded-full ring-1 ring-rp-iris/40">
+                                <Image
+                                    src={profile.image_url}
+                                    alt={profile.display_name || profile.username || "You"}
+                                    fill
+                                    sizes="32px"
+                                    className="object-cover"
+                                />
+                            </div>
+                        ) : (
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-rp-iris/30 text-rp-iris border border-rp-iris/40">
+                                <IconUser size={18} />
+                            </div>
+                        )}
+                    </Link>
                 </div>
             )}
+
         </div>
     )
 })

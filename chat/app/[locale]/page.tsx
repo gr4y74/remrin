@@ -231,7 +231,7 @@ export default function HomePage() {
       <FeaturedPremiumRow onPersonaClick={handlePersonaClick} />
 
       {/* Section 6: Explore All Souls - Updated with gacha-style cards */}
-      <section className="relative mt-8" data-section="explore-souls">
+      <section id="explore-souls" className="relative mt-8" data-section="explore-souls">
         <div className="mb-4 flex flex-col items-center gap-2 px-6">
           <h2 className="font-tiempos-headline font-semibold inline-flex items-center gap-2" style={{ fontSize: '40px', color: headingColor }}>
             <IconSparkles size={24} className="text-purple-400" />
@@ -239,7 +239,7 @@ export default function HomePage() {
             <IconSparkles size={24} className="text-purple-400" />
           </h2>
           <Link
-            href="/discover"
+            href="#explore-souls"
             className="flex items-center gap-1 text-sm text-purple-400 transition-colors hover:text-purple-300"
           >
             View all

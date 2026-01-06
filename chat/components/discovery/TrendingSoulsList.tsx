@@ -31,9 +31,10 @@ export function TrendingSoulsList({ onPersonaClick, className }: TrendingSoulsLi
 
                 const { data, error } = await supabase
                     .from("personas")
-                    .select("id, name, description, image_url, message_count, follower_count")
+                    .select("id, name, description, image_url")
                     .eq("visibility", "PUBLIC")
                     .limit(8)
+
 
                 if (!error && data) {
                     // Add random counts for demo if fields are missing
@@ -135,8 +136,10 @@ export function TrendingSoulsList({ onPersonaClick, className }: TrendingSoulsLi
                                         src={persona.image_url}
                                         alt={persona.name}
                                         fill
+                                        sizes="48px"
                                         className="object-cover"
                                     />
+
                                 ) : (
                                     <div className="flex size-full items-center justify-center bg-gradient-to-br from-rp-iris/50 to-rp-rose/50">
                                         <span className="text-sm font-bold text-rp-text">

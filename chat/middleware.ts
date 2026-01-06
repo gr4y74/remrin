@@ -10,26 +10,25 @@ export async function middleware(request: NextRequest) {
   try {
     const { supabase, response } = createClient(request)
 
-    const session = await supabase.auth.getSession()
+    const { data: { session } } = await supabase.auth.getSession()
 
-    const redirectToChat = session && request.nextUrl.pathname === "/"
+    const isRootPath = request.nextUrl.pathname === "/" || request.nextUrl.pathname === "/en" || request.nextUrl.pathname === "/zh"
 
-    if (redirectToChat) {
+    if (session && isRootPath) {
       const { data: homeWorkspace, error } = await supabase
         .from("workspaces")
         .select("*")
-        .eq("user_id", session.data.session?.user.id)
+        .eq("user_id", session.user.id)
         .eq("is_home", true)
         .single()
 
-      if (!homeWorkspace) {
-        throw new Error(error?.message)
+      if (homeWorkspace) {
+        return NextResponse.redirect(
+          new URL(`/${homeWorkspace.id}/chat`, request.url)
+        )
       }
-
-      return NextResponse.redirect(
-        new URL(`/${homeWorkspace.id}/chat`, request.url)
-      )
     }
+
 
     return response
   } catch (e) {

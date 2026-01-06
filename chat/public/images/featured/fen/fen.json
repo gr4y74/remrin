@@ -1,0 +1,31 @@
+{
+  "completed_at": "2026-01-06T12:49:54.407906Z",
+  "created_at": "2026-01-06T12:47:53.425000Z",
+  "data_removed": false,
+  "error": null,
+  "id": "kd940evta5rmy0cvjdcv7d0k8c",
+  "input": {
+    "fps": 24,
+    "image": "https://replicate.delivery/pbxt/OMdHU1sPW2XsNdeplT6pXyOA1S1gb0xiY6C5pg0KSvU60agf/fen.png",
+    "prompt": "Animate the attached image: she flaps her wings and rises above the cupcakes, then she lands, gives a happy growl and then starts to eat the cupcakes. Then she turns her face and smiles with cupcake frosting on her face. ",
+    "duration": 12,
+    "resolution": "1080p",
+    "aspect_ratio": "16:9",
+    "camera_fixed": false
+  },
+  "logs": "Using seed: 270780230\nGenerating video...\nGenerated video in 104.1sec\nDownloading 32212054 bytes\nDownloaded 30.72MB in 13.65sec",
+  "metrics": {
+    "predict_time": 120.949685678,
+    "total_time": 120.982906633
+  },
+  "output": "https://replicate.delivery/xezq/544sdTe4tyzjEylY6kvzAfM6PeRQLDj8XTr6pDqFKRKfutqXB/tmpy8o6t89e.mp4",
+  "started_at": "2026-01-06T12:47:53.458220Z",
+  "status": "succeeded",
+  "urls": {
+    "stream": "https://stream.replicate.com/v1/files/jbxs-7ulwxoffvsk4ir4jyrsolc6yvpcejhujzmm6csd24oovh4fsoi6q",
+    "get": "https://api.replicate.com/v1/predictions/kd940evta5rmy0cvjdcv7d0k8c",
+    "cancel": "https://api.replicate.com/v1/predictions/kd940evta5rmy0cvjdcv7d0k8c/cancel",
+    "web": "https://replicate.com/p/kd940evta5rmy0cvjdcv7d0k8c"
+  },
+  "version": "hidden"
+}

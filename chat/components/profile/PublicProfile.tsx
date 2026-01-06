@@ -52,11 +52,13 @@ export function PublicProfile() {
     const [loading, setLoading] = useState(true)
     const [profile, setProfile] = useState<UserProfile | null>(null)
     const [personas, setPersonas] = useState<Persona[]>([])
+    const [followedPersonas, setFollowedPersonas] = useState<Persona[]>([])
     const [stats, setStats] = useState<ProfileStats>({
         personas_created: 0,
         total_messages: 0,
         followers: 0
     })
+
     const [isOwnProfile, setIsOwnProfile] = useState(false)
 
     const loadProfile = useCallback(async () => {
@@ -65,22 +67,22 @@ export function PublicProfile() {
             const { data: { user } } = await supabase.auth.getUser()
             setIsOwnProfile(user?.id === userId)
 
-            // Load profile
+            // Load profile - Use user_id column
             const { data: profileData } = await supabase
                 .from('profiles')
                 .select('*')
-                .eq('id', userId)
+                .eq('user_id', userId)
                 .single()
 
             if (profileData) {
                 setProfile(profileData)
             }
 
-            // Load public personas
+            // Load public personas created by user
             const { data: personasData } = await supabase
                 .from('personas')
                 .select('*')
-                .eq('user_id', userId)
+                .eq('owner_id', userId) // Using owner_id as per personas schema
                 .eq('visibility', 'PUBLIC')
                 .order('created_at', { ascending: false })
 
@@ -89,15 +91,36 @@ export function PublicProfile() {
                 setStats(prev => ({ ...prev, personas_created: personasData.length }))
             }
 
-            // Load stats (you can expand this with actual data)
-            // For now using placeholder values
-            setStats(prev => ({
-                ...prev,
-                total_messages: 0, // TODO: Get from message count
-                followers: 0 // TODO: Get from followers table
-            }))
+            // Load personas followed by user
+            const { data: followedData } = await supabase
+                .from('character_follows')
+                .select(`
+                    persona_id,
+                    personas (*)
+                `)
+                .eq('user_id', userId)
+
+            if (followedData) {
+                const followed = followedData.map(f => (f as any).personas).filter(Boolean)
+                setFollowedPersonas(followed)
+            }
+
+            // Load follower count for this user (how many people follow their characters)
+            // This is complex, so let's just use the count of follows for this user if we had a user_follows table, 
+            // but the user wants follow characters. Maybe "followers" means people following THIS user?
+            // For now, let's get the number of people following this user's personas.
+            if (personasData && personasData.length > 0) {
+                const personaIds = personasData.map(p => p.id)
+                const { count } = await supabase
+                    .from('character_follows')
+                    .select('*', { count: 'exact', head: true })
+                    .in('persona_id', personaIds)
+
+                setStats(prev => ({ ...prev, followers: count || 0 }))
+            }
 
         } catch (error) {
+
             console.error('Error loading profile:', error)
         } finally {
             setLoading(false)
@@ -226,7 +249,7 @@ export function PublicProfile() {
                     </div>
                 </div>
 
-                {/* Created Personas */}
+                {/* Created Souls */}
                 <div>
                     <h2 className="mb-6 font-tiempos-headline text-2xl font-bold text-rp-text">
                         Created Souls
@@ -259,7 +282,43 @@ export function PublicProfile() {
                         </div>
                     )}
                 </div>
+
+                {/* Followed Souls */}
+                <div className="mt-12">
+                    <h2 className="mb-6 font-tiempos-headline text-2xl font-bold text-rp-text">
+                        Followed Souls
+                    </h2>
+
+                    {followedPersonas.length > 0 ? (
+                        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                            {followedPersonas.map((persona) => (
+                                <EtherealCard
+                                    key={persona.id}
+                                    id={persona.id}
+                                    name={persona.name}
+                                    description={persona.description}
+                                    imageUrl={persona.image_url}
+                                    rarity={persona.is_premium ? 'legendary' : 'common'}
+                                    isFeatured={persona.is_featured}
+                                    onClick={() => window.location.href = `/chat/${persona.id}`}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-rp-muted flex flex-col items-center justify-center rounded-xl border border-rp-highlight-med bg-rp-surface py-16 text-center">
+                            <IconHeart className="mb-4 size-16 text-rp-muted/50" />
+                            <p className="text-lg font-medium">No souls followed yet</p>
+                            <p className="text-sm">
+                                {isOwnProfile
+                                    ? "Explore and follow souls to see them here!"
+                                    : "This user hasn't followed any souls yet."}
+                            </p>
+                        </div>
+                    )}
+                </div>
+
             </div>
         </div>
+        </div >
     )
 }
