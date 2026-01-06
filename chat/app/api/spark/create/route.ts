@@ -64,16 +64,15 @@ export async function POST(request: Request) {
         })
 
         const prediction = await replicate.predictions.create({
-            model: "bytedance/seedance-1-pro",
+            version: "39ed52f2a71e648ead4dffd7a284392cbb9f07db96a1e808eb94344eb7943c86", // SVD XT 1.1
             input: {
-                source_image: image_url,
-                // Removing persona.name from prompt to avoid literal interpretation of names like "Cupcake" (which resulted in a literal cupcake)
-                // specific instruction for seedance to rely on the image
-                prompt: `A living breathing portrait of ${persona.description || "a character"}, subtle breathing motion, high quality, 8k, photorealistic`,
-                fps: 24,
-                width: 512,
-                height: 896,
-                motion_intensity: 4
+                input_image: image_url,
+                video_length: "25_frames_with_svd_xt",
+                sizing_strategy: "maintain_aspect_ratio",
+                frames_per_second: 6,
+                motion_bucket_id: 127, // Standard motion
+                cond_aug: 0.02, // Low noise = high fidelity to original image
+                decoding_t: 7
             }
         })
 
