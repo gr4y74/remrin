@@ -2,7 +2,7 @@ import { supabase } from "@/lib/supabase/browser-client"
 
 export const getCommentsByPersonaId = async (personaId: string) => {
     const { data, error } = await supabase
-        .from("persona_comments")
+        .from("persona_comments" as any)
         .select(`
       *,
       profiles (
