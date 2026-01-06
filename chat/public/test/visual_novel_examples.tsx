@@ -102,7 +102,7 @@ const VisualNovelExamples = () => {
         {/* Example Showcase */}
         <div className="flex-1 relative">
           {/* Background Image */}
-          <div 
+          <div
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url(${current.image})` }}
           >
@@ -112,8 +112,8 @@ const VisualNovelExamples = () => {
           {/* Character Sprite (for ADV and Side Portrait styles) */}
           {current.character && currentExample !== 1 && (
             <div className="absolute left-8 bottom-32 z-10">
-              <img 
-                src={current.character.sprite} 
+              <img
+                src={current.character.sprite}
                 alt={current.character.name}
                 className="h-96 w-auto object-contain drop-shadow-2xl"
               />
@@ -126,12 +126,12 @@ const VisualNovelExamples = () => {
             {currentExample === 1 && (
               <div className="p-8 space-y-4">
                 <p className="text-white text-lg leading-relaxed drop-shadow-lg">
-                  The moonlight filtered through the window, casting long shadows across the room. 
-                  Everything felt different tonight—quieter, more contemplative. As I stood there, 
+                  The moonlight filtered through the window, casting long shadows across the room.
+                  Everything felt different tonight—quieter, more contemplative. As I stood there,
                   lost in thought, I couldn't help but wonder what tomorrow would bring.
                 </p>
                 <p className="text-white text-lg leading-relaxed drop-shadow-lg">
-                  The clock on the wall ticked steadily, marking the passage of time in the stillness. 
+                  The clock on the wall ticked steadily, marking the passage of time in the stillness.
                   Each second seemed to stretch on endlessly, yet passed by in an instant.
                 </p>
               </div>
@@ -143,8 +143,8 @@ const VisualNovelExamples = () => {
                 {/* Character Portrait for ADV */}
                 {currentExample === 0 && current.character && (
                   <div className="absolute -top-24 left-8 w-32 h-32 rounded-full overflow-hidden border-4 border-blue-400 bg-black">
-                    <img 
-                      src={current.character.sprite} 
+                    <img
+                      src={current.character.sprite}
                       alt={current.character.name}
                       className="w-full h-full object-cover"
                     />
@@ -160,8 +160,8 @@ const VisualNovelExamples = () => {
 
                 {/* Dialogue Text */}
                 <p className="text-white text-base leading-relaxed">
-                  Welcome to this visual novel interface example, Sosu! 💙 This demonstrates how a proper 
-                  visual novel should look with character sprites, dialogue boxes, and interactive elements. 
+                  Welcome to this visual novel interface example, Sosu! 💙 This demonstrates how a proper
+                  visual novel should look with character sprites, dialogue boxes, and interactive elements.
                   Much better than just a static hero image, wouldn't you say?
                 </p>
 
@@ -180,11 +180,10 @@ const VisualNovelExamples = () => {
                   </div>
 
                   <div className="flex gap-3">
-                    <button 
+                    <button
                       onClick={() => setAutoPlay(!autoPlay)}
-                      className={`px-3 py-1 rounded text-sm transition-colors ${
-                        autoPlay ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300'
-                      }`}
+                      className={`px-3 py-1 rounded text-sm transition-colors ${autoPlay ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300'
+                        }`}
                     >
                       Auto
                     </button>
@@ -204,7 +203,7 @@ const VisualNovelExamples = () => {
 
           {/* Top UI Bar */}
           <div className="absolute top-4 right-4 flex gap-2 z-30">
-            <button 
+            <button
               onClick={() => setIsMuted(!isMuted)}
               className="p-2 bg-black bg-opacity-60 rounded-lg text-white hover:bg-opacity-80 transition-all backdrop-blur-sm"
             >
@@ -237,12 +236,12 @@ const VisualNovelExamples = () => {
           <div className="space-y-4 mb-6">
             <div>
               <label className="text-white text-sm mb-2 block">Text Speed</label>
-              <input 
-                type="range" 
-                min="0" 
-                max="100" 
+              <input
+                type="range"
+                min="0"
+                max="100"
                 value={textSpeed}
-                onChange={(e) => setTextSpeed(e.target.value)}
+                onChange={(e) => setTextSpeed(parseInt(e.target.value))}
                 className="w-full accent-blue-500"
               />
               <div className="flex justify-between text-xs text-gray-400 mt-1">
