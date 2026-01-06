@@ -38,7 +38,7 @@ export function TrendingSoulsList({ onPersonaClick, className }: TrendingSoulsLi
 
                 if (!error && data) {
                     // Add random counts for demo if fields are missing
-                    const withCounts: TrendingPersona[] = data.map(p => ({
+                    const withCounts: TrendingPersona[] = data.map((p: any) => ({
                         id: p.id,
                         name: p.name,
                         description: p.description,
