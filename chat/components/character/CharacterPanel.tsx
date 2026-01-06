@@ -134,7 +134,7 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
     }
 
     const handlePostComment = async () => {
-        if (!profile || !selectedPersona || !commentText.trim()) return
+        if (!profile || !profile.user_id || !selectedPersona || !commentText.trim()) return
 
         const loadingToast = toast.loading("Posting comment...")
         try {
