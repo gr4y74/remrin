@@ -397,7 +397,7 @@ export default function MediaManagerPage() {
                                                 </div>
 
                                                 <div className="text-xs text-rp-muted text-center max-w-xs mx-auto">
-                                                    Tip: Use the &quot;Spark of Life&quot; feature to generate videos from images automatically (coming soon).
+                                                    Tip: Use the &quot;Spark of Life&quot; feature to generate videos from images automatically.
                                                 </div>
                                             </div>
                                         </div>

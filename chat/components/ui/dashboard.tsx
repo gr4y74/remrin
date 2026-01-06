@@ -103,7 +103,7 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
             priority
           />
           {/* Overlay for readability - Lightened for better vibrancy */}
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
+          <div className="absolute inset-0 bg-black/20" />
         </div>
       )}
 

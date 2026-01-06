@@ -30,6 +30,7 @@ import { toast } from "sonner"
 import { getIsFollowing, followPersona, unfollowPersona } from "@/db/character-follows"
 import { getCommentsByPersonaId, postComment } from "@/db/comments"
 import { getSimilarPersonas } from "@/db/discovery"
+import { updatePersonaImageActions } from "@/app/actions/update-persona-image"
 
 
 interface CharacterPanelProps {
@@ -623,6 +624,52 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
 
                                     {/* Shimmer effect */}
                                     <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                                </button>
+                            )}
+
+                            {/* Change Hero Image Button (Owner Only) */}
+                            {isOwner && (
+                                <button
+                                    onClick={() => {
+                                        const fileInput = document.getElementById('hero-image-upload') as HTMLInputElement
+                                        fileInput?.click()
+                                    }}
+                                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-rp-overlay/40 hover:bg-rp-overlay transition-colors group"
+                                >
+                                    <div className="flex items-center justify-center size-10 rounded-lg bg-emerald-500/20">
+                                        <IconPhoto size={20} className="text-emerald-500" />
+                                    </div>
+                                    <div className="flex-1 text-left">
+                                        <div className="text-sm font-medium text-rp-text">Change Hero Image</div>
+                                        <div className="text-xs text-rp-muted">Update character portrait</div>
+                                    </div>
+                                    <IconArrowNarrowRight size={18} className="text-rp-subtle group-hover:text-rp-text transition-colors" />
+                                    <input
+                                        type="file"
+                                        id="hero-image-upload"
+                                        className="hidden"
+                                        accept="image/*"
+                                        onChange={async (e) => {
+                                            const file = e.target.files?.[0]
+                                            if (!file) return
+
+                                            const toastId = toast.loading("Uploading new image...")
+                                            try {
+                                                const formData = new FormData()
+                                                formData.append('file', file)
+                                                formData.append('personaId', selectedPersona.id)
+
+                                                const result = await updatePersonaImageActions(formData)
+
+                                                if (result.error) throw new Error(result.error)
+
+                                                toast.success("Hero image updated!", { id: toastId })
+                                                window.location.reload() // Refresh to show new image
+                                            } catch (err: any) {
+                                                toast.error(err.message, { id: toastId })
+                                            }
+                                        }}
+                                    />
                                 </button>
                             )}
 
