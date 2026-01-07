@@ -184,7 +184,11 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
 
             if (!response.ok) throw new Error(data.error || "Failed to start generation")
 
-            toast.message("Spark ignited! Breathing life into soul...", { id: toastId })
+            toast.message("Spark ignited! Breathing life into soul...", {
+                description: "This may take several minutes, please be patient.",
+                id: toastId,
+                duration: 10000 // Show for longer
+            })
 
             // 2. Poll for Status
             const predictionId = data.predictionId
