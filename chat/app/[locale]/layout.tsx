@@ -114,7 +114,7 @@ export default async function RootLayout({
             <div className="flex min-h-screen">
               <GlobalState>
                 {/* Desktop Sidebar - Hidden on mobile */}
-                <MinimalSidebar />
+                <MinimalSidebar user={session?.user} />
 
                 {/* Main Content - Offset by sidebar on desktop, full width on mobile */}
                 <main className="flex-1 md:ml-20 pb-20 md:pb-0">

@@ -58,12 +58,11 @@ export function CharacterProfilePage({
             // Get current user
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) {
-                // Redirect to login if not authenticated
                 router.push("/login")
                 return
             }
 
-            // Get user's default workspace (first one they're a member of)
+            // Get user's default workspace
             const { data: workspaces } = await supabase
                 .from("workspaces")
                 .select("id")
@@ -77,28 +76,8 @@ export function CharacterProfilePage({
                 return
             }
 
-            // Create a chat with this persona
-            const { data: chat, error } = await supabase
-                .from("chats")
-                .insert({
-                    user_id: user.id,
-                    workspace_id: workspaces.id,
-                    name: `Chat with ${persona.name}`,
-                    model: "deepseek-chat",
-                    prompt: persona.systemPrompt || persona.description || `You are ${persona.name}. Be helpful and stay in character.`,
-                    temperature: 0.7,
-                    context_length: 4096,
-                    include_profile_context: true,
-                    include_workspace_instructions: false,
-                    embeddings_provider: "openai"
-                })
-                .select()
-                .single()
-
-            if (error) throw error
-
-            // Navigate to the chat
-            router.push(`/${workspaces.id}/chat/${chat.id}`)
+            // Redirect to chat with persona param
+            router.push(`/${workspaces.id}/chat?persona=${persona.id}`)
         } catch (error) {
             console.error("Error starting chat:", error)
             setIsStartingChat(false)

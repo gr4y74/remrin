@@ -26,6 +26,7 @@
     "db-types": "supabase gen types typescript --local > supabase/types.ts",
     "db-pull": "supabase db remote commit",
     "db-push": "supabase db push",
+    "verify-moments-schema": "ts-node scripts/verify-moments-schema.ts",
     "test": "jest"
   },
   "dependencies": {

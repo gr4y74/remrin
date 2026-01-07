@@ -1,98 +1,123 @@
 import { cookies } from "next/headers"
 import { createClient } from "@/lib/supabase/server"
-import { MomentsGallery } from "@/components/moments"
+import { FeedPageClient } from "./FeedPageClient"
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
     title: "Soul Feed | Remrin",
-    description: "Catch up with the latest moments from your favorite souls. See what they've been up to and join the conversation.",
+    description: "Discover moments from souls across the realm. Watch, react, and engage with the community.",
     openGraph: {
         title: "Soul Feed | Remrin",
-        description: "Catch up with the latest moments from your favorite souls. See what they've been up to and join the conversation."
+        description: "Discover moments from souls across the realm. Watch, react, and engage with the community."
     }
 }
 
 const PAGE_SIZE = 12
 
-export default async function FeedPage() {
+export default async function FeedPage({
+    searchParams
+}: {
+    searchParams: Promise<{ filter?: string; layout?: string }>
+}) {
     const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
-    // Get current user for likes check
+    const params = await searchParams
+    const filter = params.filter || 'for-you'
+    const layout = params.layout || 'grid'
+
+    // Get current user
     const { data: { user } } = await supabase.auth.getUser()
 
     // Fetch initial moments
-    const { data: momentsData, error } = await supabase
+    let query = supabase
         .from("moments")
         .select(`
             id,
-            image_url,
-            caption,
-            likes_count,
-            created_at,
-            is_pinned,
             persona_id,
+            created_by_user_id,
+            media_type,
+            image_url,
+            video_url,
+            thumbnail_url,
+            duration_seconds,
+            caption,
+            created_at,
+            likes_count,
+            view_count,
+            is_pinned,
+            reactions_summary,
             personas!inner(id, name, image_url)
         `)
-        .order("is_pinned", { ascending: false })
-        .order("created_at", { ascending: false })
-        .range(0, PAGE_SIZE - 1)
+
+    // Apply filter
+    if (filter === 'trending') {
+        query = query
+            .order('view_count', { ascending: false })
+            .order('likes_count', { ascending: false })
+    } else {
+        query = query
+            .order('is_pinned', { ascending: false })
+            .order('created_at', { ascending: false })
+    }
+
+    query = query.range(0, PAGE_SIZE - 1)
+
+    const { data: momentsData, error } = await query
 
     if (error) {
         console.error("Error fetching moments:", error)
     }
 
-    // Check which moments the user has liked
-    let likedMomentIds: Set<string> = new Set()
+    // Get user's reactions
+    let userReactionsMap: Record<string, string[]> = {}
     if (user && momentsData && momentsData.length > 0) {
-        const { data: likesData } = await supabase
-            .from("moment_likes")
-            .select("moment_id")
+        const { data: reactions } = await supabase
+            .from("moment_reactions")
+            .select("moment_id, reaction_emoji")
             .eq("user_id", user.id)
             .in("moment_id", momentsData.map(m => m.id))
 
-        likedMomentIds = new Set(likesData?.map(l => l.moment_id) || [])
+        userReactionsMap = (reactions || []).reduce((acc, r) => {
+            if (!acc[r.moment_id]) acc[r.moment_id] = []
+            acc[r.moment_id].push(r.reaction_emoji)
+            return acc
+        }, {} as Record<string, string[]>)
     }
 
     const initialMoments = (momentsData || []).map((m) => {
-        // Handle both array and single object for personas relation
         const personaData = Array.isArray(m.personas) ? m.personas[0] : m.personas
         return {
             id: m.id,
-            imageUrl: m.image_url,
+            persona_id: m.persona_id,
+            created_by_user_id: m.created_by_user_id,
+            media_type: m.media_type as 'image' | 'video',
+            image_url: m.image_url,
+            video_url: m.video_url,
+            thumbnail_url: m.thumbnail_url,
+            duration_seconds: m.duration_seconds,
             caption: m.caption,
-            likesCount: m.likes_count,
-            isLiked: likedMomentIds.has(m.id),
-            createdAt: m.created_at,
-            isPinned: m.is_pinned,
+            created_at: m.created_at,
+            likes_count: m.likes_count,
+            view_count: m.view_count,
+            is_pinned: m.is_pinned,
+            reactions_summary: m.reactions_summary || {},
             persona: {
                 id: personaData?.id || m.persona_id,
                 name: personaData?.name || "Unknown",
-                imageUrl: personaData?.image_url || null
-            }
+                image_url: personaData?.image_url || null
+            },
+            userReactions: userReactionsMap[m.id] || []
         }
     })
 
-    const initialHasMore = initialMoments.length === PAGE_SIZE
-
     return (
-        <div className="bg-rp-base min-h-screen">
-            <div className="mx-auto max-w-7xl px-4 py-8">
-                <div className="mb-8 flex flex-col gap-2">
-                    <h1 className="font-tiempos-headline text-4xl font-bold text-rp-text md:text-5xl">
-                        Soul Feed
-                    </h1>
-                    <p className="text-rp-subtle text-lg">
-                        Discover the latest moments shared by Souls across the realm.
-                    </p>
-                </div>
-
-                <MomentsGallery
-                    initialMoments={initialMoments}
-                    initialHasMore={initialHasMore}
-                    pageSize={PAGE_SIZE}
-                />
-            </div>
-        </div>
+        <FeedPageClient
+            initialMoments={initialMoments}
+            initialFilter={filter}
+            initialLayout={layout}
+            hasMore={initialMoments.length === PAGE_SIZE}
+            user={user}
+        />
     )
 }

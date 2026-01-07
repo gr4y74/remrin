@@ -11,10 +11,12 @@ import { RemrinContext } from "@/context/context"
 import { IconCrown, IconLogin, IconUser, IconLogout, IconSettings, IconUserCircle } from "@tabler/icons-react"
 import { createClient } from "@/lib/supabase/client"
 import { User } from "@supabase/supabase-js"
+import i18nConfig from "@/i18nConfig"
 
 interface SidebarUserSectionProps {
     isExpanded: boolean
     onProfileClick?: () => void
+    initialUser?: User | null
 }
 
 /**
@@ -24,9 +26,9 @@ interface SidebarUserSectionProps {
  * - Logged out: Sign In button
  * - Logged in: Avatar + Subscribe/Upgrade CTA (or Pro badge if subscribed)
  */
-export function SidebarUserSection({ isExpanded, onProfileClick }: SidebarUserSectionProps) {
+export function SidebarUserSection({ isExpanded, onProfileClick, initialUser }: SidebarUserSectionProps) {
     const { profile } = useContext(RemrinContext)
-    const [user, setUser] = useState<User | null>(null)
+    const [user, setUser] = useState<User | null>(initialUser ?? null)
     const [showDropdown, setShowDropdown] = useState(false)
     const dropdownRef = useRef<HTMLDivElement>(null)
     const router = useRouter()
@@ -34,10 +36,12 @@ export function SidebarUserSection({ isExpanded, onProfileClick }: SidebarUserSe
 
     // Check auth status directly from Supabase
     useEffect(() => {
-        // Get initial session
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setUser(session?.user ?? null)
-        })
+        // Only fetch if we didn't receive an initial user or to update
+        if (!initialUser) {
+            supabase.auth.getSession().then(({ data: { session } }) => {
+                if (session?.user) setUser(session.user)
+            })
+        }
 
         // Listen for auth changes
         const {
@@ -72,7 +76,8 @@ export function SidebarUserSection({ isExpanded, onProfileClick }: SidebarUserSe
     }, [showDropdown])
 
     const pathname = usePathname()
-    const locale = pathname.split("/")[1] || "en"
+    const firstSegment = pathname.split("/")[1]
+    const locale = i18nConfig.locales.includes(firstSegment) ? firstSegment : i18nConfig.defaultLocale
 
     const handleSignOut = async () => {
         try {

@@ -45,14 +45,11 @@ const NAV_ITEMS: NavItem[] = [
     { icon: IconWallet, label: "Wallet", href: "/wallet" },
 ]
 
+interface MinimalSidebarProps {
+    user?: User | null
+}
 
-/**
- * MinimalSidebar - Talkie-AI inspired sidebar with:
- * - Craft a Soul button
- * - Recent chats list
- * - User section with avatar + Subscribe CTA
- */
-export function MinimalSidebar() {
+export function MinimalSidebar({ user }: MinimalSidebarProps) {
     const { resolvedTheme } = useTheme()
     const [mounted, setMounted] = useState(false)
     const [isExpanded, setIsExpanded] = useState(false)
@@ -100,6 +97,7 @@ export function MinimalSidebar() {
                             priority
                             className={cn(
                                 "h-[26px] w-auto transition-all duration-300",
+                                "opacity-100 scale-100",
                                 isExpanded ? "opacity-100 scale-100" : "absolute opacity-0 scale-90"
                             )}
                         />
@@ -191,7 +189,7 @@ export function MinimalSidebar() {
                 <div className="border-rp-muted/20 -mx-2 my-2 border-t" />
 
                 {/* Recent Chats Section */}
-                <SidebarRecentChats isExpanded={isExpanded} maxChats={8} showDemo={false} />
+                <SidebarRecentChats isExpanded={isExpanded} maxChats={20} showDemo={false} />
 
                 {/* Spacer pushes user section to bottom */}
                 <div className="flex-1" />
@@ -211,6 +209,7 @@ export function MinimalSidebar() {
                 <SidebarUserSection
                     isExpanded={isExpanded}
                     onProfileClick={() => setShowProfileSettings(true)}
+                    initialUser={user}
                 />
             </div>
 
