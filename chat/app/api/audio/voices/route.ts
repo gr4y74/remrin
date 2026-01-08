@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import { Voice } from '@/types/audio'; // Using existing type definition
 import { createClient } from '@/lib/supabase/server';
+import { cookies } from 'next/headers';
 
 // Static list of popular Edge TTS voices
 const EDGE_VOICES: Voice[] = [
@@ -135,7 +136,8 @@ export async function GET(request: Request) {
 
         // Handle Community Voices
         if (type === 'community') {
-            const supabase = createClient();
+            const cookieStore = await cookies();
+            const supabase = createClient(cookieStore);
 
             // Start building the query
             let query = supabase

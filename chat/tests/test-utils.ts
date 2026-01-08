@@ -26,7 +26,7 @@ export function setupGlobalRequest() {
             constructor(init?: any) {
                 if (init) {
                     if (init instanceof Headers) {
-                        init.forEach((v, k) => this.map.set(k, v));
+                        init.forEach((v: string, k: string) => this.map.set(k, v));
                     } else if (Array.isArray(init)) {
                         init.forEach(([k, v]) => this.map.set(k, v));
                     } else {

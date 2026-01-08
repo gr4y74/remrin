@@ -6,7 +6,8 @@ import { cookies } from 'next/headers';
 
 export async function POST(request: Request) {
     try {
-        const supabase = createClient();
+        const cookieStore = await cookies();
+        const supabase = createClient(cookieStore);
 
         // 1. Authenticate User
         const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -63,11 +64,11 @@ export async function POST(request: Request) {
         // Use the newly added cloneVoice method
         // If the method isn't available (runtime check), we fallback or error
         let voiceId: string;
-        if (typeof kokoro.cloneVoice === 'function') {
+        if (typeof (kokoro as any).cloneVoice === 'function') {
             // In a clearer implementation we might pass the publicUrl.
             // However, local Kokoro instance might perform better with a direct file path if we were running it on same FS.
             // Since we are likely in a containerized env, URL is best.
-            voiceId = await kokoro.cloneVoice(name, publicUrl);
+            voiceId = await (kokoro as any).cloneVoice(name, publicUrl);
         } else {
             // Fallback ID generation if provider doesn't support it yet
             voiceId = `kokoro_${user.id}_${Date.now()}`;

@@ -229,7 +229,7 @@ export function VoiceLibrary({ onSelectVoice }: VoiceLibraryProps) {
 
                     {filteredVoices.length === 0 && (
                         <div className="col-span-full py-12 text-center text-muted-foreground">
-                            No voices found matching "{query}"
+                            No voices found matching &quot;{query}&quot;
                         </div>
                     )}
                 </div>

@@ -378,8 +378,8 @@ export class AudioCacheManager {
             }, {} as Record<string, number>);
 
             const topVoices = Object.entries(voiceCounts)
-                .map(([voiceId, count]) => ({ voiceId, count }))
-                .sort((a: { count: number }, b: { count: number }) => b.count - a.count)
+                .map(([voiceId, count]) => ({ voiceId, count } as { voiceId: string; count: number }))
+                .sort((a: any, b: any) => b.count - a.count)
                 .slice(0, 10);
 
             return {

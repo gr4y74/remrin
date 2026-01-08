@@ -25,6 +25,8 @@ export interface Voice {
     tags?: string[];
     sampleRate?: number;
     description?: string;
+    isNeural?: boolean;
+    styles?: string[];
 }
 
 export interface VoiceFilter {

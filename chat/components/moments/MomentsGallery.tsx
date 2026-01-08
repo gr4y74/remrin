@@ -296,6 +296,9 @@ export function MomentsGallery({
         caption: m.caption,
         created_at: m.createdAt,
         likes_count: m.likesCount,
+        comments_count: 0, // Default to 0 as not currently in MomentData
+        shares_count: 0,
+        bookmarks_count: 0,
         view_count: 0,
         is_pinned: m.isPinned,
         reactions_summary: m.reactionsSummary || {},
@@ -362,6 +365,8 @@ export function MomentsGallery({
                     onLoadMore={loadMore}
                     hasMore={hasMore}
                     isLoading={isLoading}
+                    currentFilter="all"
+                    onFilterChange={() => { }}
                 />
             ) : (
                 <>

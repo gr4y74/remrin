@@ -164,7 +164,7 @@ export async function scheduledCacheWarming() {
 /**
  * Helper: Get top personas by usage
  */
-async function getTopPersonas(limit: number) {
+async function getTopPersonas(limit: number): Promise<{ id: string; voice_id?: string }[]> {
     // This would query your database for most-used personas
     // Placeholder implementation
     return [];

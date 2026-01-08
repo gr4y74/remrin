@@ -21,7 +21,7 @@ interface FeedLayoutProps {
     onLoadMore?: () => void
     hasMore?: boolean
     isLoading?: boolean
-    params: any // unused
+
     currentUserProfile?: { id: string, username: string, avatar_url: string | null } | null
     currentFilter: string
     onFilterChange: (filter: string) => void

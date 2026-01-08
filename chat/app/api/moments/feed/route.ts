@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
 
         const { data: { user } } = await supabase.auth.getUser()
 
-        let query = supabase
+        let query: any = supabase
             .from('moments')
             .select(`
         id,
@@ -95,16 +95,16 @@ export async function GET(request: NextRequest) {
                 .from('moment_reactions')
                 .select('moment_id, reaction_emoji')
                 .eq('user_id', user.id)
-                .in('moment_id', moments.map(m => m.id))
+                .in('moment_id', moments.map((m: any) => m.id))
 
-            userReactions = (reactions || []).reduce((acc, r) => {
+            userReactions = (reactions || []).reduce((acc: any, r: any) => {
                 if (!acc[r.moment_id]) acc[r.moment_id] = []
                 acc[r.moment_id].push(r.reaction_emoji)
                 return acc
             }, {} as Record<string, string[]>)
         }
 
-        const formattedMoments = (moments || []).map(m => ({
+        const formattedMoments = (moments || []).map((m: any) => ({
             ...m,
             userReactions: userReactions[m.id] || []
         }))

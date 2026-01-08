@@ -1,7 +1,7 @@
 "use client"
 
 import { useTheme } from "next-themes"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
@@ -14,6 +14,7 @@ import { SidebarCreateButton } from "./SidebarCreateButton"
 import { SidebarThemeToggle } from "./SidebarThemeToggle"
 import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
+import { User } from "@supabase/supabase-js"
 import {
     IconHome,
     IconSparkles,
@@ -25,7 +26,6 @@ import {
     IconDatabase,
     IconBell,
 } from "@tabler/icons-react"
-import { useContext } from "react"
 import { RemrinContext } from "@/context/context"
 
 interface NavItem {

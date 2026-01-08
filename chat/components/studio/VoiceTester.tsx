@@ -41,8 +41,8 @@ export function VoiceTester({ voiceId, settings, characterName = "Assistant" }: 
         if (!text.trim()) return
 
         await generate(text, {
-            voiceId,
-            ...settings
+            ...settings,
+            voiceId
         })
     }
 

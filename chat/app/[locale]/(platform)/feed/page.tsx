@@ -45,6 +45,9 @@ export default async function FeedPage({
             created_at,
             likes_count,
             view_count,
+            comments_count,
+            shares_count,
+            bookmarks_count,
             is_pinned,
             reactions_summary,
             personas!inner(id, name, image_url)
@@ -100,6 +103,9 @@ export default async function FeedPage({
             created_at: m.created_at,
             likes_count: m.likes_count,
             view_count: m.view_count,
+            comments_count: m.comments_count || 0,
+            shares_count: m.shares_count || 0,
+            bookmarks_count: m.bookmarks_count || 0,
             is_pinned: m.is_pinned,
             reactions_summary: m.reactions_summary || {},
             persona: {
