@@ -68,7 +68,7 @@ export function ProviderSelector({
     userTier = "free",
 }: ProviderSelectorProps) {
     return (
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="flex flex-col gap-3">
             {PROVIDERS.map((provider) => {
                 const isLocked = provider.isPremium && userTier === "free"
                 const isSelected = selectedProvider === provider.id
@@ -77,8 +77,10 @@ export function ProviderSelector({
                     <div key={provider.id} className="relative group">
                         <Card
                             className={cn(
-                                "cursor-pointer transition-all hover:border-primary/50 h-full",
-                                isSelected && "border-primary ring-1 ring-primary bg-primary/5",
+                                "cursor-pointer transition-all hover:border-primary/50 h-full relative overflow-hidden",
+                                isSelected
+                                    ? "border-primary bg-primary/10 ring-1 ring-primary shadow-sm"
+                                    : "border-border/50 hover:bg-accent/5",
                                 isLocked && "opacity-60 cursor-not-allowed hover:border-border"
                             )}
                             onClick={() => !isLocked && onSelect(provider.id)}
@@ -102,13 +104,13 @@ export function ProviderSelector({
                                     {provider.description}
                                 </CardDescription>
                             </CardHeader>
-                            <CardContent className="pb-2">
-                                <div className="flex flex-wrap gap-2">
-                                    <Badge variant="secondary" className="text-[10px] h-5">
-                                        {provider.quality} Quality
+                            <CardContent className="pb-3 pt-0">
+                                <div className="flex items-center gap-2 mt-2">
+                                    <Badge variant={isSelected ? "default" : "secondary"} className="text-xs font-normal">
+                                        {provider.quality}
                                     </Badge>
-                                    <Badge variant="outline" className="text-[10px] h-5">
-                                        {provider.cost} Cost
+                                    <Badge variant="outline" className="text-xs font-normal">
+                                        {provider.cost === 'Free' ? 'Free' : '$$$'}
                                     </Badge>
                                 </div>
                             </CardContent>

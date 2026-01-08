@@ -102,11 +102,7 @@ CREATE POLICY "Admins can view all cost records"
 ON audio_costs FOR SELECT
 TO authenticated
 USING (
-    EXISTS (
-        SELECT 1 FROM profiles 
-        WHERE profiles.user_id = auth.uid() 
-        AND profiles.membership = 'admin'
-    )
+    false -- Admin check disabled due to missing membership column
 );
 
 -- Admins can delete cost records (for data cleanup)
@@ -114,11 +110,7 @@ CREATE POLICY "Admins can delete cost records"
 ON audio_costs FOR DELETE
 TO authenticated
 USING (
-    EXISTS (
-        SELECT 1 FROM profiles 
-        WHERE profiles.user_id = auth.uid() 
-        AND profiles.membership = 'admin'
-    )
+    false -- Admin check disabled due to missing membership column
 );
 
 -- ============================================

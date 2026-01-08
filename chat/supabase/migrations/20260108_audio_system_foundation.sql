@@ -193,11 +193,7 @@ CREATE POLICY "Audio cache can be deleted by admins"
 ON audio_cache FOR DELETE
 TO authenticated
 USING (
-    EXISTS (
-        SELECT 1 FROM profiles 
-        WHERE profiles.user_id = auth.uid() 
-        AND profiles.membership = 'admin'
-    )
+    false -- Admin check disabled due to missing membership column
 );
 
 -- Enable RLS on community_voices
@@ -229,18 +225,10 @@ CREATE POLICY "Admins can manage all community voices"
 ON community_voices FOR ALL
 TO authenticated
 USING (
-    EXISTS (
-        SELECT 1 FROM profiles 
-        WHERE profiles.user_id = auth.uid() 
-        AND profiles.membership = 'admin'
-    )
+    false -- Admin check disabled due to missing membership column
 )
 WITH CHECK (
-    EXISTS (
-        SELECT 1 FROM profiles 
-        WHERE profiles.user_id = auth.uid() 
-        AND profiles.membership = 'admin'
-    )
+    false -- Admin check disabled due to missing membership column
 );
 
 -- Storage RLS policies for audio buckets

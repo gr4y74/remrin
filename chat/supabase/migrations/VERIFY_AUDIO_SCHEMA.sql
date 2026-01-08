@@ -22,7 +22,9 @@ AND column_name IN (
     'voice_provider', 
     'voice_id', 
     'voice_settings', 
-    'audio_enabled'
+    'audio_enabled',
+    'background_url',
+    'is_default_media_set'
 )
 ORDER BY column_name;
 
@@ -113,7 +115,7 @@ SELECT
     file_size_limit,
     allowed_mime_types::text
 FROM storage.buckets 
-WHERE id IN ('audio_cache', 'welcome_audio', 'voice_samples')
+WHERE id IN ('audio_cache', 'welcome_audio', 'voice_samples', 'persona_backgrounds')
 ORDER BY id;
 
 -- Expected: 3 buckets with correct settings
@@ -182,13 +184,13 @@ SELECT
     'SUMMARY' as section,
     (SELECT COUNT(*) FROM information_schema.columns 
      WHERE table_name = 'personas' 
-     AND column_name IN ('welcome_audio_url', 'welcome_message', 'voice_provider', 'voice_id', 'voice_settings', 'audio_enabled')
-    ) as personas_audio_columns,
+     AND column_name IN ('welcome_audio_url', 'welcome_message', 'voice_provider', 'voice_id', 'voice_settings', 'audio_enabled', 'background_url', 'is_default_media_set')
+    ) as personas_new_columns,
     (SELECT COUNT(*) FROM information_schema.columns WHERE table_name = 'audio_cache') as audio_cache_columns,
     (SELECT COUNT(*) FROM information_schema.columns WHERE table_name = 'community_voices') as community_voices_columns,
     (SELECT COUNT(*) FROM pg_indexes WHERE tablename IN ('audio_cache', 'community_voices', 'personas') AND indexname LIKE 'idx_%') as total_indexes,
     (SELECT COUNT(*) FROM pg_policies WHERE tablename IN ('audio_cache', 'community_voices')) as total_rls_policies,
-    (SELECT COUNT(*) FROM storage.buckets WHERE id IN ('audio_cache', 'welcome_audio', 'voice_samples')) as storage_buckets;
+    (SELECT COUNT(*) FROM storage.buckets WHERE id IN ('audio_cache', 'welcome_audio', 'voice_samples', 'persona_backgrounds')) as storage_buckets;
 
 -- Expected summary:
 -- personas_audio_columns: 6
