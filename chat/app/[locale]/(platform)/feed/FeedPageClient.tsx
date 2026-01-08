@@ -1,11 +1,10 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { MomentsGallery } from '@/components/moments/MomentsGallery'
 import { FeedLayout } from '@/components/moments/FeedLayout'
 import { MomentWithPersona } from '@/types/moments'
 import { Button } from '@/components/ui/button'
-import { Grid, Rows, TrendingUp, Sparkles, Users, Bookmark } from 'lucide-react'
+import { TrendingUp, Sparkles, Users, Bookmark } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Plus } from 'lucide-react'
@@ -23,7 +22,6 @@ import { UploadMomentModal } from '@/components/moments/UploadMomentModal'
 interface FeedPageClientProps {
     initialMoments: MomentWithPersona[]
     initialFilter: string
-    initialLayout: string
     hasMore: boolean
     user?: User | null
 }
@@ -31,7 +29,6 @@ interface FeedPageClientProps {
 export function FeedPageClient({
     initialMoments,
     initialFilter,
-    initialLayout,
     hasMore: initialHasMore,
     user
 }: FeedPageClientProps) {
@@ -39,7 +36,6 @@ export function FeedPageClient({
     const searchParams = useSearchParams()
     const [moments, setMoments] = useState(initialMoments)
     const [filter, setFilter] = useState(initialFilter)
-    const [layout, setLayout] = useState(initialLayout)
     const [hasMore, setHasMore] = useState(initialHasMore)
     const [isLoading, setIsLoading] = useState(false)
     const [isUploadOpen, setIsUploadOpen] = useState(false)
@@ -47,7 +43,7 @@ export function FeedPageClient({
     const [currentUserProfile, setCurrentUserProfile] = useState<{ id: string, username: string, avatar_url: string | null } | null>(null)
 
     // Auto-hide header in feed mode
-    const { isVisible: isHeaderVisible } = useAutoHide({ timeout: 3000, enabled: layout === 'feed' })
+    const { isVisible: isHeaderVisible } = useAutoHide({ timeout: 3000, enabled: true })
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -67,10 +63,9 @@ export function FeedPageClient({
     useEffect(() => {
         setMoments(initialMoments)
         setFilter(initialFilter)
-        setLayout(initialLayout)
         setHasMore(initialHasMore)
         setIsLoading(false) // Reset loading when new data arrives
-    }, [initialMoments, initialFilter, initialLayout, initialHasMore])
+    }, [initialMoments, initialFilter, initialHasMore])
 
     const handleFilterChange = (newFilter: string) => {
         // Optimistic update
@@ -87,12 +82,6 @@ export function FeedPageClient({
         // If router.push re-runs server component, new props arrive, useEffect fires.
     }
 
-    const handleLayoutChange = (newLayout: string) => {
-        setLayout(newLayout)
-        const params = new URLSearchParams(searchParams)
-        params.set('layout', newLayout)
-        router.push(`/feed?${params.toString()}`)
-    }
 
     const handleReact = async (momentId: string, emoji: string, isAdding: boolean) => {
         try {
@@ -179,7 +168,7 @@ export function FeedPageClient({
             {/* Header */}
             <div className={cn(
                 "sticky top-0 z-10 bg-rp-base/80 backdrop-blur-sm transition-transform duration-300",
-                layout === 'feed' && !isHeaderVisible && "-translate-y-full"
+                !isHeaderVisible && "-translate-y-full"
             )}>
                 <div className="mx-auto max-w-7xl px-4 py-4">
                     <div className="flex items-center justify-between mb-4">
@@ -195,55 +184,23 @@ export function FeedPageClient({
                                 }}
                             />
 
-                            {/* Layout Toggle */}
-                            <div className="flex gap-2">
-                                <Button
-                                    variant={layout === 'grid' ? 'default' : 'ghost'}
-                                    size="sm"
-                                    onClick={() => handleLayoutChange('grid')}
-                                    className={cn(
-                                        layout === 'grid' && "bg-rp-iris hover:bg-rp-iris/90"
-                                    )}
-                                >
-                                    <Grid className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                    variant={layout === 'feed' ? 'default' : 'ghost'}
-                                    size="sm"
-                                    onClick={() => handleLayoutChange('feed')}
-                                    className={cn(
-                                        layout === 'feed' && "bg-rp-iris hover:bg-rp-iris/90"
-                                    )}
-                                >
-                                    <Rows className="h-4 w-4" />
-                                </Button>
-                            </div>
+
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* Content */}
-            {layout === 'feed' ? (
-                <FeedLayout
-                    moments={moments}
-                    onReact={handleReact}
-                    onView={handleView}
-                    onLoadMore={loadMore}
-                    hasMore={hasMore}
-                    currentUserProfile={currentUserProfile}
-                    currentFilter={filter}
-                    onFilterChange={handleFilterChange}
-                />
-            ) : (
-                <div className="mx-auto max-w-7xl px-4 py-8">
-                    <MomentsGallery
-                        initialMoments={galleryMoments}
-                        initialHasMore={hasMore}
-                        pageSize={12}
-                    />
-                </div>
-            )}
+            <FeedLayout
+                moments={moments}
+                onReact={handleReact}
+                onView={handleView}
+                onLoadMore={loadMore}
+                hasMore={hasMore}
+                currentUserProfile={currentUserProfile}
+                currentFilter={filter}
+                onFilterChange={handleFilterChange}
+            />
 
             {/* Upload Modal */}
             {selectedPersona && (

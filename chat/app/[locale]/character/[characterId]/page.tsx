@@ -26,7 +26,8 @@ export default async function CharacterPage({ params }: CharacterPageProps) {
       category,
       metadata,
       owner_id,
-      visibility
+      visibility,
+      welcome_audio_url
     `)
         .eq("id", characterId)
         .single()
@@ -99,13 +100,15 @@ export default async function CharacterPage({ params }: CharacterPageProps) {
                 category: persona.category,
                 tags,
                 introMessage,
-                creatorName
+                creatorName,
+                welcomeAudioUrl: persona.welcome_audio_url
             }}
             stats={{
                 totalChats: stats?.total_chats ?? 0,
                 followersCount: stats?.followers_count ?? 0
             }}
             isFollowing={isFollowing}
+            isOwner={isOwner}
         />
     )
 }

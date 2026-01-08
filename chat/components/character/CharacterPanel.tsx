@@ -17,7 +17,8 @@ import {
     IconPaperclip,
     IconPhoto,
     IconArrowNarrowRight,
-    IconSparkles
+    IconSparkles,
+    IconWaveSine
 } from "@tabler/icons-react"
 import { FC, useContext, useState, useMemo } from "react"
 import Image from "next/image"
@@ -629,6 +630,30 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                                     {/* Shimmer effect */}
                                     <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                                 </button>
+                            )}
+
+                            {/* Voice Settings Button - Primary Place for Audio Studio */}
+                            {isOwner && (
+                                <Link
+                                    href={`/studio/audio?persona=${selectedPersona.id}`}
+                                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-rp-overlay/40 hover:bg-rp-overlay transition-colors group"
+                                >
+                                    <div className="flex items-center justify-center size-10 rounded-lg bg-indigo-500/20">
+                                        <IconWaveSine size={20} className="text-indigo-400" />
+                                    </div>
+                                    <div className="flex-1 text-left">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm font-medium text-rp-text">Voice Settings</span>
+                                            {(selectedPersona as any).voice_id && (
+                                                <span className="text-[10px] bg-rp-iris/20 text-rp-iris px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
+                                                    Active
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="text-xs text-rp-muted">Configure voice & TTS</div>
+                                    </div>
+                                    <IconArrowNarrowRight size={18} className="text-rp-subtle group-hover:text-rp-text transition-colors" />
+                                </Link>
                             )}
 
                             {/* Change Hero Image Button (Owner Only) */}

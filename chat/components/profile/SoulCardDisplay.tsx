@@ -5,10 +5,13 @@ import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { TYPOGRAPHY, SPACING } from "@/lib/design-system"
 
+import { WelcomeAudioPlayer } from "@/components/audio/WelcomeAudioPlayer"
+
 interface SoulCardDisplayProps {
     name: string
     imageUrl: string | null
     tags: string[]
+    welcomeAudioUrl?: string | null
     className?: string
 }
 
@@ -30,6 +33,7 @@ export function SoulCardDisplay({
     name,
     imageUrl,
     tags,
+    welcomeAudioUrl,
     className
 }: SoulCardDisplayProps) {
     return (
@@ -60,11 +64,20 @@ export function SoulCardDisplay({
                 <div className="from-rp-base/80 absolute inset-0 bg-gradient-to-t via-transparent to-transparent" />
 
                 {/* Character Name */}
-                <div className="absolute inset-x-4 bottom-4">
+                <div className="absolute inset-x-4 bottom-4 pr-12">
                     <h3 className={`${TYPOGRAPHY.heading.h3} text-rp-text drop-shadow-lg`}>
                         {name}
                     </h3>
                 </div>
+
+                {/* Welcome Audio Player */}
+                {welcomeAudioUrl && (
+                    <WelcomeAudioPlayer
+                        audioUrl={welcomeAudioUrl}
+                        autoPlay
+                        className="absolute bottom-4 right-4 z-20"
+                    />
+                )}
             </div>
 
             {/* Tags Section */}

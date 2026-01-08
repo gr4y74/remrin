@@ -4,35 +4,63 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { momentId: string } }
+    { params }: { params: Promise<{ momentId: string }> }
 ) {
     try {
+        const { momentId } = await params
         const cookieStore = await cookies()
         const supabase = createClient(cookieStore)
-        const { momentId } = params // params is just { momentId } in Next 15/14? Wait, in strict TS it might need waiting or generic.
-        // Assuming params is available.
 
+        // Fetch comments with user profiles
         const { data: comments, error } = await supabase
             .from('moment_comments')
             .select(`
                 id,
                 content,
                 created_at,
-                user:profiles (
-                    id,
-                    username,
-                    display_name,
-                    avatar_url
-                )
+                user_id
             `)
             .eq('moment_id', momentId)
             .order('created_at', { ascending: false })
 
         if (error) {
+            console.error('API: Error fetching comments:', error)
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
 
-        return NextResponse.json({ comments })
+        // Fetch user profiles for all commenters
+        if (comments && comments.length > 0) {
+            const userIds = [...new Set(comments.map(c => c.user_id))]
+            const { data: profiles } = await supabase
+                .from('profiles')
+                .select('user_id, id, username, display_name, avatar_url')
+                .in('user_id', userIds)
+
+            // Map profiles to comments
+            const commentsWithProfiles = comments.map(comment => {
+                const profile = profiles?.find(p => p.user_id === comment.user_id)
+                return {
+                    id: comment.id,
+                    content: comment.content,
+                    created_at: comment.created_at,
+                    user: profile ? {
+                        id: profile.id,
+                        username: profile.username || 'User',
+                        display_name: profile.display_name,
+                        avatar_url: profile.avatar_url
+                    } : {
+                        id: comment.user_id,
+                        username: 'User',
+                        display_name: null,
+                        avatar_url: null
+                    }
+                }
+            })
+
+            return NextResponse.json({ comments: commentsWithProfiles })
+        }
+
+        return NextResponse.json({ comments: [] })
     } catch (error) {
         console.error('API: Error fetching comments:', error)
         return NextResponse.json(
@@ -78,17 +106,7 @@ export async function POST(
                 user_id: user.id,
                 content: content.trim()
             })
-            .select(`
-                id,
-                content,
-                created_at,
-                user:profiles!moment_comments_user_id_fkey_real_profiles(
-                    id,
-                    username,
-                    display_name,
-                    avatar_url
-                )
-            `)
+            .select('id, content, created_at, user_id')
             .single()
 
         if (insertError) {
@@ -99,7 +117,31 @@ export async function POST(
             )
         }
 
-        return NextResponse.json({ comment })
+        // Fetch the user's profile
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('id, username, display_name, avatar_url')
+            .eq('user_id', user.id)
+            .single()
+
+        const commentWithProfile = {
+            id: comment.id,
+            content: comment.content,
+            created_at: comment.created_at,
+            user: profile ? {
+                id: profile.id,
+                username: profile.username || user.email?.split('@')[0] || 'User',
+                display_name: profile.display_name,
+                avatar_url: profile.avatar_url
+            } : {
+                id: user.id,
+                username: user.email?.split('@')[0] || 'User',
+                display_name: null,
+                avatar_url: null
+            }
+        }
+
+        return NextResponse.json({ comment: commentWithProfile })
     } catch (error) {
         console.error('API: Unhandled error in comment POST:', error)
         return NextResponse.json(
@@ -108,3 +150,4 @@ export async function POST(
         )
     }
 }
+

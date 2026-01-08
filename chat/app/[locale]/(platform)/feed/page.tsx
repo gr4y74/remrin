@@ -115,7 +115,6 @@ export default async function FeedPage({
         <FeedPageClient
             initialMoments={initialMoments}
             initialFilter={filter}
-            initialLayout={layout}
             hasMore={initialMoments.length === PAGE_SIZE}
             user={user}
         />

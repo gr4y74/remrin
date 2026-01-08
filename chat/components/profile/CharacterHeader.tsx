@@ -3,6 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { FollowButton } from "./FollowButton"
+import { VoiceSettingsButton } from "@/components/character/VoiceSettingsButton"
 import { MessageCircle, Users } from "lucide-react"
 
 interface CharacterHeaderProps {
@@ -14,6 +15,7 @@ interface CharacterHeaderProps {
     totalChats: number
     followersCount: number
     isFollowing: boolean
+    isOwner?: boolean
     creatorName?: string | null
     onFollowChange?: (isFollowing: boolean) => void
 }
@@ -38,6 +40,7 @@ export function CharacterHeader({
     totalChats,
     followersCount,
     isFollowing,
+    isOwner,
     creatorName,
     onFollowChange
 }: CharacterHeaderProps) {
@@ -88,12 +91,22 @@ export function CharacterHeader({
                 </div>
             </div>
 
-            {/* Follow Button */}
-            <FollowButton
-                personaId={personaId}
-                initialIsFollowing={isFollowing}
-                onFollowChange={onFollowChange}
-            />
+            {/* Follow Button & Voice Settings */}
+            <div className="flex items-center gap-2">
+                <FollowButton
+                    personaId={personaId}
+                    initialIsFollowing={isFollowing}
+                    onFollowChange={onFollowChange}
+                />
+
+                {isOwner && (
+                    <VoiceSettingsButton
+                        personaId={personaId}
+                        variant="outline"
+                        className="rounded-full bg-rp-surface border-rp-muted/20 hover:border-rp-iris/50"
+                    />
+                )}
+            </div>
 
             {/* Creator Attribution */}
             {creatorName && (

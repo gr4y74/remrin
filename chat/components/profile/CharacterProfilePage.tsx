@@ -11,6 +11,7 @@ import { MomentsGallery, MomentData } from "@/components/moments"
 import { MessageCircle, ArrowLeft, Loader2, ImageIcon } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useParallaxScroll } from "@/lib/animations"
+
 import { cn } from "@/lib/utils"
 
 interface PersonaStats {
@@ -29,12 +30,14 @@ interface PersonaData {
     creatorName?: string | null
     ownerId?: string | null
     systemPrompt?: string | null
+    welcomeAudioUrl?: string | null
 }
 
 interface CharacterProfilePageProps {
     persona: PersonaData
     stats: PersonaStats
     isFollowing: boolean
+    isOwner?: boolean
     moments?: MomentData[]
     hasMoments?: boolean
 }
@@ -43,6 +46,7 @@ export function CharacterProfilePage({
     persona,
     stats,
     isFollowing,
+    isOwner,
     moments = [],
     hasMoments = false
 }: CharacterProfilePageProps) {
@@ -131,112 +135,114 @@ export function CharacterProfilePage({
                                 name={persona.name}
                                 imageUrl={persona.imageUrl}
                                 tags={persona.tags}
+                                welcomeAudioUrl={persona.welcomeAudioUrl}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Right Column - Character Details */}
+                    <div className="flex-1 space-y-8">
+                        {/* Header */}
+                        <div
+                            className="animate-fade-in-up"
+                            style={{ animationDelay: '200ms', animationFillMode: 'both' }}
+                        >
+                            <CharacterHeader
+                                personaId={persona.id}
+                                name={persona.name}
+                                description={persona.description}
+                                imageUrl={persona.imageUrl}
+                                category={persona.category}
+                                totalChats={stats.totalChats}
+                                followersCount={stats.followersCount}
+                                isFollowing={isFollowing}
+                                isOwner={isOwner}
+                                creatorName={persona.creatorName}
                             />
                         </div>
 
-                        {/* Right Column - Character Details */}
-                        <div className="flex-1 space-y-8">
-                            {/* Header */}
+                        {/* Intro Message Preview */}
+                        {persona.introMessage && (
                             <div
-                                className="animate-fade-in-up"
-                                style={{ animationDelay: '200ms', animationFillMode: 'both' }}
+                                className="bg-rp-surface animate-fade-in-up hover:bg-rp-overlay rounded-2xl p-6 backdrop-blur-xl transition-all duration-300"
+                                style={{ animationDelay: '300ms', animationFillMode: 'both' }}
                             >
-                                <CharacterHeader
-                                    personaId={persona.id}
-                                    name={persona.name}
-                                    description={persona.description}
-                                    imageUrl={persona.imageUrl}
-                                    category={persona.category}
-                                    totalChats={stats.totalChats}
-                                    followersCount={stats.followersCount}
-                                    isFollowing={isFollowing}
-                                    creatorName={persona.creatorName}
-                                />
+                                <h2 className="text-rp-muted mb-3 text-sm font-semibold uppercase tracking-wider">
+                                    First Message
+                                </h2>
+                                <p className="text-rp-text text-base italic leading-relaxed">
+                                    &ldquo;{persona.introMessage}&rdquo;
+                                </p>
                             </div>
+                        )}
 
-                            {/* Intro Message Preview */}
-                            {persona.introMessage && (
-                                <div
-                                    className="bg-rp-surface animate-fade-in-up hover:bg-rp-overlay rounded-2xl p-6 backdrop-blur-xl transition-all duration-300"
-                                    style={{ animationDelay: '300ms', animationFillMode: 'both' }}
-                                >
-                                    <h2 className="text-rp-muted mb-3 text-sm font-semibold uppercase tracking-wider">
-                                        First Message
-                                    </h2>
-                                    <p className="text-rp-text text-base italic leading-relaxed">
-                                        &ldquo;{persona.introMessage}&rdquo;
-                                    </p>
-                                </div>
-                            )}
-
-                            {/* Start Chat CTA with floating animation */}
-                            <div
-                                className="animate-fade-in-up pt-4"
-                                style={{ animationDelay: '400ms', animationFillMode: 'both' }}
+                        {/* Start Chat CTA with floating animation */}
+                        <div
+                            className="animate-fade-in-up pt-4"
+                            style={{ animationDelay: '400ms', animationFillMode: 'both' }}
+                        >
+                            <Button
+                                size="lg"
+                                onClick={handleStartChat}
+                                disabled={isStartingChat}
+                                className={cn(
+                                    "from-rp-iris to-rp-foam text-rp-base group w-full rounded-2xl bg-gradient-to-r py-6 text-lg font-bold",
+                                    "shadow-rp-iris/25 shadow-2xl transition-all duration-300",
+                                    "hover:from-rp-iris/80 hover:to-rp-foam/80 hover:shadow-rp-iris/40 hover:scale-[1.02]",
+                                    "disabled:opacity-70",
+                                    !isStartingChat && "animate-float"
+                                )}
                             >
-                                <Button
-                                    size="lg"
-                                    onClick={handleStartChat}
-                                    disabled={isStartingChat}
-                                    className={cn(
-                                        "from-rp-iris to-rp-foam text-rp-base group w-full rounded-2xl bg-gradient-to-r py-6 text-lg font-bold",
-                                        "shadow-rp-iris/25 shadow-2xl transition-all duration-300",
-                                        "hover:from-rp-iris/80 hover:to-rp-foam/80 hover:shadow-rp-iris/40 hover:scale-[1.02]",
-                                        "disabled:opacity-70",
-                                        !isStartingChat && "animate-float"
-                                    )}
-                                >
-                                    {isStartingChat ? (
-                                        <>
-                                            <Loader2 className="mr-3 size-6 animate-spin" />
-                                            Starting Chat...
-                                        </>
-                                    ) : (
-                                        <>
-                                            <MessageCircle className="mr-3 size-6 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" />
-                                            Start Chat
-                                        </>
-                                    )}
-                                </Button>
-                            </div>
-
-                            {/* Moments Section */}
-                            {(hasMoments || moments.length > 0) && (
-                                <div className="space-y-4">
-                                    <div className="flex items-center justify-between">
-                                        <h2 className="text-rp-text flex items-center gap-2 text-lg font-semibold">
-                                            <ImageIcon className="text-rp-iris size-5" />
-                                            Moments
-                                        </h2>
-                                        {moments.length > 0 && (
-                                            <Link
-                                                href={`/moments?persona=${persona.id}`}
-                                                className="text-rp-iris hover:text-rp-rose text-sm transition-colors"
-                                            >
-                                                View All →
-                                            </Link>
-                                        )}
-                                    </div>
-                                    {moments.length > 0 ? (
-                                        <MomentsGallery
-                                            initialMoments={moments}
-                                            personaId={persona.id}
-                                            initialHasMore={false}
-                                            showViewAllLink={true}
-                                            viewAllHref={`/moments?persona=${persona.id}`}
-                                        />
-                                    ) : (
-                                        <div className="bg-rp-surface rounded-2xl p-8 text-center backdrop-blur-xl">
-                                            <ImageIcon className="text-rp-muted mx-auto mb-3 size-12" />
-                                            <p className="text-rp-subtle">No moments yet</p>
-                                            <p className="text-rp-muted mt-1 text-sm">
-                                                Check back later for gallery content
-                                            </p>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
+                                {isStartingChat ? (
+                                    <>
+                                        <Loader2 className="mr-3 size-6 animate-spin" />
+                                        Starting Chat...
+                                    </>
+                                ) : (
+                                    <>
+                                        <MessageCircle className="mr-3 size-6 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" />
+                                        Start Chat
+                                    </>
+                                )}
+                            </Button>
                         </div>
+
+                        {/* Moments Section */}
+                        {(hasMoments || moments.length > 0) && (
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <h2 className="text-rp-text flex items-center gap-2 text-lg font-semibold">
+                                        <ImageIcon className="text-rp-iris size-5" />
+                                        Moments
+                                    </h2>
+                                    {moments.length > 0 && (
+                                        <Link
+                                            href={`/moments?persona=${persona.id}`}
+                                            className="text-rp-iris hover:text-rp-rose text-sm transition-colors"
+                                        >
+                                            View All →
+                                        </Link>
+                                    )}
+                                </div>
+                                {moments.length > 0 ? (
+                                    <MomentsGallery
+                                        initialMoments={moments}
+                                        personaId={persona.id}
+                                        initialHasMore={false}
+                                        showViewAllLink={true}
+                                        viewAllHref={`/moments?persona=${persona.id}`}
+                                    />
+                                ) : (
+                                    <div className="bg-rp-surface rounded-2xl p-8 text-center backdrop-blur-xl">
+                                        <ImageIcon className="text-rp-muted mx-auto mb-3 size-12" />
+                                        <p className="text-rp-subtle">No moments yet</p>
+                                        <p className="text-rp-muted mt-1 text-sm">
+                                            Check back later for gallery content
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </main>
             </div>
