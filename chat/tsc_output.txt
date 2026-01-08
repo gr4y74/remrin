@@ -1,256 +1,132 @@
-app/[locale]/character/[characterId]/page.tsx(3,30): error TS2307: Cannot find module '@/lib/supabase/server' or its corresponding type declarations.
-app/[locale]/character/[characterId]/page.tsx(4,38): error TS2307: Cannot find module '@/components/profile' or its corresponding type declarations.
-app/[locale]/character/[characterId]/page.tsx(94,9): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(3,31): error TS2307: Cannot find module '@/context/context' or its corresponding type declarations.
-components/character/CharacterPanel.tsx(5,24): error TS2307: Cannot find module '@/components/ui/button' or its corresponding type declarations.
-components/character/CharacterPanel.tsx(6,20): error TS2307: Cannot find module '@/lib/utils' or its corresponding type declarations.
-components/character/CharacterPanel.tsx(26,28): error TS2307: Cannot find module '@/lib/design-system' or its corresponding type declarations.
-components/character/CharacterPanel.tsx(27,36): error TS2307: Cannot find module '@/lib/forge/is-mother-chat' or its corresponding type declarations.
-components/character/CharacterPanel.tsx(31,64): error TS2307: Cannot find module '@/db/character-follows' or its corresponding type declarations.
-components/character/CharacterPanel.tsx(32,53): error TS2307: Cannot find module '@/db/comments' or its corresponding type declarations.
-components/character/CharacterPanel.tsx(33,36): error TS2307: Cannot find module '@/db/discovery' or its corresponding type declarations.
-components/character/CharacterPanel.tsx(34,43): error TS2307: Cannot find module '@/app/actions/update-persona-image' or its corresponding type declarations.
-components/character/CharacterPanel.tsx(54,13): error TS2339: Property 'selectedPersona' does not exist on type 'ServerContextJSONValue'.
-components/character/CharacterPanel.tsx(54,30): error TS2339: Property 'setIsCharacterPanelOpen' does not exist on type 'ServerContextJSONValue'.
-components/character/CharacterPanel.tsx(54,55): error TS2339: Property 'isCharacterPanelOpen' does not exist on type 'ServerContextJSONValue'.
-components/character/CharacterPanel.tsx(54,77): error TS2339: Property 'profile' does not exist on type 'ServerContextJSONValue'.
-components/character/CharacterPanel.tsx(238,13): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(244,17): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(257,9): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(262,13): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(264,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(273,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(284,17): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(285,17): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(289,17): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(294,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(299,13): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(301,17): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(303,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(304,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(305,29): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(316,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(320,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(323,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(329,17): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(331,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(332,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(333,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(337,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(340,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(341,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(342,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(346,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(349,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(353,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(354,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(355,29): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(362,17): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(374,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(375,29): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(376,29): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(379,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(380,29): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(381,29): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(389,13): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(391,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(402,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(407,17): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(419,13): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(422,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(424,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(425,29): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(426,29): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(431,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(432,29): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(435,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(436,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(445,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(446,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(451,33): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(461,29): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(463,33): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(464,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(468,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(470,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(474,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(480,33): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(481,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(489,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(503,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(505,33): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(506,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(510,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(511,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(513,49): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(521,49): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(522,53): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(526,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(527,45): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(528,49): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(531,49): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(535,45): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(544,33): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(545,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(546,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(548,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(558,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(560,29): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(561,33): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(564,29): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(566,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(571,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(578,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(579,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(580,45): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(581,45): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(587,29): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(588,33): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(589,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(591,33): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(600,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(601,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(604,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(607,33): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(612,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(613,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(615,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(616,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(617,45): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(620,45): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(622,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(625,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(627,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(631,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(637,33): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(641,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(642,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(644,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(645,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(646,45): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(648,49): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(653,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(655,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(661,33): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(668,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(669,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(671,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(672,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(673,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(675,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(676,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(706,29): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(713,33): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(714,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(716,33): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(717,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(718,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(720,33): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(724,29): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(732,33): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(733,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(735,33): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(736,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(737,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/CharacterPanel.tsx(739,33): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/VoiceSettingsButton.tsx(6,74): error TS2307: Cannot find module '@/components/ui/tooltip' or its corresponding type declarations.
-components/character/VoiceSettingsButton.tsx(7,20): error TS2307: Cannot find module '@/lib/utils' or its corresponding type declarations.
-components/character/VoiceSettingsButton.tsx(23,9): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/VoiceSettingsButton.tsx(24,13): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/VoiceSettingsButton.tsx(25,17): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/VoiceSettingsButton.tsx(26,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/VoiceSettingsButton.tsx(38,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/VoiceSettingsButton.tsx(39,43): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/character/VoiceSettingsButton.tsx(42,17): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterHeader.tsx(3,53): error TS2307: Cannot find module '@/components/ui/avatar' or its corresponding type declarations.
-components/profile/CharacterHeader.tsx(4,23): error TS2307: Cannot find module '@/components/ui/badge' or its corresponding type declarations.
-components/profile/CharacterHeader.tsx(5,30): error TS6142: Module './FollowButton' was resolved to '/mnt/Data68/remrin/chat/components/profile/FollowButton.tsx', but '--jsx' is not set.
-components/profile/CharacterHeader.tsx(6,37): error TS2307: Cannot find module '@/components/character/VoiceSettingsButton' or its corresponding type declarations.
-components/profile/CharacterHeader.tsx(48,9): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterHeader.tsx(50,13): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterHeader.tsx(51,17): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterHeader.tsx(52,17): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterHeader.tsx(58,13): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterHeader.tsx(59,17): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterHeader.tsx(63,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterHeader.tsx(71,17): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterHeader.tsx(80,13): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterHeader.tsx(81,17): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterHeader.tsx(82,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterHeader.tsx(83,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterHeader.tsx(84,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterHeader.tsx(86,17): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterHeader.tsx(87,17): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterHeader.tsx(88,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterHeader.tsx(89,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterHeader.tsx(90,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterHeader.tsx(95,13): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterHeader.tsx(96,17): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterHeader.tsx(103,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterHeader.tsx(113,17): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterHeader.tsx(114,32): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(7,24): error TS2307: Cannot find module '@/components/ui/button' or its corresponding type declarations.
-components/profile/CharacterProfilePage.tsx(8,33): error TS6142: Module './CharacterHeader' was resolved to '/mnt/Data68/remrin/chat/components/profile/CharacterHeader.tsx', but '--jsx' is not set.
-components/profile/CharacterProfilePage.tsx(9,33): error TS6142: Module './SoulCardDisplay' was resolved to '/mnt/Data68/remrin/chat/components/profile/SoulCardDisplay.tsx', but '--jsx' is not set.
-components/profile/CharacterProfilePage.tsx(10,44): error TS2307: Cannot find module '@/components/moments' or its corresponding type declarations.
-components/profile/CharacterProfilePage.tsx(12,30): error TS2307: Cannot find module '@/lib/supabase/client' or its corresponding type declarations.
-components/profile/CharacterProfilePage.tsx(13,35): error TS2307: Cannot find module '@/lib/animations' or its corresponding type declarations.
-components/profile/CharacterProfilePage.tsx(15,20): error TS2307: Cannot find module '@/lib/utils' or its corresponding type declarations.
-components/profile/CharacterProfilePage.tsx(92,9): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(95,17): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(102,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(109,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(114,13): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(116,17): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(117,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(121,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(122,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(127,17): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(128,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(130,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(134,29): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(144,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(146,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(150,29): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(166,29): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(170,33): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(173,33): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(180,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(184,29): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(197,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(198,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(202,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(203,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(212,29): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(213,33): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(214,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(215,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(219,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(228,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(236,37): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(237,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(238,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-components/profile/CharacterProfilePage.tsx(239,41): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
-node_modules/next/dist/build/templates/app-page.d.ts(10,40): error TS2307: Cannot find module 'VAR_MODULE_GLOBAL_ERROR' or its corresponding type declarations.
-node_modules/next/dist/build/webpack-config.d.ts(11,104): error TS2694: Namespace '"/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/webpack/webpack".webpack' has no exported member 'RuleSetUseItem'.
-node_modules/next/dist/build/webpack/loaders/next-app-loader.d.ts(1,13): error TS2613: Module '"/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/webpack/webpack"' has no default export. Did you mean to use 'import { webpack } from "/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/webpack/webpack"' instead?
-node_modules/next/dist/build/webpack/plugins/define-env-plugin.d.ts(26,86): error TS2694: Namespace '"/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/webpack/webpack".webpack' has no exported member 'DefinePlugin'.
-node_modules/next/dist/client/components/error-boundary.d.ts(1,8): error TS1259: Module '"/mnt/Data68/remrin/chat/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
-node_modules/next/dist/client/components/layout-router.d.ts(3,8): error TS1259: Module '"/mnt/Data68/remrin/chat/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
-node_modules/next/dist/client/components/not-found-boundary.d.ts(1,8): error TS1259: Module '"/mnt/Data68/remrin/chat/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
-node_modules/next/dist/client/image-component.d.ts(1,8): error TS1259: Module '"/mnt/Data68/remrin/chat/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
-node_modules/next/dist/client/link.d.ts(2,8): error TS1259: Module '"/mnt/Data68/remrin/chat/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
-node_modules/next/dist/client/with-router.d.ts(1,8): error TS1259: Module '"/mnt/Data68/remrin/chat/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
-node_modules/next/dist/server/app-render/entry-base.d.ts(1,85): error TS2307: Cannot find module 'react-server-dom-webpack/server.edge' or its corresponding type declarations.
-node_modules/next/dist/server/render.d.ts(17,8): error TS1259: Module '"/mnt/Data68/remrin/chat/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
-node_modules/next/dist/shared/lib/amp-context.shared-runtime.d.ts(1,8): error TS1259: Module '"/mnt/Data68/remrin/chat/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
-node_modules/next/dist/shared/lib/app-router-context.shared-runtime.d.ts(4,8): error TS1259: Module '"/mnt/Data68/remrin/chat/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
-node_modules/next/dist/shared/lib/head-manager-context.shared-runtime.d.ts(1,8): error TS1259: Module '"/mnt/Data68/remrin/chat/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
-node_modules/next/dist/shared/lib/image-config-context.shared-runtime.d.ts(1,8): error TS1259: Module '"/mnt/Data68/remrin/chat/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
-node_modules/next/dist/shared/lib/loadable-context.shared-runtime.d.ts(1,8): error TS1259: Module '"/mnt/Data68/remrin/chat/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
-node_modules/next/dist/shared/lib/loadable.shared-runtime.d.ts(21,8): error TS1259: Module '"/mnt/Data68/remrin/chat/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
-node_modules/next/dist/shared/lib/router-context.shared-runtime.d.ts(1,8): error TS1259: Module '"/mnt/Data68/remrin/chat/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
-node_modules/next/dist/shared/lib/server-inserted-html.shared-runtime.d.ts(1,8): error TS1259: Module '"/mnt/Data68/remrin/chat/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
-node_modules/next/dist/shared/lib/utils.d.ts(12,13): error TS1192: Module '"fs"' has no default export.
-node_modules/next/types/index.d.ts(10,13): error TS1259: Module '"/mnt/Data68/remrin/chat/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
-node_modules/sonner/dist/index.d.ts(1,8): error TS1259: Module '"/mnt/Data68/remrin/chat/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
+app/[locale]/(platform)/feed/FeedPageClient.tsx(194,14): error TS2741: Property 'params' is missing in type '{ moments: MomentWithPersona[]; onReact: (momentId: string, emoji: string, isAdding: boolean) => Promise<void>; onView: (momentId: string) => Promise<void>; ... 4 more ...; onFilterChange: (newFilter: string) => void; }' but required in type 'FeedLayoutProps'.
+app/[locale]/(platform)/feed/page.tsx(116,13): error TS2322: Type '{ id: any; persona_id: any; created_by_user_id: any; media_type: "image" | "video"; image_url: any; video_url: any; thumbnail_url: any; duration_seconds: any; caption: any; created_at: any; likes_count: any; ... 4 more ...; userReactions: string[]; }[]' is not assignable to type 'MomentWithPersona[]'.
+  Type '{ id: any; persona_id: any; created_by_user_id: any; media_type: "image" | "video"; image_url: any; video_url: any; thumbnail_url: any; duration_seconds: any; caption: any; created_at: any; likes_count: any; ... 4 more ...; userReactions: string[]; }' is missing the following properties from type 'MomentWithPersona': comments_count, shares_count, bookmarks_count
+app/[locale]/admin/media/page.tsx(57,27): error TS2304: Cannot find name 'useRef'.
+app/api/audio/cache/stats/route.ts(44,32): error TS2554: Expected 1 arguments, but got 0.
+app/api/audio/clone/route.ts(9,26): error TS2554: Expected 1 arguments, but got 0.
+app/api/audio/clone/route.ts(66,27): error TS2339: Property 'cloneVoice' does not exist on type 'KokoroProvider'.
+app/api/audio/clone/route.ts(70,36): error TS2339: Property 'cloneVoice' does not exist on type 'KokoroProvider'.
+app/api/audio/voices/route.ts(18,9): error TS2353: Object literal may only specify known properties, and 'isNeural' does not exist in type 'Voice'.
+app/api/audio/voices/route.ts(31,9): error TS2353: Object literal may only specify known properties, and 'isNeural' does not exist in type 'Voice'.
+app/api/audio/voices/route.ts(44,9): error TS2353: Object literal may only specify known properties, and 'isNeural' does not exist in type 'Voice'.
+app/api/audio/voices/route.ts(57,9): error TS2353: Object literal may only specify known properties, and 'isNeural' does not exist in type 'Voice'.
+app/api/audio/voices/route.ts(70,9): error TS2353: Object literal may only specify known properties, and 'isNeural' does not exist in type 'Voice'.
+app/api/audio/voices/route.ts(83,9): error TS2353: Object literal may only specify known properties, and 'isNeural' does not exist in type 'Voice'.
+app/api/audio/voices/route.ts(96,9): error TS2353: Object literal may only specify known properties, and 'isNeural' does not exist in type 'Voice'.
+app/api/audio/voices/route.ts(108,9): error TS2353: Object literal may only specify known properties, and 'isNeural' does not exist in type 'Voice'.
+app/api/audio/voices/route.ts(120,9): error TS2353: Object literal may only specify known properties, and 'isNeural' does not exist in type 'Voice'.
+app/api/audio/voices/route.ts(138,30): error TS2554: Expected 1 arguments, but got 0.
+app/api/moments/feed/route.ts(51,13): error TS2322: Type 'PostgrestFilterBuilder<any, any, any, { id: any; persona_id: any; created_by_user_id: any; media_type: any; image_url: any; video_url: any; thumbnail_url: any; duration_seconds: any; caption: any; created_at: any; ... 8 more ...; moment_bookmarks: { ...; }[]; }[], "moments", unknown, "GET">' is not assignable to type 'PostgrestFilterBuilder<any, any, any, { id: any; persona_id: any; created_by_user_id: any; media_type: any; image_url: any; video_url: any; thumbnail_url: any; duration_seconds: any; caption: any; created_at: any; ... 7 more ...; personas: { ...; }[]; }[], "moments", unknown, "GET">'.
+  Type '{ id: any; persona_id: any; created_by_user_id: any; media_type: any; image_url: any; video_url: any; thumbnail_url: any; duration_seconds: any; caption: any; created_at: any; likes_count: any; comments_count: any; ... 5 more ...; personas: { ...; }[]; }[]' is not assignable to type '{ id: any; persona_id: any; created_by_user_id: any; media_type: any; image_url: any; video_url: any; thumbnail_url: any; duration_seconds: any; caption: any; created_at: any; likes_count: any; comments_count: any; ... 6 more ...; moment_bookmarks: { ...; }[]; }[]'.
+    Property 'moment_bookmarks' is missing in type '{ id: any; persona_id: any; created_by_user_id: any; media_type: any; image_url: any; video_url: any; thumbnail_url: any; duration_seconds: any; caption: any; created_at: any; likes_count: any; comments_count: any; ... 5 more ...; personas: { ...; }[]; }' but required in type '{ id: any; persona_id: any; created_by_user_id: any; media_type: any; image_url: any; video_url: any; thumbnail_url: any; duration_seconds: any; caption: any; created_at: any; likes_count: any; comments_count: any; ... 6 more ...; moment_bookmarks: { ...; }[]; }'.
+app/api/moments/feed/route.ts(51,13): error TS2589: Type instantiation is excessively deep and possibly infinite.
+components/layout/MinimalSidebar.tsx(49,12): error TS2304: Cannot find name 'User'.
+components/moments/MomentsGallery.tsx(287,11): error TS2322: Type '{ id: string; persona_id: string; created_by_user_id: null; media_type: "image" | "video"; image_url: string; video_url: string | null; thumbnail_url: string | null; duration_seconds: null; ... 7 more ...; persona: { ...; }; }[]' is not assignable to type '(MomentWithPersona & { userReactions?: string[] | undefined; })[]'.
+  Type '{ id: string; persona_id: string; created_by_user_id: null; media_type: "image" | "video"; image_url: string; video_url: string | null; thumbnail_url: string | null; duration_seconds: null; ... 7 more ...; persona: { ...; }; }' is not assignable to type 'MomentWithPersona & { userReactions?: string[] | undefined; }'.
+    Type '{ id: string; persona_id: string; created_by_user_id: null; media_type: "image" | "video"; image_url: string; video_url: string | null; thumbnail_url: string | null; duration_seconds: null; ... 7 more ...; persona: { ...; }; }' is missing the following properties from type 'MomentWithPersona': comments_count, shares_count, bookmarks_count
+components/moments/MomentsGallery.tsx(358,18): error TS2739: Type '{ moments: (MomentWithPersona & { userReactions?: string[] | undefined; })[]; onReact: (momentId: string, emoji: string, isAdding: boolean) => Promise<void>; onView: (momentId: string) => Promise<...>; onLoadMore: () => Promise<...>; hasMore: boolean; isLoading: boolean; }' is missing the following properties from type 'FeedLayoutProps': params, currentFilter, onFilterChange
+components/studio/VoiceTester.tsx(44,13): error TS2783: 'voiceId' is specified more than once, so this usage will be overwritten.
+docs/examples/audio-cache-warming.ts(153,25): error TS2339: Property 'voice_id' does not exist on type 'never'.
+docs/examples/audio-cache-warming.ts(154,48): error TS2339: Property 'id' does not exist on type 'never'.
+docs/examples/audio-cache-warming.ts(154,60): error TS2339: Property 'voice_id' does not exist on type 'never'.
+lib/audio/AudioCacheManager.ts(382,23): error TS2345: Argument of type '(a: {    count: number;}, b: {    count: number;}) => number' is not assignable to parameter of type '(a: { voiceId: string; count: unknown; }, b: { voiceId: string; count: unknown; }) => number'.
+  Types of parameters 'a' and 'a' are incompatible.
+    Type '{ voiceId: string; count: unknown; }' is not assignable to type '{ count: number; }'.
+      Types of property 'count' are incompatible.
+        Type 'unknown' is not assignable to type 'number'.
+lib/audio/AudioCacheManager.ts(392,17): error TS2322: Type '{ voiceId: string; count: unknown; }[]' is not assignable to type '{ voiceId: string; count: number; }[]'.
+  Type '{ voiceId: string; count: unknown; }' is not assignable to type '{ voiceId: string; count: number; }'.
+    Types of property 'count' are incompatible.
+      Type 'unknown' is not assignable to type 'number'.
+lib/audio/analytics.ts(4,60): error TS2339: Property 'audio_cache' does not exist on type '{ assistant_collections: { Row: { assistant_id: string; collection_id: string; created_at: string; updated_at: string | null; user_id: string; }; Insert: { assistant_id: string; collection_id: string; created_at?: string | undefined; updated_at?: string | ... 1 more ... | undefined; user_id: string; }; Update: { ......'.
+tests/audio/api-routes.test.ts(20,46): error TS2345: Argument of type '{ data: { user: { id: string; }; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/api-routes.test.ts(30,45): error TS2345: Argument of type '{ error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/api-routes.test.ts(31,45): error TS2345: Argument of type '{ data: { path: string; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/api-routes.test.ts(41,42): error TS2345: Argument of type '{ get: Mock<UnknownFunction>; set: Mock<UnknownFunction>; }' is not assignable to parameter of type 'never'.
+tests/audio/api-routes.test.ts(84,57): error TS2345: Argument of type '{ data: { user: null; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/api-routes.test.ts(91,57): error TS2345: Argument of type '{ data: { user: { id: string; }; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/cache.test.ts(7,48): error TS2345: Argument of type '{ error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/cache.test.ts(30,45): error TS2345: Argument of type '{ error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/cache.test.ts(73,50): error TS2345: Argument of type '{ error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/cache.test.ts(78,82): error TS2345: Argument of type '{ error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/cache.test.ts(84,42): error TS2345: Argument of type '{ data: { id: string; audio_url: string; access_count: number; last_accessed_at: string; created_at: string; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/cache.test.ts(88,74): error TS2345: Argument of type '{ error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/cache.test.ts(94,42): error TS2345: Argument of type '{ data: null; error: { message: string; }; }' is not assignable to parameter of type 'never'.
+tests/audio/cache.test.ts(100,42): error TS2345: Argument of type '{ error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/cache.test.ts(121,42): error TS2345: Argument of type '{ data: any[]; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/cache.test.ts(135,49): error TS2345: Argument of type '{ data: { id: string; }[]; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/cache.test.ts(139,49): error TS2345: Argument of type '{ error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/cache.test.ts(152,42): error TS2345: Argument of type '{ data: { id: string; file_size_bytes: number; access_count: number; created_at: string; voice_id: string; }[]; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/generate-route.test.ts(29,35): error TS7006: Parameter 'v' implicitly has an 'any' type.
+tests/audio/generate-route.test.ts(29,38): error TS7006: Parameter 'k' implicitly has an 'any' type.
+tests/audio/generate-route.test.ts(93,45): error TS2345: Argument of type '{ data: { path: string; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/generate-route.test.ts(103,42): error TS2345: Argument of type '{}' is not assignable to parameter of type 'never'.
+tests/audio/generate-route.test.ts(119,43): error TS2345: Argument of type '{}' is not assignable to parameter of type 'never'.
+tests/audio/generate-route.test.ts(128,53): error TS2345: Argument of type '{ data: { user: { id: string; }; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/generate-route.test.ts(133,45): error TS2345: Argument of type '{ audioUrl: string; duration: number; fileSize: number; hitCount: number; lastAccessed: Date; createdAt: Date; }' is not assignable to parameter of type 'never'.
+tests/audio/generate-route.test.ts(143,51): error TS2345: Argument of type '{ data: { voice_provider: string; voice_id: string; voice_settings: {}; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/generate-route.test.ts(162,45): error TS2345: Argument of type 'null' is not assignable to parameter of type 'never'.
+tests/audio/generate-route.test.ts(165,51): error TS2345: Argument of type '{ data: { voice_provider: string; voice_id: string; voice_settings: {}; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/generate-route.test.ts(186,57): error TS2345: Argument of type '{ data: { user: null; }; error: string; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(156,46): error TS2345: Argument of type '{ data: { user: { id: string; }; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(174,45): error TS2345: Argument of type '{ data: { path: string; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(175,45): error TS2345: Argument of type '{ error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(185,42): error TS2345: Argument of type '{ get: Mock<UnknownFunction>; set: Mock<UnknownFunction>; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(200,56): error TS2345: Argument of type '{ audio: ArrayBuffer; audioUrl: string; cached: boolean; duration: number; metadata: { provider: string; voiceId: string; textHash: string; generationTimeMs: number; characterCount: number; }; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(216,45): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(217,47): error TS2345: Argument of type '{}' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(218,52): error TS2345: Argument of type '{ available: boolean; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(219,48): error TS2345: Argument of type '{ totalEntries: number; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(220,45): error TS2345: Argument of type '{ deletedCount: number; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(242,43): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(249,49): error TS2345: Argument of type '{ data: { user: { id: string; }; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(250,46): error TS2345: Argument of type '{ data: { id: string; user_id: string; voice_provider: string; voice_id: string; voice_settings: { rate: number; pitch: number; }; welcome_audio_url: null; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(251,46): error TS2345: Argument of type '{ error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(252,46): error TS2345: Argument of type '{ error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(253,43): error TS2345: Argument of type '{ data: number; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(287,44): error TS2345: Argument of type '{ data: { id: string; user_id: string; voice_provider: string; voice_id: string; voice_settings: { rate: number; pitch: number; }; welcome_audio_url: null; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(288,44): error TS2345: Argument of type '{ data: null; error: { message: string; }; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(312,50): error TS2345: Argument of type '{ data: { id: string; user_id: string; voice_provider: string; voice_id: string; voice_settings: { rate: number; pitch: number; }; welcome_audio_url: null; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(352,44): error TS2345: Argument of type '{ data: { id: string; user_id: string; voice_provider: string; voice_id: string; voice_settings: { rate: number; pitch: number; }; welcome_audio_url: null; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(353,44): error TS2345: Argument of type '{ data: { subscription_tier: string; id: string; is_admin: boolean; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(375,44): error TS2345: Argument of type '{ data: { voice_provider: string; id: string; user_id: string; voice_id: string; voice_settings: { rate: number; pitch: number; }; welcome_audio_url: null; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(379,47): error TS2345: Argument of type '{ data: number; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(406,46): error TS2345: Argument of type '{ data: { voice_provider: string; id: string; user_id: string; voice_id: string; voice_settings: { rate: number; pitch: number; }; welcome_audio_url: null; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(432,46): error TS2345: Argument of type '{ data: { voice_provider: string; id: string; user_id: string; voice_id: string; voice_settings: { rate: number; pitch: number; }; welcome_audio_url: null; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(503,46): error TS2345: Argument of type '{ error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(520,43): error TS2345: Argument of type '{ data: number; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(532,43): error TS2345: Argument of type '{ data: number; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(544,43): error TS2345: Argument of type '{ data: number; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(563,46): error TS2345: Argument of type '{ data: { id: string; audio_url: string; access_count: number; last_accessed_at: string; created_at: string; file_size_bytes: number; duration_seconds: number; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(567,74): error TS2345: Argument of type '{ error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(578,46): error TS2345: Argument of type '{ error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(593,46): error TS2345: Argument of type '{ data: { access_count: number; id: string; audio_url: string; last_accessed_at: string; created_at: string; file_size_bytes: number; duration_seconds: number; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(597,74): error TS2345: Argument of type '{ error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(608,46): error TS2345: Argument of type '{ data: any[]; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(627,46): error TS2345: Argument of type '{ data: { id: string; file_size_bytes: number; access_count: number; created_at: string; voice_id: string; }[]; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(669,46): error TS2345: Argument of type '{ data: { id: string; }[]; count: number; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(690,61): error TS2345: Argument of type '{ data: { user: { id: string; }; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(696,46): error TS2345: Argument of type '{ data: { is_admin: boolean; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(719,61): error TS2345: Argument of type '{ data: { user: { id: string; }; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(725,46): error TS2345: Argument of type '{ data: { id: string; user_id: string; voice_provider: string; voice_id: string; voice_settings: { rate: number; pitch: number; }; welcome_audio_url: null; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(731,46): error TS2345: Argument of type '{ data: null; error: { message: string; }; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(737,46): error TS2345: Argument of type '{ error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(777,46): error TS2345: Argument of type '{ data: { user_id: string; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(783,46): error TS2345: Argument of type '{ data: { welcome_audio_url: string; id: string; user_id: string; voice_provider: string; voice_id: string; voice_settings: { rate: number; pitch: number; }; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(806,61): error TS2345: Argument of type '{ data: { user: null; }; error: { message: string; }; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(837,46): error TS2345: Argument of type '{ data: null; error: { message: string; }; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(856,78): error TS2345: Argument of type '{ data: null; error: { message: string; }; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(875,46): error TS2345: Argument of type '{ data: { user_id: string; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(894,46): error TS2345: Argument of type '{ data: { id: string; audio_url: string; access_count: number; last_accessed_at: string; created_at: string; file_size_bytes: number; duration_seconds: number; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(898,74): error TS2345: Argument of type '{ error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(911,42): error TS2345: Argument of type '{ data: { id: string; user_id: string; voice_provider: string; voice_id: string; voice_settings: { rate: number; pitch: number; }; welcome_audio_url: null; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(972,46): error TS2345: Argument of type '{ data: { id: string; user_id: string; voice_provider: string; voice_id: string; voice_settings: { rate: number; pitch: number; }; welcome_audio_url: null; }; error: null; }' is not assignable to parameter of type 'never'.
+tests/audio/integration.test.ts(991,46): error TS2345: Argument of type '{ data: null; error: { message: string; }; }' is not assignable to parameter of type 'never'.
+tests/audio/kokoro.test.ts(7,1): error TS2322: Type 'Mock<UnknownFunction>' is not assignable to type '{ (input: URL | RequestInfo, init?: RequestInit | undefined): Promise<Response>; (input: string | Request | URL, init?: RequestInit | undefined): Promise<...>; }'.
+  Type 'unknown' is not assignable to type 'Promise<Response>'.
+tests/audio/kokoro.test.ts(24,55): error TS2345: Argument of type '{ ok: boolean; arrayBuffer: () => Promise<ArrayBuffer>; }' is not assignable to parameter of type 'never'.
+tests/audio/kokoro.test.ts(44,55): error TS2345: Argument of type '{ ok: boolean; status: number; statusText: string; }' is not assignable to parameter of type 'never'.
+tests/audio/kokoro.test.ts(63,55): error TS2345: Argument of type '{ ok: boolean; }' is not assignable to parameter of type 'never'.
+tests/audio/performance.test.ts(42,55): error TS2345: Argument of type '{ ok: boolean; json: () => Promise<{ ShortName: string; FriendlyName: string; Locale: string; Gender: string; }[]>; }' is not assignable to parameter of type 'never'.
+tests/test-utils.ts(29,39): error TS7006: Parameter 'v' implicitly has an 'any' type.
+tests/test-utils.ts(29,42): error TS7006: Parameter 'k' implicitly has an 'any' type.

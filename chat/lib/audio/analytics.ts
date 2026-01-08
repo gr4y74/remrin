@@ -1,7 +1,18 @@
 
-import { Database } from '@/supabase/types'
 
-export type AudioCacheEntry = Database['public']['Tables']['audio_cache']['Row']
+export interface AudioCacheEntry {
+    id: string
+    text_hash: string
+    persona_id: string | null
+    voice_provider: string
+    voice_id: string
+    audio_url: string
+    file_size_bytes: number | null
+    duration_seconds: number | null
+    created_at: string
+    last_accessed_at: string
+    access_count: number | null
+}
 
 export const PROVIDER_COSTS = {
     edge: 0, // Free
