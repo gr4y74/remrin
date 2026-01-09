@@ -31,6 +31,7 @@ interface ChatUIV2Props {
     personaIntroMessage?: string
     userTier?: UserTier
     showSoulGallery?: boolean
+    welcomeAudioUrl?: string | null
 }
 
 
@@ -41,6 +42,7 @@ function ChatUIInner({
     userId,
     personaImage,
     personaName,
+    welcomeAudioUrl,
     showSoulGallery = false,
     onSoulSelect,
     onMemorySearchTrigger,
@@ -50,6 +52,7 @@ function ChatUIInner({
     userId?: string
     personaImage?: string
     personaName?: string
+    welcomeAudioUrl?: string | null
     showSoulGallery?: boolean
     onSoulSelect?: (personaId: string, personaData: any) => void
     onMemorySearchTrigger?: (query: string) => void
@@ -183,6 +186,7 @@ function ChatUIInner({
                         profile={profile}
                         setChatBackgroundEnabled={setChatBackgroundEnabled}
                         setActiveBackgroundUrl={setActiveBackgroundUrl}
+                        welcomeAudioUrl={welcomeAudioUrl}
                     />
                 </div>
             )}
@@ -276,6 +280,7 @@ export function ChatUIV2({
     personaName: initialPersonaName,
     personaSystemPrompt: initialPersonaSystemPrompt,
     personaIntroMessage: initialPersonaIntroMessage,
+    welcomeAudioUrl: initialWelcomeAudioUrl,
     userTier = 'free',
     showSoulGallery = false
 }: ChatUIV2Props) {
@@ -285,6 +290,7 @@ export function ChatUIV2({
         name?: string
         systemPrompt?: string
         introMessage?: string
+        welcomeAudioUrl?: string | null
     } | null>(
         initialPersonaId
             ? {
@@ -292,7 +298,8 @@ export function ChatUIV2({
                 image: initialPersonaImage,
                 name: initialPersonaName,
                 systemPrompt: initialPersonaSystemPrompt,
-                introMessage: initialPersonaIntroMessage
+                introMessage: initialPersonaIntroMessage,
+                welcomeAudioUrl: initialWelcomeAudioUrl
             }
             : null
     )
@@ -309,10 +316,11 @@ export function ChatUIV2({
                 image: initialPersonaImage,
                 name: initialPersonaName,
                 systemPrompt: initialPersonaSystemPrompt,
-                introMessage: initialPersonaIntroMessage
+                introMessage: initialPersonaIntroMessage,
+                welcomeAudioUrl: initialWelcomeAudioUrl
             })
         }
-    }, [initialPersonaId, initialPersonaImage, initialPersonaName, initialPersonaSystemPrompt, initialPersonaIntroMessage])
+    }, [initialPersonaId, initialPersonaImage, initialPersonaName, initialPersonaSystemPrompt, initialPersonaIntroMessage, initialWelcomeAudioUrl])
 
     const handleSoulSelect = (personaId: string, personaData: any) => {
         setSelectedPersona({
@@ -320,7 +328,8 @@ export function ChatUIV2({
             image: personaData.image_url,
             name: personaData.name,
             systemPrompt: personaData.system_prompt || personaData.description,
-            introMessage: personaData.intro_message
+            introMessage: personaData.intro_message,
+            welcomeAudioUrl: personaData.welcome_audio_url
         })
     }
 
@@ -348,6 +357,7 @@ export function ChatUIV2({
                     onMemorySearchTrigger={handleMemorySearchTrigger}
                     isVisualNovelMode={isVisualNovelMode}
                     toggleVisualNovelMode={() => setIsVisualNovelMode(!isVisualNovelMode)}
+                    welcomeAudioUrl={selectedPersona?.welcomeAudioUrl || initialWelcomeAudioUrl}
                 />
                 <MemorySearchModal
                     isOpen={isMemorySearchOpen}

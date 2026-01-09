@@ -168,15 +168,29 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
 
   // Load background when persona changes
   useEffect(() => {
-    if (selectedPersona?.id && typeof window !== 'undefined') {
-      const key = `chat_bg_${selectedPersona.id}`
-      const saved = localStorage.getItem(key)
-      // Only update if different to avoid loops, though strict diff check is fine
-      setActiveBackgroundUrlState(saved)
+    if (selectedPersona?.id) {
+      // 1. Try local storage (user override)
+      if (typeof window !== 'undefined') {
+        const key = `chat_bg_${selectedPersona.id}`
+        const saved = localStorage.getItem(key)
+        if (saved) {
+          setActiveBackgroundUrlState(saved)
+          return
+        }
+      }
+
+      // 2. Try persona's default background from DB
+      if ((selectedPersona as any).background_url) {
+        setActiveBackgroundUrlState((selectedPersona as any).background_url)
+        return
+      }
+
+      // 3. Reset to null (will show default or generic)
+      setActiveBackgroundUrlState(null)
     } else {
       setActiveBackgroundUrlState(null)
     }
-  }, [selectedPersona?.id])
+  }, [selectedPersona?.id, (selectedPersona as any)?.background_url])
 
 
   // Persist enabled toggle

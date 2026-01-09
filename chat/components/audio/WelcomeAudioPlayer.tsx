@@ -48,6 +48,16 @@ export function WelcomeAudioPlayer({
         if (savedMuted !== null) {
             setIsMuted(savedMuted === "true")
         }
+
+        const handleMuteChange = (e: Event) => {
+            const customEvent = e as CustomEvent
+            if (customEvent.detail && typeof customEvent.detail.isMuted === 'boolean') {
+                setIsMuted(customEvent.detail.isMuted)
+            }
+        }
+
+        window.addEventListener('remrin-audio-mute-change', handleMuteChange)
+        return () => window.removeEventListener('remrin-audio-mute-change', handleMuteChange)
     }, [])
 
     // Handle audio initialization

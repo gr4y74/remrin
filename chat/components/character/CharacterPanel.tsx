@@ -18,7 +18,9 @@ import {
     IconPhoto,
     IconArrowNarrowRight,
     IconSparkles,
-    IconWaveSine
+    IconWaveSine,
+    IconVolume,
+    IconVolumeOff
 } from "@tabler/icons-react"
 import { FC, useContext, useState, useMemo } from "react"
 import Image from "next/image"
@@ -65,6 +67,29 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
     const [isLoadingSimilar, setIsLoadingSimilar] = useState(false)
     const [commentCount, setCommentCount] = useState(0)
     const [isSparking, setIsSparking] = useState(false)
+    const [isGlobalMuted, setIsGlobalMuted] = useState(false)
+
+    // Check global mute state
+    useReactEffect(() => {
+        const savedMuted = localStorage.getItem("remrin_audio_muted")
+        if (savedMuted !== null) {
+            setIsGlobalMuted(savedMuted === "true")
+        }
+    }, [])
+
+    const toggleGlobalMute = () => {
+        const newState = !isGlobalMuted
+        setIsGlobalMuted(newState)
+        localStorage.setItem("remrin_audio_muted", String(newState))
+
+        // Dispatch custom event for players to sync
+        const event = new CustomEvent('remrin-audio-mute-change', {
+            detail: { isMuted: newState }
+        })
+        window.dispatchEvent(event)
+
+        toast.success(newState ? "Audio muted" : "Audio unmuted")
+    }
 
 
     const handleClose = () => {
@@ -602,6 +627,41 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
 
                         {/* Settings Buttons */}
                         <div className="space-y-3">
+                            {/* Global Mute Toggle */}
+                            <button
+                                onClick={toggleGlobalMute}
+                                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-rp-overlay/40 hover:bg-rp-overlay transition-colors group"
+                            >
+                                <div className={cn(
+                                    "flex items-center justify-center size-10 rounded-lg",
+                                    isGlobalMuted ? "bg-red-500/20" : "bg-emerald-500/20"
+                                )}>
+                                    {isGlobalMuted ? (
+                                        <IconVolumeOff size={20} className="text-red-400" />
+                                    ) : (
+                                        <IconVolume size={20} className="text-emerald-400" />
+                                    )}
+                                </div>
+                                <div className="flex-1 text-left">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-sm font-medium text-rp-text">
+                                            {isGlobalMuted ? "Unmute Audio" : "Mute Audio"}
+                                        </span>
+                                    </div>
+                                    <div className="text-xs text-rp-muted">
+                                        {isGlobalMuted ? "Enable character voices" : "Disable character voices"}
+                                    </div>
+                                </div>
+                                <div className={cn(
+                                    "w-8 h-4 rounded-full p-0.5 transition-colors relative",
+                                    isGlobalMuted ? "bg-rp-muted/30" : "bg-rp-iris"
+                                )}>
+                                    <div className={cn(
+                                        "size-3 bg-white rounded-full shadow-sm transition-transform",
+                                        isGlobalMuted ? "translate-x-0" : "translate-x-4"
+                                    )} />
+                                </div>
+                            </button>
                             {/* Spark of Life - ONLY FOR OWNER AND IF NO VIDEO */}
                             {isOwner && !(selectedPersona as any).video_url && (
                                 <button

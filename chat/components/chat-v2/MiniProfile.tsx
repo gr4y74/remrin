@@ -22,6 +22,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { uploadChatBackground, getChatBackgroundFromStorage } from "@/db/storage/chat-backgrounds"
 import { toast } from "sonner"
 import { WithTooltip } from "@/components/ui/with-tooltip"
+import { WelcomeAudioPlayer } from "@/components/audio/WelcomeAudioPlayer"
 
 
 interface MiniProfileProps {
@@ -52,6 +53,7 @@ interface MiniProfileProps {
   profile?: any // For background upload
   setChatBackgroundEnabled?: (enabled: boolean) => void
   setActiveBackgroundUrl?: (url: string) => void
+  welcomeAudioUrl?: string | null
 }
 
 export const MiniProfile: React.FC<MiniProfileProps> = ({
@@ -72,7 +74,8 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
   onToggleVisualNovel,
   profile,
   setChatBackgroundEnabled,
-  setActiveBackgroundUrl
+  setActiveBackgroundUrl,
+  welcomeAudioUrl
 }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -161,6 +164,17 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
 
         {/* Right Actions Wrapper */}
         <div className="flex items-center gap-2">
+          {/* Welcome Audio Player */}
+          {welcomeAudioUrl && !isExpanded && (
+            <div className="mr-1">
+              <WelcomeAudioPlayer
+                audioUrl={welcomeAudioUrl}
+                autoPlay={true}
+                className="[&_button]:size-8 [&_button]:bg-transparent [&_button]:border-white/10 [&_button:hover]:bg-white/10 [&_svg]:size-3.5"
+              />
+            </div>
+          )}
+
           {/* Mood (Visible when collapsed) - No pill, just emoji + battery */}
           {!isExpanded && moodState && (
             <div className="flex items-center gap-2 mr-1">

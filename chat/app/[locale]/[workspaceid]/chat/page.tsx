@@ -51,6 +51,7 @@ export default function ChatPage() {
         personaName={selectedPersona?.name || undefined}
         personaSystemPrompt={selectedPersona?.system_prompt || undefined}
         personaIntroMessage={selectedPersona?.intro_message || undefined}
+        welcomeAudioUrl={selectedPersona?.welcome_audio_url || undefined}
         userTier={userTier}
       />
     </ErrorBoundary>

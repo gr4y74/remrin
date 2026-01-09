@@ -91,11 +91,11 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
           {/* Overlay for readability - Lightened for better vibrancy */}
           <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px]" />
         </div>
-      ) : chatBackgroundEnabled && selectedPersona && (
+      ) : chatBackgroundEnabled && selectedPersona && activeBackgroundUrl ? (
         <div className="fixed inset-0 z-0 transform-gpu">
           {/* Background Image */}
           <Image
-            src={activeBackgroundUrl || "/images/rem_bg.jpg"}
+            src={activeBackgroundUrl}
             alt="Chat background"
             fill
             sizes="100vw"
@@ -105,7 +105,7 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
           {/* Overlay for readability - Lightened for better vibrancy */}
           <div className="absolute inset-0 bg-black/20" />
         </div>
-      )}
+      ) : null}
 
       {/* Main Content Area - with dynamic right margin for CharacterPanel */}
       <div
