@@ -28,6 +28,7 @@ interface InteractionSidebarProps {
     onShare: () => void
     onCommentClick: () => void
     onProfileClick: () => void
+    onChatClick?: () => void
     currentFilter?: string
     onFilterChange?: (filter: string) => void
 }
@@ -42,6 +43,7 @@ export function InteractionSidebar({
     onShare,
     onCommentClick,
     onProfileClick,
+    onChatClick,
     currentFilter = 'for-you',
     onFilterChange
 }: InteractionSidebarProps) {
@@ -91,39 +93,6 @@ export function InteractionSidebar({
                 </span>
             </div>
 
-            {/* Comments */}
-            <div className="flex flex-col items-center gap-1">
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="rounded-full w-12 h-12 bg-black/20 backdrop-blur-sm hover:bg-black/40 transition-all [&_svg]:size-7 text-white"
-                    onClick={onCommentClick}
-                >
-                    <MessageCircle className="fill-white/20" />
-                </Button>
-                <span className="text-white text-xs font-semibold drop-shadow-md">
-                    {formatCount(stats.comments)}
-                </span>
-            </div>
-
-            {/* Bookmark */}
-            <div className="flex flex-col items-center gap-1">
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className={cn(
-                        "rounded-full w-12 h-12 bg-black/20 backdrop-blur-sm hover:bg-black/40 transition-all [&_svg]:size-7 text-white",
-                        userState.isBookmarked && "text-rp-gold"
-                    )}
-                    onClick={onBookmark}
-                >
-                    <Bookmark className={cn("fill-transparent transition-all", userState.isBookmarked && "fill-current")} />
-                </Button>
-                <span className="text-white text-xs font-semibold drop-shadow-md">
-                    {formatCount(stats.bookmarks)}
-                </span>
-            </div>
-
             {/* Settings / Filter Menu */}
             <div className="relative">
                 <button
@@ -170,14 +139,18 @@ export function InteractionSidebar({
                 )}
             </div>
 
-            {/* Spinning Disc (Audio) */}
-            <div className="mt-4 w-12 h-12 rounded-full bg-rp-surface border-4 border-black/50 overflow-hidden animate-[spin_5s_linear_infinite]">
+            {/* Spinning Disc (Chat Button) */}
+            <button
+                onClick={onChatClick}
+                className="mt-4 w-12 h-12 rounded-full bg-rp-surface border-4 border-black/50 overflow-hidden animate-[spin_5s_linear_infinite] hover:scale-110 hover:border-rp-iris/50 transition-all cursor-pointer group"
+                aria-label="Open chat"
+            >
                 {creator.avatarUrl ? (
-                    <img src={creator.avatarUrl} className="w-full h-full object-cover opacity-80" alt="sound" />
+                    <img src={creator.avatarUrl} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="chat" />
                 ) : (
                     <div className="w-full h-full bg-gradient-to-tr from-rp-iris to-rp-love" />
                 )}
-            </div>
+            </button>
 
         </div>
     )

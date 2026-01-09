@@ -20,6 +20,7 @@ interface VideoMomentCardProps {
     isUIVisible?: boolean
     currentFilter?: string
     onFilterChange?: (filter: string) => void
+    onChatClick?: () => void
 }
 
 export function VideoMomentCard({
@@ -30,7 +31,8 @@ export function VideoMomentCard({
     currentUserProfile,
     isUIVisible = true,
     currentFilter,
-    onFilterChange
+    onFilterChange,
+    onChatClick
 }: VideoMomentCardProps) {
     const router = useRouter()
     const videoRef = useRef<HTMLVideoElement>(null)
@@ -47,6 +49,10 @@ export function VideoMomentCard({
 
     const [isLiked, setIsLiked] = useState(moment.userReactions?.includes('❤️') || false)
     const [isBookmarked, setIsBookmarked] = useState(false) // Ideally passed from prop
+
+    // Welcome Audio State
+    const audioRef = useRef<HTMLAudioElement | null>(null)
+    const [isAudioPlaying, setIsAudioPlaying] = useState(false)
 
     // Check initial bookmark status
     useEffect(() => {
@@ -214,8 +220,38 @@ export function VideoMomentCard({
                     </div>
                 )}
 
-                {/* Top Controls (Mute/View) */}
+                {/* Top Controls (Audio/Mute) */}
                 <div className="absolute top-4 right-4 z-20">
+                    {/* Welcome Audio Button - Always show */}
+                    {moment.persona.welcome_audio_url && (
+                        <button
+                            onClick={() => {
+                                if (!audioRef.current) {
+                                    audioRef.current = new Audio(moment.persona.welcome_audio_url)
+                                    audioRef.current.onended = () => setIsAudioPlaying(false)
+                                }
+
+                                if (isAudioPlaying) {
+                                    audioRef.current.pause()
+                                    audioRef.current.currentTime = 0
+                                    setIsAudioPlaying(false)
+                                } else {
+                                    audioRef.current.play()
+                                    setIsAudioPlaying(true)
+                                }
+                            }}
+                            className="bg-black/30 rounded-full p-2 backdrop-blur-md hover:bg-black/50 transition-colors mb-2"
+                            aria-label="Play welcome audio"
+                        >
+                            {isAudioPlaying ? (
+                                <VolumeX className="h-5 w-5 text-white" />
+                            ) : (
+                                <Volume2 className="h-5 w-5 text-white" />
+                            )}
+                        </button>
+                    )}
+
+                    {/* Video Mute Button - Only for videos */}
                     {moment.media_type === 'video' && (
                         <button
                             onClick={toggleMute}
@@ -230,11 +266,44 @@ export function VideoMomentCard({
                     )}
                 </div>
 
-                <div className="absolute top-4 left-4 z-20 flex items-center gap-1.5 bg-black/30 rounded-full px-3 py-1.5 backdrop-blur-md">
-                    <Eye className="h-4 w-4 text-white/90" />
-                    <span className="text-white/90 text-sm font-medium">
-                        {formatViews(moment.view_count)}
-                    </span>
+                {/* Top Left - Views & Audio */}
+                <div className="absolute top-4 left-4 z-20 flex items-center gap-2">
+                    {/* View Counter */}
+                    <div className="flex items-center gap-1.5 bg-black/30 rounded-full px-3 py-1.5 backdrop-blur-md">
+                        <Eye className="h-4 w-4 text-white/90" />
+                        <span className="text-white/90 text-sm font-medium">
+                            {formatViews(moment.view_count)}
+                        </span>
+                    </div>
+
+                    {/* Welcome Audio Button */}
+                    {moment.persona.welcome_audio_url && (
+                        <button
+                            onClick={() => {
+                                if (!audioRef.current) {
+                                    audioRef.current = new Audio(moment.persona.welcome_audio_url)
+                                    audioRef.current.onended = () => setIsAudioPlaying(false)
+                                }
+
+                                if (isAudioPlaying) {
+                                    audioRef.current.pause()
+                                    audioRef.current.currentTime = 0
+                                    setIsAudioPlaying(false)
+                                } else {
+                                    audioRef.current.play()
+                                    setIsAudioPlaying(true)
+                                }
+                            }}
+                            className="bg-black/30 rounded-full p-2 backdrop-blur-md hover:bg-black/50 transition-colors"
+                            aria-label="Play welcome audio"
+                        >
+                            {isAudioPlaying ? (
+                                <VolumeX className="h-4 w-4 text-white" />
+                            ) : (
+                                <Volume2 className="h-4 w-4 text-white" />
+                            )}
+                        </button>
+                    )}
                 </div>
 
                 {/* Bottom Content (Caption & Persona) - Inside Video */}
@@ -296,6 +365,7 @@ export function VideoMomentCard({
                     onShare={handleShare}
                     onCommentClick={() => setIsCommentsOpen(true)}
                     onProfileClick={() => router.push(`/character/${moment.persona.id}`)}
+                    onChatClick={onChatClick}
                     currentFilter={currentFilter}
                     onFilterChange={onFilterChange}
                 />

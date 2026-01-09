@@ -39,6 +39,12 @@ import { updatePersonaImageActions } from "@/app/actions/update-persona-image"
 interface CharacterPanelProps {
     width?: number
     onClose?: () => void
+    // For Feed integration: override the persona from context
+    overridePersona?: any
+    // Context mode: 'chat' (default) or 'feed'
+    mode?: 'chat' | 'feed'
+    // Show chat tab (future feature)
+    showChatTab?: boolean
 }
 
 type TabId = "comments" | "similar" | "settings"
@@ -51,9 +57,15 @@ const TABS: { id: TabId; icon: typeof IconMessage; label: string }[] = [
 
 export const CharacterPanel: FC<CharacterPanelProps> = ({
     width = 350,
-    onClose
+    onClose,
+    overridePersona,
+    mode = 'chat',
+    showChatTab = false
 }) => {
-    const { selectedPersona, setIsCharacterPanelOpen, isCharacterPanelOpen, profile } = useContext(RemrinContext)
+    const { selectedPersona: contextPersona, setIsCharacterPanelOpen, isCharacterPanelOpen, profile } = useContext(RemrinContext)
+
+    // Use overridePersona if provided (Feed mode), otherwise use context (Chat mode)
+    const selectedPersona = overridePersona || contextPersona
     const params = useParams()
     const locale = params.locale as string
 
@@ -131,7 +143,7 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
         }
 
         fetchData()
-    }, [selectedPersona?.id, isCharacterPanelOpen, profile?.id])
+    }, [selectedPersona?.id, isCharacterPanelOpen, profile?.id, overridePersona])
 
     const handleFollowClick = async () => {
         if (!profile || !selectedPersona) {
@@ -262,7 +274,7 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
         return (
             <button
                 onClick={handleOpen}
-                className="bg-rp-overlay border-border/50 text-rp-subtle hover:bg-rp-highlight-med hover:text-rp-text absolute right-0 top-1/2 z-20 hidden min-h-[44px] min-w-[44px] -translate-y-1/2 items-center justify-center rounded-l-full border border-r-0 transition-colors md:flex"
+                className="bg-rp-overlay border-border/50 text-rp-subtle hover:bg-rp-highlight-med hover:text-rp-text fixed right-0 top-1/2 z-20 hidden min-h-[44px] min-w-[44px] -translate-y-1/2 items-center justify-center rounded-l-full border border-r-0 transition-colors md:flex"
                 aria-label="Open character panel"
                 title="Open character panel"
             >

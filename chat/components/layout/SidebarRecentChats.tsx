@@ -1,11 +1,12 @@
 "use client"
 
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, useContext } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { IconMessage } from "@tabler/icons-react"
+import { RemrinContext } from "@/context/context"
 
 interface SidebarRecentChatsProps {
     isExpanded: boolean
@@ -115,6 +116,8 @@ export function SidebarRecentChats({ isExpanded, maxChats = 20, showDemo = false
         workspaceId: string
     }>>([])
 
+    const { selectedWorkspace } = useContext(RemrinContext)
+
     // Load recent chats from localStorage only on client side
     useEffect(() => {
         setMounted(true)
@@ -152,7 +155,7 @@ export function SidebarRecentChats({ isExpanded, maxChats = 20, showDemo = false
                 id: chat.personaId,
                 name: chat.personaName,
                 imageUrl: chat.personaImage,
-                href: `/${chat.workspaceId}/chat?persona=${chat.personaId}`,
+                href: `/character/${chat.personaId}`,
                 lastChatAt: chat.lastChatAt
             }))
         }

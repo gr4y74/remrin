@@ -266,7 +266,7 @@ export function PublicProfile() {
                                     imageUrl={persona.image_url}
                                     rarity={persona.is_premium ? 'legendary' : 'common'}
                                     isFeatured={persona.is_featured}
-                                    onClick={() => window.location.href = `/chat/${persona.id}`}
+                                    onClick={() => window.location.href = `/character/${persona.id}`}
                                 />
                             ))}
                         </div>
@@ -300,7 +300,7 @@ export function PublicProfile() {
                                     imageUrl={persona.image_url}
                                     rarity={persona.is_premium ? 'legendary' : 'common'}
                                     isFeatured={persona.is_featured}
-                                    onClick={() => window.location.href = `/chat/${persona.id}`}
+                                    onClick={() => window.location.href = `/character/${persona.id}`}
                                 />
                             ))}
                         </div>

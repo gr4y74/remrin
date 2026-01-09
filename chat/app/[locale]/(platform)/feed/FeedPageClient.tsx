@@ -171,21 +171,20 @@ export function FeedPageClient({
                 !isHeaderVisible && "-translate-y-full"
             )}>
                 <div className="mx-auto max-w-7xl px-4 py-4">
-                    <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center justify-center gap-3">
+                        {/* Title - Centered */}
                         <h1 className="font-tiempos-headline text-3xl font-bold text-rp-text">
                             Soul Feed
                         </h1>
-                        <div className="flex items-center gap-3">
-                            <CreateMomentButton
-                                user={user}
-                                onSelectPersona={(persona) => {
-                                    setSelectedPersona(persona)
-                                    setIsUploadOpen(true)
-                                }}
-                            />
 
-
-                        </div>
+                        {/* Create Button - Icon Only */}
+                        <button
+                            onClick={() => setIsUploadOpen(true)}
+                            className="bg-rp-iris hover:bg-rp-love text-white rounded-full p-2 transition-all shadow-lg hover:shadow-xl hover:scale-110"
+                            aria-label="Create moment"
+                        >
+                            <Plus className="w-5 h-5" />
+                        </button>
                     </div>
                 </div>
             </div>

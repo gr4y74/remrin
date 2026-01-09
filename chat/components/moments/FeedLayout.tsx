@@ -9,6 +9,10 @@ import { cn } from '@/lib/utils'
 import Image from 'next/image'
 import { CollapsibleFilterMenu } from './CollapsibleFilterMenu'
 import { useAutoHide } from '@/hooks/useAutoHide'
+import { FloatingChatBubble } from '@/components/feed/FloatingChatBubble'
+import { CharacterPanel } from '@/components/character/CharacterPanel'
+import { useContext } from 'react'
+import { RemrinContext } from '@/context/context'
 
 interface FeedMoment extends MomentWithPersona {
     userReactions?: string[]
@@ -44,6 +48,12 @@ export function FeedLayout({
 
     // Auto-hide UI after 3 seconds of inactivity
     const { isVisible: isUIVisible } = useAutoHide({ timeout: 3000 })
+
+    // Get workspace from context for chat bubble
+    const { selectedWorkspace } = useContext(RemrinContext)
+
+    // Chat state
+    const [isChatOpen, setIsChatOpen] = useState(false)
 
     const currentMoment = moments[currentIndex]
 
@@ -156,14 +166,13 @@ export function FeedLayout({
             className="relative h-[calc(100vh-120px)] flex items-center justify-center bg-rp-base overflow-hidden"
         >
             {/* Main Content Container */}
-            <div className="flex items-center justify-center gap-8 max-w-7xl w-full px-4 h-full py-8">
-
-                {/* Left Side Controls */}
+            <div className="flex items-center justify-center max-w-7xl w-full px-4 h-full py-8 gap-8">
+                {/* Left Side - Vertical Navigation Arrows */}
                 <div className={cn(
-                    "hidden lg:flex items-center gap-4 shrink-0 transition-opacity duration-300",
+                    "flex flex-col items-center gap-4 shrink-0 transition-opacity duration-300",
                     isUIVisible ? "opacity-100" : "opacity-0 pointer-events-none"
                 )}>
-                    {/* Left Navigation Arrow */}
+                    {/* Up Arrow (Previous) */}
                     {currentIndex > 0 && (
                         <button
                             onClick={goToPrevious}
@@ -174,7 +183,24 @@ export function FeedLayout({
                             )}
                             aria-label="Previous moment"
                         >
-                            <ChevronLeft className="h-6 w-6 text-rp-text" />
+                            <ChevronUp className="h-6 w-6 text-rp-text" />
+                        </button>
+                    )}
+
+                    {/* Down Arrow (Next) */}
+                    {(currentIndex < moments.length - 1 || hasMore) && (
+                        <button
+                            onClick={goToNext}
+                            disabled={isLoading}
+                            className={cn(
+                                "rounded-full bg-rp-surface/80 p-3 backdrop-blur-md",
+                                "hover:bg-rp-overlay transition-all duration-200 hover:scale-110",
+                                "border border-rp-muted/20 shadow-lg",
+                                isLoading && "opacity-50 cursor-not-allowed"
+                            )}
+                            aria-label="Next moment"
+                        >
+                            <ChevronDown className="h-6 w-6 text-rp-text" />
                         </button>
                     )}
                 </div>
@@ -192,6 +218,7 @@ export function FeedLayout({
                             isUIVisible={isUIVisible}
                             currentFilter={currentFilter}
                             onFilterChange={onFilterChange}
+                            onChatClick={() => setIsChatOpen(true)}
                         />
                     </div>
 
@@ -222,29 +249,6 @@ export function FeedLayout({
                         {currentIndex + 1} / {moments.length}{hasMore && '+'}
                     </p>
                 </div>
-
-                {/* Right Side Controls */}
-                <div className={cn(
-                    "hidden lg:flex items-center gap-4 shrink-0 transition-opacity duration-300",
-                    isUIVisible ? "opacity-100" : "opacity-0 pointer-events-none"
-                )}>
-                    {/* Right Navigation Arrow */}
-                    {(currentIndex < moments.length - 1 || hasMore) && (
-                        <button
-                            onClick={goToNext}
-                            disabled={isLoading}
-                            className={cn(
-                                "rounded-full bg-rp-surface/80 p-3 backdrop-blur-md",
-                                "hover:bg-rp-overlay transition-all duration-200 hover:scale-110",
-                                "border border-rp-muted/20 shadow-lg",
-                                isLoading && "opacity-50 cursor-not-allowed"
-                            )}
-                            aria-label="Next moment"
-                        >
-                            <ChevronRight className="h-6 w-6 text-rp-text" />
-                        </button>
-                    )}
-                </div>
             </div>
 
             {/* Bottom Navigation - REMOVED */}
@@ -264,6 +268,27 @@ export function FeedLayout({
             <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-10 md:hidden">
                 <p className="text-xs text-rp-muted/60 animate-pulse">Swipe up for next</p>
             </div>
+
+            {/* Character Panel - Feed Mode */}
+            {currentMoment && (
+                <CharacterPanel
+                    overridePersona={currentMoment.persona}
+                    mode="feed"
+                />
+            )}
+
+            {/* Floating Chat Bubble - Feed Mode */}
+            {currentMoment && selectedWorkspace && (
+                <FloatingChatBubble
+                    personaId={currentMoment.persona.id}
+                    personaName={currentMoment.persona.name}
+                    personaImage={currentMoment.persona.image_url}
+                    personaSystemPrompt={currentMoment.persona.system_prompt}
+                    workspaceId={selectedWorkspace.id}
+                    isOpen={isChatOpen}
+                    onClose={() => setIsChatOpen(false)}
+                />
+            )}
         </div>
     )
 }
