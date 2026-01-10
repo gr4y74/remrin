@@ -2,8 +2,6 @@ import { createClient } from "@/lib/supabase/server"
 import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import Replicate from "replicate"
-import fs from "fs"
-import path from "path"
 
 const COST_AETHER = 50
 
@@ -25,28 +23,12 @@ export async function POST(request: Request) {
         }
 
         // Handle local images (for default characters like Kess)
-        // Replicate cannot access localhost URLs, so we convert local files to Data URIs
+        // We ensure image_url is a full absolute URL for Replicate
         if (image_url.startsWith("/")) {
-            try {
-                const imagePath = path.join(process.cwd(), "public", image_url)
-                if (fs.existsSync(imagePath)) {
-                    const fileBuffer = fs.readFileSync(imagePath)
-                    const base64Image = fileBuffer.toString("base64")
-                    // Determine mime type
-                    const ext = path.extname(image_url).toLowerCase()
-                    const mimeType = ext === ".png" ? "image/png" :
-                        ext === ".jpg" || ext === ".jpeg" ? "image/jpeg" : "image/webp"
-
-                    image_url = `data:${mimeType};base64,${base64Image}`
-                    console.log(`Converted local (${mimeType}) image to Data URI for Replicate`)
-                } else {
-                    console.warn(`Local image not found at ${imagePath}`)
-                    // If not found, we let the URL pass through, usually failing at Replicate 
-                    // unless it acts as a relative path that fails anyway.
-                }
-            } catch (err) {
-                console.error("Error converting local image:", err)
-            }
+            const host = request.headers.get("host") || "remrin.ai"
+            const protocol = host.includes("localhost") ? "http" : "https"
+            image_url = `${protocol}://${host}${image_url}`
+            console.log(`Converted local path to absolute URL for Replicate: ${image_url}`)
         }
 
         // 1. Check Ownership
