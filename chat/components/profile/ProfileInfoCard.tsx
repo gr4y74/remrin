@@ -3,6 +3,7 @@
 import { MapPin, Calendar, Globe, QrCode } from 'lucide-react';
 import Image from 'next/image';
 import { UserProfile } from '@/types/profile';
+import { SocialLinksDisplay } from './SocialLinksDisplay';
 
 interface ProfileInfoCardProps {
     profile: UserProfile;
@@ -69,6 +70,13 @@ export function ProfileInfoCard({
                             </a>
                         )}
                     </div>
+
+                    {/* Social Links */}
+                    {profile.social_links && profile.social_links.length > 0 && (
+                        <div className="mb-4">
+                            <SocialLinksDisplay links={profile.social_links} />
+                        </div>
+                    )}
 
                     {/* Actions */}
                     <div className="flex gap-3">

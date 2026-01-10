@@ -11,6 +11,8 @@ interface RibbonBadgeProps {
     colorGradient: string;
     rarity: 'common' | 'rare' | 'epic' | 'legendary';
     size?: 'small' | 'large';
+    description?: string;
+    onClick?: () => void;
 }
 
 export function RibbonBadge({
@@ -19,7 +21,9 @@ export function RibbonBadge({
     earnedDate,
     colorGradient,
     rarity,
-    size = 'small'
+    size = 'small',
+    description,
+    onClick
 }: RibbonBadgeProps) {
     const [showTooltip, setShowTooltip] = useState(false);
 
@@ -34,7 +38,10 @@ export function RibbonBadge({
             onMouseLeave={() => setShowTooltip(false)}
         >
             {/* Ribbon shape */}
-            <div className={`${dimensions} relative cursor-pointer transition-transform hover:-translate-y-1`}>
+            <div
+                className={`${dimensions} relative cursor-pointer transition-transform hover:-translate-y-1`}
+                onClick={onClick}
+            >
                 <svg viewBox="0 0 40 60" className="absolute inset-0 w-full h-full">
                     <defs>
                         <linearGradient id={`gradient-${name}`} x1="0%" y1="0%" x2="0%" y2="100%">

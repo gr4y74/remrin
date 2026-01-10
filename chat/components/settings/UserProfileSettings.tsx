@@ -50,6 +50,11 @@ export function UserProfileSettings() {
     const [gender, setGender] = useState<'male' | 'female' | null>(null)
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
     const [backgrounds, setBackgrounds] = useState<UploadedBackground[]>([])
+    const [pronouns, setPronouns] = useState("")
+    const [location, setLocation] = useState("")
+    const [website, setWebsite] = useState("")
+    const [bannerUrl, setBannerUrl] = useState<string | null>(null)
+    const [uploadingBanner, setUploadingBanner] = useState(false)
 
     const avatarInputRef = useRef<HTMLInputElement>(null)
     const backgroundInputRef = useRef<HTMLInputElement>(null)
@@ -80,6 +85,20 @@ export function UserProfileSettings() {
                 setBio(data.bio || '')
                 setGender(data.gender)
                 setAvatarUrl(data.image_url)
+            }
+
+            // Also load extended profile data from user_profiles
+            const { data: userProfile } = await supabase
+                .from('user_profiles')
+                .select('pronouns, location, website_url, banner_url')
+                .eq('user_id', user.id)
+                .single()
+
+            if (userProfile) {
+                setPronouns(userProfile.pronouns || '')
+                setLocation(userProfile.location || '')
+                setWebsite(userProfile.website_url || '')
+                setBannerUrl(userProfile.banner_url)
             }
         } catch (error) {
             console.error('Error loading profile:', error)
@@ -198,6 +217,45 @@ export function UserProfileSettings() {
         }
     }
 
+    const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+
+        // Validate file size (max 10MB)
+        if (file.size > 10 * 1024 * 1024) {
+            toast.error('Banner must be less than 10MB')
+            return
+        }
+
+        setUploadingBanner(true)
+        try {
+            const { data: { user } } = await supabase.auth.getUser()
+            if (!user) throw new Error('Not authenticated')
+
+            const fileExt = file.name.split('.').pop()
+            const fileName = `banner-${Date.now()}.${fileExt}`
+            const filePath = `${user.id}/${fileName}`
+
+            const { error: uploadError } = await supabase.storage
+                .from('profile_banners')
+                .upload(filePath, file, { upsert: true })
+
+            if (uploadError) throw uploadError
+
+            const { data: { publicUrl } } = supabase.storage
+                .from('profile_banners')
+                .getPublicUrl(filePath)
+
+            setBannerUrl(publicUrl)
+            toast.success('Banner uploaded! Click Save to apply changes.')
+        } catch (error) {
+            console.error('Error uploading banner:', error)
+            toast.error('Failed to upload banner')
+        } finally {
+            setUploadingBanner(false)
+        }
+    }
+
     const handleDeleteBackground = async (filePath: string) => {
         if (!confirm('Delete this background?')) return
 
@@ -252,6 +310,10 @@ export function UserProfileSettings() {
                     user_id: user.id,
                     display_name: displayName.trim() || null,
                     bio: bio.trim() || null,
+                    pronouns: pronouns.trim() || null,
+                    location: location.trim() || null,
+                    website_url: website.trim() || null,
+                    banner_url: bannerUrl,
                 }, { onConflict: 'user_id' })
 
             toast.success('Profile updated successfully!')

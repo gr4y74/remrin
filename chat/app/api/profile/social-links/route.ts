@@ -8,6 +8,35 @@ const socialLinkSchema = z.object({
     url: z.string().url(),
     display_order: z.number().int().min(0).optional(),
 });
+
+export async function GET(request: NextRequest) {
+    try {
+        const cookieStore = cookies();
+        const supabase = createClient(cookieStore);
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (!user) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const { data: links, error } = await supabase
+            .from('social_links')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('display_order', { ascending: true });
+
+        if (error) {
+            console.error('Error fetching social links:', error);
+            return NextResponse.json({ error: error.message }, { status: 400 });
+        }
+
+        return NextResponse.json({ links });
+    } catch (error) {
+        console.error('Error in GET /api/profile/social-links:', error);
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    }
+}
+
 export async function POST(request: NextRequest) {
     try {
         const cookieStore = cookies();
