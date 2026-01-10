@@ -1,0 +1,171 @@
+
+> remrin@2.0.0 build
+> next build
+
+  ▲ Next.js 14.2.35
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+Failed to compile.
+
+./components/feed/FloatingChatBubble.tsx
+Error: 
+  [31mx[0m the name `handleMouseDown` is defined multiple times
+     ,-[[36;1;4m/mnt/Data68/remrin/chat/components/feed/FloatingChatBubble.tsx[0m:167:1]
+ [2m167[0m |     }, [personaId, isOpen])
+ [2m168[0m | 
+ [2m169[0m |     // Drag handlers
+ [2m170[0m |     const handleMouseDown = (e: React.MouseEvent) => {
+     : [31;1m          ^^^^^^^|^^^^^^^[0m
+     :                  [31;1m`-- [31;1mprevious definition of `handleMouseDown` here[0m[0m
+ [2m171[0m |         setIsDragging(true)
+ [2m172[0m |         setDragOffset({
+ [2m173[0m |             x: e.clientX - position.x,
+ [2m174[0m |             y: e.clientY - position.y
+ [2m175[0m |         })
+ [2m176[0m |     }
+ [2m177[0m | 
+ [2m178[0m |     const handleMouseMove = useCallback((e: MouseEvent) => {
+ [2m179[0m |         if (isDragging) {
+ [2m180[0m |             setPosition({
+ [2m181[0m |                 x: e.clientX - dragOffset.x,
+ [2m182[0m |                 y: e.clientY - dragOffset.y
+ [2m183[0m |             })
+ [2m184[0m |         }
+ [2m185[0m |     }, [isDragging, dragOffset])
+ [2m186[0m | 
+ [2m187[0m |     const handleMouseUp = () => {
+ [2m188[0m |         setIsDragging(false)
+ [2m189[0m |     }
+ [2m190[0m | 
+ [2m191[0m |     // Add/remove global mouse listeners
+ [2m192[0m |     useEffect(() => {
+ [2m193[0m |         if (!isDragging) return
+ [2m194[0m | 
+ [2m195[0m |         window.addEventListener('mousemove', handleMouseMove)
+ [2m196[0m |         window.addEventListener('mouseup', handleMouseUp)
+ [2m197[0m |         return () => {
+ [2m198[0m |             window.removeEventListener('mousemove', handleMouseMove)
+ [2m199[0m |             window.removeEventListener('mouseup', handleMouseUp)
+ [2m200[0m |         }
+ [2m201[0m |     }, [isDragging, handleMouseMove])
+ [2m202[0m | 
+ [2m203[0m | 
+ [2m204[0m | 
+ [2m205[0m |     // Drag handlers
+ [2m206[0m |     const handleMouseDown = (e: React.MouseEvent) => {
+     : [33;1m          ^^^^^^^|^^^^^^^[0m
+     :                  [33;1m`-- [33;1m`handleMouseDown` redefined here[0m[0m
+ [2m207[0m |         setIsDragging(true)
+ [2m208[0m |         setDragOffset({
+ [2m209[0m |             x: e.clientX - position.x,
+     `----
+
+  [31mx[0m the name `handleMouseMove` is defined multiple times
+     ,-[[36;1;4m/mnt/Data68/remrin/chat/components/feed/FloatingChatBubble.tsx[0m:175:1]
+ [2m175[0m |         })
+ [2m176[0m |     }
+ [2m177[0m | 
+ [2m178[0m |     const handleMouseMove = useCallback((e: MouseEvent) => {
+     : [31;1m          ^^^^^^^|^^^^^^^[0m
+     :                  [31;1m`-- [31;1mprevious definition of `handleMouseMove` here[0m[0m
+ [2m179[0m |         if (isDragging) {
+ [2m180[0m |             setPosition({
+ [2m181[0m |                 x: e.clientX - dragOffset.x,
+ [2m182[0m |                 y: e.clientY - dragOffset.y
+ [2m183[0m |             })
+ [2m184[0m |         }
+ [2m185[0m |     }, [isDragging, dragOffset])
+ [2m186[0m | 
+ [2m187[0m |     const handleMouseUp = () => {
+ [2m188[0m |         setIsDragging(false)
+ [2m189[0m |     }
+ [2m190[0m | 
+ [2m191[0m |     // Add/remove global mouse listeners
+ [2m192[0m |     useEffect(() => {
+ [2m193[0m |         if (!isDragging) return
+ [2m194[0m | 
+ [2m195[0m |         window.addEventListener('mousemove', handleMouseMove)
+ [2m196[0m |         window.addEventListener('mouseup', handleMouseUp)
+ [2m197[0m |         return () => {
+ [2m198[0m |             window.removeEventListener('mousemove', handleMouseMove)
+ [2m199[0m |             window.removeEventListener('mouseup', handleMouseUp)
+ [2m200[0m |         }
+ [2m201[0m |     }, [isDragging, handleMouseMove])
+ [2m202[0m | 
+ [2m203[0m | 
+ [2m204[0m | 
+ [2m205[0m |     // Drag handlers
+ [2m206[0m |     const handleMouseDown = (e: React.MouseEvent) => {
+ [2m207[0m |         setIsDragging(true)
+ [2m208[0m |         setDragOffset({
+ [2m209[0m |             x: e.clientX - position.x,
+ [2m210[0m |             y: e.clientY - position.y
+ [2m211[0m |         })
+ [2m212[0m |     }
+ [2m213[0m | 
+ [2m214[0m |     const handleMouseMove = (e: MouseEvent) => {
+     : [33;1m          ^^^^^^^|^^^^^^^[0m
+     :                  [33;1m`-- [33;1m`handleMouseMove` redefined here[0m[0m
+ [2m215[0m |         if (isDragging) {
+ [2m216[0m |             setPosition({
+ [2m217[0m |                 x: e.clientX - dragOffset.x,
+     `----
+
+  [31mx[0m the name `handleMouseUp` is defined multiple times
+     ,-[[36;1;4m/mnt/Data68/remrin/chat/components/feed/FloatingChatBubble.tsx[0m:184:1]
+ [2m184[0m |         }
+ [2m185[0m |     }, [isDragging, dragOffset])
+ [2m186[0m | 
+ [2m187[0m |     const handleMouseUp = () => {
+     : [31;1m          ^^^^^^|^^^^^^[0m
+     :                 [31;1m`-- [31;1mprevious definition of `handleMouseUp` here[0m[0m
+ [2m188[0m |         setIsDragging(false)
+ [2m189[0m |     }
+ [2m190[0m | 
+ [2m191[0m |     // Add/remove global mouse listeners
+ [2m192[0m |     useEffect(() => {
+ [2m193[0m |         if (!isDragging) return
+ [2m194[0m | 
+ [2m195[0m |         window.addEventListener('mousemove', handleMouseMove)
+ [2m196[0m |         window.addEventListener('mouseup', handleMouseUp)
+ [2m197[0m |         return () => {
+ [2m198[0m |             window.removeEventListener('mousemove', handleMouseMove)
+ [2m199[0m |             window.removeEventListener('mouseup', handleMouseUp)
+ [2m200[0m |         }
+ [2m201[0m |     }, [isDragging, handleMouseMove])
+ [2m202[0m | 
+ [2m203[0m | 
+ [2m204[0m | 
+ [2m205[0m |     // Drag handlers
+ [2m206[0m |     const handleMouseDown = (e: React.MouseEvent) => {
+ [2m207[0m |         setIsDragging(true)
+ [2m208[0m |         setDragOffset({
+ [2m209[0m |             x: e.clientX - position.x,
+ [2m210[0m |             y: e.clientY - position.y
+ [2m211[0m |         })
+ [2m212[0m |     }
+ [2m213[0m | 
+ [2m214[0m |     const handleMouseMove = (e: MouseEvent) => {
+ [2m215[0m |         if (isDragging) {
+ [2m216[0m |             setPosition({
+ [2m217[0m |                 x: e.clientX - dragOffset.x,
+ [2m218[0m |                 y: e.clientY - dragOffset.y
+ [2m219[0m |             })
+ [2m220[0m |         }
+ [2m221[0m |     }
+ [2m222[0m | 
+ [2m223[0m |     const handleMouseUp = () => {
+     : [33;1m          ^^^^^^|^^^^^^[0m
+     :                 [33;1m`-- [33;1m`handleMouseUp` redefined here[0m[0m
+ [2m224[0m |         setIsDragging(false)
+ [2m225[0m |     }
+     `----
+
+Import trace for requested module:
+./components/feed/FloatingChatBubble.tsx
+./components/moments/FeedLayout.tsx
+./app/[locale]/(platform)/feed/FeedPageClient.tsx
+
+
+> Build failed because of webpack errors

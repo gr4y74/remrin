@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page Mockup - Behance Style</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            color: #191919;
+        }
+
+        /* Header/Banner Section */
+        .profile-banner {
+            height: 300px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+        }
+
+        /* Ribbon Badges */
+        .ribbon-showcase {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            display: flex;
+            gap: 12px;
+            z-index: 10;
+        }
+
+        .ribbon-badge {
+            width: 40px;
+            height: 60px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .ribbon-badge:hover {
+            transform: translateY(-5px);
+        }
+
+        .ribbon-badge::before {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 50px;
+            background: var(--ribbon-color);
+            clip-path: polygon(0 0, 100% 0, 100% 75%, 50% 100%, 0 75%);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .ribbon-badge .icon {
+            position: relative;
+            z-index: 1;
+            font-size: 20px;
+            color: white;
+        }
+
+        .ribbon-badge-1 { --ribbon-color: linear-gradient(180deg, #1E88E5 0%, #1565C0 100%); }
+        .ribbon-badge-2 { --ribbon-color: linear-gradient(180deg, #43A047 0%, #2E7D32 100%); }
+        .ribbon-badge-3 { --ribbon-color: linear-gradient(180deg, #9C27B0 0%, #6A1B9A 100%); }
+        .ribbon-badge-4 { --ribbon-color: linear-gradient(180deg, #FFA726 0%, #F57C00 100%); }
+        .ribbon-badge-5 { --ribbon-color: linear-gradient(180deg, #EF5350 0%, #C62828 100%); }
+
+        .ribbon-badge-1::before { background: linear-gradient(180deg, #1E88E5 0%, #1565C0 100%); }
+        .ribbon-badge-2::before { background: linear-gradient(180deg, #43A047 0%, #2E7D32 100%); }
+        .ribbon-badge-3::before { background: linear-gradient(180deg, #9C27B0 0%, #6A1B9A 100%); }
+        .ribbon-badge-4::before { background: linear-gradient(180deg, #FFA726 0%, #F57C00 100%); }
+        .ribbon-badge-5::before { background: linear-gradient(180deg, #EF5350 0%, #C62828 100%); }
+
+        .ribbon-tooltip {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .ribbon-badge:hover .ribbon-tooltip {
+            opacity: 1;
+        }
+
+        /* Profile Info Card */
+        .profile-info-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 40px;
+            position: relative;
+        }
+
+        .profile-info-card {
+            background: white;
+            border-radius: 8px;
+            padding: 32px;
+            margin-top: -80px;
+            position: relative;
+            z-index: 5;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: flex-start;
+            gap: 24px;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .profile-details {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .profile-title {
+            font-size: 18px;
+            color: #696969;
+            margin-bottom: 16px;
+        }
+
+        .profile-meta {
+            display: flex;
+            gap: 24px;
+            font-size: 14px;
+            color: #696969;
+            margin-bottom: 16px;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border-radius: 4px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #0057FF;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0046CC;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #0057FF;
+            border: 2px solid #0057FF;
+        }
+
+        .btn-secondary:hover {
+            background: #f5f5f5;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 16px;
+            margin-left: auto;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: #e0e0e0;
+        }
+
+        /* Navigation Tabs */
+        .profile-nav {
+            max-width: 1440px;
+            margin: 32px auto 0;
+            padding: 0 40px;
+            border-bottom: 1px solid #e7e7e7;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-tab {
+            padding: 16px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: #696969;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab.active {
+            color: #191919;
+            border-bottom-color: #0057FF;
+        }
+
+        .nav-tab:hover {
+            color: #191919;
+        }
+
+        /* Main Content Layout */
+        .profile-content {
+            max-width: 1440px;
+            margin: 32px auto;
+            padding: 0 40px;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 32px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .sidebar-section {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .sidebar-title {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #696969;
+            margin-bottom: 16px;
+        }
+
+        .bio-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #191919;
+            margin-bottom: 16px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f5f5f5;
+            font-size: 14px;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #696969;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            color: #191919;
+        }
+
+        /* Main Gallery */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .gallery-item {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+
+        .gallery-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .gallery-info {
+            padding: 16px;
+        }
+
+        .gallery-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .gallery-stats {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: #696969;
+        }
+
+        /* Badge Showcase Section */
+        .badge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 24px;
+        }
+
+        .badge-item {
+            text-align: center;
+        }
+
+        .badge-ribbon-large {
+            width: 60px;
+            height: 90px;
+            margin: 0 auto 12px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .badge-ribbon-large::before {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 75px;
+            background: var(--ribbon-color);
+            clip-path: polygon(0 0, 100% 0, 100% 75%, 50% 100%, 0 75%);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .badge-ribbon-large .icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 32px;
+            color: white;
+            z-index: 1;
+        }
+
+        .badge-name {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .badge-date {
+            font-size: 11px;
+            color: #696969;
+        }
+
+        @media (max-width: 1024px) {
+            .profile-content {
+                grid-template-columns: 1fr;
+            }
+
+            .ribbon-showcase {
+                right: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .profile-banner {
+                height: 200px;
+            }
+
+            .profile-info-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .social-links {
+                margin-left: 0;
+                justify-content: center;
+            }
+
+            .profile-nav {
+                overflow-x: auto;
+            }
+
+            .nav-tabs {
+                min-width: max-content;
+            }
+
+            .gallery {
+                grid-template-columns: 1fr;
+            }
+
+            .ribbon-showcase {
+                top: 10px;
+                right: 10px;
+                gap: 8px;
+            }
+
+            .ribbon-badge {
+                width: 32px;
+                height: 48px;
+            }
+
+            .ribbon-badge::before {
+                width: 32px;
+                height: 40px;
+            }
+
+            .ribbon-badge .icon {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Banner with Ribbons -->
+    <div class="profile-banner">
+        <div class="ribbon-showcase">
+            <div class="ribbon-badge ribbon-badge-1">
+                <div class="ribbon-tooltip">Early Adopter</div>
+                <span class="icon">🚀</span>
+            </div>
+            <div class="ribbon-badge ribbon-badge-2">
+                <div class="ribbon-tooltip">Bug Hunter</div>
+                <span class="icon">🐛</span>
+            </div>
+            <div class="ribbon-badge ribbon-badge-3">
+                <div class="ribbon-tooltip">Diamond Status</div>
+                <span class="icon">💎</span>
+            </div>
+            <div class="ribbon-badge ribbon-badge-4">
+                <div class="ribbon-tooltip">Prolific Creator</div>
+                <span class="icon">✨</span>
+            </div>
+            <div class="ribbon-badge ribbon-badge-5">
+                <div class="ribbon-tooltip">Beloved Creator</div>
+                <span class="icon">❤️</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Info Card -->
+    <div class="profile-info-container">
+        <div class="profile-info-card">
+            <div class="profile-avatar"></div>
+            <div class="profile-details">
+                <h1 class="profile-name">Sosu</h1>
+                <p class="profile-title">Character Creator | Storyteller</p>
+                <div class="profile-meta">
+                    <span>📍 Location</span>
+                    <span>🗓️ Member since Jan 2025</span>
+                    <span>🌐 website.com</span>
+                </div>
+                <div class="profile-actions">
+                    <button class="btn btn-primary">Follow</button>
+                    <button class="btn btn-secondary">Message</button>
+                    <button class="btn btn-secondary">📱 QR Code</button>
+                </div>
+            </div>
+            <div class="social-links">
+                <div class="social-link">📷</div>
+                <div class="social-link">🐦</div>
+                <div class="social-link">💼</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="profile-nav">
+        <ul class="nav-tabs">
+            <li class="nav-tab active">Work</li>
+            <li class="nav-tab">About</li>
+            <li class="nav-tab">Statistics</li>
+            <li class="nav-tab">Achievements</li>
+            <li class="nav-tab">Collections</li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="profile-content">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <!-- About Section -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">About</h3>
+                <p class="bio-text">
+                    Passionate character creator and storyteller. Love bringing unique personalities to life through AI. Always exploring new creative possibilities!
+                </p>
+                <div class="info-item">
+                    <span>🏢</span>
+                    <span>Character Designer</span>
+                </div>
+                <div class="info-item">
+                    <span>🎨</span>
+                    <span>AI Art Enthusiast</span>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Quick Stats</h3>
+                <div class="stat-item">
+                    <span class="stat-label">Project Views</span>
+                    <span class="stat-value">341,019</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Appreciations</span>
+                    <span class="stat-value">28,080</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Followers</span>
+                    <span class="stat-value">12,862</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Following</span>
+                    <span class="stat-value">407</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Total Creations</span>
+                    <span class="stat-value">156</span>
+                </div>
+            </div>
+
+            <!-- Badge Progress -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Next Achievements</h3>
+                <div style="margin-bottom: 16px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                        <span>1 Year Anniversary</span>
+                        <span>85%</span>
+                    </div>
+                    <div style="width: 100%; height: 6px; background: #f5f5f5; border-radius: 3px; overflow: hidden;">
+                        <div style="width: 85%; height: 100%; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);"></div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                        <span>200 Creations</span>
+                        <span>78%</span>
+                    </div>
+                    <div style="width: 100%; height: 6px; background: #f5f5f5; border-radius: 3px; overflow: hidden;">
+                        <div style="width: 78%; height: 100%; background: linear-gradient(90deg, #FFA726 0%, #F57C00 100%);"></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Gallery -->
+        <main>
+            <div class="gallery">
+                <div class="gallery-item">
+                    <div class="gallery-image"></div>
+                    <div class="gallery-info">
+                        <h3 class="gallery-title">Kilo - The Jinni</h3>
+                        <div class="gallery-stats">
+                            <span>👁️ 12.5K</span>
+                            <span>❤️ 890</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <div class="gallery-image" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+                    <div class="gallery-info">
+                        <h3 class="gallery-title">Squee - Baby Seal</h3>
+                        <div class="gallery-stats">
+                            <span>👁️ 18.2K</span>
+                            <span>❤️ 1.2K</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <div class="gallery-image" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);"></div>
+                    <div class="gallery-info">
+                        <h3 class="gallery-title">Kess - Queen of Bees</h3>
+                        <div class="gallery-stats">
+                            <span>👁️ 25.8K</span>
+                            <span>❤️ 2.1K</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <div class="gallery-image" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);"></div>
+                    <div class="gallery-info">
+                        <h3 class="gallery-title">Character Design</h3>
+                        <div class="gallery-stats">
+                            <span>👁️ 9.4K</span>
+                            <span>❤️ 645</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <div class="gallery-image" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);"></div>
+                    <div class="gallery-info">
+                        <h3 class="gallery-title">Fantasy Character</h3>
+                        <div class="gallery-stats">
+                            <span>👁️ 14.7K</span>
+                            <span>❤️ 978</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <div class="gallery-image" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
+                    <div class="gallery-info">
+                        <h3 class="gallery-title">Sci-Fi Character</h3>
+                        <div class="gallery-stats">
+                            <span>👁️ 11.3K</span>
+                            <span>❤️ 823</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Add interactivity for tabs
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+            });
+        });
+
+        // Add hover effects to gallery items
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                item.style.transform = 'translateY(-4px)';
+            });
+            item.addEventListener('mouseleave', () => {
+                item.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>

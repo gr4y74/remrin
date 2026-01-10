@@ -227,7 +227,7 @@ export function VideoMomentCard({
                         <button
                             onClick={() => {
                                 if (!audioRef.current) {
-                                    audioRef.current = new Audio(moment.persona.welcome_audio_url)
+                                    audioRef.current = new Audio(moment.persona.welcome_audio_url ?? '')
                                     audioRef.current.onended = () => setIsAudioPlaying(false)
                                 }
 
@@ -281,7 +281,7 @@ export function VideoMomentCard({
                         <button
                             onClick={() => {
                                 if (!audioRef.current) {
-                                    audioRef.current = new Audio(moment.persona.welcome_audio_url)
+                                    audioRef.current = new Audio(moment.persona.welcome_audio_url ?? '')
                                     audioRef.current.onended = () => setIsAudioPlaying(false)
                                 }
 

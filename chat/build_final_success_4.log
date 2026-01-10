@@ -1,0 +1,103 @@
+
+> remrin@2.0.0 build
+> next build
+
+  ▲ Next.js 14.2.35
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+
+./app/[locale]/[workspaceid]/layout.tsx
+154:6  Warning: React Hook useCallback has a missing dependency: 'router'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+175:6  Warning: React Hook useEffect has an unnecessary dependency: 'supabase.auth'. Either exclude it or remove the dependency array. Outer scope values like 'supabase.auth' aren't valid dependencies because mutating them doesn't re-render the component.  react-hooks/exhaustive-deps
+
+./app/[locale]/admin/analytics/page.tsx
+222:50  Warning: Classname 'flex-shrink-0' should be updated to 'shrink-0' in Tailwind CSS v3!  tailwindcss/migration-from-tailwind-2
+
+./app/[locale]/admin/chat-config/page.tsx
+220:64  Warning: Classname 'transform' is not needed in Tailwind CSS v3!  tailwindcss/migration-from-tailwind-2
+324:30  Warning: Classname 'bg-opacity-50' should be replaced by an opacity suffix (eg. '/50')  tailwindcss/migration-from-tailwind-2
+365:60  Warning: Classname 'flex-shrink-0' should be updated to 'shrink-0' in Tailwind CSS v3!  tailwindcss/migration-from-tailwind-2
+
+./app/[locale]/admin/llm-config/page.tsx
+89:29  Warning: Classname 'placeholder-gray-500' should be updated to 'placeholder:text-gray-500' in Tailwind CSS v3!  tailwindcss/migration-from-tailwind-2
+
+./app/[locale]/admin/settings/page.tsx
+347:57  Warning: Classname 'placeholder-rp-muted' should be updated to 'placeholder:text-rp-muted' in Tailwind CSS v3!  tailwindcss/migration-from-tailwind-2
+
+./app/[locale]/page.tsx
+149:6  Warning: React Hook useMemo has a missing dependency: 'featuredCharacters'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./app/[locale]/studio/analytics/page.tsx
+191:46  Warning: Classname 'flex-shrink-0' should be updated to 'shrink-0' in Tailwind CSS v3!  tailwindcss/migration-from-tailwind-2
+
+./components/admin/SearchProviderCard.tsx
+278:29  Warning: Classname 'placeholder-white/40' should be updated to 'placeholder:text-white/40' in Tailwind CSS v3!  tailwindcss/migration-from-tailwind-2
+
+./components/audio/WelcomeAudioPlayer.tsx
+98:8  Warning: React Hook useEffect has missing dependencies: 'audioRef' and 'playAudio'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+111:8  Warning: React Hook useEffect has a missing dependency: 'audioRef'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+119:8  Warning: React Hook useEffect has a missing dependency: 'audioRef'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+154:26  Warning: The ref value 'videoRef.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'videoRef.current' to a variable inside the effect, and use that variable in the cleanup function.  react-hooks/exhaustive-deps
+155:26  Warning: The ref value 'audioRef.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'audioRef.current' to a variable inside the effect, and use that variable in the cleanup function.  react-hooks/exhaustive-deps
+158:8  Warning: React Hook useEffect has a missing dependency: 'audioRef'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+181:8  Warning: React Hook useEffect has a missing dependency: 'togglePlay'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/chat-v2/ChatEngine.tsx
+458:9  Warning: React Hook useMemo has a duplicate dependency: 'setSystemPrompt'. Either omit it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/chat-v2/ChatInput.tsx
+176:21  Warning: Classname 'placeholder-rp-subtle/70' should be updated to 'placeholder:text-rp-subtle/70' in Tailwind CSS v3!  tailwindcss/migration-from-tailwind-2
+
+./components/chat-v2/MemorySearchModal.tsx
+124:37  Warning: Classname 'placeholder-rp-subtle' should be updated to 'placeholder:text-rp-subtle' in Tailwind CSS v3!  tailwindcss/migration-from-tailwind-2
+
+./components/chat-v2/hooks/use-file-handler.ts
+45:8  Warning: React Hook useCallback has a missing dependency: 'chatSettings'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/discovery/FeaturedCarousel.tsx
+224:64  Warning: Classname 'transform' is not needed in Tailwind CSS v3!  tailwindcss/migration-from-tailwind-2
+
+./components/layout/SidebarUserSection.tsx
+54:8  Warning: React Hook useEffect has a missing dependency: 'initialUser'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+145:37  Warning: Arbitrary value classname '-translate-x-[2.5px]' should not start with a dash (-)  tailwindcss/enforces-negative-arbitrary-values
+
+./components/moments/CommentsDrawer.tsx
+50:8  Warning: React Hook useEffect has a missing dependency: 'fetchComments'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/moments/InteractionSidebar.tsx
+149:21  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./components/profile/ProfileInfoCard.tsx
+26:22  Warning: Classname 'flex-shrink-0' should be updated to 'shrink-0' in Tailwind CSS v3!  tailwindcss/migration-from-tailwind-2
+
+./components/studio/AudioAnalytics.tsx
+50:8  Warning: React Hook useEffect has a missing dependency: 'fetchData'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/studio/PremiumVoiceGallery.tsx
+23:8  Warning: React Hook useEffect has a missing dependency: 'loadVoices'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/studio/QuotaIndicator.tsx
+155:8  Warning: React Hook useEffect has a missing dependency: 'fetchQuota'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/utility/global-state.tsx
+193:6  Warning: React Hook useEffect has a missing dependency: 'selectedPersona'. Either include it or remove the dependency array. You can also replace multiple useState variables with useReducer if 'setActiveBackgroundUrlState' needs the current value of 'selectedPersona'.  react-hooks/exhaustive-deps
+193:28  Warning: React Hook useEffect has a complex expression in the dependency array. Extract it to a separate variable so it can be statically checked.  react-hooks/exhaustive-deps
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+Failed to compile.
+
+./components/moments/VideoMomentCard.tsx:230:66
+Type error: Argument of type 'string | null | undefined' is not assignable to parameter of type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+
+[0m [90m 228 |[39m                             onClick[33m=[39m{() [33m=>[39m {[0m
+[0m [90m 229 |[39m                                 [36mif[39m ([33m![39maudioRef[33m.[39mcurrent) {[0m
+[0m[31m[1m>[22m[39m[90m 230 |[39m                                     audioRef[33m.[39mcurrent [33m=[39m [36mnew[39m [33mAudio[39m(moment[33m.[39mpersona[33m.[39mwelcome_audio_url)[0m
+[0m [90m     |[39m                                                                  [31m[1m^[22m[39m[0m
+[0m [90m 231 |[39m                                     audioRef[33m.[39mcurrent[33m.[39monended [33m=[39m () [33m=>[39m setIsAudioPlaying([36mfalse[39m)[0m
+[0m [90m 232 |[39m                                 }[0m
+[0m [90m 233 |[39m[0m
+Next.js build worker exited with code: 1 and signal: null

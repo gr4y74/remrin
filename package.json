@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "deploy": "npx supabase functions deploy telegram-bot --project-ref wftsctqfiqbdyllxwagi --no-verify-jwt",
-    "dev": "vite"
+    "dev": "vite",
+    "migrate": "bash ./scripts/migrate.sh",
+    "setup:db:auth": "bash ./scripts/setup-db-auth.sh"
   },
   "repository": {
     "type": "git",

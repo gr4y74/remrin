@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect, useContext, useCallback } from 'react'
 import { RemrinContext } from '@/context/context'
 import { ChatEngineProvider, useChatEngine } from '@/components/chat-v2/ChatEngine'
 import { ChatMessages } from '@/components/chat-v2/ChatMessages'
@@ -113,7 +113,7 @@ function FloatingChatInner({
                             Start chatting with {personaName}
                         </h4>
                         <p className="text-rp-muted text-sm max-w-[280px] mb-4">
-                            Try a quick conversation to see if you'd like to follow this character
+                            Try a quick conversation to see if you&apos;d like to follow this character
                         </p>
                         <Link
                             href={`/${workspaceId}/chat?persona=${personaId}`}
@@ -166,10 +166,6 @@ export function FloatingChatBubble({
         }
     }, [personaId, isOpen])
 
-    if (!profile) {
-        return null
-    }
-
     // Drag handlers
     const handleMouseDown = (e: React.MouseEvent) => {
         setIsDragging(true)
@@ -179,14 +175,14 @@ export function FloatingChatBubble({
         })
     }
 
-    const handleMouseMove = (e: MouseEvent) => {
+    const handleMouseMove = useCallback((e: MouseEvent) => {
         if (isDragging) {
             setPosition({
                 x: e.clientX - dragOffset.x,
                 y: e.clientY - dragOffset.y
             })
         }
-    }
+    }, [isDragging, dragOffset])
 
     const handleMouseUp = () => {
         setIsDragging(false)
@@ -194,15 +190,19 @@ export function FloatingChatBubble({
 
     // Add/remove global mouse listeners
     useEffect(() => {
-        if (isDragging) {
-            window.addEventListener('mousemove', handleMouseMove)
-            window.addEventListener('mouseup', handleMouseUp)
-            return () => {
-                window.removeEventListener('mousemove', handleMouseMove)
-                window.removeEventListener('mouseup', handleMouseUp)
-            }
+        if (!isDragging) return
+
+        window.addEventListener('mousemove', handleMouseMove)
+        window.addEventListener('mouseup', handleMouseUp)
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove)
+            window.removeEventListener('mouseup', handleMouseUp)
         }
-    }, [isDragging, dragOffset])
+    }, [isDragging, handleMouseMove])
+
+    if (!profile) {
+        return null
+    }
 
     return (
         <>
@@ -222,12 +222,9 @@ export function FloatingChatBubble({
                     }}
                 >
                     <ChatEngineProvider
-                        userId={profile.user_id}
+
                         personaId={personaId}
-                        personaName={personaName}
-                        personaImage={personaImage || undefined}
-                        personaSystemPrompt={personaSystemPrompt}
-                        workspaceId={workspaceId}
+                        initialSystemPrompt={personaSystemPrompt}
                     >
                         <FloatingChatInner
                             personaName={personaName}

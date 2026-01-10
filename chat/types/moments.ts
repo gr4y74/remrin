@@ -33,6 +33,8 @@ export interface MomentWithPersona extends Moment {
         id: string
         name: string
         image_url: string | null
+        system_prompt?: string
+        welcome_audio_url?: string | null
     }
     created_by?: {
         id: string

@@ -245,6 +245,15 @@ export function UserProfileSettings() {
                 throw error
             }
 
+            // Also sync to user_profiles table for the public profile system
+            await supabase
+                .from('user_profiles')
+                .upsert({
+                    user_id: user.id,
+                    display_name: displayName.trim() || null,
+                    bio: bio.trim() || null,
+                }, { onConflict: 'user_id' })
+
             toast.success('Profile updated successfully!')
 
             // Update local state AND global context

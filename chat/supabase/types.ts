@@ -1380,6 +1380,39 @@ export type Database = {
           },
         ]
       }
+      profile_analytics: {
+        Row: {
+          aggregation_period: string | null
+          created_at: string | null
+          date: string
+          id: string
+          metadata: Json | null
+          metric_type: string
+          user_id: string
+          value: number
+        }
+        Insert: {
+          aggregation_period?: string | null
+          created_at?: string | null
+          date: string
+          id?: string
+          metadata?: Json | null
+          metric_type: string
+          user_id: string
+          value: number
+        }
+        Update: {
+          aggregation_period?: string | null
+          created_at?: string | null
+          date?: string
+          id?: string
+          metadata?: Json | null
+          metric_type?: string
+          user_id?: string
+          value?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           onboarding_complete: boolean
