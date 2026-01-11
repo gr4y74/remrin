@@ -69,7 +69,7 @@ export function HighlightsSection({
 
     if (highlights.length === 0) {
         return (
-            <div className="bg-rp-surface rounded-xl border border-rp-highlight-med p-6">
+            <div className="bg-rp-surface rounded-xl p-6">
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl font-bold text-rp-text flex items-center gap-2">
                         <Star className="w-5 h-5 text-rp-gold" aria-hidden="true" />
@@ -93,7 +93,7 @@ export function HighlightsSection({
     const currentHighlight = highlights[currentIndex];
 
     return (
-        <div className="bg-rp-surface rounded-xl border border-rp-highlight-med p-6">
+        <div className="bg-rp-surface rounded-xl p-6">
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-rp-text flex items-center gap-2">

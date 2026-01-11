@@ -84,7 +84,7 @@ export function StatsCard({
     return (
         <div
             className={`
-                bg-rp-surface rounded-lg p-4 border border-rp-highlight-med 
+                bg-rp-surface rounded-lg p-4 
                 ${variantStyles[variant]} 
                 transition-all duration-300 
                 hover:shadow-lg hover:shadow-${variant === 'default' ? 'rp-iris' : `rp-${variant}`}/10

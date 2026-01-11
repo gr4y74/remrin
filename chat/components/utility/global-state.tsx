@@ -211,23 +211,8 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
 
       let profile
       try {
-        // Load legacy/internal profile
-        const internalProfile = await getProfileByUserId(user.id)
-
-        // Load extended social profile
-        const { data: socialProfile } = await supabase
-          .from("user_profiles")
-          .select("*")
-          .eq("user_id", user.id)
-          .maybeSingle()
-
-        // Merge them - Social profile takes precedence for display fields
-        profile = {
-          ...internalProfile,
-          ...socialProfile,
-          // Map hero_image_url to image_url for legacy component compatibility if needed
-          image_url: socialProfile?.hero_image_url || internalProfile?.image_url
-        }
+        // Load profile from profiles table
+        profile = await getProfileByUserId(user.id)
 
         setProfile(profile)
       } catch (error) {
@@ -235,7 +220,7 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         return
       }
 
-      if (!profile.has_onboarded) {
+      if (!profile?.has_onboarded) {
         return router.push("/setup")
       }
 

@@ -25,7 +25,7 @@ export const WelcomeModal: FC<WelcomeModalProps> = () => {
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
-        if (profile && !profile.onboarding_complete) {
+        if (profile && !(profile as any).onboarding_complete) {
             setIsOpen(true)
             setDisplayName(profile.display_name || "")
         }
@@ -54,7 +54,7 @@ export const WelcomeModal: FC<WelcomeModalProps> = () => {
                 onboarding_complete: true
             })
 
-            setProfile(updatedProfile)
+            setProfile(updatedProfile as any)
             setIsOpen(false)
             toast.success("Welcome to Remrin!")
         } catch (error) {
@@ -66,7 +66,7 @@ export const WelcomeModal: FC<WelcomeModalProps> = () => {
 
     // Prevent closing by clicking outside
     const handleOpenChange = (open: boolean) => {
-        if (!open && (!profile?.onboarding_complete)) {
+        if (!open && (!(profile as any)?.onboarding_complete)) {
             // Do not allow closing if onboarding is not complete
             return
         }

@@ -71,7 +71,12 @@ export default function SetupPage() {
         const user = session.user
 
         const profile = await getProfileByUserId(user.id)
-        setProfile(profile)
+
+        if (!profile) {
+          return router.push("/login")
+        }
+
+        setProfile(profile as any)
         setUsername(profile.username)
 
         if (!profile.has_onboarded) {
@@ -120,6 +125,10 @@ export default function SetupPage() {
     const user = session.user
     const profile = await getProfileByUserId(user.id)
 
+    if (!profile) {
+      return router.push("/login")
+    }
+
     const updateProfilePayload: TablesUpdate<"profiles"> = {
       ...profile,
       has_onboarded: true,
@@ -143,7 +152,7 @@ export default function SetupPage() {
     }
 
     const updatedProfile = await updateProfile(profile.id, updateProfilePayload)
-    setProfile(updatedProfile)
+    setProfile(updatedProfile as any)
 
     const workspaces = await getWorkspacesByUserId(profile.user_id!)
     const homeWorkspace = workspaces.find(w => w.is_home)

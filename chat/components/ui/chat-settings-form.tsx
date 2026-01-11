@@ -155,7 +155,7 @@ const AdvancedContent: FC<AdvancedContentProps> = ({
           max={
             isCustomModel
               ? models.find(model => model.model_id === chatSettings.model)
-                  ?.context_length
+                ?.context_length
               : MODEL_LIMITS.MAX_CONTEXT_LENGTH
           }
           step={1}
@@ -180,7 +180,7 @@ const AdvancedContent: FC<AdvancedContentProps> = ({
             delayDuration={0}
             display={
               <div className="w-[400px] p-3">
-                {profile?.profile_context || "No profile context."}
+                {(profile as any)?.profile_context || "No profile context."}
               </div>
             }
             trigger={
@@ -237,7 +237,7 @@ const AdvancedContent: FC<AdvancedContentProps> = ({
 
           <SelectContent>
             <SelectItem value="openai">
-              {profile?.use_azure_openai ? "Azure OpenAI" : "OpenAI"}
+              {(profile as any)?.use_azure_openai ? "Azure OpenAI" : "OpenAI"}
             </SelectItem>
 
             {window.location.hostname === "localhost" && (

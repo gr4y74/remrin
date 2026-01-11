@@ -47,7 +47,7 @@ export function UserAvatar({
 
     // Determine the image source
     // Priority: explicit src > context profile > null
-    const imageUrl = src !== undefined ? src : profile?.image_url
+    const imageUrl = src !== undefined ? src : (profile as any)?.image_url
     const displayName = name !== undefined ? name : profile?.display_name || "User"
 
     const sizeConfig = SIZES[size]

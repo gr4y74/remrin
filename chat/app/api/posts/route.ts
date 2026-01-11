@@ -64,13 +64,7 @@ export async function GET(request: NextRequest) {
 
         let query = supabase
             .from('posts')
-            .select(`
-                *,
-                author:user_profiles (username, display_name, hero_image_url, banner_url),
-                reactions:post_reactions(count),
-                comments:post_comments(count),
-                shares:post_shares(count)
-            `)
+            .select('*')
             .order('created_at', { ascending: false })
             .limit(limit);
 
@@ -89,8 +83,43 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ error: error.message }, { status: 400 });
         }
 
+        // Manually fetch author data for each post
+        const postsWithAuthors = await Promise.all(
+            (posts || []).map(async (post) => {
+                const { data: author } = await supabase
+                    .from('user_profiles')
+                    .select('username, display_name, hero_image_url, banner_url')
+                    .eq('user_id', post.user_id)
+                    .single();
+
+                // Fetch reaction, comment, and share counts
+                const { count: reactionCount } = await supabase
+                    .from('post_reactions')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('post_id', post.id);
+
+                const { count: commentCount } = await supabase
+                    .from('post_comments')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('post_id', post.id);
+
+                const { count: shareCount } = await supabase
+                    .from('post_shares')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('post_id', post.id);
+
+                return {
+                    ...post,
+                    author: author || null,
+                    reactions: [{ count: reactionCount || 0 }],
+                    comments: [{ count: commentCount || 0 }],
+                    shares: [{ count: shareCount || 0 }]
+                };
+            })
+        );
+
         return NextResponse.json({
-            posts: posts || [],
+            posts: postsWithAuthors,
             nextCursor: posts && posts.length === limit ? posts[posts.length - 1].created_at : null
         });
     } catch (error) {

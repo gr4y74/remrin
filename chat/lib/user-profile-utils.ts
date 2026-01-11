@@ -17,7 +17,7 @@ export function getUserProfileUrl(username: string): string {
  * Get user's display name
  * Fallback: display_name → username → "Unknown User"
  */
-export function getUserDisplayName(profile: Partial<UserProfile> | null): string {
+export function getUserDisplayName(profile: any): string {
     if (!profile) return 'Unknown User';
     return profile.display_name || profile.username || 'Unknown User';
 }
@@ -26,9 +26,12 @@ export function getUserDisplayName(profile: Partial<UserProfile> | null): string
  * Get user's avatar URL
  * Returns Supabase storage URL or generated initials avatar
  */
-export function getUserAvatarUrl(profile: Partial<UserProfile> | null): string {
-    if (profile?.hero_image_url) {
-        return profile.hero_image_url;
+export function getUserAvatarUrl(profile: any): string {
+    // Check multiple possible avatar property names
+    const avatarUrl = profile?.hero_image_url || profile?.avatar_url || profile?.image_url;
+
+    if (avatarUrl) {
+        return avatarUrl;
     }
 
     // Fallback to initials-based avatar service or local default

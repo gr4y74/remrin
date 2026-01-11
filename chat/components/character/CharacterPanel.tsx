@@ -468,10 +468,10 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                         <div className="bg-rp-base/50 rounded-xl">
                             <div className="flex items-start gap-3 p-3">
                                 {/* User Avatar */}
-                                {profile?.image_url ? (
+                                {(profile as any)?.image_url ? (
                                     <div className="relative size-8 shrink-0">
                                         <Image
-                                            src={profile.image_url}
+                                            src={(profile as any).image_url}
                                             alt="You"
                                             className="rounded-full object-cover"
                                             fill

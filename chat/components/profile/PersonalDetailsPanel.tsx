@@ -52,7 +52,7 @@ export function PersonalDetailsPanel({
     };
 
     return (
-        <div className="bg-rp-surface rounded-3xl border border-rp-highlight-med p-8 space-y-8 shadow-xl shadow-rp-base/50">
+        <div className="bg-rp-surface rounded-3xl p-8 space-y-8 shadow-xl shadow-rp-base/50">
             {/* Section Header */}
             <div className="flex items-center justify-between">
                 <h2 className="text-xl font-bold text-rp-text flex items-center gap-2">

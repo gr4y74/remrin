@@ -1,30 +1,7 @@
 import { supabase } from "@/lib/supabase/browser-client"
 import { TablesInsert, TablesUpdate } from "@/supabase/types"
 
-/**
- * Sync social fields to user_profiles table
- */
-async function syncToUserProfiles(profile: any) {
-  try {
-    const socialData = {
-      user_id: profile.user_id || profile.id,
-      username: profile.username,
-      display_name: profile.display_name,
-      hero_image_url: profile.image_url,
-      bio: profile.bio,
-      updated_at: new Date().toISOString()
-    }
 
-    // Only update if we have the required user_id and username
-    if (socialData.user_id && socialData.username) {
-      await supabase
-        .from("user_profiles")
-        .upsert(socialData, { onConflict: 'user_id' })
-    }
-  } catch (err) {
-    console.error("Failed to sync to user_profiles:", err)
-  }
-}
 
 export const getProfileByUserId = async (userId: string) => {
   const { data: profile, error } = await supabase
@@ -66,8 +43,7 @@ export const createProfile = async (profile: any) => {
     throw new Error(error.message)
   }
 
-  // Sync to social profile
-  await syncToUserProfiles(createdProfile)
+
 
   return createdProfile
 }
@@ -87,8 +63,7 @@ export const updateProfile = async (
     throw new Error(error.message)
   }
 
-  // Sync to social profile
-  await syncToUserProfiles(updatedProfile)
+
 
   return updatedProfile
 }

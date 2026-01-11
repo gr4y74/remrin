@@ -84,56 +84,56 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ }) => {
   const [usernameAvailable, setUsernameAvailable] = useState(true)
   const [loadingUsername, setLoadingUsername] = useState(false)
   const [profileImageSrc, setProfileImageSrc] = useState(
-    profile?.image_url || ""
+    (profile as any)?.image_url || ""
   )
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null)
   const [profileInstructions, setProfileInstructions] = useState(
-    profile?.profile_context || ""
+    (profile as any)?.profile_context || ""
   )
 
   const [useAzureOpenai, setUseAzureOpenai] = useState(
-    profile?.use_azure_openai
+    (profile as any)?.use_azure_openai
   )
   const [openaiAPIKey, setOpenaiAPIKey] = useState(
-    profile?.openai_api_key || ""
+    (profile as any)?.openai_api_key || ""
   )
   const [openaiOrgID, setOpenaiOrgID] = useState(
-    profile?.openai_organization_id || ""
+    (profile as any)?.openai_organization_id || ""
   )
   const [azureOpenaiAPIKey, setAzureOpenaiAPIKey] = useState(
-    profile?.azure_openai_api_key || ""
+    (profile as any)?.azure_openai_api_key || ""
   )
   const [azureOpenaiEndpoint, setAzureOpenaiEndpoint] = useState(
-    profile?.azure_openai_endpoint || ""
+    (profile as any)?.azure_openai_endpoint || ""
   )
   const [azureOpenai35TurboID, setAzureOpenai35TurboID] = useState(
-    profile?.azure_openai_35_turbo_id || ""
+    (profile as any)?.azure_openai_35_turbo_id || ""
   )
   const [azureOpenai45TurboID, setAzureOpenai45TurboID] = useState(
-    profile?.azure_openai_45_turbo_id || ""
+    (profile as any)?.azure_openai_45_turbo_id || ""
   )
   const [azureOpenai45VisionID, setAzureOpenai45VisionID] = useState(
-    profile?.azure_openai_45_vision_id || ""
+    (profile as any)?.azure_openai_45_vision_id || ""
   )
   const [azureEmbeddingsID, setAzureEmbeddingsID] = useState(
-    profile?.azure_openai_embeddings_id || ""
+    (profile as any)?.azure_openai_embeddings_id || ""
   )
   const [anthropicAPIKey, setAnthropicAPIKey] = useState(
-    profile?.anthropic_api_key || ""
+    (profile as any)?.anthropic_api_key || ""
   )
   const [googleGeminiAPIKey, setGoogleGeminiAPIKey] = useState(
-    profile?.google_gemini_api_key || ""
+    (profile as any)?.google_gemini_api_key || ""
   )
   const [mistralAPIKey, setMistralAPIKey] = useState(
-    profile?.mistral_api_key || ""
+    (profile as any)?.mistral_api_key || ""
   )
-  const [groqAPIKey, setGroqAPIKey] = useState(profile?.groq_api_key || "")
+  const [groqAPIKey, setGroqAPIKey] = useState((profile as any)?.groq_api_key || "")
   const [perplexityAPIKey, setPerplexityAPIKey] = useState(
-    profile?.perplexity_api_key || ""
+    (profile as any)?.perplexity_api_key || ""
   )
 
   const [openrouterAPIKey, setOpenrouterAPIKey] = useState(
-    profile?.openrouter_api_key || ""
+    (profile as any)?.openrouter_api_key || ""
   )
 
   const handleSignOut = async () => {
@@ -156,11 +156,11 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ }) => {
 
   const handleSave = async () => {
     if (!profile) return
-    let profileImageUrl = profile.image_url
+    let profileImageUrl = (profile as any).image_url
     let profileImagePath = ""
 
     if (profileImageFile) {
-      const { path, url } = await uploadProfileImage(profile, profileImageFile)
+      const { path, url } = await uploadProfileImage(profile as any, profileImageFile)
       profileImageUrl = url ?? profileImageUrl
       profileImagePath = path
     }
@@ -189,7 +189,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ }) => {
       openrouter_api_key: openrouterAPIKey
     })
 
-    setProfile(updatedProfile)
+    setProfile(updatedProfile as any)
 
     toast.success("Profile updated!")
 
@@ -205,21 +205,21 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ }) => {
     ]
 
     providers.forEach(async provider => {
-      let providerKey: keyof typeof profile
+      let providerKey: any
 
       if (provider === "google") {
         providerKey = "google_gemini_api_key"
       } else if (provider === "azure") {
         providerKey = "azure_openai_api_key"
       } else {
-        providerKey = `${provider}_api_key` as keyof typeof profile
+        providerKey = `${provider}_api_key`
       }
 
       const models = LLM_LIST_MAP[provider]
       const envKeyActive = envKeyMap[provider]
 
       if (!envKeyActive) {
-        const hasApiKey = !!updatedProfile[providerKey]
+        const hasApiKey = !!(updatedProfile as any)[providerKey]
 
         if (provider === "openrouter") {
           if (hasApiKey && availableOpenRouterModels.length === 0) {
@@ -333,10 +333,10 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ }) => {
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        {profile.image_url ? (
+        {(profile as any).image_url ? (
           <Image
             className="mt-2 size-[34px] cursor-pointer rounded hover:opacity-50"
-            src={profile.image_url + "?" + new Date().getTime()}
+            src={(profile as any).image_url + "?" + new Date().getTime()}
             height={34}
             width={34}
             alt={"Image"}

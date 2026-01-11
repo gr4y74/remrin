@@ -35,7 +35,7 @@ export default async function ProfilePage({ params }: { params: { userId: string
     }
 
     // Fetch related data separately (these may be empty and that's OK)
-    const [achievementsResult, socialLinksResult, featuredResult] = await Promise.all([
+    const [achievementsResult, socialLinksResult, featuredResult, personasResult] = await Promise.all([
         supabase
             .from('user_achievements')
             .select('*, achievement:achievements (*)')
@@ -47,7 +47,12 @@ export default async function ProfilePage({ params }: { params: { userId: string
         supabase
             .from('featured_creations')
             .select('*, persona:personas (*)')
+            .eq('user_id', profileBase.user_id),
+        supabase
+            .from('personas')
+            .select('*')
             .eq('user_id', profileBase.user_id)
+            .order('created_at', { ascending: false })
     ]);
 
     // Fetch avatar from profiles table
@@ -63,7 +68,8 @@ export default async function ProfilePage({ params }: { params: { userId: string
         hero_image_url: profileData?.image_url || null,
         user_achievements: achievementsResult.data || [],
         social_links: socialLinksResult.data || [],
-        featured_creations: featuredResult.data || []
+        featured_creations: featuredResult.data || [],
+        personas: personasResult.data || []
     };
 
     const { data: { user } } = await supabase.auth.getUser();

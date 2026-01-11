@@ -149,13 +149,14 @@ export function ProfileClient({ profile: initialProfile, isOwnProfile }: Profile
         socialLinks: profile.social_links?.map(l => ({ platform: l.platform, url: l.url })) || []
     };
 
-    const souls: Soul[] = profile.featured_creations?.map(fc => ({
-        id: fc.persona_id,
-        name: fc.persona?.name || 'Unnamed Soul',
-        imageUrl: fc.persona?.image_url,
-        rarity: 'common',
+    // Map all personas to Soul format for CreatedSoulsGrid
+    const souls: Soul[] = ((profile as any).personas || []).map((persona: any) => ({
+        id: persona.id,
+        name: persona.name,
+        imageUrl: persona.image_url || persona.image_path || undefined,
+        rarity: 'common' as const,
         tags: []
-    })) || [];
+    }));
 
     const highlights: Highlight[] = profile.featured_creations?.slice(0, 3).map(fc => ({
         id: fc.id,
@@ -240,7 +241,7 @@ export function ProfileClient({ profile: initialProfile, isOwnProfile }: Profile
                 )}
 
                 {activeTab === 'about' && (
-                    <div className="max-w-3xl space-y-8 bg-rp-surface p-8 rounded-3xl border border-rp-highlight-med shadow-xl shadow-rp-base/50">
+                    <div className="max-w-3xl space-y-8 bg-rp-surface p-8 rounded-3xl shadow-xl shadow-rp-base/50">
                         <section>
                             <h3 className="text-xs font-bold text-rp-subtle uppercase tracking-widest mb-4">Bio & Vision</h3>
                             <EditableField
@@ -296,7 +297,7 @@ export function ProfileClient({ profile: initialProfile, isOwnProfile }: Profile
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {profile.user_achievements && profile.user_achievements.length > 0 ? (
                             profile.user_achievements.map((ua: any) => (
-                                <div key={ua.id} className="bg-rp-surface p-6 rounded-2xl border border-rp-highlight-med flex items-center gap-6 hover:border-rp-iris hover:shadow-lg hover:shadow-rp-iris/10 transition-all group">
+                                <div key={ua.id} className="bg-rp-surface p-6 rounded-2xl flex items-center gap-6 hover:shadow-lg hover:shadow-rp-iris/10 transition-all group">
                                     <div className="text-5xl bg-rp-overlay w-20 h-20 flex items-center justify-center rounded-2xl shadow-inner group-hover:scale-110 transition-transform">
                                         {ua.achievement?.icon || '🏆'}
                                     </div>

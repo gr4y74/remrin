@@ -28,7 +28,6 @@ interface CommentsDrawerProps {
     isOpen: boolean
     onClose: () => void
     onCommentCountUpdate?: (count: number) => void
-    onCommentCountUpdate?: (count: number) => void
     currentUserProfile?: any | null
 }
 
