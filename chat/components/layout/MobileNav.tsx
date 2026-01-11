@@ -12,19 +12,20 @@ import {
 } from "@tabler/icons-react"
 import { useContext } from "react"
 import { RemrinContext } from "@/context/context"
+import { getUserProfileUrl } from "@/lib/user-profile-utils"
 
 const MOBILE_NAV = [
     { icon: IconHome, label: "Discover", href: "/" },
     { icon: IconSparkles, label: "Feed", href: "/feed" },
     { icon: IconMessage, label: "Chat", href: "/chat" },
     { icon: IconBooks, label: "Collection", href: "/collection" },
-    { icon: IconUser, label: "Profile", href: "/profile" },
+    { icon: IconUser, label: "Profile", href: "/profile-link-placeholder" },
 ]
 
 
 export function MobileNav() {
     const pathname = usePathname()
-    const { selectedWorkspace } = useContext(RemrinContext)
+    const { selectedWorkspace, profile } = useContext(RemrinContext)
 
     return (
         <nav className="bg-rp-surface/95 border-rp-muted/20 fixed bottom-0 left-0 right-0 z-50 border-t backdrop-blur-lg md:hidden">
@@ -33,6 +34,10 @@ export function MobileNav() {
                     const Icon = item.icon
                     let href = item.href
                     let isDisabled = false
+
+                    if (item.label === "Profile") {
+                        href = `/${pathname.split("/")[1]}${getUserProfileUrl(profile?.username || "")}`
+                    }
 
                     if (item.label === "Chat") {
                         if (selectedWorkspace) {

@@ -37,7 +37,7 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   const router = useRouter()
 
   // PROFILE STORE
-  const [profile, setProfile] = useState<Tables<"profiles"> | null>(null)
+  const [profile, setProfile] = useState<any | null>(null)
 
   // ITEMS STORE
   const [assistants, setAssistants] = useState<Tables<"assistants">[]>([])
@@ -211,7 +211,24 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
 
       let profile
       try {
-        profile = await getProfileByUserId(user.id)
+        // Load legacy/internal profile
+        const internalProfile = await getProfileByUserId(user.id)
+
+        // Load extended social profile
+        const { data: socialProfile } = await supabase
+          .from("user_profiles")
+          .select("*")
+          .eq("user_id", user.id)
+          .maybeSingle()
+
+        // Merge them - Social profile takes precedence for display fields
+        profile = {
+          ...internalProfile,
+          ...socialProfile,
+          // Map hero_image_url to image_url for legacy component compatibility if needed
+          image_url: socialProfile?.hero_image_url || internalProfile?.image_url
+        }
+
         setProfile(profile)
       } catch (error) {
         console.warn("[GlobalState] Profile not found, may still be creating:", error)

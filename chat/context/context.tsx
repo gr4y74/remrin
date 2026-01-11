@@ -12,10 +12,12 @@ import { AssistantImage } from "@/types/images/assistant-image"
 import { VALID_ENV_KEYS } from "@/types/valid-keys"
 import { Dispatch, SetStateAction, createContext } from "react"
 
+import { UserProfile } from "@/types/profile"
+
 interface RemrinContext {
   // PROFILE STORE
-  profile: Tables<"profiles"> | null
-  setProfile: Dispatch<SetStateAction<Tables<"profiles"> | null>>
+  profile: UserProfile | null
+  setProfile: Dispatch<SetStateAction<UserProfile | null>>
 
   // ITEMS STORE
   assistants: Tables<"assistants">[]

@@ -26,6 +26,7 @@ import { AVAILABLE_VOICES } from '@/lib/voice/config'
 import { RemrinContext } from '@/context/context'
 import { useContext } from 'react'
 import Link from 'next/link'
+import { getUserAvatarUrl, getUserDisplayName, getUserProfileUrl } from '@/lib/user-profile-utils'
 
 
 interface ChatMessageProps {
@@ -296,7 +297,7 @@ export const ChatMessage = memo(function ChatMessage({
                 {isUser && (
                     <div className="flex items-center justify-end gap-2 mb-1">
                         <span className="text-[10px] font-bold text-rp-iris uppercase tracking-widest">
-                            {profile?.display_name || profile?.username || "You"}
+                            {getUserDisplayName(profile)}
                         </span>
                     </div>
                 )}
@@ -376,22 +377,16 @@ export const ChatMessage = memo(function ChatMessage({
             {/* Avatar - Only show for user on right side */}
             {isUser && (
                 <div className="shrink-0 self-end mb-1">
-                    <Link href={profile ? `/profile/${profile.id}` : "#"}>
-                        {profile?.image_url ? (
-                            <div className="relative h-8 w-8 overflow-hidden rounded-full ring-1 ring-rp-iris/40">
-                                <Image
-                                    src={profile.image_url}
-                                    alt={profile.display_name || profile.username || "You"}
-                                    fill
-                                    sizes="32px"
-                                    className="object-cover"
-                                />
-                            </div>
-                        ) : (
-                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-rp-iris/30 text-rp-iris border border-rp-iris/40">
-                                <IconUser size={18} />
-                            </div>
-                        )}
+                    <Link href={getUserProfileUrl(profile?.username || "")}>
+                        <div className="relative h-8 w-8 overflow-hidden rounded-full ring-1 ring-rp-iris/40 border border-rp-highlight-low hover:ring-rp-rose transition-all cursor-pointer">
+                            <Image
+                                src={getUserAvatarUrl(profile)}
+                                alt={getUserDisplayName(profile)}
+                                fill
+                                sizes="32px"
+                                className="object-cover"
+                            />
+                        </div>
                     </Link>
                 </div>
             )}

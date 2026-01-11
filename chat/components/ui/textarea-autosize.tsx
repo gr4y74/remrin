@@ -13,6 +13,7 @@ interface TextareaAutosizeProps {
   minRows?: number
   maxRows?: number
   maxLength?: number
+  autoFocus?: boolean
   onKeyDown?: (event: React.KeyboardEvent) => void
   onPaste?: (event: React.ClipboardEvent) => void
   onCompositionStart?: (event: React.CompositionEvent) => void
@@ -28,6 +29,7 @@ export const TextareaAutosize: FC<TextareaAutosizeProps> = ({
   minRows = 1,
   maxRows = 6,
   maxLength,
+  autoFocus,
   onKeyDown = () => { },
   onPaste = () => { },
   onCompositionStart = () => { },
@@ -36,6 +38,7 @@ export const TextareaAutosize: FC<TextareaAutosizeProps> = ({
   return (
     <ReactTextareaAutosize
       ref={textareaRef}
+      autoFocus={autoFocus}
       className={cn(
         "bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex w-full resize-none rounded-md border-none px-3 py-2 text-sm focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
         className

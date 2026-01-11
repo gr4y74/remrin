@@ -40,7 +40,7 @@ export function SocialLinksDisplay({ links }: SocialLinksDisplayProps) {
                         href={link.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-rose-pine-highlight bg-rose-pine-base text-rose-pine-text hover:border-rose-pine-love hover:text-rose-pine-love transition-colors text-sm"
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-rp-highlight-med bg-rp-surface text-rp-text hover:border-rp-love hover:text-rp-love transition-colors text-sm"
                         title={link.handle || link.platform}
                     >
                         <Icon className="w-4 h-4" />

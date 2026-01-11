@@ -48,10 +48,11 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Generate unique filename
+        // Generate unique filename and bucket
+        const bucket = imageType === 'banner' ? 'user_backgrounds' : 'avatars';
         const fileExt = file.name.split('.').pop();
-        const fileName = `${user.id}-${imageType || 'image'}-${Date.now()}.${fileExt}`;
-        const filePath = `profile-images/${fileName}`;
+        const fileName = `${Date.now()}.${fileExt}`;
+        const filePath = `${user.id}/${fileName}`;
 
         // Convert File to ArrayBuffer
         const arrayBuffer = await file.arrayBuffer();
@@ -59,10 +60,10 @@ export async function POST(request: NextRequest) {
 
         // Upload to Supabase Storage
         const { data: uploadData, error: uploadError } = await supabase.storage
-            .from('avatars') // Make sure this bucket exists in your Supabase project
+            .from(bucket)
             .upload(filePath, buffer, {
                 contentType: file.type,
-                upsert: false,
+                upsert: true,
             });
 
         if (uploadError) {
@@ -75,16 +76,15 @@ export async function POST(request: NextRequest) {
 
         // Get public URL
         const { data: { publicUrl } } = supabase.storage
-            .from('avatars')
+            .from(bucket)
             .getPublicUrl(filePath);
 
         // Update profile with new image URL
-        const updateField = imageType === 'banner' ? 'hero_image_url' : 'image_url';
+        const updateField = imageType === 'banner' ? 'banner_url' : 'hero_image_url';
         const { error: updateError } = await supabase
-            .from('profiles')
+            .from('user_profiles')
             .update({
                 [updateField]: publicUrl,
-                image_path: filePath,
                 updated_at: new Date().toISOString(),
             })
             .eq('user_id', user.id);

@@ -68,9 +68,9 @@ export function UserProfileSettings() {
             }
 
             const { data, error } = await supabase
-                .from('profiles')
+                .from('user_profiles')
                 .select('*')
-                .eq('id', user.id)
+                .eq('user_id', user.id)
                 .maybeSingle()
 
             if (error) {
@@ -80,25 +80,14 @@ export function UserProfileSettings() {
             }
 
             if (data) {
-                setProfile(data)
+                setProfile(data as any)
                 setDisplayName(data.display_name || '')
                 setBio(data.bio || '')
-                setGender(data.gender)
-                setAvatarUrl(data.image_url)
-            }
-
-            // Also load extended profile data from user_profiles
-            const { data: userProfile } = await supabase
-                .from('user_profiles')
-                .select('pronouns, location, website_url, banner_url')
-                .eq('user_id', user.id)
-                .single()
-
-            if (userProfile) {
-                setPronouns(userProfile.pronouns || '')
-                setLocation(userProfile.location || '')
-                setWebsite(userProfile.website_url || '')
-                setBannerUrl(userProfile.banner_url)
+                setAvatarUrl(data.hero_image_url)
+                setPronouns(data.pronouns || '')
+                setLocation(data.location || '')
+                setWebsite(data.website_url || '')
+                setBannerUrl(data.banner_url)
             }
         } catch (error) {
             console.error('Error loading profile:', error)
@@ -281,20 +270,20 @@ export function UserProfileSettings() {
             if (!user) throw new Error('Not authenticated')
 
             const profileData = {
-                id: user.id,
+                user_id: user.id,
                 display_name: displayName.trim() || null,
                 bio: bio.trim() || null,
-                gender: gender,
-                image_url: avatarUrl,
-                image_path: avatarUrl || '',
-                profile_context: '',
-                use_azure_openai: false,
+                pronouns: pronouns.trim() || null,
+                location: location.trim() || null,
+                website_url: website.trim() || null,
+                hero_image_url: avatarUrl,
+                banner_url: bannerUrl,
                 updated_at: new Date().toISOString()
             }
 
             const { data, error } = await supabase
-                .from('profiles')
-                .upsert(profileData)
+                .from('user_profiles')
+                .upsert(profileData, { onConflict: 'user_id' })
                 .select()
                 .single()
 
@@ -303,24 +292,22 @@ export function UserProfileSettings() {
                 throw error
             }
 
-            // Also sync to user_profiles table for the public profile system
+            // Sync certain fields back to the internal/legacy profiles table 
+            // to ensure consistency with LLM systems
             await supabase
-                .from('user_profiles')
-                .upsert({
-                    user_id: user.id,
+                .from('profiles')
+                .update({
                     display_name: displayName.trim() || null,
-                    bio: bio.trim() || null,
-                    pronouns: pronouns.trim() || null,
-                    location: location.trim() || null,
-                    website_url: website.trim() || null,
-                    banner_url: bannerUrl,
-                }, { onConflict: 'user_id' })
+                    image_url: avatarUrl,
+                    bio: bio.trim() || null
+                })
+                .eq('user_id', user.id)
 
             toast.success('Profile updated successfully!')
 
             // Update local state AND global context
             if (data) {
-                setProfile(data)
+                setProfile(data as any)
                 // Sync to global context so sidebar/other components update instantly
                 setGlobalProfile(data as any)
             }

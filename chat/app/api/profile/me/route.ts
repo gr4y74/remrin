@@ -8,7 +8,8 @@ const updateProfileSchema = z.object({
     bio: z.string().max(1000).optional(),
     pronouns: z.string().max(50).optional(),
     location: z.string().max(100).optional(),
-    website_url: z.string().url().optional().or(z.literal('')),
+    website_url: z.string().optional().or(z.literal('')),
+    hero_image_url: z.string().url().optional().or(z.literal('')),
     banner_url: z.string().url().optional().or(z.literal('')),
 });
 
@@ -33,15 +34,9 @@ export async function GET(request: NextRequest) {
             .eq('user_id', user.id)
             .single();
 
-        // If no user_profile exists, create one from the profiles table
+        // If no user_profile exists, create one
         if (error || !userProfile) {
-            const { data: legacyProfile } = await supabase
-                .from('profiles')
-                .select('username, display_name, bio, image_url')
-                .eq('user_id', user.id)
-                .single();
-
-            const username = legacyProfile?.username ||
+            const username = user.user_metadata?.username ||
                 user.user_metadata?.name?.replace(/\s+/g, '').toLowerCase().substring(0, 20) ||
                 user.email?.split('@')[0] ||
                 `user_${Math.random().toString(36).substring(2, 10)}`;
@@ -51,12 +46,13 @@ export async function GET(request: NextRequest) {
                 .insert({
                     user_id: user.id,
                     username: username,
-                    display_name: legacyProfile?.display_name || user.user_metadata?.name || user.email?.split('@')[0] || 'User',
-                    bio: legacyProfile?.bio || '',
+                    display_name: user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'User',
+                    bio: '',
                     pronouns: '',
                     location: '',
                     website_url: '',
                     banner_url: '',
+                    hero_image_url: user.user_metadata?.avatar_url || '',
                     privacy_settings: {
                         profile: 'public',
                         analytics: 'private',
@@ -78,7 +74,22 @@ export async function GET(request: NextRequest) {
             userProfile = newProfile;
         }
 
-        return NextResponse.json({ profile: userProfile });
+        // Also get legacy/internal profile for full picture
+        const { data: internalProfile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('user_id', user.id)
+            .single();
+
+        // Merge them - user_profiles takes precedence for social fields
+        const mergedProfile = {
+            ...(internalProfile || {}),
+            ...(userProfile || {}),
+            // Ensure social image URL is mapped for legacy consistency
+            image_url: userProfile?.hero_image_url || internalProfile?.image_url
+        };
+
+        return NextResponse.json({ profile: mergedProfile });
     } catch (error) {
         console.error('Error fetching profile:', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

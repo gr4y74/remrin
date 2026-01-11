@@ -14,6 +14,11 @@ export interface UserProfile {
     privacy_settings: PrivacySettings;
     created_at: string;
     updated_at: string;
+
+    // Joined relations
+    social_links?: SocialLink[];
+    user_achievements?: UserAchievement[];
+    featured_creations?: FeaturedCreation[];
 }
 export interface ProfileCustomization {
     theme?: string;
@@ -65,4 +70,7 @@ export interface FeaturedCreation {
     persona_id: string;
     display_order: number;
     created_at: string;
+
+    // Joined relations
+    persona?: any; // You can replace 'any' with the proper Persona type if available
 }

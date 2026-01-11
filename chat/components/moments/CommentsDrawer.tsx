@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Send, Loader2, MessageCircle } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
+import { getUserAvatarUrl, getUserDisplayName, getUserProfileUrl } from '@/lib/user-profile-utils'
+import Link from 'next/link'
 
 interface Comment {
     id: string
@@ -26,7 +28,8 @@ interface CommentsDrawerProps {
     isOpen: boolean
     onClose: () => void
     onCommentCountUpdate?: (count: number) => void
-    currentUserProfile?: { id: string, username: string, avatar_url: string | null } | null
+    onCommentCountUpdate?: (count: number) => void
+    currentUserProfile?: any | null
 }
 
 export function CommentsDrawer({
@@ -121,17 +124,21 @@ export function CommentsDrawer({
                         <div className="space-y-6">
                             {comments.map((comment) => (
                                 <div key={comment.id} className="flex gap-3">
-                                    <Avatar className="h-8 w-8 ring-1 ring-white/10">
-                                        <AvatarImage src={comment.user.avatar_url || undefined} />
-                                        <AvatarFallback className="bg-rp-surface text-xs">
-                                            {comment.user.username?.slice(0, 2).toUpperCase()}
-                                        </AvatarFallback>
-                                    </Avatar>
+                                    <Link href={getUserProfileUrl(comment.user.username)}>
+                                        <Avatar className="h-8 w-8 ring-1 ring-white/10 hover:ring-rp-rose transition-all cursor-pointer">
+                                            <AvatarImage src={getUserAvatarUrl(comment.user as any)} />
+                                            <AvatarFallback className="bg-rp-surface text-xs">
+                                                {getUserDisplayName(comment.user as any).slice(0, 2).toUpperCase()}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                    </Link>
                                     <div className="flex-1 space-y-1">
                                         <div className="flex items-baseline gap-2">
-                                            <span className="text-sm font-semibold text-white/90">
-                                                {comment.user.display_name || comment.user.username}
-                                            </span>
+                                            <Link href={getUserProfileUrl(comment.user.username)}>
+                                                <span className="text-sm font-semibold text-white/90 hover:text-rp-rose cursor-pointer transition-colors">
+                                                    {getUserDisplayName(comment.user as any)}
+                                                </span>
+                                            </Link>
                                             <span className="text-xs text-white/40">
                                                 {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
                                             </span>
@@ -148,10 +155,10 @@ export function CommentsDrawer({
 
                 <div className="p-3 border-t border-white/5 bg-black/20 backdrop-blur-md">
                     <form onSubmit={handlePostComment} className="relative flex items-center gap-2">
-                        <Avatar className="h-7 w-7 shrink-0">
-                            <AvatarImage src={currentUserProfile?.avatar_url || undefined} />
+                        <Avatar className="h-7 w-7 shrink-0 border border-white/5">
+                            <AvatarImage src={getUserAvatarUrl(currentUserProfile)} />
                             <AvatarFallback className="bg-rp-iris text-[9px]">
-                                {currentUserProfile?.username?.slice(0, 2).toUpperCase() || 'YOU'}
+                                {getUserDisplayName(currentUserProfile).slice(0, 2).toUpperCase()}
                             </AvatarFallback>
                         </Avatar>
                         <Input

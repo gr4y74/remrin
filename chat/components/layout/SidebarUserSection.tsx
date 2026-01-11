@@ -12,6 +12,7 @@ import { IconCrown, IconLogin, IconUser, IconLogout, IconSettings, IconUserCircl
 import { createClient } from "@/lib/supabase/client"
 import { User } from "@supabase/supabase-js"
 import i18nConfig from "@/i18nConfig"
+import { getUserProfileUrl, getUserDisplayName, getUserAvatarUrl } from "@/lib/user-profile-utils"
 
 interface SidebarUserSectionProps {
     isExpanded: boolean
@@ -124,8 +125,8 @@ export function SidebarUserSection({ isExpanded, onProfileClick, initialUser }: 
     }
 
     // Get display info from profile or user metadata
-    const displayName = profile?.display_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || "User"
-    const avatarUrl = profile?.image_url || user?.user_metadata?.avatar_url
+    const displayName = getUserDisplayName(profile)
+    const avatarUrl = getUserAvatarUrl(profile)
 
     // Logged in state - show avatar + subscribe/upgrade CTA
     return (
@@ -196,7 +197,7 @@ export function SidebarUserSection({ isExpanded, onProfileClick, initialUser }: 
                         >
                             <div className="p-1">
                                 <Link
-                                    href={`/${locale}/profile/${user?.id}`}
+                                    href={`/${locale}${getUserProfileUrl(profile?.username || "")}`}
                                     onClick={() => setShowDropdown(false)}
                                     className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-rp-text transition-colors hover:bg-rp-overlay"
                                 >
