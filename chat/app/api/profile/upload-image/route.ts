@@ -80,9 +80,9 @@ export async function POST(request: NextRequest) {
             .getPublicUrl(filePath);
 
         // Update profile with new image URL
-        const updateField = imageType === 'banner' ? 'banner_url' : 'hero_image_url';
+        const updateField = imageType === 'banner' ? 'banner_url' : 'image_url';
         const { error: updateError } = await supabase
-            .from('user_profiles')
+            .from('profiles')
             .update({
                 [updateField]: publicUrl,
                 updated_at: new Date().toISOString(),
@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
         if (updateError) {
             console.error('Error updating profile:', updateError);
             // Try to delete the uploaded file
-            await supabase.storage.from('avatars').remove([filePath]);
+            await supabase.storage.from(bucket).remove([filePath]);
 
             return NextResponse.json(
                 { error: 'Failed to update profile' },

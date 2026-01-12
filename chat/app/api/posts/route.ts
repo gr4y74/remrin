@@ -31,10 +31,7 @@ export async function POST(request: NextRequest) {
                 user_id: user.id,
                 ...validatedData,
             })
-            .select(`
-                *,
-                author:user_profiles!posts_user_id_fkey(username, display_name, hero_image_url, banner_url)
-            `)
+            .select('*')
             .single();
 
         if (error) {
@@ -42,7 +39,19 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: error.message }, { status: 400 });
         }
 
-        return NextResponse.json({ post }, { status: 201 });
+        // Manually fetch author data
+        const { data: author } = await supabase
+            .from('user_profiles')
+            .select('username, display_name, hero_image_url, banner_url')
+            .eq('user_id', user.id)
+            .single();
+
+        const postWithAuthor = {
+            ...post,
+            author: author || null
+        };
+
+        return NextResponse.json({ post: postWithAuthor }, { status: 201 });
     } catch (error) {
         if (error instanceof z.ZodError) {
             return NextResponse.json({ error: error.errors }, { status: 400 });
