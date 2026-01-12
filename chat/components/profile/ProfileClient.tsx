@@ -8,6 +8,7 @@ import { HighlightsSection, Highlight } from '@/components/profile/HighlightsSec
 import { CreatedSoulsGrid, Soul } from '@/components/profile/CreatedSoulsGrid';
 import { EditModeProvider } from '@/components/profile/editable/EditModeProvider';
 import { EditableField } from '@/components/profile/editable/EditableField';
+import { EditableSelect } from '@/components/profile/editable/EditableSelect';
 import { RibbonBadge } from '@/components/profile/RibbonBadge';
 import { QRCodeModal } from '@/components/profile/QRCodeModal';
 import { UserProfile } from '@/types/profile';
@@ -278,6 +279,22 @@ export function ProfileClient({ profile: initialProfile, isOwnProfile }: Profile
                                     value={profile.pronouns || ''}
                                     placeholder="How should we refer to you?"
                                     onSave={(val) => handleProfileUpdate({ pronouns: val })}
+                                    disabled={!isOwnProfile}
+                                />
+                            </div>
+                            <div>
+                                <h3 className="text-xs font-bold text-rp-subtle uppercase tracking-widest mb-3">Gender</h3>
+                                <EditableSelect
+                                    value={(profile as any).gender || ''}
+                                    options={[
+                                        { value: '', label: 'Prefer not to say' },
+                                        { value: 'male', label: 'Male' },
+                                        { value: 'female', label: 'Female' },
+                                        { value: 'other', label: 'Other' }
+                                    ]}
+                                    onSave={async (val) => {
+                                        await handleProfileUpdate({ gender: val } as any);
+                                    }}
                                     disabled={!isOwnProfile}
                                 />
                             </div>

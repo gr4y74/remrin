@@ -223,7 +223,7 @@ export function PublicProfile() {
                         {/* Edit Button (if own profile) */}
                         {isOwnProfile && (
                             <Link
-                                href="/settings/profile"
+                                href={`/profile/${userId}`}
                                 className="flex items-center gap-2 rounded-lg bg-rp-iris px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-rp-iris/80"
                             >
                                 <IconEdit size={16} />
