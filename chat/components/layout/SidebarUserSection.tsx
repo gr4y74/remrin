@@ -28,9 +28,10 @@ interface SidebarUserSectionProps {
  * - Logged in: Avatar + Subscribe/Upgrade CTA (or Pro badge if subscribed)
  */
 export function SidebarUserSection({ isExpanded, onProfileClick, initialUser }: SidebarUserSectionProps) {
-    const { profile } = useContext(RemrinContext)
+    const { profile, setProfile } = useContext(RemrinContext)
     const [user, setUser] = useState<User | null>(initialUser ?? null)
     const [showDropdown, setShowDropdown] = useState(false)
+    const [imageKey, setImageKey] = useState(Date.now()) // For forcing image reload
     const dropdownRef = useRef<HTMLDivElement>(null)
     const router = useRouter()
     const supabase = useMemo(() => createClient(), [])
@@ -53,6 +54,21 @@ export function SidebarUserSection({ isExpanded, onProfileClick, initialUser }: 
 
         return () => subscription.unsubscribe()
     }, [supabase])
+
+    // Listen for profile image updates
+    useEffect(() => {
+        const handleProfileImageUpdate = (event: CustomEvent) => {
+            // Force image reload by updating key
+            setImageKey(Date.now())
+            // Update profile in context if needed
+            if (profile && event.detail) {
+                setProfile(prev => prev ? { ...prev, ...event.detail } : prev)
+            }
+        }
+
+        window.addEventListener('profile-image-updated' as any, handleProfileImageUpdate as any)
+        return () => window.removeEventListener('profile-image-updated' as any, handleProfileImageUpdate as any)
+    }, [profile, setProfile])
 
     // Check if user is logged in (use Supabase user as source of truth)
     const isLoggedIn = !!user
@@ -150,11 +166,13 @@ export function SidebarUserSection({ isExpanded, onProfileClick, initialUser }: 
                         {avatarUrl ? (
                             <div className="relative size-9">
                                 <Image
+                                    key={imageKey}
                                     src={avatarUrl}
                                     alt={displayName}
                                     className="rounded-full object-cover ring-2 ring-rp-highlight-med"
                                     fill
                                     sizes="36px"
+                                    unoptimized
                                 />
                             </div>
                         ) : (

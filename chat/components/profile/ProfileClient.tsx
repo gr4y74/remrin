@@ -122,7 +122,20 @@ export function ProfileClient({ profile: initialProfile, isOwnProfile }: Profile
             const data = await response.json();
             const updateField = type === 'banner' ? 'banner_url' : 'hero_image_url';
 
-            setProfile(prev => ({ ...prev, [updateField]: data.url }));
+            // Add cache-busting timestamp to force image reload
+            const urlWithTimestamp = `${data.url}?t=${Date.now()}`;
+
+            // Update local state
+            setProfile(prev => ({ ...prev, [updateField]: urlWithTimestamp }));
+
+            // Update global context if available
+            if (typeof window !== 'undefined') {
+                // Trigger a storage event to update other components
+                window.dispatchEvent(new CustomEvent('profile-image-updated', {
+                    detail: { [updateField]: urlWithTimestamp }
+                }));
+            }
+
             toast.dismiss();
             toast.success(`${type.charAt(0).toUpperCase() + type.slice(1)} updated successfully`);
         } catch (error: any) {

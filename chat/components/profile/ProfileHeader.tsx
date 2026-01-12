@@ -84,6 +84,7 @@ export function ProfileHeader({
                         fill
                         className="object-cover"
                         priority
+                        unoptimized
                     />
                 )}
 
@@ -127,6 +128,7 @@ export function ProfileHeader({
                                         alt={displayName}
                                         fill
                                         className="object-cover"
+                                        unoptimized
                                     />
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center text-white text-4xl md:text-5xl font-bold">
