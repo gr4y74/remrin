@@ -291,7 +291,7 @@ export function FeaturedManager() {
                         onToggleFeatured={() => toggleFeatured(persona)}
                         onToggleVisibility={() => toggleVisibility(persona)}
                         onDelete={() => deletePersona(persona)}
-                        onUploadImage={(f) => performImageUpload(persona.id, f)}
+                        onUploadImage={(f: File) => performImageUpload(persona.id, f)}
                         uploadingImage={uploadingImage}
                         onEdit={() => setEditingId(persona.id)}
                     />
