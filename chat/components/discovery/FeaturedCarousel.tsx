@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils"
 export interface FeaturedCharacter {
     id: string
     name: string
-    imageUrl: string
+    imageUrl: string | null
     // Optional fields that might be passed or we map to defaults
     category?: string
     description?: string
