@@ -12,8 +12,8 @@ export interface FeaturedCharacter {
     name: string
     imageUrl: string | null
     // Optional fields that might be passed or we map to defaults
-    category?: string
-    description?: string
+    category?: string | null
+    description?: string | null
     creativity?: number
     tags?: string[]
     followersCount?: number
