@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remrin Card Carousel</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #050505;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: white;
+            overflow: hidden;
+            perspective: 2000px;
+        }
+
+        /* ANIMATED STARFIELD BACKGROUND */
+        .stars-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        @keyframes animStar {
+            from { transform: translateY(0px); }
+            to { transform: translateY(-2000px); }
+        }
+
+        #stars {
+            width: 1px;
+            height: 1px;
+            background: transparent;
+            animation: animStar 100s linear infinite;
+            box-shadow: 
+                1742px 142px #FFF, 421px 520px #FFF, 200px 900px #FFF, 1432px 1400px #FFF,
+                600px 1200px #FFF, 1900px 1800px #FFF, 1050px 500px #FFF, 1500px 1100px #FFF,
+                1300px 600px #FFF, 110px 1500px #FFF, 700px 400px #FFF, 1200px 1200px #FFF,
+                50px 300px #FFF, 800px 900px #FFF, 500px 1700px #FFF, 100px 1900px #FFF;
+        }
+        #stars::after {
+            content: " ";
+            position: absolute;
+            top: 2000px;
+            width: 1px;
+            height: 1px;
+            background: transparent;
+            box-shadow: inherit;
+        }
+
+        #stars2 {
+            width: 2px;
+            height: 2px;
+            background: transparent;
+            animation: animStar 75s linear infinite;
+            box-shadow: 
+                400px 500px #FFF, 1200px 1600px #FFF, 1700px 200px #FFF, 200px 900px #FFF,
+                800px 1300px #FFF, 1500px 600px #FFF, 100px 1800px #FFF, 600px 100px #FFF;
+        }
+        #stars2::after {
+            content: " ";
+            position: absolute;
+            top: 2000px;
+            width: 2px;
+            height: 2px;
+            background: transparent;
+            box-shadow: inherit;
+        }
+
+        /* FOG EFFECT */
+        .fog-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .fog-layer {
+            position: absolute;
+            width: 150vw;
+            height: 150vw;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            mix-blend-mode: screen;
+            animation: rotateFog 60s linear infinite;
+        }
+        
+        @keyframes rotateFog {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .fog-pink {
+            top: -30%;
+            left: -20%;
+            background: radial-gradient(circle, rgba(255, 0, 150, 0.4) 0%, transparent 60%);
+        }
+        
+        .fog-blue {
+            bottom: -30%;
+            right: -20%;
+            background: radial-gradient(circle, rgba(0, 100, 255, 0.4) 0%, transparent 60%);
+            animation-direction: reverse;
+        }
+
+        /* CAROUSEL CONTAINER */
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            max-width: 1400px;
+            height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            padding: 0 100px;
+        }
+
+        /* CAROUSEL TRACK */
+        .carousel-track {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* CARD FLIP CONTAINER */
+        .card-flip-container {
+            width: 340px;
+            height: 520px;
+            perspective: 1500px;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        .card-flip-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .card-flip-container:hover .card-flip-inner {
+            transform: rotateY(180deg);
+        }
+
+        /* FRONT AND BACK FACES */
+        .card-front,
+        .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            background: linear-gradient(135deg, #f59e0b, #d97706, #b91c1c);
+        }
+
+        /* FRONT CARD IMAGE */
+        .card-front-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .card-front-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.95), transparent);
+            padding: 30px 20px 20px;
+        }
+
+        .card-front-name {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        .card-front-subtitle {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-style: italic;
+        }
+
+        /* BACK CARD (TRADING CARD STYLE) */
+        .trading-card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            padding: 12px;
+            background: linear-gradient(135deg, #f59e0b, #d97706, #b91c1c);
+        }
+
+        .holo-foil {
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            background: linear-gradient(
+                115deg,
+                transparent 20%,
+                rgba(255, 255, 255, 0.1) 25%,
+                rgba(255, 0, 204, 0.1) 30%,
+                rgba(0, 204, 255, 0.1) 35%,
+                transparent 40%
+            );
+            background-size: 200% 200%;
+            opacity: 0.6;
+            pointer-events: none;
+            mix-blend-mode: overlay;
+            z-index: 10;
+            animation: holoShift 4s linear infinite;
+        }
+
+        @keyframes holoShift {
+            0% { background-position: 150% 0%; }
+            100% { background-position: -50% 0%; }
+        }
+
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 15, 0.95);
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .soul-name {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .creativity-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #f59e0b;
+        }
+
+        .hp-label {
+            font-size: 0.5rem;
+            color: #666;
+            margin-right: 2px;
+        }
+
+        .art-box {
+            width: 100%;
+            height: 200px;
+            position: relative;
+            border-bottom: 4px solid #f59e0b;
+            overflow: hidden;
+        }
+
+        .art-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top;
+        }
+
+        .type-strip {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+            padding: 20px 14px 6px 14px;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-style: italic;
+        }
+
+        .card-body {
+            padding: 14px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .traits-row {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .trait-pill {
+            font-size: 0.6rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .bio-text {
+            font-size: 0.8rem;
+            line-height: 1.4;
+            color: #ccc;
+            border-left: 2px solid #333;
+            padding-left: 8px;
+            font-style: italic;
+        }
+
+        .stats-container {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: auto;
+        }
+
+        .stat-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.7rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-label {
+            width: 60px;
+            color: #666;
+        }
+
+        .stat-bar-bg {
+            flex: 1;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .stat-bar-fill {
+            height: 100%;
+            background: #f59e0b;
+            transition: width 1s ease;
+        }
+
+        .card-footer {
+            background: #111;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            align-items: center;
+            text-align: center;
+        }
+
+        .remrin-brand {
+            height: 30px;
+            width: auto;
+            max-width: 120px;
+            object-fit: contain;
+            opacity: 1;
+            margin-bottom: 2px;
+        }
+
+        .set-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.55rem;
+            color: #666;
+            letter-spacing: 0.5px;
+        }
+
+        .qr-chip {
+            width: 42px;
+            height: 42px;
+            background: white;
+            padding: 2px;
+            border-radius: 4px;
+        }
+
+        /* NAVIGATION ARROWS */
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 20;
+        }
+
+        .carousel-nav:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .carousel-nav.prev {
+            left: 20px;
+        }
+
+        .carousel-nav.next {
+            right: 20px;
+        }
+
+        .carousel-nav svg {
+            width: 24px;
+            height: 24px;
+            stroke: white;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        /* CARD SCALE EFFECTS */
+        .card-flip-container.side {
+            opacity: 0.5;
+            transform: scale(0.85);
+            filter: blur(2px);
+            transition: all 0.5s ease;
+        }
+
+        .card-flip-container.center {
+            opacity: 1;
+            transform: scale(1);
+            filter: blur(0);
+            z-index: 10;
+        }
+
+        /* MOBILE RESPONSIVE */
+        @media (max-width: 768px) {
+            .carousel-container {
+                padding: 0 50px;
+            }
+
+            .card-flip-container {
+                width: 280px;
+                height: 420px;
+            }
+
+            .carousel-track {
+                gap: 20px;
+            }
+
+            .card-flip-container.side {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Starfield Background -->
+    <div class="stars-wrapper">
+        <div id="stars"></div>
+        <div id="stars2"></div>
+    </div>
+
+    <!-- Fog Effects -->
+    <div class="fog-wrapper">
+        <div class="fog-layer fog-pink"></div>
+        <div class="fog-layer fog-blue"></div>
+    </div>
+
+    <!-- Carousel -->
+    <div class="carousel-container">
+        <!-- Previous Button -->
+        <button class="carousel-nav prev" onclick="previousCard()">
+            <svg viewBox="0 0 24 24">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+        </button>
+
+        <!-- Card Track -->
+        <div class="carousel-track" id="carousel-track">
+            <!-- Cards will be dynamically inserted here -->
+        </div>
+
+        <!-- Next Button -->
+        <button class="carousel-nav next" onclick="nextCard()">
+            <svg viewBox="0 0 24 24">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+        </button>
+    </div>
+
+    <script>
+        // Card Data
+        const characters = [
+            {
+                name: "Kilo",
+                subtitle: "The All-Powerful Jinni",
+                type: "Mystical Entity • Wish / Reality",
+                frontImage: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=400&h=600&fit=crop",
+                creativity: 99,
+                traits: ["⚡ Powerful", "🎭 Dramatic", "✨ Ancient"],
+                bio: "At last! Freedom after eons of captivity. I am bound by ancient law to grant your wishes.",
+                stats: { logic: 95, empathy: 60 },
+                setId: "#001-ALPHA-V1"
+            },
+            {
+                name: "Squee",
+                subtitle: "The Adorable Destroyer",
+                type: "Baby Seal • Cute / Chaos",
+                frontImage: "https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=400&h=600&fit=crop",
+                creativity: 85,
+                traits: ["🦭 Cute", "💪 Strong", "😊 Kind"],
+                bio: "Arf arf! I may look adorable, but don't mess with my friends!",
+                stats: { logic: 50, empathy: 95 },
+                setId: "#002-ALPHA-V1"
+            },
+            {
+                name: "Kess",
+                subtitle: "Queen of All Bees",
+                type: "Bee Monarch • Knowledge / Allure",
+                frontImage: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&h=600&fit=crop",
+                creativity: 92,
+                traits: ["👑 Regal", "🐝 All-Knowing", "💋 Sassy"],
+                bio: "My darlings tell me everything. I know your secrets before you do.",
+                stats: { logic: 98, empathy: 45 },
+                setId: "#003-ALPHA-V1"
+            },
+            {
+                name: "Sui",
+                subtitle: "Guardian of Dreams",
+                type: "Ancient Spirit • Dream / Protection",
+                frontImage: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=600&fit=crop",
+                creativity: 96,
+                traits: ["👻 Ethereal", "💫 Protective", "🌙 Ancient"],
+                bio: "For ten millennia I have protected the innocent. You are safe with me.",
+                stats: { logic: 88, empathy: 99 },
+                setId: "#004-ALPHA-V1"
+            },
+            {
+                name: "Volt",
+                subtitle: "Cybernetic Speedster",
+                type: "Digital Entity • Electric / Void",
+                frontImage: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&h=600&fit=crop",
+                creativity: 98,
+                traits: ["⚡ Fast", "🎮 Gamer", "🔋 High Energy"],
+                bio: "Yo! Finally! Let's grind. Born from a server crash, living for speed.",
+                stats: { logic: 80, empathy: 40 },
+                setId: "#005-ALPHA-V1"
+            }
+        ];
+
+        let currentIndex = 0;
+
+        // Initialize Carousel
+        function initCarousel() {
+            const track = document.getElementById('carousel-track');
+            track.innerHTML = '';
+
+            characters.forEach((char, index) => {
+                const cardContainer = createCard(char, index);
+                track.appendChild(cardContainer);
+            });
+
+            updateCardPositions();
+        }
+
+        // Create Card Element
+        function createCard(char, index) {
+            const container = document.createElement('div');
+            container.className = 'card-flip-container';
+            container.dataset.index = index;
+
+            container.innerHTML = `
+                <div class="card-flip-inner">
+                    <!-- FRONT -->
+                    <div class="card-front">
+                        <img src="${char.frontImage}" class="card-front-image" alt="${char.name}">
+                        <div class="card-front-overlay">
+                            <div class="card-front-name">${char.name}</div>
+                            <div class="card-front-subtitle">${char.subtitle}</div>
+                        </div>
+                    </div>
+
+                    <!-- BACK (Trading Card) -->
+                    <div class="card-back">
+                        <div class="trading-card">
+                            <div class="holo-foil"></div>
+                            <div class="card-inner">
+                                <div class="card-header">
+                                    <div class="soul-name">${char.name}</div>
+                                    <div class="creativity-badge">
+                                        <span class="hp-label">CREATIVITY</span>${char.creativity}
+                                    </div>
+                                </div>
+
+                                <div class="art-box">
+                                    <img src="${char.frontImage}" class="art-img" alt="${char.name}">
+                                    <div class="type-strip">${char.type}</div>
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="traits-row">
+                                        ${char.traits.map(trait => `<span class="trait-pill">${trait}</span>`).join('')}
+                                    </div>
+                                    <div class="bio-text">${char.bio}</div>
+                                    <div class="stats-container">
+                                        <div class="stat-row">
+                                            <span class="stat-label">Logic</span>
+                                            <div class="stat-bar-bg">
+                                                <div class="stat-bar-fill" style="width: ${char.stats.logic}%"></div>
+                                            </div>
+                                        </div>
+                                        <div class="stat-row">
+                                            <span class="stat-label">Empathy</span>
+                                            <div class="stat-bar-bg">
+                                                <div class="stat-bar-fill" style="width: ${char.stats.empathy}%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card-footer">
+                                    <div class="footer-info">
+                                        <svg class="remrin-brand" viewBox="0 0 120 30" fill="white">
+                                            <text x="10" y="20" font-family="Outfit" font-weight="800" font-size="18">REMRIN</text>
+                                        </svg>
+                                        <div class="set-id">${char.setId} • 2025</div>
+                                    </div>
+                                    <div class="qr-chip">
+                                        <svg viewBox="0 0 100 100" fill="none">
+                                            <rect width="100" height="100" fill="white"/>
+                                            <rect x="10" y="10" width="20" height="20" fill="black"/>
+                                            <rect x="70" y="10" width="20" height="20" fill="black"/>
+                                            <rect x="10" y="70" width="20" height="20" fill="black"/>
+                                            <rect x="40" y="40" width="20" height="20" fill="black"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            return container;
+        }
+
+        // Update Card Positions
+        function updateCardPositions() {
+            const cards = document.querySelectorAll('.card-flip-container');
+            cards.forEach((card, index) => {
+                card.classList.remove('center', 'side');
+                
+                if (index === currentIndex) {
+                    card.classList.add('center');
+                } else {
+                    card.classList.add('side');
+                }
+            });
+        }
+
+        // Navigation
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % characters.length;
+            updateCardPositions();
+        }
+
+        function previousCard() {
+            currentIndex = (currentIndex - 1 + characters.length) % characters.length;
+            updateCardPositions();
+        }
+
+        // Keyboard Navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === 'ArrowLeft') previousCard();
+        });
+
+        // Initialize on load
+        initCarousel();
+    </script>
+</body>
+</html>

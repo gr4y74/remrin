@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { useState, useCallback, useMemo } from "react"
+import { useState, useCallback, useMemo, useRef } from "react"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -22,6 +22,9 @@ import {
 import { createClient } from "@/lib/supabase/client"
 import { StudioPersona } from "@/app/[locale]/studio/types"
 import { VibeSelector } from "./VibeSelector"
+import { EmojiButton } from "@/components/ui/EmojiButton"
+import { PickerItem } from "@/components/ui/UniversalPicker"
+import { useEmojiInsertion } from "@/hooks/useEmojiInsertion"
 
 interface SoulSplicerProps {
     persona: StudioPersona
@@ -31,6 +34,10 @@ interface SoulSplicerProps {
 
 export function SoulSplicer({ persona, onUpdate, knowledgeItems = [] }: SoulSplicerProps) {
     const [activeTab, setActiveTab] = useState("identity")
+    const systemPromptRef = useRef<HTMLTextAreaElement>(null)
+    const { insertEmoji } = useEmojiInsertion(systemPromptRef, persona.system_prompt || "", (newVal) => onUpdate({ system_prompt: newVal }))
+
+    // Also add one for Tagline maybe? Let's start with system prompt which is the big one.
 
     // Token count estimation (rough approximation: 1 token ≈ 4 characters)
     const estimateTokens = (text: string) => Math.ceil(text.length / 4)
@@ -260,11 +267,22 @@ export function SoulSplicer({ persona, onUpdate, knowledgeItems = [] }: SoulSpli
                             </div>
                             <Textarea
                                 id="system-prompt"
+                                ref={systemPromptRef}
                                 value={persona.system_prompt}
                                 onChange={(e) => onUpdate({ system_prompt: e.target.value })}
                                 className="mt-2 min-h-[300px] border-rp-highlight-med bg-rp-surface font-mono text-sm text-rp-text"
                                 placeholder="You are..."
                             />
+                            <div className="flex justify-end mt-1">
+                                <EmojiButton
+                                    onSelect={(item) => {
+                                        if (item.type === 'emoji') insertEmoji(item.data)
+                                    }}
+                                    position="left"
+                                    theme="dark"
+                                    className="p-1 rounded hover:bg-rp-highlight-low text-rp-muted hover:text-rp-text transition-colors"
+                                />
+                            </div>
                             <p className="mt-2 text-xs text-rp-subtle">
                                 The core instructions that define how this persona thinks and responds
                             </p>

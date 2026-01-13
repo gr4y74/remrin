@@ -74,13 +74,13 @@ export function MinimalSidebar({ user }: MinimalSidebarProps) {
         >
             {/* Logo Container - Dual-logo crossfade */}
             <div className="border-rp-muted/20 relative flex h-14 shrink-0 items-center justify-center overflow-hidden border-b">
-                <Link href="/" className="flex items-center justify-center transition-transform duration-300 ease-out hover:rotate-[-5deg] hover:scale-105">
+                <Link href="/" className="flex items-center justify-center transition-transform duration-300 ease-out hover:rotate-[-5deg] hover:scale-105 mt-[7px]">
                     {/* Small logo - visible when collapsed */}
                     <Image
                         src="/logo_sm.svg"
                         alt="Remrin"
-                        width={32}
-                        height={32}
+                        width={45}
+                        height={45}
                         priority
                         className={cn(
                             "transition-all duration-300",

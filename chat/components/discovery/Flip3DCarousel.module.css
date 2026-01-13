@@ -1,0 +1,165 @@
+/* Flip3DCarousel.module.css */
+
+/* CAROUSEL */
+.carouselContainer {
+    position: relative;
+    width: 100%;
+    min-height: 480px;
+    z-index: 10;
+    perspective: 2000px;
+    overflow: hidden;
+    background: transparent;
+
+    /* CSS Variables for Responsive Calc */
+    --card-width: 260px;
+    /* Negative gap creates the overlap/pyramid effect */
+    --card-gap: -110px;
+}
+
+.carouselTrack {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0;
+    height: 0;
+    /* Track itself is static now, cards move relative to it */
+    transform-style: preserve-3d;
+    padding-bottom: 40px;
+    /* Space for reflection */
+}
+
+.cardFlipContainer {
+    /* Absolute positioning for all cards relative to track center */
+    position: absolute;
+    left: 50%;
+    top: 50%;
+
+    /* Center axis adjustment: Shift up/left by half dim */
+    margin-left: calc(var(--card-width) / -2);
+    margin-top: -220px;
+    /* Half of 400 + 40 padding? 400/2 = 200. + small shift */
+
+    width: var(--card-width);
+    height: 400px;
+    perspective: 1500px;
+
+    /* CIRCULAR POSITIONING LOGIC */
+    /* --offset is passed from React: 0, 1, -1, 2, -2 etc */
+    /* Transform X = offset * (width + gap) */
+    transform:
+        translateX(calc(var(--offset) * (var(--card-width) + var(--card-gap)))) scale(max(0.4, var(--scale-factor)));
+    /* Combine with scale logic */
+
+    transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+    /* PYRAMID STACKING LOGIC */
+    z-index: calc(100 - var(--distance));
+
+    /* Visual Depth Falloff */
+    --scale-factor: calc(1 - (var(--distance) * 0.15));
+    --blur-amount: calc(var(--distance) * 3px);
+    --opacity-val: calc(1 - (var(--distance) * 0.15));
+
+    filter: blur(var(--blur-amount));
+    opacity: max(0, var(--opacity-val));
+
+    /* Reflection Effect */
+    -webkit-box-reflect: below 10px linear-gradient(to bottom, rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.25));
+}
+
+.cardFlipInner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+}
+
+/* Hover flip effect ONLY for the center card */
+.center:hover .cardFlipInner {
+    transform: rotateY(180deg);
+}
+
+.side {
+    cursor: pointer;
+}
+
+.center {
+    cursor: pointer;
+    opacity: 1;
+    /* Ensure center is unscaled in calculation but allow the base transform to work */
+    /* Actually transform is set above. .center has offset 0, so scale factor is 1. */
+    filter: blur(0);
+    z-index: 100;
+}
+
+.cardFront,
+.cardBack {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.cardFront {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+.cardBack {
+    transform: rotateY(180deg);
+    background: linear-gradient(135deg, #f59e0b, #d97706, #b91c1c);
+}
+
+/* HOLO FOIL */
+.holoFoil {
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    background: linear-gradient(115deg,
+            transparent 20%,
+            rgba(255, 255, 255, 0.1) 25%,
+            rgba(255, 0, 204, 0.1) 30%,
+            rgba(0, 204, 255, 0.1) 35%,
+            transparent 40%);
+    background-size: 200% 200%;
+    opacity: 0.6;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    z-index: 10;
+    animation: holoShift 4s linear infinite;
+}
+
+@keyframes holoShift {
+    0% {
+        background-position: 150% 0%;
+    }
+
+    100% {
+        background-position: -50% 0%;
+    }
+}
+
+/* STAT BARS ANIMATION */
+.statBarFill {
+    transition: width 1s ease;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .carouselContainer {
+        min-height: 400px;
+        --card-width: 220px;
+        --card-gap: -80px;
+    }
+
+    .cardFlipContainer {
+        height: 340px;
+        margin-top: -190px;
+        /* Adjust vertical center */
+        --scale-factor: calc(1 - (var(--distance) * 0.2));
+    }
+}

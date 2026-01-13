@@ -21,7 +21,21 @@ export async function GET() {
 
         const { data: personas, error } = await supabase
             .from("personas")
-            .select("id, name, description, image_url, visibility, is_featured, is_premium, category, created_at")
+            .select(`
+                id, 
+                name, 
+                description, 
+                image_url, 
+                visibility, 
+                is_featured, 
+                created_at,
+                tags,
+                persona_stats(
+                    followers_count,
+                    total_chats,
+                    trending_score
+                )
+            `)
             .order("created_at", { ascending: false })
 
         if (error) {
@@ -29,7 +43,14 @@ export async function GET() {
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
 
-        return NextResponse.json({ personas })
+        // Flatten stats for frontend convenience if needed, or keep as is.
+        // Frontend expects direct access or nested. Let's keep nested but ensure single object.
+        const enrichedPersonas = personas.map(p => ({
+            ...p,
+            persona_stats: Array.isArray(p.persona_stats) ? p.persona_stats[0] : p.persona_stats
+        }))
+
+        return NextResponse.json({ personas: enrichedPersonas })
     } catch (error) {
         console.error("Admin personas error:", error)
         return NextResponse.json(
@@ -39,11 +60,11 @@ export async function GET() {
     }
 }
 
-// PATCH: Batch update personas (featured status, visibility, or premium)
+// PATCH: Batch update personas (featured status, visibility, tags, STATS)
 export async function PATCH(request: Request) {
     try {
         const { updates } = await request.json()
-        // updates: Array<{ id: string, is_featured?: boolean, visibility?: string, is_premium?: boolean }>
+        // updates: Array<{ id: string, is_featured?, visibility?, tags?: string[], stats?: { ... } }>
 
         if (!updates || !Array.isArray(updates)) {
             return NextResponse.json(
@@ -71,25 +92,45 @@ export async function PATCH(request: Request) {
                 id: string
                 is_featured?: boolean
                 visibility?: string
-                is_premium?: boolean
+                tags?: string[]
+                description?: string
+                stats?: {
+                    total_chats?: number
+                    followers_count?: number
+                    trending_score?: number
+                }
             }) => {
                 const updateData: Record<string, unknown> = {}
-                if (update.is_featured !== undefined) {
-                    updateData.is_featured = update.is_featured
-                }
-                if (update.visibility !== undefined) {
-                    updateData.visibility = update.visibility
-                }
-                if (update.is_premium !== undefined) {
-                    updateData.is_premium = update.is_premium
+                if (update.is_featured !== undefined) updateData.is_featured = update.is_featured
+                if (update.visibility !== undefined) updateData.visibility = update.visibility
+                if (update.tags !== undefined) updateData.tags = update.tags
+                if (update.description !== undefined) updateData.description = update.description
+
+                let errorMsg = null
+
+                // 1. Update Personas Table
+                if (Object.keys(updateData).length > 0) {
+                    const { error } = await supabase
+                        .from("personas")
+                        .update(updateData)
+                        .eq("id", update.id)
+                    if (error) errorMsg = error.message
                 }
 
-                const { error } = await supabase
-                    .from("personas")
-                    .update(updateData)
-                    .eq("id", update.id)
+                // 2. Update Stats Table (if stats provided)
+                if (update.stats && !errorMsg) {
+                    const { error } = await supabase
+                        .from("persona_stats")
+                        .upsert({
+                            persona_id: update.id, // Foreign Key
+                            ...update.stats,
+                            updated_at: new Date().toISOString()
+                        }, { onConflict: 'persona_id' })
 
-                return { id: update.id, success: !error, error: error?.message }
+                    if (error) errorMsg = error.message
+                }
+
+                return { id: update.id, success: !errorMsg, error: errorMsg }
             })
         )
 

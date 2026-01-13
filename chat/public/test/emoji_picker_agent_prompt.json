@@ -1,0 +1,434 @@
+{
+  "project_name": "Universal Emoji & Sticker Picker - Site-Wide Integration",
+  "primary_objective": "Integrate the Universal Emoji/Sticker Picker component throughout the ENTIRE Remrin.ai website, ensuring it's available in EVERY location where users can input text",
+
+  "critical_requirements": {
+    "scope": "SITE-WIDE - This is NOT a single-component implementation",
+    "consistency": "The picker must work identically across all locations",
+    "availability": "EVERY text input area must have emoji picker access",
+    "user_experience": "Seamless, intuitive, and consistent behavior everywhere"
+  },
+
+  "installation_steps": {
+    "step_1": {
+      "action": "Install required packages",
+      "commands": [
+        "npm install @emoji-mart/react @emoji-mart/data",
+        "npm install @giphy/react-components @giphy/js-fetch-api"
+      ]
+    },
+    "step_2": {
+      "action": "Get Giphy API Key",
+      "instructions": [
+        "Sign up at https://developers.giphy.com",
+        "Create a new app",
+        "Copy the API key",
+        "Add to .env.local: NEXT_PUBLIC_GIPHY_API_KEY=your_key_here"
+      ]
+    },
+    "step_3": {
+      "action": "Add component files to project",
+      "files": [
+        "components/ui/UniversalPicker.tsx (main picker component)",
+        "components/ui/EmojiButton.tsx (trigger button component)",
+        "hooks/useEmojiInsertion.ts (helper hook)"
+      ]
+    }
+  },
+
+  "implementation_locations": {
+    "critical_instruction": "You MUST implement the emoji picker in ALL of the following locations. Search the codebase thoroughly to find every text input.",
+    
+    "primary_locations": {
+      "main_chat_window": {
+        "description": "The primary chat interface where users talk to AI characters",
+        "files_to_check": [
+          "components/chat/**/*.tsx",
+          "app/**/chat/**/*.tsx",
+          "components/ChatInput.tsx",
+          "components/MessageInput.tsx"
+        ],
+        "implementation": "Add EmojiButton next to the send button in the main message input",
+        "requirements": [
+          "Picker should appear above input (position='top')",
+          "On emoji select: insert at cursor position",
+          "On GIF/sticker select: send as media message",
+          "Must not interfere with existing send/attachment buttons"
+        ]
+      },
+
+      "feed_posts": {
+        "description": "Creating new posts in the social feed",
+        "files_to_check": [
+          "components/feed/**/*.tsx",
+          "components/CreatePost.tsx",
+          "components/NewPost.tsx",
+          "app/**/feed/**/*.tsx"
+        ],
+        "implementation": "Add EmojiButton in the post composition toolbar",
+        "requirements": [
+          "Available in 'Create Post' modal/form",
+          "Insert emojis into post text",
+          "Allow adding GIFs/stickers as post media",
+          "Integrate with existing formatting toolbar"
+        ]
+      },
+
+      "comments": {
+        "description": "Commenting on posts, replies to comments",
+        "files_to_check": [
+          "components/Comment.tsx",
+          "components/CommentInput.tsx",
+          "components/feed/**/Comment*.tsx"
+        ],
+        "implementation": "Add EmojiButton to every comment input field",
+        "requirements": [
+          "Available on post comments",
+          "Available on comment replies",
+          "Available on nested comments",
+          "Compact design for inline comment forms"
+        ]
+      },
+
+      "direct_messages": {
+        "description": "Private DM conversations between users",
+        "files_to_check": [
+          "components/messages/**/*.tsx",
+          "components/DirectMessage*.tsx",
+          "app/**/messages/**/*.tsx"
+        ],
+        "implementation": "Add EmojiButton to DM input",
+        "requirements": [
+          "Same functionality as main chat",
+          "Support for GIF/sticker sending",
+          "Emoji reactions on messages (if feature exists)"
+        ]
+      },
+
+      "profile_bio": {
+        "description": "Editing profile bio and about sections",
+        "files_to_check": [
+          "components/settings/UserProfileSettings.tsx",
+          "app/settings/profile/**.tsx",
+          "components/profile/Edit*.tsx"
+        ],
+        "implementation": "Add EmojiButton to bio textarea",
+        "requirements": [
+          "Allow emojis in bio text",
+          "Picker should open upward if near bottom of screen",
+          "No GIFs/stickers in bio (text only)"
+        ]
+      },
+
+      "character_creation": {
+        "description": "Creating/editing AI character descriptions, greetings, etc.",
+        "files_to_check": [
+          "components/character/**/*.tsx",
+          "components/CreateCharacter.tsx",
+          "app/**/character/create/**/*.tsx"
+        ],
+        "implementation": "Add EmojiButton to character description fields",
+        "requirements": [
+          "Available in character bio/description",
+          "Available in greeting message editor",
+          "Available in personality description"
+        ]
+      },
+
+      "search_and_filter": {
+        "description": "Search bars where users type queries",
+        "files_to_check": [
+          "components/Search*.tsx",
+          "components/navigation/SearchBar.tsx"
+        ],
+        "implementation": "Optional - consider if emojis make sense in search",
+        "requirements": [
+          "May want to allow emoji search",
+          "Consider UX carefully - may not be needed"
+        ]
+      },
+
+      "notifications_replies": {
+        "description": "Quick reply boxes in notifications",
+        "files_to_check": [
+          "components/notifications/**/*.tsx",
+          "components/Notification*.tsx"
+        ],
+        "implementation": "Add EmojiButton if quick reply is available",
+        "requirements": [
+          "Compact picker design",
+          "Position carefully to not obstruct other UI"
+        ]
+      }
+    },
+
+    "additional_locations": {
+      "instruction": "Search the ENTIRE codebase for these patterns and add emoji picker:",
+      "patterns_to_search": [
+        "<input type=\"text\"",
+        "<textarea",
+        "contentEditable",
+        "placeholder=",
+        "MessageInput",
+        "ChatInput",
+        "CommentInput",
+        "TextArea",
+        "TextField"
+      ],
+      "evaluation_criteria": "If a user can type text, they should have emoji picker access"
+    }
+  },
+
+  "implementation_patterns": {
+    "pattern_1_simple_text_input": {
+      "description": "For basic text inputs where emojis insert at cursor",
+      "example_code": "```tsx\nimport { useState, useRef } from 'react'\nimport { EmojiButton } from '@/components/ui/UniversalPicker'\n\nexport function ChatInput() {\n  const [message, setMessage] = useState('')\n  const inputRef = useRef<HTMLTextAreaElement>(null)\n\n  const handleEmojiSelect = (item) => {\n    if (item.type === 'emoji') {\n      // Insert emoji at cursor position\n      const input = inputRef.current\n      const start = input.selectionStart || 0\n      const end = input.selectionEnd || 0\n      const newText = message.slice(0, start) + item.data + message.slice(end)\n      setMessage(newText)\n      \n      // Restore cursor position\n      setTimeout(() => {\n        input.focus()\n        input.setSelectionRange(start + item.data.length, start + item.data.length)\n      }, 0)\n    } else {\n      // GIF or sticker - send as separate message\n      sendMediaMessage(item.type, item.data)\n    }\n  }\n\n  return (\n    <div className=\"flex items-end gap-2\">\n      <textarea\n        ref={inputRef}\n        value={message}\n        onChange={(e) => setMessage(e.target.value)}\n        placeholder=\"Type a message...\"\n      />\n      <EmojiButton \n        onSelect={handleEmojiSelect}\n        position=\"top\"\n      />\n      <button onClick={sendMessage}>Send</button>\n    </div>\n  )\n}\n```"
+    },
+
+    "pattern_2_rich_text_editor": {
+      "description": "For rich text editors or complex inputs",
+      "example_code": "```tsx\nimport { Editor } from '@tiptap/react'\nimport { EmojiButton } from '@/components/ui/UniversalPicker'\n\nexport function RichTextInput({ editor }: { editor: Editor }) {\n  const handleEmojiSelect = (item) => {\n    if (item.type === 'emoji') {\n      editor.commands.insertContent(item.data)\n    } else {\n      // Insert image for GIF/sticker\n      editor.commands.insertContent({\n        type: 'image',\n        attrs: { src: item.data, alt: item.name }\n      })\n    }\n  }\n\n  return (\n    <div className=\"toolbar\">\n      {/* Other toolbar buttons */}\n      <EmojiButton onSelect={handleEmojiSelect} />\n    </div>\n  )\n}\n```"
+    },
+
+    "pattern_3_controlled_component": {
+      "description": "For controlled inputs with setState",
+      "example_code": "```tsx\nconst [text, setText] = useState('')\nconst inputRef = useRef<HTMLInputElement>(null)\n\nconst handleEmojiSelect = (item) => {\n  if (item.type === 'emoji') {\n    const input = inputRef.current\n    if (!input) return\n    \n    const start = input.selectionStart || 0\n    const end = input.selectionEnd || 0\n    const newText = text.slice(0, start) + item.data + text.slice(end)\n    \n    setText(newText)\n    \n    // Restore focus and cursor\n    requestAnimationFrame(() => {\n      input.focus()\n      input.setSelectionRange(start + item.data.length, start + item.data.length)\n    })\n  }\n}\n\nreturn (\n  <div className=\"relative\">\n    <input\n      ref={inputRef}\n      value={text}\n      onChange={(e) => setText(e.target.value)}\n    />\n    <EmojiButton onSelect={handleEmojiSelect} />\n  </div>\n)\n```"
+    }
+  },
+
+  "styling_requirements": {
+    "consistency": "Picker must match Remrin.ai design system",
+    "theme": "Use existing color variables (rp-surface, rp-iris, rp-muted, etc.)",
+    "responsive": "Must work on mobile, tablet, and desktop",
+    "positioning": {
+      "default": "Open upward from input (position='top')",
+      "near_top": "Open downward if near top of screen (position='bottom')",
+      "mobile": "May need to use modal/fullscreen on small screens"
+    },
+    "z_index": "Ensure picker appears above all other elements (z-50 or higher)",
+    "animations": "Use existing animation classes (animate-in, fade-in, etc.)"
+  },
+
+  "data_handling": {
+    "emoji_insertion": {
+      "method": "Insert at current cursor position",
+      "preserve_cursor": "Restore cursor position after insertion",
+      "trigger_events": "Fire onChange/onInput events after insertion"
+    },
+    "gif_sticker_handling": {
+      "method": "Send as separate media message or embed in rich content",
+      "storage": "Store URLs in message/post/comment data",
+      "display": "Render as img tags in message display components"
+    },
+    "database_schema": {
+      "messages_table": "Add 'media_type' and 'media_url' columns if not present",
+      "posts_table": "Add 'media_attachments' JSON column for multiple media",
+      "example": "{ type: 'gif', url: 'https://...', id: '...', name: '...' }"
+    }
+  },
+
+  "custom_stickers": {
+    "location": "public/stickers/ directory",
+    "organization": {
+      "kilo": "public/stickers/kilo/*.png",
+      "squee": "public/stickers/squee/*.png",
+      "kess": "public/stickers/kess/*.png",
+      "sui": "public/stickers/sui/*.png"
+    },
+    "naming_convention": "character-emotion.png (e.g., kilo-happy.png)",
+    "requirements": [
+      "Create at least 5-10 stickers per character",
+      "Use transparent PNG format",
+      "Recommended size: 512x512px",
+      "Optimize images for web (<100KB each)"
+    ],
+    "fallback": "If stickers don't exist yet, show placeholder or hide 'Remrin' tab"
+  },
+
+  "testing_checklist": {
+    "functional_tests": [
+      "✓ Emoji picker opens when clicking emoji button",
+      "✓ Picker closes when clicking outside",
+      "✓ Picker closes when pressing Escape key",
+      "✓ Emojis insert at correct cursor position",
+      "✓ Cursor position is preserved after insertion",
+      "✓ GIFs/stickers send as separate messages",
+      "✓ Search functionality works for GIFs/stickers",
+      "✓ Custom stickers load and display correctly",
+      "✓ All tabs (Emoji, GIF, Sticker, Remrin) work",
+      "✓ Picker doesn't interfere with send/submit buttons"
+    ],
+    "location_tests": [
+      "✓ Works in main chat window",
+      "✓ Works in feed post creation",
+      "✓ Works in comments",
+      "✓ Works in comment replies",
+      "✓ Works in DMs (if applicable)",
+      "✓ Works in profile bio editing",
+      "✓ Works in character creation/editing",
+      "✓ Works in any other text input areas"
+    ],
+    "responsive_tests": [
+      "✓ Works on desktop (1920px+)",
+      "✓ Works on laptop (1366px)",
+      "✓ Works on tablet (768px)",
+      "✓ Works on mobile (375px)",
+      "✓ Picker doesn't overflow screen on small devices",
+      "✓ Touch interactions work on mobile"
+    ],
+    "edge_cases": [
+      "✓ Works with empty input",
+      "✓ Works with input at max length",
+      "✓ Works with multiline text",
+      "✓ Works with existing emojis in text",
+      "✓ Handles slow network for GIF loading",
+      "✓ Handles Giphy API errors gracefully"
+    ]
+  },
+
+  "accessibility_requirements": {
+    "keyboard_navigation": [
+      "Tab to emoji button",
+      "Enter/Space to open picker",
+      "Escape to close picker",
+      "Arrow keys to navigate categories",
+      "Enter to select emoji/GIF/sticker"
+    ],
+    "screen_readers": [
+      "Emoji button has aria-label='Add emoji, GIF, or sticker'",
+      "Picker has role='dialog'",
+      "Tab panels have proper aria-labels",
+      "Images have alt text"
+    ],
+    "visual": [
+      "Focus indicators visible on all interactive elements",
+      "Color contrast meets WCAG AA standards",
+      "Icons have text labels or tooltips"
+    ]
+  },
+
+  "performance_considerations": {
+    "lazy_loading": "Load picker component only when button is clicked (dynamic import)",
+    "code_splitting": "Use React.lazy() or next/dynamic for picker",
+    "gif_loading": "Use Giphy's thumbnail URLs for preview, full URL on send",
+    "caching": "Cache recent emojis and frequently used GIFs",
+    "debouncing": "Debounce GIF search input (300ms delay)"
+  },
+
+  "error_handling": {
+    "giphy_api_failure": {
+      "scenario": "Giphy API is down or rate limited",
+      "handling": [
+        "Show error message: 'Unable to load GIFs. Please try again later.'",
+        "Disable GIF and Sticker tabs",
+        "Keep Emoji and Custom tabs functional",
+        "Log error for monitoring"
+      ]
+    },
+    "network_failure": {
+      "scenario": "User has no internet connection",
+      "handling": [
+        "Emoji tab still works (no network needed)",
+        "Show offline indicator for GIF/Sticker tabs",
+        "Custom stickers work if cached"
+      ]
+    },
+    "invalid_selection": {
+      "scenario": "User selects corrupted/invalid media",
+      "handling": [
+        "Validate URL before sending",
+        "Show error toast if invalid",
+        "Don't send message with broken media"
+      ]
+    }
+  },
+
+  "migration_strategy": {
+    "phase_1": "Core Implementation (Week 1)",
+    "tasks_phase_1": [
+      "Install dependencies",
+      "Create UniversalPicker component",
+      "Implement in main chat window",
+      "Test and refine"
+    ],
+    "phase_2": "Expand to Feed (Week 1-2)",
+    "tasks_phase_2": [
+      "Add to post creation",
+      "Add to comments",
+      "Add to comment replies",
+      "Test interactions"
+    ],
+    "phase_3": "Complete Integration (Week 2)",
+    "tasks_phase_3": [
+      "Add to all remaining text inputs",
+      "Add to profile editing",
+      "Add to character creation",
+      "Final testing across entire site"
+    ],
+    "phase_4": "Polish & Custom Content (Week 3)",
+    "tasks_phase_4": [
+      "Create custom character stickers",
+      "Optimize performance",
+      "Add analytics tracking",
+      "Document for future developers"
+    ]
+  },
+
+  "analytics_tracking": {
+    "events_to_track": [
+      "emoji_picker_opened",
+      "emoji_selected { emoji: string }",
+      "gif_selected { id: string, search_term: string }",
+      "sticker_selected { type: 'giphy' | 'custom', id: string }",
+      "custom_sticker_selected { character: string, sticker_id: string }",
+      "tab_switched { from: string, to: string }"
+    ],
+    "purpose": "Understand which emojis/GIFs/stickers are most popular to create more custom content"
+  },
+
+  "documentation_requirements": {
+    "developer_docs": [
+      "How to add emoji picker to new components",
+      "How to handle different input types",
+      "How to add new custom stickers",
+      "How to customize picker appearance"
+    ],
+    "user_docs": [
+      "How to use emoji picker",
+      "Available sticker packs",
+      "GIF search tips"
+    ]
+  },
+
+  "environment_variables": {
+    "required": [
+      "NEXT_PUBLIC_GIPHY_API_KEY - Get from https://developers.giphy.com"
+    ],
+    "optional": [
+      "NEXT_PUBLIC_TENOR_API_KEY - Alternative GIF provider",
+      "NEXT_PUBLIC_CUSTOM_STICKER_CDN - If hosting stickers on CDN"
+    ]
+  },
+
+  "final_acceptance_criteria": {
+    "completeness": "Emoji picker is available in EVERY text input across the entire site",
+    "consistency": "Picker behavior is identical in all locations",
+    "performance": "Picker loads quickly and doesn't slow down page",
+    "mobile": "Works perfectly on mobile devices",
+    "accessibility": "Fully accessible via keyboard and screen readers",
+    "error_handling": "Gracefully handles all error scenarios",
+    "documentation": "Fully documented for future development",
+    "testing": "All tests pass, no regressions",
+    "user_experience": "Users can easily add emojis, GIFs, and stickers anywhere they type"
+  },
+
+  "critical_notes": [
+    "DO NOT implement this in just one or two places - it must be SITE-WIDE",
+    "Search the ENTIRE codebase for text inputs and add picker to ALL of them",
+    "Test on mobile devices - this is critical for user experience",
+    "Ensure picker doesn't interfere with existing functionality",
+    "Keep the implementation consistent - don't create variations in different places",
+    "Document any non-standard implementations for future reference",
+    "Consider accessibility from the start, not as an afterthought"
+  ]
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { PostComment } from '@/types/social';
 import { useComments } from '@/hooks/feed/useComments';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -13,6 +13,9 @@ import { getUserAvatarUrl, getUserDisplayName, getUserProfileUrl } from '@/lib/u
 import Link from 'next/link';
 import { useContext } from 'react';
 import { RemrinContext } from '@/context/context';
+import { EmojiButton } from '@/components/ui/EmojiButton';
+import { PickerItem } from '@/components/ui/UniversalPicker';
+import { useEmojiInsertion } from '@/hooks/useEmojiInsertion';
 
 interface CommentSectionProps {
     postId: string;
@@ -23,6 +26,8 @@ export function CommentSection({ postId }: CommentSectionProps) {
     const { comments, isLoading, fetchComments, addComment, deleteComment } = useComments(postId);
     const [newComment, setNewComment] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const commentInputRef = useRef<HTMLTextAreaElement>(null);
+    const { insertEmoji } = useEmojiInsertion(commentInputRef, newComment, setNewComment);
 
     useEffect(() => {
         fetchComments();
@@ -41,6 +46,12 @@ export function CommentSection({ postId }: CommentSectionProps) {
         }
     };
 
+    const handleEmojiSelect = (item: PickerItem) => {
+        if (item.type === 'emoji') {
+            insertEmoji(item.data);
+        }
+    };
+
     return (
         <div className="space-y-6">
             <form onSubmit={handleSubmit} className="flex gap-3 items-start">
@@ -52,18 +63,27 @@ export function CommentSection({ postId }: CommentSectionProps) {
                 </Avatar>
                 <div className="flex-1 relative">
                     <TextareaAutosize
+                        textareaRef={commentInputRef}
                         value={newComment}
                         onValueChange={(val) => setNewComment(val)}
                         placeholder="Write a comment..."
-                        className="w-full bg-rp-overlay border-rp-highlight-low rounded-xl px-4 py-2 text-sm focus:border-rp-rose transition-colors resize-none pr-10"
+                        className="w-full bg-rp-overlay border-rp-highlight-low rounded-xl px-4 py-2 text-sm focus:border-rp-rose transition-colors resize-none pr-20"
                     />
-                    <button
-                        type="submit"
-                        disabled={!newComment.trim() || isSubmitting}
-                        className="absolute right-2 bottom-2 p-1 text-rp-rose hover:bg-rp-highlight-low rounded-full disabled:opacity-50 disabled:text-rp-muted"
-                    >
-                        <Send className="w-4 h-4" />
-                    </button>
+                    <div className="absolute right-2 bottom-2 flex gap-1">
+                        <EmojiButton
+                            onSelect={handleEmojiSelect}
+                            position="top"
+                            theme="dark"
+                            className="p-1 hover:bg-rp-highlight-low rounded-full"
+                        />
+                        <button
+                            type="submit"
+                            disabled={!newComment.trim() || isSubmitting}
+                            className="p-1 text-rp-rose hover:bg-rp-highlight-low rounded-full disabled:opacity-50 disabled:text-rp-muted"
+                        >
+                            <Send className="w-4 h-4" />
+                        </button>
+                    </div>
                 </div>
             </form>
 
@@ -97,6 +117,8 @@ function CommentItem({ comment, onDelete, onReply }: CommentItemProps) {
     const [isReplying, setIsReplying] = useState(false);
     const [replyContent, setReplyContent] = useState('');
     const [isSubmittingReply, setIsSubmittingReply] = useState(false);
+    const replyInputRef = useRef<HTMLTextAreaElement>(null);
+    const { insertEmoji: insertReplyEmoji } = useEmojiInsertion(replyInputRef, replyContent, setReplyContent);
 
     const handleReplySubmit = async () => {
         if (!replyContent.trim() || isSubmittingReply) return;
@@ -107,6 +129,12 @@ function CommentItem({ comment, onDelete, onReply }: CommentItemProps) {
             setIsReplying(false);
         } finally {
             setIsSubmittingReply(false);
+        }
+    };
+
+    const handleReplyEmojiSelect = (item: PickerItem) => {
+        if (item.type === 'emoji') {
+            insertReplyEmoji(item.data);
         }
     };
 
@@ -166,21 +194,30 @@ function CommentItem({ comment, onDelete, onReply }: CommentItemProps) {
 
                 {isReplying && (
                     <div className="flex gap-2 mt-2">
-                        <TextareaAutosize
-                            autoFocus
-                            value={replyContent}
-                            onValueChange={(val) => setReplyContent(val)}
-                            placeholder="Write a reply..."
-                            className="flex-1 bg-rp-overlay border-rp-highlight-low rounded-xl px-3 py-1.5 text-xs focus:border-rp-iris transition-colors resize-none"
-                        />
-                        <Button
-                            size="sm"
-                            className="bg-rp-iris hover:bg-rp-iris/80 text-white rounded-xl h-8 px-3"
-                            disabled={!replyContent.trim() || isSubmittingReply}
-                            onClick={handleReplySubmit}
-                        >
-                            Reply
-                        </Button>
+                        <div className="flex-1 relative">
+                            <TextareaAutosize
+                                textareaRef={replyInputRef}
+                                value={replyContent}
+                                onValueChange={(val) => setReplyContent(val)}
+                                placeholder="Write a reply..."
+                                className="w-full bg-rp-overlay border-rp-highlight-low rounded-xl px-4 py-2 text-sm focus:border-rp-rose transition-colors resize-none pr-20"
+                            />
+                            <div className="absolute right-2 bottom-2 flex gap-1">
+                                <EmojiButton
+                                    onSelect={handleReplyEmojiSelect}
+                                    position="top"
+                                    theme="dark"
+                                    className="p-1 hover:bg-rp-highlight-low rounded-full"
+                                />
+                                <button
+                                    onClick={handleReplySubmit}
+                                    disabled={!replyContent.trim() || isSubmittingReply}
+                                    className="p-1 text-rp-rose hover:bg-rp-highlight-low rounded-full disabled:opacity-50"
+                                >
+                                    <Send className="w-4 h-4" />
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 )}
 

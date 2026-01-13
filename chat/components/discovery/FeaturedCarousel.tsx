@@ -1,21 +1,23 @@
-/**
- * Featured Carousel Component
- * 
- * 3D carousel for featured characters with real character data and links
- */
-
 "use client"
 
-import React, { useState } from 'react'
-import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react'
-import { useRouter } from 'next/navigation'
-import Image from 'next/image'
-import { cn } from '@/lib/utils'
+import React, { useState, useEffect, useCallback } from "react"
+import Image from "next/image"
+import { ChevronLeft, ChevronRight } from "lucide-react"
+import styles from "./Flip3DCarousel.module.css"
+import { cn } from "@/lib/utils"
 
-interface FeaturedCharacter {
+// Compatible interface for FeaturedCarousel
+export interface FeaturedCharacter {
     id: string
     name: string
     imageUrl: string
+    // Optional fields that might be passed or we map to defaults
+    category?: string
+    description?: string
+    creativity?: number
+    tags?: string[]
+    followersCount?: number
+    totalChats?: number
 }
 
 interface FeaturedCarouselProps {
@@ -23,248 +25,232 @@ interface FeaturedCarouselProps {
     onCharacterClick?: (character: FeaturedCharacter) => void
 }
 
+// Helper to get random traits deterministically (fallback)
+function getPlaceholderTraits(id: string) {
+    const hash = id.split("").reduce((a, b) => a + b.charCodeAt(0), 0)
+    const traitsPool = ["⚡ Powerful", "🎭 Dramatic", "✨ Ancient", "🦭 Cute", "💪 Strong", "😊 Kind", "👑 Regal", "🐝 All-Knowing", "💋 Sassy", "👻 Ethereal", "💫 Protective", "🌙 Ancient", "⚡ Fast", "🎮 Gamer", "🔋 High Energy"]
+    const traits = []
+    for (let i = 0; i < 3; i++) {
+        const idx = (hash + i * 7) % traitsPool.length
+        traits.push(traitsPool[idx])
+    }
+    return traits
+}
+
 export function FeaturedCarousel({ characters, onCharacterClick }: FeaturedCarouselProps) {
-    // Start at middle for symmetrical display
-    const [currentIndex, setCurrentIndex] = useState(Math.floor(characters.length / 2))
-    const router = useRouter()
+    const [currentIndex, setCurrentIndex] = useState(0)
 
-    const goToPrevious = () => {
-        setCurrentIndex((prevIndex) =>
-            prevIndex === 0 ? characters.length - 1 : prevIndex - 1
-        )
-    }
+    const personas = characters
 
-    const goToNext = () => {
-        setCurrentIndex((prevIndex) =>
-            prevIndex === characters.length - 1 ? 0 : prevIndex + 1
-        )
-    }
-
-    const [touchStart, setTouchStart] = useState<number | null>(null)
-    const [touchEnd, setTouchEnd] = useState<number | null>(null)
-
-    // Minimum swipe distance
-    const minSwipeDistance = 50
-
-    const onTouchStart = (e: React.TouchEvent) => {
-        setTouchEnd(null)
-        setTouchStart(e.targetTouches[0].clientX)
-    }
-
-    const onTouchMove = (e: React.TouchEvent) => {
-        setTouchEnd(e.targetTouches[0].clientX)
-    }
-
-    const onTouchEnd = () => {
-        if (!touchStart || !touchEnd) return
-
-        const distance = touchStart - touchEnd
-        const isLeftSwipe = distance > minSwipeDistance
-        const isRightSwipe = distance < -minSwipeDistance
-
-        if (isLeftSwipe) {
-            goToNext()
-        } else if (isRightSwipe) {
-            goToPrevious()
+    useEffect(() => {
+        if (currentIndex >= personas.length && personas.length > 0) {
+            setCurrentIndex(0)
         }
-    }
+    }, [personas.length, currentIndex])
 
-    const getCardStyle = (index: number) => {
-        const diff = index - currentIndex
-        const absPos = Math.abs(diff)
+    const nextCard = useCallback(() => {
+        setCurrentIndex((prev) => (prev + 1) % personas.length)
+    }, [personas.length])
 
-        if (absPos > 2) return { display: 'none' as const }
+    const prevCard = useCallback(() => {
+        setCurrentIndex((prev) => (prev - 1 + personas.length) % personas.length)
+    }, [personas.length])
 
-        // Center card
-        if (diff === 0) {
-            return {
-                transform: 'translateX(0) translateZ(0) scale(1)',
-                opacity: 1,
-                zIndex: 3
-            }
+    // Keyboard nav
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "ArrowRight") nextCard()
+            if (e.key === "ArrowLeft") prevCard()
         }
+        window.addEventListener("keydown", handleKeyDown)
+        return () => window.removeEventListener("keydown", handleKeyDown)
+    }, [nextCard, prevCard])
 
-        // Side cards
-        return {
-            transform: `translateX(${diff * 280}px) translateZ(-${absPos * 200}px) scale(${1 - absPos * 0.15})`,
-            opacity: 1 - absPos * 0.3,
-            zIndex: 3 - absPos
-        }
-    }
-
-    // Mouse Drag Logic
-    const [isDragging, setIsDragging] = useState(false)
-    const [startX, setStartX] = useState<number | null>(null)
-
-    const onMouseDown = (e: React.MouseEvent) => {
-        setStartX(e.clientX)
-        setIsDragging(false)
-    }
-
-    const onMouseMove = (e: React.MouseEvent) => {
-        if (startX !== null) {
-            // If moved more than small threshold, it's a drag
-            if (Math.abs(e.clientX - startX!) > 5) {
-                setIsDragging(true)
-            }
-        }
-    }
-
-    const onMouseUp = (e: React.MouseEvent) => {
-        if (startX === null) return
-
-        const distance = e.clientX - startX
-        setStartX(null)
-
-        // Reset dragging state after a layout tick to allowing onClick to fire if it wasn't a drag
-        // However, if isDragging is true, we SWIPED.
-        if (isDragging) {
-            // Handle Swipe
-            if (distance > minSwipeDistance) {
-                goToPrevious() // Left to Right = Previous 
-            } else if (distance < -minSwipeDistance) {
-                goToNext() // Right to Left = Next
-            }
-
-            // Prevent click propagation immediately?
-            // The click event fires after mouseup.
-        }
-
-        // We delay resetting isDragging slightly so onClick can read it
-        setTimeout(() => setIsDragging(false), 50)
-    }
-
-    const onMouseLeave = () => {
-        setStartX(null)
-        setIsDragging(false)
-    }
-
-    const handleCardClick = (character: FeaturedCharacter, isCenter: boolean) => {
-        // If we were dragging/swiping, IGNORE the click
-        if (isDragging) return
-
-        // User requested immediate activation on click/touch
-        if (onCharacterClick) {
-            onCharacterClick(character)
-        } else {
-            router.push(`/chat?persona=${character.id}`)
-        }
-    }
-
-    if (characters.length === 0) return null
+    if (!personas || personas.length === 0) return null
 
     return (
-        <div className="w-full py-8">
-            <div className="w-full max-w-7xl mx-auto">
-                {/* Carousel Container */}
-                <div className="relative" style={{ perspective: '2000px' }}>
-                    {/* Navigation Buttons */}
-                    <button
-                        onClick={goToPrevious}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-rp-surface text-rp-iris border-2 border-rp-iris hover:bg-rp-iris hover:text-white rounded-full flex items-center justify-center transition-all"
-                        aria-label="Previous"
-                    >
-                        <IconChevronLeft size={32} />
-                    </button>
+        <div className={styles.carouselContainer}>
+            {/* Nav Buttons */}
+            <button
+                onClick={prevCard}
+                className="absolute left-4 top-1/2 z-30 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/50 backdrop-blur-md transition-all hover:scale-110 hover:bg-black/70"
+                aria-label="Previous character"
+            >
+                <ChevronLeft className="h-5 w-5 text-white" />
+            </button>
 
-                    <button
-                        onClick={goToNext}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-rp-surface text-rp-iris border-2 border-rp-iris hover:bg-rp-iris hover:text-white rounded-full flex items-center justify-center transition-all"
-                        aria-label="Next"
-                    >
-                        <IconChevronRight size={32} />
-                    </button>
+            <button
+                onClick={nextCard}
+                className="absolute right-4 top-1/2 z-30 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/50 backdrop-blur-md transition-all hover:scale-110 hover:bg-black/70"
+                aria-label="Next character"
+            >
+                <ChevronRight className="h-5 w-5 text-white" />
+            </button>
 
-                    {/* Cards Container */}
-                    <div
-                        className="relative h-[600px] flex items-center justify-center touch-pan-y cursor-grab active:cursor-grabbing"
-                        style={{ transformStyle: 'preserve-3d' }}
-                        onTouchStart={onTouchStart}
-                        onTouchMove={onTouchMove}
-                        onTouchEnd={onTouchEnd}
-                        onMouseDown={onMouseDown}
-                        onMouseMove={onMouseMove}
-                        onMouseUp={onMouseUp}
-                        onMouseLeave={onMouseLeave}
-                    >
-                        {characters.map((character, index) => {
-                            const isCenter = index === currentIndex
-                            return (
-                                <div
-                                    key={character.id}
-                                    className="absolute transition-all duration-500 ease-out cursor-pointer"
-                                    style={getCardStyle(index)}
-                                    onClick={() => handleCardClick(character, isCenter)}
-                                >
-                                    {/* Card */}
-                                    <div className={cn(
-                                        "relative w-[320px] h-[480px] rounded-xl overflow-hidden group",
-                                        "border-2 transition-all duration-300",
-                                        isCenter ? "border-rp-iris/60" : "border-rp-muted/20"
-                                    )}>
-                                        {/* Character Image */}
-                                        <Image
-                                            src={character.imageUrl}
-                                            alt={character.name}
-                                            fill
-                                            className="object-cover transition-transform duration-500 group-hover:scale-110"
-                                            sizes="320px"
-                                            priority={index < 3}
-                                        />
+            {/* Track - Static container for absolute cards */}
+            <div className={styles.carouselTrack}>
+                {personas.map((persona, index) => {
+                    // Calculate circular offset
+                    const count = personas.length
+                    let offset = (index - currentIndex) % count
 
-                                        {/* Card Content */}
-                                        <div className="absolute bottom-0 left-0 right-0 p-6">
-                                            <h3 className="text-white text-2xl font-bold mb-4 font-tiempos-headline" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.5)' }}>
-                                                {character.name}
-                                            </h3>
+                    if (offset > count / 2) offset -= count
+                    if (offset < -count / 2) offset += count
 
-                                            {/* Button - only show on center card */}
-                                            {isCenter && (
-                                                <button
-                                                    className={cn(
-                                                        "inline-flex items-center gap-2 px-6 py-3 rounded-lg transition-all transform hover:scale-105 shadow-lg font-semibold",
-                                                        "bg-gradient-to-r from-rp-iris to-rp-rose text-rp-base",
-                                                        "hover:from-rp-iris/80 hover:to-rp-rose/80"
-                                                    )}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation()
-                                                        handleCardClick(character, true)
-                                                    }}
-                                                >
-                                                    <span>Chat Now</span>
-                                                </button>
-                                            )}
-                                        </div>
+                    const distance = Math.abs(offset)
+                    const isCenter = distance === 0
 
-                                        {/* Hover Border Effect */}
-                                        <div className={cn(
-                                            "absolute inset-0 rounded-xl transition-all duration-300",
-                                            "border-2",
-                                            isCenter ? "border-rp-iris/30" : "border-white/0 group-hover:border-white/30"
-                                        )}></div>
+                    // TRAITS LOGIC: Use real tags if available, else generated
+                    const displayTraits = (persona.tags && persona.tags.length > 0)
+                        ? persona.tags.slice(0, 3)
+                        : getPlaceholderTraits(persona.id)
+
+                    // STATS LOGIC: Use real metrics
+                    const chatVal = persona.totalChats || 0
+                    const followVal = persona.followersCount || 0
+
+                    const chatPercent = Math.min(100, Math.max(5, (chatVal / 200) * 100))
+                    const followPercent = Math.min(100, Math.max(5, (followVal / 50) * 100))
+
+                    const displayCreativity = persona.creativity || 50
+
+                    const displayCategory = persona.category || "Featured Soul"
+                    const displayDescription = persona.description || "A mysterious soul waiting to be discovered."
+
+                    return (
+                        <div
+                            key={persona.id}
+                            className={cn(
+                                styles.cardFlipContainer,
+                                isCenter ? styles.center : styles.side
+                            )}
+                            style={{
+                                "--offset": offset,
+                                "--distance": distance
+                            } as React.CSSProperties}
+                            onClick={() => {
+                                if (offset !== 0) {
+                                    setCurrentIndex(index)
+                                }
+                            }}
+                        >
+                            <div className={styles.cardFlipInner}>
+                                {/* FRONT */}
+                                <div className={styles.cardFront}>
+                                    <Image
+                                        src={persona.imageUrl || '/placeholder-persona.png'}
+                                        alt={persona.name}
+                                        fill
+                                        className="object-cover"
+                                        sizes="(max-width: 768px) 220px, 260px"
+                                    />
+                                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 to-transparent p-4 pt-10">
+                                        <h3 className="font-outfit text-2xl font-extrabold uppercase tracking-wide text-white drop-shadow-md">
+                                            {persona.name}
+                                        </h3>
+                                        <p className="text-xs italic text-white/70">
+                                            {displayCategory}
+                                        </p>
                                     </div>
                                 </div>
-                            )
-                        })}
-                    </div>
 
-                    {/* Dots Navigation */}
-                    <div className="flex justify-center gap-2 mt-8">
-                        {characters.map((_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => setCurrentIndex(index)}
-                                className={cn(
-                                    "h-2 rounded-full transition-all",
-                                    index === currentIndex
-                                        ? 'bg-rp-iris w-8'
-                                        : 'bg-rp-muted/30 hover:bg-rp-muted/50 w-2'
-                                )}
-                                aria-label={`Go to slide ${index + 1}`}
-                            />
-                        ))}
-                    </div>
-                </div>
+                                {/* BACK (Info Only) */}
+                                <div className={styles.cardBack}>
+                                    <div className="relative h-full w-full bg-gradient-to-br from-amber-500 via-yellow-600 to-red-700 p-2.5">
+                                        {/* Holo Foil Overlay */}
+                                        <div className={styles.holoFoil} />
+
+                                        {/* Card Content Inner */}
+                                        <div className="relative z-10 flex h-full w-full flex-col overflow-hidden rounded-[12px] bg-[#0a0a0f]/95">
+
+                                            {/* Header */}
+                                            <div className="flex items-center justify-between border-b border-white/10 px-4 py-3 bg-black/20">
+                                                <div className="font-outfit text-lg font-extrabold uppercase tracking-wide text-white truncate max-w-[140px]">
+                                                    {persona.name}
+                                                </div>
+                                                <div className="font-mono text-[10px] font-bold text-amber-500 flex flex-col items-end">
+                                                    <span className="text-[8px] text-gray-500">CREATIVITY</span>
+                                                    {Math.round(displayCreativity)}
+                                                </div>
+                                            </div>
+
+                                            {/* Body - Full Height for Info */}
+                                            <div className="flex flex-1 flex-col gap-4 p-4 overflow-hidden">
+
+                                                {/* Category/Type Pill */}
+                                                <div className="flex">
+                                                    <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-amber-500">
+                                                        {displayCategory}
+                                                    </span>
+                                                </div>
+
+                                                {/* Bio */}
+                                                <div className="flex-1 overflow-hidden">
+                                                    <div className="text-[11px] leading-relaxed text-zinc-300 italic border-l-2 border-zinc-700 pl-3">
+                                                        {displayDescription}
+                                                    </div>
+                                                </div>
+
+                                                {/* Traits */}
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    {displayTraits.map((t, i) => (
+                                                        <span key={i} className="rounded border border-white/10 bg-white/10 px-2 py-1 text-[9px] uppercase tracking-wider text-white">
+                                                            {t}
+                                                        </span>
+                                                    ))}
+                                                </div>
+
+                                                {/* Divider */}
+                                                <div className="h-px w-full bg-white/10" />
+
+                                                {/* Stats Bars */}
+                                                <div className="flex flex-col gap-2">
+                                                    <div className="flex items-center gap-3 font-mono text-[9px]">
+                                                        <span className="w-14 text-zinc-400 font-bold">CHATS</span>
+                                                        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-zinc-800">
+                                                            <div
+                                                                className={styles.statBarFill}
+                                                                style={{ width: `${chatPercent}%`, background: '#f59e0b' }}
+                                                            />
+                                                        </div>
+                                                        <span className="w-8 text-right text-zinc-500">{chatVal}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-3 font-mono text-[9px]">
+                                                        <span className="w-14 text-zinc-400 font-bold">FOLLOWS</span>
+                                                        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-zinc-800">
+                                                            <div
+                                                                className={styles.statBarFill}
+                                                                style={{ width: `${followPercent}%`, background: '#cc5500' }}
+                                                            />
+                                                        </div>
+                                                        <span className="w-8 text-right text-zinc-500">{followVal}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Footer */}
+                                            <div
+                                                className="flex items-center justify-between border-t border-white/10 bg-[#111] px-4 py-2.5 cursor-pointer hover:bg-[#222] transition-colors group"
+                                                onClick={() => onCharacterClick && onCharacterClick(persona)}
+                                            >
+                                                <div className="flex flex-col">
+                                                    <div className="font-outfit text-xs font-extrabold tracking-widest text-white group-hover:text-amber-500 transition-colors">CHAT NOW</div>
+                                                </div>
+                                                <div className="h-6 w-6 rounded bg-white p-0.5 group-hover:scale-110 transition-transform">
+                                                    <svg viewBox="0 0 100 100" fill="none" className="h-full w-full">
+                                                        <rect width="100" height="100" fill="black" />
+                                                        <rect x="20" y="20" width="60" height="60" fill="white" />
+                                                        <path d="M50 35 L70 65 L30 65 Z" fill="black" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                })}
             </div>
         </div>
     )

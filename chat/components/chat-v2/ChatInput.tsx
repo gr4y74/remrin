@@ -10,7 +10,10 @@ import React, { useState, useRef, KeyboardEvent } from 'react'
 import { useChatEngine, useMood } from './ChatEngine'
 import { IconSend, IconPlayerStop, IconPaperclip, IconMicrophone } from '@tabler/icons-react'
 import { useFileHandler } from './hooks/use-file-handler'
-import { toast } from 'sonner' // Assuming sonner is used for toasts based on other files
+import { toast } from 'sonner'
+import { EmojiButton } from '@/components/ui/EmojiButton'
+import { PickerItem } from '@/components/ui/UniversalPicker'
+import { useEmojiInsertion } from '@/hooks/useEmojiInsertion'
 
 interface ChatInputProps {
     placeholder?: string
@@ -31,6 +34,7 @@ export function ChatInput({
     const moodState = useMood()
     const { handleSelectDeviceFile, filesToAccept } = useFileHandler()
     const [isListening, setIsListening] = useState(false)
+    const { insertEmoji } = useEmojiInsertion(textareaRef, input, setInput)
 
     // Check if we should show excited pulse
     const isExcited = moodState.mood === 'excited'
@@ -130,6 +134,20 @@ export function ChatInput({
         recognition.start()
     }
 
+    const handleEmojiSelect = (item: PickerItem) => {
+        if (item.type === 'emoji') {
+            // Insert emoji at cursor position
+            insertEmoji(item.data)
+        } else {
+            // GIF or sticker - send as media message
+            // For now, we'll just insert the URL into the text
+            // You can modify this to send as actual media attachment
+            toast.success(`${item.type === 'gif' ? 'GIF' : 'Sticker'} selected! (Media sending coming soon)`)
+            // TODO: Implement actual media message sending
+            // sendMediaMessage(item.type, item.data, item.name)
+        }
+    }
+
     return (
         <div className="relative flex w-full items-end gap-2">
             <input
@@ -140,7 +158,7 @@ export function ChatInput({
                 onChange={handleFileSelect}
             />
 
-            {/* Left Actions: File Upload & Voice */}
+            {/* Left Actions: File Upload, Voice, & Emoji */}
             <div className="flex gap-1 pb-1">
                 <button
                     onClick={() => fileInputRef.current?.click()}
@@ -161,6 +179,11 @@ export function ChatInput({
                 >
                     <IconMicrophone size={20} />
                 </button>
+                <EmojiButton
+                    onSelect={handleEmojiSelect}
+                    position="top"
+                    theme="dark"
+                />
             </div>
 
             {/* Input Container */}

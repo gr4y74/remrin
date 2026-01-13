@@ -30,6 +30,9 @@ import Image from 'next/image';
 import { usePost } from '@/hooks/feed/usePost';
 import { Post } from '@/types/social';
 import { motion, AnimatePresence } from 'framer-motion';
+import { EmojiButton } from '@/components/ui/EmojiButton';
+import { PickerItem } from '@/components/ui/UniversalPicker';
+import { useEmojiInsertion } from '@/hooks/useEmojiInsertion';
 
 interface CreatePostModalProps {
     isOpen: boolean;
@@ -50,6 +53,8 @@ export function CreatePostModal({ isOpen, onClose, onSuccess }: CreatePostModalP
     const [mediaFiles, setMediaFiles] = useState<File[]>([]);
     const [previews, setPreviews] = useState<string[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const { insertEmoji } = useEmojiInsertion(textareaRef, content, setContent);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || []);
@@ -101,6 +106,17 @@ export function CreatePostModal({ isOpen, onClose, onSuccess }: CreatePostModalP
         onClose();
     };
 
+    const handleEmojiSelect = (item: PickerItem) => {
+        if (item.type === 'emoji') {
+            insertEmoji(item.data);
+        } else {
+            // GIF or sticker - add as media file
+            // For now, we'll just show a toast
+            // TODO: Implement actual GIF/sticker as media
+            console.log('GIF/Sticker selected:', item);
+        }
+    };
+
     const currentVisibility = VISIBILITY_OPTIONS.find(v => v.value === visibility)!;
 
     return (
@@ -142,6 +158,7 @@ export function CreatePostModal({ isOpen, onClose, onSuccess }: CreatePostModalP
                             </DropdownMenu>
 
                             <TextareaAutosize
+                                textareaRef={textareaRef}
                                 value={content}
                                 onValueChange={(val) => setContent(val)}
                                 placeholder="What's on your mind? Capture a soul moment..."
@@ -196,9 +213,12 @@ export function CreatePostModal({ isOpen, onClose, onSuccess }: CreatePostModalP
                         >
                             <ImageIcon className="w-5 h-5" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="text-rp-gold hover:bg-rp-gold/10 rounded-full">
-                            <Smile className="w-5 h-5" />
-                        </Button>
+                        <EmojiButton
+                            onSelect={handleEmojiSelect}
+                            position="top"
+                            theme="dark"
+                            className="text-rp-gold hover:bg-rp-gold/10 rounded-full"
+                        />
                         <Button variant="ghost" size="icon" className="text-rp-foam hover:bg-rp-foam/10 rounded-full">
                             <AtSign className="w-5 h-5" />
                         </Button>

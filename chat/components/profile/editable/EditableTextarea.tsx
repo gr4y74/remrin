@@ -2,6 +2,9 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Check, X, Loader2, Edit2 } from 'lucide-react';
+import { EmojiButton } from '@/components/ui/EmojiButton';
+import { PickerItem } from '@/components/ui/UniversalPicker';
+import { useEmojiInsertion } from '@/hooks/useEmojiInsertion';
 
 interface EditableTextareaProps {
     value: string;
@@ -33,6 +36,7 @@ export function EditableTextarea({
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const { insertEmoji } = useEmojiInsertion(textareaRef, currentValue, setCurrentValue);
 
     // Update current value when prop changes
     useEffect(() => {
@@ -105,6 +109,12 @@ export function EditableTextarea({
         } else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
             e.preventDefault();
             handleSave();
+        }
+    };
+
+    const handleEmojiSelect = (item: PickerItem) => {
+        if (item.type === 'emoji') {
+            insertEmoji(item.data);
         }
     };
 
@@ -200,6 +210,14 @@ export function EditableTextarea({
                     )}
                 </div>
                 <div className="flex flex-col gap-1 pt-2">
+                    {!isSaving && (
+                        <EmojiButton
+                            onSelect={handleEmojiSelect}
+                            position="left"
+                            theme="dark"
+                            className="p-1 rounded hover:bg-rp-highlight-low text-rp-muted hover:text-rp-text transition-colors content-center"
+                        />
+                    )}
                     {isSaving ? (
                         <Loader2 className="w-5 h-5 animate-spin text-rp-iris" />
                     ) : (

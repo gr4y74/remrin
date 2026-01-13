@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react"
 import { CategoryTabs } from "./CategoryTabs"
-import { TrendingCarousel } from "./TrendingCarousel"
+import { FeaturedCarousel } from "./FeaturedCarousel"
 import { UnifiedCard } from "@/components/cards/UnifiedCard"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -35,9 +35,13 @@ interface TrendingPersona {
     id: string
     name: string
     imageUrl: string | null
+    category: string | null
     description: string | null
     totalChats: number
     isFeatured: boolean
+    creativity?: number
+    tags?: string[]
+    followersCount?: number
 }
 
 interface DiscoveryFeedProps {
@@ -135,7 +139,7 @@ export function DiscoveryFeed({
                 {/* Trending Section */}
                 {trendingPersonas.length > 0 && (
                     <section className="mb-10">
-                        <TrendingCarousel personas={trendingPersonas} />
+                        <FeaturedCarousel characters={trendingPersonas} />
                     </section>
                 )}
 

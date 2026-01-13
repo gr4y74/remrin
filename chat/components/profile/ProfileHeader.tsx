@@ -114,7 +114,7 @@ export function ProfileHeader({
             {/* Avatar & Info Container */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="relative -mt-24 md:-mt-32 pb-6">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-end gap-6">
+                    <div className="flex flex-col items-center gap-6">
                         {/* Avatar */}
                         <div
                             className="relative group"
@@ -157,7 +157,7 @@ export function ProfileHeader({
                         </div>
 
                         {/* Name & Actions */}
-                        <div className="flex-1 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 pb-2">
+                        <div className="flex flex-col items-center gap-4 text-center">
                             <div>
                                 <h1 className="text-3xl md:text-4xl font-bold text-rp-text mb-1">
                                     {displayName}
