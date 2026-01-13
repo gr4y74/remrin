@@ -291,7 +291,7 @@ export function FeaturedManager() {
                         onToggleFeatured={() => toggleFeatured(persona)}
                         onToggleVisibility={() => toggleVisibility(persona)}
                         onDelete={() => deletePersona(persona)}
-                        onUploadImage={(f: File) => performImageUpload(persona.id, f)}
+                        onUploadImage={(file: File) => performImageUpload(persona.id, file)}
                         uploadingImage={uploadingImage}
                         onEdit={() => setEditingId(persona.id)}
                     />
@@ -310,7 +310,19 @@ export function FeaturedManager() {
     )
 }
 
-function PersonaCard({ persona, activeTab, onToggleFeatured, onToggleVisibility, onDelete, onUploadImage, uploadingImage, onEdit }: any) {
+// Define Props Interface
+interface PersonaCardProps {
+    persona: Persona
+    activeTab: TabType
+    onToggleFeatured: () => void
+    onToggleVisibility: () => void
+    onDelete: () => void
+    onUploadImage: (file: File) => void
+    uploadingImage: boolean
+    onEdit: () => void
+}
+
+function PersonaCard({ persona, activeTab, onToggleFeatured, onToggleVisibility, onDelete, onUploadImage, uploadingImage, onEdit }: PersonaCardProps) {
     const fileRef = useRef<HTMLInputElement>(null)
     const [hover, setHover] = useState(false)
 

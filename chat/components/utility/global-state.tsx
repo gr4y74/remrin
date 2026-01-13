@@ -166,6 +166,9 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   }, [selectedPersona?.id])
 
 
+
+  const backgroundUrl = (selectedPersona as any)?.background_url
+
   // Load background when persona changes
   useEffect(() => {
     if (selectedPersona?.id) {
@@ -180,8 +183,8 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
       }
 
       // 2. Try persona's default background from DB
-      if ((selectedPersona as any).background_url) {
-        setActiveBackgroundUrlState((selectedPersona as any).background_url)
+      if (backgroundUrl) {
+        setActiveBackgroundUrlState(backgroundUrl)
         return
       }
 
@@ -190,7 +193,7 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
     } else {
       setActiveBackgroundUrlState(null)
     }
-  }, [selectedPersona?.id, (selectedPersona as any)?.background_url])
+  }, [selectedPersona?.id, backgroundUrl])
 
 
   // Persist enabled toggle
