@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useTheme } from "next-themes"
@@ -66,6 +67,13 @@ const overviewLinks = [
 
 export function Footer() {
     const { resolvedTheme } = useTheme()
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
+    const logoSrc = resolvedTheme === "light" ? "/logo_dark.svg" : "/logo.svg"
 
     return (
         <footer className="w-full border-t border-rp-highlight-low bg-rp-base/80 backdrop-blur-sm">
@@ -73,13 +81,15 @@ export function Footer() {
                 <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
                     {/* Brand Column */}
                     <section className="flex flex-col items-start gap-4">
-                        <Image
-                            src={resolvedTheme === "light" ? "/logo_dark.svg" : "/logo.svg"}
-                            alt="Remrin logo"
-                            width={140}
-                            height={40}
-                            className="h-10 w-auto"
-                        />
+                        {mounted && (
+                            <Image
+                                src={logoSrc}
+                                alt="Remrin logo"
+                                width={140}
+                                height={40}
+                                className="h-10 w-auto"
+                            />
+                        )}
 
                         {/* Social Media Links */}
                         <div className="flex items-center gap-3">

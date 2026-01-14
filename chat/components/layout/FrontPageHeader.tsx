@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import {
@@ -16,7 +16,8 @@ import {
     IconBriefcase,
     IconMovie,
     IconHeart,
-    IconPalette
+    IconPalette,
+    IconSettings
 } from "@tabler/icons-react"
 import { SearchSouls } from "@/components/ui/SearchSouls"
 import { cn } from "@/lib/utils"
@@ -43,6 +44,8 @@ export function FrontPageHeader({
 }: FrontPageHeaderProps) {
     const router = useRouter()
     const [showBanner, setShowBanner] = useState(true)
+    const [isHeaderVisible, setIsHeaderVisible] = useState(true)
+    const lastScrollY = useRef(0)
 
     // Check localStorage for banner dismissal
     useEffect(() => {
@@ -51,6 +54,31 @@ export function FrontPageHeader({
             setShowBanner(false)
         }
     }, [])
+
+    // Handle scroll to hide/show header
+    useEffect(() => {
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY
+            const scrollThreshold = 100 // Start hiding after 100px
+
+            if (currentScrollY < scrollThreshold) {
+                // Always show header at top of page
+                setIsHeaderVisible(true)
+            } else if (currentScrollY > lastScrollY.current) {
+                // Scrolling down - hide header
+                setIsHeaderVisible(false)
+            } else {
+                // Scrolling up - show header
+                setIsHeaderVisible(true)
+            }
+
+            lastScrollY.current = currentScrollY
+        }
+
+        window.addEventListener("scroll", handleScroll, { passive: true })
+        return () => window.removeEventListener("scroll", handleScroll)
+    }, [])
+
 
     const handleDismissBanner = () => {
         localStorage.setItem("remrin_extension_banner_dismissed", "true")
@@ -70,7 +98,14 @@ export function FrontPageHeader({
     }
 
     return (
-        <header className="sticky top-0 z-40 w-full px-4 py-4">
+        <header
+            className={cn(
+                "sticky top-0 z-40 w-full px-4 py-4 transition-all duration-300",
+                isHeaderVisible
+                    ? "translate-y-0 opacity-100"
+                    : "-translate-y-full opacity-0 pointer-events-none"
+            )}
+        >
             {/* Extension Banner */}
             {showBanner && (
                 <div className="relative flex justify-center items-center gap-2 bg-blue-500/10 px-4 py-2 rounded-xl mb-4 max-w-fit mx-auto">
@@ -129,12 +164,12 @@ export function FrontPageHeader({
                             <IconLogin size={16} />
                             <span className="hidden md:inline">Login</span>
                         </Link>
-                        <button className="w-10 h-10 rounded-xl bg-rp-overlay hover:bg-rp-base flex items-center justify-center transition-all shrink-0">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" className="text-rp-text">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                        </button>
+                        <Link
+                            href="/settings"
+                            className="w-10 h-10 rounded-xl bg-rp-overlay hover:bg-rp-base flex items-center justify-center transition-all shrink-0"
+                        >
+                            <IconSettings size={20} className="text-rp-text" />
+                        </Link>
                     </div>
                 </div>
 

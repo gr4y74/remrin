@@ -68,7 +68,7 @@ export function MinimalSidebar({ user }: MinimalSidebarProps) {
             className="bg-rp-surface border-rp-muted/20 fixed left-0 top-0 z-40 hidden h-screen flex-col border-r md:flex"
             initial={false}
             animate={{ width: isExpanded ? SIDEBAR.expanded : SIDEBAR.collapsed }}
-            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+            transition={{ type: "spring", stiffness: 300, damping: 30, mass: 0.8 }}
             onMouseEnter={() => setIsExpanded(true)}
             onMouseLeave={() => setIsExpanded(false)}
         >
@@ -97,8 +97,9 @@ export function MinimalSidebar({ user }: MinimalSidebarProps) {
                             priority
                             className={cn(
                                 "h-[26px] w-auto transition-all duration-300",
-                                "opacity-100 scale-100",
-                                isExpanded ? "opacity-100 scale-100" : "absolute opacity-0 scale-90"
+                                isExpanded
+                                    ? "opacity-100 scale-100 relative"
+                                    : "absolute opacity-0 scale-90 pointer-events-none"
                             )}
                         />
                     )}
@@ -243,6 +244,16 @@ function NotificationBellItem({ isExpanded }: { isExpanded: boolean }) {
     const { profile, setIsNotificationsOpen } = useContext(RemrinContext)
     const [unreadCount, setUnreadCount] = useState(0)
 
+    const handleClick = () => {
+        if (!profile) {
+            // User is not logged in, redirect to login
+            toast.info("Please log in to view notifications")
+            window.location.href = "/login"
+            return
+        }
+        setIsNotificationsOpen(true)
+    }
+
     useEffect(() => {
         if (!profile) return
 
@@ -278,7 +289,7 @@ function NotificationBellItem({ isExpanded }: { isExpanded: boolean }) {
 
     return (
         <button
-            onClick={() => setIsNotificationsOpen(true)}
+            onClick={handleClick}
             className={cn(
                 "group relative flex min-h-[44px] w-full items-center rounded-lg py-3 transition-all",
                 "text-rp-subtle hover:bg-rp-overlay hover:text-rp-text",
