@@ -4,6 +4,7 @@ import Link from "next/link"
 import { IconArrowLeft } from "@tabler/icons-react"
 import { AdminPasswordGate } from "@/components/admin/AdminPasswordGate"
 import { FeaturedManager } from "@/components/admin/FeaturedManager"
+import { BannerManager } from "@/components/admin/BannerManager"
 
 export default function AdminFeaturedPage() {
     return (
@@ -28,6 +29,10 @@ export default function AdminFeaturedPage() {
 
                 {/* Content */}
                 <main className="mx-auto max-w-7xl p-6">
+                    <div className="mb-12">
+                        <BannerManager />
+                    </div>
+
                     <div className="mb-6">
                         <h2 className="mb-2 text-2xl font-bold">Manage Featured Content</h2>
                         <p className="text-rp-subtle">

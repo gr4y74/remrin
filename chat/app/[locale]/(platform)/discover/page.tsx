@@ -1,7 +1,11 @@
 import { cookies } from "next/headers"
 import { createClient } from "@/lib/supabase/server"
 import { DiscoveryFeed } from "@/components/discovery"
+import { RotatingBanner } from "@/components/discovery/RotatingBanner"
 import { Metadata } from "next"
+
+// Force dynamic rendering to ensure fresh data
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
     title: "Discover Souls | Remrin",
@@ -112,13 +116,31 @@ export default async function DiscoverPage() {
         creativity: p.persona_stats?.trending_score ?? 50
     })) ?? []
 
+    // Fetch banners
+    const { data: bannersData, error: bannerError } = await supabase
+        .from("banners")
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true })
+
+    if (bannerError) {
+        console.error("Error fetching banners on Discover page:", bannerError)
+    } else {
+        console.log("Fetched banners for Discover page:", bannersData?.length)
+    }
+
+    const banners = bannersData ?? []
+
     return (
-        <DiscoveryFeed
-            initialPersonas={initialPersonas}
-            trendingPersonas={trendingPersonas}
-            categories={categories}
-            categoryColors={categoryColors}
-            initialHasMore={initialHasMore}
-        />
+        <>
+            <RotatingBanner banners={banners} />
+            <DiscoveryFeed
+                initialPersonas={initialPersonas}
+                trendingPersonas={trendingPersonas}
+                categories={categories}
+                categoryColors={categoryColors}
+                initialHasMore={initialHasMore}
+            />
+        </>
     )
 }

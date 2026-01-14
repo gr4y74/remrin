@@ -11,6 +11,7 @@ import {
   TrendingSoulsList,
   FeaturedPremiumRow
 } from "@/components/discovery"
+import { RotatingBanner, Banner } from "@/components/discovery/RotatingBanner"
 import { PageTemplate, Footer, FrontPageHeader } from "@/components/layout"
 import { RemrinContext } from "@/context/context"
 import { IconSparkles, IconDiamond, IconArrowRight } from "@tabler/icons-react"
@@ -38,6 +39,7 @@ export default function HomePage() {
   const { workspaces, profile } = useContext(RemrinContext)
   const { resolvedTheme } = useTheme()
   const [personas, setPersonas] = useState<Persona[]>([])
+  const [banners, setBanners] = useState<Banner[]>([])
   const [loading, setLoading] = useState(true)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [defaultWorkspaceId, setDefaultWorkspaceId] = useState<string | null>(null)
@@ -113,7 +115,27 @@ export default function HomePage() {
       }
     }
 
+    const fetchBanners = async () => {
+      try {
+        const supabase = createClient()
+        const { data: bannersData, error } = await supabase
+          .from("banners")
+          .select("*")
+          .eq("is_active", true)
+          .order("sort_order", { ascending: true })
+
+        if (error) {
+          console.error("Error fetching banners:", error)
+        } else {
+          setBanners(bannersData ?? [])
+        }
+      } catch (error) {
+        console.error("Error fetching banners:", error)
+      }
+    }
+
     fetchPersonas()
+    fetchBanners()
   }, [])
 
   // Featured characters - same as carousel, all legendary
@@ -190,6 +212,13 @@ export default function HomePage() {
       <FrontPageHeader
         onSearchResultClick={handlePersonaClick}
       />
+
+      {/* Rotating Promotional Banners */}
+      {banners.length > 0 && (
+        <div className="container mx-auto px-4 md:px-6 lg:px-8">
+          <RotatingBanner banners={banners} />
+        </div>
+      )}
 
       {/* Section 3: Featured Souls with 3D Carousel - KEEP AS IS */}
       <section className="relative mt-8">
