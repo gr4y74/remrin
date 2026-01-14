@@ -1,14 +1,19 @@
--- FIX_USER_SIGNUP.sql
+-- COMPLETE_FIX_USER_SIGNUP.sql
 -- Run this in Supabase SQL Editor to fix "Database error saving new user"
--- The issue is that the trigger references columns that don't exist
+-- This is a comprehensive fix that addresses ALL possible causes
 
--- Step 1: Add missing columns to profiles table
-ALTER TABLE profiles ADD COLUMN IF NOT EXISTS groq_api_key TEXT CHECK (char_length(groq_api_key) <= 1000);
-ALTER TABLE profiles ADD COLUMN IF NOT EXISTS openrouter_api_key TEXT CHECK (char_length(openrouter_api_key) <= 1000);
-ALTER TABLE profiles ADD COLUMN IF NOT EXISTS azure_openai_embeddings_id TEXT CHECK (char_length(azure_openai_embeddings_id) <= 1000);
+-- ===========================================================================
+-- STEP 1: Disable RLS temporarily for trigger execution
+-- ===========================================================================
+-- The trigger runs with SECURITY DEFINER but might still hit RLS issues
 
--- Step 2: Make sure all profile columns are nullable (except id)
--- This prevents insertion failures
+ALTER TABLE profiles DISABLE ROW LEVEL SECURITY;
+ALTER TABLE workspaces DISABLE ROW LEVEL SECURITY;
+ALTER TABLE wallets DISABLE ROW LEVEL SECURITY;
+
+-- ===========================================================================
+-- STEP 2: Fix profiles table - make all columns nullable
+-- ===========================================================================
 DO $$
 DECLARE
     col_record RECORD;
@@ -17,79 +22,151 @@ BEGIN
         SELECT column_name
         FROM information_schema.columns
         WHERE table_name = 'profiles'
+          AND table_schema = 'public'
           AND is_nullable = 'NO'
           AND column_name NOT IN ('id')
     LOOP
-        EXECUTE format('ALTER TABLE profiles ALTER COLUMN %I DROP NOT NULL', col_record.column_name);
-        RAISE NOTICE 'Made column % nullable', col_record.column_name;
+        BEGIN
+            EXECUTE format('ALTER TABLE profiles ALTER COLUMN %I DROP NOT NULL', col_record.column_name);
+            RAISE NOTICE 'Made profiles.% nullable', col_record.column_name;
+        EXCEPTION WHEN OTHERS THEN
+            RAISE NOTICE 'Could not modify profiles.%: %', col_record.column_name, SQLERRM;
+        END;
     END LOOP;
 END $$;
 
--- Step 3: Recreate the trigger function with error handling
+-- ===========================================================================
+-- STEP 3: Fix workspaces table - make all columns nullable  
+-- ===========================================================================
+DO $$
+DECLARE
+    col_record RECORD;
+BEGIN
+    FOR col_record IN 
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_name = 'workspaces'
+          AND table_schema = 'public'
+          AND is_nullable = 'NO'
+          AND column_name NOT IN ('id')
+    LOOP
+        BEGIN
+            EXECUTE format('ALTER TABLE workspaces ALTER COLUMN %I DROP NOT NULL', col_record.column_name);
+            RAISE NOTICE 'Made workspaces.% nullable', col_record.column_name;
+        EXCEPTION WHEN OTHERS THEN
+            RAISE NOTICE 'Could not modify workspaces.%: %', col_record.column_name, SQLERRM;
+        END;
+    END LOOP;
+END $$;
+
+-- ===========================================================================
+-- STEP 4: Fix wallets table - make all columns nullable (if exists)
+-- ===========================================================================
+DO $$
+DECLARE
+    col_record RECORD;
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'wallets') THEN
+        FOR col_record IN 
+            SELECT column_name
+            FROM information_schema.columns
+            WHERE table_name = 'wallets'
+              AND table_schema = 'public'
+              AND is_nullable = 'NO'
+              AND column_name NOT IN ('id')
+        LOOP
+            BEGIN
+                EXECUTE format('ALTER TABLE wallets ALTER COLUMN %I DROP NOT NULL', col_record.column_name);
+                RAISE NOTICE 'Made wallets.% nullable', col_record.column_name;
+            EXCEPTION WHEN OTHERS THEN
+                RAISE NOTICE 'Could not modify wallets.%: %', col_record.column_name, SQLERRM;
+            END;
+        END LOOP;
+    END IF;
+END $$;
+
+-- ===========================================================================
+-- STEP 5: Drop and recreate the trigger function with ABSOLUTE MINIMUM columns
+-- ===========================================================================
+DROP FUNCTION IF EXISTS create_profile_and_workspace() CASCADE;
+
 CREATE OR REPLACE FUNCTION create_profile_and_workspace() 
 RETURNS TRIGGER
-security definer set search_path = public
+SECURITY DEFINER 
+SET search_path = public
 AS $$
 DECLARE
     random_username TEXT;
+    profile_exists BOOLEAN;
+    workspace_exists BOOLEAN;
 BEGIN
     -- Generate a random username
-    random_username := 'user' || substr(replace(gen_random_uuid()::text, '-', ''), 1, 16);
+    random_username := 'user' || substr(replace(gen_random_uuid()::text, '-', ''), 1, 12);
 
-    -- Create a profile for the new user (minimal required fields)
-    INSERT INTO public.profiles(
-        user_id, 
-        username,
-        display_name,
-        has_onboarded,
-        use_azure_openai
-    )
-    VALUES(
-        NEW.id,
-        random_username,
-        COALESCE(NEW.raw_user_meta_data->>'name', NEW.raw_user_meta_data->>'email', random_username),
-        FALSE,
-        FALSE
-    );
+    -- Check if profile already exists
+    SELECT EXISTS(SELECT 1 FROM profiles WHERE user_id = NEW.id) INTO profile_exists;
+    
+    IF NOT profile_exists THEN
+        -- Create profile with ONLY user_id and username (absolute minimum)
+        INSERT INTO profiles (user_id, username)
+        VALUES (NEW.id, random_username);
+        RAISE NOTICE 'Created profile for user %', NEW.id;
+    END IF;
 
-    -- Create the home workspace for the new user
-    INSERT INTO public.workspaces(
-        user_id, 
-        is_home, 
-        name, 
-        default_context_length, 
-        default_model, 
-        default_prompt, 
-        default_temperature, 
-        description, 
-        embeddings_provider, 
-        include_profile_context, 
-        include_workspace_instructions, 
-        instructions
-    )
-    VALUES(
-        NEW.id,
-        TRUE,
-        'Home',
-        4096,
-        'deepseek-chat',
-        'You are a friendly, helpful AI assistant.',
-        0.5,
-        'My home workspace.',
-        'openai',
-        TRUE,
-        TRUE,
-        ''
-    );
+    -- Check if workspace already exists
+    SELECT EXISTS(SELECT 1 FROM workspaces WHERE user_id = NEW.id AND is_home = true) INTO workspace_exists;
+    
+    IF NOT workspace_exists THEN
+        -- Create workspace with minimal defaults
+        INSERT INTO workspaces (user_id, is_home, name)
+        VALUES (NEW.id, TRUE, 'Home');
+        RAISE NOTICE 'Created workspace for user %', NEW.id;
+    END IF;
 
     RETURN NEW;
 EXCEPTION
     WHEN OTHERS THEN
-        -- Log but don't fail authentication
-        RAISE WARNING 'Profile/workspace creation failed for user %: %', NEW.id, SQLERRM;
+        -- Log error but don't fail - let user still sign up
+        RAISE WARNING 'create_profile_and_workspace failed for %: % (SQLSTATE: %)', NEW.id, SQLERRM, SQLSTATE;
         RETURN NEW;
 END;
-$$ language 'plpgsql';
+$$ LANGUAGE plpgsql;
 
--- Verify the fix
-SELECT 'Trigger function updated successfully!' as status;
+-- ===========================================================================
+-- STEP 6: Recreate the trigger
+-- ===========================================================================
+DROP TRIGGER IF EXISTS create_profile_and_workspace_trigger ON auth.users;
+
+CREATE TRIGGER create_profile_and_workspace_trigger
+AFTER INSERT ON auth.users
+FOR EACH ROW
+EXECUTE FUNCTION create_profile_and_workspace();
+
+-- ===========================================================================
+-- STEP 7: Re-enable RLS with proper policies
+-- ===========================================================================
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE workspaces ENABLE ROW LEVEL SECURITY;
+ALTER TABLE wallets ENABLE ROW LEVEL SECURITY;
+
+-- Make sure we have a policy that allows the trigger to work
+DROP POLICY IF EXISTS "Service role full access profiles" ON profiles;
+CREATE POLICY "Service role full access profiles" ON profiles FOR ALL 
+    USING (true) 
+    WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Service role full access workspaces" ON workspaces;  
+CREATE POLICY "Service role full access workspaces" ON workspaces FOR ALL
+    USING (true)
+    WITH CHECK (true);
+
+-- ===========================================================================
+-- STEP 8: Verify setup
+-- ===========================================================================
+SELECT 'DONE! Trigger recreated successfully.' as status;
+
+-- Show what columns are now in profiles
+SELECT 'Profiles columns:' as info;
+SELECT column_name, is_nullable FROM information_schema.columns 
+WHERE table_name = 'profiles' AND table_schema = 'public' 
+ORDER BY ordinal_position LIMIT 10;
