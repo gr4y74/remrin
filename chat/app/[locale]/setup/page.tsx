@@ -170,7 +170,7 @@ export default function SetupPage() {
               <IconSparkles className="text-rp-iris" size={24} />
               Welcome to Remrin.ai
             </CardTitle>
-            <CardDescription>Let's set up your profile</CardDescription>
+            <CardDescription>Let&apos;s set up your profile</CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-6">
