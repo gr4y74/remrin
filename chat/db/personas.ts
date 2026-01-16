@@ -39,7 +39,8 @@ export const getUserCollection = async (userId: string) => {
 
     // Add followed personas if they aren't already in the list (though unlikely to be both owner and follower, possible)
     follows?.forEach((item: any) => {
-        if (item.personas && !collection.find(p => p.id === item.personas.id)) {
+        // Only add if persona exists (not deleted) and has valid data
+        if (item.personas && item.personas.id && item.personas.name && !collection.find(p => p.id === item.personas.id)) {
             collection.push(item.personas)
         }
     })

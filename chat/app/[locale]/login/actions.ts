@@ -30,8 +30,8 @@ export const login = async (formData: FormData, redirectTo?: string, locale: str
         return { error: homeWorkspaceError?.message || "No home workspace found" }
     }
 
-    // Default redirect to home chat, ensuring locale is included
-    let target = `/${locale}/${homeWorkspace.id}/chat`
+    // Default redirect to discover/homepage
+    let target = `/${locale}`
 
     // Special case for Soul Forge
     if (redirectTo === 'soul-forge') {

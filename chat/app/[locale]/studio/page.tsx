@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect } from "react"
-import { useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
+import { useSearchParams, useRouter } from "next/navigation"
+import Link from "next/link"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
@@ -11,6 +12,7 @@ import { BehaviorTab } from "./components/behavior-tab"
 import { VisualsTab } from "./components/visuals-tab"
 import { VoiceTab } from "./components/voice-tab"
 import { StoreTab } from "./components/store-tab"
+import { AnalyticsTab } from "./components/analytics-tab"
 import { SoulSplicer } from "./components/soul-splicer"
 import { BrainParametersPanel } from "./components/brain-parameters-panel"
 import { ImportExportPanel } from "@/components/studio/ImportExportPanel"
@@ -25,15 +27,15 @@ import {
     IconRocket,
     IconArrowLeft,
     IconSend,
-    IconArrowBack,
-    IconHistory,
+    IconX,
     IconDna,
     IconChartBar
 } from "@tabler/icons-react"
-import Link from "next/link"
+import { toast } from "sonner"
 
 export default function StudioPage() {
     const searchParams = useSearchParams()
+    const router = useRouter()
     const personaId = searchParams.get('persona_id')
 
     const {
@@ -41,6 +43,7 @@ export default function StudioPage() {
         moderationHistory,
         loading,
         saving,
+        uploading,
         error,
         loadPersona,
         loadCategories,
@@ -63,30 +66,60 @@ export default function StudioPage() {
     }, [personaId, loadPersona, loadCategories])
 
     const handleSaveDraft = async () => {
-        const success = await saveDraft()
-        if (success) {
-            console.log('Draft saved!')
+        const savedId = await saveDraft()
+        if (savedId && !personaId) {
+            // Update URL with persona_id so refresh works
+            router.replace(`/studio?persona_id=${savedId}`, { scroll: false })
+            toast.success('Draft saved successfully!', {
+                description: 'Your Soul has been saved and can be edited later.'
+            })
+        } else if (savedId) {
+            toast.success('Changes saved!', {
+                description: 'Your Soul has been updated.'
+            })
+        } else {
+            toast.error('Failed to save draft', {
+                description: error || 'Please check your inputs and try again.'
+            })
         }
     }
 
     const handleSubmitForReview = async () => {
         const success = await submitForReview()
         if (success) {
-            console.log('Submitted for review!')
+            toast.success('Submitted for review!', {
+                description: 'Your Soul will be reviewed by our team.'
+            })
+        } else {
+            toast.error('Failed to submit', {
+                description: error || 'Please try again.'
+            })
         }
     }
 
     const handleWithdraw = async () => {
         const success = await withdrawFromReview()
         if (success) {
-            console.log('Withdrawn from review')
+            toast.info('Withdrawn from review', {
+                description: 'Your Soul is back in draft status.'
+            })
+        } else {
+            toast.error('Failed to withdraw', {
+                description: error || 'Please try again.'
+            })
         }
     }
 
     const handlePublish = async () => {
         const success = await publish()
         if (success) {
-            console.log('Published!')
+            toast.success('Soul published!', {
+                description: 'Your Soul is now live and available to users.'
+            })
+        } else {
+            toast.error('Failed to publish', {
+                description: error || 'Please try again.'
+            })
         }
     }
 
@@ -135,6 +168,7 @@ export default function StudioPage() {
                     {/* Save Draft - always available for editable states */}
                     {canEdit && (
                         <Button
+                            type="button"
                             variant="outline"
                             onClick={handleSaveDraft}
                             disabled={saving || !persona.name}
@@ -148,6 +182,7 @@ export default function StudioPage() {
                     {/* Submit for Review - only for drafts */}
                     {canSubmit && (
                         <Button
+                            type="button"
                             onClick={handleSubmitForReview}
                             disabled={saving}
                             className="bg-gradient-to-r from-amber-600 to-orange-500 hover:from-amber-500 hover:to-orange-400"
@@ -160,6 +195,7 @@ export default function StudioPage() {
                     {/* Withdraw from Review - only for pending */}
                     {canWithdraw && (
                         <Button
+                            type="button"
                             variant="outline"
                             onClick={handleWithdraw}
                             disabled={saving}
@@ -173,6 +209,7 @@ export default function StudioPage() {
                     {/* Direct Publish - only for admins or approved personas */}
                     {(isApproved || persona.status === 'draft') && (
                         <Button
+                            type="button"
                             onClick={handlePublish}
                             disabled={saving || !persona.name || !persona.system_prompt}
                             className="bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400"
@@ -267,12 +304,13 @@ export default function StudioPage() {
                                     </TabsTrigger>
                                 </TabsList>
 
-                                <div className="rounded-xl border border-rp-highlight-med bg-rp-surface/50 p-6">
+                                <div className="mt-6">
                                     <TabsContent value="identity" className="mt-0">
                                         <IdentityTab
                                             persona={persona}
                                             updateField={updateField}
                                             uploadFile={uploadFile}
+                                            uploading={uploading}
                                         />
                                     </TabsContent>
 
@@ -294,6 +332,10 @@ export default function StudioPage() {
                                                     throw new Error(data.error || 'DNA synthesis failed')
                                                 }
                                                 return response.json()
+                                            }}
+                                            onApply={(systemPrompt, nbb) => {
+                                                updateField('system_prompt', systemPrompt)
+                                                updateField('behavioral_blueprint', nbb)
                                             }}
                                         />
                                         <div className="mt-6">
@@ -318,19 +360,21 @@ export default function StudioPage() {
 
                                     <TabsContent value="visuals" className="mt-0">
                                         <VisualsTab
-                                            metadata={persona.metadata}
+                                            metadata={(persona as any).metadata || {}}
                                             updateMetadata={updateMetadata}
                                             uploadFile={uploadFile}
+                                            uploading={uploading}
                                         />
                                     </TabsContent>
 
                                     <TabsContent value="voice" className="mt-0">
                                         <VoiceTab
                                             persona={persona}
-                                            metadata={persona.metadata}
+                                            metadata={(persona as any).metadata || {}}
                                             updateField={updateField}
                                             updateMetadata={updateMetadata}
                                             uploadFile={uploadFile}
+                                            uploading={uploading}
                                         />
                                     </TabsContent>
 
@@ -343,12 +387,14 @@ export default function StudioPage() {
                                                 const currentConfig = persona.config || {}
                                                 updateField('config' as any, { ...currentConfig, [key]: value })
                                             }}
+                                            uploadFile={uploadFile}
+                                            uploading={uploading}
                                         />
                                     </TabsContent>
 
                                     <TabsContent value="analytics" className="mt-0">
                                         <div className="space-y-6">
-                                            <div className="flex items-center gap-3 border-b border-rp-highlight-med pb-4">
+                                            <div className="flex items-center gap-3 pb-4">
                                                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-rp-foam to-rp-iris">
                                                     <IconChartBar size={20} className="text-white" />
                                                 </div>
@@ -362,15 +408,15 @@ export default function StudioPage() {
 
                                             {/* Placeholder Analytics Cards */}
                                             <div className="grid gap-4 md:grid-cols-3">
-                                                <div className="rounded-lg border border-rp-highlight-med bg-rp-overlay p-4">
+                                                <div className="rounded-lg bg-rp-overlay p-4">
                                                     <div className="text-sm text-rp-subtle">Total Aether Earned</div>
                                                     <div className="mt-1 text-2xl font-bold text-rp-gold">0 ✧</div>
                                                 </div>
-                                                <div className="rounded-lg border border-rp-highlight-med bg-rp-overlay p-4">
+                                                <div className="rounded-lg bg-rp-overlay p-4">
                                                     <div className="text-sm text-rp-subtle">Avg. Session Length</div>
                                                     <div className="mt-1 text-2xl font-bold text-rp-foam">-- min</div>
                                                 </div>
-                                                <div className="rounded-lg border border-rp-highlight-med bg-rp-overlay p-4">
+                                                <div className="rounded-lg bg-rp-overlay p-4">
                                                     <div className="text-sm text-rp-subtle">Soulmate Bonds</div>
                                                     <div className="mt-1 text-2xl font-bold text-rp-rose">0</div>
                                                 </div>
@@ -385,7 +431,7 @@ export default function StudioPage() {
                             </Tabs>
 
                             {/* Status Bar */}
-                            <div className="mt-6 flex items-center justify-between rounded-lg border border-rp-highlight-med bg-rp-surface/30 px-4 py-3 text-sm">
+                            <div className="mt-6 flex items-center justify-between rounded-lg px-4 py-3 text-sm">
                                 <div className="flex items-center gap-4">
                                     <span className="text-rp-muted">
                                         Status:{' '}

@@ -7,11 +7,16 @@ export interface SwagItem {
     url: string
     image_url?: string
     type: 'Physical' | 'Digital'
+    // Digital asset URLs (for Digital type)
+    digital_image_url?: string
+    digital_video_url?: string
+    digital_audio_url?: string
 }
 
 export interface PersonaMetadata {
     // Visuals
     hero_image_url?: string
+    hero_video_url?: string
     appearance_prompt?: string
     negative_prompt?: string
     // Voice
@@ -106,7 +111,7 @@ export const DEFAULT_PERSONA: StudioPersona = {
     behavioral_blueprint: null,
     image_url: '',
     voice_id: '',
-    base_model: 'deepseek-chat',
+    base_model: 'meta-llama/llama-3.3-70b-instruct:free',
     safety_level: 'ADULT',
     visibility: 'PRIVATE',
     status: 'draft',
@@ -116,6 +121,10 @@ export const DEFAULT_PERSONA: StudioPersona = {
 }
 
 export const BASE_MODELS = [
+    // FREE OpenRouter Models (no credits needed)
+    { value: 'meta-llama/llama-3.3-70b-instruct:free', label: '✨ Llama 3.3 70B (FREE)' },
+    { value: 'meta-llama/llama-3.1-8b-instruct:free', label: '✨ Llama 3 8B (FREE)' },
+    // Premium Models
     { value: 'deepseek-chat', label: 'DeepSeek Chat' },
     { value: 'claude-3-5-sonnet-20241022', label: 'Claude 3.5 Sonnet' },
     { value: 'gemini-pro', label: 'Gemini Pro' },

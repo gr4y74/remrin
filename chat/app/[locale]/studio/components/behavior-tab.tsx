@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { StudioPersona } from "../types"
 import { IconWand, IconBrain } from "@tabler/icons-react"
+import { InfoTooltip, TooltipTitle, TooltipBody, TooltipExample } from "@/components/ui/info-tooltip"
 
 interface BehaviorTabProps {
     persona: StudioPersona
@@ -30,17 +31,41 @@ export function BehaviorTab({ persona, updateField, autoCompile, loading }: Beha
     return (
         <div className="space-y-6">
             {/* Auto-Compile Button */}
-            <div className="flex items-center gap-4 rounded-lg border border-purple-500/30 bg-purple-500/10 p-4">
+            <div className="flex items-center gap-4 rounded-lg bg-purple-500/10 p-4">
                 <div className="flex-1">
                     <h3 className="flex items-center gap-2 font-medium text-purple-300">
                         <IconBrain size={20} />
                         Neural Upscaler
+                        <InfoTooltip
+                            side="right"
+                            content={
+                                <div className="space-y-2">
+                                    <TooltipTitle>🧠 What is the Neural Upscaler?</TooltipTitle>
+                                    <TooltipBody>
+                                        Think of it like an "AI portrait artist" for personalities. You give it a name
+                                        and basic description, and it paints a complete behavioral portrait.
+                                    </TooltipBody>
+                                    <div className="mt-2 space-y-1 text-xs">
+                                        <p className="text-rp-foam">✨ What it does:</p>
+                                        <ul className="list-inside list-disc text-rp-subtle">
+                                            <li>Creates speech patterns & vocabulary rules</li>
+                                            <li>Defines what the character would NEVER say</li>
+                                            <li>Generates signature response examples</li>
+                                        </ul>
+                                    </div>
+                                    <TooltipExample>
+                                        Input: "Sonic" → Output: Fast-paced speech, uses "gotta go fast!", never gives up attitude
+                                    </TooltipExample>
+                                </div>
+                            }
+                        />
                     </h3>
                     <p className="text-sm text-rp-subtle">
                         Auto-generate behavioral blueprint from name and description
                     </p>
                 </div>
                 <Button
+                    type="button"
                     onClick={autoCompile}
                     disabled={loading || !persona.name}
                     className="bg-purple-600 hover:bg-purple-500"
@@ -52,7 +77,33 @@ export function BehaviorTab({ persona, updateField, autoCompile, loading }: Beha
 
             {/* System Prompt */}
             <div className="space-y-2">
-                <Label htmlFor="system_prompt">System Prompt *</Label>
+                <Label htmlFor="system_prompt" className="flex items-center gap-2">
+                    System Prompt *
+                    <InfoTooltip
+                        content={
+                            <div className="space-y-2">
+                                <TooltipTitle>📜 The Soul's Core Identity</TooltipTitle>
+                                <TooltipBody>
+                                    This is the "script" that tells your AI character who they are.
+                                    It runs at the start of every conversation, shaping how they think,
+                                    talk, and react.
+                                </TooltipBody>
+                                <div className="mt-2 space-y-1 text-xs">
+                                    <p className="text-rp-foam">📝 Include:</p>
+                                    <ul className="list-inside list-disc text-rp-subtle">
+                                        <li>Who they are (name, role, backstory)</li>
+                                        <li>How they speak (formal, casual, quirky)</li>
+                                        <li>Their goals and motivations</li>
+                                        <li>Any rules they must follow</li>
+                                    </ul>
+                                </div>
+                                <TooltipExample>
+                                    "You are Luna, a friendly astronomy tutor who explains space concepts using pizza analogies..."
+                                </TooltipExample>
+                            </div>
+                        }
+                    />
+                </Label>
                 <p className="text-xs text-rp-muted">
                     The core identity and behavior instructions for this Soul.
                 </p>
@@ -67,7 +118,31 @@ export function BehaviorTab({ persona, updateField, autoCompile, loading }: Beha
 
             {/* NBB JSON Editor */}
             <div className="space-y-2">
-                <Label htmlFor="nbb">Neural Behavioral Blueprint (JSON)</Label>
+                <Label htmlFor="nbb" className="flex items-center gap-2">
+                    Neural Behavioral Blueprint (JSON)
+                    <InfoTooltip
+                        content={
+                            <div className="space-y-2">
+                                <TooltipTitle>🔬 Advanced Personality Programming</TooltipTitle>
+                                <TooltipBody>
+                                    This is the "DNA" of your character's personality — strict rules that
+                                    ensure they stay in character no matter what.
+                                </TooltipBody>
+                                <div className="mt-2 space-y-1 text-xs">
+                                    <p className="text-rp-foam">🧩 Contains:</p>
+                                    <ul className="list-inside list-disc text-rp-subtle">
+                                        <li><strong>lexical_rules</strong>: How they structure sentences</li>
+                                        <li><strong>negative_constraints</strong>: Things they NEVER do</li>
+                                        <li><strong>anchors</strong>: Pre-set responses to specific triggers</li>
+                                    </ul>
+                                </div>
+                                <TooltipExample>
+                                    Pro tip: Click "Auto-Compile" above to generate this automatically!
+                                </TooltipExample>
+                            </div>
+                        }
+                    />
+                </Label>
                 <p className="text-xs text-rp-muted">
                     Strict lexical rules, constraints, and anchors. Auto-generated or manually edited.
                 </p>
@@ -94,3 +169,4 @@ export function BehaviorTab({ persona, updateField, autoCompile, loading }: Beha
         </div>
     )
 }
+

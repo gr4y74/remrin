@@ -3,14 +3,7 @@ import { supabase } from "@/lib/supabase/browser-client"
 export const getCommentsByPersonaId = async (personaId: string) => {
     const { data, error } = await supabase
         .from("persona_comments" as any)
-        .select(`
-      *,
-      profiles (
-        username,
-        image_url,
-        display_name
-      )
-    `)
+        .select("*")
         .eq("persona_id", personaId)
         .order("created_at", { ascending: false })
 

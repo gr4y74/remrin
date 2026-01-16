@@ -4,7 +4,7 @@ import { useCallback, useRef } from "react"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { StudioPersona, PersonaMetadata } from "../types"
-import { IconMicrophone, IconUpload } from "@tabler/icons-react"
+import { IconMicrophone, IconUpload, IconLoader2 } from "@tabler/icons-react"
 
 interface VoiceTabProps {
     persona: StudioPersona
@@ -12,9 +12,10 @@ interface VoiceTabProps {
     updateField: <K extends keyof StudioPersona>(field: K, value: StudioPersona[K]) => void
     updateMetadata: <K extends keyof PersonaMetadata>(field: K, value: PersonaMetadata[K]) => void
     uploadFile: (file: File, bucket: string, folder: string) => Promise<string | null>
+    uploading: boolean
 }
 
-export function VoiceTab({ persona, metadata, updateField, updateMetadata, uploadFile }: VoiceTabProps) {
+export function VoiceTab({ persona, metadata, updateField, updateMetadata, uploadFile, uploading }: VoiceTabProps) {
     const audioInputRef = useRef<HTMLInputElement>(null)
 
     const handleAudioUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,10 +34,16 @@ export function VoiceTab({ persona, metadata, updateField, updateMetadata, uploa
             <div className="space-y-2">
                 <Label>Voice Sample (for preview)</Label>
                 <div
-                    className="relative flex h-24 w-full cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-rp-highlight-med bg-rp-surface/50 transition-colors hover:border-rp-love"
-                    onClick={() => audioInputRef.current?.click()}
+                    className={`relative flex h-24 w-full items-center justify-center rounded-xl border-2 border-dashed border-rp-highlight-med bg-rp-surface/50 transition-colors ${uploading ? 'cursor-wait opacity-60' : 'cursor-pointer hover:border-rp-love'
+                        }`}
+                    onClick={() => !uploading && audioInputRef.current?.click()}
                 >
-                    {metadata.voice_sample_url ? (
+                    {uploading ? (
+                        <div className="flex flex-col items-center gap-2 text-rp-iris">
+                            <IconLoader2 size={32} className="animate-spin" />
+                            <span className="text-sm">Uploading audio...</span>
+                        </div>
+                    ) : metadata.voice_sample_url ? (
                         <div className="flex items-center gap-4 px-4">
                             <IconMicrophone size={24} className="text-orange-400" />
                             <audio controls className="h-10">
@@ -55,6 +62,7 @@ export function VoiceTab({ persona, metadata, updateField, updateMetadata, uploa
                         accept="audio/mp3,audio/wav,audio/mpeg"
                         className="hidden"
                         onChange={handleAudioUpload}
+                        disabled={uploading}
                     />
                 </div>
             </div>

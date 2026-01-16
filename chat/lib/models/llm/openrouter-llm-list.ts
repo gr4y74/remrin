@@ -2,10 +2,10 @@ import { LLM } from "@/types"
 
 export const OPENROUTER_LLM_LIST: LLM[] = [
     {
-        modelId: "mistralai/mistral-7b-instruct:free",
-        modelName: "Mistral 7B Instruct (FREE)",
+        modelId: "meta-llama/llama-3.3-70b-instruct:free",
+        modelName: "Llama 3.3 70B Instruct (FREE)",
         provider: "openrouter",
-        hostedId: "mistralai/mistral-7b-instruct:free",
+        hostedId: "meta-llama/llama-3.3-70b-instruct:free",
         platformLink: "https://openrouter.ai",
         imageInput: false
     },

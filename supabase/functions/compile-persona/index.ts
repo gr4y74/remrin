@@ -13,9 +13,22 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 // ─────────────────────────────────────────────────────────────
 const SUPA_URL = Deno.env.get('SUPA_BASE_URL') ?? '';
 const SUPA_KEY = Deno.env.get('SUPA_BASE_SERVICE_ROLE_KEY') ?? '';
+// Primary: OpenRouter (FREE models available)
+const OPENROUTER_KEY = Deno.env.get('OPENROUTER_API_KEY');
+// Fallback: DeepSeek (if OpenRouter not configured)
 const DEEPSEEK_KEY = Deno.env.get('DEEPSEEK_API_KEY');
 
 const supabase = createClient(SUPA_URL, SUPA_KEY);
+
+// Choose API configuration: prefer OpenRouter (has free models)
+const USE_OPENROUTER = !!OPENROUTER_KEY;
+const API_KEY = OPENROUTER_KEY || DEEPSEEK_KEY;
+const API_URL = USE_OPENROUTER
+    ? 'https://openrouter.ai/api/v1/chat/completions'
+    : 'https://api.deepseek.com/chat/completions';
+const MODEL = USE_OPENROUTER
+    ? 'meta-llama/llama-3.3-70b-instruct:free'  // FREE model
+    : 'deepseek-chat';
 
 // ─────────────────────────────────────────────────────────────
 // CORS HEADERS
@@ -147,22 +160,32 @@ If unknown, create a compelling original interpretation.)
 Generate the Neural Behavioral Blueprint JSON now.
   `.trim();
 
-    // Call AI
-    const response = await fetch('https://api.deepseek.com/chat/completions', {
+    // Call AI (OpenRouter preferred, DeepSeek fallback)
+    console.log(`🤖 Using ${USE_OPENROUTER ? 'OpenRouter' : 'DeepSeek'} with model: ${MODEL}`);
+
+    const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${API_KEY}`
+    };
+
+    // Add OpenRouter-specific headers
+    if (USE_OPENROUTER) {
+        headers['HTTP-Referer'] = 'https://remrin.ai';
+        headers['X-Title'] = 'Remrin Soul Studio';
+    }
+
+    const response = await fetch(API_URL, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${DEEPSEEK_KEY}`
-        },
+        headers,
         body: JSON.stringify({
-            model: "deepseek-chat",
+            model: MODEL,
             messages: [
                 { role: "system", content: COMPILER_SYSTEM_PROMPT },
                 { role: "user", content: userPrompt }
             ],
             temperature: 0.7,  // Creative but not chaotic
             max_tokens: 2000,
-            response_format: { type: "json_object" }  // Request JSON mode if supported
+            ...(USE_OPENROUTER ? {} : { response_format: { type: "json_object" } })  // JSON mode only for DeepSeek
         })
     });
 

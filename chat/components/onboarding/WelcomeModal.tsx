@@ -25,7 +25,7 @@ export const WelcomeModal: FC<WelcomeModalProps> = () => {
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
-        if (profile && !(profile as any).onboarding_complete) {
+        if (profile && !(profile as any).has_onboarded) {
             setIsOpen(true)
             setDisplayName(profile.display_name || "")
         }
@@ -48,10 +48,9 @@ export const WelcomeModal: FC<WelcomeModalProps> = () => {
 
         try {
             const updatedProfile = await updateProfile(profile.id, {
-                ...profile,
                 display_name: displayName,
                 age_bracket: ageBracket,
-                onboarding_complete: true
+                has_onboarded: true
             })
 
             setProfile(updatedProfile as any)
@@ -66,7 +65,7 @@ export const WelcomeModal: FC<WelcomeModalProps> = () => {
 
     // Prevent closing by clicking outside
     const handleOpenChange = (open: boolean) => {
-        if (!open && (!(profile as any)?.onboarding_complete)) {
+        if (!open && (!(profile as any)?.has_onboarded)) {
             // Do not allow closing if onboarding is not complete
             return
         }

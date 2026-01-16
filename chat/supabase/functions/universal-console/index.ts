@@ -19,11 +19,24 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 // ─────────────────────────────────────────────────────────────
 const SUPA_URL = Deno.env.get('SUPA_BASE_URL') ?? '';
 const SUPA_KEY = Deno.env.get('SUPA_BASE_SERVICE_ROLE_KEY') ?? '';
+// Primary: OpenRouter (FREE models available)
+const OPENROUTER_KEY = Deno.env.get('OPENROUTER_API_KEY');
+// Fallback: DeepSeek (if OpenRouter not configured)
 const DEEPSEEK_KEY = Deno.env.get('DEEPSEEK_API_KEY');
 const HF_TOKEN = Deno.env.get('HUGGINGFACE_TOKEN');
 
 const supabase = createClient(SUPA_URL, SUPA_KEY);
 const EMBEDDING_MODEL_URL = "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2";
+
+// Choose API configuration: prefer OpenRouter (has free models)
+const USE_OPENROUTER = !!OPENROUTER_KEY;
+const API_KEY = OPENROUTER_KEY || DEEPSEEK_KEY;
+const API_URL = USE_OPENROUTER
+  ? 'https://openrouter.ai/api/v1/chat/completions'
+  : 'https://api.deepseek.com/chat/completions';
+const MODEL = USE_OPENROUTER
+  ? 'meta-llama/llama-3.3-70b-instruct:free'  // FREE model
+  : 'deepseek-chat';
 
 // ─────────────────────────────────────────────────────────────
 // RELATIONSHIP EVOLUTION SYSTEM
@@ -439,14 +452,24 @@ serve(async (req) => {
     // ─────────────────────────────────────────────────────────
     // STEP 5: CALL AI (WITH STREAMING)
     // ─────────────────────────────────────────────────────────
-    const deepseekResponse = await fetch('https://api.deepseek.com/chat/completions', {
+    console.log(`🤖 Using ${USE_OPENROUTER ? 'OpenRouter' : 'DeepSeek'} with model: ${MODEL}`);
+
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${API_KEY}`
+    };
+
+    // Add OpenRouter-specific headers
+    if (USE_OPENROUTER) {
+      headers['HTTP-Referer'] = 'https://remrin.ai';
+      headers['X-Title'] = 'Remrin Universal Console';
+    }
+
+    const aiResponse = await fetch(API_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${DEEPSEEK_KEY}`
-      },
+      headers,
       body: JSON.stringify({
-        model: "deepseek-chat",
+        model: MODEL,
         messages: [
           { role: "system", content: systemPrompt },
           ...(history || []),
@@ -464,7 +487,7 @@ serve(async (req) => {
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
       async start(controller) {
-        const reader = deepseekResponse.body?.getReader();
+        const reader = aiResponse.body?.getReader();
         if (!reader) {
           controller.close();
           return;
@@ -505,7 +528,7 @@ serve(async (req) => {
           // ─────────────────────────────────────────────────────
           // STEP 7: SAVE INTERACTION & HANDLE SPECIAL COMMANDS
           // ─────────────────────────────────────────────────────
-          
+
           // Check for [SAVE_FACT: type | content] commands
           const saveFactRegex = /\[SAVE_FACT:\s*(\w+)\s*\|\s*(.+?)\]/g;
           let match;

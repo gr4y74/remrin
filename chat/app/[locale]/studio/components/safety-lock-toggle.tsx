@@ -21,14 +21,14 @@ export function SafetyLockToggle({ config, updateConfig }: SafetyLockToggleProps
 
     return (
         <div className={`rounded-lg border p-4 transition-all ${isLocked
-                ? 'border-rp-gold/40 bg-rp-gold/10'
-                : 'border-rp-highlight-med bg-rp-overlay'
+            ? 'border-rp-gold/40 bg-rp-gold/10'
+            : 'border-rp-highlight-med bg-rp-overlay'
             }`}>
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <div className={`flex h-10 w-10 items-center justify-center rounded-full transition-all ${isLocked
-                            ? 'bg-rp-gold/20'
-                            : 'bg-rp-overlay'
+                        ? 'bg-rp-gold/20'
+                        : 'bg-rp-overlay'
                         }`}>
                         {isLocked ? (
                             <IconShieldLock size={20} className="text-rp-gold" />
@@ -54,7 +54,7 @@ export function SafetyLockToggle({ config, updateConfig }: SafetyLockToggleProps
             </div>
 
             {isLocked && (
-                <div className="mt-4 rounded-md border border-rp-gold/30 bg-rp-gold/5 p-3">
+                <div className="mt-4 rounded-md bg-rp-gold/5 p-3">
                     <p className="flex items-center gap-2 text-sm text-rp-gold">
                         <IconLock size={16} />
                         <span><strong>Protected</strong> — Your Soul&apos;s &quot;cartridge&quot; is encrypted</span>

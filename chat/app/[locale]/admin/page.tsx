@@ -63,7 +63,7 @@ export default function AdminPage() {
             icon: IconUsers,
             href: "/admin/users",
             color: "from-blue-600 to-cyan-500",
-            badge: "Coming Soon"
+            badge: null
         },
         {
             title: "Media Manager",
@@ -133,8 +133,7 @@ export default function AdminPage() {
                             <Link
                                 key={module.title}
                                 href={module.href}
-                                className={`group relative block rounded-xl border border-rp-highlight-med bg-rp-surface p-6 transition-all hover:border-rp-highlight-high hover:bg-rp-overlay ${module.badge === 'Coming Soon' ? 'pointer-events-none opacity-50' : ''
-                                    }`}
+                                className="group relative block rounded-xl border border-rp-highlight-med bg-rp-surface p-6 transition-all hover:border-rp-highlight-high hover:bg-rp-overlay"
                             >
                                 <div className={`inline-flex rounded-lg bg-gradient-to-br p-3 ${module.color} mb-4`}>
                                     <module.icon size={24} className="text-white" />

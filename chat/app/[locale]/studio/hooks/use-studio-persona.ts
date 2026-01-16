@@ -12,6 +12,7 @@ export function useStudioPersona(initialPersonaId?: string) {
     const [moderationHistory, setModerationHistory] = useState<ModerationAction[]>([])
     const [loading, setLoading] = useState(false)
     const [saving, setSaving] = useState(false)
+    const [uploading, setUploading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
     const supabase = createClient()
@@ -106,6 +107,7 @@ export function useStudioPersona(initialPersonaId?: string) {
         bucket: string,
         folder: string
     ): Promise<string | null> => {
+        setUploading(true)
         try {
             const fileName = `${folder}/${Date.now()}_${file.name.replace(/\s+/g, '_')}`
 
@@ -123,6 +125,8 @@ export function useStudioPersona(initialPersonaId?: string) {
         } catch (e) {
             console.error('Upload failed:', e)
             return null
+        } finally {
+            setUploading(false)
         }
     }, [supabase])
 
@@ -161,13 +165,17 @@ export function useStudioPersona(initialPersonaId?: string) {
     }, [persona.name, persona.description, persona.tagline, persona.system_prompt])
 
     // Save persona (draft)
-    const saveDraft = useCallback(async () => {
+    const saveDraft = useCallback(async (): Promise<string | null> => {
         setSaving(true)
         setError(null)
 
         try {
             const { data: userData } = await supabase.auth.getUser()
             const userId = userData.user?.id
+
+            if (!userId) {
+                throw new Error('You must be logged in to save')
+            }
 
             const payload = {
                 name: persona.name,
@@ -199,6 +207,7 @@ export function useStudioPersona(initialPersonaId?: string) {
                     .eq('id', persona.id)
 
                 if (updateError) throw updateError
+                return persona.id
             } else {
                 // Insert new
                 const { data: newData, error: insertError } = await supabase
@@ -209,13 +218,13 @@ export function useStudioPersona(initialPersonaId?: string) {
                 if (insertError) throw insertError
                 if (newData?.[0]) {
                     setPersona(prev => ({ ...prev, id: newData[0].id }))
+                    return newData[0].id
                 }
+                return null
             }
-
-            return true
         } catch (e: unknown) {
             setError(e instanceof Error ? e.message : 'Failed to save')
-            return false
+            return null
         } finally {
             setSaving(false)
         }
@@ -334,6 +343,7 @@ export function useStudioPersona(initialPersonaId?: string) {
         moderationHistory,
         loading,
         saving,
+        uploading,
         error,
         loadPersona,
         loadCategories,

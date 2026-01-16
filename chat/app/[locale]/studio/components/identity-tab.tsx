@@ -12,16 +12,18 @@ import {
     SelectValue
 } from "@/components/ui/select"
 import { StudioPersona, BASE_MODELS, SAFETY_LEVELS } from "../types"
-import { IconUpload, IconPhoto } from "@tabler/icons-react"
+import { IconUpload, IconPhoto, IconLoader2 } from "@tabler/icons-react"
 import Image from "next/image"
+import { InfoTooltip, TooltipTitle, TooltipBody, TooltipExample } from "@/components/ui/info-tooltip"
 
 interface IdentityTabProps {
     persona: StudioPersona
     updateField: <K extends keyof StudioPersona>(field: K, value: StudioPersona[K]) => void
     uploadFile: (file: File, bucket: string, folder: string) => Promise<string | null>
+    uploading: boolean
 }
 
-export function IdentityTab({ persona, updateField, uploadFile }: IdentityTabProps) {
+export function IdentityTab({ persona, updateField, uploadFile, uploading }: IdentityTabProps) {
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     const handleAvatarUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,6 +38,8 @@ export function IdentityTab({ persona, updateField, uploadFile }: IdentityTabPro
 
     const handleDrop = useCallback(async (e: React.DragEvent) => {
         e.preventDefault()
+        if (uploading) return
+
         const file = e.dataTransfer.files?.[0]
         if (!file || !file.type.startsWith('image/')) return
 
@@ -43,7 +47,7 @@ export function IdentityTab({ persona, updateField, uploadFile }: IdentityTabPro
         if (url) {
             updateField('image_url', url)
         }
-    }, [uploadFile, updateField])
+    }, [uploadFile, updateField, uploading])
 
     return (
         <div className="space-y-6">
@@ -51,12 +55,18 @@ export function IdentityTab({ persona, updateField, uploadFile }: IdentityTabPro
             <div className="space-y-2">
                 <Label>Avatar Image</Label>
                 <div
-                    className="relative flex size-48 cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-rp-highlight-med bg-rp-surface/50 transition-colors hover:border-rp-iris"
-                    onClick={() => fileInputRef.current?.click()}
+                    className={`relative flex size-48 items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-rp-highlight-med bg-rp-surface/50 transition-colors ${uploading ? 'cursor-wait opacity-60' : 'cursor-pointer hover:border-rp-iris'
+                        }`}
+                    onClick={() => !uploading && fileInputRef.current?.click()}
                     onDrop={handleDrop}
                     onDragOver={(e) => e.preventDefault()}
                 >
-                    {persona.image_url ? (
+                    {uploading ? (
+                        <div className="flex flex-col items-center gap-2 text-rp-iris">
+                            <IconLoader2 size={40} className="animate-spin" />
+                            <span className="text-sm">Uploading...</span>
+                        </div>
+                    ) : persona.image_url ? (
                         <Image
                             src={persona.image_url}
                             alt="Avatar"
@@ -75,13 +85,30 @@ export function IdentityTab({ persona, updateField, uploadFile }: IdentityTabPro
                         accept="image/*"
                         className="hidden"
                         onChange={handleAvatarUpload}
+                        disabled={uploading}
                     />
                 </div>
             </div>
 
             {/* Name */}
             <div className="space-y-2">
-                <Label htmlFor="name">Name *</Label>
+                <Label htmlFor="name" className="flex items-center gap-2">
+                    Name *
+                    <InfoTooltip
+                        content={
+                            <div className="space-y-2">
+                                <TooltipTitle>👤 Your Soul&apos;s Identity</TooltipTitle>
+                                <TooltipBody>
+                                    This is the name users will see and use to talk to your character.
+                                    Make it memorable and fitting for the personality!
+                                </TooltipBody>
+                                <TooltipExample>
+                                    Good names: "Luna", "Captain Rex", "Wise Owl" — avoid generic names like "AI Assistant"
+                                </TooltipExample>
+                            </div>
+                        }
+                    />
+                </Label>
                 <Input
                     id="name"
                     value={persona.name}
@@ -117,9 +144,35 @@ export function IdentityTab({ persona, updateField, uploadFile }: IdentityTabPro
 
             {/* Base Model */}
             <div className="space-y-2">
-                <Label>Base AI Model</Label>
+                <Label className="flex items-center gap-2">
+                    Base AI Model
+                    <InfoTooltip
+                        content={
+                            <div className="space-y-2">
+                                <TooltipTitle>🤖 The Brain Behind Your Soul</TooltipTitle>
+                                <TooltipBody>
+                                    This is which AI model powers your character. Different models have
+                                    different strengths, speeds, and costs.
+                                </TooltipBody>
+                                <div className="mt-2 grid gap-2 text-xs">
+                                    <div className="rounded bg-green-500/10 p-2">
+                                        <p className="font-medium text-green-400">✨ FREE Models</p>
+                                        <p className="text-rp-subtle">Great for testing & casual use</p>
+                                    </div>
+                                    <div className="rounded bg-purple-500/10 p-2">
+                                        <p className="font-medium text-purple-400">Premium Models</p>
+                                        <p className="text-rp-subtle">Better quality, uses credits</p>
+                                    </div>
+                                </div>
+                                <TooltipExample>
+                                    Start with a FREE model, upgrade later if needed!
+                                </TooltipExample>
+                            </div>
+                        }
+                    />
+                </Label>
                 <Select
-                    value={persona.base_model || 'deepseek-chat'}
+                    value={persona.base_model || 'mistralai/mistral-7b-instruct:free'}
                     onValueChange={(value) => updateField('base_model', value)}
                 >
                     <SelectTrigger className="border-rp-highlight-med bg-rp-surface">
@@ -137,7 +190,34 @@ export function IdentityTab({ persona, updateField, uploadFile }: IdentityTabPro
 
             {/* Safety Level */}
             <div className="space-y-2">
-                <Label>Safety Level</Label>
+                <Label className="flex items-center gap-2">
+                    Safety Level
+                    <InfoTooltip
+                        content={
+                            <div className="space-y-2">
+                                <TooltipTitle>🛡️ Content Safety Settings</TooltipTitle>
+                                <TooltipBody>
+                                    Controls what kind of content your Soul can discuss.
+                                    This affects both what it says and how it responds to sensitive topics.
+                                </TooltipBody>
+                                <div className="mt-2 space-y-1 text-xs">
+                                    <div className="rounded bg-green-500/10 p-1.5">
+                                        <span className="font-medium text-green-400">CHILD</span>
+                                        <span className="text-rp-subtle"> — Strictly kid-friendly, no mature content</span>
+                                    </div>
+                                    <div className="rounded bg-blue-500/10 p-1.5">
+                                        <span className="font-medium text-blue-400">TEEN</span>
+                                        <span className="text-rp-subtle"> — Appropriate for teenagers</span>
+                                    </div>
+                                    <div className="rounded bg-purple-500/10 p-1.5">
+                                        <span className="font-medium text-purple-400">ADULT</span>
+                                        <span className="text-rp-subtle"> — Unrestricted conversations</span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    />
+                </Label>
                 <Select
                     value={persona.safety_level || 'ADULT'}
                     onValueChange={(value) => updateField('safety_level', value as StudioPersona['safety_level'])}

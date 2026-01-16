@@ -22,9 +22,14 @@ export async function POST(request: NextRequest) {
             )
         }
 
+        // Use OpenRouter FREE models to avoid balance issues
         const openai = new OpenAI({
-            baseURL: "https://api.deepseek.com",
-            apiKey: process.env.OPENAI_API_KEY
+            baseURL: "https://openrouter.ai/api/v1",
+            apiKey: process.env.OPENROUTER_API_KEY,
+            defaultHeaders: {
+                "HTTP-Referer": "https://remrin.ai",
+                "X-Title": "Remrin Soul Splicer"
+            }
         })
 
         console.log("🧬 [Soul Splicer] Distilling DNA from:", donors)
@@ -70,7 +75,7 @@ Perform a Cross-Pollination Analysis:
 Output ONLY valid JSON, no markdown code blocks or explanations.`
 
         const response = await openai.chat.completions.create({
-            model: "deepseek-chat",
+            model: "meta-llama/llama-3.3-70b-instruct:free",
             messages: [
                 { role: "system", content: "You are a precise JSON-outputting AI. Output only valid JSON." },
                 { role: "user", content: synthesisPrompt }

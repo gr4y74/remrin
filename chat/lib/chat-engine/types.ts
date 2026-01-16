@@ -77,8 +77,8 @@ export const PROVIDER_CONFIGS: Record<ProviderId, ProviderConfig> = {
         apiEndpoint: 'https://openrouter.ai/api/v1/chat/completions',
         apiKeyEnv: 'OPENROUTER_API_KEY',
         isEnabled: true,
-        defaultModel: 'mistralai/mistral-7b-instruct:free',
-        maxTokens: 4096
+        defaultModel: 'meta-llama/llama-3.3-70b-instruct:free',
+        maxTokens: 8192
     },
     deepseek: {
         id: 'deepseek',
