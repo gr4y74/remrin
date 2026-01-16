@@ -9,7 +9,8 @@ import {
   FeaturedCarousel,
   DraggableGallery,
   TrendingSoulsList,
-  FeaturedPremiumRow
+  FeaturedPremiumRow,
+  CategorySection
 } from "@/components/discovery"
 import { RotatingBanner, Banner } from "@/components/discovery/RotatingBanner"
 import { PageTemplate, Footer, FrontPageHeader } from "@/components/layout"
@@ -29,6 +30,17 @@ interface Persona {
   follower_count?: number
 }
 
+interface ContentSection {
+  id: string
+  name: string
+  slug: string
+  description: string | null
+  icon: string | null
+  color: string | null
+  age_rating: string
+  personas: Persona[]
+}
+
 const SIDEBAR_WIDTH = 350
 
 // Demo content removed
@@ -40,6 +52,7 @@ export default function HomePage() {
   const { resolvedTheme } = useTheme()
   const [personas, setPersonas] = useState<Persona[]>([])
   const [banners, setBanners] = useState<Banner[]>([])
+  const [contentSections, setContentSections] = useState<ContentSection[]>([])
   const [loading, setLoading] = useState(true)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [defaultWorkspaceId, setDefaultWorkspaceId] = useState<string | null>(null)
@@ -136,7 +149,20 @@ export default function HomePage() {
 
     fetchPersonas()
     fetchBanners()
+    fetchContentSections()
   }, [])
+
+  const fetchContentSections = async () => {
+    try {
+      const response = await fetch("/api/discovery/sections")
+      const data = await response.json()
+      if (data.sections) {
+        setContentSections(data.sections)
+      }
+    } catch (error) {
+      console.error("Error fetching content sections:", error)
+    }
+  }
 
   // Featured characters - same as carousel, all legendary
   const featuredCharacters = [
@@ -258,6 +284,16 @@ export default function HomePage() {
 
       {/* Section 5: Featured Premium - NEW */}
       <FeaturedPremiumRow onPersonaClick={handlePersonaClick} />
+
+      {/* Section 5.5: Dynamic Content Sections (Kids, Gaming, etc.) - NEW */}
+      {contentSections.map(section => (
+        <CategorySection
+          key={section.id}
+          section={section}
+          personas={section.personas}
+          onPersonaClick={handlePersonaClick}
+        />
+      ))}
 
       {/* Section 6: Explore All Souls - Updated with gacha-style cards */}
       <section id="explore-souls" className="relative mt-8" data-section="explore-souls">

@@ -40,12 +40,23 @@ interface Persona {
     created_at: string
     tags?: string[]
     persona_stats?: Stats
+    sections?: string[] // Section IDs this persona belongs to
+}
+
+interface ContentSection {
+    id: string
+    name: string
+    slug: string
+    age_rating: string
+    color: string | null
+    icon: string | null
 }
 
 type TabType = "featured" | "visibility" | "trending"
 
 export function FeaturedManager() {
     const [personas, setPersonas] = useState<Persona[]>([])
+    const [sections, setSections] = useState<ContentSection[]>([])
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [searchQuery, setSearchQuery] = useState("")
@@ -60,17 +71,26 @@ export function FeaturedManager() {
     // Image Upload State
     const [uploadingImage, setUploadingImage] = useState(false)
 
-    // Fetch personas
+    // Fetch personas and sections
     const fetchPersonas = async () => {
         setLoading(true)
         try {
-            const response = await fetch("/api/admin/personas")
-            const data = await response.json()
-            if (data.personas) {
-                setPersonas(data.personas)
+            const [personasRes, sectionsRes] = await Promise.all([
+                fetch("/api/admin/personas"),
+                fetch("/api/admin/content-sections")
+            ])
+
+            const personasData = await personasRes.json()
+            const sectionsData = await sectionsRes.json()
+
+            if (personasData.personas) {
+                setPersonas(personasData.personas)
+            }
+            if (sectionsData.sections) {
+                setSections(sectionsData.sections)
             }
         } catch (error) {
-            toast.error("Failed to load personas")
+            toast.error("Failed to load data")
         } finally {
             setLoading(false)
         }
@@ -302,6 +322,7 @@ export function FeaturedManager() {
             {editingPersona && (
                 <EditPersonaModal
                     persona={editingPersona}
+                    sections={sections}
                     onClose={() => setEditingId(null)}
                     onSave={handleSaveEdit}
                 />
@@ -369,16 +390,19 @@ function PersonaCard({ persona, activeTab, onToggleFeatured, onToggleVisibility,
     )
 }
 
-function EditPersonaModal({ persona, onClose, onSave }: { persona: Persona, onClose: () => void, onSave: (u: any) => void }) {
+function EditPersonaModal({ persona, onClose, onSave, sections }: { persona: Persona, onClose: () => void, onSave: (u: any) => void, sections: ContentSection[] }) {
     const [form, setForm] = useState({
         description: persona.description || "",
         tags: (persona.tags || []).join(", "),
         total_chats: persona.persona_stats?.total_chats || 0,
         followers_count: persona.persona_stats?.followers_count || 0,
-        trending_score: persona.persona_stats?.trending_score || 0
+        trending_score: persona.persona_stats?.trending_score || 0,
+        section_ids: persona.sections || []
     })
+    const [savingSections, setSavingSections] = useState(false)
 
-    const handleSave = () => {
+    const handleSave = async () => {
+        // Save persona updates
         onSave({
             description: form.description,
             tags: form.tags.split(",").map(s => s.trim()).filter(Boolean),
@@ -388,6 +412,41 @@ function EditPersonaModal({ persona, onClose, onSave }: { persona: Persona, onCl
                 trending_score: Number(form.trending_score)
             }
         })
+
+        // Save section assignments separately
+        if (JSON.stringify(form.section_ids) !== JSON.stringify(persona.sections || [])) {
+            setSavingSections(true)
+            try {
+                const response = await fetch("/api/admin/section-personas", {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        persona_id: persona.id,
+                        section_ids: form.section_ids
+                    })
+                })
+
+                if (response.ok) {
+                    toast.success("Section assignments updated")
+                } else {
+                    const data = await response.json()
+                    toast.error(data.error || "Failed to update sections")
+                }
+            } catch (error) {
+                toast.error("Error updating sections")
+            } finally {
+                setSavingSections(false)
+            }
+        }
+    }
+
+    const toggleSection = (sectionId: string) => {
+        setForm(prev => ({
+            ...prev,
+            section_ids: prev.section_ids.includes(sectionId)
+                ? prev.section_ids.filter(id => id !== sectionId)
+                : [...prev.section_ids, sectionId]
+        }))
     }
 
     return (
@@ -446,6 +505,34 @@ function EditPersonaModal({ persona, onClose, onSave }: { persona: Persona, onCl
                                 value={form.trending_score}
                                 onChange={e => setForm({ ...form, trending_score: e.target.value as any })}
                             />
+                        </div>
+                    </div>
+
+                    {/* Section Assignments */}
+                    <div>
+                        <label className="text-sm text-rp-subtle mb-2 block">Assign to Sections</label>
+                        <div className="flex flex-wrap gap-2">
+                            {sections.map(section => {
+                                const isAssigned = form.section_ids.includes(section.id)
+                                return (
+                                    <button
+                                        key={section.id}
+                                        type="button"
+                                        onClick={() => toggleSection(section.id)}
+                                        className={`flex items-center gap-1 rounded-lg border px-3 py-1.5 text-sm transition-colors ${isAssigned
+                                                ? 'bg-rp-iris/20 border-rp-iris text-rp-iris'
+                                                : 'bg-rp-base border-rp-muted/20 text-rp-muted hover:border-rp-iris/50'
+                                            }`}
+                                    >
+                                        {section.icon && <span>{section.icon}</span>}
+                                        <span>{section.name}</span>
+                                        {isAssigned && <IconCheck size={14} />}
+                                    </button>
+                                )
+                            })}
+                            {sections.length === 0 && (
+                                <p className="text-rp-muted text-sm">No sections available. Create sections first.</p>
+                            )}
                         </div>
                     </div>
                 </div>

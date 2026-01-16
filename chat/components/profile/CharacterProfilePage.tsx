@@ -24,6 +24,7 @@ interface PersonaData {
     name: string
     description: string | null
     imageUrl: string | null
+    backgroundUrl?: string | null
     category: string | null
     tags: string[]
     introMessage: string | null
@@ -91,7 +92,7 @@ export function CharacterProfilePage({
     return (
         <div className="bg-rp-base relative min-h-screen">
             {/* Blurred Hero Background with Parallax */}
-            {persona.imageUrl && (
+            {(persona.backgroundUrl || persona.imageUrl) && (
                 <div
                     className="absolute inset-0 overflow-hidden"
                     style={{
@@ -100,7 +101,7 @@ export function CharacterProfilePage({
                     }}
                 >
                     <Image
-                        src={persona.imageUrl}
+                        src={persona.backgroundUrl || persona.imageUrl}
                         alt=""
                         fill
                         className="scale-110 object-cover opacity-30 blur-3xl"

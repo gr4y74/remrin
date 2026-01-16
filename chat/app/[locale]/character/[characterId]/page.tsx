@@ -23,6 +23,7 @@ export default async function CharacterPage({ params }: CharacterPageProps) {
       name,
       description,
       image_url,
+      background_url,
       category,
       metadata,
       owner_id,
@@ -97,6 +98,7 @@ export default async function CharacterPage({ params }: CharacterPageProps) {
                 name: persona.name,
                 description: persona.description,
                 imageUrl: persona.image_url,
+                backgroundUrl: persona.background_url,
                 category: persona.category,
                 tags,
                 introMessage,
@@ -121,7 +123,7 @@ export async function generateMetadata({ params }: CharacterPageProps) {
 
     const { data: persona } = await supabase
         .from("personas")
-        .select("name, description, image_url")
+        .select("name, description, image_url, background_url")
         .eq("id", characterId)
         .single()
 
