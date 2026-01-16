@@ -152,6 +152,7 @@ export function QuotaIndicator({
 
         const interval = setInterval(fetchQuota, refreshInterval);
         return () => clearInterval(interval);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [refreshInterval]);
 
     // Loading state

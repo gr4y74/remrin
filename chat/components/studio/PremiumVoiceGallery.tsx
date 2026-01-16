@@ -20,6 +20,7 @@ export const PremiumVoiceGallery: React.FC = () => {
 
     useEffect(() => {
         loadVoices();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handlePreview = (voiceId: string) => previewVoice(voiceId);

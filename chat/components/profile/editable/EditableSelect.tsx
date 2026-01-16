@@ -51,6 +51,7 @@ export function EditableSelect({
 
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isEditing, isOpen, currentValue]);
 
     // Set focused index when opening

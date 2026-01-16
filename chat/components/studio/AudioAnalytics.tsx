@@ -47,6 +47,7 @@ export function AudioAnalytics() {
 
     useEffect(() => {
         fetchData()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dateRange])
 
     if (loading && !data) {
@@ -86,8 +87,8 @@ export function AudioAnalytics() {
                             key={range}
                             onClick={() => setDateRange(range)}
                             className={`rounded px-3 py-1 text-xs font-medium transition-colors ${dateRange === range
-                                    ? 'bg-rp-iris text-rp-base'
-                                    : 'text-rp-subtle hover:text-rp-text hover:bg-rp-surface'
+                                ? 'bg-rp-iris text-rp-base'
+                                : 'text-rp-subtle hover:text-rp-text hover:bg-rp-surface'
                                 }`}
                         >
                             {range.toUpperCase()}

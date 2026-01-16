@@ -2,15 +2,41 @@
 
 export type ModerationStatus = 'draft' | 'pending_review' | 'approved' | 'rejected' | 'suspended'
 
+// Edition and License Types
+export type EditionType = 'one_of_one' | 'limited' | 'open' | 'timed'
+export type LicenseType = 'personal' | 'commercial' | 'full_rights' | 'exclusive'
+export type AssetType = 'image' | 'video' | 'audio'
+
+export interface DigitalAssetEdition {
+    id?: string
+    asset_url: string
+    asset_type: AssetType
+    edition_type: EditionType
+    total_supply?: number // undefined for open editions
+    minted_count?: number
+    license_type: LicenseType
+
+    // Metadata
+    title?: string
+    description?: string
+    rarity_traits?: Record<string, string>
+    creator_signature?: string
+
+    // Timing (for timed editions)
+    available_from?: string
+    available_until?: string
+
+    // Pricing
+    price_usd?: number
+}
+
 export interface SwagItem {
     name: string
     url: string
     image_url?: string
     type: 'Physical' | 'Digital'
-    // Digital asset URLs (for Digital type)
-    digital_image_url?: string
-    digital_video_url?: string
-    digital_audio_url?: string
+    // Digital editions (replaces simple arrays)
+    digital_editions?: DigitalAssetEdition[]
 }
 
 export interface PersonaMetadata {

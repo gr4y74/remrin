@@ -217,7 +217,7 @@ export default function UniversalPicker({
                             className="
                 w-full px-4 py-2 mb-3 rounded-lg
                 bg-rp-base border border-rp-muted/20
-                text-rp-text placeholder-rp-muted
+                text-rp-text placeholder:text-rp-muted
                 focus:outline-none focus:border-rp-iris/50
               "
                         />
@@ -251,7 +251,7 @@ export default function UniversalPicker({
                             className="
                 w-full px-4 py-2 mb-3 rounded-lg
                 bg-rp-base border border-rp-muted/20
-                text-rp-text placeholder-rp-muted
+                text-rp-text placeholder:text-rp-muted
                 focus:outline-none focus:border-rp-iris/50
               "
                         />

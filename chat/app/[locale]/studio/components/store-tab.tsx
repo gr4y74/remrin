@@ -12,9 +12,11 @@ import {
     SelectTrigger,
     SelectValue
 } from "@/components/ui/select"
-import { PersonaMetadata, SwagItem, PersonaConfig } from "../types"
-import { IconPlus, IconTrash, IconShoppingBag, IconUpload, IconLoader2 } from "@tabler/icons-react"
+import { PersonaMetadata, SwagItem, PersonaConfig, DigitalAssetEdition, AssetType } from "../types"
+import { IconPlus, IconTrash, IconShoppingBag, IconUpload, IconLoader2, IconSparkles } from "@tabler/icons-react"
 import { SafetyLockToggle } from "./safety-lock-toggle"
+import { EditionCreator } from "./edition-creator"
+import { EditionBadge } from "./edition-badge"
 import Image from "next/image"
 
 interface StoreTabProps {
@@ -31,8 +33,14 @@ export function StoreTab({ metadata, updateMetadata, config, updateConfig, uploa
         name: '',
         url: '',
         image_url: '',
-        type: 'Physical'
+        type: 'Physical',
+        digital_editions: []
     })
+
+    const [editionCreatorOpen, setEditionCreatorOpen] = useState(false)
+    const [currentAssetType, setCurrentAssetType] = useState<AssetType>('image')
+    const [currentAssetUrl, setCurrentAssetUrl] = useState('')
+    const [tempAssetUrl, setTempAssetUrl] = useState('')
 
     const imageInputRef = useRef<HTMLInputElement>(null)
     const videoInputRef = useRef<HTMLInputElement>(null)
@@ -40,26 +48,43 @@ export function StoreTab({ metadata, updateMetadata, config, updateConfig, uploa
 
     const swagItems = metadata.swag_items || []
 
-    const handleDigitalImageUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleAssetUpload = useCallback(async (
+        e: React.ChangeEvent<HTMLInputElement>,
+        assetType: AssetType,
+        bucket: string
+    ) => {
         const file = e.target.files?.[0]
         if (!file) return
-        const url = await uploadFile(file, 'soul_forge', 'digital')
-        if (url) setNewItem(prev => ({ ...prev, digital_image_url: url }))
+
+        const url = await uploadFile(file, bucket, 'digital')
+        if (url) {
+            setCurrentAssetUrl(url)
+            setCurrentAssetType(assetType)
+            setEditionCreatorOpen(true)
+        }
     }, [uploadFile])
 
-    const handleDigitalVideoUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
-        if (!file) return
-        const url = await uploadFile(file, 'soul_video', 'digital')
-        if (url) setNewItem(prev => ({ ...prev, digital_video_url: url }))
-    }, [uploadFile])
+    const handleAssetUrlAdd = (url: string, assetType: AssetType) => {
+        if (!url.trim()) return
+        setCurrentAssetUrl(url.trim())
+        setCurrentAssetType(assetType)
+        setEditionCreatorOpen(true)
+        setTempAssetUrl('')
+    }
 
-    const handleDigitalAudioUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
-        if (!file) return
-        const url = await uploadFile(file, 'soul_audio', 'digital')
-        if (url) setNewItem(prev => ({ ...prev, digital_audio_url: url }))
-    }, [uploadFile])
+    const handleEditionSave = (edition: DigitalAssetEdition) => {
+        setNewItem(prev => ({
+            ...prev,
+            digital_editions: [...(prev.digital_editions || []), edition]
+        }))
+    }
+
+    const removeEdition = (index: number) => {
+        setNewItem(prev => ({
+            ...prev,
+            digital_editions: (prev.digital_editions || []).filter((_, i) => i !== index)
+        }))
+    }
 
     const addSwagItem = () => {
         if (!newItem.name || !newItem.url) return
@@ -71,13 +96,17 @@ export function StoreTab({ metadata, updateMetadata, config, updateConfig, uploa
                 url: newItem.url,
                 image_url: newItem.image_url,
                 type: newItem.type || 'Physical',
-                digital_image_url: newItem.digital_image_url,
-                digital_video_url: newItem.digital_video_url,
-                digital_audio_url: newItem.digital_audio_url
+                digital_editions: newItem.digital_editions
             } as SwagItem
         ])
 
-        setNewItem({ name: '', url: '', image_url: '', type: 'Physical' })
+        setNewItem({
+            name: '',
+            url: '',
+            image_url: '',
+            type: 'Physical',
+            digital_editions: []
+        })
     }
 
     const removeSwagItem = (index: number) => {
@@ -85,6 +114,7 @@ export function StoreTab({ metadata, updateMetadata, config, updateConfig, uploa
     }
 
     const isDigital = newItem.type === 'Digital'
+    const editionCount = newItem.digital_editions?.length || 0
 
     return (
         <div className="space-y-6">
@@ -160,11 +190,9 @@ export function StoreTab({ metadata, updateMetadata, config, updateConfig, uploa
                                     <div className="font-medium">{item.name}</div>
                                     <div className="text-xs text-rp-muted">
                                         {item.type}
-                                        {item.type === 'Digital' && (
+                                        {item.type === 'Digital' && item.digital_editions && item.digital_editions.length > 0 && (
                                             <span className="ml-2">
-                                                {item.digital_image_url && '🖼️ '}
-                                                {item.digital_video_url && '🎥 '}
-                                                {item.digital_audio_url && '🎵 '}
+                                                • {item.digital_editions.length} edition{item.digital_editions.length !== 1 ? 's' : ''}
                                             </span>
                                         )}
                                     </div>
@@ -230,103 +258,161 @@ export function StoreTab({ metadata, updateMetadata, config, updateConfig, uploa
                         className="border-rp-highlight-med bg-rp-surface"
                     />
 
-                    {/* Digital Assets Section */}
+                    {/* Digital Editions Section */}
                     {isDigital && (
-                        <div className="space-y-3 rounded-lg bg-rp-iris/5 p-3">
-                            <div className="text-xs font-medium text-rp-iris">Digital Package Assets</div>
+                        <div className="space-y-4 rounded-lg bg-rp-iris/5 p-4">
+                            <div className="flex items-center justify-between">
+                                <div className="text-xs font-medium text-rp-iris">Limited Edition Digital Assets</div>
+                                <span className="text-xs text-rp-muted">{editionCount} edition{editionCount !== 1 ? 's' : ''}</span>
+                            </div>
 
-                            {/* Digital Image Upload */}
-                            <div className="space-y-2">
-                                <Label className="text-xs">Package Image (Gold/Silver/Bronze)</Label>
-                                <div className="flex gap-2">
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => imageInputRef.current?.click()}
-                                        disabled={uploading}
-                                        className="flex-1"
-                                    >
-                                        {uploading ? <IconLoader2 size={16} className="mr-2 animate-spin" /> : <IconUpload size={16} className="mr-2" />}
-                                        Upload Image
-                                    </Button>
-                                    <Input
-                                        value={newItem.digital_image_url || ''}
-                                        onChange={(e) => setNewItem({ ...newItem, digital_image_url: e.target.value })}
-                                        placeholder="Or paste URL"
-                                        className="flex-1 border-rp-highlight-med bg-rp-surface text-xs"
-                                    />
-                                    <input
-                                        ref={imageInputRef}
-                                        type="file"
-                                        accept="image/*"
-                                        className="hidden"
-                                        onChange={handleDigitalImageUpload}
-                                    />
+                            {/* Existing Editions */}
+                            {newItem.digital_editions && newItem.digital_editions.length > 0 && (
+                                <div className="space-y-2">
+                                    {newItem.digital_editions.map((edition, idx) => (
+                                        <div key={idx} className="flex items-center gap-2 rounded bg-rp-surface/50 p-2">
+                                            <div className="flex-1">
+                                                <div className="text-xs font-medium">{edition.title || `${edition.asset_type} Edition`}</div>
+                                                <EditionBadge edition={edition} size="sm" />
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => removeEdition(idx)}
+                                                className="text-red-400 hover:text-red-300"
+                                            >
+                                                <IconTrash size={14} />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Add Edition Buttons */}
+                            <div className="space-y-3">
+                                {/* Images */}
+                                <div className="space-y-2">
+                                    <Label className="text-xs">Add Image Edition</Label>
+                                    <div className="flex gap-2">
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => imageInputRef.current?.click()}
+                                            disabled={uploading}
+                                            className="shrink-0"
+                                        >
+                                            {uploading ? <IconLoader2 size={16} className="mr-2 animate-spin" /> : <IconUpload size={16} className="mr-2" />}
+                                            Upload
+                                        </Button>
+                                        <Input
+                                            value={tempAssetUrl}
+                                            onChange={(e) => setTempAssetUrl(e.target.value)}
+                                            placeholder="Or paste URL"
+                                            className="flex-1 border-rp-highlight-med bg-rp-surface text-xs"
+                                        />
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => handleAssetUrlAdd(tempAssetUrl, 'image')}
+                                            disabled={!tempAssetUrl.trim()}
+                                        >
+                                            <IconSparkles size={16} />
+                                        </Button>
+                                        <input
+                                            ref={imageInputRef}
+                                            type="file"
+                                            accept="image/*"
+                                            className="hidden"
+                                            onChange={(e) => handleAssetUpload(e, 'image', 'soul_forge')}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Videos */}
+                                <div className="space-y-2">
+                                    <Label className="text-xs">Add Video Edition</Label>
+                                    <div className="flex gap-2">
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => videoInputRef.current?.click()}
+                                            disabled={uploading}
+                                            className="shrink-0"
+                                        >
+                                            {uploading ? <IconLoader2 size={16} className="mr-2 animate-spin" /> : <IconUpload size={16} className="mr-2" />}
+                                            Upload
+                                        </Button>
+                                        <Input
+                                            value={tempAssetUrl}
+                                            onChange={(e) => setTempAssetUrl(e.target.value)}
+                                            placeholder="Or paste URL"
+                                            className="flex-1 border-rp-highlight-med bg-rp-surface text-xs"
+                                        />
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => handleAssetUrlAdd(tempAssetUrl, 'video')}
+                                            disabled={!tempAssetUrl.trim()}
+                                        >
+                                            <IconSparkles size={16} />
+                                        </Button>
+                                        <input
+                                            ref={videoInputRef}
+                                            type="file"
+                                            accept="video/*"
+                                            className="hidden"
+                                            onChange={(e) => handleAssetUpload(e, 'video', 'soul_video')}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Audio */}
+                                <div className="space-y-2">
+                                    <Label className="text-xs">Add Audio Edition</Label>
+                                    <div className="flex gap-2">
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => audioInputRef.current?.click()}
+                                            disabled={uploading}
+                                            className="shrink-0"
+                                        >
+                                            {uploading ? <IconLoader2 size={16} className="mr-2 animate-spin" /> : <IconUpload size={16} className="mr-2" />}
+                                            Upload
+                                        </Button>
+                                        <Input
+                                            value={tempAssetUrl}
+                                            onChange={(e) => setTempAssetUrl(e.target.value)}
+                                            placeholder="Or paste URL"
+                                            className="flex-1 border-rp-highlight-med bg-rp-surface text-xs"
+                                        />
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => handleAssetUrlAdd(tempAssetUrl, 'audio')}
+                                            disabled={!tempAssetUrl.trim()}
+                                        >
+                                            <IconSparkles size={16} />
+                                        </Button>
+                                        <input
+                                            ref={audioInputRef}
+                                            type="file"
+                                            accept="audio/*"
+                                            className="hidden"
+                                            onChange={(e) => handleAssetUpload(e, 'audio', 'soul_audio')}
+                                        />
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Digital Video Upload */}
-                            <div className="space-y-2">
-                                <Label className="text-xs">Package Video</Label>
-                                <div className="flex gap-2">
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => videoInputRef.current?.click()}
-                                        disabled={uploading}
-                                        className="flex-1"
-                                    >
-                                        {uploading ? <IconLoader2 size={16} className="mr-2 animate-spin" /> : <IconUpload size={16} className="mr-2" />}
-                                        Upload Video
-                                    </Button>
-                                    <Input
-                                        value={newItem.digital_video_url || ''}
-                                        onChange={(e) => setNewItem({ ...newItem, digital_video_url: e.target.value })}
-                                        placeholder="Or paste URL"
-                                        className="flex-1 border-rp-highlight-med bg-rp-surface text-xs"
-                                    />
-                                    <input
-                                        ref={videoInputRef}
-                                        type="file"
-                                        accept="video/*"
-                                        className="hidden"
-                                        onChange={handleDigitalVideoUpload}
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Digital Audio Upload */}
-                            <div className="space-y-2">
-                                <Label className="text-xs">Package Audio</Label>
-                                <div className="flex gap-2">
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => audioInputRef.current?.click()}
-                                        disabled={uploading}
-                                        className="flex-1"
-                                    >
-                                        {uploading ? <IconLoader2 size={16} className="mr-2 animate-spin" /> : <IconUpload size={16} className="mr-2" />}
-                                        Upload Audio
-                                    </Button>
-                                    <Input
-                                        value={newItem.digital_audio_url || ''}
-                                        onChange={(e) => setNewItem({ ...newItem, digital_audio_url: e.target.value })}
-                                        placeholder="Or paste URL"
-                                        className="flex-1 border-rp-highlight-med bg-rp-surface text-xs"
-                                    />
-                                    <input
-                                        ref={audioInputRef}
-                                        type="file"
-                                        accept="audio/*"
-                                        className="hidden"
-                                        onChange={handleDigitalAudioUpload}
-                                    />
-                                </div>
-                            </div>
+                            <p className="text-xs text-rp-muted">
+                                💡 Upload or paste URL, then configure edition type, supply, and licensing
+                            </p>
                         </div>
                     )}
 
@@ -341,6 +427,15 @@ export function StoreTab({ metadata, updateMetadata, config, updateConfig, uploa
                     </Button>
                 </div>
             </div>
+
+            {/* Edition Creator Dialog */}
+            <EditionCreator
+                open={editionCreatorOpen}
+                onOpenChange={setEditionCreatorOpen}
+                assetType={currentAssetType}
+                assetUrl={currentAssetUrl}
+                onSave={handleEditionSave}
+            />
         </div>
     )
 }
