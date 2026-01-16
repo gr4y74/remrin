@@ -72,6 +72,7 @@ export type PerplexityLLMID =
 export type OpenRouterLLMID =
   | "meta-llama/llama-3.3-70b-instruct:free" // Llama 3.3 70B (FREE)
   | "meta-llama/llama-3.1-8b-instruct:free" // Llama 3.1 8B (FREE)
+  | "mistralai/mistral-7b-instruct:free" // Mistral 7B Instruct (FREE)
 
 export interface LLM {
   modelId: LLMID
