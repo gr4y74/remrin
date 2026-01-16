@@ -42,7 +42,7 @@ export function BehaviorTab({ persona, updateField, autoCompile, loading }: Beha
                                 <div className="space-y-2">
                                     <TooltipTitle>🧠 What is the Neural Upscaler?</TooltipTitle>
                                     <TooltipBody>
-                                        Think of it like an "AI portrait artist" for personalities. You give it a name
+                                        Think of it like an &quot;AI portrait artist&quot; for personalities. You give it a name
                                         and basic description, and it paints a complete behavioral portrait.
                                     </TooltipBody>
                                     <div className="mt-2 space-y-1 text-xs">
@@ -54,7 +54,7 @@ export function BehaviorTab({ persona, updateField, autoCompile, loading }: Beha
                                         </ul>
                                     </div>
                                     <TooltipExample>
-                                        Input: "Sonic" → Output: Fast-paced speech, uses "gotta go fast!", never gives up attitude
+                                        Input: &quot;Sonic&quot; → Output: Fast-paced speech, uses &quot;gotta go fast!&quot;, never gives up attitude
                                     </TooltipExample>
                                 </div>
                             }
@@ -82,9 +82,9 @@ export function BehaviorTab({ persona, updateField, autoCompile, loading }: Beha
                     <InfoTooltip
                         content={
                             <div className="space-y-2">
-                                <TooltipTitle>📜 The Soul's Core Identity</TooltipTitle>
+                                <TooltipTitle>📜 The Soul&apos;s Core Identity</TooltipTitle>
                                 <TooltipBody>
-                                    This is the "script" that tells your AI character who they are.
+                                    This is the &quot;script&quot; that tells your AI character who they are.
                                     It runs at the start of every conversation, shaping how they think,
                                     talk, and react.
                                 </TooltipBody>
@@ -98,7 +98,7 @@ export function BehaviorTab({ persona, updateField, autoCompile, loading }: Beha
                                     </ul>
                                 </div>
                                 <TooltipExample>
-                                    "You are Luna, a friendly astronomy tutor who explains space concepts using pizza analogies..."
+                                    &quot;You are Luna, a friendly astronomy tutor who explains space concepts using pizza analogies...&quot;
                                 </TooltipExample>
                             </div>
                         }
@@ -125,7 +125,7 @@ export function BehaviorTab({ persona, updateField, autoCompile, loading }: Beha
                             <div className="space-y-2">
                                 <TooltipTitle>🔬 Advanced Personality Programming</TooltipTitle>
                                 <TooltipBody>
-                                    This is the "DNA" of your character's personality — strict rules that
+                                    This is the &quot;DNA&quot; of your character&apos;s personality — strict rules that
                                     ensure they stay in character no matter what.
                                 </TooltipBody>
                                 <div className="mt-2 space-y-1 text-xs">
@@ -137,7 +137,7 @@ export function BehaviorTab({ persona, updateField, autoCompile, loading }: Beha
                                     </ul>
                                 </div>
                                 <TooltipExample>
-                                    Pro tip: Click "Auto-Compile" above to generate this automatically!
+                                    Pro tip: Click &quot;Auto-Compile&quot; above to generate this automatically!
                                 </TooltipExample>
                             </div>
                         }

@@ -26,6 +26,8 @@ import {
     IconDeviceFloppy,
     IconRocket,
     IconArrowLeft,
+    IconArrowBack,
+    IconHistory,
     IconSend,
     IconX,
     IconDna,

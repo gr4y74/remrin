@@ -146,7 +146,7 @@ export function SoulSplicer({ config, updateConfig, onDistill, onApply }: SoulSp
                             <div className="space-y-2">
                                 <TooltipTitle>👥 Who Should You Add?</TooltipTitle>
                                 <TooltipBody>
-                                    These are the "ingredients" for your new personality. Pick people or characters
+                                    These are the &quot;ingredients&quot; for your new personality. Pick people or characters
                                     whose THINKING STYLE you want to blend together.
                                 </TooltipBody>
                                 <div className="mt-2 space-y-1 text-xs">
@@ -154,7 +154,7 @@ export function SoulSplicer({ config, updateConfig, onDistill, onApply }: SoulSp
                                     <ul className="list-inside list-disc text-rp-subtle">
                                         <li>Historical figures (Einstein, Cleopatra)</li>
                                         <li>Fictional characters (Sherlock, Gandalf)</li>
-                                        <li>Personality archetypes ("a wise grandmother")</li>
+                                        <li>Personality archetypes (&quot;a wise grandmother&quot;)</li>
                                     </ul>
                                 </div>
                                 <TooltipExample>
@@ -203,11 +203,11 @@ export function SoulSplicer({ config, updateConfig, onDistill, onApply }: SoulSp
                             <div className="space-y-2">
                                 <TooltipTitle>✍️ Add Your Own Directive</TooltipTitle>
                                 <TooltipBody>
-                                    Want to add a specific instruction or personality trait that isn't covered by the archetypes?
+                                    Want to add a specific instruction or personality trait that isn&apos;t covered by the archetypes?
                                     Add it here and it will be included in the synthesis.
                                 </TooltipBody>
                                 <TooltipExample>
-                                    "Always speaks in haikus" or "Has a fear of heights" or "Loves puns"
+                                    &quot;Always speaks in haikus&quot; or &quot;Has a fear of heights&quot; or &quot;Loves puns&quot;
                                 </TooltipExample>
                             </div>
                         }

@@ -103,7 +103,7 @@ export function IdentityTab({ persona, updateField, uploadFile, uploading }: Ide
                                     Make it memorable and fitting for the personality!
                                 </TooltipBody>
                                 <TooltipExample>
-                                    Good names: "Luna", "Captain Rex", "Wise Owl" — avoid generic names like "AI Assistant"
+                                    Good names: &quot;Luna&quot;, &quot;Captain Rex&quot;, &quot;Wise Owl&quot; — avoid generic names like &quot;AI Assistant&quot;
                                 </TooltipExample>
                             </div>
                         }
