@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { cookies } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 
 export async function GET(request: NextRequest) {
     try {
-        const supabase = createClient()
+        const cookieStore = cookies()
+        const supabase = createClient(cookieStore)
         const { searchParams } = new URL(request.url)
         const editionId = searchParams.get('edition_id')
 
