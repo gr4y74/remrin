@@ -7,6 +7,7 @@ import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { IconMessage } from "@tabler/icons-react"
 import { RemrinContext } from "@/context/context"
+import { MOTHER_OF_SOULS_ID } from "@/lib/forge/is-mother-chat"
 
 interface SidebarRecentChatsProps {
     isExpanded: boolean
@@ -134,6 +135,8 @@ export function SidebarRecentChats({ isExpanded, maxChats = 20, showDemo = false
         }
     }, [showDemo])
 
+
+
     // Get recent chats and group them
     const groupedChats = useMemo(() => {
         let chats: ChatItem[] = []
@@ -151,13 +154,21 @@ export function SidebarRecentChats({ isExpanded, maxChats = 20, showDemo = false
             )
 
             // Map to sidebar format
-            chats = sorted.slice(0, maxChats).map(chat => ({
-                id: chat.personaId,
-                name: chat.personaName,
-                imageUrl: chat.personaImage,
-                href: `/character/${chat.personaId}`,
-                lastChatAt: chat.lastChatAt
-            }))
+            chats = sorted.slice(0, maxChats).map(chat => {
+                // Enforce correct avatar for Mother of Souls
+                // This fixes issues where wrong avatar might be cached in localStorage
+                const imageUrl = chat.personaId === MOTHER_OF_SOULS_ID
+                    ? '/images/mother/thumb.png'
+                    : chat.personaImage
+
+                return {
+                    id: chat.personaId,
+                    name: chat.personaName,
+                    imageUrl: imageUrl,
+                    href: `/character/${chat.personaId}`,
+                    lastChatAt: chat.lastChatAt
+                }
+            })
         }
 
         return groupChatsByTime(chats)

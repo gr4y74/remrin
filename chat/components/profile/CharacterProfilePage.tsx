@@ -5,14 +5,13 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { CharacterHeader } from "./CharacterHeader"
-import { SoulCardDisplay } from "./SoulCardDisplay"
+import { Badge } from "@/components/ui/badge"
+import { FollowButton } from "./FollowButton"
 import { MomentsGallery, MomentData } from "@/components/moments"
-import { MessageCircle, ArrowLeft, Loader2, ImageIcon } from "lucide-react"
+import { MessageCircle, ArrowLeft, Loader2, ImageIcon, Users } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
-import { useParallaxScroll } from "@/lib/animations"
-
 import { cn } from "@/lib/utils"
+import { WelcomeAudioPlayer } from "@/components/audio/WelcomeAudioPlayer"
 
 interface PersonaStats {
     totalChats: number
@@ -24,6 +23,7 @@ interface PersonaData {
     name: string
     description: string | null
     imageUrl: string | null
+    videoUrl?: string | null
     backgroundUrl?: string | null
     category: string | null
     tags: string[]
@@ -43,6 +43,29 @@ interface CharacterProfilePageProps {
     hasMoments?: boolean
 }
 
+// Format large numbers: 12500 -> "12.5K"
+function formatCount(count: number): string {
+    if (count >= 1000000) {
+        return `${(count / 1000000).toFixed(1)}M`
+    }
+    if (count >= 1000) {
+        return `${(count / 1000).toFixed(1)}K`
+    }
+    return count.toString()
+}
+
+// Color palette for tag pills
+const tagColors = [
+    "bg-rp-iris/20 text-rp-iris border-rp-iris/30",
+    "bg-rp-foam/20 text-rp-foam border-rp-foam/30",
+    "bg-rp-rose/20 text-rp-rose border-rp-rose/30",
+    "bg-rp-gold/20 text-rp-gold border-rp-gold/30",
+]
+
+function getTagColor(index: number): string {
+    return tagColors[index % tagColors.length]
+}
+
 export function CharacterProfilePage({
     persona,
     stats,
@@ -53,7 +76,6 @@ export function CharacterProfilePage({
 }: CharacterProfilePageProps) {
     const router = useRouter()
     const [isStartingChat, setIsStartingChat] = useState(false)
-    const parallaxOffset = useParallaxScroll(0.3)
 
     const handleStartChat = async () => {
         setIsStartingChat(true)
@@ -91,107 +113,137 @@ export function CharacterProfilePage({
 
     return (
         <div className="bg-rp-base relative min-h-screen">
-            {/* Blurred Hero Background with Parallax */}
-            {(persona.backgroundUrl || persona.imageUrl) && (
-                <div
-                    className="absolute inset-0 overflow-hidden"
-                    style={{
-                        transform: `translateY(${parallaxOffset}px)`,
-                        willChange: 'transform'
-                    }}
+            {/* Back Button */}
+            <div className="animate-fade-in absolute left-4 top-4 z-20 md:left-8 md:top-8">
+                <button
+                    onClick={() => router.back()}
+                    className="text-rp-subtle hover:text-rp-text inline-flex items-center gap-2 rounded-full bg-black/40 px-4 py-2 backdrop-blur-md transition-all duration-300 hover:bg-black/60"
                 >
-                    <Image
-                        src={persona.backgroundUrl || persona.imageUrl || ""}
-                        alt=""
-                        fill
-                        className="scale-110 object-cover opacity-30 blur-3xl"
-                        priority
-                    />
-                    <div className="from-rp-base/50 via-rp-base/80 to-rp-base absolute inset-0 bg-gradient-to-b" />
-                </div>
-            )}
+                    <ArrowLeft className="size-5" />
+                    <span>Back</span>
+                </button>
+            </div>
 
-            {/* Content */}
-            <div className="relative z-10">
-                {/* Back Button */}
-                <div className="animate-fade-in p-4 md:px-8">
-                    <button
-                        onClick={() => router.back()}
-                        className="text-rp-subtle hover:text-rp-text inline-flex items-center gap-2 transition-all duration-300 hover:translate-x-[-4px]"
-                    >
-                        <ArrowLeft className="size-5" />
-                        <span>Back</span>
-                    </button>
-                </div>
-
-                {/* Main Content */}
-                <main className="mx-auto max-w-4xl px-4 pb-24 pt-8 md:px-8">
-                    <div className="flex flex-col gap-12 lg:flex-row lg:gap-16">
-                        {/* Left Column - Soul Card */}
-                        <div
-                            className="animate-fade-in-up mx-auto w-full max-w-xs shrink-0 lg:mx-0"
-                            style={{ animationDelay: '100ms', animationFillMode: 'both' }}
-                        >
-                            <SoulCardDisplay
-                                name={persona.name}
-                                imageUrl={persona.imageUrl}
-                                tags={persona.tags}
-                                welcomeAudioUrl={persona.welcomeAudioUrl}
-                            />
-                        </div>
+            {/* Hero Image Section */}
+            <div className="relative h-[50vh] min-h-[400px] max-h-[600px] w-full overflow-hidden">
+                {persona.videoUrl ? (
+                    <>
+                        <video
+                            src={persona.videoUrl}
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                            className="absolute inset-0 h-full w-full object-cover object-center"
+                        />
+                        {/* Gradient Overlay */}
+                        <div className="from-rp-base/60 via-rp-base/40 to-rp-base absolute inset-0 bg-gradient-to-b" />
+                    </>
+                ) : persona.imageUrl ? (
+                    <>
+                        <Image
+                            src={persona.imageUrl}
+                            alt={persona.name}
+                            fill
+                            className="object-cover object-center"
+                            priority
+                        />
+                        {/* Gradient Overlay */}
+                        <div className="from-rp-base/60 via-rp-base/40 to-rp-base absolute inset-0 bg-gradient-to-b" />
+                    </>
+                ) : (
+                    <div className="from-rp-iris/50 to-rp-foam/50 flex size-full items-center justify-center bg-gradient-to-br">
+                        <span className="text-rp-text/50 text-9xl font-bold">
+                            {persona.name.slice(0, 2).toUpperCase()}
+                        </span>
                     </div>
+                )}
 
-                    {/* Right Column - Character Details */}
-                    <div className="flex-1 space-y-8">
-                        {/* Header */}
-                        <div
-                            className="animate-fade-in-up"
-                            style={{ animationDelay: '200ms', animationFillMode: 'both' }}
-                        >
-                            <CharacterHeader
-                                personaId={persona.id}
-                                name={persona.name}
-                                description={persona.description}
-                                imageUrl={persona.imageUrl}
-                                category={persona.category}
-                                totalChats={stats.totalChats}
-                                followersCount={stats.followersCount}
-                                isFollowing={isFollowing}
-                                isOwner={isOwner}
-                                creatorName={persona.creatorName}
-                            />
+                {/* Welcome Audio Player */}
+                {persona.welcomeAudioUrl && (
+                    <WelcomeAudioPlayer
+                        audioUrl={persona.welcomeAudioUrl}
+                        autoPlay
+                        className="absolute bottom-4 right-4 z-20"
+                    />
+                )}
+            </div>
+
+            {/* Main Content - Centered Single Column */}
+            <main className="relative -mt-16 pb-24">
+                <div className="mx-auto max-w-3xl px-4 md:px-8">
+                    {/* Info Card */}
+                    <div className="animate-fade-in-up rounded-3xl border border-white/10 bg-rp-base/95 p-6 shadow-2xl backdrop-blur-xl md:p-8">
+                        {/* Name and Category */}
+                        <div className="mb-4 text-center">
+                            <h1 className="font-tiempos-headline text-rp-text mb-2 text-3xl font-bold tracking-tight md:text-4xl">
+                                {persona.name}
+                            </h1>
+                            {persona.category && (
+                                <Badge
+                                    variant="secondary"
+                                    className="bg-rp-overlay text-rp-text hover:bg-rp-overlay/80 rounded-full px-4 py-1 text-sm font-medium"
+                                >
+                                    {persona.category}
+                                </Badge>
+                            )}
                         </div>
 
-                        {/* Intro Message Preview */}
-                        {persona.introMessage && (
-                            <div
-                                className="bg-rp-surface animate-fade-in-up hover:bg-rp-overlay rounded-2xl p-6 backdrop-blur-xl transition-all duration-300"
-                                style={{ animationDelay: '300ms', animationFillMode: 'both' }}
-                            >
-                                <h2 className="text-rp-muted mb-3 text-sm font-semibold uppercase tracking-wider">
-                                    First Message
-                                </h2>
-                                <p className="text-rp-text text-base italic leading-relaxed">
-                                    &ldquo;{persona.introMessage}&rdquo;
-                                </p>
+                        {/* Description */}
+                        {persona.description && (
+                            <p className="text-rp-subtle mb-6 text-center text-base leading-relaxed md:text-lg">
+                                {persona.description}
+                            </p>
+                        )}
+
+                        {/* Tags */}
+                        {persona.tags.length > 0 && (
+                            <div className="mb-6 flex flex-wrap justify-center gap-2">
+                                {persona.tags.slice(0, 6).map((tag, index) => (
+                                    <Badge
+                                        key={tag}
+                                        className={cn(
+                                            "rounded-full border px-3 py-1 text-xs font-medium",
+                                            getTagColor(index)
+                                        )}
+                                    >
+                                        {tag}
+                                    </Badge>
+                                ))}
+                                {persona.tags.length > 6 && (
+                                    <Badge className="border-rp-muted bg-rp-surface/50 text-rp-subtle rounded-full border px-3 py-1 text-xs font-medium">
+                                        +{persona.tags.length - 6}
+                                    </Badge>
+                                )}
                             </div>
                         )}
 
-                        {/* Start Chat CTA with floating animation */}
-                        <div
-                            className="animate-fade-in-up pt-4"
-                            style={{ animationDelay: '400ms', animationFillMode: 'both' }}
-                        >
+                        {/* Stats Row */}
+                        <div className="text-rp-subtle mb-6 flex items-center justify-center gap-6 border-y border-white/5 py-4">
+                            <div className="flex items-center gap-2">
+                                <MessageCircle className="text-rp-iris size-5" />
+                                <span className="text-rp-text font-semibold">{formatCount(stats.totalChats)}</span>
+                                <span className="text-sm">chats</span>
+                            </div>
+                            <div className="bg-rp-overlay h-4 w-px" />
+                            <div className="flex items-center gap-2">
+                                <Users className="text-rp-foam size-5" />
+                                <span className="text-rp-text font-semibold">{formatCount(stats.followersCount)}</span>
+                                <span className="text-sm">followers</span>
+                            </div>
+                        </div>
+
+                        {/* CTA Buttons - Prominent and Above Fold */}
+                        <div className="flex flex-col gap-3 sm:flex-row">
                             <Button
                                 size="lg"
                                 onClick={handleStartChat}
                                 disabled={isStartingChat}
                                 className={cn(
-                                    "from-rp-iris to-rp-foam text-rp-base group w-full rounded-2xl bg-gradient-to-r py-6 text-lg font-bold",
+                                    "from-rp-iris to-rp-foam text-rp-base group flex-1 rounded-2xl bg-gradient-to-r py-6 text-lg font-bold",
                                     "shadow-rp-iris/25 shadow-2xl transition-all duration-300",
                                     "hover:from-rp-iris/80 hover:to-rp-foam/80 hover:shadow-rp-iris/40 hover:scale-[1.02]",
-                                    "disabled:opacity-70",
-                                    !isStartingChat && "animate-float"
+                                    "disabled:opacity-70"
                                 )}
                             >
                                 {isStartingChat ? (
@@ -206,47 +258,78 @@ export function CharacterProfilePage({
                                     </>
                                 )}
                             </Button>
+
+                            <FollowButton
+                                personaId={persona.id}
+                                initialIsFollowing={isFollowing}
+                                className="flex-1 rounded-2xl py-6 text-lg sm:flex-initial sm:min-w-[140px]"
+                            />
                         </div>
 
-                        {/* Moments Section */}
-                        {(hasMoments || moments.length > 0) && (
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <h2 className="text-rp-text flex items-center gap-2 text-lg font-semibold">
-                                        <ImageIcon className="text-rp-iris size-5" />
-                                        Moments
-                                    </h2>
-                                    {moments.length > 0 && (
-                                        <Link
-                                            href={`/moments?persona=${persona.id}`}
-                                            className="text-rp-iris hover:text-rp-rose text-sm transition-colors"
-                                        >
-                                            View All →
-                                        </Link>
-                                    )}
-                                </div>
-                                {moments.length > 0 ? (
-                                    <MomentsGallery
-                                        initialMoments={moments}
-                                        personaId={persona.id}
-                                        initialHasMore={false}
-                                        showViewAllLink={true}
-                                        viewAllHref={`/moments?persona=${persona.id}`}
-                                    />
-                                ) : (
-                                    <div className="bg-rp-surface rounded-2xl p-8 text-center backdrop-blur-xl">
-                                        <ImageIcon className="text-rp-muted mx-auto mb-3 size-12" />
-                                        <p className="text-rp-subtle">No moments yet</p>
-                                        <p className="text-rp-muted mt-1 text-sm">
-                                            Check back later for gallery content
-                                        </p>
-                                    </div>
-                                )}
-                            </div>
+                        {/* Creator Attribution */}
+                        {persona.creatorName && (
+                            <p className="text-rp-muted mt-4 text-center text-sm">
+                                Created by <span className="text-rp-subtle">{persona.creatorName}</span>
+                            </p>
                         )}
                     </div>
-                </main>
-            </div>
+
+                    {/* Intro Message Preview */}
+                    {persona.introMessage && (
+                        <div
+                            className="animate-fade-in-up mt-8 rounded-2xl border border-white/5 bg-rp-base/60 p-6 backdrop-blur-xl transition-all duration-300 hover:border-white/10"
+                            style={{ animationDelay: '100ms', animationFillMode: 'both' }}
+                        >
+                            <h2 className="text-rp-muted mb-3 text-sm font-semibold uppercase tracking-wider">
+                                First Message
+                            </h2>
+                            <p className="text-rp-text text-base italic leading-relaxed">
+                                &ldquo;{persona.introMessage}&rdquo;
+                            </p>
+                        </div>
+                    )}
+
+                    {/* Moments Section */}
+                    {(hasMoments || moments.length > 0) && (
+                        <div
+                            className="animate-fade-in-up mt-8 space-y-4"
+                            style={{ animationDelay: '200ms', animationFillMode: 'both' }}
+                        >
+                            <div className="flex items-center justify-between">
+                                <h2 className="text-rp-text flex items-center gap-2 text-lg font-semibold">
+                                    <ImageIcon className="text-rp-iris size-5" />
+                                    Moments
+                                </h2>
+                                {moments.length > 0 && (
+                                    <Link
+                                        href={`/moments?persona=${persona.id}`}
+                                        className="text-rp-iris hover:text-rp-rose text-sm transition-colors"
+                                    >
+                                        View All →
+                                    </Link>
+                                )}
+                            </div>
+                            {moments.length > 0 ? (
+                                <MomentsGallery
+                                    initialMoments={moments}
+                                    personaId={persona.id}
+                                    initialHasMore={false}
+                                    showViewAllLink={true}
+                                    viewAllHref={`/moments?persona=${persona.id}`}
+                                />
+                            ) : (
+                                <div className="rounded-2xl border border-white/5 bg-rp-base/60 p-8 text-center backdrop-blur-xl">
+                                    <ImageIcon className="text-rp-muted mx-auto mb-3 size-12" />
+                                    <p className="text-rp-subtle">No moments yet</p>
+                                    <p className="text-rp-muted mt-1 text-sm">
+                                        Check back later for gallery content
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+            </main>
         </div>
     )
 }

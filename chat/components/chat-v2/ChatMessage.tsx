@@ -199,50 +199,41 @@ export const ChatMessage = memo(function ChatMessage({
         </ReactMarkdown>
     )
 
-    // Render Mother specialized message
-    if (isMother) {
-        return (
-            <MotherMessage
-                message={message.content}
-                isStreaming={isStreaming}
-                autoPlay={!isStreaming && displayedContent === message.content}
-            >
-                <div className="space-y-4">
-                    {renderMarkdown(displayedContent)}
-
-                    {/* Tool specific rendering */}
-                    {message.metadata?.toolResult?.image_url && (
-                        <div className="mt-4 rounded-xl overflow-hidden border border-rp-iris/30 shadow-2xl shadow-rp-iris/10">
-                            <Image
-                                src={message.metadata.toolResult.image_url}
-                                alt="Soul Portrait"
-                                width={512}
-                                height={512}
-                                className="w-full h-auto"
-                            />
-                        </div>
-                    )}
-
-                    {message.metadata?.toolResult?.revealData && (
-                        <SoulRevealCard data={message.metadata.toolResult.revealData as SoulRevealData} />
-                    )}
-
-                    {isVoicePrompt && (
-                        <VoiceSelector
-                            selectedId={selectedVoiceId}
-                            onSelect={(vid) => {
-                                // Progress the ritual by sending the selection back
-                                setSelectedVoiceId(vid)
-                                const voice = AVAILABLE_VOICES.find(v => v.id === vid)
-                                const voiceName = voice?.name || vid
-                                sendMessage(`I have chosen the frequency of ${voiceName} (${vid}).`, false)
-                            }}
-                        />
-                    )}
+    // Render Mother specialized widgets (but in standard bubble)
+    const motherToolWidgets = isMother ? (
+        <>
+            {/* Tool specific rendering */}
+            {message.metadata?.toolResult?.image_url && (
+                <div className="mt-4 rounded-xl overflow-hidden border border-rp-iris/30 shadow-2xl shadow-rp-iris/10">
+                    <Image
+                        src={message.metadata.toolResult.image_url}
+                        alt="Soul Portrait"
+                        width={512}
+                        height={512}
+                        className="w-full h-auto"
+                    />
                 </div>
-            </MotherMessage>
-        )
-    }
+            )}
+
+            {message.metadata?.toolResult?.revealData && (
+                <SoulRevealCard data={message.metadata.toolResult.revealData as SoulRevealData} />
+            )}
+
+            {isVoicePrompt && (
+                <VoiceSelector
+                    selectedId={selectedVoiceId}
+                    onSelect={(vid) => {
+                        // Progress the ritual by sending the selection back
+                        setSelectedVoiceId(vid)
+                        const voice = AVAILABLE_VOICES.find(v => v.id === vid)
+                        const voiceName = voice?.name || vid
+                        sendMessage(`I have chosen the frequency of ${voiceName} (${vid}).`, false)
+                    }}
+                />
+            )}
+        </>
+    ) : null
+
 
     // Role == tool shouldn't really be rendered in the chat flow directly usually, 
     // it's handled by the engine to provide context. 
@@ -330,6 +321,9 @@ export const ChatMessage = memo(function ChatMessage({
                         <ThinkingIndicator />
                     ) : null}
                 </div>
+
+                {/* Mother-specific tool widgets */}
+                {motherToolWidgets}
 
                 {/* Action buttons for assistant messages */}
                 {!isUser && message.content && (

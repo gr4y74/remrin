@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Mother of Souls - Remrin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0f;
+            color: white;
+            min-height: 100vh;
+        }
+
+        /* HERO SECTION - No container, full bleed */
+        .character-hero {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            min-height: 600px;
+            max-height: 800px;
+            overflow: hidden;
+        }
+
+        /* Background Image with Blur */
+        .hero-background {
+            position: absolute;
+            inset: 0;
+            background-image: url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=1200');
+            background-size: cover;
+            background-position: center;
+            filter: blur(20px) brightness(0.4);
+            transform: scale(1.1); /* Prevents blur edge artifacts */
+        }
+
+        /* Gradient Overlay */
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(10, 10, 15, 0.3) 0%,
+                rgba(10, 10, 15, 0.7) 50%,
+                rgba(10, 10, 15, 0.95) 100%
+            );
+        }
+
+        /* Content Container */
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 24px 40px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        /* Character Avatar (Large, Circular) */
+        .character-avatar {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 6px solid rgba(255, 255, 255, 0.2);
+            object-fit: cover;
+            margin-bottom: 24px;
+            box-shadow: 
+                0 0 60px rgba(100, 200, 255, 0.4),
+                0 20px 40px rgba(0, 0, 0, 0.6);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Character Name */
+        .character-name {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #fff, #64b5f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        /* Character Bio */
+        .character-bio {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 600px;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        /* Tag/Category */
+        .character-tag {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(100, 181, 246, 0.2);
+            border: 1px solid rgba(100, 181, 246, 0.3);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #64b5f6;
+            margin-bottom: 32px;
+            text-transform: lowercase;
+        }
+
+        /* Stats Row */
+        .character-stats {
+            display: flex;
+            gap: 32px;
+            margin-bottom: 32px;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-icon {
+            font-size: 1.2rem;
+        }
+
+        /* Action Buttons */
+        .character-actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Creator Attribution */
+        .character-creator {
+            margin-top: auto;
+            padding-top: 40px;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* MOBILE RESPONSIVE */
+        @media (max-width: 768px) {
+            .character-hero {
+                min-height: 100vh;
+                max-height: none;
+            }
+
+            .hero-content {
+                padding: 40px 20px;
+                justify-content: flex-start;
+                padding-top: 80px;
+            }
+
+            .character-avatar {
+                width: 150px;
+                height: 150px;
+                margin-bottom: 20px;
+            }
+
+            .character-name {
+                font-size: 2rem;
+            }
+
+            .character-bio {
+                font-size: 1rem;
+            }
+
+            .character-stats {
+                gap: 20px;
+                font-size: 0.85rem;
+            }
+
+            .character-actions {
+                width: 100%;
+            }
+
+            .btn {
+                flex: 1;
+                min-width: 140px;
+                justify-content: center;
+            }
+        }
+
+        /* Alternative Layout: Side-by-Side (Desktop Only) */
+        @media (min-width: 1024px) {
+            .character-hero.layout-split {
+                display: flex;
+            }
+
+            .layout-split .hero-background {
+                width: 50%;
+                right: 50%;
+                left: 0;
+                filter: blur(0) brightness(0.6);
+            }
+
+            .layout-split .hero-content {
+                width: 50%;
+                margin-left: 50%;
+                align-items: flex-start;
+                text-align: left;
+                justify-content: center;
+                padding-left: 60px;
+            }
+
+            .layout-split .character-avatar {
+                display: none; /* Image is on left side */
+            }
+
+            .layout-split .character-actions {
+                justify-content: flex-start;
+            }
+        }
+
+        /* Compact Card Alternative (Optional) */
+        .character-card-compact {
+            max-width: 600px;
+            margin: 40px auto;
+            background: rgba(20, 20, 30, 0.8);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 32px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .card-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .card-subtitle {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <!-- OPTION 1: HERO LAYOUT (Default - Recommended) -->
+    <div class="character-hero">
+        <div class="hero-background"></div>
+        <div class="hero-overlay"></div>
+        
+        <div class="hero-content">
+            <img 
+                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400" 
+                alt="The Mother of Souls" 
+                class="character-avatar"
+            >
+            
+            <h1 class="character-name">The Mother of Souls</h1>
+            
+            <p class="character-bio">
+                Your mystical guide to creating AI companions. She walks you through the sacred ritual of designing a unique soul.
+            </p>
+            
+            <span class="character-tag">system</span>
+            
+            <div class="character-stats">
+                <div class="stat-item">
+                    <span class="stat-icon">💬</span>
+                    <span>0 chats</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">👥</span>
+                    <span>1 follower</span>
+                </div>
+            </div>
+            
+            <div class="character-actions">
+                <button class="btn btn-primary" onclick="startChat()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    Start Chat
+                </button>
+                
+                <button class="btn btn-secondary" onclick="followCharacter()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                    Follow
+                </button>
+            </div>
+            
+            <div class="character-creator">
+                Created by sosu
+            </div>
+        </div>
+    </div>
+
+    <!-- OPTION 2: COMPACT CARD (Alternative - Uncomment to use) -->
+    <!--
+    <div style="background: #0a0a0f; min-height: 100vh; padding: 40px 20px;">
+        <div class="character-card-compact">
+            <img 
+                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600" 
+                alt="The Mother of Souls" 
+                class="card-image"
+            >
+            
+            <div class="card-content">
+                <div class="card-header">
+                    <img 
+                        src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" 
+                        alt="Avatar" 
+                        class="card-avatar"
+                    >
+                    <div>
+                        <h2 class="card-title">The Mother of Souls</h2>
+                        <p class="card-subtitle">system</p>
+                    </div>
+                </div>
+                
+                <p class="character-bio" style="margin-bottom: 20px;">
+                    Your mystical guide to creating AI companions. She walks you through the sacred ritual of designing a unique soul.
+                </p>
+                
+                <div class="character-stats" style="justify-content: flex-start; margin-bottom: 24px;">
+                    <div class="stat-item">
+                        <span class="stat-icon">💬</span>
+                        <span>0 chats</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">👥</span>
+                        <span>1 follower</span>
+                    </div>
+                </div>
+                
+                <div class="character-actions" style="justify-content: flex-start;">
+                    <button class="btn btn-primary">Start Chat</button>
+                    <button class="btn btn-secondary">Follow</button>
+                </div>
+                
+                <div class="character-creator" style="margin-top: 24px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1);">
+                    Created by sosu
+                </div>
+            </div>
+        </div>
+    </div>
+    -->
+
+    <script>
+        function startChat() {
+            console.log('Starting chat with The Mother of Souls...');
+            // Navigate to chat page
+            window.location.href = '/chat/mother-of-souls';
+        }
+
+        function followCharacter() {
+            console.log('Following character...');
+            // Handle follow logic
+            alert('You are now following The Mother of Souls!');
+        }
+    </script>
+</body>
+</html>

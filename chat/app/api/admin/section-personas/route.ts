@@ -129,7 +129,10 @@ export async function PATCH(request: Request) {
         const body = await request.json()
         const { persona_id, section_ids } = body
 
+        console.log('[PATCH /api/admin/section-personas] Request:', { persona_id, section_ids })
+
         if (!persona_id || !section_ids || !Array.isArray(section_ids)) {
+            console.error('[PATCH /api/admin/section-personas] Invalid request:', { persona_id, section_ids })
             return NextResponse.json(
                 { error: "persona_id and section_ids (array) are required" },
                 { status: 400 }
@@ -151,12 +154,17 @@ export async function PATCH(request: Request) {
 
         // Get current user
         const { data: { user } } = await supabase.auth.getUser()
+        console.log('[PATCH /api/admin/section-personas] User:', user?.id)
 
         // First, remove all existing assignments for this persona
-        await supabase
+        const { error: deleteError } = await supabase
             .from("section_personas")
             .delete()
             .eq("persona_id", persona_id)
+
+        if (deleteError) {
+            console.error('[PATCH /api/admin/section-personas] Delete error:', deleteError)
+        }
 
         // Then, add new assignments
         if (section_ids.length > 0) {
@@ -167,17 +175,27 @@ export async function PATCH(request: Request) {
                 added_by: user?.id || null
             }))
 
-            const { error } = await supabase
+            console.log('[PATCH /api/admin/section-personas] Inserting:', inserts)
+
+            const { error, data } = await supabase
                 .from("section_personas")
                 .insert(inserts)
+                .select()
 
             if (error) {
-                console.error("Error updating section assignments:", error)
+                console.error('[PATCH /api/admin/section-personas] Insert error:', {
+                    message: error.message,
+                    details: error.details,
+                    hint: error.hint,
+                    code: error.code
+                })
                 return NextResponse.json(
-                    { error: error.message },
+                    { error: error.message, details: error.details, hint: error.hint },
                     { status: 500 }
                 )
             }
+
+            console.log('[PATCH /api/admin/section-personas] Success:', data)
         }
 
         return NextResponse.json({
@@ -185,9 +203,9 @@ export async function PATCH(request: Request) {
             message: `Persona assigned to ${section_ids.length} section(s)`
         })
     } catch (error) {
-        console.error("Admin section persona bulk update error:", error)
+        console.error("[PATCH /api/admin/section-personas] Unexpected error:", error)
         return NextResponse.json(
-            { error: "Failed to update section assignments" },
+            { error: "Failed to update section assignments", details: String(error) },
             { status: 500 }
         )
     }

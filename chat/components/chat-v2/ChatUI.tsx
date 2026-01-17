@@ -87,6 +87,9 @@ function ChatUIInner({
     // Determine if we should show desaturation (low battery)
     const isLowBattery = moodState.battery < 30
 
+    // Check if this is Mother of Souls chat
+    const isMotherChat = personaId === 'a0000000-0000-0000-0000-000000000001' || personaName === 'The Mother of Souls'
+
     // Visual Novel Layout
     if (isVisualNovelMode) {
         const spriteUrl = personaImage || "/images/mother/mother_avatar.png"
@@ -163,6 +166,18 @@ function ChatUIInner({
     // Classic Layout
     return (
         <div className={`flex h-full flex-col relative ${isLowBattery ? 'low-battery-mode' : ''}`}>
+            {/* Mother of Souls Background */}
+            {isMotherChat && (
+                <div
+                    className="absolute inset-0 z-0"
+                    style={{
+                        backgroundImage: 'url(/images/mother/mother_bg2.jpg)',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundAttachment: 'fixed'
+                    }}
+                />
+            )}
             {/* Mini Profile Card */}
             {personaId && (
                 <div className="relative z-10">
