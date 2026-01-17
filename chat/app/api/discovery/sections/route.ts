@@ -8,14 +8,15 @@ type AgeRating = Database["public"]["Enums"]["age_rating"]
 // Helper function to determine allowed age ratings based on user's age bracket
 function getAllowedAgeRatings(ageBracket: string | null): AgeRating[] {
     if (!ageBracket) {
-        // No age set - only show 'everyone' content
-        return ['everyone']
+        // No age set - default to general public content (everyone + kids)
+        // Kids content is considered safe for all audiences
+        return ['everyone', 'kids']
     }
 
     // Parse age bracket (format: "0-12", "13-17", "18+", etc.)
     const ageMatch = ageBracket.match(/(\d+)/)
     if (!ageMatch) {
-        return ['everyone']
+        return ['everyone', 'kids']
     }
 
     const age = parseInt(ageMatch[1])

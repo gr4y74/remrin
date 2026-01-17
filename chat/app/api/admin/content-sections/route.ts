@@ -23,12 +23,12 @@ export async function GET() {
             }
         )
 
-        // Fetch all sections with persona counts
+        // Fetch all sections with persona IDs to count them
         const { data: sections, error } = await supabase
             .from("content_sections")
             .select(`
                 *,
-                section_personas(count)
+                section_personas(persona_id)
             `)
             .order("sort_order", { ascending: true })
 

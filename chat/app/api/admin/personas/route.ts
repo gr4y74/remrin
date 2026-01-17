@@ -33,8 +33,10 @@ export async function GET() {
                 persona_stats(
                     followers_count,
                     total_chats,
+                    total_chats,
                     trending_score
-                )
+                ),
+                section_personas(section_id)
             `)
             .order("created_at", { ascending: false })
 
@@ -43,11 +45,14 @@ export async function GET() {
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
 
-        // Flatten stats for frontend convenience if needed, or keep as is.
-        // Frontend expects direct access or nested. Let's keep nested but ensure single object.
+        // Flatten stats and section assignments
         const enrichedPersonas = personas.map(p => ({
             ...p,
-            persona_stats: Array.isArray(p.persona_stats) ? p.persona_stats[0] : p.persona_stats
+            persona_stats: Array.isArray(p.persona_stats) ? p.persona_stats[0] : p.persona_stats,
+            sections: Array.isArray(p.section_personas)
+                ? p.section_personas.map((sp: any) => sp.section_id)
+                : [],
+            section_personas: undefined
         }))
 
         return NextResponse.json({ personas: enrichedPersonas })

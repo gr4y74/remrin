@@ -5,6 +5,7 @@ import { IconArrowLeft } from "@tabler/icons-react"
 import { AdminPasswordGate } from "@/components/admin/AdminPasswordGate"
 import { FeaturedManager } from "@/components/admin/FeaturedManager"
 import { BannerManager } from "@/components/admin/BannerManager"
+import { ContentSectionsManager } from "@/components/admin/ContentSectionsManager"
 
 export default function AdminFeaturedPage() {
     return (
@@ -33,14 +34,25 @@ export default function AdminFeaturedPage() {
                         <BannerManager />
                     </div>
 
-                    <div className="mb-6">
-                        <h2 className="mb-2 text-2xl font-bold">Manage Featured Content</h2>
-                        <p className="text-rp-subtle">
-                            Control which Souls appear in the Hero Carousel and Gallery.
-                        </p>
+                    <div className="mb-12 border-t border-rp-highlight-med pt-8">
+                        <div className="mb-6">
+                            <h2 className="mb-2 text-2xl font-bold">Content Categories</h2>
+                            <p className="text-rp-subtle">
+                                Manage specialized sections like Kids, Gaming, Religion, etc. and set age restrictions.
+                            </p>
+                        </div>
+                        <ContentSectionsManager />
                     </div>
 
-                    <FeaturedManager />
+                    <div className="mb-12 border-t border-rp-highlight-med pt-8">
+                        <div className="mb-6">
+                            <h2 className="mb-2 text-2xl font-bold">Manage Featured Content</h2>
+                            <p className="text-rp-subtle">
+                                Control which Souls appear in the Hero Carousel and Gallery.
+                            </p>
+                        </div>
+                        <FeaturedManager />
+                    </div>
                 </main>
             </div>
         </AdminPasswordGate>

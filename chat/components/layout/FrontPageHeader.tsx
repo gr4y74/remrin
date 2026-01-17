@@ -135,9 +135,18 @@ export function FrontPageHeader({
         if (onCategoryClick) {
             onCategoryClick(categoryId)
         } else {
-            const exploreSection = document.querySelector('[data-section="explore-souls"]')
-            if (exploreSection) {
-                exploreSection.scrollIntoView({ behavior: "smooth" })
+            // Try to find a section with this specific ID (slug)
+            const sectionId = categoryId.toLowerCase()
+            const section = document.getElementById(sectionId)
+
+            if (section) {
+                section.scrollIntoView({ behavior: "smooth" })
+            } else {
+                // Fallback to explore section if specific category not found
+                const exploreSection = document.querySelector('[data-section="explore-souls"]')
+                if (exploreSection) {
+                    exploreSection.scrollIntoView({ behavior: "smooth" })
+                }
             }
         }
     }

@@ -198,9 +198,22 @@ export default function HomePage() {
 
   // Generate hero carousel items (mix of real + demo)
   // Return only real featured personas
+  // Return only real featured personas, or fallback to demo content if database is empty/loading
   const carouselItems = useMemo(() => {
-    return personas.filter(p => p.is_featured).slice(0, 8)
-  }, [personas])
+    const dbFeatured = personas.filter(p => p.is_featured)
+
+    if (dbFeatured.length > 0) {
+      return dbFeatured.slice(0, 8)
+    }
+
+    // Fallback to hardcoded featured characters if no DB results
+    return featuredCharacters.map(char => ({
+      ...char,
+      description: null,
+      is_featured: true,
+      rarity: "legendary" as const
+    }))
+  }, [personas, featuredCharacters])
 
   const handlePersonaClick = (persona: { id: string } | string) => {
     const personaId = typeof persona === "string" ? persona : persona.id
@@ -246,7 +259,7 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Section 3: Featured Souls with 3D Carousel - KEEP AS IS */}
+      {/* Section 3: Featured Souls with 3D Carousel - Dynamic data */}
       <section className="relative mt-8">
         <div className="mb-4 px-6 text-center">
           <h2 className="font-tiempos-headline inline-flex items-center gap-2 font-semibold" style={{ fontSize: '40px', color: headingColor }}>
@@ -256,25 +269,12 @@ export default function HomePage() {
           </h2>
         </div>
         <FeaturedCarousel
-          characters={[
-            { id: "kess", name: "Kess", imageUrl: "/images/featured/Kess.png" },
-            { id: "oma", name: "Oma", imageUrl: "/images/featured/Oma.png" },
-            { id: "silas", name: "Silas", imageUrl: "/images/featured/Silas.png" },
-            { id: "squee", name: "Squee", imageUrl: "/images/featured/Squee.png" },
-            { id: "sui", name: "Sui", imageUrl: "/images/featured/Sui.png" },
-            { id: "volt", name: "Volt", imageUrl: "/images/featured/Volt.png" },
-            { id: "boon", name: "Boon", imageUrl: "/images/featured/boon.png" },
-            { id: "cupcake", name: "Cupcake", imageUrl: "/images/featured/cupcake.png" },
-            { id: "fello-fello", name: "Fello Fello", imageUrl: "/images/featured/fello_fello.png" },
-            { id: "fen", name: "Fen", imageUrl: "/images/featured/fen.png" },
-            { id: "fenris", name: "Fenris", imageUrl: "/images/featured/fenris.png" },
-            { id: "kael", name: "Kael", imageUrl: "/images/featured/kael.png" },
-            { id: "kilo", name: "Kilo", imageUrl: "/images/featured/kilo.png" },
-            { id: "krill", name: "Krill", imageUrl: "/images/featured/krill.png" },
-            { id: "meek", name: "Meek", imageUrl: "/images/featured/meek.png" },
-            { id: "surge", name: "Surge", imageUrl: "/images/featured/surge.png" },
-            { id: "vorath", name: "Vorath", imageUrl: "/images/featured/vorath.png" }
-          ]}
+          characters={carouselItems.map(p => ({
+            id: p.id,
+            name: p.name,
+            imageUrl: p.image_url,
+            isFeatured: true
+          }))}
           onCharacterClick={handlePersonaClick}
         />
       </section>
@@ -286,13 +286,15 @@ export default function HomePage() {
       <FeaturedPremiumRow onPersonaClick={handlePersonaClick} />
 
       {/* Section 5.5: Dynamic Content Sections (Kids, Gaming, etc.) - NEW */}
+      {/* Section 5.5: Dynamic Content Sections (Kids, Gaming, etc.) - NEW */}
       {contentSections.map(section => (
-        <CategorySection
-          key={section.id}
-          section={section}
-          personas={section.personas}
-          onPersonaClick={handlePersonaClick}
-        />
+        <div key={section.id} id={section.slug} className="scroll-mt-24">
+          <CategorySection
+            section={section}
+            personas={section.personas}
+            onPersonaClick={handlePersonaClick}
+          />
+        </div>
       ))}
 
       {/* Section 6: Explore All Souls - Updated with gacha-style cards */}

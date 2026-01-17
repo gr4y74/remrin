@@ -23,15 +23,42 @@ export default async function ProfilePage({ params }: { params: { userId: string
     const supabase = createClient(cookies());
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.userId);
 
-    // First, fetch just the profile without joins
-    const { data: profileBase, error: profileError } = await supabase
+    // First, fetch from user_profiles
+    let { data: profileBase, error: profileError } = await supabase
         .from('user_profiles')
         .select('*')
         .eq(isUuid ? 'user_id' : 'username', params.userId)
-        .single();
+        .maybeSingle(); // Use maybeSingle to handle missing record without erroring immediately
 
-    if (profileError || !profileBase) {
-        notFound();
+    // Fallback to profiles table if not found in user_profiles
+    if (!profileBase) {
+        const { data: fallbackProfile, error: fallbackError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq(isUuid ? 'user_id' : 'username', params.userId)
+            .maybeSingle();
+
+        if (fallbackError || !fallbackProfile) {
+            notFound();
+        }
+
+        // Map profiles structure to user_profiles structure for the UI
+        profileBase = {
+            id: fallbackProfile.id,
+            user_id: fallbackProfile.user_id || fallbackProfile.id,
+            username: fallbackProfile.username,
+            display_name: fallbackProfile.display_name,
+            bio: fallbackProfile.bio,
+            avatar_url: fallbackProfile.image_url,
+            created_at: fallbackProfile.created_at,
+            updated_at: fallbackProfile.updated_at,
+            // Add other required fields with defaults
+            cover_image_url: null,
+            website_url: null,
+            location: null,
+            pronouns: null,
+            is_verified: false
+        };
     }
 
     // Fetch related data separately (these may be empty and that's OK)

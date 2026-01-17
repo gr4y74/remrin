@@ -397,7 +397,8 @@ function EditPersonaModal({ persona, onClose, onSave, sections }: { persona: Per
         total_chats: persona.persona_stats?.total_chats || 0,
         followers_count: persona.persona_stats?.followers_count || 0,
         trending_score: persona.persona_stats?.trending_score || 0,
-        section_ids: persona.sections || []
+        section_ids: persona.sections || [],
+        visibility: persona.visibility || "PRIVATE"
     })
     const [savingSections, setSavingSections] = useState(false)
 
@@ -410,7 +411,8 @@ function EditPersonaModal({ persona, onClose, onSave, sections }: { persona: Per
                 total_chats: Number(form.total_chats),
                 followers_count: Number(form.followers_count),
                 trending_score: Number(form.trending_score)
-            }
+            },
+            visibility: form.visibility
         })
 
         // Save section assignments separately
@@ -468,6 +470,34 @@ function EditPersonaModal({ persona, onClose, onSave, sections }: { persona: Per
                         />
                     </div>
 
+
+                    {/* Visibility */}
+                    <div>
+                        <label className="text-sm text-rp-subtle mb-1 block">Visibility</label>
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => setForm({ ...form, visibility: "PUBLIC" })}
+                                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-colors ${form.visibility === "PUBLIC"
+                                    ? "bg-rp-iris text-white"
+                                    : "bg-rp-base text-rp-subtle border border-rp-muted/20 hover:text-rp-text"
+                                    }`}
+                            >
+                                <IconEye size={16} />
+                                Public
+                            </button>
+                            <button
+                                onClick={() => setForm({ ...form, visibility: "PRIVATE" })}
+                                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-colors ${form.visibility === "PRIVATE"
+                                    ? "bg-rp-rose text-white"
+                                    : "bg-rp-base text-rp-subtle border border-rp-muted/20 hover:text-rp-text"
+                                    }`}
+                            >
+                                <IconEyeOff size={16} />
+                                Private
+                            </button>
+                        </div>
+                    </div>
+
                     <div>
                         <label className="text-sm text-rp-subtle mb-1 block">Tags (comma separated)</label>
                         <input
@@ -520,8 +550,8 @@ function EditPersonaModal({ persona, onClose, onSave, sections }: { persona: Per
                                         type="button"
                                         onClick={() => toggleSection(section.id)}
                                         className={`flex items-center gap-1 rounded-lg border px-3 py-1.5 text-sm transition-colors ${isAssigned
-                                                ? 'bg-rp-iris/20 border-rp-iris text-rp-iris'
-                                                : 'bg-rp-base border-rp-muted/20 text-rp-muted hover:border-rp-iris/50'
+                                            ? 'bg-rp-iris/20 border-rp-iris text-rp-iris'
+                                            : 'bg-rp-base border-rp-muted/20 text-rp-muted hover:border-rp-iris/50'
                                             }`}
                                     >
                                         {section.icon && <span>{section.icon}</span>}
