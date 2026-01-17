@@ -606,6 +606,90 @@ export type Database = {
         }
         Relationships: []
       }
+      content_sections: {
+        Row: {
+          age_rating: string
+          color: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string | null
+        }
+        Insert: {
+          age_rating?: string
+          color?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string | null
+        }
+        Update: {
+          age_rating?: string
+          color?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      section_personas: {
+        Row: {
+          added_at: string
+          added_by: string | null
+          persona_id: string
+          section_id: string
+          sort_order: number
+        }
+        Insert: {
+          added_at?: string
+          added_by?: string | null
+          persona_id: string
+          section_id: string
+          sort_order?: number
+        }
+        Update: {
+          added_at?: string
+          added_by?: string | null
+          persona_id?: string
+          section_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "section_personas_persona_id_fkey"
+            columns: ["persona_id"]
+            isOneToOne: false
+            referencedRelation: "personas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "section_personas_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "content_sections"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       content_moderation: {
         Row: {
           action: string
@@ -1450,6 +1534,7 @@ export type Database = {
           anthropic_api_key: string | null
           azure_openai_35_turbo_id: string | null
           azure_openai_45_turbo_id: string | null
+          is_admin: boolean | null
           azure_openai_45_vision_id: string | null
           azure_openai_api_key: string | null
           azure_openai_embeddings_id: string | null
@@ -1480,6 +1565,7 @@ export type Database = {
           anthropic_api_key?: string | null
           azure_openai_35_turbo_id?: string | null
           azure_openai_45_turbo_id?: string | null
+          is_admin?: boolean | null
           azure_openai_45_vision_id?: string | null
           azure_openai_api_key?: string | null
           azure_openai_embeddings_id?: string | null
@@ -1510,6 +1596,7 @@ export type Database = {
           anthropic_api_key?: string | null
           azure_openai_35_turbo_id?: string | null
           azure_openai_45_turbo_id?: string | null
+          is_admin?: boolean | null
           azure_openai_45_vision_id?: string | null
           azure_openai_api_key?: string | null
           azure_openai_embeddings_id?: string | null
@@ -2022,6 +2109,7 @@ export type Database = {
     }
     Enums: {
       subscription_tier: "wanderer" | "soul_weaver" | "architect" | "titan"
+      age_rating: "everyone" | "teen" | "mature" | "adult" | "kids"
     }
     CompositeTypes: {
       [_ in never]: never

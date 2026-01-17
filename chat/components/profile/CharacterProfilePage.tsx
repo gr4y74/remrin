@@ -101,7 +101,7 @@ export function CharacterProfilePage({
                     }}
                 >
                     <Image
-                        src={persona.backgroundUrl || persona.imageUrl}
+                        src={persona.backgroundUrl || persona.imageUrl || ""}
                         alt=""
                         fill
                         className="scale-110 object-cover opacity-30 blur-3xl"
