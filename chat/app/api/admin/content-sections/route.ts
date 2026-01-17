@@ -60,6 +60,7 @@ export async function GET() {
 export async function POST(request: Request) {
     try {
         const body = await request.json()
+        console.log("Creating content section with body:", body)
         const { name, slug, description, icon, color, age_rating, sort_order, is_active } = body
 
         if (!name || !slug) {
@@ -106,7 +107,7 @@ export async function POST(request: Request) {
         if (error) {
             console.error("Error creating content section:", error)
             return NextResponse.json(
-                { error: error.message },
+                { error: error.message, details: error },
                 { status: 500 }
             )
         }
@@ -129,6 +130,7 @@ export async function POST(request: Request) {
 export async function PATCH(request: Request) {
     try {
         const body = await request.json()
+        console.log("Updating content section with body:", body)
         const { id, ...updates } = body
 
         if (!id) {
@@ -172,7 +174,7 @@ export async function PATCH(request: Request) {
         if (error) {
             console.error("Error updating content section:", error)
             return NextResponse.json(
-                { error: error.message },
+                { error: error.message, details: error },
                 { status: 500 }
             )
         }

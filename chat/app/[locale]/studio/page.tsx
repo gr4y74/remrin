@@ -30,7 +30,8 @@ import {
     IconSend,
     IconX,
     IconDna,
-    IconChartBar
+    IconChartBar,
+    IconFileDownload
 } from "@tabler/icons-react"
 import { toast } from "sonner"
 
@@ -53,6 +54,7 @@ export default function StudioPage() {
         uploadFile,
         autoCompile,
         saveDraft,
+        downloadDraft,
         submitForReview,
         withdrawFromReview,
         publish
@@ -177,6 +179,24 @@ export default function StudioPage() {
                         >
                             <IconDeviceFloppy size={18} className="mr-2" />
                             {saving ? 'Saving...' : 'Save Draft'}
+                        </Button>
+                    )}
+
+                    {/* Download Draft - export as local file */}
+                    {persona.name && (
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => {
+                                downloadDraft()
+                                toast.success('Draft downloaded!', {
+                                    description: 'Your Soul has been exported as a JSON file.'
+                                })
+                            }}
+                            className="border-rp-foam/50 text-rp-foam hover:bg-rp-foam/10"
+                        >
+                            <IconFileDownload size={18} className="mr-2" />
+                            Download
                         </Button>
                     )}
 

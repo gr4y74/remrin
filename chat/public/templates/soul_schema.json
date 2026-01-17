@@ -1,0 +1,126 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Soul Template",
+    "description": "JSON Schema for validating Soul template files",
+    "type": "object",
+    "required": [
+        "name",
+        "system_prompt"
+    ],
+    "properties": {
+        "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "description": "The name of the Soul"
+        },
+        "tagline": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "A short catchy phrase"
+        },
+        "description": {
+            "type": "string",
+            "description": "Detailed description of the Soul"
+        },
+        "system_prompt": {
+            "type": "string",
+            "minLength": 10,
+            "description": "The core personality and behavior instructions"
+        },
+        "intro_message": {
+            "type": "string",
+            "description": "The first message the Soul sends"
+        },
+        "safety_level": {
+            "type": "string",
+            "enum": [
+                "CHILD",
+                "TEEN",
+                "ADULT"
+            ],
+            "default": "ADULT"
+        },
+        "category": {
+            "type": "string",
+            "enum": [
+                "general",
+                "romance",
+                "adventure",
+                "helper",
+                "anime",
+                "original",
+                "education"
+            ],
+            "default": "general"
+        },
+        "tags": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "maxItems": 10
+        },
+        "voice_id": {
+            "type": "string",
+            "description": "ElevenLabs voice ID (optional)"
+        },
+        "image_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to avatar image (optional)"
+        },
+        "metadata": {
+            "type": "object",
+            "properties": {
+                "hero_image_url": {
+                    "type": "string"
+                },
+                "hero_video_url": {
+                    "type": "string"
+                },
+                "appearance_prompt": {
+                    "type": "string"
+                },
+                "vibe_keywords": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "is_official": {
+                    "type": "boolean",
+                    "default": false
+                }
+            }
+        },
+        "config": {
+            "type": "object",
+            "properties": {
+                "brain_params": {
+                    "type": "object",
+                    "properties": {
+                        "temperature": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 2
+                        },
+                        "top_p": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                        },
+                        "frequency_penalty": {
+                            "type": "number",
+                            "minimum": -2,
+                            "maximum": 2
+                        }
+                    }
+                },
+                "safety_lock": {
+                    "type": "boolean"
+                }
+            }
+        }
+    }
+}

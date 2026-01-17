@@ -10,8 +10,10 @@ import {
     IconX,
     IconGripVertical,
     IconEye,
-    IconEyeOff
+    IconEyeOff,
+    IconMoodSmile
 } from "@tabler/icons-react"
+import EmojiPicker, { Theme } from "emoji-picker-react"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 
@@ -267,6 +269,7 @@ function SectionModal({ section, onClose, onSave }: SectionModalProps) {
         is_active: section?.is_active ?? true
     })
     const [saving, setSaving] = useState(false)
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false)
 
     const handleSubmit = async () => {
         if (!form.name || !form.slug) {
@@ -360,17 +363,41 @@ function SectionModal({ section, onClose, onSave }: SectionModalProps) {
                         />
                     </div>
 
-                    {/* Icon & Color */}
                     <div className="grid grid-cols-2 gap-4">
-                        <div>
+                        <div className="relative">
                             <label className="text-rp-text mb-1 block text-sm font-medium">Icon (Emoji)</label>
-                            <input
-                                type="text"
-                                value={form.icon}
-                                onChange={e => setForm({ ...form, icon: e.target.value })}
-                                className="bg-rp-base border-rp-muted/20 text-rp-text w-full rounded-lg border p-2 focus:border-rp-iris focus:outline-none"
-                                placeholder="🧒"
-                            />
+                            <div className="flex gap-2">
+                                <input
+                                    type="text"
+                                    value={form.icon}
+                                    onChange={e => setForm({ ...form, icon: e.target.value })}
+                                    className="bg-rp-base border-rp-muted/20 text-rp-text w-full rounded-lg border p-2 focus:border-rp-iris focus:outline-none"
+                                    placeholder="🧒"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                                    className="bg-rp-base border-rp-muted/20 hover:border-rp-iris flex items-center justify-center rounded-lg border px-3 transition-colors"
+                                >
+                                    <IconMoodSmile size={20} className="text-rp-subtle" />
+                                </button>
+                            </div>
+
+                            {showEmojiPicker && (
+                                <div className="absolute bottom-full right-0 z-[60] mb-2">
+                                    <div className="fixed inset-0" onClick={() => setShowEmojiPicker(false)} />
+                                    <div className="relative">
+                                        <EmojiPicker
+                                            theme={Theme.DARK}
+                                            onEmojiClick={(emojiData) => {
+                                                setForm({ ...form, icon: emojiData.emoji })
+                                                setShowEmojiPicker(false)
+                                            }}
+                                            lazyLoadEmojis={true}
+                                        />
+                                    </div>
+                                </div>
+                            )}
                         </div>
                         <div>
                             <label className="text-rp-text mb-1 block text-sm font-medium">Color</label>

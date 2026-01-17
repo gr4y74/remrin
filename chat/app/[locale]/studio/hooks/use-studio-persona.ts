@@ -336,6 +336,38 @@ export function useStudioPersona(initialPersonaId?: string) {
         }
     }, [persona.id, persona.status, supabase])
 
+    // Download persona as local JSON file
+    const downloadDraft = useCallback(() => {
+        const exportData = {
+            name: persona.name,
+            tagline: persona.tagline,
+            description: persona.description,
+            system_prompt: persona.system_prompt,
+            behavioral_blueprint: persona.behavioral_blueprint,
+            intro_message: persona.intro_message,
+            safety_level: persona.safety_level,
+            category: persona.category,
+            tags: persona.tags,
+            voice_id: persona.voice_id,
+            image_url: persona.image_url,
+            metadata: persona.metadata,
+            config: persona.config,
+            // Export metadata
+            _exported_at: new Date().toISOString(),
+            _source_id: persona.id || null
+        }
+
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `${persona.name || 'soul'}_draft_${Date.now()}.json`
+        document.body.appendChild(a)
+        a.click()
+        URL.revokeObjectURL(url)
+        document.body.removeChild(a)
+    }, [persona])
+
     return {
         persona,
         setPersona,
@@ -352,6 +384,7 @@ export function useStudioPersona(initialPersonaId?: string) {
         uploadFile,
         autoCompile,
         saveDraft,
+        downloadDraft,
         submitForReview,
         withdrawFromReview,
         publish
