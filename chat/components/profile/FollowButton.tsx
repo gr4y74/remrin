@@ -13,6 +13,7 @@ interface FollowButtonProps {
     initialFollowerCount?: number
     onFollowChange?: (isFollowing: boolean) => void
     compact?: boolean
+    className?: string
 }
 
 export function FollowButton({
@@ -20,7 +21,8 @@ export function FollowButton({
     initialIsFollowing = false,
     initialFollowerCount = 0,
     onFollowChange,
-    compact = false
+    compact = false,
+    className
 }: FollowButtonProps) {
     const [isFollowing, setIsFollowing] = useState(initialIsFollowing)
     const [followerCount, setFollowerCount] = useState(initialFollowerCount)
@@ -78,7 +80,7 @@ export function FollowButton({
     }, [isFollowing, followerCount, personaId, supabase, onFollowChange])
 
     return (
-        <div className={cn("flex items-center", compact ? "gap-2" : "gap-3")}>
+        <div className={cn("flex items-center", compact ? "gap-2" : "gap-3", className)}>
             <Button
                 onClick={handleToggleFollow}
                 disabled={isLoading}
