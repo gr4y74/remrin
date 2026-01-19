@@ -247,6 +247,12 @@ export default function HomePage() {
       fullBleed
       className="text-rp-text"
     >
+      {/* Ambient Orbs Background */}
+      <div className="pointer-events-none fixed inset-0 z-[1] overflow-hidden">
+        <div className="absolute right-[-10%] top-[-10%] size-[600px] rounded-full bg-rp-iris/10 blur-[100px]" />
+        <div className="absolute bottom-[10%] left-[-10%] size-[500px] rounded-full bg-rp-rose/10 blur-[100px]" />
+      </div>
+
       {/* Section 2: Header with Extension Banner, Search, Categories, Auth Buttons */}
       <FrontPageHeader
         onSearchResultClick={handlePersonaClick}
@@ -329,7 +335,7 @@ export default function HomePage() {
       </section>
 
       {/* Quick Actions Section */}
-      <section className="relative mt-8 border-t border-rp-highlight-med bg-rp-surface dark:bg-rp-base py-12">
+      <section className="relative mt-8 border-t border-rp-iris/20 bg-rp-surface dark:bg-rp-base py-12">
         <div className="mx-auto grid max-w-4xl grid-cols-1 gap-6 px-6 md:grid-cols-3">
           <Link
             href="/summon"

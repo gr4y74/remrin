@@ -30,6 +30,8 @@ export async function GET() {
                 is_featured, 
                 created_at,
                 tags,
+                price,
+                rarity,
                 persona_stats(
                     followers_count,
                     total_chats,
@@ -99,6 +101,8 @@ export async function PATCH(request: Request) {
                 visibility?: string
                 tags?: string[]
                 description?: string
+                price?: number | null
+                rarity?: string | null
                 stats?: {
                     total_chats?: number
                     followers_count?: number
@@ -110,6 +114,8 @@ export async function PATCH(request: Request) {
                 if (update.visibility !== undefined) updateData.visibility = update.visibility
                 if (update.tags !== undefined) updateData.tags = update.tags
                 if (update.description !== undefined) updateData.description = update.description
+                if (update.price !== undefined) updateData.price = update.price
+                if (update.rarity !== undefined) updateData.rarity = update.rarity
 
                 let errorMsg = null
 

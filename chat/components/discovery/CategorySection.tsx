@@ -79,14 +79,14 @@ export function CategorySection({ section, personas, onPersonaClick, className }
                         <div className="hidden gap-2 md:flex">
                             <button
                                 onClick={() => scroll("left")}
-                                className="rounded-lg border border-rp-highlight-med bg-rp-surface p-2 text-rp-text transition-colors hover:border-rp-iris hover:bg-rp-base"
+                                className="rounded-lg border border-rp-iris/20 bg-rp-surface p-2 text-rp-text transition-colors hover:border-rp-iris hover:bg-rp-base"
                                 aria-label="Scroll left"
                             >
                                 <IconChevronLeft size={20} />
                             </button>
                             <button
                                 onClick={() => scroll("right")}
-                                className="rounded-lg border border-rp-highlight-med bg-rp-surface p-2 text-rp-text transition-colors hover:border-rp-iris hover:bg-rp-base"
+                                className="rounded-lg border border-rp-iris/20 bg-rp-surface p-2 text-rp-text transition-colors hover:border-rp-iris hover:bg-rp-base"
                                 aria-label="Scroll right"
                             >
                                 <IconChevronRight size={20} />
@@ -105,7 +105,7 @@ export function CategorySection({ section, personas, onPersonaClick, className }
                         <div
                             key={persona.id}
                             onClick={() => onPersonaClick(persona.id)}
-                            className="group relative shrink-0 cursor-pointer overflow-hidden rounded-xl border border-rp-highlight-med shadow-lg transition-all hover:-translate-y-1 hover:shadow-2xl"
+                            className="group relative shrink-0 cursor-pointer overflow-hidden rounded-xl border border-rp-iris/20 shadow-lg transition-all hover:-translate-y-1 hover:shadow-2xl hover:border-rp-iris/40"
                             style={{ width: "300px", height: "400px" }}
                         >
                             {/* Background Image */}

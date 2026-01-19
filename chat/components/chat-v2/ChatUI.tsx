@@ -16,6 +16,7 @@ import { ChatMessages } from './ChatMessages'
 import { SoulGallery } from './SoulGallery'
 import { MoodHUD } from './MoodHUD'
 import { MemorySearchModal } from './MemorySearchModal'
+import { CallModal } from './CallModal'
 import { UserTier } from '@/lib/chat-engine/types'
 import { MOOD_EMOJI, MoodType } from '@/lib/chat-engine/mood'
 import Image from 'next/image'
@@ -26,6 +27,7 @@ interface ChatUIV2Props {
     userId?: string
     personaId?: string
     personaImage?: string
+    personaVideoUrl?: string | null
     personaName?: string
     personaSystemPrompt?: string
     personaIntroMessage?: string
@@ -41,16 +43,19 @@ interface ChatUIV2Props {
 function ChatUIInner({
     userId,
     personaImage,
+    personaVideoUrl,
     personaName,
     welcomeAudioUrl,
     showSoulGallery = false,
     onSoulSelect,
     onMemorySearchTrigger,
     isVisualNovelMode,
-    toggleVisualNovelMode
+    toggleVisualNovelMode,
+    onStartCall
 }: {
     userId?: string
     personaImage?: string
+    personaVideoUrl?: string | null
     personaName?: string
     welcomeAudioUrl?: string | null
     showSoulGallery?: boolean
@@ -58,6 +63,7 @@ function ChatUIInner({
     onMemorySearchTrigger?: (query: string) => void
     isVisualNovelMode: boolean
     toggleVisualNovelMode: () => void
+    onStartCall?: () => void
 }) {
     const { messages, personaId } = useChatEngine()
     const moodState = useMood()
@@ -90,70 +96,104 @@ function ChatUIInner({
     // Check if this is Mother of Souls chat
     const isMotherChat = personaId === 'a0000000-0000-0000-0000-000000000001' || personaName === 'The Mother of Souls'
 
-    // Visual Novel Layout
+    // Visual Novel Layout - Theater Mode
     if (isVisualNovelMode) {
         const spriteUrl = personaImage || "/images/mother/mother_avatar.png"
+        const videoUrl = personaVideoUrl
+
+        // Get the last assistant message for the dialogue bubble
+        const lastAssistantMessage = [...messages].reverse().find(m => m.role === 'assistant')
 
         return (
-            <div className={`fixed inset-0 z-40 overflow-hidden bg-black ${isLowBattery ? 'low-battery-mode' : ''}`}>
-                {/* Background gradient overlay */}
-                <div className="absolute inset-0 z-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+            <div className={`fixed inset-0 z-40 overflow-hidden flex flex-col ${isLowBattery ? 'low-battery-mode' : ''}`}>
 
-                {/* Character Sprite - Using viewport units and transform centering */}
-                <div
-                    className="absolute bottom-[200px] left-1/2 -translate-x-1/2 z-10 pointer-events-none animate-in fade-in slide-in-from-bottom-10 duration-700"
-                    style={{ width: '50vw', maxWidth: '400px', height: '70vh' }}
-                >
+                {/* Solid dark base - blocks everything behind */}
+                <div className="absolute inset-0 z-0 bg-black" />
+
+                {/* Blurred character image background */}
+                <div className="absolute inset-0 z-[1] opacity-30">
                     <Image
                         src={spriteUrl}
-                        alt={personaName || "Character"}
+                        alt=""
                         fill
-                        sizes="(max-width: 768px) 80vw, 400px"
-                        className="object-contain object-bottom drop-shadow-[0_0_50px_rgba(0,0,0,0.8)]"
-                        priority
+                        sizes="100vw"
+                        className="object-cover blur-3xl scale-110"
+                        priority={false}
                     />
                 </div>
 
+                {/* Dark gradient overlay */}
+                <div className="absolute inset-0 z-[2] bg-gradient-to-b from-black/60 via-black/40 to-black/80" />
 
-                {/* VN Mode Header Controls (Minimal) */}
-                <div className="absolute top-4 right-4 z-50 flex gap-2">
+                {/* Top Section: Video Theater */}
+                <div className="relative z-10 flex-1 flex items-center justify-center p-4 pt-6">
+                    {/* Mode Toggle - Top Right */}
                     <button
                         onClick={toggleVisualNovelMode}
-                        className="p-2 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white/70 hover:text-white hover:bg-white/10 transition-all"
+                        className="absolute top-4 right-4 z-50 p-2.5 rounded-full bg-black/40 backdrop-blur-md border border-white/20 text-white/80 hover:text-white hover:bg-white/20 transition-all shadow-lg"
                         title="Switch to Chat Mode"
                     >
                         <IconMessage size={20} />
                     </button>
+
+                    {/* Video Container */}
+                    <div className="relative w-full max-w-4xl aspect-video rounded-lg overflow-hidden shadow-2xl ring-1 ring-white/10">
+                        {videoUrl ? (
+                            <video
+                                src={videoUrl}
+                                autoPlay
+                                loop
+                                muted
+                                playsInline
+                                className="w-full h-full object-contain bg-black"
+                            />
+                        ) : (
+                            <div className="relative w-full h-full bg-black">
+                                <Image
+                                    src={spriteUrl}
+                                    alt={personaName || "Character"}
+                                    fill
+                                    sizes="(max-width: 1024px) 100vw, 1024px"
+                                    className="object-contain"
+                                    priority
+                                />
+                            </div>
+                        )}
+                    </div>
                 </div>
 
-                {/* Text Box Overlay */}
-                <div className="absolute bottom-0 left-0 right-0 z-20 p-4 md:p-8 pb-Safe w-full max-w-5xl mx-auto">
-                    <div className="relative rounded-2xl bg-black/60 backdrop-blur-xl border border-white/10 p-6 shadow-2xl animate-in slide-in-from-bottom duration-500">
+                {/* Bottom Section: Chat Area */}
+                <div className="relative z-10 bg-rp-base/95 backdrop-blur-lg border-t border-white/10">
+                    <div className="max-w-4xl mx-auto px-4 md:px-8 py-4">
+
                         {/* Character Name Tag */}
-                        <div className="absolute -top-4 left-6 px-4 py-1 bg-rp-iris text-black font-bold rounded-full text-sm shadow-lg border border-white/20">
+                        <div className="inline-block px-4 py-1.5 bg-rp-iris/90 text-white font-bold rounded-full text-sm shadow-lg mb-3">
                             {personaName}
                         </div>
 
-                        {/* Messages Area (Scrollable within the box) */}
-                        <div className="max-h-[30vh] overflow-y-auto pr-2 mb-4 scrollbar-hide space-y-4">
+                        {/* Messages Area */}
+                        <div className="max-h-[20vh] overflow-y-auto mb-4 scrollbar-hide">
                             {messages.length === 0 ? (
                                 <div className="text-white/50 italic text-center py-4">
                                     Start the conversation...
                                 </div>
+                            ) : lastAssistantMessage ? (
+                                <div className="text-rp-text text-base leading-relaxed">
+                                    {lastAssistantMessage.content}
+                                </div>
                             ) : (
-                                <ChatMessages
-                                    personaImage={personaImage}
-                                    personaName={personaName}
-                                    isVisualNovel
-                                />
+                                <div className="text-white/50 italic text-center py-2">
+                                    Waiting for response...
+                                </div>
                             )}
                         </div>
 
-                        {/* Input Area (Integrated) */}
-                        <div className="relative">
+                        {/* Input Area */}
+                        <div className="rounded-xl bg-rp-surface/50 shadow-lg">
                             <ChatInput
                                 placeholder="What do you say?"
                                 onMemorySearch={onMemorySearchTrigger}
+                                onStartCall={onStartCall}
                                 minimal
                             />
                         </div>
@@ -247,6 +287,7 @@ function ChatUIInner({
                     <ChatInput
                         placeholder={personaName ? `Message ${personaName}...` : 'Message Remrin...'}
                         onMemorySearch={onMemorySearchTrigger}
+                        onStartCall={onStartCall}
                     />
                 </div>
             </div>
@@ -292,6 +333,7 @@ export function ChatUIV2({
     userId,
     personaId: initialPersonaId,
     personaImage: initialPersonaImage,
+    personaVideoUrl: initialPersonaVideoUrl,
     personaName: initialPersonaName,
     personaSystemPrompt: initialPersonaSystemPrompt,
     personaIntroMessage: initialPersonaIntroMessage,
@@ -302,6 +344,7 @@ export function ChatUIV2({
     const [selectedPersona, setSelectedPersona] = useState<{
         id: string
         image?: string
+        videoUrl?: string | null
         name?: string
         systemPrompt?: string
         introMessage?: string
@@ -311,6 +354,7 @@ export function ChatUIV2({
             ? {
                 id: initialPersonaId,
                 image: initialPersonaImage,
+                videoUrl: initialPersonaVideoUrl,
                 name: initialPersonaName,
                 systemPrompt: initialPersonaSystemPrompt,
                 introMessage: initialPersonaIntroMessage,
@@ -322,6 +366,7 @@ export function ChatUIV2({
     const [isMemorySearchOpen, setIsMemorySearchOpen] = useState(false)
     const [memorySearchQuery, setMemorySearchQuery] = useState('')
     const [isVisualNovelMode, setIsVisualNovelMode] = useState(false)
+    const [isCallActive, setIsCallActive] = useState(false)
 
     // Sync state with props
     React.useEffect(() => {
@@ -329,18 +374,20 @@ export function ChatUIV2({
             setSelectedPersona({
                 id: initialPersonaId,
                 image: initialPersonaImage,
+                videoUrl: initialPersonaVideoUrl,
                 name: initialPersonaName,
                 systemPrompt: initialPersonaSystemPrompt,
                 introMessage: initialPersonaIntroMessage,
                 welcomeAudioUrl: initialWelcomeAudioUrl
             })
         }
-    }, [initialPersonaId, initialPersonaImage, initialPersonaName, initialPersonaSystemPrompt, initialPersonaIntroMessage, initialWelcomeAudioUrl])
+    }, [initialPersonaId, initialPersonaImage, initialPersonaVideoUrl, initialPersonaName, initialPersonaSystemPrompt, initialPersonaIntroMessage, initialWelcomeAudioUrl])
 
     const handleSoulSelect = (personaId: string, personaData: any) => {
         setSelectedPersona({
             id: personaId,
             image: personaData.image_url,
+            videoUrl: personaData.video_url,
             name: personaData.name,
             systemPrompt: personaData.system_prompt || personaData.description,
             introMessage: personaData.intro_message,
@@ -366,6 +413,7 @@ export function ChatUIV2({
                 <ChatUIInner
                     userId={userId}
                     personaImage={selectedPersona?.image || initialPersonaImage}
+                    personaVideoUrl={selectedPersona?.videoUrl || initialPersonaVideoUrl}
                     personaName={selectedPersona?.name || initialPersonaName}
                     showSoulGallery={showSoulGallery}
                     onSoulSelect={handleSoulSelect}
@@ -373,11 +421,18 @@ export function ChatUIV2({
                     isVisualNovelMode={isVisualNovelMode}
                     toggleVisualNovelMode={() => setIsVisualNovelMode(!isVisualNovelMode)}
                     welcomeAudioUrl={selectedPersona?.welcomeAudioUrl || initialWelcomeAudioUrl}
+                    onStartCall={() => setIsCallActive(true)}
                 />
                 <MemorySearchModal
                     isOpen={isMemorySearchOpen}
                     onClose={() => setIsMemorySearchOpen(false)}
                     initialQuery={memorySearchQuery}
+                />
+                <CallModal
+                    isOpen={isCallActive}
+                    onClose={() => setIsCallActive(false)}
+                    personaName={selectedPersona?.name || initialPersonaName}
+                    personaImage={selectedPersona?.image || initialPersonaImage}
                 />
             </ChatEngineProvider>
         </>

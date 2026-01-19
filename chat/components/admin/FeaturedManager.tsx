@@ -17,7 +17,9 @@ import {
     IconUpload,
     IconDownload,
     IconX,
-    IconPhoto
+    IconPhoto,
+    IconDiamond,
+    IconSparkles
 } from "@tabler/icons-react"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
@@ -41,6 +43,8 @@ interface Persona {
     tags?: string[]
     persona_stats?: Stats
     sections?: string[] // Section IDs this persona belongs to
+    price?: number | null
+    rarity?: "common" | "rare" | "epic" | "legendary" | null
 }
 
 interface ContentSection {
@@ -52,7 +56,7 @@ interface ContentSection {
     icon: string | null
 }
 
-type TabType = "featured" | "visibility" | "trending"
+type TabType = "featured" | "visibility" | "premium"
 
 export function FeaturedManager() {
     const [personas, setPersonas] = useState<Persona[]>([])
@@ -116,6 +120,14 @@ export function FeaturedManager() {
         featured: personas.filter(p => p.is_featured).length,
         public: personas.filter(p => p.visibility === "PUBLIC").length,
         private: personas.filter(p => p.visibility === "PRIVATE").length
+    }), [personas])
+
+    // Premium stats
+    const premiumStats = useMemo(() => ({
+        total: personas.filter(p => p.price && p.price > 0).length,
+        legendary: personas.filter(p => p.rarity === 'legendary').length,
+        epic: personas.filter(p => p.rarity === 'epic').length,
+        rare: personas.filter(p => p.rarity === 'rare').length,
     }), [personas])
 
     // Helper to buffer updates
@@ -257,6 +269,7 @@ export function FeaturedManager() {
                     {[
                         { id: "featured", icon: IconStarFilled, label: "Featured", color: "text-rp-gold border-rp-gold/30 bg-rp-gold/20" },
                         { id: "visibility", icon: IconEye, label: "Visibility", color: "text-rp-foam border-rp-foam/30 bg-rp-foam/20" },
+                        { id: "premium", icon: IconDiamond, label: "Premium", color: "text-purple-400 border-purple-400/30 bg-purple-400/20" },
                     ].map((tab: any) => (
                         <button
                             key={tab.id}
@@ -348,11 +361,16 @@ function PersonaCard({ persona, activeTab, onToggleFeatured, onToggleVisibility,
     const [hover, setHover] = useState(false)
 
     // Highlight logic
-    const isHighlighted = (activeTab === "featured" && persona.is_featured)
+    const isHighlighted = (activeTab === "featured" && persona.is_featured) ||
+        (activeTab === "premium" && persona.price && persona.price > 0)
+
+    const highlightColor = activeTab === "premium"
+        ? "border-purple-500/50 ring-1 ring-purple-500/20"
+        : "border-rp-gold/50 ring-1 ring-rp-gold/20"
 
     return (
         <div
-            className={cn("bg-rp-surface relative overflow-hidden rounded-xl border transition-all group", isHighlighted ? "border-rp-gold/50 ring-1 ring-rp-gold/20" : "border-rp-muted/20")}
+            className={cn("bg-rp-surface relative overflow-hidden rounded-xl border transition-all group", isHighlighted ? highlightColor : "border-rp-muted/20")}
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
         >
@@ -376,14 +394,34 @@ function PersonaCard({ persona, activeTab, onToggleFeatured, onToggleVisibility,
                             {persona.is_featured ? <IconStarFilled size={14} /> : <IconStar size={14} />}
                         </button>
                     )}
+                    {activeTab === 'premium' && persona.price && persona.price > 0 && (
+                        <div className={cn(
+                            "px-2 py-1 rounded text-[10px] font-bold text-white",
+                            persona.rarity === 'legendary' ? "bg-gradient-to-r from-amber-500 to-orange-500" :
+                                persona.rarity === 'epic' ? "bg-gradient-to-r from-purple-500 to-pink-500" :
+                                    persona.rarity === 'rare' ? "bg-gradient-to-r from-blue-500 to-cyan-500" :
+                                        "bg-gray-500"
+                        )}>
+                            {persona.rarity?.toUpperCase()}
+                        </div>
+                    )}
                     {!persona.is_featured && activeTab === 'featured' && persona.visibility === 'PRIVATE' && <div className="bg-black/50 text-rp-subtle p-1 rounded text-[10px]">PVT</div>}
                 </div>
             </div>
             <div className="p-3">
                 <div className="font-bold text-sm truncate">{persona.name}</div>
                 <div className="text-xs text-rp-muted flex gap-2">
-                    <span>{persona.persona_stats?.total_chats || 0} Chats</span>
-                    <span>{persona.persona_stats?.followers_count || 0} Follows</span>
+                    {activeTab === 'premium' && persona.price && persona.price > 0 ? (
+                        <>
+                            <span className="text-amber-400">{persona.price} ✧</span>
+                            <span className="capitalize">{persona.rarity}</span>
+                        </>
+                    ) : (
+                        <>
+                            <span>{persona.persona_stats?.total_chats || 0} Chats</span>
+                            <span>{persona.persona_stats?.followers_count || 0} Follows</span>
+                        </>
+                    )}
                 </div>
             </div>
         </div>
@@ -398,7 +436,9 @@ function EditPersonaModal({ persona, onClose, onSave, sections }: { persona: Per
         followers_count: persona.persona_stats?.followers_count || 0,
         trending_score: persona.persona_stats?.trending_score || 0,
         section_ids: persona.sections || [],
-        visibility: persona.visibility || "PRIVATE"
+        visibility: persona.visibility || "PRIVATE",
+        price: persona.price || 0,
+        rarity: persona.rarity || "common"
     })
     const [savingSections, setSavingSections] = useState(false)
 
@@ -412,7 +452,9 @@ function EditPersonaModal({ persona, onClose, onSave, sections }: { persona: Per
                 followers_count: Number(form.followers_count),
                 trending_score: Number(form.trending_score)
             },
-            visibility: form.visibility
+            visibility: form.visibility,
+            price: Number(form.price) || null,
+            rarity: form.rarity || null
         })
 
         // Save section assignments separately
@@ -496,6 +538,42 @@ function EditPersonaModal({ persona, onClose, onSave, sections }: { persona: Per
                                 Private
                             </button>
                         </div>
+                    </div>
+
+                    {/* Premium Settings */}
+                    <div className="border-t border-rp-muted/20 pt-4">
+                        <label className="text-sm text-purple-400 mb-3 block flex items-center gap-2">
+                            <IconDiamond size={16} />
+                            Premium Settings
+                        </label>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="text-xs text-rp-subtle mb-1 block">Price (Aether ✧)</label>
+                                <input
+                                    type="number"
+                                    className="bg-rp-base w-full rounded-lg border border-rp-muted/20 p-2 text-sm focus:border-purple-500 outline-none"
+                                    value={form.price}
+                                    placeholder="0 = Not for sale"
+                                    onChange={e => setForm({ ...form, price: Number(e.target.value) })}
+                                />
+                            </div>
+                            <div>
+                                <label className="text-xs text-rp-subtle mb-1 block">Rarity</label>
+                                <select
+                                    className="bg-rp-base w-full rounded-lg border border-rp-muted/20 p-2 text-sm focus:border-purple-500 outline-none"
+                                    value={form.rarity}
+                                    onChange={e => setForm({ ...form, rarity: e.target.value as any })}
+                                >
+                                    <option value="common">Common</option>
+                                    <option value="rare">Rare</option>
+                                    <option value="epic">Epic</option>
+                                    <option value="legendary">Legendary</option>
+                                </select>
+                            </div>
+                        </div>
+                        <p className="text-xs text-rp-muted mt-2">
+                            Set a price &gt; 0 to show this Soul in the Premium Showcase
+                        </p>
                     </div>
 
                     <div>

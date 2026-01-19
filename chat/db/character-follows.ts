@@ -3,12 +3,12 @@ import { supabase } from "@/lib/supabase/browser-client"
 export const getIsFollowing = async (userId: string, personaId: string) => {
     const { data, error } = await supabase
         .from("character_follows")
-        .select("*")
+        .select("persona_id")
         .eq("user_id", userId)
         .eq("persona_id", personaId)
-        .single()
+        .maybeSingle()
 
-    if (error && error.code !== "PGRST116") {
+    if (error) {
         console.error("Error checking follow status:", error.message)
         return false
     }

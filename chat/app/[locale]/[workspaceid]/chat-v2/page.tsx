@@ -24,6 +24,7 @@ export default function ChatV2Page() {
         id: string
         name: string
         image_url?: string
+        video_url?: string | null
         system_prompt?: string
     } | null>(null)
 
@@ -38,6 +39,7 @@ export default function ChatV2Page() {
                             id: data.id,
                             name: data.name,
                             image_url: data.image_url || undefined,
+                            video_url: data.video_url || undefined,
                             system_prompt: data.system_prompt || undefined
                         })
                     }
@@ -65,6 +67,7 @@ export default function ChatV2Page() {
                 <ChatUIV2
                     personaId={persona?.id}
                     personaImage={persona?.image_url}
+                    personaVideoUrl={persona?.video_url}
                     personaName={persona?.name}
                     personaSystemPrompt={persona?.system_prompt}
                     userTier={userTier}

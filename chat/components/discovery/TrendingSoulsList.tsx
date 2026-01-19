@@ -84,7 +84,7 @@ export function TrendingSoulsList({ onPersonaClick, className }: TrendingSoulsLi
                             Trending Souls
                         </h2>
                     </div>
-                    <div className="rounded-lg border border-rp-highlight-med bg-rp-surface p-8 text-center">
+                    <div className="rounded-lg border border-rp-iris/20 bg-rp-surface p-8 text-center">
                         <p className="text-rp-muted">No trending souls yet - be the first to chat!</p>
                     </div>
                 </div>
@@ -103,12 +103,12 @@ export function TrendingSoulsList({ onPersonaClick, className }: TrendingSoulsLi
                 </div>
 
                 {/* Trending List */}
-                <div className="overflow-hidden rounded-lg border border-rp-highlight-med bg-rp-surface shadow-lg">
+                <div className="overflow-hidden rounded-lg border border-rp-iris/20 bg-rp-surface shadow-lg">
                     {trending.map((persona, index) => (
                         <div
                             key={persona.id}
                             className={cn(
-                                "group flex items-center gap-4 border-b border-rp-highlight-low p-4 transition-colors hover:bg-rp-base last:border-b-0",
+                                "group flex items-center gap-4 border-b border-rp-iris/10 p-4 transition-colors hover:bg-rp-base last:border-b-0",
                                 "cursor-pointer"
                             )}
                             onClick={() => onPersonaClick(persona.id)}
@@ -130,7 +130,7 @@ export function TrendingSoulsList({ onPersonaClick, className }: TrendingSoulsLi
                             </div>
 
                             {/* Avatar */}
-                            <div className="relative size-12 shrink-0 overflow-hidden rounded-full ring-2 ring-rp-highlight-med transition-all group-hover:ring-rp-iris">
+                            <div className="relative size-12 shrink-0 overflow-hidden rounded-full ring-2 ring-rp-iris/30 transition-all group-hover:ring-rp-iris">
                                 {persona.image_url ? (
                                     <Image
                                         src={persona.image_url}

@@ -31,13 +31,7 @@ export default function GrimoireClient() {
     }
 
     return (
-        <div className="min-h-screen w-full bg-[#050505] text-white">
-            {/* Background Effects */}
-            <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-                <div className="absolute right-[-10%] top-[-10%] size-[600px] rounded-full bg-rp-iris/5 blur-[100px]" />
-                <div className="absolute bottom-[10%] left-[-10%] size-[500px] rounded-full bg-rp-rose/5 blur-[100px]" />
-            </div>
-
+        <div className="min-h-screen w-full text-white">
             <div className="container relative z-10 mx-auto max-w-7xl px-4 py-8 md:px-8">
                 {/* Header */}
                 <div className="mb-8 flex items-center justify-between border-b border-white/5 pb-6">

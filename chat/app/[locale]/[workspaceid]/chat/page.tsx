@@ -48,6 +48,7 @@ export default function ChatPage() {
       <ChatUIV2
         personaId={selectedPersona?.id || undefined}
         personaImage={selectedPersona?.image_url || undefined}
+        personaVideoUrl={selectedPersona?.video_url || undefined}
         personaName={selectedPersona?.name || undefined}
         personaSystemPrompt={selectedPersona?.system_prompt || undefined}
         personaIntroMessage={selectedPersona?.intro_message || undefined}

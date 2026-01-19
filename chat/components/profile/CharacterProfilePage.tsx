@@ -234,7 +234,7 @@ export function CharacterProfilePage({
                         </div>
 
                         {/* CTA Buttons - Prominent and Above Fold */}
-                        <div className="flex flex-col gap-3 sm:flex-row">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-center">
                             <Button
                                 size="lg"
                                 onClick={handleStartChat}

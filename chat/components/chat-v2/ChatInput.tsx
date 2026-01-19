@@ -8,7 +8,7 @@
 
 import React, { useState, useRef, KeyboardEvent } from 'react'
 import { useChatEngine, useMood } from './ChatEngine'
-import { IconSend, IconPlayerStop, IconPaperclip, IconMicrophone } from '@tabler/icons-react'
+import { IconSend, IconPlayerStop, IconPaperclip, IconMicrophone, IconPhone } from '@tabler/icons-react'
 import { useFileHandler } from './hooks/use-file-handler'
 import { toast } from 'sonner'
 import { EmojiButton } from '@/components/ui/EmojiButton'
@@ -19,13 +19,15 @@ interface ChatInputProps {
     placeholder?: string
     disabled?: boolean
     onMemorySearch?: (query: string) => void
+    onStartCall?: () => void
     minimal?: boolean
 }
 
 export function ChatInput({
     placeholder = "Message Remrin...",
     disabled = false,
-    onMemorySearch
+    onMemorySearch,
+    onStartCall
 }: ChatInputProps) {
     const [input, setInput] = useState('')
     const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -149,7 +151,7 @@ export function ChatInput({
     }
 
     return (
-        <div className="relative flex w-full items-end gap-2">
+        <div className="relative flex w-full items-center gap-2 py-1">
             <input
                 type="file"
                 ref={fileInputRef}
@@ -159,7 +161,7 @@ export function ChatInput({
             />
 
             {/* Left Actions: File Upload, Voice, & Emoji */}
-            <div className="flex gap-1 pb-1">
+            <div className="flex items-center gap-1">
                 <button
                     onClick={() => fileInputRef.current?.click()}
                     disabled={disabled || isGenerating}
@@ -200,28 +202,41 @@ export function ChatInput({
                 />
             </div>
 
+            {/* Call Button */}
+            {onStartCall && (
+                <button
+                    onClick={onStartCall}
+                    disabled={disabled || isGenerating}
+                    className="flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-xl text-rp-subtle hover:bg-rp-overlay hover:text-rp-text transition-all duration-200 disabled:opacity-50"
+                    aria-label="Start voice call"
+                    title="Start voice call"
+                >
+                    <IconPhone size={20} />
+                </button>
+            )}
+
             {/* Send/Stop Button */}
             <button
                 onClick={isGenerating ? stopGeneration : handleSubmit}
                 disabled={disabled || (!isGenerating && !input.trim())}
                 className={`
-          flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-2xl
+          flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-xl
           transition-all duration-200
           ${isExcited && !isGenerating && input.trim() ? 'mood-pulse-excited' : ''}
           ${isGenerating
                         ? 'bg-rp-love text-rp-base hover:bg-rp-love/90'
                         : input.trim()
                             ? 'bg-rp-iris text-rp-base hover:bg-rp-iris/90'
-                            : 'bg-rp-surface text-rp-muted cursor-not-allowed'
+                            : 'text-rp-muted cursor-not-allowed'
                     }
           disabled:opacity-50
         `}
                 aria-label={isGenerating ? 'Stop generation' : 'Send message'}
             >
                 {isGenerating ? (
-                    <IconPlayerStop size={22} />
+                    <IconPlayerStop size={20} />
                 ) : (
-                    <IconSend size={22} />
+                    <IconSend size={20} />
                 )}
             </button>
         </div>

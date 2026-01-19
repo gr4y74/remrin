@@ -134,8 +134,14 @@ export default function StudioPage() {
 
     return (
         <div className="flex h-screen flex-col bg-rp-base text-rp-text">
+            {/* Ambient Orbs Background */}
+            <div className="pointer-events-none fixed inset-0 z-[1] overflow-hidden">
+                <div className="absolute right-[-10%] top-[-10%] size-[600px] rounded-full bg-rp-iris/10 blur-[100px]" />
+                <div className="absolute bottom-[10%] left-[-10%] size-[500px] rounded-full bg-rp-rose/10 blur-[100px]" />
+            </div>
+
             {/* Header */}
-            <header className="flex items-center justify-between border-b border-rp-highlight-med px-6 py-4">
+            <header className="relative z-10 flex items-center justify-between border-b border-rp-highlight-med px-6 py-4">
                 <div className="flex items-center gap-4">
                     <Link
                         href="/"
