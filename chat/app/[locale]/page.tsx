@@ -18,7 +18,8 @@ import { RemrinContext } from "@/context/context"
 import { IconSparkles, IconDiamond, IconArrowRight } from "@tabler/icons-react"
 import { LottieLoader } from "@/components/ui/lottie-loader"
 import { Skeleton } from "@/components/ui/skeleton"
-
+import { OnboardingModal } from "@/components/onboarding/OnboardingModal"
+import { useOnboarding } from "@/hooks/useOnboarding"
 
 
 interface Persona {
@@ -58,6 +59,15 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [defaultWorkspaceId, setDefaultWorkspaceId] = useState<string | null>(null)
+
+  // Onboarding logic
+  const { hasCompletedOnboarding, isLoading: onboardingLoading, completeOnboarding } = useOnboarding()
+
+  // Show modal only if:
+  // 1. Not loading auth or onboarding state
+  // 2. User is logged in
+  // 3. User hasn't completed onboarding
+  const showOnboarding = !loading && !onboardingLoading && isLoggedIn && !hasCompletedOnboarding
 
   // Theme-aware heading color: #faf4ed for dark, #191724 for light
   const headingColor = resolvedTheme === "light" ? "#191724" : "#faf4ed"
@@ -266,6 +276,12 @@ export default function HomePage() {
           <RotatingBanner banners={banners} />
         </div>
       )}
+
+      {/* Onboarding Modal */}
+      <OnboardingModal
+        open={showOnboarding}
+        onClose={completeOnboarding}
+      />
 
       {/* Section 3: Featured Souls with 3D Carousel - Dynamic data */}
       <section className="relative mt-6 md:mt-8">

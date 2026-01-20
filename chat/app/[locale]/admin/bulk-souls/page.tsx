@@ -195,7 +195,7 @@ export default function BulkSoulsPage() {
                             <li>Download the template JSON file</li>
                             <li>Copy and customize for each Soul you want to create</li>
                             <li>Drag and drop all JSON files here (or click to browse)</li>
-                            <li>Review and click "Import All"</li>
+                            <li>Review and click &quot;Import All&quot;</li>
                         </ol>
                         <Button
                             variant="outline"

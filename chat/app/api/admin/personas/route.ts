@@ -47,8 +47,12 @@ export async function GET() {
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
 
+        if (!personas) {
+            return NextResponse.json({ personas: [] })
+        }
+
         // Flatten stats and section assignments
-        const enrichedPersonas = personas.map(p => ({
+        const enrichedPersonas = personas.map((p: any) => ({
             ...p,
             persona_stats: Array.isArray(p.persona_stats) ? p.persona_stats[0] : p.persona_stats,
             sections: Array.isArray(p.section_personas)

@@ -2,6 +2,7 @@ import { cookies } from "next/headers"
 import { notFound } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { CharacterProfilePage } from "@/components/profile"
+import { SimilarSouls } from "@/components/character/SimilarSouls"
 
 interface CharacterPageProps {
     params: {
@@ -93,27 +94,30 @@ export default async function CharacterPage({ params }: CharacterPageProps) {
         : null
 
     return (
-        <CharacterProfilePage
-            persona={{
-                id: persona.id,
-                name: persona.name,
-                description: persona.description,
-                imageUrl: persona.image_url,
-                videoUrl: persona.video_url,
-                backgroundUrl: persona.background_url,
-                category: persona.category,
-                tags,
-                introMessage,
-                creatorName,
-                welcomeAudioUrl: persona.welcome_audio_url
-            }}
-            stats={{
-                totalChats: stats?.total_chats ?? 0,
-                followersCount: stats?.followers_count ?? 0
-            }}
-            isFollowing={isFollowing}
-            isOwner={isOwner}
-        />
+        <>
+            <CharacterProfilePage
+                persona={{
+                    id: persona.id,
+                    name: persona.name,
+                    description: persona.description,
+                    imageUrl: persona.image_url,
+                    videoUrl: persona.video_url,
+                    backgroundUrl: persona.background_url,
+                    category: persona.category,
+                    tags,
+                    introMessage,
+                    creatorName,
+                    welcomeAudioUrl: persona.welcome_audio_url
+                }}
+                stats={{
+                    totalChats: stats?.total_chats ?? 0,
+                    followersCount: stats?.followers_count ?? 0
+                }}
+                isFollowing={isFollowing}
+                isOwner={isOwner}
+            />
+            <SimilarSouls personaId={characterId} />
+        </>
     )
 }
 

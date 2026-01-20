@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remrin.ai - Windows 95</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'MS Sans Serif', Arial, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            background: #008080; /* Classic teal */
+            background-image: 
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,.03) 2px, rgba(0,0,0,.03) 4px),
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.03) 2px, rgba(0,0,0,.03) 4px);
+        }
+
+        /* DESKTOP */
+        .desktop {
+            height: calc(100vh - 28px);
+            padding: 10px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 80px);
+            grid-template-rows: repeat(auto-fill, 90px);
+            gap: 10px;
+            align-content: start;
+        }
+
+        /* DESKTOP ICON */
+        .desktop-icon {
+            width: 70px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 4px;
+            user-select: none;
+        }
+
+        .desktop-icon:hover,
+        .desktop-icon.selected {
+            background: rgba(0, 0, 128, 0.3);
+            outline: 1px dotted white;
+        }
+
+        .desktop-icon.selected {
+            background: rgba(0, 0, 128, 0.5);
+        }
+
+        .icon-image {
+            width: 32px;
+            height: 32px;
+            margin-bottom: 4px;
+            image-rendering: pixelated;
+        }
+
+        .icon-label {
+            font-size: 11px;
+            color: white;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            word-wrap: break-word;
+            max-width: 70px;
+        }
+
+        /* TASKBAR */
+        .taskbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 28px;
+            background: #c0c0c0;
+            border-top: 2px solid #ffffff;
+            display: flex;
+            align-items: center;
+            padding: 2px;
+            z-index: 1000;
+        }
+
+        .start-button {
+            height: 24px;
+            padding: 0 4px 0 2px;
+            background: #c0c0c0;
+            border: 2px outset #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .start-button:active {
+            border-style: inset;
+        }
+
+        .start-button img {
+            width: 18px;
+            height: 18px;
+        }
+
+        .taskbar-divider {
+            width: 2px;
+            height: 20px;
+            background: #808080;
+            margin: 0 2px;
+            border-left: 1px solid #ffffff;
+        }
+
+        .taskbar-apps {
+            flex: 1;
+            display: flex;
+            gap: 2px;
+            overflow-x: auto;
+        }
+
+        .taskbar-app {
+            height: 22px;
+            min-width: 120px;
+            max-width: 160px;
+            padding: 0 6px;
+            background: #c0c0c0;
+            border: 2px outset #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .taskbar-app.active {
+            border-style: inset;
+            background: #000080;
+            color: white;
+        }
+
+        .taskbar-app img {
+            width: 16px;
+            height: 16px;
+        }
+
+        .system-tray {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            border-left: 2px groove #808080;
+            padding-left: 4px;
+            margin-left: 4px;
+        }
+
+        .system-tray-icon {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .clock {
+            font-size: 11px;
+            padding: 0 4px;
+            border: 1px inset #808080;
+            background: #c0c0c0;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        /* START MENU */
+        .start-menu {
+            position: fixed;
+            bottom: 28px;
+            left: 0;
+            width: 200px;
+            background: #c0c0c0;
+            border: 2px outset #ffffff;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 999;
+        }
+
+        .start-menu.active {
+            display: block;
+        }
+
+        .start-menu-banner {
+            background: linear-gradient(to right, #000080, #1084d0);
+            color: white;
+            padding: 4px 8px;
+            font-size: 18px;
+            font-weight: bold;
+            writing-mode: vertical-lr;
+            transform: rotate(180deg);
+            float: left;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .start-menu-items {
+            margin-left: 32px;
+            padding: 2px 0;
+        }
+
+        .start-menu-item {
+            padding: 6px 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .start-menu-item:hover {
+            background: #000080;
+            color: white;
+        }
+
+        .start-menu-item img {
+            width: 16px;
+            height: 16px;
+        }
+
+        .start-menu-divider {
+            height: 1px;
+            background: #808080;
+            margin: 2px 0;
+        }
+
+        /* WINDOW */
+        .window {
+            position: fixed;
+            background: #c0c0c0;
+            border: 2px outset #ffffff;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            min-width: 300px;
+            min-height: 200px;
+            display: none;
+            z-index: 100;
+        }
+
+        .window.active {
+            display: flex;
+            flex-direction: column;
+            z-index: 101;
+        }
+
+        .window-title-bar {
+            background: linear-gradient(to right, #000080, #1084d0);
+            color: white;
+            padding: 2px 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: move;
+            user-select: none;
+        }
+
+        .window-title {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .window-title img {
+            width: 16px;
+            height: 16px;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 2px;
+        }
+
+        .window-control {
+            width: 16px;
+            height: 14px;
+            background: #c0c0c0;
+            border: 1px outset #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: bold;
+            color: black;
+        }
+
+        .window-control:active {
+            border-style: inset;
+        }
+
+        .window-content {
+            flex: 1;
+            padding: 8px;
+            background: white;
+            overflow: auto;
+        }
+
+        /* ICON STYLES (Pixel Art Emulation) */
+        .icon-computer { background: #c0c0c0; }
+        .icon-folder { background: #ffff00; }
+        .icon-document { background: #ffffff; }
+        .icon-executable { background: #808080; }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .desktop {
+                grid-template-columns: repeat(auto-fill, 70px);
+                grid-template-rows: repeat(auto-fill, 80px);
+            }
+
+            .start-menu {
+                width: 180px;
+            }
+
+            .window {
+                width: 100% !important;
+                height: calc(100vh - 28px) !important;
+                top: 0 !important;
+                left: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- DESKTOP -->
+    <div class="desktop" id="desktop">
+        <!-- My Computer -->
+        <div class="desktop-icon" ondblclick="openWindow('myComputer')">
+            <div class="icon-image" style="background: linear-gradient(#808080, #c0c0c0); border: 2px solid #000; display: flex; align-items: center; justify-content: center; font-size: 20px;">🖥️</div>
+            <div class="icon-label">My Computer</div>
+        </div>
+
+        <!-- Remrin.ai -->
+        <div class="desktop-icon" ondblclick="openRemrin()">
+            <div class="icon-image" style="background: linear-gradient(135deg, #667eea, #764ba2); border: 2px solid #000; display: flex; align-items: center; justify-content: center; font-size: 20px;">🐰</div>
+            <div class="icon-label">Remrin.ai</div>
+        </div>
+
+        <!-- Remrin Chat 95 -->
+        <div class="desktop-icon" ondblclick="openChat()">
+            <div class="icon-image" style="background: linear-gradient(#ff6b6b, #ee5a6f); border: 2px solid #000; display: flex; align-items: center; justify-content: center; font-size: 18px;">💬</div>
+            <div class="icon-label">Remrin_Chat_95.exe</div>
+        </div>
+
+        <!-- Craft a Soul -->
+        <div class="desktop-icon" ondblclick="navigateTo('/craft')">
+            <div class="icon-image" style="background: linear-gradient(#a8edea, #fed6e3); border: 2px solid #000; display: flex; align-items: center; justify-content: center; font-size: 20px;">✨</div>
+            <div class="icon-label">Craft a Soul</div>
+        </div>
+
+        <!-- Discover -->
+        <div class="desktop-icon" ondblclick="navigateTo('/discover')">
+            <div class="icon-image" style="background: linear-gradient(#ffecd2, #fcb69f); border: 2px solid #000; display: flex; align-items: center; justify-content: center; font-size: 20px;">🔍</div>
+            <div class="icon-label">Discover</div>
+        </div>
+
+        <!-- Feed -->
+        <div class="desktop-icon" ondblclick="navigateTo('/feed')">
+            <div class="icon-image" style="background: linear-gradient(#ff9a9e, #fecfef); border: 2px solid #000; display: flex; align-items: center; justify-content: center; font-size: 20px;">📰</div>
+            <div class="icon-label">Feed</div>
+        </div>
+
+        <!-- Collection -->
+        <div class="desktop-icon" ondblclick="navigateTo('/collection')">
+            <div class="icon-image" style="background: linear-gradient(#4facfe, #00f2fe); border: 2px solid #000; display: flex; align-items: center; justify-content: center; font-size: 20px;">📚</div>
+            <div class="icon-label">Collection</div>
+        </div>
+
+        <!-- Marketplace -->
+        <div class="desktop-icon" ondblclick="navigateTo('/marketplace')">
+            <div class="icon-image" style="background: linear-gradient(#43e97b, #38f9d7); border: 2px solid #000; display: flex; align-items: center; justify-content: center; font-size: 20px;">🛍️</div>
+            <div class="icon-label">Marketplace</div>
+        </div>
+
+        <!-- Studio -->
+        <div class="desktop-icon" ondblclick="navigateTo('/studio')">
+            <div class="icon-image" style="background: linear-gradient(#fa709a, #fee140); border: 2px solid #000; display: flex; align-items: center; justify-content: center; font-size: 20px;">🎨</div>
+            <div class="icon-label">Studio</div>
+        </div>
+
+        <!-- Recycle Bin -->
+        <div class="desktop-icon" ondblclick="openWindow('recycleBin')">
+            <div class="icon-image" style="background: #c0c0c0; border: 2px solid #000; display: flex; align-items: center; justify-content: center; font-size: 20px;">🗑️</div>
+            <div class="icon-label">Recycle Bin</div>
+        </div>
+    </div>
+
+    <!-- TASKBAR -->
+    <div class="taskbar">
+        <div class="start-button" onclick="toggleStartMenu()">
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect fill='%23ff0000' width='24' height='24'/%3E%3Ctext x='12' y='16' font-size='14' text-anchor='middle' fill='white' font-weight='bold'%3ES%3C/text%3E%3C/svg%3E" alt="Start">
+            <span>Start</span>
+        </div>
+
+        <div class="taskbar-divider"></div>
+
+        <div class="taskbar-apps" id="taskbarApps">
+            <!-- Active windows appear here -->
+        </div>
+
+        <div class="system-tray">
+            <img class="system-tray-icon" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000080' d='M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z'/%3E%3C/svg%3E" title="Antivirus">
+            <img class="system-tray-icon" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23008000' d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E" title="Online">
+            <div class="clock" id="clock">12:00 PM</div>
+        </div>
+    </div>
+
+    <!-- START MENU -->
+    <div class="start-menu" id="startMenu">
+        <div class="start-menu-banner">Remrin 95</div>
+        <div class="start-menu-items">
+            <div class="start-menu-item" onclick="openRemrin()">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ctext x='12' y='16' font-size='16' text-anchor='middle'%3E🐰%3C/text%3E%3C/svg%3E">
+                <span>Remrin.ai</span>
+            </div>
+            <div class="start-menu-item" onclick="openChat()">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ctext x='12' y='16' font-size='16' text-anchor='middle'%3E💬%3C/text%3E%3C/svg%3E">
+                <span>Remrin Chat 95</span>
+            </div>
+            <div class="start-menu-divider"></div>
+            <div class="start-menu-item" onclick="navigateTo('/craft')">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ctext x='12' y='16' font-size='16' text-anchor='middle'%3E✨%3C/text%3E%3C/svg%3E">
+                <span>Craft a Soul</span>
+            </div>
+            <div class="start-menu-item" onclick="navigateTo('/discover')">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ctext x='12' y='16' font-size='16' text-anchor='middle'%3E🔍%3C/text%3E%3C/svg%3E">
+                <span>Discover</span>
+            </div>
+            <div class="start-menu-item" onclick="navigateTo('/feed')">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ctext x='12' y='16' font-size='16' text-anchor='middle'%3E📰%3C/text%3E%3C/svg%3E">
+                <span>Feed</span>
+            </div>
+            <div class="start-menu-divider"></div>
+            <div class="start-menu-item" onclick="navigateTo('/settings')">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ctext x='12' y='16' font-size='16' text-anchor='middle'%3E⚙️%3C/text%3E%3C/svg%3E">
+                <span>Settings</span>
+            </div>
+            <div class="start-menu-item" onclick="alert('Shutting down Windows 95...')">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ctext x='12' y='16' font-size='16' text-anchor='middle'%3E🔌%3C/text%3E%3C/svg%3E">
+                <span>Shut Down...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SAMPLE WINDOW -->
+    <div class="window" id="myComputerWindow" style="width: 500px; height: 400px; top: 50px; left: 100px;">
+        <div class="window-title-bar">
+            <div class="window-title">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ctext x='12' y='16' font-size='16' text-anchor='middle'%3E🖥️%3C/text%3E%3C/svg%3E">
+                <span>My Computer</span>
+            </div>
+            <div class="window-controls">
+                <div class="window-control">_</div>
+                <div class="window-control">□</div>
+                <div class="window-control" onclick="closeWindow('myComputerWindow')">×</div>
+            </div>
+        </div>
+        <div class="window-content">
+            <h2 style="margin-bottom: 16px;">My Computer</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, 80px); gap: 16px;">
+                <div style="text-align: center; cursor: pointer;">
+                    <div style="font-size: 32px;">💾</div>
+                    <div style="font-size: 11px; margin-top: 4px;">(C:)</div>
+                </div>
+                <div style="text-align: center; cursor: pointer;">
+                    <div style="font-size: 32px;">💿</div>
+                    <div style="font-size: 11px; margin-top: 4px;">(D:)</div>
+                </div>
+                <div style="text-align: center; cursor: pointer;">
+                    <div style="font-size: 32px;">🖨️</div>
+                    <div style="font-size: 11px; margin-top: 4px;">Printers</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Clock
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours() % 12 || 12;
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const ampm = now.getHours() >= 12 ? 'PM' : 'AM';
+            document.getElementById('clock').textContent = `${hours}:${minutes} ${ampm}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Start Menu
+        function toggleStartMenu() {
+            const menu = document.getElementById('startMenu');
+            menu.classList.toggle('active');
+        }
+
+        // Close start menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('startMenu');
+            const startButton = document.querySelector('.start-button');
+            if (!menu.contains(e.target) && !startButton.contains(e.target)) {
+                menu.classList.remove('active');
+            }
+        });
+
+        // Window Management
+        function openWindow(windowId) {
+            const window = document.getElementById(windowId + 'Window');
+            if (window) {
+                window.classList.add('active');
+                toggleStartMenu();
+            }
+        }
+
+        function closeWindow(windowId) {
+            const window = document.getElementById(windowId);
+            if (window) {
+                window.classList.remove('active');
+            }
+        }
+
+        // Navigation
+        function navigateTo(path) {
+            alert(`Navigating to ${path}...`);
+            // In real implementation: window.location.href = path;
+        }
+
+        function openRemrin() {
+            alert('Opening Remrin.ai main site...');
+            // window.location.href = '/';
+        }
+
+        function openChat() {
+            alert('Opening Remrin Chat 95...');
+            // window.location.href = '/chat95';
+        }
+
+        // Desktop icon selection
+        document.querySelectorAll('.desktop-icon').forEach(icon => {
+            icon.addEventListener('click', function(e) {
+                if (!e.detail || e.detail === 1) { // Single click
+                    document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
+                    this.classList.add('selected');
+                }
+            });
+        });
+
+        // Deselect icons when clicking desktop
+        document.getElementById('desktop').addEventListener('click', function(e) {
+            if (e.target === this) {
+                document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
+            }
+        });
+    </script>
+</body>
+</html>

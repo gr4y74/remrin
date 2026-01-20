@@ -4,10 +4,11 @@ import { useState, useRef, memo } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
-import { MessageCircle } from "lucide-react"
+import { MessageCircle, PlusCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { calculateTilt, staggerDelay } from "@/lib/animations"
 import { TYPOGRAPHY, SPACING } from "@/lib/design-system"
+import { AddToCollectionModal } from "../collections/AddToCollectionModal"
 
 interface CharacterCardProps {
     id: string
@@ -44,6 +45,7 @@ export const CharacterCard = memo(function CharacterCard({
     const cardRef = useRef<HTMLDivElement>(null)
     const [tiltStyle, setTiltStyle] = useState<React.CSSProperties>({})
     const [isHovering, setIsHovering] = useState(false)
+    const [isModalOpen, setIsModalOpen] = useState(false)
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
         const { rotateX, rotateY } = calculateTilt(e, 8)
@@ -63,97 +65,126 @@ export const CharacterCard = memo(function CharacterCard({
         })
     }
 
+    const handleAddClick = (e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setIsModalOpen(true)
+    }
+
     // Glow color based on category
     const glowColor = categoryColor || 'rgba(196, 167, 231, 0.6)' // rp-iris default
 
     return (
-        <Link href={`/character/${id}`} className="block">
-            <div
-                ref={cardRef}
-                className={cn(
-                    "border-rp-muted/20 bg-rp-surface group relative overflow-hidden rounded-2xl border",
-                    "animate-card-enter transition-all duration-300 ease-out",
-                    className
-                )}
-                style={{
-                    ...tiltStyle,
-                    animationDelay: `${staggerDelay(animationIndex)}ms`,
-                    animationFillMode: 'both',
-                    boxShadow: isHovering
-                        ? `0 20px 40px rgba(0,0,0,0.4), 0 0 40px ${glowColor}`
-                        : '0 4px 20px rgba(0,0,0,0.2)',
-                    borderColor: isHovering ? glowColor : 'rgba(110, 106, 134, 0.2)',
-                    ['--glow-color' as string]: glowColor
-                }}
-                onMouseMove={handleMouseMove}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-            >
-                {/* Portrait Image */}
-                <div className="relative aspect-[3/4] w-full overflow-hidden">
-                    {imageUrl ? (
-                        <Image
-                            src={imageUrl}
-                            alt={name}
-                            fill
-                            className={cn(
-                                "object-cover transition-transform duration-500 ease-out",
-                                isHovering ? "scale-105" : "scale-100"
-                            )}
-                            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-                        />
-                    ) : (
-                        <div className="from-rp-iris/50 to-rp-foam/50 flex size-full items-center justify-center bg-gradient-to-br">
-                            <span className="text-rp-text/50 text-4xl font-bold">
-                                {name.slice(0, 2).toUpperCase()}
-                            </span>
-                        </div>
+        <>
+            <Link href={`/character/${id}`} className="block">
+                <div
+                    ref={cardRef}
+                    className={cn(
+                        "border-rp-muted/20 bg-rp-surface group relative overflow-hidden rounded-2xl border",
+                        "animate-card-enter transition-all duration-300 ease-out",
+                        className
                     )}
-
-                    {/* Gradient Overlay */}
-                    <div className="from-rp-base/90 via-rp-base/20 absolute inset-0 bg-gradient-to-t to-transparent" />
-
-                    {/* Stats Badge */}
-                    <div className="absolute right-3 top-3">
-                        <Badge className="bg-rp-base/60 flex items-center gap-1 rounded-full border-0 px-2 py-1 text-xs text-rp-rose backdrop-blur-sm">
-                            <MessageCircle className="size-3" />
-                            <span>{formatCount(totalChats)}</span>
-                        </Badge>
-                    </div>
-
-                    {/* Bottom Content */}
-                    <div className={`absolute inset-x-0 bottom-0 ${SPACING.card.medium}`}>
-                        {/* Category Badge */}
-                        {category && (
-                            <Badge
+                    style={{
+                        ...tiltStyle,
+                        animationDelay: `${staggerDelay(animationIndex)}ms`,
+                        animationFillMode: 'both',
+                        boxShadow: isHovering
+                            ? `0 20px 40px rgba(0,0,0,0.4), 0 0 40px ${glowColor}`
+                            : '0 4px 20px rgba(0,0,0,0.2)',
+                        borderColor: isHovering ? glowColor : 'rgba(110, 106, 134, 0.2)',
+                        ['--glow-color' as string]: glowColor
+                    }}
+                    onMouseMove={handleMouseMove}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                >
+                    {/* Portrait Image */}
+                    <div className="relative aspect-[3/4] w-full overflow-hidden">
+                        {imageUrl ? (
+                            <Image
+                                src={imageUrl}
+                                alt={name}
+                                fill
                                 className={cn(
-                                    "mb-2 rounded-full border-0 px-2.5 py-0.5 text-xs font-medium",
-                                    "transition-all duration-300",
-                                    isHovering && "scale-105"
+                                    "object-cover transition-transform duration-500 ease-out",
+                                    isHovering ? "scale-105" : "scale-100"
                                 )}
-                                style={{
-                                    backgroundColor: categoryColor
-                                        ? `${categoryColor}30`
-                                        : "rgba(196, 167, 231, 0.3)",
-                                    color: categoryColor || "#c4a7e7"
-                                }}
-                            >
-                                {category}
-                            </Badge>
+                                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                            />
+                        ) : (
+                            <div className="from-rp-iris/50 to-rp-foam/50 flex size-full items-center justify-center bg-gradient-to-br">
+                                <span className="text-rp-text/50 text-4xl font-bold">
+                                    {name.slice(0, 2).toUpperCase()}
+                                </span>
+                            </div>
                         )}
 
-                        {/* Character Name */}
-                        <h3 className={cn(
-                            TYPOGRAPHY.heading.h4,
-                            "line-clamp-2 leading-tight drop-shadow-lg text-rp-rose",
-                            "transition-transform duration-300",
-                            isHovering && "translate-x-1"
-                        )}>
-                            {name}
-                        </h3>
+                        {/* Gradient Overlay */}
+                        <div className="from-rp-base/90 via-rp-base/20 absolute inset-0 bg-gradient-to-t to-transparent" />
+
+                        {/* Action Buttons (Top Right) */}
+                        <div className="absolute right-3 top-3 flex flex-col gap-2">
+                            {/* Stats Badge */}
+                            <Badge className="bg-rp-base/60 flex items-center gap-1 rounded-full border-0 px-2 py-1 text-xs text-rp-rose backdrop-blur-sm">
+                                <MessageCircle className="size-3" />
+                                <span>{formatCount(totalChats)}</span>
+                            </Badge>
+
+                            {/* Add to Collection Button */}
+                            <button
+                                onClick={handleAddClick}
+                                className={cn(
+                                    "bg-rp-iris text-rp-base flex size-8 items-center justify-center rounded-full transition-all duration-300",
+                                    "hover:scale-110 active:scale-95 shadow-lg",
+                                    isHovering ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0"
+                                )}
+                                title="Add to collection"
+                            >
+                                <PlusCircle className="size-5" />
+                            </button>
+                        </div>
+
+                        {/* Bottom Content */}
+                        <div className={`absolute inset-x-0 bottom-0 ${SPACING.card.medium}`}>
+                            {/* Category Badge */}
+                            {category && (
+                                <Badge
+                                    className={cn(
+                                        "mb-2 rounded-full border-0 px-2.5 py-0.5 text-xs font-medium",
+                                        "transition-all duration-300",
+                                        isHovering && "scale-105"
+                                    )}
+                                    style={{
+                                        backgroundColor: categoryColor
+                                            ? `${categoryColor}30`
+                                            : "rgba(196, 167, 231, 0.3)",
+                                        color: categoryColor || "#c4a7e7"
+                                    }}
+                                >
+                                    {category}
+                                </Badge>
+                            )}
+
+                            {/* Character Name */}
+                            <h3 className={cn(
+                                TYPOGRAPHY.heading.h4,
+                                "line-clamp-2 leading-tight drop-shadow-lg text-rp-rose",
+                                "transition-transform duration-300",
+                                isHovering && "translate-x-1"
+                            )}>
+                                {name}
+                            </h3>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </Link>
+            </Link>
+
+            <AddToCollectionModal
+                isOpen={isModalOpen}
+                onOpenChange={setIsModalOpen}
+                personaId={id}
+                personaName={name}
+            />
+        </>
     )
 })

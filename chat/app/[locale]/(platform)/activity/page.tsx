@@ -137,7 +137,7 @@ export default function ActivityPage() {
                         </div>
                         <h3 className="text-lg font-semibold text-rp-text">No notifications yet</h3>
                         <p className="text-rp-muted max-w-xs mx-auto mt-2">
-                            When someone interacts with you or your Souls, you'll see it here.
+                            When someone interacts with you or your Souls, you&apos;ll see it here.
                         </p>
                     </div>
                 ) : (

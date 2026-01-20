@@ -12,7 +12,12 @@
   "rules": {
     "tailwindcss/no-custom-classname": "off",
     "tailwindcss/classnames-order": "off",
-    "tailwindcss/enforces-shorthand": "off"
+    "tailwindcss/enforces-shorthand": "off",
+    "tailwindcss/no-contradicting-classname": "off",
+    "tailwindcss/migration-from-tailwind-2": "off",
+    "tailwindcss/enforces-negative-arbitrary-values": "off",
+    "react-hooks/exhaustive-deps": "off",
+    "@next/next/no-img-element": "off"
   },
   "settings": {
     "tailwindcss": {

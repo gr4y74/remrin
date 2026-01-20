@@ -50,7 +50,7 @@ export function ResponsiveGrid({
         <div
             className={cn(
                 "grid w-full",
-                gridCols[cols.mobile || 1 as keyof typeof gridCols],
+                gridCols[(cols.mobile || 1) as keyof typeof gridCols],
                 cols.tablet && `md:${gridCols[cols.tablet as keyof typeof gridCols]}`,
                 cols.desktop && `lg:${gridCols[cols.desktop as keyof typeof gridCols]}`,
                 cols.lg && `xl:${gridCols[cols.lg as keyof typeof gridCols]}`,

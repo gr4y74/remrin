@@ -2,6 +2,7 @@
  * Call Modal - Voice Call Interface
  * 
  * Character.AI-style voice call experience with full-screen overlay
+ * Uses AI TTS (ElevenLabs/OpenAI) for high-quality voice synthesis
  */
 
 "use client"
@@ -15,24 +16,34 @@ interface CallModalProps {
     onClose: () => void
     personaName?: string
     personaImage?: string
+    personaVoiceId?: string // ElevenLabs voice ID
     onSendMessage?: (message: string) => Promise<string | undefined>
 }
 
 type CallStatus = 'connecting' | 'listening' | 'processing' | 'speaking' | 'idle'
+
+interface AudioQueueItem {
+    text: string
+    audioUrl?: string
+}
 
 export function CallModal({
     isOpen,
     onClose,
     personaName = "Character",
     personaImage,
+    personaVoiceId,
     onSendMessage
 }: CallModalProps) {
     const [isMuted, setIsMuted] = useState(false)
     const [status, setStatus] = useState<CallStatus>('connecting')
     const [transcript, setTranscript] = useState('')
+    const [audioQueue, setAudioQueue] = useState<AudioQueueItem[]>([])
+    const [isProcessingQueue, setIsProcessingQueue] = useState(false)
 
     const recognitionRef = useRef<any>(null)
-    const synthRef = useRef<SpeechSynthesis | null>(null)
+    const audioRef = useRef<HTMLAudioElement | null>(null)
+    const audioContextRef = useRef<AudioContext | null>(null)
 
     // Use refs to avoid stale closure issues
     const isMutedRef = useRef(isMuted)
@@ -44,29 +55,42 @@ export function CallModal({
     useEffect(() => { isOpenRef.current = isOpen }, [isOpen])
     useEffect(() => { statusRef.current = status }, [status])
 
-    // Initialize speech synthesis
+    // Initialize audio context
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            synthRef.current = window.speechSynthesis
-            // Preload voices
-            synthRef.current.getVoices()
+            audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
+            audioRef.current = new Audio()
+        }
+        return () => {
+            audioContextRef.current?.close()
         }
     }, [])
 
-    // Start listening when call opens
-    useEffect(() => {
-        if (isOpen && !isMuted) {
-            // Small delay to ensure modal is fully rendered
-            const timer = setTimeout(() => {
-                startListening()
-            }, 500)
-            return () => clearTimeout(timer)
+
+    const handleUserMessage = useCallback(async (message: string) => {
+        setStatus('processing')
+        setTranscript('')
+
+        if (onSendMessage) {
+            try {
+                const response = await onSendMessage(message)
+                if (response) {
+                    // Add to audio queue
+                    setAudioQueue(prev => [...prev, { text: response }])
+                } else {
+                    setStatus('listening')
+                }
+            } catch (error) {
+                console.error('Error sending message:', error)
+                setStatus('listening')
+            }
+        } else {
+            // Demo mode - simulate response
+            setTimeout(() => {
+                setAudioQueue(prev => [...prev, { text: `I heard you say: ${message}` }])
+            }, 1000)
         }
-        return () => {
-            stopListening()
-            synthRef.current?.cancel()
-        }
-    }, [isOpen, isMuted])
+    }, [onSendMessage])
 
     const startListening = useCallback(() => {
         // Check browser support
@@ -140,7 +164,7 @@ export function CallModal({
             console.error('[CallModal] Failed to start speech recognition:', error)
             setStatus('idle')
         }
-    }, []) // Empty deps - uses refs for mutable values
+    }, [handleUserMessage])
 
     const stopListening = useCallback(() => {
         if (recognitionRef.current) {
@@ -149,61 +173,111 @@ export function CallModal({
         }
     }, [])
 
-    const handleUserMessage = async (message: string) => {
-        setStatus('processing')
-        setTranscript('')
-
-        if (onSendMessage) {
-            try {
-                const response = await onSendMessage(message)
-                if (response) {
-                    speak(response)
-                } else {
-                    setStatus('listening')
-                    if (!isMuted) startListening()
-                }
-            } catch (error) {
-                console.error('Error sending message:', error)
-                setStatus('listening')
-                if (!isMuted) startListening()
+    // Start listening when call opens
+    useEffect(() => {
+        if (isOpen && !isMuted) {
+            // Small delay to ensure modal is fully rendered
+            const timer = setTimeout(() => {
+                startListening()
+            }, 500)
+            return () => clearTimeout(timer)
+        }
+        return () => {
+            stopListening()
+            // Stop audio playback
+            if (audioRef.current) {
+                audioRef.current.pause()
+                audioRef.current.src = ''
             }
-        } else {
-            // Demo mode - simulate response
-            setTimeout(() => {
-                speak(`I heard you say: ${message}`)
-            }, 1000)
+            // Clear audio queue
+            setAudioQueue([])
+            setIsProcessingQueue(false)
         }
-    }
+    }, [isOpen, isMuted, startListening, stopListening])
 
-    const speak = (text: string) => {
-        if (!synthRef.current) return
 
-        setStatus('speaking')
-        const utterance = new SpeechSynthesisUtterance(text)
 
-        // Try to use a natural-sounding voice
-        const voices = synthRef.current.getVoices()
-        const preferredVoice = voices.find(v =>
-            v.name.includes('Natural') ||
-            v.name.includes('Premium') ||
-            v.name.includes('Samantha')
-        ) || voices[0]
-
-        if (preferredVoice) {
-            utterance.voice = preferredVoice
+    // Process audio queue
+    useEffect(() => {
+        if (audioQueue.length > 0 && !isProcessingQueue) {
+            processNextInQueue()
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [audioQueue, isProcessingQueue])
 
-        utterance.rate = 1
-        utterance.pitch = 1
+    const processNextInQueue = async () => {
+        if (audioQueue.length === 0 || isProcessingQueue) return
 
-        utterance.onend = () => {
-            setStatus('listening')
-            if (!isMuted && isOpen) {
+        setIsProcessingQueue(true)
+        const item = audioQueue[0]
+
+        try {
+            await speakWithTTS(item.text)
+        } catch (error) {
+            console.error('Error playing audio:', error)
+        } finally {
+            // Remove processed item
+            setAudioQueue(prev => prev.slice(1))
+            setIsProcessingQueue(false)
+
+            // Resume listening if not muted
+            if (!isMutedRef.current && isOpenRef.current && audioQueue.length === 1) {
+                setStatus('listening')
                 startListening()
             }
         }
+    }
 
-        synthRef.current.speak(utterance)
+    const speakWithTTS = async (text: string): Promise<void> => {
+        if (!audioRef.current) return
+
+        setStatus('speaking')
+
+        try {
+            // Call TTS API
+            const response = await fetch('/api/tts/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    text,
+                    voiceId: personaVoiceId,
+                    provider: personaVoiceId ? 'elevenlabs' : 'auto',
+                }),
+            })
+
+            if (!response.ok) {
+                throw new Error(`TTS API error: ${response.status}`)
+            }
+
+            // Get audio blob
+            const audioBlob = await response.blob()
+            const audioUrl = URL.createObjectURL(audioBlob)
+
+            // Play audio
+            return new Promise((resolve, reject) => {
+                if (!audioRef.current) {
+                    reject(new Error('Audio element not available'))
+                    return
+                }
+
+                audioRef.current.src = audioUrl
+                audioRef.current.onended = () => {
+                    URL.revokeObjectURL(audioUrl)
+                    resolve()
+                }
+                audioRef.current.onerror = () => {
+                    URL.revokeObjectURL(audioUrl)
+                    reject(new Error('Audio playback failed'))
+                }
+
+                audioRef.current.play().catch(reject)
+            })
+        } catch (error) {
+            console.error('TTS error:', error)
+            throw error
+        }
     }
 
     const toggleMute = () => {
@@ -219,7 +293,14 @@ export function CallModal({
 
     const handleHangUp = () => {
         stopListening()
-        synthRef.current?.cancel()
+        // Stop audio playback
+        if (audioRef.current) {
+            audioRef.current.pause()
+            audioRef.current.src = ''
+        }
+        // Clear queue
+        setAudioQueue([])
+        setIsProcessingQueue(false)
         onClose()
     }
 
@@ -285,10 +366,28 @@ export function CallModal({
             <div className="relative z-10 flex flex-col items-center gap-4 flex-1 justify-center">
                 <p className="text-white/90 text-xl md:text-lg font-medium">{getStatusText()}</p>
 
+                {/* Waveform when speaking */}
+                {status === 'speaking' && (
+                    <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1 h-8">
+                            {[...Array(5)].map((_, i) => (
+                                <div
+                                    key={i}
+                                    className="w-1 bg-[#c4a7e7] rounded-full animate-pulse"
+                                    style={{
+                                        height: `${Math.max(40, Math.random() * 100)}%`,
+                                        animationDelay: `${i * 0.1}s`
+                                    }}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                )}
+
                 {/* Transcript preview */}
                 {transcript && (
                     <p className="text-white/60 text-base md:text-sm max-w-xs text-center italic">
-                        "{transcript}"
+                        &ldquo;{transcript}&rdquo;
                     </p>
                 )}
             </div>

@@ -1,0 +1,662 @@
+{
+  "project_name": "Remrin.ai - Windows 95 Desktop Experience (Full React/Next.js)",
+  "route": "/win95 or /desktop",
+  
+  "primary_objective": "Create a fully functional Windows 95 desktop interface in Next.js that serves as an alternate way to navigate the entire Remrin.ai website. This should be pixel-perfect Windows 95 aesthetic with working navigation, draggable windows, and full integration with existing routes.",
+
+  "design_requirements": {
+    "aesthetic": "MUST match Windows 95 exactly",
+    "colors": {
+      "desktop_background": "#008080",
+      "window_chrome": "#c0c0c0",
+      "title_bar": "linear-gradient(to right, #000080, #1084d0)",
+      "highlight": "#000080",
+      "shadow_dark": "#808080",
+      "shadow_light": "#ffffff",
+      "text": "#000000"
+    },
+    "fonts": {
+      "system": "'MS Sans Serif', Arial, sans-serif",
+      "monospace": "'Courier New', monospace"
+    },
+    "ui_elements": [
+      "Outset/inset borders (3D effect)",
+      "Dotted selection outlines",
+      "Classic window controls (_, □, ×)",
+      "Gray taskbar with Start button",
+      "System tray with clock",
+      "Desktop icons with emoji graphics",
+      "Context menus (right-click)",
+      "Draggable windows"
+    ]
+  },
+
+  "file_structure": {
+    "pages": [
+      {
+        "path": "app/win95/page.tsx",
+        "description": "Main Windows 95 desktop page"
+      }
+    ],
+    "components": [
+      {
+        "path": "components/win95/Desktop.tsx",
+        "description": "Desktop component with icons and background"
+      },
+      {
+        "path": "components/win95/DesktopIcon.tsx",
+        "description": "Individual desktop icon component"
+      },
+      {
+        "path": "components/win95/Taskbar.tsx",
+        "description": "Bottom taskbar with Start menu and clock"
+      },
+      {
+        "path": "components/win95/StartMenu.tsx",
+        "description": "Start menu popup"
+      },
+      {
+        "path": "components/win95/Window.tsx",
+        "description": "Draggable window component"
+      },
+      {
+        "path": "components/win95/ContextMenu.tsx",
+        "description": "Right-click context menu"
+      },
+      {
+        "path": "components/win95/SystemTray.tsx",
+        "description": "System tray with icons and clock"
+      }
+    ],
+    "hooks": [
+      {
+        "path": "hooks/useWindows.ts",
+        "description": "Manage open windows state"
+      },
+      {
+        "path": "hooks/useDesktop.ts",
+        "description": "Desktop icon selection and interactions"
+      }
+    ],
+    "styles": [
+      {
+        "path": "styles/win95.css",
+        "description": "Windows 95 specific styles"
+      }
+    ]
+  },
+
+  "desktop_icons": {
+    "description": "Icons displayed on desktop",
+    "icons": [
+      {
+        "id": "my-computer",
+        "label": "My Computer",
+        "icon": "🖥️",
+        "position": { "x": 0, "y": 0 },
+        "action": "open_window",
+        "window_content": "My Computer window showing drive list and stats"
+      },
+      {
+        "id": "remrin-main",
+        "label": "Remrin.ai",
+        "icon": "🐰",
+        "gradient": "linear-gradient(135deg, #667eea, #764ba2)",
+        "position": { "x": 0, "y": 1 },
+        "action": "navigate",
+        "route": "/"
+      },
+      {
+        "id": "chat95",
+        "label": "Remrin_Chat_95.exe",
+        "icon": "💬",
+        "gradient": "linear-gradient(#ff6b6b, #ee5a6f)",
+        "position": { "x": 0, "y": 2 },
+        "action": "navigate",
+        "route": "/chat95",
+        "description": "Opens the AOL-style chat rooms"
+      },
+      {
+        "id": "craft",
+        "label": "Craft a Soul",
+        "icon": "✨",
+        "gradient": "linear-gradient(#a8edea, #fed6e3)",
+        "position": { "x": 0, "y": 3 },
+        "action": "navigate",
+        "route": "/craft"
+      },
+      {
+        "id": "discover",
+        "label": "Discover",
+        "icon": "🔍",
+        "gradient": "linear-gradient(#ffecd2, #fcb69f)",
+        "position": { "x": 0, "y": 4 },
+        "action": "navigate",
+        "route": "/discover"
+      },
+      {
+        "id": "feed",
+        "label": "Feed",
+        "icon": "📰",
+        "gradient": "linear-gradient(#ff9a9e, #fecfef)",
+        "position": { "x": 0, "y": 5 },
+        "action": "navigate",
+        "route": "/feed"
+      },
+      {
+        "id": "summon",
+        "label": "Summon",
+        "icon": "👻",
+        "gradient": "linear-gradient(#fa709a, #fee140)",
+        "position": { "x": 1, "y": 0 },
+        "action": "navigate",
+        "route": "/summon"
+      },
+      {
+        "id": "collection",
+        "label": "Collection",
+        "icon": "📚",
+        "gradient": "linear-gradient(#4facfe, #00f2fe)",
+        "position": { "x": 1, "y": 1 },
+        "action": "navigate",
+        "route": "/collection"
+      },
+      {
+        "id": "marketplace",
+        "label": "Marketplace",
+        "icon": "🛍️",
+        "gradient": "linear-gradient(#43e97b, #38f9d7)",
+        "position": { "x": 1, "y": 2 },
+        "action": "navigate",
+        "route": "/marketplace"
+      },
+      {
+        "id": "studio",
+        "label": "Studio",
+        "icon": "🎨",
+        "gradient": "linear-gradient(#fa709a, #fee140)",
+        "position": { "x": 1, "y": 3 },
+        "action": "navigate",
+        "route": "/studio"
+      },
+      {
+        "id": "wallet",
+        "label": "Wallet",
+        "icon": "💰",
+        "gradient": "linear-gradient(#f093fb, #f5576c)",
+        "position": { "x": 1, "y": 4 },
+        "action": "navigate",
+        "route": "/wallet"
+      },
+      {
+        "id": "recycle-bin",
+        "label": "Recycle Bin",
+        "icon": "🗑️",
+        "position": { "x": 1, "y": 5 },
+        "action": "open_window",
+        "window_content": "Recycle Bin (empty)"
+      }
+    ]
+  },
+
+  "start_menu": {
+    "description": "Start menu structure",
+    "banner_text": "Remrin 95",
+    "items": [
+      {
+        "type": "item",
+        "icon": "🐰",
+        "label": "Remrin.ai",
+        "action": "navigate",
+        "route": "/"
+      },
+      {
+        "type": "item",
+        "icon": "💬",
+        "label": "Remrin Chat 95",
+        "action": "navigate",
+        "route": "/chat95"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "item",
+        "icon": "✨",
+        "label": "Craft a Soul",
+        "action": "navigate",
+        "route": "/craft"
+      },
+      {
+        "type": "item",
+        "icon": "🔍",
+        "label": "Discover",
+        "action": "navigate",
+        "route": "/discover"
+      },
+      {
+        "type": "item",
+        "icon": "📰",
+        "label": "Feed",
+        "action": "navigate",
+        "route": "/feed"
+      },
+      {
+        "type": "item",
+        "icon": "📚",
+        "label": "Collection",
+        "action": "navigate",
+        "route": "/collection"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "item",
+        "icon": "⚙️",
+        "label": "Settings",
+        "action": "navigate",
+        "route": "/settings"
+      },
+      {
+        "type": "item",
+        "icon": "❓",
+        "label": "Help",
+        "action": "open_window",
+        "window": "help"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "item",
+        "icon": "🔌",
+        "label": "Exit Windows 95 Mode",
+        "action": "navigate",
+        "route": "/"
+      }
+    ]
+  },
+
+  "windows": {
+    "description": "Draggable window system",
+    "features": [
+      "Each window can be dragged by title bar",
+      "Windows can be minimized (hide and show in taskbar)",
+      "Windows can be maximized (fill screen)",
+      "Windows can be closed",
+      "Click window to bring to front (z-index)",
+      "Multiple windows can be open simultaneously",
+      "Window positions persist while page is open",
+      "Constrain windows to viewport"
+    ],
+    "default_windows": [
+      {
+        "id": "my-computer",
+        "title": "My Computer",
+        "icon": "🖥️",
+        "size": { "width": 500, "height": 400 },
+        "position": { "x": 100, "y": 100 },
+        "content_component": "MyComputerWindow"
+      },
+      {
+        "id": "recycle-bin",
+        "title": "Recycle Bin",
+        "icon": "🗑️",
+        "size": { "width": 400, "height": 300 },
+        "position": { "x": 150, "y": 150 },
+        "content_component": "RecycleBinWindow"
+      },
+      {
+        "id": "help",
+        "title": "Help",
+        "icon": "❓",
+        "size": { "width": 500, "height": 400 },
+        "position": { "x": 200, "y": 100 },
+        "content_component": "HelpWindow"
+      }
+    ]
+  },
+
+  "technical_implementation": {
+    "draggable_windows": {
+      "library": "react-draggable",
+      "installation": "npm install react-draggable @types/react-draggable",
+      "usage": "Wrap each window in <Draggable> component with handle prop for title bar"
+    },
+
+    "state_management": {
+      "method": "React Context or Zustand",
+      "state_needed": [
+        "openWindows: Array of window IDs",
+        "windowStates: Map of window positions/sizes/minimized",
+        "selectedIcon: Currently selected desktop icon",
+        "isStartMenuOpen: Boolean",
+        "activeWindow: Window with focus (highest z-index)"
+      ]
+    },
+
+    "navigation": {
+      "method": "Next.js router",
+      "example": "```typescript\nimport { useRouter } from 'next/navigation';\n\nconst router = useRouter();\n\nfunction handleIconDoubleClick(route: string) {\n  if (route) {\n    router.push(route);\n  }\n}\n```"
+    },
+
+    "keyboard_shortcuts": {
+      "shortcuts": [
+        "Win key / Ctrl+Esc - Toggle Start menu",
+        "Alt+F4 - Close active window",
+        "Alt+Tab - Switch between windows",
+        "F5 - Refresh desktop",
+        "Delete - Move to Recycle Bin (if icon selected)"
+      ]
+    }
+  },
+
+  "component_specifications": {
+    "Desktop_component": {
+      "path": "components/win95/Desktop.tsx",
+      "code_outline": "```typescript\n'use client';\n\nimport { useState } from 'react';\nimport DesktopIcon from './DesktopIcon';\nimport Window from './Window';\nimport { desktopIcons } from '@/data/win95-icons';\n\nexport default function Desktop() {\n  const [selectedIcon, setSelectedIcon] = useState<string | null>(null);\n  const [openWindows, setOpenWindows] = useState<string[]>([]);\n\n  const handleIconClick = (id: string) => {\n    setSelectedIcon(id);\n  };\n\n  const handleIconDoubleClick = (icon: DesktopIconType) => {\n    if (icon.action === 'navigate' && icon.route) {\n      router.push(icon.route);\n    } else if (icon.action === 'open_window') {\n      setOpenWindows([...openWindows, icon.id]);\n    }\n  };\n\n  const handleDesktopClick = () => {\n    setSelectedIcon(null);\n  };\n\n  return (\n    <div \n      className=\"desktop\" \n      onClick={handleDesktopClick}\n      style={{ height: 'calc(100vh - 28px)' }}\n    >\n      {desktopIcons.map(icon => (\n        <DesktopIcon\n          key={icon.id}\n          icon={icon}\n          selected={selectedIcon === icon.id}\n          onClick={() => handleIconClick(icon.id)}\n          onDoubleClick={() => handleIconDoubleClick(icon)}\n        />\n      ))}\n\n      {openWindows.map(windowId => (\n        <Window\n          key={windowId}\n          windowId={windowId}\n          onClose={() => setOpenWindows(openWindows.filter(w => w !== windowId))}\n        />\n      ))}\n    </div>\n  );\n}\n```"
+    },
+
+    "DesktopIcon_component": {
+      "path": "components/win95/DesktopIcon.tsx",
+      "props": [
+        "icon: DesktopIconType",
+        "selected: boolean",
+        "onClick: () => void",
+        "onDoubleClick: () => void"
+      ],
+      "features": [
+        "Grid positioning based on icon.position",
+        "Emoji icon with gradient background",
+        "Text label with white text shadow",
+        "Selected state (blue background, dotted outline)",
+        "Single click to select",
+        "Double click to open/navigate"
+      ]
+    },
+
+    "Window_component": {
+      "path": "components/win95/Window.tsx",
+      "features": [
+        "Draggable via title bar",
+        "Minimize, Maximize, Close buttons",
+        "Bring to front on click",
+        "Constrain to viewport",
+        "Window content loaded dynamically based on windowId",
+        "Taskbar item when open"
+      ],
+      "code_outline": "```typescript\nimport Draggable from 'react-draggable';\n\nexport default function Window({ windowId, onClose }) {\n  const [minimized, setMinimized] = useState(false);\n  const [maximized, setMaximized] = useState(false);\n  const [position, setPosition] = useState({ x: 100, y: 100 });\n\n  if (minimized) return null;\n\n  return (\n    <Draggable\n      handle=\".window-title-bar\"\n      position={position}\n      onStop={(e, data) => setPosition({ x: data.x, y: data.y })}\n      bounds=\"parent\"\n    >\n      <div className=\"window\">\n        <div className=\"window-title-bar\">\n          <div className=\"window-title\">\n            <img src={icon} />\n            <span>{title}</span>\n          </div>\n          <div className=\"window-controls\">\n            <button onClick={() => setMinimized(true)}>_</button>\n            <button onClick={() => setMaximized(!maximized)}>□</button>\n            <button onClick={onClose}>×</button>\n          </div>\n        </div>\n        <div className=\"window-content\">\n          {/* Dynamic content */}\n        </div>\n      </div>\n    </Draggable>\n  );\n}\n```"
+    },
+
+    "Taskbar_component": {
+      "path": "components/win95/Taskbar.tsx",
+      "sections": [
+        "Start button (toggles Start menu)",
+        "Divider",
+        "Open windows (taskbar buttons)",
+        "System tray (icons + clock)"
+      ],
+      "features": [
+        "Fixed to bottom of screen",
+        "Shows active windows as buttons",
+        "Click taskbar button to restore/focus window",
+        "Active window highlighted",
+        "Clock updates every second",
+        "System tray icons (decorative)"
+      ]
+    },
+
+    "StartMenu_component": {
+      "path": "components/win95/StartMenu.tsx",
+      "features": [
+        "Opens above Start button",
+        "Vertical banner with 'Remrin 95' text",
+        "Menu items with icons",
+        "Hover highlights items (blue background)",
+        "Click item to navigate or open window",
+        "Dividers between sections",
+        "Closes when clicking outside or selecting item"
+      ]
+    }
+  },
+
+  "window_contents": {
+    "MyComputerWindow": {
+      "description": "Shows drives and system folders",
+      "content": [
+        "Icons for (C:) drive 💾",
+        "Icons for (D:) drive 💿",
+        "Printers icon 🖨️",
+        "Control Panel ⚙️",
+        "System stats (optional): Total characters created, messages sent, etc."
+      ]
+    },
+
+    "RecycleBinWindow": {
+      "description": "Empty recycle bin",
+      "content": [
+        "Message: 'Recycle Bin is empty'",
+        "Or: Show deleted items if you implement deletion"
+      ]
+    },
+
+    "HelpWindow": {
+      "description": "Help documentation",
+      "content": [
+        "Welcome to Remrin.ai Windows 95 Mode!",
+        "How to navigate:",
+        "- Double-click icons to open",
+        "- Use Start menu for quick access",
+        "- Drag windows by title bar",
+        "Keyboard shortcuts:",
+        "- Ctrl+Esc: Open Start menu",
+        "- Alt+F4: Close window",
+        "Tips: This is a nostalgic interface for the Remrin.ai platform..."
+      ]
+    }
+  },
+
+  "styling": {
+    "css_file": "styles/win95.css",
+    "critical_classes": {
+      "desktop": "```css\n.desktop {\n  background: #008080;\n  background-image: \n    repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,.03) 2px, rgba(0,0,0,.03) 4px),\n    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.03) 2px, rgba(0,0,0,.03) 4px);\n  padding: 10px;\n  display: grid;\n  grid-template-columns: repeat(auto-fill, 80px);\n  grid-template-rows: repeat(auto-fill, 90px);\n  gap: 10px;\n  align-content: start;\n}\n```",
+
+      "desktop_icon": "```css\n.desktop-icon {\n  width: 70px;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  cursor: pointer;\n  padding: 4px;\n  user-select: none;\n}\n\n.desktop-icon.selected {\n  background: rgba(0, 0, 128, 0.5);\n  outline: 1px dotted white;\n}\n\n.desktop-icon:hover:not(.selected) {\n  background: rgba(0, 0, 128, 0.3);\n  outline: 1px dotted white;\n}\n```",
+
+      "window": "```css\n.window {\n  position: absolute;\n  background: #c0c0c0;\n  border: 2px outset #ffffff;\n  box-shadow: 2px 2px 4px rgba(0,0,0,0.3);\n  display: flex;\n  flex-direction: column;\n  min-width: 300px;\n  min-height: 200px;\n}\n```",
+
+      "window_title_bar": "```css\n.window-title-bar {\n  background: linear-gradient(to right, #000080, #1084d0);\n  color: white;\n  padding: 2px 4px;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  cursor: move;\n  user-select: none;\n  font-size: 11px;\n  font-weight: bold;\n}\n```",
+
+      "button_3d": "```css\n.win95-button {\n  background: #c0c0c0;\n  border: 2px outset #ffffff;\n  padding: 4px 16px;\n  cursor: pointer;\n  font-size: 11px;\n}\n\n.win95-button:active {\n  border-style: inset;\n}\n```"
+    }
+  },
+
+  "additional_features": {
+    "context_menu": {
+      "description": "Right-click menu on desktop",
+      "trigger": "Right-click desktop or icons",
+      "items": [
+        "Refresh",
+        "Properties (shows desktop settings)",
+        "New > Folder (placeholder)",
+        "If icon: 'Open', 'Delete', 'Properties'"
+      ]
+    },
+
+    "sound_effects": {
+      "description": "Optional Windows 95 sounds",
+      "sounds": [
+        "Startup sound when page loads",
+        "Window open/close sounds",
+        "Error beep for invalid actions"
+      ],
+      "implementation": "Use HTML5 Audio, muted by default with toggle in Start menu"
+    },
+
+    "screensaver": {
+      "description": "After 2 minutes of inactivity",
+      "options": [
+        "Flying Windows 95 logo",
+        "Starfield",
+        "3D Maze",
+        "Just black screen with 'Click to continue'"
+      ],
+      "dismiss": "Any mouse move or key press"
+    },
+
+    "easter_eggs": {
+      "ideas": [
+        "Konami code plays Windows 95 startup sound",
+        "Typing 'paint' in Start menu opens MS Paint-style drawing app",
+        "Blue screen of death (fake) with joke error",
+        "Clippy assistant (animated paperclip helper)"
+      ]
+    }
+  },
+
+  "mobile_optimization": {
+    "approach": "Simplified desktop for mobile",
+    "changes": [
+      "Larger icons (touch-friendly)",
+      "No window dragging (fullscreen windows)",
+      "Tap once to open (no double-tap needed)",
+      "Start menu fullscreen",
+      "Simplified taskbar",
+      "Landscape mode recommended message"
+    ]
+  },
+
+  "integration_with_main_site": {
+    "access_points": [
+      "Link in footer: '🎮 Try Windows 95 Mode'",
+      "Easter egg: Konami code on homepage",
+      "Settings toggle: 'Enable Retro Mode'",
+      "First-time visitor welcome: 'Try our nostalgic interface!'"
+    ],
+
+    "exit_points": [
+      "Start menu: 'Exit Windows 95 Mode'",
+      "Desktop icon: 'Return to Modern Remrin'",
+      "Any navigation goes to normal routes (or stays in Win95 mode?)"
+    ],
+
+    "navigation_behavior": {
+      "option_1": "Clicking icons navigates to normal routes (leaves Win95)",
+      "option_2": "Clicking icons keeps you in /win95 but changes content (SPA)",
+      "recommended": "Option 1 for simplicity - Win95 is a fun launcher"
+    }
+  },
+
+  "implementation_priority": {
+    "phase_1_core": {
+      "features": [
+        "Desktop with icons",
+        "Icon selection",
+        "Double-click navigation",
+        "Taskbar with Start button",
+        "Start menu with navigation",
+        "Clock"
+      ],
+      "timeline": "2-3 days"
+    },
+
+    "phase_2_windows": {
+      "features": [
+        "Draggable windows",
+        "Window minimize/maximize/close",
+        "My Computer window",
+        "Recycle Bin window",
+        "Help window"
+      ],
+      "timeline": "3-4 days"
+    },
+
+    "phase_3_polish": {
+      "features": [
+        "Right-click context menus",
+        "Sound effects (optional)",
+        "Keyboard shortcuts",
+        "Mobile optimization",
+        "Screensaver"
+      ],
+      "timeline": "2-3 days"
+    },
+
+    "total_timeline": "1-1.5 weeks"
+  },
+
+  "testing_checklist": [
+    "✓ All desktop icons are clickable and navigate correctly",
+    "✓ Start menu opens and closes properly",
+    "✓ All Start menu items navigate to correct routes",
+    "✓ Windows can be dragged without issues",
+    "✓ Windows stay within viewport bounds",
+    "✓ Multiple windows can be open simultaneously",
+    "✓ Clicking window brings it to front",
+    "✓ Minimize/maximize/close buttons work",
+    "✓ Taskbar shows active windows",
+    "✓ Clock updates every second",
+    "✓ Right-click shows context menu",
+    "✓ Desktop click deselects icons",
+    "✓ Works on desktop browsers (Chrome, Firefox, Safari)",
+    "✓ Works on mobile (simplified version)",
+    "✓ No console errors",
+    "✓ Windows 95 aesthetic is perfect"
+  ],
+
+  "success_criteria": {
+    "functional": [
+      "User can navigate entire Remrin.ai site via Win95 interface",
+      "All icons lead to correct destinations",
+      "Windows system works flawlessly",
+      "Mobile users can use it (even if simplified)",
+      "No bugs or glitches"
+    ],
+
+    "aesthetic": [
+      "Looks EXACTLY like Windows 95",
+      "Proper 3D borders (outset/inset)",
+      "Correct colors (#008080 teal, #c0c0c0 gray, etc.)",
+      "Proper fonts (MS Sans Serif)",
+      "Pixel-perfect recreation of Win95 UI elements"
+    ],
+
+    "performance": [
+      "Page loads quickly",
+      "Window dragging is smooth (60fps)",
+      "No lag when opening Start menu",
+      "Works on lower-end devices"
+    ]
+  },
+
+  "final_agent_instructions": {
+    "priorities": [
+      "1. GET THE WINDOWS 95 AESTHETIC PERFECT - This is the entire point!",
+      "2. Ensure all navigation works correctly",
+      "3. Make windows draggable and functional",
+      "4. Keep it simple - don't overcomplicate",
+      "5. Test on both desktop and mobile"
+    ],
+
+    "tips": [
+      "Use reference screenshots of actual Windows 95",
+      "Test drag behavior extensively",
+      "Ensure z-index management works (window focus)",
+      "Use Next.js router for navigation",
+      "Install react-draggable: npm install react-draggable",
+      "Create reusable Win95Button, Win95Window components",
+      "Keep state management simple (useState or Context)",
+      "Make sure icons align to grid properly"
+    ],
+
+    "common_pitfalls": [
+      "❌ Don't make it look modern - stick to Win95 aesthetic!",
+      "❌ Don't use modern fonts - use MS Sans Serif",
+      "❌ Don't skip the 3D borders - they're essential",
+      "❌ Don't forget mobile users",
+      "❌ Don't overcomplicate window management",
+      "❌ Don't use wrong colors - stick to Win95 palette"
+    ]
+  }
+}

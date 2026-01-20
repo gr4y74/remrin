@@ -9,6 +9,7 @@ export interface UserProfile {
     website_url?: string;
     hero_image_url?: string;
     banner_url?: string;
+    avatar_url?: string;
     qr_code_url?: string;
     customization_json: ProfileCustomization;
     privacy_settings: PrivacySettings;
