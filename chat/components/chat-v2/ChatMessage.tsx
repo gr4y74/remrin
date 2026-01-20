@@ -51,7 +51,19 @@ export const ChatMessage = memo(function ChatMessage({
     const { sendMessage } = useChatEngine()
     const { profile } = useContext(RemrinContext)
     const [selectedVoiceId, setSelectedVoiceId] = useState<string | undefined>((message.metadata as any)?.selectedVoiceId)
+    const [showTimestamp, setShowTimestamp] = useState(false)
     const isUser = message.role === 'user'
+
+    // Toggle timestamp on tap (mobile)
+    const handleBubbleTap = () => {
+        setShowTimestamp(prev => !prev)
+    }
+
+    // Format timestamp
+    const formatTime = (date?: Date) => {
+        if (!date) return ''
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    }
 
 
     // Typing animation state
@@ -273,15 +285,20 @@ export const ChatMessage = memo(function ChatMessage({
                 </div>
             )}
 
-            {/* Glassmorphic Chat Bubble */}
+            {/* Glassmorphic Chat Bubble - Mobile Optimized */}
             <div
+                onClick={handleBubbleTap}
                 className={`
-                    max-w-[75%] md:max-w-[65%] rounded-2xl px-4 py-3
+                    max-w-[85%] md:max-w-[65%] rounded-2xl 
+                    px-4 py-3 md:px-4 md:py-3
                     backdrop-blur-xl border shadow-lg
+                    cursor-pointer touch-manipulation
+                    transition-all duration-200
                     ${isUser
                         ? 'bg-rp-iris/20 border-rp-iris/30 rounded-br-sm'
                         : 'bg-rp-base/40 border-white/10 rounded-bl-sm'
                     }
+                    ${showTimestamp ? 'ring-1 ring-white/10' : ''}
                 `}
             >
                 {/* User Name - Show for user messages */}
@@ -308,8 +325,8 @@ export const ChatMessage = memo(function ChatMessage({
                     </div>
                 )}
 
-                {/* Message Content */}
-                <div className="prose prose-sm prose-invert max-w-none">
+                {/* Message Content - Mobile Optimized */}
+                <div className="prose prose-sm md:prose-sm prose-invert max-w-none text-base md:text-sm leading-relaxed">
                     {displayedContent ? (
                         <>
                             {renderMarkdown(displayedContent)}
@@ -321,6 +338,13 @@ export const ChatMessage = memo(function ChatMessage({
                         <ThinkingIndicator />
                     ) : null}
                 </div>
+
+                {/* Timestamp - Shows on tap (mobile) */}
+                {showTimestamp && message.timestamp && (
+                    <div className="mt-2 text-[10px] text-rp-muted/60 animate-in fade-in duration-200">
+                        {formatTime(message.timestamp)}
+                    </div>
+                )}
 
                 {/* Mother-specific tool widgets */}
                 {motherToolWidgets}

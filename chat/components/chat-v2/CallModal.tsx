@@ -237,20 +237,20 @@ export function CallModal({
     if (!isOpen) return null
 
     return (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-between py-16 px-8">
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-between py-12 md:py-16 px-6 md:px-8">
             {/* Radial gradient background */}
             <div
                 className="absolute inset-0 z-0"
                 style={{
-                    background: 'radial-gradient(ellipse at 50% 75%, rgba(6, 135, 241, 0.4) 0%, rgba(23, 114, 180, 0.15) 30%, rgb(17, 17, 20) 70%)'
+                    background: 'radial-gradient(ellipse at 50% 30%, rgba(196, 167, 231, 0.25) 0%, rgba(23, 114, 180, 0.1) 30%, rgb(17, 17, 20) 60%)'
                 }}
             />
 
-            {/* Character Section */}
-            <div className="relative z-10 flex flex-col items-center gap-4 mt-8">
-                {/* Avatar with pulse effect when listening/speaking */}
+            {/* Character Section - Larger on mobile */}
+            <div className="relative z-10 flex flex-col items-center gap-6 mt-8 md:mt-8">
+                {/* Avatar with pulse effect when listening/speaking - Bigger on mobile */}
                 <div className={`relative ${status === 'listening' || status === 'speaking' ? 'animate-pulse' : ''}`}>
-                    <div className="size-36 rounded-full overflow-hidden ring-4 ring-white/20 shadow-2xl">
+                    <div className="size-48 md:size-36 rounded-full overflow-hidden ring-4 ring-white/20 shadow-2xl">
                         {personaImage ? (
                             <Image
                                 src={personaImage}
@@ -260,7 +260,7 @@ export function CallModal({
                             />
                         ) : (
                             <div className="w-full h-full bg-gradient-to-br from-rp-iris to-rp-love flex items-center justify-center">
-                                <span className="text-4xl font-bold text-white">{personaName.charAt(0)}</span>
+                                <span className="text-5xl md:text-4xl font-bold text-white">{personaName.charAt(0)}</span>
                             </div>
                         )}
                     </div>
@@ -268,38 +268,38 @@ export function CallModal({
                     {/* Animated rings when active */}
                     {(status === 'listening' || status === 'speaking') && (
                         <>
-                            <div className="absolute inset-0 rounded-full border-2 border-blue-400/50 animate-ping" />
-                            <div className="absolute -inset-2 rounded-full border border-blue-400/30 animate-pulse" />
+                            <div className="absolute inset-0 rounded-full border-2 border-rp-iris/50 animate-ping" />
+                            <div className="absolute -inset-3 rounded-full border border-rp-iris/30 animate-pulse" />
                         </>
                     )}
                 </div>
 
                 {/* Character Name */}
                 <div className="text-center">
-                    <p className="text-white/70 text-sm mb-1">{personaName}</p>
-                    <p className="text-white text-2xl font-bold tracking-tight">remrin</p>
+                    <p className="text-white/70 text-base md:text-sm mb-1">{personaName}</p>
+                    <p className="text-white text-3xl md:text-2xl font-bold tracking-tight">remrin</p>
                 </div>
             </div>
 
             {/* Status Section */}
-            <div className="relative z-10 flex flex-col items-center gap-4">
-                <p className="text-white/90 text-lg font-medium">{getStatusText()}</p>
+            <div className="relative z-10 flex flex-col items-center gap-4 flex-1 justify-center">
+                <p className="text-white/90 text-xl md:text-lg font-medium">{getStatusText()}</p>
 
                 {/* Transcript preview */}
                 {transcript && (
-                    <p className="text-white/60 text-sm max-w-xs text-center italic">
+                    <p className="text-white/60 text-base md:text-sm max-w-xs text-center italic">
                         "{transcript}"
                     </p>
                 )}
             </div>
 
-            {/* Controls Section */}
-            <div className="relative z-10 flex items-center gap-8">
+            {/* Controls Section - Larger touch targets on mobile */}
+            <div className="relative z-10 flex items-center gap-12 md:gap-8 pb-safe-area-inset-bottom">
                 {/* Mute Button */}
-                <div className="flex flex-col items-center gap-2">
+                <div className="flex flex-col items-center gap-3 md:gap-2">
                     <button
                         onClick={toggleMute}
-                        className={`size-14 rounded-full flex items-center justify-center transition-all ${isMuted
+                        className={`size-16 md:size-14 rounded-full flex items-center justify-center transition-all touch-manipulation active:scale-95 ${isMuted
                             ? 'bg-red-500/20 text-red-400 ring-2 ring-red-500/50'
                             : 'bg-white/10 text-white hover:bg-white/20'
                             }`}
@@ -312,10 +312,10 @@ export function CallModal({
                 </div>
 
                 {/* Hang Up Button */}
-                <div className="flex flex-col items-center gap-2">
+                <div className="flex flex-col items-center gap-3 md:gap-2">
                     <button
                         onClick={handleHangUp}
-                        className="size-14 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-colors shadow-lg shadow-red-500/30"
+                        className="size-16 md:size-14 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-colors shadow-lg shadow-red-500/30 touch-manipulation active:scale-95"
                     >
                         <IconPhoneOff size={28} />
                     </button>

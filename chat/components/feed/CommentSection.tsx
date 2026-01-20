@@ -19,15 +19,86 @@ import { useEmojiInsertion } from '@/hooks/useEmojiInsertion';
 
 interface CommentSectionProps {
     postId: string;
+    onCommentCountChange?: (delta: number) => void;
 }
 
-export function CommentSection({ postId }: CommentSectionProps) {
+export function CommentSection({ postId, onCommentCountChange }: CommentSectionProps) {
     const { profile } = useContext(RemrinContext);
-    const { comments, isLoading, fetchComments, addComment, deleteComment } = useComments(postId);
+    const { comments, isLoading, fetchComments, addComment, deleteComment, toggleLike } = useComments(postId);
+
+    const handleAddComment = async (content: string, parentId?: string, mentionedIds: string[] = []) => {
+        const comment = await addComment(content, parentId, mentionedIds);
+        if (comment) onCommentCountChange?.(1);
+        return comment;
+    };
+
+    const handleDeleteComment = async (id: string) => {
+        await deleteComment(id);
+        onCommentCountChange?.(-1);
+    };
+
     const [newComment, setNewComment] = useState('');
+    const [mentionedUserIds, setMentionedUserIds] = useState<string[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const commentInputRef = useRef<HTMLTextAreaElement>(null);
     const { insertEmoji } = useEmojiInsertion(commentInputRef, newComment, setNewComment);
+
+    const [mentionSearch, setMentionSearch] = useState('');
+    const [mentionUsers, setMentionUsers] = useState<any[]>([]);
+    const [showMentions, setShowMentions] = useState(false);
+
+    useEffect(() => {
+        const fetchMentionUsers = async () => {
+            if (mentionSearch.length >= 2) {
+                try {
+                    const res = await fetch(`/api/username/search?q=${mentionSearch}`);
+                    const data = await res.json();
+                    setMentionUsers(data.users || []);
+                } catch (e) {
+                    console.error(e);
+                }
+            } else {
+                setMentionUsers([]);
+            }
+        };
+
+        if (showMentions) {
+            const timer = setTimeout(fetchMentionUsers, 300);
+            return () => clearTimeout(timer);
+        }
+    }, [mentionSearch, showMentions]);
+
+    const handleValueChange = (val: string) => {
+        setNewComment(val);
+        const cursorPosition = commentInputRef.current?.selectionStart || 0;
+        const textBeforeCursor = val.slice(0, cursorPosition);
+        const lastAt = textBeforeCursor.lastIndexOf('@');
+
+        if (lastAt !== -1 && (lastAt === 0 || textBeforeCursor[lastAt - 1] === ' ' || textBeforeCursor[lastAt - 1] === '\n')) {
+            const query = textBeforeCursor.slice(lastAt + 1);
+            if (!query.includes(' ')) {
+                setMentionSearch(query);
+                setShowMentions(true);
+            } else {
+                setShowMentions(false);
+            }
+        } else {
+            setShowMentions(false);
+        }
+    };
+
+    const insertMention = (user: any) => {
+        const cursorPosition = commentInputRef.current?.selectionStart || 0;
+        const textBeforeCursor = newComment.slice(0, cursorPosition);
+        const textAfterCursor = newComment.slice(cursorPosition);
+        const lastAt = textBeforeCursor.lastIndexOf('@');
+
+        const newText = textBeforeCursor.slice(0, lastAt) + `@${user.username} ` + textAfterCursor;
+        setNewComment(newText);
+        setMentionedUserIds(prev => Array.from(new Set([...prev, user.id])));
+        setShowMentions(false);
+        commentInputRef.current?.focus();
+    };
 
     useEffect(() => {
         fetchComments();
@@ -39,8 +110,10 @@ export function CommentSection({ postId }: CommentSectionProps) {
 
         setIsSubmitting(true);
         try {
-            await addComment(newComment);
+            await handleAddComment(newComment, undefined, mentionedUserIds);
             setNewComment('');
+            setMentionedUserIds([]);
+            setShowMentions(false);
         } finally {
             setIsSubmitting(false);
         }
@@ -65,10 +138,33 @@ export function CommentSection({ postId }: CommentSectionProps) {
                     <TextareaAutosize
                         textareaRef={commentInputRef}
                         value={newComment}
-                        onValueChange={(val) => setNewComment(val)}
+                        onValueChange={handleValueChange}
                         placeholder="Write a comment..."
                         className="w-full bg-rp-overlay border-rp-highlight-low rounded-xl px-4 py-2 text-sm focus:border-rp-rose transition-colors resize-none pr-20"
                     />
+
+                    {showMentions && mentionUsers.length > 0 && (
+                        <div className="absolute left-0 bottom-full mb-2 w-64 bg-rp-surface border border-rp-highlight-low rounded-xl shadow-xl overflow-hidden z-50">
+                            {mentionUsers.map((user) => (
+                                <button
+                                    key={user.id}
+                                    type="button"
+                                    onClick={() => insertMention(user)}
+                                    className="w-full flex items-center gap-2 px-3 py-2 hover:bg-rp-highlight-low text-left transition-colors"
+                                >
+                                    <Avatar className="w-6 h-6">
+                                        <AvatarImage src={user.avatar_url} />
+                                        <AvatarFallback className="text-[10px]">{user.username.substring(0, 2).toUpperCase()}</AvatarFallback>
+                                    </Avatar>
+                                    <div className="flex flex-col">
+                                        <span className="text-sm font-bold text-rp-text leading-tight">{user.display_name || user.username}</span>
+                                        <span className="text-[10px] text-rp-subtle leading-tight">@{user.username}</span>
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    )}
+
                     <div className="absolute right-2 bottom-2 flex gap-1">
                         <EmojiButton
                             onSelect={handleEmojiSelect}
@@ -93,8 +189,10 @@ export function CommentSection({ postId }: CommentSectionProps) {
                         <CommentItem
                             key={comment.id}
                             comment={comment}
-                            onDelete={deleteComment}
-                            onReply={addComment}
+                            onDelete={handleDeleteComment}
+                            onReply={handleAddComment}
+                            onToggleLike={toggleLike}
+                            depth={0}
                         />
                     ))}
                 </AnimatePresence>
@@ -110,23 +208,84 @@ export function CommentSection({ postId }: CommentSectionProps) {
 interface CommentItemProps {
     comment: PostComment;
     onDelete: (id: string) => void;
-    onReply: (content: string, parentId: string) => Promise<any>;
+    onReply: (content: string, parentId: string, mentionedIds?: string[]) => Promise<any>;
+    onToggleLike: (id: string) => void;
+    depth: number;
 }
 
-function CommentItem({ comment, onDelete, onReply }: CommentItemProps) {
+function CommentItem({ comment, onDelete, onReply, onToggleLike, depth }: CommentItemProps) {
     const [isReplying, setIsReplying] = useState(false);
     const [replyContent, setReplyContent] = useState('');
     const [isSubmittingReply, setIsSubmittingReply] = useState(false);
+    const [replyMentionedIds, setReplyMentionedIds] = useState<string[]>([]);
+    const [replyMentionSearch, setReplyMentionSearch] = useState('');
+    const [replyMentionUsers, setReplyMentionUsers] = useState<any[]>([]);
+    const [showReplyMentions, setShowReplyMentions] = useState(false);
     const replyInputRef = useRef<HTMLTextAreaElement>(null);
     const { insertEmoji: insertReplyEmoji } = useEmojiInsertion(replyInputRef, replyContent, setReplyContent);
+
+    useEffect(() => {
+        const fetchMentionUsers = async () => {
+            if (replyMentionSearch.length >= 2) {
+                try {
+                    const res = await fetch(`/api/username/search?q=${replyMentionSearch}`);
+                    const data = await res.json();
+                    setReplyMentionUsers(data.users || []);
+                } catch (e) {
+                    console.error(e);
+                }
+            } else {
+                setReplyMentionUsers([]);
+            }
+        };
+
+        if (showReplyMentions) {
+            const timer = setTimeout(fetchMentionUsers, 300);
+            return () => clearTimeout(timer);
+        }
+    }, [replyMentionSearch, showReplyMentions]);
+
+    const handleReplyValueChange = (val: string) => {
+        setReplyContent(val);
+        const cursorPosition = replyInputRef.current?.selectionStart || 0;
+        const textBeforeCursor = val.slice(0, cursorPosition);
+        const lastAt = textBeforeCursor.lastIndexOf('@');
+
+        if (lastAt !== -1 && (lastAt === 0 || textBeforeCursor[lastAt - 1] === ' ' || textBeforeCursor[lastAt - 1] === '\n')) {
+            const query = textBeforeCursor.slice(lastAt + 1);
+            if (!query.includes(' ')) {
+                setReplyMentionSearch(query);
+                setShowReplyMentions(true);
+            } else {
+                setShowReplyMentions(false);
+            }
+        } else {
+            setShowReplyMentions(false);
+        }
+    };
+
+    const insertReplyMention = (user: any) => {
+        const cursorPosition = replyInputRef.current?.selectionStart || 0;
+        const textBeforeCursor = replyContent.slice(0, cursorPosition);
+        const textAfterCursor = replyContent.slice(cursorPosition);
+        const lastAt = textBeforeCursor.lastIndexOf('@');
+
+        const newText = textBeforeCursor.slice(0, lastAt) + `@${user.username} ` + textAfterCursor;
+        setReplyContent(newText);
+        setReplyMentionedIds(prev => Array.from(new Set([...prev, user.id])));
+        setShowReplyMentions(false);
+        replyInputRef.current?.focus();
+    };
 
     const handleReplySubmit = async () => {
         if (!replyContent.trim() || isSubmittingReply) return;
         setIsSubmittingReply(true);
         try {
-            await onReply(replyContent, comment.id);
+            await onReply(replyContent, comment.id, replyMentionedIds);
             setReplyContent('');
+            setReplyMentionedIds([]);
             setIsReplying(false);
+            setShowReplyMentions(false);
         } finally {
             setIsSubmittingReply(false);
         }
@@ -170,11 +329,14 @@ function CommentItem({ comment, onDelete, onReply }: CommentItemProps) {
                 </div>
 
                 <div className="flex items-center gap-4 px-2">
-                    <button className="flex items-center gap-1.5 text-xs text-rp-subtle hover:text-rp-love transition-colors">
-                        <Heart className="w-3.5 h-3.5" />
-                        <span>Like</span>
+                    <button
+                        onClick={() => onToggleLike(comment.id)}
+                        className={`flex items-center gap-1.5 text-xs transition-colors ${comment.user_liked ? 'text-rp-love' : 'text-rp-subtle hover:text-rp-love'}`}
+                    >
+                        <Heart className={`w-3.5 h-3.5 ${comment.user_liked ? 'fill-current' : ''}`} />
+                        <span>{comment.likes_count || 0}</span>
                     </button>
-                    {!comment.parent_comment_id && (
+                    {depth < 2 && (
                         <button
                             onClick={() => setIsReplying(!isReplying)}
                             className="flex items-center gap-1.5 text-xs text-rp-subtle hover:text-rp-iris transition-colors"
@@ -198,10 +360,32 @@ function CommentItem({ comment, onDelete, onReply }: CommentItemProps) {
                             <TextareaAutosize
                                 textareaRef={replyInputRef}
                                 value={replyContent}
-                                onValueChange={(val) => setReplyContent(val)}
+                                onValueChange={handleReplyValueChange}
                                 placeholder="Write a reply..."
                                 className="w-full bg-rp-overlay border-rp-highlight-low rounded-xl px-4 py-2 text-sm focus:border-rp-rose transition-colors resize-none pr-20"
                             />
+
+                            {showReplyMentions && replyMentionUsers.length > 0 && (
+                                <div className="absolute left-0 bottom-full mb-2 w-64 bg-rp-surface border border-rp-highlight-low rounded-xl shadow-xl overflow-hidden z-50">
+                                    {replyMentionUsers.map((user) => (
+                                        <button
+                                            key={user.id}
+                                            type="button"
+                                            onClick={() => insertReplyMention(user)}
+                                            className="w-full flex items-center gap-2 px-3 py-2 hover:bg-rp-highlight-low text-left transition-colors"
+                                        >
+                                            <Avatar className="w-6 h-6">
+                                                <AvatarImage src={user.avatar_url} />
+                                                <AvatarFallback className="text-[10px]">{user.username.substring(0, 2).toUpperCase()}</AvatarFallback>
+                                            </Avatar>
+                                            <div className="flex flex-col">
+                                                <span className="text-sm font-bold text-rp-text leading-tight">{user.display_name || user.username}</span>
+                                                <span className="text-[10px] text-rp-subtle leading-tight">@{user.username}</span>
+                                            </div>
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                             <div className="absolute right-2 bottom-2 flex gap-1">
                                 <EmojiButton
                                     onSelect={handleReplyEmojiSelect}
@@ -229,6 +413,8 @@ function CommentItem({ comment, onDelete, onReply }: CommentItemProps) {
                                 comment={reply}
                                 onDelete={onDelete}
                                 onReply={onReply}
+                                onToggleLike={onToggleLike}
+                                depth={depth + 1}
                             />
                         ))}
                     </div>
@@ -237,3 +423,4 @@ function CommentItem({ comment, onDelete, onReply }: CommentItemProps) {
         </motion.div>
     );
 }
+

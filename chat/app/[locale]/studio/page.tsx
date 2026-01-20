@@ -140,6 +140,17 @@ export default function StudioPage() {
                 <div className="absolute bottom-[10%] left-[-10%] size-[500px] rounded-full bg-rp-rose/10 blur-[100px]" />
             </div>
 
+            {/* Mobile Experience Warning Banner */}
+            <div className="block md:hidden bg-amber-500/10 border-b border-amber-500/20 px-4 py-3">
+                <div className="flex items-center gap-3">
+                    <span className="text-xl">🖥️</span>
+                    <div>
+                        <p className="text-sm font-medium text-amber-200">Desktop View Recommended</p>
+                        <p className="text-xs text-amber-200/60">For the best creation experience, use a desktop browser.</p>
+                    </div>
+                </div>
+            </div>
+
             {/* Header */}
             <header className="relative z-10 flex items-center justify-between border-b border-rp-highlight-med px-6 py-4">
                 <div className="flex items-center gap-4">

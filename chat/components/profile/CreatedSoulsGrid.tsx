@@ -83,9 +83,9 @@ export function CreatedSoulsGrid({
     }
 
     return (
-        <div className="space-y-6">
-            {/* Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+        <div className="space-y-4 md:space-y-6">
+            {/* Grid - 2 columns on mobile, touch-optimized */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 sm:gap-4">
                 {displayedSouls.map((soul) => {
                     const rarity = soul.rarity || 'common';
                     const config = rarityConfig[rarity];
@@ -96,12 +96,14 @@ export function CreatedSoulsGrid({
                             onClick={() => onSoulClick?.(soul)}
                             className={`
                                 group relative 
-                                bg-rp-surface rounded-xl overflow-hidden 
+                                bg-rp-surface rounded-lg sm:rounded-xl overflow-hidden 
                                 border-2 border-rp-highlight-med
                                 hover:border-${config.color}
                                 transition-all duration-300
                                 hover:scale-105 hover:shadow-xl hover:shadow-${config.glow}
+                                active:scale-[0.98] active:opacity-90
                                 cursor-pointer
+                                touch-manipulation
                             `}
                             role="button"
                             tabIndex={0}

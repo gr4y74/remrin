@@ -1,4 +1,5 @@
 import { cookies } from "next/headers"
+import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { FeedPageClient } from "./FeedPageClient"
 import { Metadata } from "next"
@@ -15,19 +16,26 @@ export const metadata: Metadata = {
 const PAGE_SIZE = 12
 
 export default async function FeedPage({
-    searchParams
+    searchParams,
+    params
 }: {
-    searchParams: Promise<{ filter?: string; layout?: string }>
+    searchParams: Promise<{ filter?: string; layout?: string; tab?: string }>
+    params: { locale: string }
 }) {
     const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
-    const params = await searchParams
-    const filter = params.filter || 'for-you'
-    const layout = params.layout || 'grid'
-
-    // Get current user
+    // Get current user - require authentication
     const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+        return redirect(`/${params.locale}/login?redirect=/feed`)
+    }
+
+    const resolvedParams = await searchParams
+    const filter = resolvedParams.filter || 'for-you'
+    const layout = resolvedParams.layout || 'grid'
+    const tab = resolvedParams.tab || 'moments'
 
     // Fetch initial moments
     let query = supabase
@@ -121,6 +129,7 @@ export default async function FeedPage({
         <FeedPageClient
             initialMoments={initialMoments}
             initialFilter={filter}
+            initialTab={tab as 'moments' | 'posts'}
             hasMore={initialMoments.length === PAGE_SIZE}
             user={user}
         />

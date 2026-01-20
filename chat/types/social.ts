@@ -43,7 +43,10 @@ export interface PostComment {
         avatar_url?: string;
     };
     replies?: PostComment[];
+    likes_count?: number;
+    user_liked?: boolean;
 }
+
 
 export interface Notification {
     id: string;

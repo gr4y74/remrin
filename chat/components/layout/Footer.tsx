@@ -76,30 +76,30 @@ export function Footer() {
     const logoSrc = resolvedTheme === "light" ? "/logo_dark.svg" : "/logo.svg"
 
     return (
-        <footer className="w-full border-t border-rp-iris/20 bg-rp-base/80 backdrop-blur-sm">
-            <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <footer className="w-full border-t border-rp-iris/20 bg-rp-base/80 backdrop-blur-sm pb-safe-area-inset-bottom">
+            <div className="mx-auto max-w-7xl px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-1 gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-4">
                     {/* Brand Column */}
-                    <section className="flex flex-col items-start gap-4">
+                    <section className="flex flex-col items-center sm:items-start gap-4">
                         {mounted && (
                             <Image
                                 src={logoSrc}
                                 alt="Remrin logo"
                                 width={140}
                                 height={40}
-                                className="h-10 w-auto"
+                                className="h-8 sm:h-10 w-auto"
                             />
                         )}
 
                         {/* Social Media Links */}
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 overflow-x-auto no-scrollbar pb-2 sm:pb-0">
                             {socialLinks.map((social) => (
                                 <a
                                     key={social.href}
                                     href={social.href}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-rp-subtle hover:text-rp-rose transition-colors duration-200"
+                                    className="text-rp-subtle hover:text-rp-rose transition-colors duration-200 shrink-0"
                                     aria-label={social.label}
                                 >
                                     <social.icon size={22} stroke={1.5} />
@@ -107,17 +107,17 @@ export function Footer() {
                             ))}
                         </div>
 
-                        <p className="text-sm text-rp-muted">
+                        <p className="text-xs sm:text-sm text-rp-muted text-center sm:text-left">
                             Copyright © 2025 Remrin AI. All rights reserved
                         </p>
                     </section>
 
                     {/* Features Column */}
-                    <nav className="flex flex-col gap-3">
+                    <nav className="flex flex-col gap-2 sm:gap-3 items-center sm:items-start">
                         <p className="text-sm font-semibold text-rp-text">Features</p>
                         {featuresLinks.map((link, index) =>
                             link.isSpan ? (
-                                <span key={index} className="text-sm text-rp-subtle cursor-default">
+                                <span key={index} className="text-xs sm:text-sm text-rp-subtle cursor-default">
                                     {link.label}
                                 </span>
                             ) : link.external ? (
@@ -126,7 +126,7 @@ export function Footer() {
                                     href={link.href}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-sm text-rp-subtle hover:text-rp-rose transition-colors duration-200"
+                                    className="text-xs sm:text-sm text-rp-subtle hover:text-rp-rose transition-colors duration-200"
                                 >
                                     {link.label}
                                 </a>
@@ -134,7 +134,7 @@ export function Footer() {
                                 <Link
                                     key={link.href}
                                     href={link.href}
-                                    className="text-sm text-rp-subtle hover:text-rp-rose transition-colors duration-200"
+                                    className="text-xs sm:text-sm text-rp-subtle hover:text-rp-rose transition-colors duration-200"
                                 >
                                     {link.label}
                                 </Link>
@@ -143,13 +143,13 @@ export function Footer() {
                     </nav>
 
                     {/* Explore Column */}
-                    <nav className="flex flex-col gap-3">
+                    <nav className="flex flex-col gap-2 sm:gap-3 items-center sm:items-start">
                         <p className="text-sm font-semibold text-rp-text">Explore</p>
                         {exploreLinks.map((link) => (
                             <Link
                                 key={link.href}
                                 href={link.href}
-                                className="text-sm text-rp-subtle hover:text-rp-rose transition-colors duration-200"
+                                className="text-xs sm:text-sm text-rp-subtle hover:text-rp-rose transition-colors duration-200"
                             >
                                 {link.label}
                             </Link>
@@ -157,7 +157,7 @@ export function Footer() {
                     </nav>
 
                     {/* Overview Column */}
-                    <nav className="flex flex-col gap-3">
+                    <nav className="flex flex-col gap-2 sm:gap-3 items-center sm:items-start">
                         <p className="text-sm font-semibold text-rp-text">Overview</p>
                         {overviewLinks.map((link) =>
                             link.external ? (
@@ -166,7 +166,7 @@ export function Footer() {
                                     href={link.href}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-sm text-rp-subtle hover:text-rp-rose transition-colors duration-200"
+                                    className="text-xs sm:text-sm text-rp-subtle hover:text-rp-rose transition-colors duration-200"
                                 >
                                     {link.label}
                                 </a>
@@ -174,7 +174,7 @@ export function Footer() {
                                 <Link
                                     key={link.href}
                                     href={link.href}
-                                    className="text-sm text-rp-subtle hover:text-rp-rose transition-colors duration-200"
+                                    className="text-xs sm:text-sm text-rp-subtle hover:text-rp-rose transition-colors duration-200"
                                 >
                                     {link.label}
                                 </Link>

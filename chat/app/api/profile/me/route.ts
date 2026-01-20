@@ -85,8 +85,10 @@ export async function GET(request: NextRequest) {
         const mergedProfile = {
             ...(internalProfile || {}),
             ...(userProfile || {}),
-            // Ensure social image URL is mapped for legacy consistency
-            image_url: userProfile?.hero_image_url || internalProfile?.image_url
+            // Ensure social image URLs are properly mapped
+            image_url: userProfile?.hero_image_url || internalProfile?.image_url,
+            banner_url: userProfile?.banner_url || internalProfile?.banner_url || '',
+            hero_image_url: userProfile?.hero_image_url || internalProfile?.image_url || ''
         };
 
         return NextResponse.json({ profile: mergedProfile });

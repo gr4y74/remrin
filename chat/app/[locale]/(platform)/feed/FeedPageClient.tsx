@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { FeedLayout } from '@/components/moments/FeedLayout'
+import { FeedContainer } from '@/components/feed/FeedContainer'
 import { MomentWithPersona } from '@/types/moments'
 import { Button } from '@/components/ui/button'
-import { TrendingUp, Sparkles, Users, Bookmark } from 'lucide-react'
+import { TrendingUp, Sparkles, Users, Bookmark, Image, FileText } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Plus } from 'lucide-react'
@@ -22,6 +23,7 @@ import { UploadMomentModal } from '@/components/moments/UploadMomentModal'
 interface FeedPageClientProps {
     initialMoments: MomentWithPersona[]
     initialFilter: string
+    initialTab?: 'moments' | 'posts'
     hasMore: boolean
     user?: User | null
 }
@@ -29,6 +31,7 @@ interface FeedPageClientProps {
 export function FeedPageClient({
     initialMoments,
     initialFilter,
+    initialTab = 'moments',
     hasMore: initialHasMore,
     user
 }: FeedPageClientProps) {
@@ -36,6 +39,7 @@ export function FeedPageClient({
     const searchParams = useSearchParams()
     const [moments, setMoments] = useState(initialMoments)
     const [filter, setFilter] = useState(initialFilter)
+    const [activeTab, setActiveTab] = useState<'moments' | 'posts'>(initialTab)
     const [hasMore, setHasMore] = useState(initialHasMore)
     const [isLoading, setIsLoading] = useState(false)
     const [isUploadOpen, setIsUploadOpen] = useState(false)
@@ -163,6 +167,13 @@ export function FeedPageClient({
         }
     }))
 
+    const handleTabChange = (tab: 'moments' | 'posts') => {
+        setActiveTab(tab)
+        const params = new URLSearchParams(searchParams)
+        params.set('tab', tab)
+        router.push(`/feed?${params.toString()}`)
+    }
+
     return (
         <div className="bg-rp-base min-h-screen">
             {/* Header */}
@@ -171,35 +182,69 @@ export function FeedPageClient({
                 !isHeaderVisible && "-translate-y-full"
             )}>
                 <div className="mx-auto max-w-7xl px-4 py-4">
-                    <div className="flex items-center justify-center gap-3">
-                        {/* Title - Centered */}
-                        <h1 className="font-tiempos-headline text-3xl font-bold text-rp-text">
-                            Soul Feed
-                        </h1>
+                    <div className="flex flex-col items-center gap-4">
+                        <div className="flex items-center gap-3">
+                            {/* Title - Centered */}
+                            <h1 className="font-tiempos-headline text-3xl font-bold text-rp-text">
+                                Soul Feed
+                            </h1>
 
-                        {/* Create Button - Icon Only */}
-                        <button
-                            onClick={() => setIsUploadOpen(true)}
-                            className="bg-rp-iris hover:bg-rp-love text-white rounded-full p-2 transition-all shadow-lg hover:shadow-xl hover:scale-110"
-                            aria-label="Create moment"
-                        >
-                            <Plus className="w-5 h-5" />
-                        </button>
+                            {/* Create Button - Icon Only */}
+                            <button
+                                onClick={() => setIsUploadOpen(true)}
+                                className="bg-rp-iris hover:bg-rp-love text-white rounded-full p-2 transition-all shadow-lg hover:shadow-xl hover:scale-110"
+                                aria-label="Create"
+                            >
+                                <Plus className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        {/* Tab Switcher */}
+                        <div className="flex items-center gap-2 bg-rp-surface/50 rounded-full p-1">
+                            <button
+                                onClick={() => handleTabChange('moments')}
+                                className={cn(
+                                    "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all",
+                                    activeTab === 'moments'
+                                        ? 'bg-rp-iris text-white shadow-md'
+                                        : 'text-rp-muted hover:bg-rp-highlight-low hover:text-rp-text'
+                                )}
+                            >
+                                <Image className="w-4 h-4" />
+                                Moments
+                            </button>
+                            <button
+                                onClick={() => handleTabChange('posts')}
+                                className={cn(
+                                    "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all",
+                                    activeTab === 'posts'
+                                        ? 'bg-rp-rose text-white shadow-md'
+                                        : 'text-rp-muted hover:bg-rp-highlight-low hover:text-rp-text'
+                                )}
+                            >
+                                <FileText className="w-4 h-4" />
+                                Posts
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
 
             {/* Content */}
-            <FeedLayout
-                moments={moments}
-                onReact={handleReact}
-                onView={handleView}
-                onLoadMore={loadMore}
-                hasMore={hasMore}
-                currentUserProfile={currentUserProfile}
-                currentFilter={filter}
-                onFilterChange={handleFilterChange}
-            />
+            {activeTab === 'moments' ? (
+                <FeedLayout
+                    moments={moments}
+                    onReact={handleReact}
+                    onView={handleView}
+                    onLoadMore={loadMore}
+                    hasMore={hasMore}
+                    currentUserProfile={currentUserProfile}
+                    currentFilter={filter}
+                    onFilterChange={handleFilterChange}
+                />
+            ) : (
+                <FeedContainer />
+            )}
 
             {/* Upload Modal */}
             {selectedPersona && (

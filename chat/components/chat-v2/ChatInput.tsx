@@ -188,8 +188,8 @@ export function ChatInput({
                 />
             </div>
 
-            {/* Input Container */}
-            <div className="relative flex-1 overflow-hidden transition-all duration-200 focus-within:ring-1 focus-within:ring-rp-iris/20 rounded-2xl">
+            {/* Input Container - Mobile Optimized */}
+            <div className="relative flex-1 overflow-hidden transition-all duration-200 focus-within:ring-1 focus-within:ring-rp-iris/20 rounded-2xl bg-rp-surface/30">
                 <textarea
                     ref={textareaRef}
                     value={input}
@@ -198,7 +198,8 @@ export function ChatInput({
                     placeholder={placeholder}
                     disabled={disabled || isGenerating}
                     rows={1}
-                    className="max-h-[200px] min-h-[52px] w-full resize-none bg-transparent px-5 py-3.5 text-base text-rp-text placeholder-rp-subtle/70 outline-none scrollbar-thin scrollbar-track-transparent scrollbar-thumb-rp-muted/20 disabled:opacity-50"
+                    className="max-h-[120px] min-h-[48px] w-full resize-none bg-transparent px-4 py-3.5 text-base text-rp-text placeholder-rp-subtle/70 outline-none scrollbar-thin scrollbar-track-transparent scrollbar-thumb-rp-muted/20 disabled:opacity-50 md:min-h-[52px] md:px-5"
+                    style={{ fontSize: '16px' }} // Prevents iOS zoom on focus
                 />
             </div>
 

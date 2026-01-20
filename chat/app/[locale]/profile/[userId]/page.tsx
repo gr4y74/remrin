@@ -82,17 +82,21 @@ export default async function ProfilePage({ params }: { params: { userId: string
             .order('created_at', { ascending: false })
     ]);
 
-    // Fetch avatar from profiles table
+    // Fetch avatar from profiles table as fallback
     const { data: profileData } = await supabase
         .from('profiles')
         .select('image_url')
         .eq('user_id', profileBase.user_id)
         .single();
 
-    // Combine profile with related data and avatar
+    // Combine profile with related data
+    // Prioritize user_profiles fields, only use profiles.image_url as fallback
     const profile = {
         ...profileBase,
-        hero_image_url: profileData?.image_url || null,
+        // Keep hero_image_url from user_profiles, fallback to profiles.image_url
+        hero_image_url: profileBase.hero_image_url || profileData?.image_url || null,
+        // Keep banner_url from user_profiles
+        banner_url: profileBase.banner_url || null,
         user_achievements: achievementsResult.data || [],
         social_links: socialLinksResult.data || [],
         featured_creations: featuredResult.data || [],

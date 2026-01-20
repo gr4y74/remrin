@@ -17,6 +17,8 @@ import { PageTemplate, Footer, FrontPageHeader } from "@/components/layout"
 import { RemrinContext } from "@/context/context"
 import { IconSparkles, IconDiamond, IconArrowRight } from "@tabler/icons-react"
 import { LottieLoader } from "@/components/ui/lottie-loader"
+import { Skeleton } from "@/components/ui/skeleton"
+
 
 
 interface Persona {
@@ -232,13 +234,13 @@ export default function HomePage() {
 
 
 
-  if (loading) {
-    return (
-      <div className="bg-rp-base flex min-h-screen items-center justify-center">
-        <LottieLoader size={64} className="text-rp-rose" />
-      </div>
-    )
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="bg-rp-base flex min-h-screen items-center justify-center">
+  //       <LottieLoader size={64} className="text-rp-rose" />
+  //     </div>
+  //   )
+  // }
 
   return (
     <PageTemplate
@@ -266,23 +268,32 @@ export default function HomePage() {
       )}
 
       {/* Section 3: Featured Souls with 3D Carousel - Dynamic data */}
-      <section className="relative mt-8">
-        <div className="mb-4 px-6 text-center">
-          <h2 className="font-tiempos-headline inline-flex items-center gap-2 font-semibold" style={{ fontSize: '40px', color: headingColor }}>
-            <IconSparkles size={24} className="text-amber-400" />
+      <section className="relative mt-6 md:mt-8">
+        <div className="mb-4 px-4 md:px-6 text-center">
+          <h2 className="font-tiempos-headline inline-flex items-center gap-2 font-semibold text-2xl md:text-4xl" style={{ color: headingColor }}>
+            <IconSparkles size={20} className="text-amber-400 md:hidden" />
+            <IconSparkles size={24} className="text-amber-400 hidden md:inline" />
             Featured Souls
-            <IconSparkles size={24} className="text-amber-400" />
+            <IconSparkles size={20} className="text-amber-400 md:hidden" />
+            <IconSparkles size={24} className="text-amber-400 hidden md:inline" />
           </h2>
         </div>
-        <FeaturedCarousel
-          characters={carouselItems.map(p => ({
-            id: p.id,
-            name: p.name,
-            imageUrl: p.image_url,
-            isFeatured: true
-          }))}
-          onCharacterClick={handlePersonaClick}
-        />
+
+        {loading ? (
+          <div className="px-6 flex justify-center">
+            <Skeleton className="w-[300px] h-[400px] md:w-[600px] md:h-[500px] rounded-3xl" />
+          </div>
+        ) : (
+          <FeaturedCarousel
+            characters={carouselItems.map(p => ({
+              id: p.id,
+              name: p.name,
+              imageUrl: p.image_url,
+              isFeatured: true
+            }))}
+            onCharacterClick={handlePersonaClick}
+          />
+        )}
       </section>
 
       {/* Section 4: Trending Souls - NEW */}
@@ -304,12 +315,14 @@ export default function HomePage() {
       ))}
 
       {/* Section 6: Explore All Souls - Updated with gacha-style cards */}
-      <section id="explore-souls" className="relative mt-8" data-section="explore-souls">
-        <div className="mb-4 flex flex-col items-center gap-2 px-6">
-          <h2 className="font-tiempos-headline font-semibold inline-flex items-center gap-2" style={{ fontSize: '40px', color: headingColor }}>
-            <IconSparkles size={24} className="text-purple-400" />
+      <section id="explore-souls" className="relative mt-6 md:mt-8" data-section="explore-souls">
+        <div className="mb-4 flex flex-col items-center gap-2 px-4 md:px-6">
+          <h2 className="font-tiempos-headline font-semibold inline-flex items-center gap-2 text-2xl md:text-4xl" style={{ color: headingColor }}>
+            <IconSparkles size={20} className="text-purple-400 md:hidden" />
+            <IconSparkles size={24} className="text-purple-400 hidden md:inline" />
             Explore Souls
-            <IconSparkles size={24} className="text-purple-400" />
+            <IconSparkles size={20} className="text-purple-400 md:hidden" />
+            <IconSparkles size={24} className="text-purple-400 hidden md:inline" />
           </h2>
           <Link
             href="#explore-souls"
@@ -335,7 +348,7 @@ export default function HomePage() {
       </section>
 
       {/* Quick Actions Section */}
-      <section className="relative mt-8 border-t border-rp-iris/20 bg-rp-surface dark:bg-rp-base py-12">
+      <section className="relative mt-6 md:mt-8 border-t border-rp-iris/20 bg-rp-surface dark:bg-rp-base py-8 md:py-12">
         <div className="mx-auto grid max-w-4xl grid-cols-1 gap-6 px-6 md:grid-cols-3">
           <Link
             href="/summon"

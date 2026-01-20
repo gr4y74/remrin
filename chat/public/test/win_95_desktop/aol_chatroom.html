@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remrin Chat Rooms</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'MS Sans Serif', Arial, sans-serif;
+            background: #008080; /* Classic teal Windows 95 background */
+            padding: 20px;
+            color: #000;
+        }
+
+        /* WINDOW CONTAINER */
+        .window {
+            background: #c0c0c0;
+            border: 2px outset #fff;
+            box-shadow: 2px 2px 0 #000;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* TITLE BAR */
+        .title-bar {
+            background: linear-gradient(to right, #000080, #1084d0);
+            color: white;
+            padding: 4px 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .title-text {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 2px;
+        }
+
+        .window-button {
+            width: 16px;
+            height: 14px;
+            background: #c0c0c0;
+            border: 1px outset #fff;
+            font-size: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .window-button:active {
+            border-style: inset;
+        }
+
+        /* MENU BAR */
+        .menu-bar {
+            background: #c0c0c0;
+            border-bottom: 1px solid #808080;
+            padding: 2px 4px;
+            font-size: 11px;
+        }
+
+        .menu-item {
+            display: inline-block;
+            padding: 2px 8px;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background: #000080;
+            color: white;
+        }
+
+        /* MAIN CONTENT */
+        .content {
+            display: flex;
+            height: 500px;
+            background: #c0c0c0;
+        }
+
+        /* LEFT PANEL - Chat Messages */
+        .chat-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-right: 2px groove #808080;
+        }
+
+        .chat-header {
+            background: #c0c0c0;
+            padding: 4px 8px;
+            border-bottom: 1px solid #808080;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            background: white;
+            border: 2px inset #808080;
+            margin: 4px;
+            padding: 8px;
+            overflow-y: scroll;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 16px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: #c0c0c0;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #808080;
+            border: 1px outset #fff;
+        }
+
+        .message {
+            margin-bottom: 4px;
+        }
+
+        .message-user {
+            color: #0000ff;
+            font-weight: bold;
+        }
+
+        .message-system {
+            color: #808080;
+            font-style: italic;
+        }
+
+        /* INPUT AREA */
+        .chat-input-area {
+            border-top: 1px solid #808080;
+            padding: 4px;
+            background: #c0c0c0;
+        }
+
+        .chat-input {
+            width: 100%;
+            padding: 4px;
+            border: 2px inset #808080;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            background: white;
+        }
+
+        .send-button {
+            margin-top: 4px;
+            padding: 4px 16px;
+            background: #c0c0c0;
+            border: 2px outset #fff;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .send-button:active {
+            border-style: inset;
+        }
+
+        /* RIGHT PANEL - User List */
+        .user-panel {
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            background: #c0c0c0;
+        }
+
+        .user-header {
+            padding: 4px 8px;
+            border-bottom: 1px solid #808080;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .user-count {
+            font-weight: normal;
+            color: #0000ff;
+        }
+
+        .user-list {
+            flex: 1;
+            background: white;
+            border: 2px inset #808080;
+            margin: 4px;
+            padding: 4px;
+            overflow-y: auto;
+            font-size: 11px;
+        }
+
+        .user-item {
+            padding: 2px 4px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .user-item:hover {
+            background: #000080;
+            color: white;
+            border: 1px dotted white;
+        }
+
+        .user-item.selected {
+            background: #000080;
+            color: white;
+        }
+
+        /* ACTION BUTTONS */
+        .user-actions {
+            padding: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .action-button {
+            padding: 4px 8px;
+            background: #c0c0c0;
+            border: 2px outset #fff;
+            cursor: pointer;
+            font-size: 10px;
+            text-align: center;
+        }
+
+        .action-button:active {
+            border-style: inset;
+        }
+
+        /* STATUS BAR */
+        .status-bar {
+            background: #c0c0c0;
+            border-top: 1px solid #fff;
+            padding: 2px 4px;
+            font-size: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .status-item {
+            border: 1px inset #808080;
+            padding: 1px 4px;
+            background: white;
+        }
+
+        /* ROOM LIST WINDOW (Modal) */
+        .room-list-window {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #c0c0c0;
+            border: 2px outset #fff;
+            box-shadow: 2px 2px 0 #000;
+            width: 400px;
+            display: none;
+            z-index: 100;
+        }
+
+        .room-list-window.active {
+            display: block;
+        }
+
+        .room-category {
+            font-weight: bold;
+            background: #000080;
+            color: white;
+            padding: 4px 8px;
+            margin-top: 8px;
+            font-size: 11px;
+        }
+
+        .room-item {
+            padding: 4px 8px;
+            cursor: pointer;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 11px;
+        }
+
+        .room-item:hover {
+            background: #e0e0e0;
+        }
+
+        .room-info {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .room-users {
+            color: #0000ff;
+            font-size: 10px;
+        }
+
+        /* MOBILE RESPONSIVE */
+        @media (max-width: 768px) {
+            body {
+                padding: 0;
+            }
+
+            .content {
+                flex-direction: column;
+                height: auto;
+                min-height: 500px;
+            }
+
+            .user-panel {
+                width: 100%;
+                max-height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- MAIN CHAT WINDOW -->
+    <div class="window">
+        <!-- Title Bar -->
+        <div class="title-bar">
+            <div class="title-text">
+                <span>💬</span>
+                <span>Remrin Chat - Lounge</span>
+            </div>
+            <div class="window-controls">
+                <button class="window-button">_</button>
+                <button class="window-button">□</button>
+                <button class="window-button">×</button>
+            </div>
+        </div>
+
+        <!-- Menu Bar -->
+        <div class="menu-bar">
+            <span class="menu-item" onclick="showRoomList()">Rooms</span>
+            <span class="menu-item">File</span>
+            <span class="menu-item">Edit</span>
+            <span class="menu-item">People</span>
+            <span class="menu-item">View</span>
+            <span class="menu-item">Help</span>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <!-- Left Panel: Chat -->
+            <div class="chat-panel">
+                <div class="chat-header">Room: Lounge (Public)</div>
+                
+                <div class="chat-messages" id="messages">
+                    <div class="message message-system">*** You have entered the Lounge ***</div>
+                    <div class="message">
+                        <span class="message-user">OnlineHost:</span> Welcome to Remrin Chat Rooms!
+                    </div>
+                    <div class="message message-system">*** CoolDude89 has entered the room ***</div>
+                    <div class="message">
+                        <span class="message-user">CoolDude89:</span> Hey everyone!
+                    </div>
+                    <div class="message">
+                        <span class="message-user">ChattyKathy:</span> Hi! Welcome!
+                    </div>
+                    <div class="message message-system">*** JakeDaSnake has entered the room ***</div>
+                </div>
+
+                <div class="chat-input-area">
+                    <input 
+                        type="text" 
+                        class="chat-input" 
+                        id="messageInput"
+                        placeholder="Type your message here..."
+                        onkeypress="handleKeyPress(event)"
+                    >
+                    <button class="send-button" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+
+            <!-- Right Panel: User List -->
+            <div class="user-panel">
+                <div class="user-header">
+                    People Here: <span class="user-count" id="userCount">7</span>
+                </div>
+                
+                <div class="user-list" id="userList">
+                    <div class="user-item" onclick="selectUser(this)">CoolDude89</div>
+                    <div class="user-item" onclick="selectUser(this)">ChattyKathy</div>
+                    <div class="user-item" onclick="selectUser(this)">JakeDaSnake</div>
+                    <div class="user-item" onclick="selectUser(this)">SpeedRacer42</div>
+                    <div class="user-item" onclick="selectUser(this)">MusicLover</div>
+                    <div class="user-item" onclick="selectUser(this)">TechGuru</div>
+                    <div class="user-item selected" onclick="selectUser(this)">Sosu (You)</div>
+                </div>
+
+                <div class="user-actions">
+                    <button class="action-button" onclick="sendIM()">Send IM</button>
+                    <button class="action-button" onclick="viewProfile()">Get Profile</button>
+                    <button class="action-button" onclick="addBuddy()">Add Buddy</button>
+                    <button class="action-button" onclick="ignoreUser()">Ignore</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span class="status-item">Online</span>
+            <span class="status-item">Ready</span>
+        </div>
+    </div>
+
+    <!-- ROOM LIST WINDOW (Hidden by default) -->
+    <div class="room-list-window" id="roomListWindow">
+        <div class="title-bar">
+            <div class="title-text">
+                <span>📋</span>
+                <span>Chat Room Directory</span>
+            </div>
+            <div class="window-controls">
+                <button class="window-button" onclick="closeRoomList()">×</button>
+            </div>
+        </div>
+
+        <div style="padding: 8px; max-height: 400px; overflow-y: auto; background: white; margin: 4px; border: 2px inset #808080;">
+            <div class="room-category">🎮 Gaming Rooms</div>
+            <div class="room-item" onclick="joinRoom('Gaming Lounge')">
+                <div class="room-info">
+                    <span>Gaming Lounge</span>
+                    <span class="room-users">12/23</span>
+                </div>
+            </div>
+            <div class="room-item" onclick="joinRoom('RPG Central')">
+                <div class="room-info">
+                    <span>RPG Central</span>
+                    <span class="room-users">8/23</span>
+                </div>
+            </div>
+
+            <div class="room-category">💬 General Chat</div>
+            <div class="room-item" onclick="joinRoom('Lounge')">
+                <div class="room-info">
+                    <span>Lounge</span>
+                    <span class="room-users">7/23</span>
+                </div>
+            </div>
+            <div class="room-item" onclick="joinRoom('Random Chat')">
+                <div class="room-info">
+                    <span>Random Chat</span>
+                    <span class="room-users">15/23</span>
+                </div>
+            </div>
+
+            <div class="room-category">❤️ Romance & Dating</div>
+            <div class="room-item" onclick="joinRoom('Flirt Lounge')">
+                <div class="room-info">
+                    <span>Flirt Lounge</span>
+                    <span class="room-users">18/23</span>
+                </div>
+            </div>
+
+            <div class="room-category">💻 Tech & Coding</div>
+            <div class="room-item" onclick="joinRoom('Code Talk')">
+                <div class="room-info">
+                    <span>Code Talk</span>
+                    <span class="room-users">5/23</span>
+                </div>
+            </div>
+
+            <div class="room-category">🎨 User Created Rooms</div>
+            <div class="room-item" onclick="joinRoom('Anime Fans Unite')">
+                <div class="room-info">
+                    <span>Anime Fans Unite</span>
+                    <span class="room-users">11/23</span>
+                </div>
+            </div>
+            <div class="room-item" onclick="joinRoom('90s Nostalgia')">
+                <div class="room-info">
+                    <span>90s Nostalgia</span>
+                    <span class="room-users">6/23</span>
+                </div>
+            </div>
+
+            <div style="margin-top: 12px; text-align: center;">
+                <button class="send-button" onclick="createRoom()">Create New Room</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedUser = null;
+        const currentUsername = 'Sosu';
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            messageDiv.innerHTML = `<span class="message-user">${currentUsername}:</span> ${message}`;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            input.value = '';
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function selectUser(element) {
+            document.querySelectorAll('.user-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            selectedUser = element.textContent;
+        }
+
+        function sendIM() {
+            if (!selectedUser || selectedUser.includes('(You)')) {
+                alert('Select a user to send an IM!');
+                return;
+            }
+            alert(`Opening IM window with ${selectedUser}...`);
+        }
+
+        function viewProfile() {
+            if (!selectedUser) {
+                alert('Select a user first!');
+                return;
+            }
+            alert(`Viewing profile for ${selectedUser}...`);
+        }
+
+        function addBuddy() {
+            if (!selectedUser || selectedUser.includes('(You)')) {
+                alert('Select a user to add to buddy list!');
+                return;
+            }
+            alert(`${selectedUser} added to your buddy list!`);
+        }
+
+        function ignoreUser() {
+            if (!selectedUser || selectedUser.includes('(You)')) {
+                alert('Select a user to ignore!');
+                return;
+            }
+            alert(`${selectedUser} has been ignored.`);
+        }
+
+        function showRoomList() {
+            document.getElementById('roomListWindow').classList.add('active');
+        }
+
+        function closeRoomList() {
+            document.getElementById('roomListWindow').classList.remove('active');
+        }
+
+        function joinRoom(roomName) {
+            alert(`Joining room: ${roomName}...`);
+            closeRoomList();
+        }
+
+        function createRoom() {
+            const roomName = prompt('Enter room name:');
+            if (roomName) {
+                alert(`Creating room "${roomName}"...`);
+            }
+        }
+
+        // Simulate incoming messages
+        setInterval(() => {
+            const users = ['CoolDude89', 'ChattyKathy', 'JakeDaSnake', 'SpeedRacer42'];
+            const messages = [
+                'Anyone playing any good games lately?',
+                'Check out my new profile!',
+                'LOL',
+                'This brings back memories!',
+                'ASL?', // classic AOL!
+                'brb',
+                'Anyone from California?'
+            ];
+
+            const randomUser = users[Math.floor(Math.random() * users.length)];
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            messageDiv.innerHTML = `<span class="message-user">${randomUser}:</span> ${randomMessage}`;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }, 8000);
+    </script>
+</body>
+</html>

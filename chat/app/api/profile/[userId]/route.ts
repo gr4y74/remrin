@@ -87,9 +87,14 @@ export async function PUT(
     try {
         const cookieStore = cookies();
         const supabase = createClient(cookieStore);
-        const { data: { user } } = await supabase.auth.getUser();
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+        if (authError) {
+            console.error('Auth error in PUT /api/profile:', authError);
+        }
 
         if (!user) {
+            console.error('No user found in PUT /api/profile. Auth error:', authError);
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 

@@ -11,6 +11,7 @@ import { EditableField } from '@/components/profile/editable/EditableField';
 import { EditableSelect } from '@/components/profile/editable/EditableSelect';
 import { RibbonBadge } from '@/components/profile/RibbonBadge';
 import { QRCodeModal } from '@/components/profile/QRCodeModal';
+import { FollowButton } from '@/components/profile/FollowButton';
 import { UserProfile } from '@/types/profile';
 import { toast } from 'sonner';
 import { Sparkles, Users } from 'lucide-react';
@@ -39,11 +40,24 @@ export function ProfileClient({ profile: initialProfile, isOwnProfile }: Profile
     const [profile, setProfile] = useState(initialProfile);
     const [showQRModal, setShowQRModal] = useState(false);
     const [isFollowing, setIsFollowing] = useState(false);
-    const [isLoadingFollow, setIsLoadingFollow] = useState(false);
+    const [stats, setStats] = useState({ followers: 0, following: 0 });
     const [activeTab, setActiveTab] = useState<'work' | 'feed' | 'about' | 'statistics' | 'achievements'>('work');
 
-    // Load follow status on mount
+    const fetchStats = async () => {
+        try {
+            const response = await fetch(`/api/profile/${profile.user_id}/stats`);
+            const data = await response.json();
+            if (response.ok) {
+                setStats(data);
+            }
+        } catch (error) {
+            console.error('Error loading stats:', error);
+        }
+    };
+
+    // Load follow status and stats on mount
     useEffect(() => {
+        fetchStats();
         if (!isOwnProfile) {
             const loadFollowStatus = async () => {
                 try {
@@ -60,38 +74,19 @@ export function ProfileClient({ profile: initialProfile, isOwnProfile }: Profile
         }
     }, [profile.user_id, isOwnProfile]);
 
-    const handleFollow = async () => {
-        setIsLoadingFollow(true);
-        try {
-            const method = isFollowing ? 'DELETE' : 'POST';
-            const response = await fetch(`/api/profile/${profile.user_id}/follow`, {
-                method,
-            });
-
-            if (response.ok) {
-                setIsFollowing(!isFollowing);
-                toast.success(isFollowing ? 'Unfollowed' : 'Following!');
-            } else {
-                const data = await response.json();
-                toast.error(data.error || 'Failed to update follow status');
-            }
-        } catch (error) {
-            console.error('Error toggling follow:', error);
-            toast.error('Failed to update follow status');
-        } finally {
-            setIsLoadingFollow(false);
-        }
-    };
-
     const handleProfileUpdate = async (updates: Partial<UserProfile>) => {
         try {
-            const response = await fetch(`/api/profile/${profile.user_id}`, {
-                method: 'PATCH',
+            // Use /api/profile/me for updates - it handles auth internally
+            const response = await fetch('/api/profile/me', {
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updates),
             });
 
-            if (!response.ok) throw new Error('Failed to update profile');
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to update profile');
+            }
 
             setProfile(prev => ({ ...prev, ...updates }));
             toast.success('Successfully updated profile');
@@ -155,8 +150,8 @@ export function ProfileClient({ profile: initialProfile, isOwnProfile }: Profile
         joinDate: profile.created_at,
         pronouns: profile.pronouns || '',
         stats: {
-            followers: 0, // In a real app, these would be reactive or fetched
-            following: 0,
+            followers: stats.followers,
+            following: stats.following,
             posts: profile.featured_creations?.length || 0,
             likes: 0
         },
@@ -197,10 +192,10 @@ export function ProfileClient({ profile: initialProfile, isOwnProfile }: Profile
 
     // Main Content Sections (Middle Column)
     const mainContent = (
-        <div className="space-y-8">
-            {/* Tabs Navigation */}
-            <div className="border-b border-rp-highlight-low">
-                <div className="flex gap-8 overflow-x-auto no-scrollbar">
+        <div className="space-y-6 md:space-y-8">
+            {/* Tabs Navigation - Scrollable on mobile, touch-friendly */}
+            <div className="border-b border-rp-highlight-low -mx-4 px-4 md:mx-0 md:px-0">
+                <div className="flex gap-1 sm:gap-6 md:gap-8 overflow-x-auto scrollbar-hide snap-x snap-mandatory">
                     {[
                         { id: 'work', label: 'Work' },
                         { id: 'feed', label: 'Feed' },
@@ -211,9 +206,9 @@ export function ProfileClient({ profile: initialProfile, isOwnProfile }: Profile
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
-                            className={`pb-4 px-2 text-sm font-bold transition-all border-b-2 whitespace-nowrap ${activeTab === tab.id
+                            className={`pb-3 md:pb-4 px-3 sm:px-2 text-sm font-bold transition-all border-b-2 whitespace-nowrap shrink-0 snap-start min-h-[44px] flex items-center ${activeTab === tab.id
                                 ? 'text-rp-iris border-rp-iris translate-y-[1px]'
-                                : 'text-rp-subtle border-transparent hover:text-rp-text'
+                                : 'text-rp-subtle border-transparent hover:text-rp-text active:text-rp-text'
                                 }`}
                         >
                             {tab.label}
@@ -223,18 +218,18 @@ export function ProfileClient({ profile: initialProfile, isOwnProfile }: Profile
             </div>
 
             {/* Tab Views with Animations */}
-            <div className="min-h-[600px] animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="min-h-[400px] md:min-h-[600px] animate-in fade-in slide-in-from-bottom-4 duration-500">
                 {activeTab === 'work' && (
-                    <div className="space-y-6">
+                    <div className="space-y-4 md:space-y-6">
                         <div className="flex items-center justify-between">
-                            <h2 className="text-2xl font-bold text-rp-text flex items-center gap-2">
-                                <Sparkles className="w-6 h-6 text-rp-gold" />
+                            <h2 className="text-xl md:text-2xl font-bold text-rp-text flex items-center gap-2">
+                                <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-rp-gold" />
                                 Created Souls
                             </h2>
                             {isOwnProfile && (
                                 <button
                                     onClick={() => window.location.href = '/studio'}
-                                    className="text-sm font-bold text-rp-iris hover:underline"
+                                    className="text-sm font-bold text-rp-iris hover:underline active:opacity-70 min-h-[44px] flex items-center"
                                 >
                                     Manage Studio
                                 </button>
@@ -249,25 +244,25 @@ export function ProfileClient({ profile: initialProfile, isOwnProfile }: Profile
                 )}
 
                 {activeTab === 'feed' && (
-                    <div className="max-w-2xl mx-auto space-y-6">
-                        <FeedContainer />
+                    <div className="max-w-2xl mx-auto space-y-4 md:space-y-6">
+                        <FeedContainer showSidebar={false} />
                     </div>
                 )}
 
                 {activeTab === 'about' && (
-                    <div className="max-w-3xl space-y-8 bg-rp-surface p-8 rounded-3xl shadow-xl shadow-rp-base/50">
+                    <div className="max-w-3xl space-y-6 md:space-y-8 bg-rp-surface p-4 sm:p-6 md:p-8 rounded-2xl md:rounded-3xl shadow-xl shadow-rp-base/50">
                         <section>
-                            <h3 className="text-xs font-bold text-rp-subtle uppercase tracking-widest mb-4">Bio & Vision</h3>
+                            <h3 className="text-xs font-bold text-rp-subtle uppercase tracking-widest mb-3 md:mb-4">Bio & Vision</h3>
                             <EditableField
                                 value={profile.bio || ''}
                                 placeholder="Describe your creative vision..."
                                 onSave={(val) => handleProfileUpdate({ bio: val })}
                                 disabled={!isOwnProfile}
-                                className="text-lg leading-relaxed text-rp-text"
+                                className="text-base md:text-lg leading-relaxed text-rp-text"
                             />
                         </section>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-10 border-t border-rp-highlight-low">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-10 pt-6 md:pt-10 border-t border-rp-highlight-low">
                             <div>
                                 <h3 className="text-xs font-bold text-rp-subtle uppercase tracking-widest mb-3">Location</h3>
                                 <EditableField
@@ -324,24 +319,24 @@ export function ProfileClient({ profile: initialProfile, isOwnProfile }: Profile
                 {activeTab === 'statistics' && <AnalyticsDashboard />}
 
                 {activeTab === 'achievements' && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                         {profile.user_achievements && profile.user_achievements.length > 0 ? (
                             profile.user_achievements.map((ua: any) => (
-                                <div key={ua.id} className="bg-rp-surface p-6 rounded-2xl flex items-center gap-6 hover:shadow-lg hover:shadow-rp-iris/10 transition-all group">
-                                    <div className="text-5xl bg-rp-overlay w-20 h-20 flex items-center justify-center rounded-2xl shadow-inner group-hover:scale-110 transition-transform">
+                                <div key={ua.id} className="bg-rp-surface p-4 md:p-6 rounded-xl md:rounded-2xl flex items-center gap-4 md:gap-6 hover:shadow-lg hover:shadow-rp-iris/10 transition-all group active:scale-[0.98]">
+                                    <div className="text-4xl md:text-5xl bg-rp-overlay w-16 h-16 md:w-20 md:h-20 flex items-center justify-center rounded-xl md:rounded-2xl shadow-inner group-hover:scale-110 transition-transform shrink-0">
                                         {ua.achievement?.icon || '🏆'}
                                     </div>
-                                    <div>
-                                        <h4 className="font-bold text-xl text-rp-text">{ua.achievement?.name}</h4>
-                                        <p className="text-sm text-rp-subtle mt-1">{ua.achievement?.description}</p>
-                                        <div className="mt-3 inline-block px-2 py-0.5 rounded bg-rp-highlight-low text-[10px] uppercase font-bold text-rp-muted">
+                                    <div className="min-w-0">
+                                        <h4 className="font-bold text-lg md:text-xl text-rp-text truncate">{ua.achievement?.name}</h4>
+                                        <p className="text-sm text-rp-subtle mt-1 line-clamp-2">{ua.achievement?.description}</p>
+                                        <div className="mt-2 md:mt-3 inline-block px-2 py-0.5 rounded bg-rp-highlight-low text-[10px] uppercase font-bold text-rp-muted">
                                             Earned {new Date(ua.earned_date).toLocaleDateString()}
                                         </div>
                                     </div>
                                 </div>
                             ))
                         ) : (
-                            <div className="col-span-full py-20 text-center bg-rp-surface rounded-3xl border-2 border-dashed border-rp-highlight-med">
+                            <div className="col-span-full py-12 md:py-20 text-center bg-rp-surface rounded-2xl md:rounded-3xl border-2 border-dashed border-rp-highlight-med">
                                 <p className="text-rp-subtle font-medium">No legacy achievements recorded yet.</p>
                             </div>
                         )}
@@ -374,16 +369,15 @@ export function ProfileClient({ profile: initialProfile, isOwnProfile }: Profile
                     actions={
                         <div className="flex gap-4 items-center">
                             {!isOwnProfile && (
-                                <button
-                                    onClick={handleFollow}
-                                    disabled={isLoadingFollow}
-                                    className={`px-8 py-2.5 rounded-full font-bold transition-all ${isFollowing
-                                        ? 'bg-rp-overlay text-rp-text border border-rp-highlight-med hover:bg-rp-surface'
-                                        : 'bg-rp-iris text-white hover:shadow-lg hover:shadow-rp-iris/20 active:scale-95'
-                                        }`}
-                                >
-                                    {isFollowing ? 'Following' : 'Follow'}
-                                </button>
+                                <FollowButton
+                                    userId={profile.user_id}
+                                    initialIsFollowing={isFollowing}
+                                    initialFollowerCount={stats.followers}
+                                    onFollowChange={(newVal) => {
+                                        setIsFollowing(newVal);
+                                        fetchStats(); // Refresh stats when follow status changes
+                                    }}
+                                />
                             )}
                             <button
                                 onClick={() => setShowQRModal(true)}

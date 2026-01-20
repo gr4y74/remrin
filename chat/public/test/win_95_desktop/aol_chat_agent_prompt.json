@@ -1,0 +1,710 @@
+{
+  "project_name": "Remrin AOL-Style Chat Rooms - Complete Implementation",
+  "aesthetic": "Windows 95 / AOL Instant Messenger nostalgia - MUST maintain this retro look!",
+  
+  "primary_objective": "Build a fully functional, real-time chat room system inspired by 1990s/2000s AOL chat rooms with Windows 95 UI aesthetic. This should feel EXACTLY like using AOL in 1999.",
+
+  "critical_design_requirements": {
+    "ui_style": "Windows 95 aesthetic is NON-NEGOTIABLE",
+    "elements_required": [
+      "Gray (#c0c0c0) window backgrounds",
+      "Outset/inset borders (3D effect)",
+      "Blue gradient title bars (#000080 to #1084d0)",
+      "Courier New font for chat messages",
+      "MS Sans Serif for UI elements",
+      "Classic window controls (minimize, maximize, close)",
+      "16px wide scrollbars with gray backgrounds",
+      "Inset text inputs",
+      "Outset buttons that inset when clicked",
+      "Status bars at bottom",
+      "Menu bars at top"
+    ],
+    "colors": {
+      "window_background": "#c0c0c0",
+      "title_bar": "linear-gradient(to right, #000080, #1084d0)",
+      "white_text_areas": "#ffffff",
+      "border_light": "#ffffff",
+      "border_dark": "#808080",
+      "border_darkest": "#000000",
+      "system_message": "#808080",
+      "username_color": "#0000ff",
+      "selection_highlight": "#000080"
+    }
+  },
+
+  "database_schema": {
+    "instruction": "Create these tables in Supabase PostgreSQL",
+    
+    "tables": [
+      {
+        "name": "chat_rooms",
+        "description": "All available chat rooms",
+        "columns": [
+          "id UUID PRIMARY KEY DEFAULT uuid_generate_v4()",
+          "name TEXT NOT NULL",
+          "category TEXT NOT NULL -- 'gaming', 'romance', 'tech', 'general', 'user_created'",
+          "description TEXT",
+          "is_public BOOLEAN DEFAULT true",
+          "is_official BOOLEAN DEFAULT false -- true for Remrin-created rooms",
+          "max_users INT DEFAULT 23 -- classic AOL limit!",
+          "password TEXT -- for private rooms",
+          "created_by UUID REFERENCES auth.users(id)",
+          "created_at TIMESTAMP DEFAULT NOW()",
+          "topic TEXT -- room topic/subject"
+        ],
+        "indexes": [
+          "CREATE INDEX idx_chat_rooms_category ON chat_rooms(category)",
+          "CREATE INDEX idx_chat_rooms_public ON chat_rooms(is_public)"
+        ]
+      },
+      {
+        "name": "chat_messages",
+        "description": "All chat room messages",
+        "columns": [
+          "id UUID PRIMARY KEY DEFAULT uuid_generate_v4()",
+          "room_id UUID REFERENCES chat_rooms(id) ON DELETE CASCADE",
+          "user_id UUID REFERENCES auth.users(id)",
+          "username TEXT NOT NULL",
+          "message TEXT NOT NULL",
+          "message_type TEXT DEFAULT 'user' -- 'user', 'system', 'emote'",
+          "created_at TIMESTAMP DEFAULT NOW()"
+        ],
+        "indexes": [
+          "CREATE INDEX idx_messages_room ON chat_messages(room_id, created_at DESC)",
+          "CREATE INDEX idx_messages_user ON chat_messages(user_id)"
+        ],
+        "rls": [
+          "ALTER TABLE chat_messages ENABLE ROW LEVEL SECURITY",
+          "CREATE POLICY messages_read ON chat_messages FOR SELECT USING (true)",
+          "CREATE POLICY messages_insert ON chat_messages FOR INSERT WITH CHECK (auth.uid() = user_id)"
+        ]
+      },
+      {
+        "name": "room_members",
+        "description": "Current users in each room",
+        "columns": [
+          "room_id UUID REFERENCES chat_rooms(id) ON DELETE CASCADE",
+          "user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE",
+          "username TEXT NOT NULL",
+          "status TEXT DEFAULT 'active' -- 'active', 'away', 'idle'",
+          "is_moderator BOOLEAN DEFAULT false",
+          "joined_at TIMESTAMP DEFAULT NOW()",
+          "last_activity TIMESTAMP DEFAULT NOW()",
+          "PRIMARY KEY (room_id, user_id)"
+        ],
+        "indexes": [
+          "CREATE INDEX idx_room_members_room ON room_members(room_id)",
+          "CREATE INDEX idx_room_members_user ON room_members(user_id)"
+        ]
+      },
+      {
+        "name": "direct_messages",
+        "description": "Private IM conversations",
+        "columns": [
+          "id UUID PRIMARY KEY DEFAULT uuid_generate_v4()",
+          "from_user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE",
+          "to_user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE",
+          "from_username TEXT NOT NULL",
+          "to_username TEXT NOT NULL",
+          "message TEXT NOT NULL",
+          "read BOOLEAN DEFAULT false",
+          "created_at TIMESTAMP DEFAULT NOW()"
+        ],
+        "indexes": [
+          "CREATE INDEX idx_dm_conversation ON direct_messages(from_user_id, to_user_id, created_at)",
+          "CREATE INDEX idx_dm_unread ON direct_messages(to_user_id, read)"
+        ]
+      },
+      {
+        "name": "buddy_lists",
+        "description": "User friend lists (buddy list)",
+        "columns": [
+          "user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE",
+          "buddy_id UUID REFERENCES auth.users(id) ON DELETE CASCADE",
+          "buddy_username TEXT NOT NULL",
+          "status TEXT DEFAULT 'accepted' -- 'pending', 'accepted', 'blocked'",
+          "added_at TIMESTAMP DEFAULT NOW()",
+          "PRIMARY KEY (user_id, buddy_id)"
+        ]
+      },
+      {
+        "name": "user_profiles_chat",
+        "description": "Extended user profiles for chat",
+        "columns": [
+          "user_id UUID PRIMARY KEY REFERENCES auth.users(id)",
+          "username TEXT UNIQUE NOT NULL",
+          "display_name TEXT",
+          "location TEXT",
+          "age INT",
+          "gender TEXT",
+          "interests TEXT[]",
+          "favorite_quote TEXT",
+          "asl TEXT -- Age/Sex/Location (classic AOL!)",
+          "away_message TEXT",
+          "status TEXT DEFAULT 'online' -- 'online', 'away', 'offline'",
+          "show_online BOOLEAN DEFAULT true",
+          "created_at TIMESTAMP DEFAULT NOW()"
+        ]
+      },
+      {
+        "name": "ignored_users",
+        "description": "Blocked/ignored users",
+        "columns": [
+          "user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE",
+          "ignored_user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE",
+          "ignored_username TEXT NOT NULL",
+          "ignored_at TIMESTAMP DEFAULT NOW()",
+          "PRIMARY KEY (user_id, ignored_user_id)"
+        ]
+      },
+      {
+        "name": "room_bans",
+        "description": "Users banned from specific rooms",
+        "columns": [
+          "room_id UUID REFERENCES chat_rooms(id) ON DELETE CASCADE",
+          "user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE",
+          "banned_by UUID REFERENCES auth.users(id)",
+          "reason TEXT",
+          "banned_at TIMESTAMP DEFAULT NOW()",
+          "expires_at TIMESTAMP",
+          "PRIMARY KEY (room_id, user_id)"
+        ]
+      }
+    ]
+  },
+
+  "supabase_realtime_setup": {
+    "enable_realtime": [
+      "ALTER PUBLICATION supabase_realtime ADD TABLE chat_messages",
+      "ALTER PUBLICATION supabase_realtime ADD TABLE room_members",
+      "ALTER PUBLICATION supabase_realtime ADD TABLE direct_messages"
+    ],
+    "note": "Enable Realtime in Supabase dashboard for these tables"
+  },
+
+  "core_features": {
+    "feature_1_chat_rooms": {
+      "description": "Main chat room functionality",
+      "requirements": [
+        "Display chat messages in Courier New monospace font",
+        "Show username in blue (#0000ff) before each message",
+        "System messages in gray italic (user joins, leaves, etc.)",
+        "Auto-scroll to bottom when new messages arrive",
+        "Limit to last 100 messages visible (older messages scroll away)",
+        "Show timestamp on hover",
+        "Support /me command for emotes (e.g., '/me waves' shows '* Username waves' in italic)"
+      ],
+      "system_messages": [
+        "*** {username} has entered the room ***",
+        "*** {username} has left the room ***",
+        "*** {username} was kicked by {moderator} ***",
+        "*** You have entered {roomname} ***",
+        "*** Room is now full (23/23) ***"
+      ]
+    },
+
+    "feature_2_user_list": {
+      "description": "Right sidebar showing current users",
+      "requirements": [
+        "Display all users currently in room",
+        "Show user count at top: 'People Here: X'",
+        "Highlight current user with '(You)' suffix",
+        "Click user to select (blue highlight)",
+        "Show user status icons: 🟢 online, 🟡 away, ⚫ idle",
+        "Sort alphabetically",
+        "Update in real-time as users join/leave"
+      ],
+      "action_buttons": [
+        {
+          "name": "Send IM",
+          "action": "Opens new IM window with selected user",
+          "disabled_if": "No user selected or user is self"
+        },
+        {
+          "name": "Get Profile",
+          "action": "Opens user profile window",
+          "shows": "ASL, interests, quote, location"
+        },
+        {
+          "name": "Add Buddy",
+          "action": "Adds user to buddy list",
+          "confirmation": "'{username}' added to your buddy list!"
+        },
+        {
+          "name": "Ignore",
+          "action": "Blocks messages from this user",
+          "effect": "Their messages are hidden from you"
+        }
+      ]
+    },
+
+    "feature_3_room_directory": {
+      "description": "Browse and join rooms",
+      "categories": [
+        {
+          "name": "🎮 Gaming Rooms",
+          "official_rooms": ["Gaming Lounge", "RPG Central", "FPS Zone", "Console Gamers"],
+          "description": "Rooms for gamers"
+        },
+        {
+          "name": "💬 General Chat",
+          "official_rooms": ["The Lounge", "Random Chat", "Late Night Hangout"],
+          "description": "Casual conversation"
+        },
+        {
+          "name": "❤️ Romance & Dating",
+          "official_rooms": ["Flirt Lounge", "Singles Chat", "Dating Advice"],
+          "description": "Meet new people"
+        },
+        {
+          "name": "💻 Tech & Coding",
+          "official_rooms": ["Code Talk", "Web Dev", "AI Enthusiasts"],
+          "description": "Tech discussions"
+        },
+        {
+          "name": "🎨 Creative",
+          "official_rooms": ["Artists Hangout", "Writers Corner", "Music Lovers"],
+          "description": "Creative community"
+        },
+        {
+          "name": "🌟 User Created Rooms",
+          "description": "Community-made rooms",
+          "shows_all_user_rooms": true
+        }
+      ],
+      "room_list_display": [
+        "Room name on left",
+        "User count on right (e.g., '12/23')",
+        "Full rooms show in red",
+        "Click room to join",
+        "'Create New Room' button at bottom"
+      ],
+      "create_room_form": {
+        "fields": [
+          "Room Name (required, max 50 chars)",
+          "Category (dropdown: gaming, romance, tech, general, other)",
+          "Description (optional, max 200 chars)",
+          "Public/Private toggle",
+          "Password (if private)",
+          "Max users (default 23, range 2-50)"
+        ]
+      }
+    },
+
+    "feature_4_instant_messaging": {
+      "description": "Private DM windows (THE MOST IMPORTANT NOSTALGIC FEATURE!)",
+      "window_design": [
+        "Opens in new floating window (position: fixed)",
+        "Same Windows 95 aesthetic as main chat",
+        "Title bar shows: 'IM from {username}'",
+        "Can have MULTIPLE IM windows open simultaneously",
+        "Each window can be dragged around screen",
+        "Close button closes window",
+        "Minimize button hides window (stays in taskbar)"
+      ],
+      "functionality": [
+        "Real-time message delivery using Supabase Realtime",
+        "Show typing indicator when other user is typing",
+        "Message history loads last 50 messages",
+        "Auto-scroll to bottom",
+        "Play 'IM received' sound when new message arrives",
+        "Unread message count in title bar if window minimized",
+        "Save conversation history to database"
+      ],
+      "sounds": {
+        "im_received": "door_open.mp3 or classic AOL door sound",
+        "im_sent": "door_close.mp3",
+        "note": "Use free sounds from freesound.org or create simple beeps"
+      }
+    },
+
+    "feature_5_buddy_list": {
+      "description": "Friends list window",
+      "window_features": [
+        "Separate floating window",
+        "Shows online buddies at top (green dot)",
+        "Offline buddies at bottom (gray)",
+        "Away buddies in middle (yellow dot)",
+        "Double-click buddy to open IM",
+        "Right-click for context menu: IM, Profile, Remove",
+        "Shows last seen time for offline users"
+      ],
+      "buddy_groups": [
+        "Online Now (sorted alphabetically)",
+        "Away",
+        "Offline"
+      ]
+    },
+
+    "feature_6_user_profile": {
+      "description": "User profile window",
+      "layout": [
+        "Window title: '{username}'s Profile'",
+        "Display name",
+        "ASL (Age/Sex/Location) - classic!",
+        "Location",
+        "Interests (tags)",
+        "Favorite quote",
+        "Member since date",
+        "Buttons: Send IM, Add Buddy, Close"
+      ],
+      "edit_own_profile": [
+        "Settings menu → Edit Profile",
+        "Form with all fields",
+        "Save updates to user_profiles_chat table",
+        "Preview before saving"
+      ]
+    },
+
+    "feature_7_away_messages": {
+      "description": "Set status and away message",
+      "statuses": [
+        "🟢 Online",
+        "🟡 Away",
+        "⚫ Idle (automatic after 5 min inactivity)",
+        "🔴 Do Not Disturb"
+      ],
+      "away_message": [
+        "Custom text message",
+        "Shows when someone IMs you while away",
+        "Auto-reply sent once per IM session",
+        "Examples: 'BRB - Getting food', 'In a meeting', 'AFK'"
+      ]
+    },
+
+    "feature_8_emoticons": {
+      "description": "Text-based emoticons that auto-convert",
+      "conversions": {
+        ":)": "🙂",
+        ":(": "☹️",
+        ":D": "😀",
+        ";)": "😉",
+        ":P": "😛",
+        ":|": "😐",
+        "LOL": "😂",
+        "<3": "❤️",
+        ":-*": "😘"
+      },
+      "implementation": "Replace text patterns before displaying message"
+    },
+
+    "feature_9_moderation_tools": {
+      "description": "Room moderator controls",
+      "moderator_actions": [
+        {
+          "action": "Kick User",
+          "effect": "Removes user from room immediately",
+          "message": "You have been kicked from this room"
+        },
+        {
+          "action": "Ban User",
+          "effect": "Prevents user from rejoining room",
+          "duration_options": ["1 hour", "24 hours", "7 days", "Permanent"]
+        },
+        {
+          "action": "Mute User",
+          "effect": "User can see messages but cannot send",
+          "duration": "Temporary or until unmuted"
+        },
+        {
+          "action": "Set Topic",
+          "effect": "Changes room topic shown at top"
+        }
+      ],
+      "who_is_moderator": [
+        "Room creator is automatic moderator",
+        "Official Remrin rooms: Staff members",
+        "Moderators have [MOD] tag next to username"
+      ]
+    },
+
+    "feature_10_sound_effects": {
+      "description": "Classic AOL sounds",
+      "sounds_needed": [
+        {
+          "event": "IM received",
+          "sound": "door_open.wav or im_received.mp3",
+          "volume": 0.5
+        },
+        {
+          "event": "User enters room",
+          "sound": "door_open.wav",
+          "volume": 0.3
+        },
+        {
+          "event": "User leaves room",
+          "sound": "door_close.wav",
+          "volume": 0.3
+        },
+        {
+          "event": "Buddy comes online",
+          "sound": "buddy_online.mp3",
+          "volume": 0.4
+        }
+      ],
+      "settings": [
+        "Mute all sounds toggle",
+        "Individual sound volume controls",
+        "Save preferences to localStorage"
+      ],
+      "free_sound_sources": [
+        "https://freesound.org",
+        "Create simple beep sounds with Web Audio API",
+        "Use classic Windows 95 sounds (public domain)"
+      ]
+    },
+
+    "feature_11_idle_detection": {
+      "description": "Auto-detect when user is idle",
+      "logic": [
+        "Track last activity time on: keypress, mouse move, click",
+        "After 5 minutes of no activity: Set status to 'Idle'",
+        "After 30 minutes: Auto-leave all rooms",
+        "On any activity: Return status to 'Online'"
+      ],
+      "visual_indicator": "Idle users show ⚫ black dot in user list"
+    },
+
+    "feature_12_notifications": {
+      "description": "Desktop notifications for important events",
+      "notify_on": [
+        "IM received (if window not focused)",
+        "Buddy comes online",
+        "Mentioned in chat (@username)",
+        "Kicked from room"
+      ],
+      "permission": "Request notification permission on first IM or mention"
+    }
+  },
+
+  "file_structure": {
+    "components": [
+      {
+        "path": "components/chat/ChatRoomWindow.tsx",
+        "description": "Main chat room window component"
+      },
+      {
+        "path": "components/chat/IMWindow.tsx",
+        "description": "Instant message window (can have multiple instances)"
+      },
+      {
+        "path": "components/chat/RoomDirectory.tsx",
+        "description": "Room list browser/selector"
+      },
+      {
+        "path": "components/chat/BuddyList.tsx",
+        "description": "Friends list window"
+      },
+      {
+        "path": "components/chat/UserProfile.tsx",
+        "description": "User profile viewer/editor"
+      },
+      {
+        "path": "components/chat/Windows95Button.tsx",
+        "description": "Reusable Win95 style button"
+      },
+      {
+        "path": "components/chat/Windows95Window.tsx",
+        "description": "Reusable Win95 window wrapper"
+      },
+      {
+        "path": "components/chat/Windows95Input.tsx",
+        "description": "Reusable Win95 style input"
+      }
+    ],
+    "hooks": [
+      {
+        "path": "hooks/useChatRoom.ts",
+        "description": "Chat room state and realtime subscriptions"
+      },
+      {
+        "path": "hooks/useDirectMessages.ts",
+        "description": "IM functionality and history"
+      },
+      {
+        "path": "hooks/useBuddyList.ts",
+        "description": "Buddy list management"
+      },
+      {
+        "path": "hooks/usePresence.ts",
+        "description": "Track user online/away/idle status"
+      },
+      {
+        "path": "hooks/useSoundEffects.ts",
+        "description": "Play AOL-style sounds"
+      }
+    ],
+    "lib": [
+      {
+        "path": "lib/chat/ChatRoom.ts",
+        "description": "ChatRoom class for room operations"
+      },
+      {
+        "path": "lib/chat/DirectMessage.ts",
+        "description": "DM sending/receiving logic"
+      },
+      {
+        "path": "lib/chat/sounds.ts",
+        "description": "Sound effect player utilities"
+      }
+    ],
+    "public": [
+      {
+        "path": "public/sounds/im_received.mp3",
+        "description": "IM notification sound"
+      },
+      {
+        "path": "public/sounds/door_open.mp3",
+        "description": "User enters room"
+      },
+      {
+        "path": "public/sounds/door_close.mp3",
+        "description": "User leaves room"
+      },
+      {
+        "path": "public/sounds/buddy_online.mp3",
+        "description": "Buddy comes online"
+      }
+    ]
+  },
+
+  "implementation_priorities": {
+    "phase_1_core_chat": {
+      "priority": "CRITICAL - Must work first",
+      "features": [
+        "Database schema creation",
+        "Chat room window UI (Windows 95 style)",
+        "Real-time messaging with Supabase",
+        "User list with presence",
+        "Send/receive messages",
+        "Join/leave rooms",
+        "System messages (user joined/left)"
+      ],
+      "acceptance_criteria": [
+        "User can join a room",
+        "User can see other users in room",
+        "Messages appear in real-time",
+        "Windows 95 aesthetic is perfect",
+        "System messages work"
+      ]
+    },
+
+    "phase_2_room_management": {
+      "priority": "HIGH",
+      "features": [
+        "Room directory window",
+        "Browse rooms by category",
+        "Create new rooms",
+        "Join/leave functionality",
+        "Room capacity limits (23 users)",
+        "Official vs user-created rooms"
+      ]
+    },
+
+    "phase_3_instant_messaging": {
+      "priority": "CRITICAL - This is THE killer feature!",
+      "features": [
+        "IM window component (draggable)",
+        "Multiple IM windows support",
+        "Real-time DM delivery",
+        "Message history",
+        "Typing indicators",
+        "IM sounds",
+        "Unread message counts"
+      ],
+      "note": "THIS IS WHAT PEOPLE REMEMBER MOST ABOUT AOL - MAKE IT PERFECT!"
+    },
+
+    "phase_4_social_features": {
+      "priority": "HIGH",
+      "features": [
+        "Buddy list window",
+        "Add/remove buddies",
+        "Online status indicators",
+        "User profiles",
+        "Profile editing",
+        "Ignore/block users"
+      ]
+    },
+
+    "phase_5_polish": {
+      "priority": "MEDIUM",
+      "features": [
+        "Sound effects",
+        "Away messages",
+        "Idle detection",
+        "Emoticon conversion",
+        "Desktop notifications",
+        "Moderation tools"
+      ]
+    }
+  },
+
+  "technical_implementation_details": {
+    "realtime_chat": {
+      "method": "Supabase Realtime Broadcast + Postgres Changes",
+      "example_code": "```typescript\n// Subscribe to room messages\nconst channel = supabase\n  .channel(`room:${roomId}`)\n  .on('postgres_changes',\n    { event: 'INSERT', schema: 'public', table: 'chat_messages', filter: `room_id=eq.${roomId}` },\n    (payload) => {\n      // Add new message to UI\n      addMessage(payload.new);\n    }\n  )\n  .on('presence', { event: 'sync' }, () => {\n    // Update user list\n    const users = channel.presenceState();\n    updateUserList(users);\n  })\n  .subscribe();\n\n// Track presence\nawait channel.track({\n  user_id: currentUser.id,\n  username: currentUser.username,\n  status: 'online',\n  online_at: new Date().toISOString()\n});\n```"
+    },
+
+    "multiple_im_windows": {
+      "approach": "Use React state to manage array of open IM windows",
+      "example": "```typescript\nconst [imWindows, setImWindows] = useState<IMWindow[]>([]);\n\nfunction openIM(username: string) {\n  // Check if window already exists\n  const existing = imWindows.find(w => w.username === username);\n  if (existing) {\n    // Focus existing window\n    existing.focus();\n    return;\n  }\n  \n  // Create new IM window\n  setImWindows([...imWindows, {\n    id: Date.now(),\n    username,\n    position: { x: 100 + (imWindows.length * 30), y: 100 + (imWindows.length * 30) },\n    minimized: false\n  }]);\n}\n```"
+    },
+
+    "draggable_windows": {
+      "library": "Use 'react-draggable' or implement custom drag",
+      "installation": "npm install react-draggable",
+      "usage": "```tsx\nimport Draggable from 'react-draggable';\n\n<Draggable handle=\".title-bar\">\n  <div className=\"im-window\">\n    <div className=\"title-bar\">IM from Username</div>\n    {/* window content */}\n  </div>\n</Draggable>\n```"
+    },
+
+    "sound_effects": {
+      "implementation": "```typescript\nclass SoundPlayer {\n  private sounds: Map<string, HTMLAudioElement> = new Map();\n  \n  constructor() {\n    this.loadSound('im_received', '/sounds/im_received.mp3');\n    this.loadSound('door_open', '/sounds/door_open.mp3');\n    this.loadSound('door_close', '/sounds/door_close.mp3');\n  }\n  \n  loadSound(name: string, path: string) {\n    const audio = new Audio(path);\n    audio.volume = 0.5;\n    this.sounds.set(name, audio);\n  }\n  \n  play(name: string) {\n    const sound = this.sounds.get(name);\n    if (sound) {\n      sound.currentTime = 0;\n      sound.play().catch(e => console.log('Sound play blocked'));\n    }\n  }\n}\n```"
+    },
+
+    "idle_detection": {
+      "implementation": "```typescript\nlet lastActivity = Date.now();\nlet idleTimer: NodeJS.Timeout;\n\nfunction resetIdleTimer() {\n  lastActivity = Date.now();\n  clearTimeout(idleTimer);\n  \n  if (userStatus === 'idle') {\n    setUserStatus('online');\n  }\n  \n  idleTimer = setTimeout(() => {\n    setUserStatus('idle');\n  }, 5 * 60 * 1000); // 5 minutes\n}\n\n// Track activity\ndocument.addEventListener('mousemove', resetIdleTimer);\ndocument.addEventListener('keypress', resetIdleTimer);\n```"
+    }
+  },
+
+  "css_styling_requirements": {
+    "critical_styles": {
+      "windows_95_button": "```css\n.win95-button {\n  background: #c0c0c0;\n  border: 2px outset #ffffff;\n  padding: 4px 16px;\n  font-family: 'MS Sans Serif', Arial, sans-serif;\n  font-size: 11px;\n  cursor: pointer;\n}\n\n.win95-button:active {\n  border-style: inset;\n}\n```",
+      
+      "windows_95_input": "```css\n.win95-input {\n  background: #ffffff;\n  border: 2px inset #808080;\n  padding: 4px;\n  font-family: 'Courier New', monospace;\n  font-size: 12px;\n}\n```",
+      
+      "title_bar": "```css\n.title-bar {\n  background: linear-gradient(to right, #000080, #1084d0);\n  color: white;\n  padding: 4px 6px;\n  display: flex;\n  justify-content: space-between;\n  font-family: 'MS Sans Serif', Arial, sans-serif;\n  font-size: 11px;\n  font-weight: bold;\n  cursor: move; /* for dragging */\n}\n```",
+      
+      "window_container": "```css\n.win95-window {\n  background: #c0c0c0;\n  border: 2px outset #ffffff;\n  box-shadow: 2px 2px 0 #000000;\n  position: fixed; /* for draggable windows */\n}\n```"
+    }
+  },
+
+  "testing_checklist": {
+    "functional_tests": [
+      "✓ User can join a chat room",
+      "✓ Messages send and receive in real-time",
+      "✓ User list updates when users join/leave",
+      "✓ System messages appear correctly",
+      "✓ IM windows open and function",
+      "✓ Multiple IM windows can be open simultaneously",
+      "✓ Buddy list shows online/offline status",
+      "✓ User profiles display correctly",
+      "✓ Create room functionality works",
+      "✓ Room directory shows all categories",
+      "✓ Ignore user hides their messages",
+      "✓ Sound effects play on events",
+      "✓ Idle detection works after 5 minutes",
+      "✓ Away message auto-replies",
+      "✓ Emoticons convert correctly",
+      "✓ Moderator tools function (kick/ban)",
+      "✓ Room capacity limit enforced (23 users)"
+    ],
+    
+    "ui_tests": [
+      "✓ Windows 95 aesthetic is perfect",
+      "✓ All buttons have outset/inset effect",
+      "✓ Title bars are blue gradient",
+      "✓ Scrollbars look like Win95",
+      "✓ Fonts are correct (Courier New for chat, MS Sans Serif for UI)",
+      "✓ Colors match Win95 palette",
+      "✓ Windows are draggable",
+      "✓ Windows can be minimized/close

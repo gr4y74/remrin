@@ -8,7 +8,8 @@ import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 
 interface FollowButtonProps {
-    personaId: string
+    personaId?: string
+    userId?: string
     initialIsFollowing?: boolean
     initialFollowerCount?: number
     onFollowChange?: (isFollowing: boolean) => void
@@ -18,6 +19,7 @@ interface FollowButtonProps {
 
 export function FollowButton({
     personaId,
+    userId,
     initialIsFollowing = false,
     initialFollowerCount = 0,
     onFollowChange,
@@ -41,43 +43,57 @@ export function FollowButton({
         const previousState = isFollowing
         const previousCount = followerCount
         setIsFollowing(!isFollowing)
-        setFollowerCount(prev => isFollowing ? prev - 1 : prev + 1)
+        setFollowerCount(prev => isFollowing ? Math.max(0, prev - 1) : prev + 1)
         onFollowChange?.(!isFollowing)
 
         setIsLoading(true)
 
         try {
-            if (previousState) {
-                // Was following, now unfollowing
-                const { error } = await supabase
-                    .from("character_follows")
-                    .delete()
-                    .eq("persona_id", personaId)
-                    .eq("user_id", user.id)
+            if (userId) {
+                // User follow via API
+                const method = previousState ? "DELETE" : "POST"
+                const response = await fetch(`/api/profile/${userId}/follow`, {
+                    method,
+                })
 
-                if (error) throw error
-            } else {
-                // Was not following, now following
-                const { error } = await supabase
-                    .from("character_follows")
-                    .insert({
-                        persona_id: personaId,
-                        user_id: user.id
-                    })
+                if (!response.ok) {
+                    const error = await response.json()
+                    throw new Error(error.error || "Failed to update follow status")
+                }
+            } else if (personaId) {
+                // Character follow via direct Supabase
+                if (previousState) {
+                    // Was following, now unfollowing
+                    const { error } = await supabase
+                        .from("character_follows")
+                        .delete()
+                        .eq("persona_id", personaId)
+                        .eq("user_id", user.id)
 
-                if (error) throw error
+                    if (error) throw error
+                } else {
+                    // Was not following, now following
+                    const { error } = await supabase
+                        .from("character_follows")
+                        .insert({
+                            persona_id: personaId,
+                            user_id: user.id
+                        })
+
+                    if (error) throw error
+                }
             }
-        } catch (error) {
+        } catch (error: any) {
             // Revert optimistic update on error
             console.error("Error toggling follow:", error)
             setIsFollowing(previousState)
             setFollowerCount(previousCount)
             onFollowChange?.(previousState)
-            toast.error("Failed to update follow status")
+            toast.error(error.message || "Failed to update follow status")
         } finally {
             setIsLoading(false)
         }
-    }, [isFollowing, followerCount, personaId, supabase, onFollowChange])
+    }, [isFollowing, followerCount, personaId, userId, supabase, onFollowChange])
 
     return (
         <div className={cn("flex items-center", compact ? "gap-2" : "gap-3", className)}>

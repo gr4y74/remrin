@@ -27,6 +27,7 @@ import { ReactionPicker } from './ReactionPicker';
 import { usePost } from '@/hooks/feed/usePost';
 import { getUserAvatarUrl, getUserDisplayName, getUserProfileUrl } from '@/lib/user-profile-utils';
 import Link from 'next/link';
+import { CommentSection } from './CommentSection';
 
 interface PostCardProps {
     post: Post;
@@ -41,6 +42,7 @@ export function PostCard({ post, isOwner, onDelete, onEdit }: PostCardProps) {
     const [reactionsCount, setReactionsCount] = useState(post.reactions_count || 0);
     const [showComments, setShowComments] = useState(false);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [localCommentsCount, setLocalCommentsCount] = useState(post.comments_count || 0);
 
     const handleReact = async (type: ReactionType) => {
         // Optimistic update
@@ -192,7 +194,7 @@ export function PostCard({ post, isOwner, onDelete, onEdit }: PostCardProps) {
                             className="flex items-center gap-2 py-2 px-3 rounded-full text-rp-subtle hover:bg-rp-highlight-low hover:text-rp-iris transition-all"
                         >
                             <MessageCircle className="w-5 h-5" />
-                            <span className="font-medium text-sm">{post.comments_count || 0}</span>
+                            <span className="font-medium text-sm">{localCommentsCount}</span>
                         </button>
                     </div>
 
@@ -201,12 +203,16 @@ export function PostCard({ post, isOwner, onDelete, onEdit }: PostCardProps) {
                     </button>
                 </div>
 
-                {/* Comments Placeholder */}
+                {/* Comments Section */}
                 {showComments && (
                     <div className="mt-4 pt-4 border-t border-rp-highlight-low animate-fadeIn">
-                        <p className="text-center text-sm text-rp-muted">Comments section coming soon...</p>
+                        <CommentSection
+                            postId={post.id}
+                            onCommentCountChange={(delta) => setLocalCommentsCount(prev => prev + delta)}
+                        />
                     </div>
                 )}
+
             </div>
 
             {/* Image Modal */}

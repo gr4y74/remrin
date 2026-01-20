@@ -39,14 +39,21 @@ export async function POST(
             return NextResponse.json({ message: 'Reaction removed' });
         }
 
-        // Add or update reaction
+        // First try to delete existing reaction
+        await supabase
+            .from('post_reactions')
+            .delete()
+            .eq('post_id', postId)
+            .eq('user_id', user.id);
+
+        // Then insert new reaction
         const { data: reaction, error } = await supabase
             .from('post_reactions')
-            .upsert({
+            .insert({
                 post_id: postId,
                 user_id: user.id,
                 reaction_type,
-            }, { onConflict: 'post_id, user_id' })
+            })
             .select()
             .single();
 

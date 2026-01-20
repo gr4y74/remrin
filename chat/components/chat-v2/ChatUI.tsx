@@ -105,91 +105,77 @@ function ChatUIInner({
         const lastAssistantMessage = [...messages].reverse().find(m => m.role === 'assistant')
 
         return (
-            <div className={`fixed inset-0 z-40 overflow-hidden flex flex-col ${isLowBattery ? 'low-battery-mode' : ''}`}>
+            <div className={`fixed inset-0 z-50 overflow-hidden ${isLowBattery ? 'low-battery-mode' : ''}`}>
+                {/* TRUE FULLSCREEN - Character fills entire screen on mobile */}
 
-                {/* Solid dark base - blocks everything behind */}
-                <div className="absolute inset-0 z-0 bg-black" />
-
-                {/* Blurred character image background */}
-                <div className="absolute inset-0 z-[1] opacity-30">
-                    <Image
-                        src={spriteUrl}
-                        alt=""
-                        fill
-                        sizes="100vw"
-                        className="object-cover blur-3xl scale-110"
-                        priority={false}
+                {/* 1. Character Background - Full bleed on mobile */}
+                {videoUrl ? (
+                    <video
+                        src={videoUrl}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="absolute inset-0 w-full h-full object-cover z-0"
                     />
-                </div>
-
-                {/* Dark gradient overlay */}
-                <div className="absolute inset-0 z-[2] bg-gradient-to-b from-black/60 via-black/40 to-black/80" />
-
-                {/* Top Section: Video Theater */}
-                <div className="relative z-10 flex-1 flex items-center justify-center p-4 pt-6">
-                    {/* Mode Toggle - Top Right */}
-                    <button
-                        onClick={toggleVisualNovelMode}
-                        className="absolute top-4 right-4 z-50 p-2.5 rounded-full bg-black/40 backdrop-blur-md border border-white/20 text-white/80 hover:text-white hover:bg-white/20 transition-all shadow-lg"
-                        title="Switch to Chat Mode"
-                    >
-                        <IconMessage size={20} />
-                    </button>
-
-                    {/* Video Container */}
-                    <div className="relative w-full max-w-4xl aspect-video rounded-lg overflow-hidden shadow-2xl ring-1 ring-white/10">
-                        {videoUrl ? (
-                            <video
-                                src={videoUrl}
-                                autoPlay
-                                loop
-                                muted
-                                playsInline
-                                className="w-full h-full object-contain bg-black"
-                            />
-                        ) : (
-                            <div className="relative w-full h-full bg-black">
-                                <Image
-                                    src={spriteUrl}
-                                    alt={personaName || "Character"}
-                                    fill
-                                    sizes="(max-width: 1024px) 100vw, 1024px"
-                                    className="object-contain"
-                                    priority
-                                />
-                            </div>
-                        )}
+                ) : (
+                    <div className="absolute inset-0 z-0">
+                        <Image
+                            src={spriteUrl}
+                            alt={personaName || "Character"}
+                            fill
+                            sizes="100vw"
+                            className="object-cover md:object-contain"
+                            priority
+                        />
                     </div>
-                </div>
+                )}
 
-                {/* Bottom Section: Chat Area */}
-                <div className="relative z-10 bg-rp-base/95 backdrop-blur-lg border-t border-white/10">
-                    <div className="max-w-4xl mx-auto px-4 md:px-8 py-4">
+                {/* 2. Gradient overlay - stronger at bottom for text readability */}
+                <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black via-black/30 to-transparent md:from-black/90 md:via-black/50" />
+
+                {/* 3. Mode Toggle - Top Right (smaller & more subtle on mobile) */}
+                <button
+                    onClick={toggleVisualNovelMode}
+                    className="absolute top-4 right-4 z-50 p-3 md:p-2.5 rounded-full bg-black/40 backdrop-blur-md border border-white/20 text-white/80 hover:text-white hover:bg-white/20 transition-all shadow-lg touch-manipulation"
+                    title="Switch to Chat Mode"
+                >
+                    <IconMessage size={24} className="md:w-5 md:h-5" />
+                </button>
+
+                {/* 4. Text Box at Bottom 1/3 - True VN Style */}
+                <div className="absolute bottom-0 left-0 right-0 z-10 vn-text-box pb-safe-area-inset-bottom">
+                    <div className="max-w-4xl mx-auto px-4 md:px-8">
 
                         {/* Character Name Tag */}
-                        <div className="inline-block px-4 py-1.5 bg-rp-iris/90 text-white font-bold rounded-full text-sm shadow-lg mb-3">
+                        <div className="inline-block px-4 py-1.5 bg-rp-iris text-white font-bold rounded-lg text-sm shadow-lg mb-3">
                             {personaName}
                         </div>
 
-                        {/* Messages Area */}
-                        <div className="max-h-[20vh] overflow-y-auto mb-4 scrollbar-hide">
+                        {/* Dialogue Text - Typewriter style */}
+                        <div className="min-h-[60px] max-h-[25vh] md:max-h-[20vh] overflow-y-auto scrollbar-hide">
                             {messages.length === 0 ? (
-                                <div className="text-white/50 italic text-center py-4">
-                                    Start the conversation...
-                                </div>
+                                <p className="text-white/60 italic text-lg md:text-base">
+                                    Tap to begin your story...
+                                </p>
                             ) : lastAssistantMessage ? (
-                                <div className="text-rp-text text-base leading-relaxed">
+                                <p className="text-white text-lg md:text-base leading-relaxed vn-text-animate">
                                     {lastAssistantMessage.content}
-                                </div>
+                                </p>
                             ) : (
-                                <div className="text-white/50 italic text-center py-2">
-                                    Waiting for response...
+                                <div className="flex items-center gap-2">
+                                    <span className="text-white/60 italic">Thinking</span>
+                                    <span className="inline-flex gap-1">
+                                        <span className="w-2 h-2 bg-rp-iris rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                                        <span className="w-2 h-2 bg-rp-iris rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                                        <span className="w-2 h-2 bg-rp-iris rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                                    </span>
                                 </div>
                             )}
                         </div>
 
-                        {/* Input Area */}
-                        <div className="rounded-xl bg-rp-surface/50 shadow-lg">
+                        {/* Input Area - Compact VN style */}
+                        <div className="mt-4 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10 shadow-lg">
                             <ChatInput
                                 placeholder="What do you say?"
                                 onMemorySearch={onMemorySearchTrigger}
@@ -199,13 +185,23 @@ function ChatUIInner({
                         </div>
                     </div>
                 </div>
+
+                {/* 5. Swipe indicator for history (mobile hint) */}
+                <div className="absolute bottom-[35vh] left-1/2 -translate-x-1/2 z-20 md:hidden opacity-40">
+                    <div className="flex flex-col items-center gap-1 text-white/50 text-xs">
+                        <svg className="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                        </svg>
+                        <span>Swipe for history</span>
+                    </div>
+                </div>
             </div>
         )
     }
 
-    // Classic Layout
+    // Classic Layout - Mobile Optimized
     return (
-        <div className={`flex h-full flex-col relative ${isLowBattery ? 'low-battery-mode' : ''}`}>
+        <div className={`flex flex-col relative chat-container-mobile md:h-full ${isLowBattery ? 'low-battery-mode' : ''}`}>
             {/* Mother of Souls Background */}
             {isMotherChat && (
                 <div
@@ -220,7 +216,7 @@ function ChatUIInner({
             )}
             {/* Mini Profile Card */}
             {personaId && (
-                <div className="relative z-10">
+                <div className="relative z-10 shrink-0">
                     <MiniProfile
                         personaName={personaName}
                         personaImage={personaImage}
@@ -247,8 +243,8 @@ function ChatUIInner({
             )}
 
 
-            {/* Messages Area - No container, bubbles sit directly on background */}
-            <div className="flex flex-1 flex-col relative z-10">
+            {/* Messages Area - Scrollable between header and input */}
+            <div className="flex flex-1 flex-col relative z-10 overflow-hidden chat-messages-mobile">
                 {messages.length === 0 ? (
                     <div className="flex flex-1 flex-col items-center justify-center px-4 py-8">
                         {showSoulGallery && userId ? (
@@ -281,9 +277,9 @@ function ChatUIInner({
                 )}
             </div>
 
-            {/* Input area with glassmorphic styling */}
-            <div className="px-4 pb-6 relative z-10">
-                <div className="mx-auto max-w-3xl rounded-xl bg-rp-base/20 backdrop-blur-md border border-white/10 p-3 shadow-lg">
+            {/* Fixed Bottom Input - Mobile Optimized */}
+            <div className="relative z-10 shrink-0 chat-input-fixed px-3 md:px-4 pt-3 pb-safe-area-inset-bottom md:pb-6">
+                <div className="mx-auto max-w-3xl rounded-2xl bg-rp-base/80 md:bg-rp-base/20 backdrop-blur-md border border-white/10 p-2 md:p-3 shadow-lg">
                     <ChatInput
                         placeholder={personaName ? `Message ${personaName}...` : 'Message Remrin...'}
                         onMemorySearch={onMemorySearchTrigger}

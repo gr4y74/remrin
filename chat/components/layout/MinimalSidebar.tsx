@@ -12,6 +12,7 @@ import { SidebarUserSection } from "./SidebarUserSection"
 import { SidebarRecentChats } from "./SidebarRecentChats"
 import { SidebarCreateButton } from "./SidebarCreateButton"
 import { SidebarThemeToggle } from "./SidebarThemeToggle"
+import { SettingsDialog } from "@/components/settings/SettingsDialog"
 import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
 import { User } from "@supabase/supabase-js"
@@ -215,26 +216,10 @@ export function MinimalSidebar({ user }: MinimalSidebarProps) {
             </div>
 
             {/* Profile Settings Modal */}
-            {showProfileSettings && (
-                <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-                    onClick={() => setShowProfileSettings(false)}
-                >
-                    <div
-                        className="bg-rp-surface border-rp-muted rounded-lg border p-6 shadow-xl"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <h2 className="text-rp-text mb-4 text-xl font-bold">Profile Settings</h2>
-                        <p className="text-rp-subtle mb-4">Profile settings modal - to be implemented with full functionality</p>
-                        <button
-                            onClick={() => setShowProfileSettings(false)}
-                            className="bg-rp-iris hover:bg-rp-iris/80 rounded px-4 py-2 text-white"
-                        >
-                            Close
-                        </button>
-                    </div>
-                </div>
-            )}
+            <SettingsDialog
+                open={showProfileSettings}
+                onOpenChange={setShowProfileSettings}
+            />
         </motion.nav>
     )
 }

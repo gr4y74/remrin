@@ -68,14 +68,16 @@ function getTagColor(index: number): string {
 
 export function CharacterProfilePage({
     persona,
-    stats,
-    isFollowing,
+    stats: initialStats,
+    isFollowing: initialIsFollowing,
     isOwner,
     moments = [],
     hasMoments = false
 }: CharacterProfilePageProps) {
     const router = useRouter()
     const [isStartingChat, setIsStartingChat] = useState(false)
+    const [isFollowing, setIsFollowing] = useState(initialIsFollowing)
+    const [followerCount, setFollowerCount] = useState(initialStats.followersCount)
 
     const handleStartChat = async () => {
         setIsStartingChat(true)
@@ -113,19 +115,19 @@ export function CharacterProfilePage({
 
     return (
         <div className="bg-rp-base relative min-h-screen">
-            {/* Back Button */}
-            <div className="animate-fade-in absolute left-4 top-4 z-20 md:left-8 md:top-8">
+            {/* Back Button - Compact on mobile */}
+            <div className="animate-fade-in absolute left-3 top-3 z-20 md:left-8 md:top-8">
                 <button
                     onClick={() => router.back()}
-                    className="text-rp-subtle hover:text-rp-text inline-flex items-center gap-2 rounded-full bg-black/40 px-4 py-2 backdrop-blur-md transition-all duration-300 hover:bg-black/60"
+                    className="text-rp-subtle hover:text-rp-text inline-flex items-center gap-1.5 md:gap-2 rounded-full bg-black/50 px-3 py-1.5 md:px-4 md:py-2 backdrop-blur-md transition-all duration-300 hover:bg-black/60 active:scale-95"
                 >
-                    <ArrowLeft className="size-5" />
-                    <span>Back</span>
+                    <ArrowLeft className="size-4 md:size-5" />
+                    <span className="text-sm md:text-base">Back</span>
                 </button>
             </div>
 
-            {/* Hero Image Section */}
-            <div className="relative h-[50vh] min-h-[400px] max-h-[600px] w-full overflow-hidden">
+            {/* Hero Image Section - Full width, taller on mobile */}
+            <div className="relative h-[60vh] min-h-[350px] max-h-[500px] md:h-[50vh] md:min-h-[400px] md:max-h-[600px] w-full overflow-hidden">
                 {persona.videoUrl ? (
                     <>
                         <video
@@ -134,10 +136,10 @@ export function CharacterProfilePage({
                             loop
                             muted
                             playsInline
-                            className="absolute inset-0 h-full w-full object-cover object-center"
+                            className="absolute inset-0 h-full w-full object-cover object-top md:object-center"
                         />
-                        {/* Gradient Overlay */}
-                        <div className="from-rp-base/60 via-rp-base/40 to-rp-base absolute inset-0 bg-gradient-to-b" />
+                        {/* Gradient Overlay - Stronger on mobile for text readability */}
+                        <div className="absolute inset-0 bg-gradient-to-b from-rp-base/40 via-rp-base/20 to-rp-base md:from-rp-base/60 md:via-rp-base/40" />
                     </>
                 ) : persona.imageUrl ? (
                     <>
@@ -145,15 +147,16 @@ export function CharacterProfilePage({
                             src={persona.imageUrl}
                             alt={persona.name}
                             fill
-                            className="object-cover object-center"
+                            className="object-cover object-top md:object-center"
                             priority
+                            sizes="100vw"
                         />
                         {/* Gradient Overlay */}
-                        <div className="from-rp-base/60 via-rp-base/40 to-rp-base absolute inset-0 bg-gradient-to-b" />
+                        <div className="absolute inset-0 bg-gradient-to-b from-rp-base/40 via-rp-base/20 to-rp-base md:from-rp-base/60 md:via-rp-base/40" />
                     </>
                 ) : (
                     <div className="from-rp-iris/50 to-rp-foam/50 flex size-full items-center justify-center bg-gradient-to-br">
-                        <span className="text-rp-text/50 text-9xl font-bold">
+                        <span className="text-rp-text/50 text-7xl md:text-9xl font-bold">
                             {persona.name.slice(0, 2).toUpperCase()}
                         </span>
                     </div>
@@ -164,25 +167,25 @@ export function CharacterProfilePage({
                     <WelcomeAudioPlayer
                         audioUrl={persona.welcomeAudioUrl}
                         autoPlay
-                        className="absolute bottom-4 right-4 z-20"
+                        className="absolute bottom-3 right-3 md:bottom-4 md:right-4 z-20"
                     />
                 )}
             </div>
 
             {/* Main Content - Centered Single Column */}
-            <main className="relative -mt-16 pb-24">
-                <div className="mx-auto max-w-3xl px-4 md:px-8">
+            <main className="relative -mt-20 md:-mt-16 pb-24">
+                <div className="mx-auto max-w-3xl px-3 sm:px-4 md:px-8">
                     {/* Info Card */}
-                    <div className="animate-fade-in-up rounded-3xl border border-white/10 bg-rp-base/95 p-6 shadow-2xl backdrop-blur-xl md:p-8">
+                    <div className="animate-fade-in-up rounded-2xl md:rounded-3xl border border-white/10 bg-rp-base/95 p-4 sm:p-6 shadow-2xl backdrop-blur-xl md:p-8">
                         {/* Name and Category */}
-                        <div className="mb-4 text-center">
-                            <h1 className="font-tiempos-headline text-rp-text mb-2 text-3xl font-bold tracking-tight md:text-4xl">
+                        <div className="mb-3 md:mb-4 text-center">
+                            <h1 className="font-tiempos-headline text-rp-text mb-2 text-2xl sm:text-3xl font-bold tracking-tight md:text-4xl">
                                 {persona.name}
                             </h1>
                             {persona.category && (
                                 <Badge
                                     variant="secondary"
-                                    className="bg-rp-overlay text-rp-text hover:bg-rp-overlay/80 rounded-full px-4 py-1 text-sm font-medium"
+                                    className="bg-rp-overlay text-rp-text hover:bg-rp-overlay/80 rounded-full px-3 py-0.5 md:px-4 md:py-1 text-xs md:text-sm font-medium"
                                 >
                                     {persona.category}
                                 </Badge>
@@ -191,69 +194,72 @@ export function CharacterProfilePage({
 
                         {/* Description */}
                         {persona.description && (
-                            <p className="text-rp-subtle mb-6 text-center text-base leading-relaxed md:text-lg">
+                            <p className="text-rp-subtle mb-4 md:mb-6 text-center text-sm sm:text-base leading-relaxed md:text-lg">
                                 {persona.description}
                             </p>
                         )}
 
-                        {/* Tags */}
+                        {/* Tags - Horizontal scroll on mobile */}
                         {persona.tags.length > 0 && (
-                            <div className="mb-6 flex flex-wrap justify-center gap-2">
-                                {persona.tags.slice(0, 6).map((tag, index) => (
-                                    <Badge
-                                        key={tag}
-                                        className={cn(
-                                            "rounded-full border px-3 py-1 text-xs font-medium",
-                                            getTagColor(index)
-                                        )}
-                                    >
-                                        {tag}
-                                    </Badge>
-                                ))}
-                                {persona.tags.length > 6 && (
-                                    <Badge className="border-rp-muted bg-rp-surface/50 text-rp-subtle rounded-full border px-3 py-1 text-xs font-medium">
-                                        +{persona.tags.length - 6}
-                                    </Badge>
-                                )}
+                            <div className="mb-4 md:mb-6 -mx-4 px-4 md:mx-0 md:px-0">
+                                <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide md:flex-wrap md:justify-center md:overflow-visible snap-x snap-mandatory">
+                                    {persona.tags.slice(0, 8).map((tag, index) => (
+                                        <Badge
+                                            key={tag}
+                                            className={cn(
+                                                "rounded-full border px-3 py-1 text-xs font-medium whitespace-nowrap shrink-0 snap-start",
+                                                getTagColor(index)
+                                            )}
+                                        >
+                                            {tag}
+                                        </Badge>
+                                    ))}
+                                    {persona.tags.length > 8 && (
+                                        <Badge className="border-rp-muted bg-rp-surface/50 text-rp-subtle rounded-full border px-3 py-1 text-xs font-medium whitespace-nowrap shrink-0">
+                                            +{persona.tags.length - 8}
+                                        </Badge>
+                                    )}
+                                </div>
                             </div>
                         )}
 
-                        {/* Stats Row */}
-                        <div className="text-rp-subtle mb-6 flex items-center justify-center gap-6 border-y border-white/5 py-4">
-                            <div className="flex items-center gap-2">
-                                <MessageCircle className="text-rp-iris size-5" />
-                                <span className="text-rp-text font-semibold">{formatCount(stats.totalChats)}</span>
-                                <span className="text-sm">chats</span>
+                        {/* Stats Row - Compact on mobile */}
+                        <div className="text-rp-subtle mb-4 md:mb-6 flex items-center justify-center gap-4 md:gap-6 border-y border-white/5 py-3 md:py-4">
+                            <div className="flex items-center gap-1.5 md:gap-2">
+                                <MessageCircle className="text-rp-iris size-4 md:size-5" />
+                                <span className="text-rp-text font-semibold text-sm md:text-base">{formatCount(initialStats.totalChats)}</span>
+                                <span className="text-xs md:text-sm">chats</span>
                             </div>
                             <div className="bg-rp-overlay h-4 w-px" />
-                            <div className="flex items-center gap-2">
-                                <Users className="text-rp-foam size-5" />
-                                <span className="text-rp-text font-semibold">{formatCount(stats.followersCount)}</span>
-                                <span className="text-sm">followers</span>
+                            <div className="flex items-center gap-1.5 md:gap-2">
+                                <Users className="text-rp-foam size-4 md:size-5" />
+                                <span className="text-rp-text font-semibold text-sm md:text-base">{formatCount(followerCount)}</span>
+                                <span className="text-xs md:text-sm">followers</span>
                             </div>
                         </div>
 
-                        {/* CTA Buttons - Prominent and Above Fold */}
+                        {/* CTA Buttons - Full width stacked on mobile, prominent */}
                         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-center">
                             <Button
                                 size="lg"
                                 onClick={handleStartChat}
                                 disabled={isStartingChat}
                                 className={cn(
-                                    "from-rp-iris to-rp-foam text-rp-base group flex-1 rounded-2xl bg-gradient-to-r py-6 text-lg font-bold",
-                                    "shadow-rp-iris/25 shadow-2xl transition-all duration-300",
+                                    "from-rp-iris to-rp-foam text-rp-base group w-full sm:flex-1 rounded-xl md:rounded-2xl bg-gradient-to-r py-4 md:py-6 text-base md:text-lg font-bold",
+                                    "shadow-rp-iris/25 shadow-xl md:shadow-2xl transition-all duration-300",
                                     "hover:from-rp-iris/80 hover:to-rp-foam/80 hover:shadow-rp-iris/40 hover:scale-[1.02]",
-                                    "disabled:opacity-70"
+                                    "active:scale-95 disabled:opacity-70",
+                                    "min-h-[52px] md:min-h-[60px]"
                                 )}
                             >
                                 {isStartingChat ? (
                                     <>
-                                        <Loader2 className="mr-3 size-6 animate-spin" />
+                                        <Loader2 className="mr-2 md:mr-3 size-5 md:size-6 animate-spin" />
                                         Starting Chat...
                                     </>
                                 ) : (
                                     <>
-                                        <MessageCircle className="mr-3 size-6 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" />
+                                        <MessageCircle className="mr-2 md:mr-3 size-5 md:size-6 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" />
                                         Start Chat
                                     </>
                                 )}
@@ -262,7 +268,12 @@ export function CharacterProfilePage({
                             <FollowButton
                                 personaId={persona.id}
                                 initialIsFollowing={isFollowing}
-                                className="flex-1 rounded-2xl py-6 text-lg sm:flex-initial sm:min-w-[140px]"
+                                initialFollowerCount={followerCount}
+                                onFollowChange={(newVal) => {
+                                    setIsFollowing(newVal)
+                                    setFollowerCount(prev => newVal ? prev + 1 : Math.max(0, prev - 1))
+                                }}
+                                className="w-full sm:w-auto sm:flex-initial rounded-xl md:rounded-2xl py-4 md:py-6 text-base md:text-lg sm:min-w-[140px] min-h-[52px] md:min-h-[60px]"
                             />
                         </div>
 
