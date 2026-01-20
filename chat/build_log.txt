@@ -1,0 +1,574 @@
+
+> remrin@2.0.0 build
+> next build
+
+  ▲ Next.js 14.2.35
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+
+./app/[locale]/(platform)/feed/FeedPageClient.tsx
+213:33  Warning: Image elements must have an alt prop, either with meaningful text, or an empty string for decorative images.  jsx-a11y/alt-text
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+   Collecting page data ...
+ ⚠ Using edge runtime on a page currently disables static generation for that page
+   Generating static pages (0/95) ...
+Analytics API Error: B [Error]: Dynamic server usage: Route /api/admin/analytics couldn't be rendered statically because it used `request.headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at V (/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:21778)
+    at Object.get (/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:29465)
+    at /mnt/Data68/remrin/chat/.next/server/app/api/admin/analytics/route.js:1:562
+    at d (/mnt/Data68/remrin/chat/.next/server/app/api/admin/analytics/route.js:1:639)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:25:19)
+    at ContextAPI.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/api/context.js:60:46)
+    at NoopTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:65:31)
+    at ProxyTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:36:24) {
+  description: "Route /api/admin/analytics couldn't be rendered statically because it used `request.headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error in GET /api/analytics/dashboard: n [Error]: Dynamic server usage: Route /api/analytics/dashboard couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/mnt/Data68/remrin/chat/.next/server/chunks/8948.js:1:56329)
+    at f (/mnt/Data68/remrin/chat/.next/server/chunks/9674.js:1:4525)
+    at d (/mnt/Data68/remrin/chat/.next/server/app/api/analytics/dashboard/route.js:1:846)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:25:19)
+    at ContextAPI.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/api/context.js:60:46)
+    at NoopTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:65:31)
+    at ProxyTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:36:24)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:122:103 {
+  description: "Route /api/analytics/dashboard couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error in GET /api/admin/users: B [Error]: Dynamic server usage: Route /api/admin/users couldn't be rendered statically because it used `request.headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at V (/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:21778)
+    at Object.get (/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:29465)
+    at p (/mnt/Data68/remrin/chat/.next/server/app/api/admin/users/route.js:1:804)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:25:19)
+    at ContextAPI.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/api/context.js:60:46)
+    at NoopTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:65:31)
+    at ProxyTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:36:24)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:122:103 {
+  description: "Route /api/admin/users couldn't be rendered statically because it used `request.headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+   Generating static pages (23/95) 
+[Kokoro] Provider initialized | API URL: http://localhost:8880/v1
+[API] Error fetching cache stats: n [Error]: Dynamic server usage: Route /api/audio/cache/stats couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/mnt/Data68/remrin/chat/.next/server/chunks/8948.js:1:56329)
+    at f (/mnt/Data68/remrin/chat/.next/server/app/api/admin/webhooks/route.js:1:5094)
+    at p (/mnt/Data68/remrin/chat/.next/server/app/api/audio/cache/stats/route.js:1:5556)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:25:19)
+    at ContextAPI.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/api/context.js:60:46)
+    at NoopTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:65:31)
+    at ProxyTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:36:24)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:122:103 {
+  description: "Route /api/audio/cache/stats couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[QuotaAPI] Error: n [Error]: Dynamic server usage: Route /api/audio/quota couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/mnt/Data68/remrin/chat/.next/server/chunks/8948.js:1:56329)
+    at h (/mnt/Data68/remrin/chat/.next/server/chunks/8526.js:1:1756)
+    at l (/mnt/Data68/remrin/chat/.next/server/app/api/audio/quota/route.js:1:876)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:25:19)
+    at ContextAPI.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/api/context.js:60:46)
+    at NoopTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:65:31)
+    at ProxyTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:36:24)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:122:103 {
+  description: "Route /api/audio/quota couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[ElevenLabs Voices] Unexpected error: n [Error]: Dynamic server usage: Route /api/audio/elevenlabs/voices couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/mnt/Data68/remrin/chat/.next/server/chunks/8948.js:1:56329)
+    at h (/mnt/Data68/remrin/chat/.next/server/chunks/8526.js:1:1756)
+    at m (/mnt/Data68/remrin/chat/.next/server/app/api/audio/elevenlabs/voices/route.js:1:1155)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:25:19)
+    at ContextAPI.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/api/context.js:60:46)
+    at NoopTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:65:31)
+    at ProxyTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:36:24)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:122:103 {
+  description: "Route /api/audio/elevenlabs/voices couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error fetching voices: B [Error]: Dynamic server usage: Route /api/audio/voices couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at V (/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:21778)
+    at Object.get (/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:29465)
+    at u (/mnt/Data68/remrin/chat/.next/server/app/api/audio/voices/route.js:1:2869)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:25:19)
+    at ContextAPI.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/api/context.js:60:46)
+    at NoopTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:65:31)
+    at ProxyTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:36:24)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:122:103 {
+  description: "Route /api/audio/voices couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Discovery sections error: n [Error]: Dynamic server usage: Route /api/discovery/sections couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/mnt/Data68/remrin/chat/.next/server/chunks/8948.js:1:56329)
+    at f (/mnt/Data68/remrin/chat/.next/server/app/api/admin/content-sections/route.js:4:5666)
+    at d (/mnt/Data68/remrin/chat/.next/server/app/api/discovery/sections/route.js:1:848)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:25:19)
+    at ContextAPI.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/api/context.js:60:46)
+    at NoopTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:65:31)
+    at ProxyTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:36:24)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:122:103 {
+  description: "Route /api/discovery/sections couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Stats endpoint error: n [Error]: Dynamic server usage: Route /api/editions/stats couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/mnt/Data68/remrin/chat/.next/server/chunks/8948.js:1:56329)
+    at h (/mnt/Data68/remrin/chat/.next/server/chunks/8526.js:1:1756)
+    at c (/mnt/Data68/remrin/chat/.next/server/app/api/editions/stats/route.js:1:846)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:25:19)
+    at ContextAPI.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/api/context.js:60:46)
+    at NoopTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:65:31)
+    at ProxyTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:36:24)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:122:103 {
+  description: "Route /api/editions/stats couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Feed error: n [Error]: Dynamic server usage: Route /api/moments/feed couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/mnt/Data68/remrin/chat/.next/server/chunks/8948.js:1:56329)
+    at f (/mnt/Data68/remrin/chat/.next/server/app/api/admin/content-sections/route.js:4:5666)
+    at l (/mnt/Data68/remrin/chat/.next/server/app/api/moments/feed/route.js:1:854)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:25:19)
+    at ContextAPI.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/api/context.js:60:46)
+    at NoopTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:65:31)
+    at ProxyTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:36:24)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:122:103 {
+  description: "Route /api/moments/feed couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+   Generating static pages (47/95) 
+Error in GET /api/messages/inbox: n [Error]: Dynamic server usage: Route /api/messages/inbox couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/mnt/Data68/remrin/chat/.next/server/chunks/8948.js:1:56329)
+    at h (/mnt/Data68/remrin/chat/.next/server/chunks/8526.js:1:1756)
+    at d (/mnt/Data68/remrin/chat/.next/server/app/api/messages/inbox/route.js:1:848)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:25:19)
+    at ContextAPI.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/api/context.js:60:46)
+    at NoopTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:65:31)
+    at ProxyTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:36:24)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:122:103 {
+  description: "Route /api/messages/inbox couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error in GET /api/notifications/count: n [Error]: Dynamic server usage: Route /api/notifications/count couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/mnt/Data68/remrin/chat/.next/server/chunks/8948.js:1:56329)
+    at f (/mnt/Data68/remrin/chat/.next/server/app/api/admin/content-sections/route.js:4:5666)
+    at u (/mnt/Data68/remrin/chat/.next/server/app/api/notifications/count/route.js:1:845)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:25:19)
+    at ContextAPI.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/api/context.js:60:46)
+    at NoopTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:65:31)
+    at ProxyTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:36:24)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:122:103 {
+  description: "Route /api/notifications/count couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Metadata API error: n [Error]: Dynamic server usage: Route /api/personas/metadata couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/mnt/Data68/remrin/chat/.next/server/chunks/8948.js:1:56329)
+    at h (/mnt/Data68/remrin/chat/.next/server/chunks/8526.js:1:1756)
+    at c (/mnt/Data68/remrin/chat/.next/server/app/api/personas/metadata/route.js:1:847)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:25:19)
+    at ContextAPI.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/api/context.js:60:46)
+    at NoopTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:65:31)
+    at ProxyTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:36:24)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:122:103 {
+  description: "Route /api/personas/metadata couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Search API error: B [Error]: Dynamic server usage: Route /api/personas/search couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at V (/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:21778)
+    at Object.get (/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:29465)
+    at d (/mnt/Data68/remrin/chat/.next/server/app/api/personas/search/route.js:1:859)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:25:19)
+    at ContextAPI.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/api/context.js:60:46)
+    at NoopTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:65:31)
+    at ProxyTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:36:24)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:122:103 {
+  description: "Route /api/personas/search couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error in GET /api/notifications: n [Error]: Dynamic server usage: Route /api/notifications couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/mnt/Data68/remrin/chat/.next/server/chunks/8948.js:1:56329)
+    at f (/mnt/Data68/remrin/chat/.next/server/chunks/9674.js:1:4525)
+    at d (/mnt/Data68/remrin/chat/.next/server/app/api/notifications/route.js:1:848)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:25:19)
+    at ContextAPI.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/api/context.js:60:46)
+    at NoopTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:65:31)
+    at ProxyTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:36:24)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:122:103 {
+  description: "Route /api/notifications couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error fetching achievements: n [Error]: Dynamic server usage: Route /api/profile/achievements couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/mnt/Data68/remrin/chat/.next/server/chunks/8948.js:1:56329)
+    at h (/mnt/Data68/remrin/chat/.next/server/chunks/8526.js:1:1756)
+    at d (/mnt/Data68/remrin/chat/.next/server/app/api/profile/achievements/route.js:1:848)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:25:19)
+    at ContextAPI.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/api/context.js:60:46)
+    at NoopTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:65:31)
+    at ProxyTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:36:24)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:122:103 {
+  description: "Route /api/profile/achievements couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error fetching featured creations: n [Error]: Dynamic server usage: Route /api/profile/featured couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/mnt/Data68/remrin/chat/.next/server/chunks/8948.js:1:56329)
+    at h (/mnt/Data68/remrin/chat/.next/server/chunks/8526.js:1:1756)
+    at f (/mnt/Data68/remrin/chat/.next/server/app/api/profile/featured/route.js:1:931)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:25:19)
+    at ContextAPI.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/api/context.js:60:46)
+    at NoopTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:65:31)
+    at ProxyTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:36:24)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:122:103 {
+  description: "Route /api/profile/featured couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error fetching analytics: B [Error]: Dynamic server usage: Route /api/profile/analytics couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at V (/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:21778)
+    at Object.get (/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:29465)
+    at u (/mnt/Data68/remrin/chat/.next/server/app/api/profile/analytics/route.js:1:2846)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:25:19)
+    at ContextAPI.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/api/context.js:60:46)
+    at NoopTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:65:31)
+    at ProxyTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:36:24)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:122:103 {
+  description: "Route /api/profile/analytics couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error fetching profile: n [Error]: Dynamic server usage: Route /api/profile/me couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/mnt/Data68/remrin/chat/.next/server/chunks/8948.js:1:56329)
+    at f (/mnt/Data68/remrin/chat/.next/server/chunks/9674.js:1:4525)
+    at m (/mnt/Data68/remrin/chat/.next/server/app/api/profile/me/route.js:1:1179)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:25:19)
+    at ContextAPI.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/api/context.js:60:46)
+    at NoopTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:65:31)
+    at ProxyTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:36:24)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:122:103 {
+  description: "Route /api/profile/me couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Spark Status Error: B [Error]: Dynamic server usage: Route /api/spark/status couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at V (/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:21778)
+    at Object.get (/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:29465)
+    at l (/mnt/Data68/remrin/chat/.next/server/app/api/spark/status/route.js:1:878)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:25:19)
+    at ContextAPI.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/api/context.js:60:46)
+    at NoopTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:65:31)
+    at ProxyTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:36:24)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:122:103 {
+  description: "Route /api/spark/status couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error generating QR code: B [Error]: Dynamic server usage: Route /api/profile/qr-code couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at V (/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:21778)
+    at Object.get (/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:29465)
+    at h (/mnt/Data68/remrin/chat/.next/server/app/api/profile/qr-code/route.js:1:886)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:25:19)
+    at ContextAPI.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/api/context.js:60:46)
+    at NoopTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:65:31)
+    at ProxyTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:36:24)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:122:103 {
+  description: "Route /api/profile/qr-code couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+   Generating static pages (71/95) 
+Error in GET /api/username/search: B [Error]: Dynamic server usage: Route /api/username/search couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at V (/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:21778)
+    at Object.get (/mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:29465)
+    at u (/mnt/Data68/remrin/chat/.next/server/app/api/username/search/route.js:1:859)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:25:19)
+    at ContextAPI.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/api/context.js:60:46)
+    at NoopTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:65:31)
+    at ProxyTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:36:24)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:122:103 {
+  description: "Route /api/username/search couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Creator Analytics API Error: n [Error]: Dynamic server usage: Route /api/studio/analytics couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/mnt/Data68/remrin/chat/.next/server/chunks/8948.js:1:56329)
+    at f (/mnt/Data68/remrin/chat/.next/server/chunks/9674.js:1:4525)
+    at u (/mnt/Data68/remrin/chat/.next/server/app/api/studio/analytics/route.js:1:857)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:25:19)
+    at ContextAPI.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/api/context.js:60:46)
+    at NoopTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:65:31)
+    at ProxyTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:36:24)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:122:103 {
+  description: "Route /api/studio/analytics couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error in GET /api/users/suggested: n [Error]: Dynamic server usage: Route /api/users/suggested couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/mnt/Data68/remrin/chat/.next/server/chunks/8948.js:1:56329)
+    at f (/mnt/Data68/remrin/chat/.next/server/chunks/9674.js:1:4525)
+    at c (/mnt/Data68/remrin/chat/.next/server/app/api/users/suggested/route.js:1:848)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:25:19)
+    at ContextAPI.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/api/context.js:60:46)
+    at NoopTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:65:31)
+    at ProxyTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:36:24)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:122:103 {
+  description: "Route /api/users/suggested couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Export route error: n [Error]: Dynamic server usage: Route /api/v2/personas/export couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/mnt/Data68/remrin/chat/.next/server/chunks/8948.js:1:56329)
+    at f (/mnt/Data68/remrin/chat/.next/server/chunks/9674.js:1:4525)
+    at d (/mnt/Data68/remrin/chat/.next/server/app/api/v2/personas/export/route.js:1:845)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38417
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:25:19)
+    at ContextAPI.with (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/api/context.js:60:46)
+    at NoopTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:65:31)
+    at ProxyTracer.startActiveSpan (/mnt/Data68/remrin/chat/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:36:24)
+    at /mnt/Data68/remrin/chat/node_modules/next/dist/server/lib/trace/tracer.js:122:103 {
+  description: "Route /api/v2/personas/export couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+ ✓ Generating static pages (95/95)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                Size     First Load JS
+┌ ○ /_not-found                            880 B            89 kB
+├ ƒ /[locale]                              13.7 kB         383 kB
+├ ƒ /[locale]/[workspaceid]                1.07 kB        89.2 kB
+├ ƒ /[locale]/[workspaceid]/chat           2.44 kB         836 kB
+├ ƒ /[locale]/[workspaceid]/chat-v2        919 B           834 kB
+├ ƒ /[locale]/[workspaceid]/chat/[chatid]  492 B           834 kB
+├ ƒ /[locale]/[workspaceid]/knowledge      8.44 kB         204 kB
+├ ƒ /[locale]/activity                     4.93 kB         118 kB
+├ ƒ /[locale]/admin                        4.64 kB         101 kB
+├ ƒ /[locale]/admin/analytics              5.92 kB         115 kB
+├ ƒ /[locale]/admin/audio-studio           5.88 kB         116 kB
+├ ƒ /[locale]/admin/bulk-souls             8.56 kB         120 kB
+├ ƒ /[locale]/admin/chat-config            6.01 kB         110 kB
+├ ƒ /[locale]/admin/featured               75 kB           250 kB
+├ ƒ /[locale]/admin/llm-config             3.76 kB        99.6 kB
+├ ƒ /[locale]/admin/media                  10.5 kB         185 kB
+├ ƒ /[locale]/admin/mission-control        36.6 kB         242 kB
+├ ƒ /[locale]/admin/moderation             6.59 kB         174 kB
+├ ƒ /[locale]/admin/search                 5.66 kB         216 kB
+├ ƒ /[locale]/admin/settings               5.63 kB         102 kB
+├ ƒ /[locale]/admin/tiers                  11.8 kB         117 kB
+├ ƒ /[locale]/admin/users                  12.2 kB         208 kB
+├ ƒ /[locale]/aol                          8.21 kB         161 kB
+├ ƒ /[locale]/character/[characterId]      131 kB          979 kB
+├ ƒ /[locale]/collection                   8.76 kB         180 kB
+├ ƒ /[locale]/collections/[id]             9.69 kB         140 kB
+├ ƒ /[locale]/creator                      11.6 kB         198 kB
+├ ƒ /[locale]/discover                     4.64 kB         312 kB
+├ ƒ /[locale]/feed                         5.22 kB         859 kB
+├ ƒ /[locale]/help                         148 B          88.3 kB
+├ ƒ /[locale]/login                        5.67 kB         217 kB
+├ ƒ /[locale]/login/password               4.11 kB         175 kB
+├ ƒ /[locale]/marketplace                  7.01 kB         124 kB
+├ ƒ /[locale]/pricing                      6.14 kB         101 kB
+├ ƒ /[locale]/profile/[userId]             14.6 kB         334 kB
+├ ƒ /[locale]/search                       12 kB           142 kB
+├ ƒ /[locale]/settings/llm                 8.94 kB         106 kB
+├ ƒ /[locale]/setup                        7.88 kB         172 kB
+├ ƒ /[locale]/signup                       7.58 kB         221 kB
+├ ƒ /[locale]/social                       10.8 kB         412 kB
+├ ƒ /[locale]/studio                       30 kB           239 kB
+├ ƒ /[locale]/studio/analytics             4.92 kB         114 kB
+├ ƒ /[locale]/studio/audio                 7.04 kB         146 kB
+├ ƒ /[locale]/studio/edit/[id]             6.03 kB         167 kB
+├ ƒ /[locale]/summon                       11.9 kB         179 kB
+├ ƒ /[locale]/wallet                       8.71 kB         129 kB
+├ ƒ /api/admin/analytics                   0 B                0 B
+├ ƒ /api/admin/api-keys                    0 B                0 B
+├ ƒ /api/admin/apply-moments-migrations    0 B                0 B
+├ ƒ /api/admin/auth                        0 B                0 B
+├ ƒ /api/admin/banners                     0 B                0 B
+├ ƒ /api/admin/chat-engine-config          0 B                0 B
+├ ƒ /api/admin/content-sections            0 B                0 B
+├ ƒ /api/admin/features                    0 B                0 B
+├ ƒ /api/admin/llm-config                  0 B                0 B
+├ ƒ /api/admin/llm-providers               0 B                0 B
+├ ƒ /api/admin/personas                    0 B                0 B
+├ ƒ /api/admin/personas/[personaId]        0 B                0 B
+├ ƒ /api/admin/search-config               0 B                0 B
+├ ƒ /api/admin/search-stats                0 B                0 B
+├ ƒ /api/admin/section-personas            0 B                0 B
+├ ƒ /api/admin/tiers/history               0 B                0 B
+├ ƒ /api/admin/tiers/price-mapping         0 B                0 B
+├ ƒ /api/admin/tiers/sync                  0 B                0 B
+├ ƒ /api/admin/users                       0 B                0 B
+├ ƒ /api/admin/users/[userId]              0 B                0 B
+├ ƒ /api/admin/users/[userId]/credits      0 B                0 B
+├ ƒ /api/admin/users/create                0 B                0 B
+├ ƒ /api/admin/webhooks                    0 B                0 B
+├ ƒ /api/ai/generate-hashtags              0 B                0 B
+├ ƒ /api/analytics/dashboard               0 B                0 B
+├ ƒ /api/analytics/view                    0 B                0 B
+├ ƒ /api/assistants/openai                 0 B                0 B
+├ ƒ /api/audio/[personaId]                 0 B                0 B
+├ ƒ /api/audio/analytics                   0 B                0 B
+├ ƒ /api/audio/cache/cleanup               0 B                0 B
+├ ƒ /api/audio/cache/stats                 0 B                0 B
+├ ƒ /api/audio/clone                       0 B                0 B
+├ ƒ /api/audio/elevenlabs/voices           0 B                0 B
+├ ƒ /api/audio/generate                    0 B                0 B
+├ ○ /api/audio/kokoro/health               0 B                0 B
+├ ƒ /api/audio/quota                       0 B                0 B
+├ ƒ /api/audio/upload                      0 B                0 B
+├ ƒ /api/audio/voices                      0 B                0 B
+├ ƒ /api/auth/signout                      0 B                0 B
+├ ƒ /api/chat/azure                        0 B                0 B
+├ ƒ /api/chat/block                        0 B                0 B
+├ ƒ /api/chat/block/[id]                   0 B                0 B
+├ ƒ /api/chat/buddies                      0 B                0 B
+├ ƒ /api/chat/buddies/[id]                 0 B                0 B
+├ ƒ /api/chat/groq                         0 B                0 B
+├ ƒ /api/chat/mistral                      0 B                0 B
+├ ƒ /api/chat/mother                       0 B                0 B
+├ ƒ /api/chat/perplexity                   0 B                0 B
+├ ƒ /api/chat/suggestions                  0 B                0 B
+├ ƒ /api/chat/tools                        0 B                0 B
+├ ƒ /api/collections                       0 B                0 B
+├ ƒ /api/collections/[id]                  0 B                0 B
+├ ƒ /api/collections/[id]/items            0 B                0 B
+├ ƒ /api/command                           0 B                0 B
+├ ƒ /api/comments/[commentId]              0 B                0 B
+├ ƒ /api/comments/[commentId]/like         0 B                0 B
+├ ƒ /api/discovery/sections                0 B                0 B
+├ ƒ /api/editions/mint                     0 B                0 B
+├ ƒ /api/editions/stats                    0 B                0 B
+├ ƒ /api/editions/transfer                 0 B                0 B
+├ ƒ /api/forge/distill                     0 B                0 B
+├ ƒ /api/forge/finalize-soul               0 B                0 B
+├ ƒ /api/forge/generate-portrait           0 B                0 B
+├ ƒ /api/forge/reveal                      0 B                0 B
+├ ƒ /api/gacha/history                     0 B                0 B
+├ ƒ /api/gacha/pools                       0 B                0 B
+├ ƒ /api/gacha/pull                        0 B                0 B
+├ ○ /api/keys                              0 B                0 B
+├ ƒ /api/marketplace                       0 B                0 B
+├ ƒ /api/marketplace/[id]                  0 B                0 B
+├ ƒ /api/marketplace/list                  0 B                0 B
+├ ƒ /api/messages/inbox                    0 B                0 B
+├ ƒ /api/messages/send                     0 B                0 B
+├ ƒ /api/moments/[momentId]/bookmark       0 B                0 B
+├ ƒ /api/moments/[momentId]/comments       0 B                0 B
+├ ƒ /api/moments/[momentId]/share          0 B                0 B
+├ ƒ /api/moments/feed                      0 B                0 B
+├ ƒ /api/moments/react                     0 B                0 B
+├ ƒ /api/moments/upload                    0 B                0 B
+├ ƒ /api/moments/view                      0 B                0 B
+├ ƒ /api/notifications                     0 B                0 B
+├ ƒ /api/notifications/[id]                0 B                0 B
+├ ƒ /api/notifications/[id]/read           0 B                0 B
+├ ƒ /api/notifications/count               0 B                0 B
+├ ƒ /api/notifications/read-all            0 B                0 B
+├ ƒ /api/personas/[personaId]/similar      0 B                0 B
+├ ƒ /api/personas/metadata                 0 B                0 B
+├ ƒ /api/personas/search                   0 B                0 B
+├ ƒ /api/posts                             0 B                0 B
+├ ƒ /api/posts/[postId]                    0 B                0 B
+├ ƒ /api/posts/[postId]/comments           0 B                0 B
+├ ƒ /api/posts/[postId]/react              0 B                0 B
+├ ƒ /api/posts/[postId]/reactions          0 B                0 B
+├ ƒ /api/profile/[userId]                  0 B                0 B
+├ ƒ /api/profile/[userId]/analytics        0 B                0 B
+├ ƒ /api/profile/[userId]/follow           0 B                0 B
+├ ƒ /api/profile/[userId]/followers        0 B                0 B
+├ ƒ /api/profile/[userId]/following        0 B                0 B
+├ ƒ /api/profile/[userId]/highlights       0 B                0 B
+├ ƒ /api/profile/[userId]/posts            0 B                0 B
+├ ƒ /api/profile/[userId]/stats            0 B                0 B
+├ ƒ /api/profile/achievements              0 B                0 B
+├ ƒ /api/profile/analytics                 0 B                0 B
+├ ƒ /api/profile/featured                  0 B                0 B
+├ ƒ /api/profile/highlights                0 B                0 B
+├ ƒ /api/profile/highlights/[id]           0 B                0 B
+├ ƒ /api/profile/me                        0 B                0 B
+├ ƒ /api/profile/populate                  0 B                0 B
+├ ƒ /api/profile/qr-code                   0 B                0 B
+├ ƒ /api/profile/social-links              0 B                0 B
+├ ƒ /api/profile/social-links/[id]         0 B                0 B
+├ ƒ /api/profile/update                    0 B                0 B
+├ ƒ /api/profile/upload-image              0 B                0 B
+├ ƒ /api/retrieval/process                 0 B                0 B
+├ ƒ /api/retrieval/process/docx            0 B                0 B
+├ ƒ /api/retrieval/retrieve                0 B                0 B
+├ ƒ /api/spark/create                      0 B                0 B
+├ ƒ /api/spark/status                      0 B                0 B
+├ ƒ /api/stripe/checkout                   0 B                0 B
+├ ƒ /api/stripe/portal                     0 B                0 B
+├ ƒ /api/stripe/webhook                    0 B                0 B
+├ ƒ /api/studio/analytics                  0 B                0 B
+├ ƒ /api/user/features                     0 B                0 B
+├ ƒ /api/user/llm-providers                0 B                0 B
+├ ƒ /api/username/available                0 B                0 B
+├ ƒ /api/username/get                      0 B                0 B
+├ ƒ /api/username/search                   0 B                0 B
+├ ƒ /api/users/suggested                   0 B                0 B
+├ ƒ /api/v2/chat                           0 B                0 B
+├ ƒ /api/v2/knowledge                      0 B                0 B
+├ ƒ /api/v2/knowledge/search               0 B                0 B
+├ ƒ /api/v2/personas/export                0 B                0 B
+├ ƒ /api/v2/personas/import                0 B                0 B
+├ ƒ /api/v2/search                         0 B                0 B
+├ ƒ /api/v2/upload                         0 B                0 B
+├ ƒ /api/voice/tts                         0 B                0 B
+├ ƒ /api/wallet                            0 B                0 B
+├ ƒ /api/wallet/topup                      0 B                0 B
+├ ƒ /api/webhooks/stripe                   0 B                0 B
+└ ƒ /auth/callback                         0 B                0 B
++ First Load JS shared by all              88.1 kB
+  ├ chunks/2117-de6ae0c7ffa27a81.js        31.9 kB
+  ├ chunks/fd9d1056-2cfa95adc0565b0e.js    53.6 kB
+  └ other shared chunks (total)            2.56 kB
+
+
+ƒ Middleware                               82 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
