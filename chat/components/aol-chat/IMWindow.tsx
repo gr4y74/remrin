@@ -118,7 +118,7 @@ export const IMWindow: React.FC<IMWindowProps> = ({
     };
 
     return (
-        <div style={{ position: 'absolute', left: position.x, top: position.y, zIndex: 50, filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.3))' }}>
+        <div className="im-window" style={{ position: 'absolute', left: position.x, top: position.y, zIndex: 50, filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.3))' }}>
             <XPWindow
                 title={`Instant Message From: ${partnerUsername}`}
                 className="w-[400px] h-[380px]"

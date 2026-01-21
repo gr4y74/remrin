@@ -6,8 +6,11 @@ import { XPButton } from './XPButton';
 import { XPInput } from './XPInput';
 import { cn } from '@/lib/utils';
 import { useBuddyList, Buddy } from '@/hooks/useBuddyList';
-import { IconUserPlus, IconLogout, IconMessage, IconUsers, IconSettings, IconBrandWindows } from '@tabler/icons-react';
+import { IconUserPlus, IconLogout, IconMessage, IconUsers, IconSettings, IconBrandWindows, IconHome, IconSparkles, IconDice, IconBooks, IconShoppingBag, IconBrush, IconWallet, IconBell, IconBrandDiscord, IconBrandReddit, IconBrandTiktok, IconBrandX, IconBrandInstagram } from '@tabler/icons-react';
 import { CharacterDirectory } from './CharacterDirectory';
+import { SidebarRecentChats } from '../layout/SidebarRecentChats';
+import { RemrinContext } from '@/context/context';
+import Image from 'next/image';
 
 interface BuddyListWindowProps {
     currentUser: any;
@@ -20,7 +23,7 @@ interface BuddyListWindowProps {
 }
 
 export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
-    currentUser,
+    currentUser: propUser,
     onOpenIM,
     onClose,
     onJoinRoom,
@@ -28,6 +31,12 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
     currentStatus = 'online',
     isStandalone = false
 }) => {
+    const { profile } = React.useContext(RemrinContext);
+    const currentUser = profile || propUser;
+
+    const displayName = profile?.display_name || currentUser?.user_metadata?.username || 'Guest';
+    const avatarUrl = profile?.avatar_url || currentUser?.user_metadata?.image_url || '/images/default-avatar.png';
+
     const {
         buddies,
         loading,
@@ -46,7 +55,7 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
     const [showAddModal, setShowAddModal] = useState(false);
     const [addUsername, setAddUsername] = useState('');
     const [addError, setAddError] = useState('');
-    const [activeTab, setActiveTab] = useState<'contacts' | 'updates'>('contacts');
+    const [activeTab, setActiveTab] = useState<'contacts' | 'chats'>('contacts');
     const [showCharacterDirectory, setShowCharacterDirectory] = useState(false);
 
     const handleAddBot = async (personaId: string) => {
@@ -91,8 +100,8 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
     };
 
     const handlePopOut = () => {
-        const width = 300;
-        const height = 600;
+        const width = 220;
+        const height = 480;
         const left = window.screenX + (window.innerWidth - width) / 2;
         const top = window.screenY + (window.innerHeight - height) / 2;
 
@@ -112,14 +121,33 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
                 onMinimize={() => !isStandalone && handlePopOut()}
                 icon="/icons/win95/aol_icon.png"
             >
-                {/* AIM/Yahoo Brand Header */}
-                <div className="bg-gradient-to-b from-[#fceebb] to-[#f4d27a] p-2 border-b border-[#e0c060] flex items-center justify-between shadow-sm yahoo-header">
-                    <div className="flex items-center gap-2">
-                        <div className="font-bold text-[#0054e3] italic text-lg tracking-tighter drop-shadow-sm yahoo-brand">Remrin Messenger</div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <div className="text-[10px] text-[#555] font-semibold">
-                            {currentStatus === 'online' ? 'Online' : 'Away'}
+                {/* Yahoo Style Menu Bar */}
+                <div className="flex px-2 py-0.5 bg-[#ece9d8] border-b border-[#d4d0c8] text-[11px] gap-2 text-[#444] select-none">
+                    <span className="hover:bg-[#5e2b8d] hover:text-white px-1 cursor-pointer rounded-sm">Messenger</span>
+                    <span className="hover:bg-[#5e2b8d] hover:text-white px-1 cursor-pointer rounded-sm">View</span>
+                    <span className="hover:bg-[#5e2b8d] hover:text-white px-1 cursor-pointer rounded-sm">Contacts</span>
+                    <span className="hover:bg-[#5e2b8d] hover:text-white px-1 cursor-pointer rounded-sm">Help</span>
+                </div>
+
+                {/* AIM/Yahoo Brand Header with User Profile */}
+                <div className="bg-gradient-to-b from-[#fceebb] to-[#f4d27a] p-3 border-b border-[#e0c060] shadow-sm yahoo-header">
+                    <div className="flex items-center gap-3">
+                        <div className="relative">
+                            <img
+                                src={avatarUrl}
+                                alt="Me"
+                                className="w-12 h-12 rounded border-2 border-white shadow-sm object-cover"
+                            />
+                            <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border border-white rounded-full" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1">
+                                <span className="font-bold text-[#2d005d] text-sm truncate">{displayName}</span>
+                                <span className="text-[10px] text-[#5e2b8d]">▼</span>
+                            </div>
+                            <div className="text-[11px] text-[#5e2b8d] font-medium leading-tight truncate">
+                                {currentStatus === 'online' ? 'Feeling lucky! ✨' : 'Away from keyboard...'}
+                            </div>
                         </div>
                         {!isStandalone && (
                             <button
@@ -127,10 +155,37 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
                                 className="p-1 hover:bg-black/10 rounded transition-colors"
                                 title="Pop out into standalone window"
                             >
-                                <IconLogout size={14} className="rotate-[-90deg]" />
+                                <IconLogout size={14} className="rotate-[-90deg] text-[#5e2b8d]" />
                             </button>
                         )}
                     </div>
+                </div>
+
+                {/* Sidebar Navigation Icons */}
+                <div className="flex bg-[#f3ebf9] p-1 border-b border-[#d8c3e8] justify-around">
+                    {[
+                        { icon: IconHome, label: "Discover", href: "/" },
+                        { icon: IconSparkles, label: "Feed", href: "/feed" },
+                        { icon: IconDice, label: "Summon", href: "/summon" },
+                        { icon: IconBooks, label: "Collection", href: "/collection" },
+                        { icon: IconShoppingBag, label: "Marketplace", href: "/marketplace" },
+                        { icon: IconBrush, label: "Studio", href: "/studio" },
+                        { icon: IconWallet, label: "Wallet", href: "/wallet" },
+                        { icon: IconBell, label: "Notifications", href: "#" },
+                    ].map((item, idx) => (
+                        <button
+                            key={idx}
+                            onClick={() => item.href !== "#" && window.open(item.href, '_blank')}
+                            className="p-1.5 hover:bg-[#d8c3e8] rounded-md transition-all group relative"
+                            title={item.label}
+                        >
+                            <item.icon size={18} className="text-[#5e2b8d]" />
+                            {/* Simple Pure CSS Tooltip */}
+                            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-[#2d005d] text-white text-[9px] rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-[100]">
+                                {item.label}
+                            </span>
+                        </button>
+                    ))}
                 </div>
 
                 {/* Main Content */}
@@ -147,13 +202,13 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
                             Contacts
                         </button>
                         <button
-                            onClick={() => setActiveTab('updates')}
+                            onClick={() => setActiveTab('chats')}
                             className={cn(
                                 "px-4 py-1.5 text-[11px] font-bold rounded-t-[4px] transition-colors",
-                                activeTab === 'updates' ? "bg-[#f3ebf9] text-[#2d005d]" : "bg-[#5e2b8d] text-white hover:bg-[#6d39a3]"
+                                activeTab === 'chats' ? "bg-[#f3ebf9] text-[#2d005d]" : "bg-[#5e2b8d] text-white hover:bg-[#6d39a3]"
                             )}
                         >
-                            Y! Updates
+                            Chats
                         </button>
                     </div>
 
@@ -177,9 +232,13 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
                         </button>
                     </div>
 
-                    {/* Buddy List */}
+                    {/* Buddy List or Recent Chats */}
                     <div className="flex-1 bg-white border-t border-[#7f9db9] overflow-y-auto font-['Tahoma',_sans-serif] text-[11px] shadow-inner">
-                        {loading ? (
+                        {activeTab === 'chats' ? (
+                            <div className="p-2 yahoo-recent-chats">
+                                <SidebarRecentChats isExpanded={true} maxChats={20} showDemo={false} />
+                            </div>
+                        ) : loading ? (
                             <div className="p-4 text-center text-gray-400 italic">Loading List...</div>
                         ) : buddies.length === 0 ? (
                             <div className="p-4 text-center text-gray-400">
@@ -213,7 +272,7 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
                                                         onDoubleClick={() => onOpenIM(buddy.buddy_id, buddy.nickname || buddy.buddy_username)}
                                                         className={cn(
                                                             "cursor-pointer px-4 py-1 flex items-center gap-2 transition-colors",
-                                                            isSelected ? "bg-[#316ac5] text-white" : "hover:bg-[#f0f0f0] text-black"
+                                                            isSelected ? "bg-[#5e2b8d] text-white" : "hover:bg-[#f3ebf9] text-[#2d005d]"
                                                         )}
                                                     >
                                                         {/* Status Icon or Avatar */}
@@ -282,6 +341,39 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
                             Remove
                         </XPButton>
                     </div>
+
+                    {/* Yahoo-style Footer (Brand Section) */}
+                    <div className="bg-[#f3ebf9] p-4 border-t border-[#d8c3e8] mt-auto">
+                        <div className="flex flex-col items-center gap-3">
+                            <div className="flex items-center gap-2">
+                                <Image
+                                    src="/logo_dark.svg"
+                                    alt="Remrin logo"
+                                    width={100}
+                                    height={30}
+                                    className="h-6 w-auto"
+                                />
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                                {[
+                                    { href: "https://discord.gg/remrin", icon: IconBrandDiscord },
+                                    { href: "https://reddit.com/r/remrin", icon: IconBrandReddit },
+                                    { href: "https://tiktok.com/@remrin_ai", icon: IconBrandTiktok },
+                                    { href: "https://twitter.com/remrin_ai", icon: IconBrandX },
+                                    { href: "https://instagram.com/remrin_ai", icon: IconBrandInstagram }
+                                ].map((social, idx) => (
+                                    <a key={idx} href={social.href} target="_blank" rel="noopener noreferrer" className="text-[#5e2b8d] hover:text-[#2d005d] transition-colors">
+                                        <social.icon size={18} />
+                                    </a>
+                                ))}
+                            </div>
+
+                            <p className="text-[9px] text-[#5e2b8d] text-center opacity-70">
+                                Copyright © 2025 Remrin AI. All rights reserved
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </XPWindow>
 
@@ -299,7 +391,7 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
                                     <IconUserPlus size={24} className="text-[#0054e3]" />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-[12px] text-[#0054e3] mb-1">Add New Buddy</h3>
+                                    <h3 className="font-bold text-[12px] text-[#5e2b8d] mb-1">Add New Buddy</h3>
                                     <p className="text-[11px] text-[#4a4a4a]">Enter the screen name of the person you want to add to your buddy list.</p>
                                 </div>
                             </div>

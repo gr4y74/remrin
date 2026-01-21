@@ -151,7 +151,7 @@ export const ChatRoomWindow: React.FC<ChatRoomWindowProps> = ({
             >
                 {/* Header / Toolbar */}
                 <div className="bg-[#ece9d8] border-b border-[#d4d0c8] px-2 py-1 flex items-center justify-between">
-                    <div className="font-bold text-[#0054e3] text-[13px] flex items-center gap-2">
+                    <div className="font-bold text-[#5e2b8d] text-[13px] flex items-center gap-2">
                         <span className="bg-white/50 px-2 py-0.5 rounded border border-[#d4d0c8] flex items-center gap-1">
                             {roomDetails?.is_private && <IconLock size={12} className="text-yellow-600" />}
                             {roomName}
@@ -197,7 +197,7 @@ export const ChatRoomWindow: React.FC<ChatRoomWindowProps> = ({
                                                     {msg.message_type === 'user' ? (
                                                         <div className="flex flex-col gap-0.5">
                                                             <div className="flex items-baseline gap-2">
-                                                                <span className="text-[#0054e3] font-bold text-[11px] cursor-pointer hover:underline">
+                                                                <span className="text-[#5e2b8d] font-bold text-[11px] cursor-pointer hover:underline">
                                                                     {msg.username}
                                                                 </span>
                                                                 <span className="text-gray-400 text-[9px]">{new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
@@ -308,7 +308,7 @@ export const ChatRoomWindow: React.FC<ChatRoomWindowProps> = ({
 
                     {/* Right Panel: User List */}
                     <div className="w-[200px] flex flex-col gap-2">
-                        <div className="bg-[#d3dff0] px-2 py-1 rounded-t-[2px] border border-[#7f9db9] border-b-0 font-bold text-[11px] text-[#0054e3] flex justify-between items-center shadow-sm">
+                        <div className="bg-[#d8c3e8] px-2 py-1 rounded-t-[2px] border border-[#d8c3e8] border-b-0 font-bold text-[11px] text-[#5e2b8d] flex justify-between items-center shadow-sm">
                             <span>Participants</span>
                             <span className="bg-white px-1.5 rounded-full text-[10px] border border-blue-200">{users.length}</span>
                         </div>
@@ -327,13 +327,13 @@ export const ChatRoomWindow: React.FC<ChatRoomWindowProps> = ({
                                             className={cn(
                                                 "px-2 py-1 cursor-pointer select-none truncate flex items-center gap-2 rounded-[1px] transition-colors",
                                                 selectedUser === user.user_id
-                                                    ? "bg-[#316ac5] text-white"
-                                                    : "hover:bg-[#f0f0f0] text-[#000]"
+                                                    ? "bg-[#5e2b8d] text-white"
+                                                    : "hover:bg-[#f3ebf9] text-[#2d005d]"
                                             )}
                                         >
                                             <div className={cn(
                                                 "w-3 h-3 rounded-full flex items-center justify-center text-[8px] font-bold",
-                                                "bg-blue-100 text-blue-600 border border-blue-200"
+                                                "bg-purple-100 text-purple-600 border border-purple-200"
                                             )}>
                                                 {user.username.charAt(0).toUpperCase()}
                                             </div>

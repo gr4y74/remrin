@@ -23,15 +23,22 @@
 
 .yahoo-theme {
     font-family: 'Segoe UI', Tahoma, sans-serif;
+    color: var(--yahoo-text-primary);
 }
 
 .yahoo-theme .xp-window {
-    border-color: var(--yahoo-window-border);
+    border-color: var(--yahoo-purple-dark);
     background-color: var(--yahoo-window-bg);
+    box-shadow: 0 8px 32px rgba(94, 43, 141, 0.3);
 }
 
 .yahoo-theme .xp-titlebar {
-    background: var(--yahoo-titlebar);
+    background: var(--yahoo-titlebar) !important;
+}
+
+.yahoo-theme .xp-titlebar span {
+    color: white !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
 }
 
 .yahoo-theme .xp-button {
@@ -42,4 +49,78 @@
 
 .yahoo-theme .xp-button:hover {
     background: var(--yahoo-button-hover);
+}
+
+/* Fix for unreadable white text on light backgrounds */
+.yahoo-theme .text-white:not(.xp-titlebar *):not(.bg-[#5e2b8d] *) {
+    color: var(--yahoo-text-primary) !important;
+}
+
+/* Specific component fixes */
+.yahoo-theme .yahoo-header .yahoo-brand {
+    color: var(--yahoo-purple-primary) !important;
+}
+
+/* IM Window specific colors */
+.yahoo-theme .im-window .bg-[#dbeafe] {
+    background-color: var(--yahoo-lavender-light) !important;
+    border-color: var(--yahoo-lavender) !important;
+}
+
+.yahoo-theme .im-window .text-[#0054e3] {
+    color: var(--yahoo-purple-primary) !important;
+}
+/* Catch any remaining Windows XP blue and turn it into Yahoo purple */
+.yahoo-theme .text-[#0054e3] {
+    color: var(--yahoo-purple-primary) !important;
+}
+
+.yahoo-theme .bg-[#316ac5] {
+    background-color: var(--yahoo-purple-primary) !important;
+}
+
+.yahoo-theme .border-[#7f9db9] {
+    border-color: var(--yahoo-lavender) !important;
+}
+
+/* Scrollbar styling for Yahoo theme */
+.yahoo-theme ::-webkit-scrollbar {
+    width: 14px;
+}
+
+.yahoo-theme ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-left: 1px solid #dcdcdc;
+}
+
+.yahoo-theme ::-webkit-scrollbar-thumb {
+    background: linear-gradient(to right, #ffffff, #d8c3e8);
+    border: 1px solid #7b4ea3;
+    border-radius: 2px;
+}
+
+.yahoo-theme ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to right, #ffffff, #b091cf);
+}
+
+/* Recent Chats overrides in Yahoo Theme */
+.yahoo-recent-chats .text-rp-subtle,
+.yahoo-recent-chats .text-rp-muted {
+    color: var(--yahoo-text-secondary) !important;
+}
+
+.yahoo-recent-chats .text-rp-text {
+    color: var(--yahoo-text-primary) !important;
+}
+
+.yahoo-recent-chats .hover\:bg-rp-overlay:hover {
+    background-color: var(--yahoo-lavender-light) !important;
+}
+
+.yahoo-recent-chats .rounded-lg {
+    border-radius: 4px !important;
+}
+
+.yahoo-recent-chats a {
+    border-bottom: 1px solid #f0f0f0;
 }

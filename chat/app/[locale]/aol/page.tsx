@@ -51,15 +51,15 @@ export default function AolChatPage() {
     };
 
     return (
-        <div className="h-screen w-full flex flex-col overflow-hidden font-['Tahoma',_sans-serif] bg-[#ECE9D8]">
+        <div className="h-screen w-full flex flex-col overflow-hidden font-['Tahoma',_sans-serif] bg-[#f3ebf9] yahoo-theme">
             {/* XP/AOL Style Header Toolbar */}
-            <div className="h-10 bg-gradient-to-r from-[#0054e3] via-[#3a6ea5] to-[#0054e3] flex items-center justify-between px-2 shadow-md z-50 border-b border-[#003c74]">
+            <div className="h-10 bg-gradient-to-r from-[#5e2b8d] via-[#7b4ea3] to-[#5e2b8d] flex items-center justify-between px-2 shadow-md z-50 border-b border-[#4b1b7a]">
                 <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
                         <div className="w-6 h-6 bg-white/20 rounded-md flex items-center justify-center border border-white/30 text-white">
                             <IconBrandWindows size={16} />
                         </div>
-                        <span className="text-white font-bold tracking-wide drop-shadow-md text-lg italic">Remrin AOL</span>
+                        <span className="text-white font-bold tracking-wide drop-shadow-md text-lg italic">Remrin Messenger</span>
                     </div>
 
                     <div className="flex gap-1 ml-4 text-white/90 text-sm">
@@ -83,9 +83,9 @@ export default function AolChatPage() {
             <div className="flex-1 flex overflow-hidden relative">
                 {/* Left Sidebar: Buddy List */}
                 <div
-                    className={`transition-all duration-300 ease-in-out border-r border-[#7f9db9] bg-[#d3dff0] flex flex-col shadow-[2px_0_5px_rgba(0,0,0,0.1)] z-40 ${sidebarCollapsed ? 'w-10' : 'w-[260px]'}`}
+                    className={`transition-all duration-300 ease-in-out border-r border-[#d8c3e8] bg-[#f3ebf9] flex flex-col shadow-[2px_0_5px_rgba(0,0,0,0.1)] z-40 ${sidebarCollapsed ? 'w-10' : 'w-[260px]'}`}
                 >
-                    <div className="flex justify-end p-1 bg-[#b6c7e1] border-b border-[#ffffff]">
+                    <div className="flex justify-end p-1 bg-[#d8c3e8] border-b border-[#ffffff]">
                         <button
                             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
                             className="p-1 hover:bg-white/50 rounded text-gray-600"
