@@ -1,0 +1,133 @@
+:root {
+  /* XP Luna Blue palette */
+  --xp-blue-dark: #0a246a;
+  --xp-blue-primary: #0054e3;
+  --xp-blue-light: #3a6ea5;
+  --xp-blue-highlight: #4a9eff;
+
+  /* Window colors */
+  --xp-window-bg: #ece9d8;
+  --xp-window-border: #0054e3;
+  --xp-titlebar-active: linear-gradient(180deg, #0054e3 0%, #0042b0 50%, #0054e3 100%);
+  --xp-titlebar-inactive: linear-gradient(180deg, #7f9db9 0%, #6d8cb3 50%, #7f9db9 100%);
+
+  /* Button colors */
+  --xp-button-bg: linear-gradient(180deg, #fff 0%, #ece9d8 100%);
+  --xp-button-border: #003c74;
+  --xp-button-hover: linear-gradient(180deg, #fff 0%, #d4d0c8 100%);
+
+  /* Text */
+  --xp-text-primary: #000;
+  --xp-text-secondary: #4a4a4a;
+
+  /* AIM-specific */
+  --aim-yellow: #ffcc00;
+  --aim-orange: #ff6600;
+  --aim-buddy-online: #00cc00;
+  --aim-buddy-away: #cccc00;
+  --aim-buddy-offline: #999999;
+}
+
+/* Typography */
+body {
+  font-family: 'Tahoma', 'Segoe UI', sans-serif;
+  font-size: 11px;
+}
+
+.xp-font-mono {
+  font-family: 'Lucida Console', monospace;
+}
+
+/* Animations */
+@keyframes xp-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes xp-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-xp-fade {
+  animation: xp-fade-in 0.2s ease-out forwards;
+}
+
+.animate-xp-slide {
+  animation: xp-slide-up 0.3s ease-out forwards;
+}
+
+/* Typing Dots */
+.typing-dots {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  animation: ellipsis 1.5s infinite;
+  width: 1.2em;
+}
+
+@keyframes ellipsis {
+  0% {
+    width: 0;
+  }
+
+  25% {
+    width: 0.3em;
+  }
+
+  50% {
+    width: 0.6em;
+  }
+
+  75% {
+    width: 0.9em;
+  }
+
+  100% {
+    width: 1.2em;
+  }
+}
+
+/* Custom Scrollbar for XP feel */
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+  background: #fff;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #c9cdd8;
+  border: 4px solid #fff;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #aeb4c4;
+}
+
+::-webkit-scrollbar-button {
+  background-color: #ece9d8;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='16' height='16' viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 6l4 4 4-4' fill='%23666'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 16px;
+  height: 16px;
+}
+
+::-webkit-scrollbar-button:vertical:decrement {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='16' height='16' viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 10l4-4 4 4' fill='%23666'/%3E%3C/svg%3E");
+}

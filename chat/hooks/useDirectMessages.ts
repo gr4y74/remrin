@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { RealtimeChannel } from '@supabase/supabase-js';
+import { chatSounds } from '@/lib/chat/soundManager';
 
 export interface DirectMessage {
     id: string;
@@ -13,6 +14,10 @@ export interface DirectMessage {
     read: boolean;
     delivered_at?: string;
     read_at?: string;
+    attachment_url?: string;
+    attachment_type?: string;
+    attachment_name?: string;
+    attachment_size?: number;
 }
 
 export function useDirectMessages(currentUserId: string | undefined) {
@@ -84,8 +89,10 @@ export function useDirectMessages(currentUserId: string | undefined) {
                     });
 
                     // Play sound
-                    const audio = new Audio('/sounds/aol/aol-im.mp3');
-                    audio.play().catch(() => { });
+                    // Play sound
+                    if (newMsg.from_user_id !== currentUserId) {
+                        chatSounds.play('imReceive');
+                    }
                 }
             )
             .on(
@@ -118,7 +125,7 @@ export function useDirectMessages(currentUserId: string | undefined) {
         };
     }, [currentUserId]);
 
-    const sendMessage = async (toUserId: string, toUsername: string, message: string, fromUsername: string) => {
+    const sendMessage = async (toUserId: string, toUsername: string, message: string, fromUsername: string, attachment?: { url: string, type: string, name: string, size: number }) => {
         if (!currentUserId) return;
 
         const { error } = await supabase.from('direct_messages').insert({
@@ -127,6 +134,10 @@ export function useDirectMessages(currentUserId: string | undefined) {
             from_username: fromUsername,
             to_username: toUsername,
             message,
+            attachment_url: attachment?.url,
+            attachment_type: attachment?.type,
+            attachment_name: attachment?.name,
+            attachment_size: attachment?.size,
         });
 
         if (!error) {
@@ -141,6 +152,10 @@ export function useDirectMessages(currentUserId: string | undefined) {
                 created_at: new Date().toISOString(),
                 read: false,
                 delivered_at: new Date().toISOString(),
+                attachment_url: attachment?.url,
+                attachment_type: attachment?.type,
+                attachment_name: attachment?.name,
+                attachment_size: attachment?.size,
             };
 
             setActiveConversations((prev) => {
@@ -149,6 +164,8 @@ export function useDirectMessages(currentUserId: string | undefined) {
                 next.set(toUserId, [...current, newMsg]);
                 return next;
             });
+
+            chatSounds.play('imSend');
         }
     };
 

@@ -9,8 +9,10 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { IconUser, IconSettings, IconPalette, IconDeviceFloppy } from "@tabler/icons-react"
+import { IconUser, IconSettings, IconPalette, IconDeviceFloppy, IconVolume } from "@tabler/icons-react"
 import { RemrinContext } from "@/context/context"
+import { Slider } from "@/components/ui/slider"
+import { chatSounds } from "@/lib/chat/soundManager"
 import { toast } from "sonner"
 import { createClient } from "@/lib/supabase/client"
 
@@ -31,6 +33,24 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
         bio: "",
         theme: "dark"
     })
+    const [soundSettings, setSoundSettings] = useState({ enabled: true, volume: 0.5 })
+
+    useEffect(() => {
+        if (open) {
+            setSoundSettings(chatSounds.getSettings())
+        }
+    }, [open])
+
+    const handleVolumeChange = (v: number[]) => {
+        const val = v[0]
+        setSoundSettings(prev => ({ ...prev, volume: val }))
+        chatSounds.setVolume(val)
+    }
+
+    const handleSoundToggle = (enabled: boolean) => {
+        setSoundSettings(prev => ({ ...prev, enabled }))
+        chatSounds.setEnabled(enabled)
+    }
 
     useEffect(() => {
         if (profile) {
@@ -40,6 +60,14 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
                 bio: profile.bio || "",
                 theme: "dark" // TODO: Connect to actual theme state
             })
+
+            // Sync sound settings from profile if available
+            if (profile.customization_json?.sound_settings) {
+                const { enabled, volume } = profile.customization_json.sound_settings
+                setSoundSettings({ enabled, volume })
+                chatSounds.setEnabled(enabled)
+                chatSounds.setVolume(volume)
+            }
         }
     }, [profile])
 
@@ -52,7 +80,14 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
                 .update({
                     username: formData.username,
                     display_name: formData.displayName,
-                    bio: formData.bio
+                    bio: formData.bio,
+                    customization_json: {
+                        ...profile?.customization_json,
+                        sound_settings: {
+                            enabled: soundSettings.enabled,
+                            volume: soundSettings.volume
+                        }
+                    }
                 })
                 .eq("id", profile?.id)
 
@@ -102,6 +137,13 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
                             >
                                 <IconPalette size={16} />
                                 Appearance
+                            </TabsTrigger>
+                            <TabsTrigger
+                                value="sounds"
+                                className="flex justify-start gap-2 data-[state=active]:bg-rp-highlight-low md:w-full"
+                            >
+                                <IconVolume size={16} />
+                                Sounds
                             </TabsTrigger>
                         </TabsList>
                     </div>
@@ -169,6 +211,44 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
                                     </div>
                                     <Switch checked={true} />
                                 </div>
+                            </TabsContent>
+
+                            <TabsContent value="sounds" className="mt-0 space-y-6">
+                                <h3 className="text-lg font-medium">Sound Settings</h3>
+
+                                <div className="flex items-center justify-between rounded-lg border border-rp-highlight-low p-4">
+                                    <div className="space-y-0.5">
+                                        <Label>Enable Sounds</Label>
+                                        <p className="text-xs text-rp-muted">Play sound effects for chat events</p>
+                                    </div>
+                                    <Switch
+                                        checked={soundSettings.enabled}
+                                        onCheckedChange={handleSoundToggle}
+                                    />
+                                </div>
+
+                                <div className="space-y-4 rounded-lg border border-rp-highlight-low p-4">
+                                    <div className="space-y-0.5">
+                                        <Label>Volume</Label>
+                                        <p className="text-xs text-rp-muted">Adjust sound effect volume</p>
+                                    </div>
+                                    <div className="flex items-center gap-4">
+                                        <IconVolume size={20} className="text-rp-muted" />
+                                        <Slider
+                                            value={[soundSettings.volume]}
+                                            max={1}
+                                            step={0.1}
+                                            onValueChange={handleVolumeChange}
+                                            className="flex-1"
+                                        />
+                                        <span className="w-8 text-right text-sm">{Math.round(soundSettings.volume * 100)}%</span>
+                                    </div>
+                                </div>
+
+                                <Button variant="outline" onClick={() => chatSounds.play('imReceive')}>
+                                    <IconVolume className="mr-2 h-4 w-4" />
+                                    Test Sound
+                                </Button>
                             </TabsContent>
                         </div>
 

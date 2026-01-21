@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Win95Window } from './Win95Window';
-import { Win95Button } from './Win95Button';
-import { Win95Input } from './Win95Input';
+import { XPWindow } from './XPWindow';
+import { XPButton } from './XPButton';
+import { XPInput } from './XPInput';
 import { cn } from '@/lib/utils';
 import { useBuddyList, Buddy } from '@/hooks/useBuddyList';
+import { IconUserPlus, IconLogout, IconMessage, IconUsers, IconSettings } from '@tabler/icons-react';
 
 interface BuddyListWindowProps {
     currentUser: any;
@@ -71,104 +72,116 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
         }
     };
 
-    const handleBlockUser = async (buddyId: string) => {
-        if (confirm('Block this user? They will be removed from your buddy list.')) {
-            await blockUser(buddyId);
-            setSelectedBuddy(null);
-        }
-    };
-
     const getSelectedBuddy = (): Buddy | undefined => {
         return buddies.find(b => b.buddy_id === selectedBuddy);
     };
 
     return (
         <>
-            <Win95Window
+            <XPWindow
                 title={`${currentUser?.user_metadata?.username || 'Guest'}'s Buddy List`}
-                className="w-[240px] h-[480px]"
+                className="w-full h-full min-h-[500px] flex flex-col"
                 onClose={onClose}
                 icon="/icons/win95/aol_icon.png"
             >
-                {/* Menu Bar */}
-                <div className="flex px-1 py-[2px] border-b border-[#808080] mb-1 text-[11px] bg-[#c0c0c0]">
-                    <span className="px-1 cursor-pointer hover:bg-[#000080] hover:text-white">My AIM</span>
-                    <span className="px-1 cursor-pointer hover:bg-[#000080] hover:text-white">People</span>
-                    <span className="px-1 cursor-pointer hover:bg-[#000080] hover:text-white">Help</span>
+                {/* AIM Brand Header */}
+                <div className="bg-gradient-to-b from-[#fceebb] to-[#f4d27a] p-2 border-b border-[#e0c060] flex items-center justify-between shadow-sm">
+                    <div className="flex items-center gap-2">
+                        {/* Placeholder for AIM running man logo if we had it, using text for now */}
+                        <div className="font-bold text-[#0054e3] italic text-lg tracking-tighter drop-shadow-sm">Remrin IM</div>
+                    </div>
+                    <div className="text-[10px] text-[#555] font-semibold">
+                        {currentStatus === 'online' ? 'Online' : 'Away'}
+                    </div>
                 </div>
 
                 {/* Main Content */}
-                <div className="flex flex-col h-[calc(100%-46px)] bg-[#c0c0c0] p-1">
-                    {/* Banner */}
-                    <div className="h-14 bg-gradient-to-r from-yellow-400 to-orange-400 border-2 border-[#808080] mb-1 flex items-center justify-center rounded">
-                        <span className="text-white font-bold text-sm drop-shadow-md">Remrin Chat</span>
+                <div className="flex flex-col flex-1 bg-[#ece9d8] p-1 overflow-hidden">
+
+                    {/* Toolbar */}
+                    <div className="flex gap-1 mb-2 px-1">
+                        <button className="flex flex-col items-center justify-center p-1 rounded hover:bg-white/50 transition-colors text-[10px] text-[#0054e3]" onClick={onSetAway}>
+                            <IconSettings size={20} />
+                            <span>Setup</span>
+                        </button>
+                        <button className="flex flex-col items-center justify-center p-1 rounded hover:bg-white/50 transition-colors text-[10px] text-[#0054e3]" onClick={() => setShowAddModal(true)}>
+                            <IconUserPlus size={20} />
+                            <span>Add</span>
+                        </button>
+                        <button className="flex flex-col items-center justify-center p-1 rounded hover:bg-white/50 transition-colors text-[10px] text-[#0054e3]" onClick={onJoinRoom}>
+                            <IconUsers size={20} />
+                            <span>Chat</span>
+                        </button>
                     </div>
 
                     {/* Buddy List */}
-                    <div className="flex-1 bg-white border-2 border-[inset] border-[#808080] overflow-y-auto font-['Tahoma',_sans-serif] text-[11px]">
+                    <div className="flex-1 bg-white border border-[#7f9db9] rounded-[2px] overflow-y-auto font-['Tahoma',_sans-serif] text-[11px] shadow-inner mb-2">
                         {loading ? (
-                            <div className="p-2 text-center text-gray-500">Loading...</div>
+                            <div className="p-4 text-center text-gray-400 italic">Loading List...</div>
                         ) : buddies.length === 0 ? (
-                            <div className="p-2 text-center text-gray-500">
-                                No buddies yet.<br />
-                                Click &quot;Add&quot; to get started!
+                            <div className="p-4 text-center text-gray-400">
+                                <p className="mb-2">Your buddy list is empty.</p>
+                                <XPButton onClick={() => setShowAddModal(true)} variant="normal" className="text-[10px]">Add a Buddy</XPButton>
                             </div>
                         ) : (
                             groupNames.map(group => (
-                                <div key={group}>
+                                <div key={group} className="select-none">
                                     <div
-                                        className="flex items-center cursor-pointer hover:bg-gray-100 select-none px-1 py-[2px]"
+                                        className="flex items-center cursor-pointer hover:bg-[#eef3fa] px-2 py-1 bg-[#f7f8f9] border-b border-gray-100"
                                         onClick={() => toggleGroup(group)}
                                     >
-                                        <span className="mr-1 text-[9px]">{expandedGroups[group] ? '▼' : '▶'}</span>
-                                        <span className="font-bold text-[#000080]">
-                                            {group} ({(groups[group] || []).filter(b => b.status === 'online').length}/{(groups[group] || []).length})
+                                        <span className="mr-1 text-[8px] text-gray-500 transform transition-transform duration-200" style={{ transform: expandedGroups[group] ? 'rotate(90deg)' : 'rotate(0deg)' }}>▶</span>
+                                        <span className="font-bold text-[#4a4a4a] text-[11px]">
+                                            {group}
+                                        </span>
+                                        <span className="ml-auto text-[10px] text-gray-400">
+                                            {(groups[group] || []).filter(b => b.status === 'online').length}/{(groups[group] || []).length}
                                         </span>
                                     </div>
 
                                     {expandedGroups[group] && (
-                                        <div className="ml-2">
-                                            {(groups[group] || []).map(buddy => (
-                                                <div
-                                                    key={buddy.buddy_id}
-                                                    onClick={() => setSelectedBuddy(buddy.buddy_id)}
-                                                    onDoubleClick={() => onOpenIM(buddy.buddy_id, buddy.nickname || buddy.buddy_username)}
-                                                    className={cn(
-                                                        "cursor-pointer px-1 py-[1px] flex items-center gap-1",
-                                                        selectedBuddy === buddy.buddy_id && "bg-[#000080] text-white"
-                                                    )}
-                                                >
-                                                    {/* Status indicator */}
-                                                    <span className={cn(
-                                                        "inline-block w-2 h-2 rounded-full",
-                                                        buddy.status === 'online' && "bg-green-500",
-                                                        buddy.status === 'away' && "bg-orange-500",
-                                                        buddy.status === 'busy' && "bg-red-500",
-                                                        buddy.status === 'offline' && "bg-gray-400"
-                                                    )} />
-
-                                                    {/* Name */}
-                                                    <span className={buddy.status === 'offline' ? 'text-gray-500' : ''}>
-                                                        {buddy.nickname || buddy.buddy_username}
-                                                        {buddy.is_favorite && ' ⭐'}
-                                                        {buddy.status === 'offline' && buddy.last_seen && (
-                                                            <span className="text-[9px] text-gray-400 ml-1 italic">
-                                                                (Last seen {(() => {
-                                                                    const diff = Date.now() - new Date(buddy.last_seen).getTime();
-                                                                    const minutes = Math.floor(diff / 60000);
-                                                                    if (minutes < 1) return 'just now';
-                                                                    if (minutes < 60) return `${minutes} min ago`;
-                                                                    const hours = Math.floor(minutes / 60);
-                                                                    if (hours < 24) return `${hours} hr ago`;
-                                                                    return new Date(buddy.last_seen).toLocaleDateString();
-                                                                })()})
-                                                            </span>
+                                        <div className="bg-white">
+                                            {(groups[group] || []).map(buddy => {
+                                                const isSelected = selectedBuddy === buddy.buddy_id;
+                                                return (
+                                                    <div
+                                                        key={buddy.buddy_id}
+                                                        onClick={() => setSelectedBuddy(buddy.buddy_id)}
+                                                        onDoubleClick={() => onOpenIM(buddy.buddy_id, buddy.nickname || buddy.buddy_username)}
+                                                        className={cn(
+                                                            "cursor-pointer px-4 py-1 flex items-center gap-2 transition-colors",
+                                                            isSelected ? "bg-[#316ac5] text-white" : "hover:bg-[#f0f0f0] text-black"
                                                         )}
-                                                    </span>
-                                                </div>
-                                            ))}
+                                                    >
+                                                        {/* Status Icon */}
+                                                        <div className={cn(
+                                                            "w-2.5 h-2.5 rounded-sm shadow-sm border border-black/10 flex-shrink-0",
+                                                            buddy.status === 'online' && "bg-[#00cc00]",
+                                                            buddy.status === 'away' && "bg-[#ffcc00]",
+                                                            buddy.status === 'busy' && "bg-[#ff0000]",
+                                                            buddy.status === 'offline' && "bg-[#999999]"
+                                                        )} />
+
+                                                        <div className="flex-1 overflow-hidden">
+                                                            <div className="truncate font-medium">{buddy.nickname || buddy.buddy_username}</div>
+                                                            {buddy.status === 'offline' && buddy.last_seen && (
+                                                                <div className={cn("text-[10px] italic truncate", isSelected ? "text-white/70" : "text-gray-400")}>
+                                                                    Last seen: {new Date(buddy.last_seen).toLocaleDateString()}
+                                                                </div>
+                                                            )}
+                                                            {buddy.status === 'away' && (
+                                                                <div className={cn("text-[10px] italic truncate", isSelected ? "text-white/70" : "text-gray-400")}>
+                                                                    Away
+                                                                </div>
+                                                            )}
+                                                        </div>
+
+                                                        {buddy.is_favorite && <span className="text-yellow-400 text-[10px]">★</span>}
+                                                    </div>
+                                                );
+                                            })}
                                             {(groups[group] || []).length === 0 && (
-                                                <div className="text-gray-400 italic px-1">Empty</div>
+                                                <div className="text-gray-300 italic px-4 py-1 text-[10px]">No buddies in this group</div>
                                             )}
                                         </div>
                                     )}
@@ -177,74 +190,73 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
                         )}
                     </div>
 
-                    {/* Bottom Buttons */}
-                    <div className="mt-1 flex flex-wrap gap-1 px-1">
-                        <Win95Button
-                            className="flex-1 px-1 py-0 min-w-[40px] text-[10px]"
+                    {/* Bottom Action Bar */}
+                    <div className="bg-[#d4d0c8] p-1 rounded-[2px] flex justify-between items-center border border-white shadow-[inset_1px_1px_0_rgba(0,0,0,0.1)]">
+                        <XPButton
+                            className="px-3"
                             disabled={!selectedBuddy}
                             onClick={() => {
                                 const buddy = getSelectedBuddy();
                                 if (buddy) onOpenIM(buddy.buddy_id, buddy.nickname || buddy.buddy_username);
                             }}
                         >
-                            IM
-                        </Win95Button>
-                        <Win95Button
-                            className="flex-1 px-1 py-0 min-w-[40px] text-[10px]"
-                            onClick={onJoinRoom}
-                        >
-                            Chat
-                        </Win95Button>
-                        <Win95Button
-                            className="flex-1 px-1 py-0 min-w-[40px] text-[10px]"
-                            onClick={() => setShowAddModal(true)}
-                        >
-                            Add
-                        </Win95Button>
-                        <Win95Button
-                            className="flex-1 px-1 py-0 min-w-[40px] text-[10px]"
-                            onClick={onSetAway}
-                        >
-                            Away
-                        </Win95Button>
-                        <Win95Button
-                            className="flex-1 px-1 py-0 min-w-[40px] text-[10px]"
+                            <span className="flex items-center gap-1"><IconMessage size={12} /> IM</span>
+                        </XPButton>
+                        <div className="h-4 w-[1px] bg-gray-400 mx-1" />
+                        <XPButton
                             disabled={!selectedBuddy}
                             onClick={() => selectedBuddy && handleRemoveBuddy(selectedBuddy)}
+                            className="bg-transparent border-none shadow-none hover:bg-red-100 hover:text-red-600 px-2"
                         >
                             Remove
-                        </Win95Button>
+                        </XPButton>
                     </div>
                 </div>
-            </Win95Window>
+            </XPWindow>
 
             {/* Add Buddy Modal */}
             {showAddModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <Win95Window
-                        title="Add Buddy"
-                        className="w-[280px] h-auto"
+                <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-[100]">
+                    <XPWindow
+                        title="Add to Buddy List"
+                        className="w-[320px] h-auto shadow-2xl"
                         onClose={() => setShowAddModal(false)}
                     >
-                        <div className="p-3">
-                            <p className="text-[11px] mb-2">Enter the username of the buddy you want to add:</p>
-                            <Win95Input
-                                value={addUsername}
-                                onChange={(e) => setAddUsername(e.target.value)}
-                                placeholder="Username"
-                                className="w-full mb-2"
-                                onKeyDown={(e) => e.key === 'Enter' && handleAddBuddy()}
-                                autoFocus
-                            />
+                        <div className="p-4 bg-[#ece9d8]">
+                            <div className="flex items-start gap-3 mb-4">
+                                <div className="bg-white p-2 rounded border border-[#7f9db9]">
+                                    <IconUserPlus size={24} className="text-[#0054e3]" />
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-[12px] text-[#0054e3] mb-1">Add New Buddy</h3>
+                                    <p className="text-[11px] text-[#4a4a4a]">Enter the screen name of the person you want to add to your buddy list.</p>
+                                </div>
+                            </div>
+
+                            <div className="mb-4">
+                                <label className="block text-[11px] mb-1 font-bold text-[#4a4a4a]">Screen Name:</label>
+                                <XPInput
+                                    value={addUsername}
+                                    onChange={(e) => setAddUsername(e.target.value)}
+                                    placeholder="e.g. CoolDude99"
+                                    className="w-full"
+                                    onKeyDown={(e) => e.key === 'Enter' && handleAddBuddy()}
+                                    autoFocus
+                                />
+                            </div>
+
                             {addError && (
-                                <p className="text-red-600 text-[10px] mb-2">{addError}</p>
+                                <div className="bg-[#ffebeb] border border-[#ff0000] text-[#ff0000] p-2 text-[10px] mb-4 rounded-[2px] flex items-center gap-1">
+                                    <span>⚠️</span> {addError}
+                                </div>
                             )}
-                            <div className="flex gap-2 justify-end">
-                                <Win95Button onClick={() => setShowAddModal(false)}>Cancel</Win95Button>
-                                <Win95Button onClick={handleAddBuddy}>Add</Win95Button>
+
+                            <div className="flex gap-2 justify-end pt-2 border-t border-white/50">
+                                <XPButton onClick={() => setShowAddModal(false)} className="px-4">Cancel</XPButton>
+                                <XPButton onClick={handleAddBuddy} variant="primary" className="px-4">Add Buddy</XPButton>
                             </div>
                         </div>
-                    </Win95Window>
+                    </XPWindow>
                 </div>
             )}
         </>

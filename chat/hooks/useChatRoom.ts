@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { RealtimeChannel } from '@supabase/supabase-js';
+import { chatSounds } from '@/lib/chat/soundManager';
 
 export interface ChatMessage {
     id: string;
@@ -10,6 +11,10 @@ export interface ChatMessage {
     message: string;
     message_type: 'user' | 'system' | 'emote';
     created_at: string;
+    attachment_url?: string;
+    attachment_type?: string;
+    attachment_name?: string;
+    attachment_size?: number;
 }
 
 export interface ChatUser {
@@ -19,37 +24,82 @@ export interface ChatUser {
     status: 'active' | 'idle' | 'away';
 }
 
+export interface RoomDetails {
+    id: string;
+    name: string;
+    description: string;
+    category: string;
+    is_private: boolean;
+    owner_id: string;
+    banner_url?: string;
+}
+
 export function useChatRoom(roomName: string = 'The Lobby', username: string) {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [users, setUsers] = useState<ChatUser[]>([]);
     const [roomId, setRoomId] = useState<string | null>(null);
+    const [roomDetails, setRoomDetails] = useState<RoomDetails | null>(null);
+    const [isModerator, setIsModerator] = useState(false);
+    const [isOwner, setIsOwner] = useState(false);
+    const [isMuted, setIsMuted] = useState(false);
     const supabase = createClient();
     const channelRef = useRef<RealtimeChannel | null>(null);
 
-    // 1. Get or Create Room ID
-    const fetchRoom = async (name: string) => {
+    // 1. Get or Create Room ID & Check Permissions
+    const fetchRoom = useCallback(async (name: string) => {
         let { data: room, error } = await supabase
             .from('chat_rooms')
-            .select('id')
+            .select('*')
             .eq('name', name)
             .single();
 
         if (!room) {
-            // Create if not exists (for now, simplistic)
+            // Create if not exists (simplistic)
             const { data: newRoom } = await supabase
                 .from('chat_rooms')
-                .insert({ name: name, category: 'General', is_public: true })
+                .insert({ name: name, category: 'General', is_private: false })
                 .select()
                 .single();
             if (newRoom) room = newRoom;
         }
 
-        if (room) setRoomId(room.id);
-    };
+        if (room) {
+            setRoomId(room.id);
+            setRoomDetails(room);
+            chatSounds.play('roomEnter');
+
+            // Check if current user is owner
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                if (room.owner_id === user.id) {
+                    setIsOwner(true);
+                    setIsModerator(true);
+                } else {
+                    // Check if mod
+                    const { data: mod } = await supabase
+                        .from('room_moderators')
+                        .select('id')
+                        .eq('room_id', room.id)
+                        .eq('user_id', user.id)
+                        .single();
+                    if (mod) setIsModerator(true);
+                }
+
+                // Check if muted
+                const { data: mute } = await supabase
+                    .from('room_mutes')
+                    .select('id')
+                    .eq('room_id', room.id)
+                    .eq('user_id', user.id)
+                    .single();
+                if (mute) setIsMuted(true);
+            }
+        }
+    }, [supabase]);
 
     useEffect(() => {
         fetchRoom(roomName);
-    }, [roomName]);
+    }, [roomName, fetchRoom]);
 
     // 2. Subscribe to Messages and Presence
     useEffect(() => {
@@ -85,9 +135,9 @@ export function useChatRoom(roomName: string = 'The Lobby', username: string) {
                 filter: `room_id=eq.${roomId}`
             }, (payload) => {
                 setMessages(prev => [...prev, payload.new as ChatMessage]);
-                // Play sound
-                const audio = new Audio('/sounds/aol/aol-im.mp3'); // We can change this to a room-msg sound later
-                audio.play().catch(() => { });
+                if (payload.new.username !== username) {
+                    chatSounds.play('imReceive');
+                }
             })
             .on('presence', { event: 'sync' }, () => {
                 const newState = channel.presenceState();
@@ -97,8 +147,10 @@ export function useChatRoom(roomName: string = 'The Lobby', username: string) {
                     const state = newState[key];
                     if (state && state.length > 0) {
                         // @ts-ignore
+                        const userState = state[0] as any;
                         onlineUsers.push({
-                            user_id: key, // Using username as key might be better for uniqueness if IDs aren't consistent, but user_id is safer
+                            // @ts-ignore
+                            user_id: userState.user_id || key,
                             username: key,
                             online_at: new Date().toISOString(),
                             status: 'active'
@@ -109,7 +161,9 @@ export function useChatRoom(roomName: string = 'The Lobby', username: string) {
             })
             .subscribe(async (status) => {
                 if (status === 'SUBSCRIBED') {
+                    const { data: { user } } = await supabase.auth.getUser();
                     await channel.track({
+                        user_id: user?.id,
                         online_at: new Date().toISOString(),
                         status: 'active'
                     });
@@ -121,18 +175,46 @@ export function useChatRoom(roomName: string = 'The Lobby', username: string) {
         return () => {
             supabase.removeChannel(channel);
         };
-    }, [roomId, username]);
+    }, [roomId, username, supabase]);
 
-    const sendMessage = async (text: string, userId: string) => {
+    const sendMessage = async (text: string, userId: string, attachment?: { url: string, type: string, name: string, size: number }) => {
         if (!roomId) return;
+        if (isMuted) {
+            alert("You are muted in this room.");
+            return;
+        }
 
-        // Optimization: Optimistic update could go here, but let's trust Supabase for now to keep it simple
         await supabase.from('chat_messages').insert({
             room_id: roomId,
             user_id: userId,
             username: username,
             message: text,
-            message_type: 'user'
+            message_type: 'user',
+            attachment_url: attachment?.url,
+            attachment_type: attachment?.type,
+            attachment_name: attachment?.name,
+            attachment_size: attachment?.size
+        });
+    };
+
+    const kickUser = async (targetUserId: string) => {
+        if (!roomId || !isModerator) return;
+        await fetch(`/api/chat/rooms/${roomId}/moderation/kick`, {
+            method: 'POST', body: JSON.stringify({ user_id: targetUserId })
+        });
+    };
+
+    const banUser = async (targetUserId: string) => {
+        if (!roomId || !isModerator) return;
+        await fetch(`/api/chat/rooms/${roomId}/moderation/ban`, {
+            method: 'POST', body: JSON.stringify({ user_id: targetUserId })
+        });
+    };
+
+    const muteUser = async (targetUserId: string) => {
+        if (!roomId || !isModerator) return;
+        await fetch(`/api/chat/rooms/${roomId}/moderation/mute`, {
+            method: 'POST', body: JSON.stringify({ user_id: targetUserId })
         });
     };
 
@@ -141,6 +223,13 @@ export function useChatRoom(roomName: string = 'The Lobby', username: string) {
         users,
         sendMessage,
         roomId,
-        joinRoom: (name: string) => fetchRoom(name) // Expose ability to switch rooms
+        roomDetails,
+        isModerator,
+        isOwner,
+        isMuted,
+        kickUser,
+        banUser,
+        muteUser,
+        joinRoom: (name: string) => fetchRoom(name)
     };
 }

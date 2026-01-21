@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { RealtimeChannel } from '@supabase/supabase-js';
+import { chatSounds } from '@/lib/chat/soundManager';
 
 export interface Buddy {
     buddy_id: string;
@@ -29,6 +30,12 @@ export function useBuddyList() {
     const [blockedUsers, setBlockedUsers] = useState<BlockedUser[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const buddiesRef = useRef(buddies);
+
+    // Keep ref updated
+    useEffect(() => {
+        buddiesRef.current = buddies;
+    }, [buddies]);
 
     const supabase = createClient();
 
@@ -241,6 +248,19 @@ export function useBuddyList() {
                         status: 'offline'
                     };
                 }));
+            })
+
+            .on('presence', { event: 'join' }, ({ key, newPresences }) => {
+                const isBuddy = buddiesRef.current.some(b => b.buddy_username === key);
+                if (isBuddy) {
+                    chatSounds.play('buddyOnline');
+                }
+            })
+            .on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
+                const isBuddy = buddiesRef.current.some(b => b.buddy_username === key);
+                if (isBuddy) {
+                    chatSounds.play('buddyOffline');
+                }
             })
             .subscribe();
 

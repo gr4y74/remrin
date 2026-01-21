@@ -13,6 +13,11 @@ CREATE TABLE IF NOT EXISTS public.chat_rooms (
     topic TEXT
 );
 
+-- Add admin columns to chat_rooms
+ALTER TABLE public.chat_rooms ADD COLUMN IF NOT EXISTS is_featured BOOLEAN DEFAULT false;
+ALTER TABLE public.chat_rooms ADD COLUMN IF NOT EXISTS is_closed BOOLEAN DEFAULT false;
+
+
 -- Create chat_messages table
 CREATE TABLE IF NOT EXISTS public.chat_messages (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -72,7 +77,9 @@ CREATE TABLE IF NOT EXISTS public.user_profiles_chat (
     away_message TEXT,
     status TEXT DEFAULT 'online', -- 'online', 'away', 'offline'
     show_online BOOLEAN DEFAULT true,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    is_banned BOOLEAN DEFAULT false,
+    is_muted BOOLEAN DEFAULT false
 );
 
 -- Create indexes

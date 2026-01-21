@@ -29,6 +29,10 @@ export interface ProfileCustomization {
     background_value?: string;
     font_family?: string;
     layout?: 'masonry' | 'grid' | 'list';
+    sound_settings?: {
+        enabled: boolean;
+        volume: number;
+    };
 }
 export interface PrivacySettings {
     profile: 'public' | 'friends' | 'private';
