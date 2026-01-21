@@ -6,11 +6,14 @@ import { XPButton } from './XPButton';
 import { XPInput } from './XPInput';
 import { cn } from '@/lib/utils';
 import { useBuddyList, Buddy } from '@/hooks/useBuddyList';
-import { IconUserPlus, IconLogout, IconMessage, IconUsers, IconSettings, IconBrandWindows, IconHome, IconSparkles, IconDice, IconBooks, IconShoppingBag, IconBrush, IconWallet, IconBell, IconBrandDiscord, IconBrandReddit, IconBrandTiktok, IconBrandX, IconBrandInstagram } from '@tabler/icons-react';
+import { IconUserPlus, IconLogout, IconMessage, IconUsers, IconSettings, IconBrandWindows, IconHome, IconSparkles, IconDice, IconBooks, IconShoppingBag, IconBrush, IconWallet, IconBell, IconBrandDiscord, IconBrandReddit, IconBrandTiktok, IconBrandX, IconBrandInstagram, IconChevronDown, IconUser, IconTrendingUp, IconDiamond } from '@tabler/icons-react';
 import { CharacterDirectory } from './CharacterDirectory';
 import { SidebarRecentChats } from '../layout/SidebarRecentChats';
 import { RemrinContext } from '@/context/context';
+import { createClient } from '@/lib/supabase/client';
 import Image from 'next/image';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 
 interface BuddyListWindowProps {
     currentUser: any;
@@ -55,8 +58,45 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
     const [showAddModal, setShowAddModal] = useState(false);
     const [addUsername, setAddUsername] = useState('');
     const [addError, setAddError] = useState('');
-    const [activeTab, setActiveTab] = useState<'contacts' | 'chats'>('contacts');
+    const [activeTab, setActiveTab] = useState<'contacts' | 'chats' | 'featured' | 'trending'>('contacts');
     const [showCharacterDirectory, setShowCharacterDirectory] = useState(false);
+    const [showProfileMenu, setShowProfileMenu] = useState(false);
+    const [featuredPersonas, setFeaturedPersonas] = useState<any[]>([]);
+    const [trendingPersonas, setTrendingPersonas] = useState<any[]>([]);
+    const [loadingContent, setLoadingContent] = useState(false);
+
+    const router = useRouter();
+    const supabase = createClient();
+
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+        window.location.reload();
+    };
+
+    // Fetch featured/trending souls for the tabs
+    React.useEffect(() => {
+        const fetchContent = async () => {
+            setLoadingContent(true);
+            try {
+                // Fetch public personas for trending/featured
+                const { data } = await supabase
+                    .from('personas')
+                    .select('id, name, description, image_url')
+                    .eq('visibility', 'PUBLIC')
+                    .limit(10);
+
+                if (data) {
+                    setFeaturedPersonas(data.slice(0, 5));
+                    setTrendingPersonas(data.slice(5, 10));
+                }
+            } catch (err) {
+                console.error("Error fetching messenger content:", err);
+            } finally {
+                setLoadingContent(false);
+            }
+        };
+        fetchContent();
+    }, []);
 
     const handleAddBot = async (personaId: string) => {
         const result = await addBuddy('', 'Characters', undefined, personaId);
@@ -130,7 +170,7 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
                 </div>
 
                 {/* AIM/Yahoo Brand Header with User Profile */}
-                <div className="bg-gradient-to-b from-[#fceebb] to-[#f4d27a] p-3 border-b border-[#e0c060] shadow-sm yahoo-header">
+                <div className="bg-gradient-to-b from-[#fceebb] to-[#f4d27a] p-3 border-b border-[#e0c060] shadow-sm relative yahoo-header">
                     <div className="flex items-center gap-3">
                         <div className="relative">
                             <img
@@ -141,14 +181,28 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
                             <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border border-white rounded-full" />
                         </div>
                         <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-1">
+                            <div
+                                className="flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity"
+                                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                            >
                                 <span className="font-bold text-[#2d005d] text-sm truncate">{displayName}</span>
-                                <span className="text-[10px] text-[#5e2b8d]">▼</span>
+                                <IconChevronDown size={10} className={cn("text-[#5e2b8d] transition-transform", showProfileMenu && "rotate-180")} />
                             </div>
                             <div className="text-[11px] text-[#5e2b8d] font-medium leading-tight truncate">
                                 {currentStatus === 'online' ? 'Feeling lucky! ✨' : 'Away from keyboard...'}
                             </div>
                         </div>
+
+                        {/* Subscribe Button */}
+                        <Link
+                            href="/subscribe"
+                            target="_blank"
+                            className="flex items-center gap-1 bg-[#5e2b8d] text-white px-2 py-1 rounded text-[10px] font-bold hover:bg-[#7b4ea3] transition-colors shadow-sm"
+                        >
+                            <IconDiamond size={12} />
+                            Subscribe
+                        </Link>
+
                         {!isStandalone && (
                             <button
                                 onClick={handlePopOut}
@@ -159,6 +213,31 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
                             </button>
                         )}
                     </div>
+
+                    {/* Profile Dropdown Menu */}
+                    {showProfileMenu && (
+                        <>
+                            <div className="fixed inset-0 z-40" onClick={() => setShowProfileMenu(false)} />
+                            <div className="absolute top-[85%] left-14 bg-white border border-[#d4d0c8] shadow-lg rounded-sm py-1 z-50 min-w-[120px] text-[11px]">
+                                <button
+                                    onClick={() => {
+                                        window.open(`/profile/${currentUser?.id || ''}`, '_blank');
+                                        setShowProfileMenu(false);
+                                    }}
+                                    className="w-full text-left px-3 py-1.5 hover:bg-[#5e2b8d] hover:text-white flex items-center gap-2"
+                                >
+                                    <IconUser size={14} /> View Profile
+                                </button>
+                                <div className="h-[1px] bg-gray-200 my-1 mx-1" />
+                                <button
+                                    onClick={handleLogout}
+                                    className="w-full text-left px-3 py-1.5 hover:bg-red-600 hover:text-white flex items-center gap-2"
+                                >
+                                    <IconLogout size={14} /> Logout
+                                </button>
+                            </div>
+                        </>
+                    )}
                 </div>
 
                 {/* Sidebar Navigation Icons */}
@@ -191,11 +270,11 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
                 {/* Main Content */}
                 <div className="flex flex-col flex-1 bg-[#ece9d8] p-0 overflow-hidden yahoo-content">
                     {/* Yahoo Style Tabs */}
-                    <div className="flex bg-[#7b4ea3] px-1 pt-1 gap-[1px]">
+                    <div className="flex bg-[#7b4ea3] px-1 pt-1 gap-[1px] overflow-x-auto no-scrollbar">
                         <button
                             onClick={() => setActiveTab('contacts')}
                             className={cn(
-                                "px-4 py-1.5 text-[11px] font-bold rounded-t-[4px] transition-colors",
+                                "px-3 py-1.5 text-[11px] font-bold rounded-t-[4px] transition-colors flex-shrink-0",
                                 activeTab === 'contacts' ? "bg-[#f3ebf9] text-[#2d005d]" : "bg-[#5e2b8d] text-white hover:bg-[#6d39a3]"
                             )}
                         >
@@ -204,11 +283,29 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
                         <button
                             onClick={() => setActiveTab('chats')}
                             className={cn(
-                                "px-4 py-1.5 text-[11px] font-bold rounded-t-[4px] transition-colors",
+                                "px-3 py-1.5 text-[11px] font-bold rounded-t-[4px] transition-colors flex-shrink-0",
                                 activeTab === 'chats' ? "bg-[#f3ebf9] text-[#2d005d]" : "bg-[#5e2b8d] text-white hover:bg-[#6d39a3]"
                             )}
                         >
                             Chats
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('featured')}
+                            className={cn(
+                                "px-3 py-1.5 text-[11px] font-bold rounded-t-[4px] transition-colors flex-shrink-0",
+                                activeTab === 'featured' ? "bg-[#f3ebf9] text-[#2d005d]" : "bg-[#5e2b8d] text-white hover:bg-[#6d39a3]"
+                            )}
+                        >
+                            Featured
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('trending')}
+                            className={cn(
+                                "px-3 py-1.5 text-[11px] font-bold rounded-t-[4px] transition-colors flex-shrink-0 text-amber-200",
+                                activeTab === 'trending' ? "bg-[#f3ebf9] text-[#2d005d]" : "bg-[#5e2b8d] hover:bg-[#6d39a3]"
+                            )}
+                        >
+                            Trending
                         </button>
                     </div>
 
@@ -237,6 +334,51 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
                         {activeTab === 'chats' ? (
                             <div className="p-2 yahoo-recent-chats">
                                 <SidebarRecentChats isExpanded={true} maxChats={20} showDemo={false} />
+                            </div>
+                        ) : activeTab === 'featured' ? (
+                            <div className="p-2 space-y-3">
+                                <h3 className="font-bold text-[#5e2b8d] border-b border-[#d8c3e8] pb-1 flex items-center gap-1">
+                                    <IconSparkles size={14} className="text-amber-500" /> Featured Souls
+                                </h3>
+                                <div className="grid grid-cols-2 gap-2">
+                                    {featuredPersonas.map(persona => (
+                                        <div
+                                            key={persona.id}
+                                            className="bg-[#f3ebf9] border border-[#d8c3e8] rounded p-1.5 cursor-pointer hover:bg-white transition-colors"
+                                            onClick={() => window.open(`/character/${persona.id}`, '_blank')}
+                                        >
+                                            <img src={persona.image_url || '/images/default-avatar.png'} alt={persona.name} className="w-full h-16 object-cover rounded mb-1" />
+                                            <div className="font-bold text-[#2d005d] text-[10px] truncate">{persona.name}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                                {/* Ad Banner Placeholder */}
+                                <div className="mt-4 bg-[#ece9d8] border-2 border-dashed border-[#d4d0c8] p-4 text-center rounded flex flex-col items-center justify-center gap-1 opacity-60">
+                                    <div className="text-[10px] uppercase font-bold text-gray-400">Sponsored</div>
+                                    <div className="text-[11px] text-gray-500 italic">Get Remrin Premium for extra summons!</div>
+                                </div>
+                            </div>
+                        ) : activeTab === 'trending' ? (
+                            <div className="p-2 space-y-3">
+                                <h3 className="font-bold text-[#5e2b8d] border-b border-[#d8c3e8] pb-1 flex items-center gap-1">
+                                    <IconTrendingUp size={14} className="text-blue-500" /> Trending Souls
+                                </h3>
+                                <div className="space-y-1">
+                                    {trendingPersonas.map((persona, idx) => (
+                                        <div
+                                            key={persona.id}
+                                            className="flex items-center gap-2 p-1.5 rounded hover:bg-[#f3ebf9] cursor-pointer transition-colors border-b border-gray-50"
+                                            onClick={() => window.open(`/character/${persona.id}`, '_blank')}
+                                        >
+                                            <span className="text-[10px] font-bold text-gray-400 w-4">#{idx + 1}</span>
+                                            <img src={persona.image_url || '/images/default-avatar.png'} alt={persona.name} className="w-8 h-8 rounded-full object-cover border border-purple-100" />
+                                            <div className="flex-1 min-w-0">
+                                                <div className="font-bold text-[#2d005d] truncate">{persona.name}</div>
+                                                <div className="text-[9px] text-[#5e2b8d] opacity-70 truncate">{persona.description}</div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         ) : loading ? (
                             <div className="p-4 text-center text-gray-400 italic">Loading List...</div>
