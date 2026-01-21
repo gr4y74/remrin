@@ -1,22 +1,61 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { BuddyListWindow } from '@/components/aol-chat/BuddyListWindow';
 import { IMWindow } from '@/components/aol-chat/IMWindow';
+import { MobileLayout } from '@/components/messenger/MobileLayout';
+import { MobileHeader } from '@/components/messenger/MobileHeader';
+import { MobileBottomNav } from '@/components/messenger/MobileBottomNav';
+import { MobileBuddyList } from '@/components/messenger/MobileBuddyList';
+import { MobileChatView } from '@/components/messenger/MobileChatView';
 import { useDirectMessages } from '@/hooks/useDirectMessages';
 import { useEnhancedPresence } from '@/hooks/useEnhancedPresence';
-import { useBuddyList } from '@/hooks/useBuddyList';
+import { useBuddyList, Buddy } from '@/hooks/useBuddyList';
+import { useDeviceType } from '@/hooks/useMobileDetection';
+import { useProfileUpdates } from '@/hooks/useUnifiedProfile';
 import '@/components/aol-chat/styles/yahoo-theme.css';
+
+type MobileView = 'buddies' | 'chat' | 'discover' | 'profile';
 
 export default function MessengerStandalonePage() {
     const [currentUser, setCurrentUser] = useState<any>(null);
     const [openIMs, setOpenIMs] = useState<{ userId: string; username: string }[]>([]);
+    const [mobileView, setMobileView] = useState<MobileView>('buddies');
+    const [activeChatPartner, setActiveChatPartner] = useState<Buddy | null>(null);
+
+    const deviceType = useDeviceType();
+    const isMobile = deviceType === 'mobile';
 
     const supabase = createClient();
     const { activeConversations, sendMessage, markMessagesAsRead } = useDirectMessages(currentUser?.id);
     const { status: presenceStatus, updateStatus } = useEnhancedPresence(currentUser?.id, currentUser?.user_metadata?.username);
     const { buddies } = useBuddyList();
+
+    // Get all buddy user IDs for real-time profile updates
+    const buddyUserIds = useMemo(() =>
+        buddies.filter(b => b.buddy_type === 'human').map(b => b.buddy_id),
+        [buddies]
+    );
+
+    // Subscribe to profile updates for all buddies
+    const profileUpdates = useProfileUpdates(buddyUserIds);
+
+    // Merge profile updates into buddies
+    const buddiesWithUpdates = useMemo(() => {
+        return buddies.map(buddy => {
+            const update = profileUpdates.get(buddy.buddy_id);
+            if (update && buddy.buddy_type === 'human') {
+                return {
+                    ...buddy,
+                    avatar_url: update.avatar_url || buddy.avatar_url,
+                    buddy_username: update.username || buddy.buddy_username,
+                    nickname: (buddy.nickname || update.display_name || null) as string | null
+                };
+            }
+            return buddy;
+        });
+    }, [buddies, profileUpdates]);
 
     useEffect(() => {
         const getUser = async () => {
@@ -42,6 +81,108 @@ export default function MessengerStandalonePage() {
         sendMessage(partnerId, partnerUsername, text, currentUser?.user_metadata?.username || 'User', attachment, isBot);
     };
 
+    // Mobile: Handle buddy click
+    const handleBuddyClick = (buddy: Buddy) => {
+        setActiveChatPartner(buddy);
+        setMobileView('chat');
+        markMessagesAsRead(buddy.buddy_id);
+    };
+
+    // Mobile: Handle back from chat
+    const handleBackFromChat = () => {
+        setActiveChatPartner(null);
+        setMobileView('buddies');
+    };
+
+    // Mobile: Handle send message
+    const handleMobileSendMessage = (text: string) => {
+        if (activeChatPartner) {
+            handleSendIM(
+                activeChatPartner.buddy_id,
+                activeChatPartner.buddy_username,
+                text
+            );
+        }
+    };
+
+    // Calculate unread messages count
+    const unreadCount = useMemo(() => {
+        let count = 0;
+        activeConversations.forEach((messages) => {
+            count += messages.filter(m => !m.read && m.to_user_id === currentUser?.id).length;
+        });
+        return count;
+    }, [activeConversations, currentUser?.id]);
+
+    // MOBILE LAYOUT
+    if (isMobile) {
+        return (
+            <MobileLayout
+                header={
+                    <MobileHeader
+                        user={{
+                            username: currentUser?.user_metadata?.username,
+                            display_name: currentUser?.user_metadata?.display_name,
+                            avatar_url: currentUser?.user_metadata?.image_url
+                        }}
+                        status={presenceStatus as any}
+                        unreadCount={unreadCount}
+                    />
+                }
+                bottomNav={
+                    mobileView !== 'chat' && (
+                        <MobileBottomNav
+                            activeTab={mobileView === 'buddies' ? 'chats' : mobileView}
+                            onTabChange={(tab) => {
+                                if (tab === 'chats') setMobileView('buddies');
+                                else setMobileView(tab as MobileView);
+                            }}
+                            unreadChats={unreadCount}
+                        />
+                    )
+                }
+            >
+                {mobileView === 'buddies' && (
+                    <MobileBuddyList
+                        buddies={buddiesWithUpdates}
+                        onBuddyClick={handleBuddyClick}
+                    />
+                )}
+
+                {mobileView === 'chat' && activeChatPartner && (
+                    <MobileChatView
+                        partner={{
+                            id: activeChatPartner.buddy_id,
+                            username: activeChatPartner.nickname || activeChatPartner.buddy_username,
+                            avatar_url: activeChatPartner.avatar_url || undefined,
+                            status: activeChatPartner.status as any
+                        }}
+                        messages={activeConversations.get(activeChatPartner.buddy_id) || []}
+                        currentUserId={currentUser?.id || ''}
+                        currentUsername={currentUser?.user_metadata?.username || 'User'}
+                        onSendMessage={handleMobileSendMessage}
+                        onBack={handleBackFromChat}
+                    />
+                )}
+
+                {mobileView === 'discover' && (
+                    <div className="p-8 text-center text-gray-500">
+                        <h2 className="text-xl font-bold mb-2">Discover</h2>
+                        <p>Coming soon...</p>
+                    </div>
+                )}
+
+                {mobileView === 'profile' && (
+                    <div className="p-8 text-center text-gray-500">
+                        <h2 className="text-xl font-bold mb-2">Profile</h2>
+                        <p>Coming soon...</p>
+                    </div>
+                )}
+            </MobileLayout>
+        );
+    }
+
+    // DESKTOP LAYOUT (Original)
     return (
         <div className="h-screen w-full bg-[#5E2B8D] flex flex-col overflow-hidden yahoo-theme">
             <div className="flex-1 flex flex-col relative p-0">

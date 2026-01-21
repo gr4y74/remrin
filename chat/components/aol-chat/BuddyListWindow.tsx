@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { XPWindow } from './XPWindow';
 import { XPButton } from './XPButton';
 import { XPInput } from './XPInput';
 import { cn } from '@/lib/utils';
 import { useBuddyList, Buddy } from '@/hooks/useBuddyList';
+import { useProfileUpdates } from '@/hooks/useUnifiedProfile';
 import { IconUserPlus, IconLogout, IconMessage, IconUsers, IconSettings, IconBrandWindows, IconHome, IconSparkles, IconDice, IconBooks, IconShoppingBag, IconBrush, IconWallet, IconBell, IconBrandDiscord, IconBrandReddit, IconBrandTiktok, IconBrandX, IconBrandInstagram, IconChevronDown, IconUser, IconTrendingUp, IconDiamond } from '@tabler/icons-react';
 import { CharacterDirectory } from './CharacterDirectory';
 import { SidebarRecentChats } from '../layout/SidebarRecentChats';
@@ -48,6 +49,32 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
         blockUser,
         groupedBuddies
     } = useBuddyList();
+
+    // Get all buddy user IDs for real-time profile updates
+    const buddyUserIds = useMemo(() =>
+        buddies.filter(b => b.buddy_type === 'human').map(b => b.buddy_id),
+        [buddies]
+    );
+
+    // Subscribe to profile updates for all buddies
+    const profileUpdates = useProfileUpdates(buddyUserIds);
+
+    // Merge profile updates into buddies
+    const buddiesWithUpdates = useMemo(() => {
+        return buddies.map(buddy => {
+            const update = profileUpdates.get(buddy.buddy_id);
+            if (update && buddy.buddy_type === 'human') {
+                return {
+                    ...buddy,
+                    avatar_url: update.avatar_url || buddy.avatar_url,
+                    buddy_username: update.username || buddy.buddy_username,
+                    nickname: buddy.nickname || update.display_name
+                };
+            }
+            return buddy;
+        });
+    }, [buddies, profileUpdates]);
+
 
     const [selectedBuddy, setSelectedBuddy] = useState<string | null>(null);
     const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
@@ -111,7 +138,27 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
         setExpandedGroups(prev => ({ ...prev, [group]: !prev[group] }));
     };
 
-    const groups = groupedBuddies();
+    // Use buddiesWithUpdates for grouping to include real-time profile changes
+    const groupedBuddiesWithUpdates = () => {
+        const groups: Record<string, any[]> = {};
+        buddiesWithUpdates.forEach(buddy => {
+            const groupName = buddy.group_name || 'Buddies';
+            if (!groups[groupName]) {
+                groups[groupName] = [];
+            }
+            groups[groupName].push(buddy);
+        });
+        // Sort each group: favorites first, then by username
+        Object.keys(groups).forEach(key => {
+            groups[key].sort((a, b) => {
+                if (a.is_favorite !== b.is_favorite) return a.is_favorite ? -1 : 1;
+                return a.buddy_username.localeCompare(b.buddy_username);
+            });
+        });
+        return groups;
+    };
+
+    const groups = groupedBuddiesWithUpdates();
     const groupNames = Object.keys(groups).length > 0 ? Object.keys(groups) : ['Buddies'];
 
     const handleAddBuddy = async () => {
@@ -135,8 +182,8 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
         }
     };
 
-    const getSelectedBuddy = (): Buddy | undefined => {
-        return buddies.find(b => b.buddy_id === selectedBuddy);
+    const getSelectedBuddy = (): any => {
+        return buddiesWithUpdates.find(b => b.buddy_id === selectedBuddy);
     };
 
     const handlePopOut = () => {
@@ -382,7 +429,7 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
                             </div>
                         ) : loading ? (
                             <div className="p-4 text-center text-gray-400 italic">Loading List...</div>
-                        ) : buddies.length === 0 ? (
+                        ) : buddiesWithUpdates.length === 0 ? (
                             <div className="p-4 text-center text-gray-400">
                                 <p className="mb-2">Your buddy list is empty.</p>
                                 <XPButton onClick={() => setShowAddModal(true)} variant="normal" className="text-[10px]">Add a Buddy</XPButton>
