@@ -6,7 +6,8 @@ import { XPButton } from './XPButton';
 import { XPInput } from './XPInput';
 import { cn } from '@/lib/utils';
 import { useBuddyList, Buddy } from '@/hooks/useBuddyList';
-import { IconUserPlus, IconLogout, IconMessage, IconUsers, IconSettings } from '@tabler/icons-react';
+import { IconUserPlus, IconLogout, IconMessage, IconUsers, IconSettings, IconBrandWindows } from '@tabler/icons-react';
+import { CharacterDirectory } from './CharacterDirectory';
 
 interface BuddyListWindowProps {
     currentUser: any;
@@ -15,6 +16,7 @@ interface BuddyListWindowProps {
     onJoinRoom?: () => void;
     onSetAway?: () => void;
     currentStatus?: string;
+    isStandalone?: boolean;
 }
 
 export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
@@ -23,7 +25,8 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
     onClose,
     onJoinRoom,
     onSetAway,
-    currentStatus = 'online'
+    currentStatus = 'online',
+    isStandalone = false
 }) => {
     const {
         buddies,
@@ -43,6 +46,17 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
     const [showAddModal, setShowAddModal] = useState(false);
     const [addUsername, setAddUsername] = useState('');
     const [addError, setAddError] = useState('');
+    const [activeTab, setActiveTab] = useState<'contacts' | 'updates'>('contacts');
+    const [showCharacterDirectory, setShowCharacterDirectory] = useState(false);
+
+    const handleAddBot = async (personaId: string) => {
+        const result = await addBuddy('', 'Characters', undefined, personaId);
+        if (result.success) {
+            setShowCharacterDirectory(false);
+        } else {
+            alert(result.error || 'Failed to add bot');
+        }
+    };
 
     const toggleGroup = (group: string) => {
         setExpandedGroups(prev => ({ ...prev, [group]: !prev[group] }));
@@ -76,46 +90,95 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
         return buddies.find(b => b.buddy_id === selectedBuddy);
     };
 
+    const handlePopOut = () => {
+        const width = 300;
+        const height = 600;
+        const left = window.screenX + (window.innerWidth - width) / 2;
+        const top = window.screenY + (window.innerHeight - height) / 2;
+
+        window.open(
+            `${window.location.origin}/en/aol/messenger`,
+            'RemrinMessenger',
+            `width=${width},height=${height},left=${left},top=${top},menubar=no,toolbar=no,location=no,status=no,resizable=yes`
+        );
+    };
+
     return (
         <>
             <XPWindow
                 title={`${currentUser?.user_metadata?.username || 'Guest'}'s Buddy List`}
-                className="w-full h-full min-h-[500px] flex flex-col"
+                className={cn("w-full h-full flex flex-col", isStandalone && "shadow-none rounded-none border-none")}
                 onClose={onClose}
+                onMinimize={() => !isStandalone && handlePopOut()}
                 icon="/icons/win95/aol_icon.png"
             >
-                {/* AIM Brand Header */}
-                <div className="bg-gradient-to-b from-[#fceebb] to-[#f4d27a] p-2 border-b border-[#e0c060] flex items-center justify-between shadow-sm">
+                {/* AIM/Yahoo Brand Header */}
+                <div className="bg-gradient-to-b from-[#fceebb] to-[#f4d27a] p-2 border-b border-[#e0c060] flex items-center justify-between shadow-sm yahoo-header">
                     <div className="flex items-center gap-2">
-                        {/* Placeholder for AIM running man logo if we had it, using text for now */}
-                        <div className="font-bold text-[#0054e3] italic text-lg tracking-tighter drop-shadow-sm">Remrin IM</div>
+                        <div className="font-bold text-[#0054e3] italic text-lg tracking-tighter drop-shadow-sm yahoo-brand">Remrin Messenger</div>
                     </div>
-                    <div className="text-[10px] text-[#555] font-semibold">
-                        {currentStatus === 'online' ? 'Online' : 'Away'}
+                    <div className="flex items-center gap-2">
+                        <div className="text-[10px] text-[#555] font-semibold">
+                            {currentStatus === 'online' ? 'Online' : 'Away'}
+                        </div>
+                        {!isStandalone && (
+                            <button
+                                onClick={handlePopOut}
+                                className="p-1 hover:bg-black/10 rounded transition-colors"
+                                title="Pop out into standalone window"
+                            >
+                                <IconLogout size={14} className="rotate-[-90deg]" />
+                            </button>
+                        )}
                     </div>
                 </div>
 
                 {/* Main Content */}
-                <div className="flex flex-col flex-1 bg-[#ece9d8] p-1 overflow-hidden">
+                <div className="flex flex-col flex-1 bg-[#ece9d8] p-0 overflow-hidden yahoo-content">
+                    {/* Yahoo Style Tabs */}
+                    <div className="flex bg-[#7b4ea3] px-1 pt-1 gap-[1px]">
+                        <button
+                            onClick={() => setActiveTab('contacts')}
+                            className={cn(
+                                "px-4 py-1.5 text-[11px] font-bold rounded-t-[4px] transition-colors",
+                                activeTab === 'contacts' ? "bg-[#f3ebf9] text-[#2d005d]" : "bg-[#5e2b8d] text-white hover:bg-[#6d39a3]"
+                            )}
+                        >
+                            Contacts
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('updates')}
+                            className={cn(
+                                "px-4 py-1.5 text-[11px] font-bold rounded-t-[4px] transition-colors",
+                                activeTab === 'updates' ? "bg-[#f3ebf9] text-[#2d005d]" : "bg-[#5e2b8d] text-white hover:bg-[#6d39a3]"
+                            )}
+                        >
+                            Y! Updates
+                        </button>
+                    </div>
 
                     {/* Toolbar */}
-                    <div className="flex gap-1 mb-2 px-1">
-                        <button className="flex flex-col items-center justify-center p-1 rounded hover:bg-white/50 transition-colors text-[10px] text-[#0054e3]" onClick={onSetAway}>
+                    <div className="flex gap-1 py-2 px-2 bg-[#f3ebf9] border-b border-[#d8c3e8]">
+                        <button className="flex flex-col items-center justify-center p-1 rounded hover:bg-white/50 transition-colors text-[10px] text-[#5e2b8d]" onClick={onSetAway}>
                             <IconSettings size={20} />
                             <span>Setup</span>
                         </button>
-                        <button className="flex flex-col items-center justify-center p-1 rounded hover:bg-white/50 transition-colors text-[10px] text-[#0054e3]" onClick={() => setShowAddModal(true)}>
+                        <button className="flex flex-col items-center justify-center p-1 rounded hover:bg-white/50 transition-colors text-[10px] text-[#5e2b8d]" onClick={() => setShowAddModal(true)}>
                             <IconUserPlus size={20} />
                             <span>Add</span>
                         </button>
-                        <button className="flex flex-col items-center justify-center p-1 rounded hover:bg-white/50 transition-colors text-[10px] text-[#0054e3]" onClick={onJoinRoom}>
+                        <button className="flex flex-col items-center justify-center p-1 rounded hover:bg-white/50 transition-colors text-[10px] text-[#5e2b8d]" onClick={() => setShowCharacterDirectory(true)}>
+                            <IconBrandWindows size={20} />
+                            <span>Find Bot</span>
+                        </button>
+                        <button className="flex flex-col items-center justify-center p-1 rounded hover:bg-white/50 transition-colors text-[10px] text-[#5e2b8d]" onClick={onJoinRoom}>
                             <IconUsers size={20} />
                             <span>Chat</span>
                         </button>
                     </div>
 
                     {/* Buddy List */}
-                    <div className="flex-1 bg-white border border-[#7f9db9] rounded-[2px] overflow-y-auto font-['Tahoma',_sans-serif] text-[11px] shadow-inner mb-2">
+                    <div className="flex-1 bg-white border-t border-[#7f9db9] overflow-y-auto font-['Tahoma',_sans-serif] text-[11px] shadow-inner">
                         {loading ? (
                             <div className="p-4 text-center text-gray-400 italic">Loading List...</div>
                         ) : buddies.length === 0 ? (
@@ -153,18 +216,26 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
                                                             isSelected ? "bg-[#316ac5] text-white" : "hover:bg-[#f0f0f0] text-black"
                                                         )}
                                                     >
-                                                        {/* Status Icon */}
-                                                        <div className={cn(
-                                                            "w-2.5 h-2.5 rounded-sm shadow-sm border border-black/10 flex-shrink-0",
-                                                            buddy.status === 'online' && "bg-[#00cc00]",
-                                                            buddy.status === 'away' && "bg-[#ffcc00]",
-                                                            buddy.status === 'busy' && "bg-[#ff0000]",
-                                                            buddy.status === 'offline' && "bg-[#999999]"
-                                                        )} />
+                                                        {/* Status Icon or Avatar */}
+                                                        {buddy.buddy_type === 'bot' ? (
+                                                            <img
+                                                                src={buddy.avatar_url || '/images/default-avatar.png'}
+                                                                alt=""
+                                                                className="w-5 h-5 rounded-full border border-gray-200 object-cover"
+                                                            />
+                                                        ) : (
+                                                            <div className={cn(
+                                                                "w-2.5 h-2.5 rounded-sm shadow-sm border border-black/10 flex-shrink-0",
+                                                                buddy.status === 'online' && "bg-[#00cc00]",
+                                                                buddy.status === 'away' && "bg-[#ffcc00]",
+                                                                buddy.status === 'busy' && "bg-[#ff0000]",
+                                                                buddy.status === 'offline' && "bg-[#999999]"
+                                                            )} />
+                                                        )}
 
                                                         <div className="flex-1 overflow-hidden">
                                                             <div className="truncate font-medium">{buddy.nickname || buddy.buddy_username}</div>
-                                                            {buddy.status === 'offline' && buddy.last_seen && (
+                                                            {buddy.buddy_type === 'human' && buddy.status === 'offline' && buddy.last_seen && (
                                                                 <div className={cn("text-[10px] italic truncate", isSelected ? "text-white/70" : "text-gray-400")}>
                                                                     Last seen: {new Date(buddy.last_seen).toLocaleDateString()}
                                                                 </div>
@@ -191,7 +262,7 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
                     </div>
 
                     {/* Bottom Action Bar */}
-                    <div className="bg-[#d4d0c8] p-1 rounded-[2px] flex justify-between items-center border border-white shadow-[inset_1px_1px_0_rgba(0,0,0,0.1)]">
+                    <div className="bg-[#f3ebf9] p-1 flex justify-between items-center border-t border-[#d8c3e8]">
                         <XPButton
                             className="px-3"
                             disabled={!selectedBuddy}
@@ -202,7 +273,7 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
                         >
                             <span className="flex items-center gap-1"><IconMessage size={12} /> IM</span>
                         </XPButton>
-                        <div className="h-4 w-[1px] bg-gray-400 mx-1" />
+                        <div className="h-4 w-[1px] bg-[#d8c3e8] mx-1" />
                         <XPButton
                             disabled={!selectedBuddy}
                             onClick={() => selectedBuddy && handleRemoveBuddy(selectedBuddy)}
@@ -257,6 +328,15 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
                             </div>
                         </div>
                     </XPWindow>
+                </div>
+            )}
+
+            {showCharacterDirectory && (
+                <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[110]">
+                    <CharacterDirectory
+                        onClose={() => setShowCharacterDirectory(false)}
+                        onAddBot={handleAddBot}
+                    />
                 </div>
             )}
         </>

@@ -6,12 +6,15 @@ import { chatSounds } from '@/lib/chat/soundManager';
 export interface Buddy {
     buddy_id: string;
     buddy_username: string;
+    buddy_type: 'human' | 'bot';
+    persona_id: string | null;
     nickname: string | null;
     group_name: string;
     is_favorite: boolean;
     status: 'online' | 'away' | 'busy' | 'offline';
     away_message: string | null;
     last_seen: string | null;
+    avatar_url?: string | null;
 }
 
 export interface BlockedUser {
@@ -74,13 +77,14 @@ export function useBuddyList() {
     const addBuddy = useCallback(async (
         buddyUsername: string,
         groupName: string = 'Buddies',
-        nickname?: string
+        nickname?: string,
+        personaId?: string
     ): Promise<{ success: boolean; error?: string }> => {
         try {
             const response = await fetch('/api/chat/buddies', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ buddyUsername, groupName, nickname })
+                body: JSON.stringify({ buddyUsername, groupName, nickname, personaId })
             });
 
             const data = await response.json();

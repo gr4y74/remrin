@@ -125,7 +125,7 @@ export function useDirectMessages(currentUserId: string | undefined) {
         };
     }, [currentUserId]);
 
-    const sendMessage = async (toUserId: string, toUsername: string, message: string, fromUsername: string, attachment?: { url: string, type: string, name: string, size: number }) => {
+    const sendMessage = async (toUserId: string, toUsername: string, message: string, fromUsername: string, attachment?: { url: string, type: string, name: string, size: number }, isBot: boolean = false) => {
         if (!currentUserId) return;
 
         const { error } = await supabase.from('direct_messages').insert({
@@ -166,6 +166,19 @@ export function useDirectMessages(currentUserId: string | undefined) {
             });
 
             chatSounds.play('imSend');
+
+            // If it's a bot, trigger the bot response
+            if (isBot) {
+                try {
+                    await fetch(`/api/chat/persona/${toUserId}/chat`, {
+                        method: 'POST',
+                        body: JSON.stringify({ message }),
+                    });
+                    // The bot response will come back via Realtime subscription in the useEffect
+                } catch (e) {
+                    console.error('Error getting bot response:', e);
+                }
+            }
         }
     };
 

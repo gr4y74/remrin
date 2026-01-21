@@ -9,6 +9,7 @@ import { BuddyListWindow } from '@/components/aol-chat/BuddyListWindow';
 import { AwayMessageModal } from '@/components/aol-chat/AwayMessageModal';
 import { useDirectMessages } from '@/hooks/useDirectMessages';
 import { useEnhancedPresence } from '@/hooks/useEnhancedPresence';
+import { useBuddyList } from '@/hooks/useBuddyList';
 import { IconBrandWindows, IconMenu2, IconUser } from '@tabler/icons-react';
 
 export default function AolChatPage() {
@@ -23,6 +24,7 @@ export default function AolChatPage() {
     const supabase = createClient();
     const { activeConversations, sendMessage, markMessagesAsRead } = useDirectMessages(currentUser?.id);
     const { status, awayMessage, updateStatus } = useEnhancedPresence(currentUser?.id, currentUser?.user_metadata?.username);
+    const { buddies } = useBuddyList();
 
     useEffect(() => {
         const getUser = async () => {
@@ -43,7 +45,9 @@ export default function AolChatPage() {
     };
 
     const handleSendIM = (partnerId: string, partnerUsername: string, text: string, attachment?: any) => {
-        sendMessage(partnerId, partnerUsername, text, currentUser?.user_metadata?.username || 'User', attachment);
+        const buddy = buddies.find(b => b.buddy_id === partnerId);
+        const isBot = buddy?.buddy_type === 'bot';
+        sendMessage(partnerId, partnerUsername, text, currentUser?.user_metadata?.username || 'User', attachment, isBot);
     };
 
     return (
@@ -97,7 +101,7 @@ export default function AolChatPage() {
                             <BuddyListWindow
                                 currentUser={currentUser}
                                 onOpenIM={openIM}
-                                onClose={() => setIsBuddyListOpen(false)} // Technically this button is hidden in sidebar mode usually, or we disable closing
+                                onClose={() => setIsBuddyListOpen(false)}
                                 currentStatus={status}
                                 onSetAway={() => setShowAwayModal(true)}
                                 onJoinRoom={() => {
@@ -160,7 +164,8 @@ export default function AolChatPage() {
                     {openIMs.map((im, index) => {
                         const partnerId = im.userId;
                         const messages = activeConversations.get(partnerId) || [];
-                        const partnerUsername = im.username || (messages[0]?.from_user_id === partnerId
+                        const buddy = buddies.find(b => b.buddy_id === partnerId);
+                        const partnerUsername = im.username || buddy?.buddy_username || (messages[0]?.from_user_id === partnerId
                             ? messages[0].from_username
                             : messages[0]?.to_username || "Unknown User");
 

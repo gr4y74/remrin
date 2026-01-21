@@ -41,41 +41,67 @@ export async function POST(request: NextRequest) {
         }
 
         const body = await request.json();
-        const { buddyUsername, groupName = 'Buddies', nickname } = body;
+        const { buddyUsername, personaId, groupName = 'Buddies', nickname } = body;
 
-        if (!buddyUsername) {
-            return NextResponse.json({ error: 'buddyUsername is required' }, { status: 400 });
-        }
+        let buddy_id: string;
+        let buddy_username: string;
+        let buddy_type: 'human' | 'bot' = 'human';
+        let final_persona_id: string | null = null;
 
-        // Find the buddy user by username
-        const { data: buddyProfile, error: profileError } = await supabase
-            .from('user_profiles_chat')
-            .select('user_id, username')
-            .eq('username', buddyUsername)
-            .single();
+        if (personaId) {
+            // Find the persona
+            const { data: persona, error: pError } = await supabase
+                .from('personas')
+                .select('id, name')
+                .eq('id', personaId)
+                .single();
 
-        if (profileError || !buddyProfile) {
-            return NextResponse.json({ error: 'User not found' }, { status: 404 });
+            if (pError || !persona) {
+                return NextResponse.json({ error: 'Persona not found' }, { status: 404 });
+            }
+
+            buddy_id = persona.id;
+            buddy_username = persona.name;
+            buddy_type = 'bot';
+            final_persona_id = persona.id;
+        } else if (buddyUsername) {
+            // Find the buddy user by username
+            const { data: buddyProfile, error: profileError } = await supabase
+                .from('user_profiles_chat')
+                .select('user_id, username')
+                .eq('username', buddyUsername)
+                .single();
+
+            if (profileError || !buddyProfile) {
+                return NextResponse.json({ error: 'User not found' }, { status: 404 });
+            }
+
+            buddy_id = buddyProfile.user_id;
+            buddy_username = buddyProfile.username;
+        } else {
+            return NextResponse.json({ error: 'buddyUsername or personaId is required' }, { status: 400 });
         }
 
         // Check if already buddies
         const { data: existing } = await supabase
             .from('buddy_lists')
-            .select('buddy_id')
+            .select('*')
             .eq('user_id', user.id)
-            .eq('buddy_id', buddyProfile.user_id)
+            .eq('buddy_id', buddy_id)
             .single();
 
         if (existing) {
             return NextResponse.json({ error: 'Already in buddy list' }, { status: 409 });
         }
 
-        // Check if blocked
-        const { data: isBlocked } = await supabase
-            .rpc('is_blocked', { checker_id: buddyProfile.user_id, target_id: user.id });
+        if (buddy_type === 'human') {
+            // Check if blocked
+            const { data: isBlocked } = await supabase
+                .rpc('is_blocked', { checker_id: buddy_id, target_id: user.id });
 
-        if (isBlocked) {
-            return NextResponse.json({ error: 'Unable to add this user' }, { status: 403 });
+            if (isBlocked) {
+                return NextResponse.json({ error: 'Unable to add this user' }, { status: 403 });
+            }
         }
 
         // Add buddy
@@ -83,8 +109,10 @@ export async function POST(request: NextRequest) {
             .from('buddy_lists')
             .insert({
                 user_id: user.id,
-                buddy_id: buddyProfile.user_id,
-                buddy_username: buddyProfile.username,
+                buddy_id: buddy_id,
+                buddy_username: buddy_username,
+                buddy_type: buddy_type,
+                persona_id: final_persona_id,
                 group_name: groupName,
                 nickname: nickname || null,
                 status: 'accepted'

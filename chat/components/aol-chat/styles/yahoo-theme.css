@@ -1,0 +1,45 @@
+:root {
+    /* Yahoo Messenger 9.0 Palette (Purple/Lavender) */
+    --yahoo-purple-dark: #4b1b7a;
+    --yahoo-purple-primary: #5e2b8d;
+    --yahoo-purple-light: #7b4ea3;
+    --yahoo-lavender: #d8c3e8;
+    --yahoo-lavender-light: #f3ebf9;
+
+    /* Window colors */
+    --yahoo-window-bg: #f3ebf9;
+    --yahoo-window-border: #4b1b7a;
+    --yahoo-titlebar: linear-gradient(180deg, #7b4ea3 0%, #5e2b8d 50%, #4b1b7a 100%);
+
+    /* Button colors */
+    --yahoo-button-bg: linear-gradient(180deg, #fff 0%, #d8c3e8 100%);
+    --yahoo-button-border: #4b1b7a;
+    --yahoo-button-hover: linear-gradient(180deg, #fff 0%, #c4a9db 100%);
+
+    /* Text */
+    --yahoo-text-primary: #2d005d;
+    --yahoo-text-secondary: #5e2b8d;
+}
+
+.yahoo-theme {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+}
+
+.yahoo-theme .xp-window {
+    border-color: var(--yahoo-window-border);
+    background-color: var(--yahoo-window-bg);
+}
+
+.yahoo-theme .xp-titlebar {
+    background: var(--yahoo-titlebar);
+}
+
+.yahoo-theme .xp-button {
+    background: var(--yahoo-button-bg);
+    border-color: var(--yahoo-button-border);
+    color: var(--yahoo-text-primary);
+}
+
+.yahoo-theme .xp-button:hover {
+    background: var(--yahoo-button-hover);
+}
