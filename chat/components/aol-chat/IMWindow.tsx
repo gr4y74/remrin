@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { XPWindow } from './XPWindow';
 import { XPButton } from './XPButton';
 import { DirectMessage } from '@/hooks/useDirectMessages';
 import { useTypingIndicator } from '@/hooks/useTypingIndicator';
+import { useConversationState } from '@/hooks/useConversationState';
 import { EmoticonPicker } from './EmoticonPicker';
 import { prepareForMarkdown } from '@/lib/chat/emoticons';
 import ReactMarkdown from 'react-markdown';
@@ -12,6 +13,7 @@ import { ContextMenu, ContextMenuTrigger, ContextMenuContent, ContextMenuItem } 
 import { IconPaperclip, IconSend, IconBold, IconItalic, IconUnderline, IconTextColor } from '@tabler/icons-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { debounce } from 'lodash';
 
 interface IMWindowProps {
     partnerUsername: string;
@@ -40,6 +42,30 @@ export const IMWindow: React.FC<IMWindowProps> = ({
     const [isUploading, setIsUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+    // Conversation state integration
+    const { state, updateDraft, updateScrollPosition, markAsRead, clearDraft } =
+        useConversationState(currentUserId, partnerId, 'direct');
+
+    // Restore draft message on mount
+    useEffect(() => {
+        if (state?.draft_message && !inputValue) {
+            setInputValue(state.draft_message);
+        }
+    }, [state?.draft_message]);
+
+    // Save draft on input change (debounced)
+    const debouncedUpdateDraft = useMemo(
+        () => debounce((draft: string) => {
+            updateDraft(draft);
+        }, 500),
+        [updateDraft]
+    );
+
+    useEffect(() => {
+        debouncedUpdateDraft(inputValue);
+    }, [inputValue, debouncedUpdateDraft]);
 
     // Typing indicator for DMs
     const { typingUsernames, handleTyping } = useTypingIndicator(`dm:${[currentUserId, partnerId].sort().join('-')}`, currentUsername);
@@ -48,6 +74,23 @@ export const IMWindow: React.FC<IMWindowProps> = ({
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
+
+    // Restore scroll position on mount
+    useEffect(() => {
+        if (state?.scroll_position && scrollContainerRef.current) {
+            scrollContainerRef.current.scrollTop = state.scroll_position;
+        }
+    }, [state?.scroll_position]);
+
+    // Save scroll position (debounced)
+    const handleScroll = useMemo(
+        () => debounce(() => {
+            if (scrollContainerRef.current) {
+                updateScrollPosition(scrollContainerRef.current.scrollTop);
+            }
+        }, 300),
+        [updateScrollPosition]
+    );
 
     // Mark messages as read when window is focused
     useEffect(() => {
@@ -68,6 +111,7 @@ export const IMWindow: React.FC<IMWindowProps> = ({
         if (!inputValue.trim()) return;
         onSend(inputValue);
         setInputValue('');
+        clearDraft(); // Clear draft from database
     };
 
     const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -135,7 +179,11 @@ export const IMWindow: React.FC<IMWindowProps> = ({
 
                 <div className="flex flex-col h-[calc(100%-25px)] p-2 bg-[#ece9d8]">
                     {/* Messages Area */}
-                    <div className="flex-1 bg-white border border-[#7f9db9] rounded-[2px] mb-2 p-3 overflow-y-auto shadow-inner text-[13px] font-['Tahoma',_sans-serif]">
+                    <div
+                        ref={scrollContainerRef}
+                        onScroll={handleScroll}
+                        className="flex-1 bg-white border border-[#7f9db9] rounded-[2px] mb-2 p-3 overflow-y-auto shadow-inner text-[13px] font-['Tahoma',_sans-serif]"
+                    >
                         {messages.map((msg) => {
                             const isMe = msg.from_username === currentUsername;
                             return (

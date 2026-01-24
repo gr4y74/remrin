@@ -1,8 +1,10 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { IconArrowLeft, IconDotsVertical, IconPaperclip, IconSend } from '@tabler/icons-react';
+import { useConversationState } from '@/hooks/useConversationState';
+import { debounce } from 'lodash';
 
 interface Message {
     id: string;
@@ -13,6 +15,7 @@ interface Message {
     message: string;
     created_at: string;
     read: boolean;
+    read_by?: string[];
 }
 
 interface MobileChatViewProps {
@@ -48,17 +51,72 @@ export const MobileChatView: React.FC<MobileChatViewProps> = ({
 }) => {
     const [inputText, setInputText] = useState('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
+
+    // Conversation state integration
+    const { state, updateDraft, updateScrollPosition, markAsRead, clearDraft } =
+        useConversationState(currentUserId, partner.id, 'direct');
+
+    // Restore draft message on mount
+    useEffect(() => {
+        if (state?.draft_message && !inputText) {
+            setInputText(state.draft_message);
+        }
+    }, [state?.draft_message]);
+
+    // Save draft on input change (debounced)
+    const debouncedUpdateDraft = useMemo(
+        () => debounce((draft: string) => {
+            updateDraft(draft);
+        }, 500),
+        [updateDraft]
+    );
+
+    useEffect(() => {
+        debouncedUpdateDraft(inputText);
+    }, [inputText, debouncedUpdateDraft]);
 
     // Auto-scroll to bottom when new messages arrive
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
+    // Restore scroll position on mount
+    useEffect(() => {
+        if (state?.scroll_position && scrollContainerRef.current) {
+            scrollContainerRef.current.scrollTop = state.scroll_position;
+        }
+    }, [state?.scroll_position]);
+
+    // Save scroll position (debounced)
+    const handleScroll = useMemo(
+        () => debounce(() => {
+            if (scrollContainerRef.current) {
+                updateScrollPosition(scrollContainerRef.current.scrollTop);
+            }
+        }, 300),
+        [updateScrollPosition]
+    );
+
+    // Mark messages as read when visible
+    useEffect(() => {
+        const unreadMessages = messages.filter(
+            m => m.to_user_id === currentUserId &&
+                (!m.read_by || !m.read_by.includes(currentUserId))
+        );
+
+        if (unreadMessages.length > 0) {
+            const latestMessage = unreadMessages[unreadMessages.length - 1];
+            markAsRead(latestMessage.id);
+        }
+    }, [messages, currentUserId, markAsRead]);
+
     const handleSend = () => {
         if (inputText.trim()) {
             onSendMessage(inputText.trim());
             setInputText('');
+            clearDraft(); // Clear draft from database
             inputRef.current?.focus();
         }
     };
@@ -120,7 +178,11 @@ export const MobileChatView: React.FC<MobileChatViewProps> = ({
             </div>
 
             {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-[#f3ebf9] to-white">
+            <div
+                ref={scrollContainerRef}
+                onScroll={handleScroll}
+                className="flex-1 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-[#f3ebf9] to-white"
+            >
                 {messages.map((msg) => {
                     const isOwn = msg.from_user_id === currentUserId;
 

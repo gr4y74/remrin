@@ -9,6 +9,10 @@ import { MobileHeader } from '@/components/messenger/MobileHeader';
 import { MobileBottomNav } from '@/components/messenger/MobileBottomNav';
 import { MobileBuddyList } from '@/components/messenger/MobileBuddyList';
 import { MobileChatView } from '@/components/messenger/MobileChatView';
+import { MobileDiscover } from '@/components/messenger/MobileDiscover';
+import { MobileProfile } from '@/components/messenger/MobileProfile';
+import { MobileMenuDrawer } from '@/components/messenger/MobileMenuDrawer';
+import { ServiceWorkerRegistration } from '@/components/utility/ServiceWorkerRegistration';
 import { useDirectMessages } from '@/hooks/useDirectMessages';
 import { useEnhancedPresence } from '@/hooks/useEnhancedPresence';
 import { useBuddyList, Buddy } from '@/hooks/useBuddyList';
@@ -21,13 +25,16 @@ type MobileView = 'buddies' | 'chat' | 'discover' | 'profile';
 export default function MessengerStandalonePage() {
     const [currentUser, setCurrentUser] = useState<any>(null);
     const [openIMs, setOpenIMs] = useState<{ userId: string; username: string }[]>([]);
-    const [mobileView, setMobileView] = useState<MobileView>('buddies');
+    const [mobileView, setMobileView] = useState<MobileView>('home');
     const [activeChatPartner, setActiveChatPartner] = useState<Buddy | null>(null);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const deviceType = useDeviceType();
     const isMobile = deviceType === 'mobile';
 
-    const supabase = createClient();
+    // Initialize Supabase client once
+    const [supabase] = useState(() => createClient());
+
     const { activeConversations, sendMessage, markMessagesAsRead } = useDirectMessages(currentUser?.id);
     const { status: presenceStatus, updateStatus } = useEnhancedPresence(currentUser?.id, currentUser?.user_metadata?.username);
     const { buddies } = useBuddyList();
@@ -57,13 +64,40 @@ export default function MessengerStandalonePage() {
         });
     }, [buddies, profileUpdates]);
 
+    // Fetch user session on mount and listen for auth changes
     useEffect(() => {
-        const getUser = async () => {
-            const { data: { user } } = await supabase.auth.getUser();
-            setCurrentUser(user);
+        let mounted = true;
+
+        const initAuth = async () => {
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (mounted) {
+                    setCurrentUser(session?.user || null);
+                    console.log('[Messenger] Auth initialized:', session?.user?.email || 'Guest');
+                }
+            } catch (error) {
+                console.error('[Messenger] Auth error:', error);
+                if (mounted) {
+                    setCurrentUser(null);
+                }
+            }
         };
-        getUser();
-    }, []);
+
+        initAuth();
+
+        // Listen for auth changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            if (mounted) {
+                setCurrentUser(session?.user || null);
+                console.log('[Messenger] Auth changed:', session?.user?.email || 'Guest');
+            }
+        });
+
+        return () => {
+            mounted = false;
+            subscription.unsubscribe();
+        };
+    }, [supabase]);
 
     const openIM = (userId: string, username: string) => {
         if (!openIMs.find(im => im.userId === userId)) {
@@ -117,110 +151,140 @@ export default function MessengerStandalonePage() {
     // MOBILE LAYOUT
     if (isMobile) {
         return (
-            <MobileLayout
-                header={
-                    <MobileHeader
-                        user={{
-                            username: currentUser?.user_metadata?.username,
-                            display_name: currentUser?.user_metadata?.display_name,
-                            avatar_url: currentUser?.user_metadata?.image_url
-                        }}
-                        status={presenceStatus as any}
-                        unreadCount={unreadCount}
-                    />
-                }
-                bottomNav={
-                    mobileView !== 'chat' && (
-                        <MobileBottomNav
-                            activeTab={mobileView === 'buddies' ? 'chats' : mobileView}
-                            onTabChange={(tab) => {
-                                if (tab === 'chats') setMobileView('buddies');
-                                else setMobileView(tab as MobileView);
+            <>
+                <ServiceWorkerRegistration />
+                <MobileMenuDrawer
+                    isOpen={mobileMenuOpen}
+                    onClose={() => setMobileMenuOpen(false)}
+                    user={{
+                        username: currentUser?.user_metadata?.username || currentUser?.email,
+                        display_name: currentUser?.user_metadata?.display_name,
+                        avatar_url: currentUser?.user_metadata?.image_url || currentUser?.user_metadata?.avatar_url
+                    }}
+                    onLogout={async () => {
+                        await supabase.auth.signOut();
+                        window.location.reload();
+                    }}
+                />
+                <MobileLayout
+                    header={
+                        <MobileHeader
+                            user={{
+                                username: currentUser?.user_metadata?.username || currentUser?.email,
+                                display_name: currentUser?.user_metadata?.display_name,
+                                avatar_url: currentUser?.user_metadata?.image_url || currentUser?.user_metadata?.avatar_url
                             }}
-                            unreadChats={unreadCount}
+                            status={presenceStatus as any}
+                            unreadCount={unreadCount}
+                            onMenuClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                            onNotificationsClick={() => {/* TODO: Open notifications */ }}
                         />
-                    )
-                }
-            >
-                {mobileView === 'buddies' && (
-                    <MobileBuddyList
-                        buddies={buddiesWithUpdates}
-                        onBuddyClick={handleBuddyClick}
-                    />
-                )}
+                    }
+                    bottomNav={
+                        mobileView !== 'chat' && (
+                            <MobileBottomNav
+                                activeTab={mobileView === 'buddies' ? 'chats' : mobileView}
+                                onTabChange={(tab) => {
+                                    if (tab === 'chats') setMobileView('buddies');
+                                    else setMobileView(tab as MobileView);
+                                }}
+                                unreadChats={unreadCount}
+                            />
+                        )
+                    }
+                >
+                    {mobileView === 'buddies' && (
+                        <MobileBuddyList
+                            buddies={buddiesWithUpdates}
+                            onBuddyClick={handleBuddyClick}
+                        />
+                    )}
 
-                {mobileView === 'chat' && activeChatPartner && (
-                    <MobileChatView
-                        partner={{
-                            id: activeChatPartner.buddy_id,
-                            username: activeChatPartner.nickname || activeChatPartner.buddy_username,
-                            avatar_url: activeChatPartner.avatar_url || undefined,
-                            status: activeChatPartner.status as any
-                        }}
-                        messages={activeConversations.get(activeChatPartner.buddy_id) || []}
-                        currentUserId={currentUser?.id || ''}
-                        currentUsername={currentUser?.user_metadata?.username || 'User'}
-                        onSendMessage={handleMobileSendMessage}
-                        onBack={handleBackFromChat}
-                    />
-                )}
+                    {mobileView === 'chat' && activeChatPartner && (
+                        <MobileChatView
+                            partner={{
+                                id: activeChatPartner.buddy_id,
+                                username: activeChatPartner.nickname || activeChatPartner.buddy_username,
+                                avatar_url: activeChatPartner.avatar_url || undefined,
+                                status: activeChatPartner.status as any
+                            }}
+                            messages={activeConversations.get(activeChatPartner.buddy_id) || []}
+                            currentUserId={currentUser?.id || ''}
+                            currentUsername={currentUser?.user_metadata?.username || 'User'}
+                            onSendMessage={handleMobileSendMessage}
+                            onBack={handleBackFromChat}
+                        />
+                    )}
 
-                {mobileView === 'discover' && (
-                    <div className="p-8 text-center text-gray-500">
-                        <h2 className="text-xl font-bold mb-2">Discover</h2>
-                        <p>Coming soon...</p>
-                    </div>
-                )}
+                    {mobileView === 'discover' && (
+                        <MobileDiscover
+                            currentUserId={currentUser?.id}
+                            onBuddyAdded={() => {
+                                // Refresh buddy list when new buddy is added
+                                window.location.reload();
+                            }}
+                        />
+                    )}
 
-                {mobileView === 'profile' && (
-                    <div className="p-8 text-center text-gray-500">
-                        <h2 className="text-xl font-bold mb-2">Profile</h2>
-                        <p>Coming soon...</p>
-                    </div>
-                )}
-            </MobileLayout>
+                    {mobileView === 'profile' && (
+                        <MobileProfile
+                            user={{
+                                username: currentUser?.user_metadata?.username,
+                                display_name: currentUser?.user_metadata?.display_name,
+                                avatar_url: currentUser?.user_metadata?.image_url
+                            }}
+                            onLogout={async () => {
+                                await supabase.auth.signOut();
+                                window.location.reload();
+                            }}
+                        />
+                    )}                </MobileLayout>
+            </>
         );
     }
 
     // DESKTOP LAYOUT (Original)
     return (
-        <div className="h-screen w-full bg-[#5E2B8D] flex flex-col overflow-hidden yahoo-theme">
-            <div className="flex-1 flex flex-col relative p-0">
-                <BuddyListWindow
-                    currentUser={currentUser}
-                    onOpenIM={openIM}
-                    onClose={() => window.close()}
-                    currentStatus={presenceStatus}
-                    onSetAway={() => {/* Handle away modal */ }}
-                    isStandalone={true}
-                />
+        <>
+            <ServiceWorkerRegistration />
+            <div className="h-screen w-full bg-[#5E2B8D] flex flex-col overflow-hidden yahoo-theme">
+                <div className="flex-1 flex flex-col relative p-0">
+                    <BuddyListWindow
+                        currentUser={currentUser}
+                        onOpenIM={openIM}
+                        onClose={() => window.close()}
+                        currentStatus={presenceStatus}
+                        onSetAway={() => {/* Handle away modal */ }}
+                        isStandalone={true}
+                    />
 
-                {/* IM Windows - Floating */}
-                <div className="absolute inset-0 pointer-events-none">
-                    {openIMs.map((im, index) => {
-                        const partnerId = im.userId;
-                        const messages = activeConversations.get(partnerId) || [];
-                        const buddy = buddies.find(b => b.buddy_id === partnerId);
-                        const partnerUsername = im.username || buddy?.buddy_username || "User";
+                    {/* IM Windows - Floating */}
+                    <div className="absolute inset-0 pointer-events-none">
+                        {openIMs.map((im, index) => {
+                            const partnerId = im.userId;
+                            const messages = activeConversations.get(partnerId) || [];
+                            const buddy = buddies.find(b => b.buddy_id === partnerId);
+                            const partnerUsername = im.username || buddy?.buddy_username || "User";
 
-                        return (
-                            <div key={partnerId} className="pointer-events-auto">
-                                <IMWindow
-                                    partnerId={partnerId}
-                                    partnerUsername={partnerUsername}
-                                    messages={messages}
-                                    currentUsername={currentUser?.user_metadata?.username || 'User'}
-                                    currentUserId={currentUser?.id || ''}
-                                    onSend={(text) => handleSendIM(partnerId, partnerUsername, text)}
-                                    onClose={() => closeIM(partnerId)}
-                                    onMarkAsRead={() => markMessagesAsRead(partnerId)}
-                                    position={{ x: 50 + (index * 20), y: 50 + (index * 20) }}
-                                />
-                            </div>
-                        );
-                    })}
+                            return (
+                                <div key={partnerId} className="pointer-events-auto">
+                                    <IMWindow
+                                        partnerId={partnerId}
+                                        partnerUsername={partnerUsername}
+                                        messages={messages}
+                                        currentUsername={currentUser?.user_metadata?.username || 'User'}
+                                        currentUserId={currentUser?.id || ''}
+                                        onSend={(text) => handleSendIM(partnerId, partnerUsername, text)}
+                                        onClose={() => closeIM(partnerId)}
+                                        onMarkAsRead={() => markMessagesAsRead(partnerId)}
+                                        position={{ x: 50 + (index * 20), y: 50 + (index * 20) }}
+                                    />
+                                </div>
+                            );
+                        })}
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
