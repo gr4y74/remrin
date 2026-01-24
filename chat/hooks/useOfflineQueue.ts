@@ -46,13 +46,16 @@ export function useOfflineQueue() {
             await tx.objectStore('pending-messages').add(queuedMessage);
 
             // Update queue size
-            const count = await tx.objectStore('pending-messages').count();
-            setQueueSize(count);
+            const countRequest = tx.objectStore('pending-messages').count();
+            countRequest.onsuccess = () => {
+                setQueueSize(countRequest.result);
+            };
 
             // Register background sync if available
             if ('serviceWorker' in navigator && 'sync' in ServiceWorkerRegistration.prototype) {
                 const registration = await navigator.serviceWorker.ready;
-                await registration.sync.register('sync-messages');
+                // @ts-ignore - sync property is non-standard but supported in some browsers
+                await (registration as any).sync.register('sync-messages');
             }
 
             return { success: true, id: queuedMessage.id };
@@ -66,9 +69,20 @@ export function useOfflineQueue() {
     const getQueueSize = async () => {
         try {
             const db = await openDB();
-            const count = await db.transaction('pending-messages').objectStore('pending-messages').count();
-            setQueueSize(count);
-            return count;
+            const tx = db.transaction('pending-messages');
+            const countRequest = tx.objectStore('pending-messages').count();
+
+            return new Promise<number>((resolve) => {
+                countRequest.onsuccess = () => {
+                    const count = countRequest.result;
+                    setQueueSize(count);
+                    resolve(count);
+                };
+                countRequest.onerror = () => {
+                    console.error('Failed to get queue size request:', countRequest.error);
+                    resolve(0);
+                };
+            });
         } catch (error) {
             console.error('Failed to get queue size:', error);
             return 0;

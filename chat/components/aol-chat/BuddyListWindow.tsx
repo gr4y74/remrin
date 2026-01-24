@@ -222,7 +222,7 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
                         <div className="relative">
                             <img
                                 src={avatarUrl}
-                                alt="Me"
+                                alt="My Avatar"
                                 className="w-12 h-12 rounded border-2 border-white shadow-sm object-cover"
                             />
                             <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border border-white rounded-full" />
@@ -394,7 +394,7 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
                                             className="bg-[#f3ebf9] border border-[#d8c3e8] rounded p-1.5 cursor-pointer hover:bg-white transition-colors"
                                             onClick={() => window.open(`/character/${persona.id}`, '_blank')}
                                         >
-                                            <img src={persona.image_url || '/images/default-avatar.png'} alt={persona.name} className="w-full h-16 object-cover rounded mb-1" />
+                                            <img src={persona.image_url || '/images/default-avatar.png'} alt={persona.name || 'Featured Soul'} className="w-full h-16 object-cover rounded mb-1" />
                                             <div className="font-bold text-[#2d005d] text-[10px] truncate">{persona.name}</div>
                                         </div>
                                     ))}
@@ -418,7 +418,7 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
                                             onClick={() => window.open(`/character/${persona.id}`, '_blank')}
                                         >
                                             <span className="text-[10px] font-bold text-gray-400 w-4">#{idx + 1}</span>
-                                            <img src={persona.image_url || '/images/default-avatar.png'} alt={persona.name} className="w-8 h-8 rounded-full object-cover border border-purple-100" />
+                                            <img src={persona.image_url || '/images/default-avatar.png'} alt={persona.name || 'Trending Soul'} className="w-8 h-8 rounded-full object-cover border border-purple-100" />
                                             <div className="flex-1 min-w-0">
                                                 <div className="font-bold text-[#2d005d] truncate">{persona.name}</div>
                                                 <div className="text-[9px] text-[#5e2b8d] opacity-70 truncate">{persona.description}</div>
@@ -468,7 +468,7 @@ export const BuddyListWindow: React.FC<BuddyListWindowProps> = ({
                                                         {buddy.buddy_type === 'bot' ? (
                                                             <img
                                                                 src={buddy.avatar_url || '/images/default-avatar.png'}
-                                                                alt=""
+                                                                alt={buddy.nickname || buddy.buddy_username || 'Bot Avatar'}
                                                                 className="w-5 h-5 rounded-full border border-gray-200 object-cover"
                                                             />
                                                         ) : (

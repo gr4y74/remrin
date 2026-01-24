@@ -23,8 +23,8 @@ export interface ConversationState {
 interface UseConversationStateReturn {
     state: ConversationState | null;
     isLoading: boolean;
-    updateDraft: (draft: string) => Promise<void>;
-    updateScrollPosition: (position: number) => void;
+    updateDraft: ((draft: string) => void) & { cancel(): void; flush(): void };
+    updateScrollPosition: ((position: number) => void) & { cancel(): void; flush(): void };
     markAsRead: (messageId: string) => Promise<void>;
     togglePin: () => Promise<void>;
     toggleArchive: () => Promise<void>;
@@ -140,8 +140,8 @@ export function useConversationState(
 
     // Debounced draft update (500ms delay)
     const updateDraft = useCallback(
-        debounce(async (draft: string) => {
-            await updateState({ draft_message: draft });
+        debounce((draft: string) => {
+            updateState({ draft_message: draft });
         }, 500),
         [updateState]
     );
