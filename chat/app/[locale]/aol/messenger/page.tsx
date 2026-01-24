@@ -25,7 +25,7 @@ type MobileView = 'buddies' | 'chat' | 'discover' | 'profile';
 export default function MessengerStandalonePage() {
     const [currentUser, setCurrentUser] = useState<any>(null);
     const [openIMs, setOpenIMs] = useState<{ userId: string; username: string }[]>([]);
-    const [mobileView, setMobileView] = useState<MobileView>('home');
+    const [mobileView, setMobileView] = useState<MobileView>('buddies');
     const [activeChatPartner, setActiveChatPartner] = useState<Buddy | null>(null);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
