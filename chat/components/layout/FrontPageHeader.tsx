@@ -124,49 +124,54 @@ export function FrontPageHeader({
 
     // Handle scroll to collapse/expand header
     useEffect(() => {
-        const findScrollableParent = (): HTMLElement | null => {
-            const scrollContainer = document.querySelector('main > div.overflow-x-auto') as HTMLElement
-            if (scrollContainer) return scrollContainer
+        // Delay initialization to ensure DOM is fully ready
+        const initTimeout = setTimeout(() => {
+            // Find the scrollable container
+            const container = document.querySelector('.bg-rp-base.min-h-screen') as HTMLElement ||
+                document.querySelector('[scrollable="true"]') as HTMLElement
 
-            const elements = document.querySelectorAll('*')
-            for (const el of elements) {
-                const style = window.getComputedStyle(el as Element)
-                const htmlEl = el as HTMLElement
-                if (
-                    (style.overflowY === 'auto' || style.overflowY === 'scroll' ||
-                        style.overflow === 'auto' || style.overflow === 'scroll') &&
-                    htmlEl.scrollHeight > htmlEl.clientHeight
-                ) {
-                    return htmlEl
-                }
-            }
-            return null
-        }
-
-        let scrollTarget: HTMLElement | Window = window
-        const container = findScrollableParent()
-        if (container) {
-            scrollTarget = container
-        }
-
-        const handleScroll = () => {
-            const currentScrollY = scrollTarget === window
-                ? window.scrollY
-                : (scrollTarget as HTMLElement).scrollTop
-
-            const scrollThreshold = 150
-
-            if (currentScrollY < scrollThreshold) {
-                setIsCollapsed(false)
-            } else {
-                setIsCollapsed(true)
+            if (!container) {
+                console.warn('FrontPageHeader: Scrollable container not found')
+                return
             }
 
-            lastScrollY.current = currentScrollY
-        }
+            const scrollThreshold = 100
+            let ticking = false
 
-        scrollTarget.addEventListener("scroll", handleScroll, { passive: true })
-        return () => scrollTarget.removeEventListener("scroll", handleScroll)
+            const handleScroll = () => {
+                if (ticking) return
+
+                ticking = true
+                requestAnimationFrame(() => {
+                    const currentScrollY = container.scrollTop
+
+                    if (currentScrollY < scrollThreshold) {
+                        setIsCollapsed(false)
+                    } else if (currentScrollY > lastScrollY.current + 50) {
+                        // Increased threshold to reduce flickering
+                        setIsCollapsed(true)
+                        lastScrollY.current = currentScrollY
+                    } else if (currentScrollY < lastScrollY.current - 50) {
+                        setIsCollapsed(false)
+                        lastScrollY.current = currentScrollY
+                    }
+
+                    ticking = false
+                })
+            }
+
+            container.addEventListener("scroll", handleScroll, { passive: true })
+
+            // Store cleanup function
+            const cleanup = () => container.removeEventListener("scroll", handleScroll)
+                ; (window as unknown as Record<string, () => void>).__headerScrollCleanup = cleanup
+        }, 300)
+
+        return () => {
+            clearTimeout(initTimeout)
+            const cleanup = (window as unknown as Record<string, () => void>).__headerScrollCleanup
+            if (cleanup) cleanup()
+        }
     }, [])
 
     const handleDismissBanner = () => {
@@ -378,94 +383,225 @@ export function FrontPageHeader({
                     </div>
                 )}
 
-                {/* Glassmorphic Nav Container */}
+                {/* Glassmorphic Nav Container - Fades on collapse */}
                 <div
                     className={cn(
-                        "bg-rp-surface/90 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-[1400px] mx-auto transition-all duration-300 ease-out",
-                        showExpanded ? "p-3 sm:p-4 md:p-5" : "p-2 md:p-3"
+                        "mx-auto max-w-[1400px] w-full overflow-hidden transition-all duration-500 ease-out",
+                        showExpanded
+                            ? "opacity-100 max-h-[200px]"
+                            : "opacity-0 max-h-0 pointer-events-none"
                     )}
                 >
-                    {/* Top Row - Always visible */}
-                    <div className={cn(
-                        "flex items-center justify-between gap-2 sm:gap-4 transition-all duration-300",
-                        showExpanded ? "mb-4" : "mb-0"
-                    )}>
-                        {/* Left: Wallet + Search */}
-                        <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
-                            {/* Wallet Icon (replaces S logo) */}
-                            <Link href={isLoggedIn ? "/wallet" : "/login"} className="shrink-0">
-                                <div className={cn(
-                                    "bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center text-white hover:scale-105 transition-all cursor-pointer",
-                                    showExpanded ? "w-8 h-8 sm:w-10 sm:h-10" : "w-7 h-7 sm:w-8 sm:h-8"
-                                )}>
-                                    <IconWallet size={showExpanded ? 18 : 16} className="sm:w-[22px] sm:h-[22px]" />
-                                </div>
+                    <div
+                        className={cn(
+                            "bg-rp-surface/90 backdrop-blur-xl rounded-2xl shadow-2xl w-full transition-all duration-300 ease-out",
+                            showExpanded ? "p-3 sm:p-4 md:p-5" : "p-2 md:p-3"
+                        )}
+                    >
+                        {/* Top Row - Always visible */}
+                        <div className={cn(
+                            "flex items-center justify-between gap-2 sm:gap-4 transition-all duration-300 relative",
+                            showExpanded ? "mb-4" : "mb-0"
+                        )}>
+                            {/* Center: Logo (absolute positioned) */}
+                            <Link href="/" className="absolute left-1/2 -translate-x-1/2 hidden md:block">
+                                <Image
+                                    src="/logo.svg"
+                                    alt="Remrin"
+                                    width={120}
+                                    height={40}
+                                    className="h-10 w-auto"
+                                    priority
+                                />
                             </Link>
+                            {/* Left: Wallet + Search */}
+                            <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
+                                {/* Wallet Icon (replaces S logo) */}
+                                <Link href={isLoggedIn ? "/wallet" : "/login"} className="shrink-0">
+                                    <div className={cn(
+                                        "bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center text-white hover:scale-105 transition-all cursor-pointer",
+                                        showExpanded ? "w-8 h-8 sm:w-10 sm:h-10" : "w-7 h-7 sm:w-8 sm:h-8"
+                                    )}>
+                                        <IconWallet size={showExpanded ? 18 : 16} className="sm:w-[22px] sm:h-[22px]" />
+                                    </div>
+                                </Link>
 
-                            {/* Search Bar - collapses to icon when mini or on mobile */}
-                            {showExpanded ? (
-                                <div className="hidden sm:flex flex-1 max-w-[500px] transition-all duration-300">
-                                    <SearchSouls onResultClick={onSearchResultClick} />
-                                </div>
-                            ) : (
+                                {/* Search Bar - collapses to icon when mini or on mobile */}
+                                {showExpanded ? (
+                                    <div className="hidden sm:flex flex-1 max-w-[500px] transition-all duration-300">
+                                        <SearchSouls onResultClick={onSearchResultClick} />
+                                    </div>
+                                ) : (
+                                    <button
+                                        className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-rp-overlay/50 hover:bg-rp-overlay text-rp-subtle text-sm transition-all"
+                                        onClick={() => setIsHovered(true)}
+                                    >
+                                        <IconSearch size={16} />
+                                        <span className="hidden sm:inline">Search Souls...</span>
+                                    </button>
+                                )}
+
+                                {/* Mobile Search Icon */}
                                 <button
-                                    className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-rp-overlay/50 hover:bg-rp-overlay text-rp-subtle text-sm transition-all"
+                                    className="sm:hidden flex items-center justify-center w-9 h-9 rounded-lg bg-rp-overlay/50 hover:bg-rp-overlay text-rp-subtle transition-all"
                                     onClick={() => setIsHovered(true)}
                                 >
-                                    <IconSearch size={16} />
-                                    <span className="hidden sm:inline">Search Souls...</span>
+                                    <IconSearch size={18} />
                                 </button>
-                            )}
+                            </div>
 
-                            {/* Mobile Search Icon */}
-                            <button
-                                className="sm:hidden flex items-center justify-center w-9 h-9 rounded-lg bg-rp-overlay/50 hover:bg-rp-overlay text-rp-subtle transition-all"
-                                onClick={() => setIsHovered(true)}
-                            >
-                                <IconSearch size={18} />
-                            </button>
-                        </div>
+                            {/* Right: Actions */}
+                            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                                {/* Subscribe Button - Hidden on mobile */}
+                                <Link
+                                    href="/pricing"
+                                    className={cn(
+                                        "group hidden md:flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-rp-iris to-rp-rose font-medium text-white transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-rp-iris/30",
+                                        showExpanded ? "h-10 px-5 text-sm" : "h-8 px-3 text-xs"
+                                    )}
+                                >
+                                    <IconSparkles size={showExpanded ? 16 : 14} className="transition-transform group-hover:rotate-12" />
+                                    <span className="hidden lg:inline">Subscribe</span>
+                                </Link>
 
-                        {/* Right: Actions */}
-                        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                            {/* Subscribe Button - Hidden on mobile */}
-                            <Link
-                                href="/pricing"
-                                className={cn(
-                                    "group hidden md:flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-rp-iris to-rp-rose font-medium text-white transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-rp-iris/30",
-                                    showExpanded ? "h-10 px-5 text-sm" : "h-8 px-3 text-xs"
-                                )}
-                            >
-                                <IconSparkles size={showExpanded ? 16 : 14} className="transition-transform group-hover:rotate-12" />
-                                <span className="hidden lg:inline">Subscribe</span>
-                            </Link>
+                                {/* Desktop User Actions */}
+                                <div className="hidden md:flex items-center gap-2">
+                                    {isLoggedIn ? (
+                                        <>
+                                            {/* Create Soul Button (replaces Settings) */}
+                                            <Link
+                                                href="/studio"
+                                                className={cn(
+                                                    "flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 font-medium text-white transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-emerald-500/30",
+                                                    showExpanded ? "h-10 px-4 text-sm" : "h-8 px-3 text-xs"
+                                                )}
+                                            >
+                                                <IconPlus size={showExpanded ? 16 : 14} />
+                                                <span className="hidden lg:inline">Create Soul</span>
+                                            </Link>
 
-                            {/* Desktop User Actions */}
-                            <div className="hidden md:flex items-center gap-2">
-                                {isLoggedIn ? (
-                                    <>
-                                        {/* Create Soul Button (replaces Settings) */}
-                                        <Link
-                                            href="/studio"
-                                            className={cn(
-                                                "flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 font-medium text-white transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-emerald-500/30",
-                                                showExpanded ? "h-10 px-4 text-sm" : "h-8 px-3 text-xs"
-                                            )}
-                                        >
-                                            <IconPlus size={showExpanded ? 16 : 14} />
-                                            <span className="hidden lg:inline">Create Soul</span>
-                                        </Link>
+                                            {/* Notification Bell */}
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <button
+                                                        className={cn(
+                                                            "relative flex items-center justify-center rounded-xl bg-rp-overlay hover:bg-rp-base text-rp-text transition-all",
+                                                            showExpanded ? "w-10 h-10" : "w-8 h-8"
+                                                        )}
+                                                    >
+                                                        <IconBell size={showExpanded ? 20 : 16} />
+                                                        {unreadCount > 0 && (
+                                                            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-rp-surface">
+                                                                {unreadCount > 99 ? "99+" : unreadCount}
+                                                            </span>
+                                                        )}
+                                                    </button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end" className="p-0 border-none bg-transparent shadow-none">
+                                                    <NotificationDropdown onMarkAsRead={() => setUnreadCount(prev => Math.max(0, prev - 1))} />
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
 
-                                        {/* Notification Bell */}
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
+                                            {/* User Avatar with Dropdown (replaces Login) */}
+                                            <div className="relative" ref={userMenuRef}>
                                                 <button
+                                                    onClick={() => setShowUserMenu(!showUserMenu)}
                                                     className={cn(
-                                                        "relative flex items-center justify-center rounded-xl bg-rp-overlay hover:bg-rp-base text-rp-text transition-all",
+                                                        "rounded-full bg-rp-overlay hover:bg-rp-base flex items-center justify-center transition-all shrink-0 overflow-hidden border-2 border-transparent hover:border-rp-iris",
                                                         showExpanded ? "w-10 h-10" : "w-8 h-8"
                                                     )}
                                                 >
-                                                    <IconBell size={showExpanded ? 20 : 16} />
+                                                    {profile?.hero_image_url ? (
+                                                        <Image
+                                                            src={profile.hero_image_url}
+                                                            alt="Profile"
+                                                            width={40}
+                                                            height={40}
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                    ) : (
+                                                        <IconUser size={showExpanded ? 20 : 16} className="text-rp-text" />
+                                                    )}
+                                                </button>
+
+                                                {/* Dropdown Menu */}
+                                                {showUserMenu && (
+                                                    <div className="absolute right-0 mt-2 w-48 rounded-xl bg-rp-surface border border-rp-highlight-med shadow-xl overflow-hidden z-50">
+                                                        <Link
+                                                            href={`/profile/${profile?.user_id}`}
+                                                            className="flex items-center gap-3 px-4 py-3 text-sm text-rp-text hover:bg-rp-overlay transition-colors"
+                                                            onClick={() => setShowUserMenu(false)}
+                                                        >
+                                                            <IconUser size={18} />
+                                                            View Profile
+                                                        </Link>
+                                                        <Link
+                                                            href="/studio"
+                                                            className="flex items-center gap-3 px-4 py-3 text-sm text-rp-text hover:bg-rp-overlay transition-colors"
+                                                            onClick={() => setShowUserMenu(false)}
+                                                        >
+                                                            <IconPlus size={18} />
+                                                            Soul Studio
+                                                        </Link>
+                                                        <Link
+                                                            href="/wallet"
+                                                            className="flex items-center gap-3 px-4 py-3 text-sm text-rp-text hover:bg-rp-overlay transition-colors"
+                                                            onClick={() => setShowUserMenu(false)}
+                                                        >
+                                                            <IconWallet size={18} />
+                                                            Wallet
+                                                        </Link>
+                                                        <div className="h-px bg-rp-highlight-med" />
+                                                        <button
+                                                            onClick={handleLogout}
+                                                            className="flex items-center gap-3 px-4 py-3 text-sm text-red-400 hover:bg-rp-overlay transition-colors w-full"
+                                                        >
+                                                            <IconLogout size={18} />
+                                                            Logout
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            {/* Login Button (when not logged in) */}
+                                            <Link
+                                                href="/login"
+                                                className={cn(
+                                                    "flex items-center justify-center gap-2 rounded-xl bg-rp-overlay hover:bg-rp-base font-medium text-rp-text transition-all",
+                                                    showExpanded ? "h-10 px-4 text-sm" : "h-8 px-3 text-xs"
+                                                )}
+                                            >
+                                                <IconLogin size={showExpanded ? 16 : 14} />
+                                                <span className="hidden lg:inline">Login</span>
+                                            </Link>
+
+                                            {/* Sign Up Button (replaces Settings when logged out) */}
+                                            <Link
+                                                href="/signup"
+                                                className={cn(
+                                                    "flex items-center justify-center gap-2 rounded-xl bg-rp-overlay hover:bg-rp-base font-medium text-rp-text transition-all",
+                                                    showExpanded ? "h-10 px-4 text-sm" : "h-8 px-3 text-xs"
+                                                )}
+                                            >
+                                                <IconUser size={showExpanded ? 16 : 14} />
+                                                <span className="hidden lg:inline">Sign Up</span>
+                                            </Link>
+                                        </>
+                                    )}
+                                </div>
+
+                                {/* Mobile Hamburger Menu */}
+                                <div className="md:hidden flex items-center gap-1.5">
+                                    {isLoggedIn && (
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <button
+                                                    className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-rp-overlay hover:bg-rp-base text-rp-text transition-all active:scale-95"
+                                                    aria-label="Notifications"
+                                                >
+                                                    <IconBell size={20} />
                                                     {unreadCount > 0 && (
                                                         <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-rp-surface">
                                                             {unreadCount > 99 ? "99+" : unreadCount}
@@ -477,159 +613,85 @@ export function FrontPageHeader({
                                                 <NotificationDropdown onMarkAsRead={() => setUnreadCount(prev => Math.max(0, prev - 1))} />
                                             </DropdownMenuContent>
                                         </DropdownMenu>
+                                    )}
 
-                                        {/* User Avatar with Dropdown (replaces Login) */}
-                                        <div className="relative" ref={userMenuRef}>
-                                            <button
-                                                onClick={() => setShowUserMenu(!showUserMenu)}
-                                                className={cn(
-                                                    "rounded-full bg-rp-overlay hover:bg-rp-base flex items-center justify-center transition-all shrink-0 overflow-hidden border-2 border-transparent hover:border-rp-iris",
-                                                    showExpanded ? "w-10 h-10" : "w-8 h-8"
-                                                )}
-                                            >
-                                                {profile?.hero_image_url ? (
-                                                    <Image
-                                                        src={profile.hero_image_url}
-                                                        alt="Profile"
-                                                        width={40}
-                                                        height={40}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                ) : (
-                                                    <IconUser size={showExpanded ? 20 : 16} className="text-rp-text" />
-                                                )}
-                                            </button>
-
-                                            {/* Dropdown Menu */}
-                                            {showUserMenu && (
-                                                <div className="absolute right-0 mt-2 w-48 rounded-xl bg-rp-surface border border-rp-highlight-med shadow-xl overflow-hidden z-50">
-                                                    <Link
-                                                        href={`/profile/${profile?.user_id}`}
-                                                        className="flex items-center gap-3 px-4 py-3 text-sm text-rp-text hover:bg-rp-overlay transition-colors"
-                                                        onClick={() => setShowUserMenu(false)}
-                                                    >
-                                                        <IconUser size={18} />
-                                                        View Profile
-                                                    </Link>
-                                                    <Link
-                                                        href="/studio"
-                                                        className="flex items-center gap-3 px-4 py-3 text-sm text-rp-text hover:bg-rp-overlay transition-colors"
-                                                        onClick={() => setShowUserMenu(false)}
-                                                    >
-                                                        <IconPlus size={18} />
-                                                        Soul Studio
-                                                    </Link>
-                                                    <Link
-                                                        href="/wallet"
-                                                        className="flex items-center gap-3 px-4 py-3 text-sm text-rp-text hover:bg-rp-overlay transition-colors"
-                                                        onClick={() => setShowUserMenu(false)}
-                                                    >
-                                                        <IconWallet size={18} />
-                                                        Wallet
-                                                    </Link>
-                                                    <div className="h-px bg-rp-highlight-med" />
-                                                    <button
-                                                        onClick={handleLogout}
-                                                        className="flex items-center gap-3 px-4 py-3 text-sm text-red-400 hover:bg-rp-overlay transition-colors w-full"
-                                                    >
-                                                        <IconLogout size={18} />
-                                                        Logout
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </>
-                                ) : (
-                                    <>
-                                        {/* Login Button (when not logged in) */}
-                                        <Link
-                                            href="/login"
-                                            className={cn(
-                                                "flex items-center justify-center gap-2 rounded-xl bg-rp-overlay hover:bg-rp-base font-medium text-rp-text transition-all",
-                                                showExpanded ? "h-10 px-4 text-sm" : "h-8 px-3 text-xs"
-                                            )}
-                                        >
-                                            <IconLogin size={showExpanded ? 16 : 14} />
-                                            <span className="hidden lg:inline">Login</span>
-                                        </Link>
-
-                                        {/* Sign Up Button (replaces Settings when logged out) */}
-                                        <Link
-                                            href="/signup"
-                                            className={cn(
-                                                "flex items-center justify-center gap-2 rounded-xl bg-rp-overlay hover:bg-rp-base font-medium text-rp-text transition-all",
-                                                showExpanded ? "h-10 px-4 text-sm" : "h-8 px-3 text-xs"
-                                            )}
-                                        >
-                                            <IconUser size={showExpanded ? 16 : 14} />
-                                            <span className="hidden lg:inline">Sign Up</span>
-                                        </Link>
-                                    </>
-                                )}
-                            </div>
-
-                            {/* Mobile Hamburger Menu */}
-                            <div className="md:hidden flex items-center gap-1.5">
-                                {isLoggedIn && (
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <button
-                                                className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-rp-overlay hover:bg-rp-base text-rp-text transition-all active:scale-95"
-                                                aria-label="Notifications"
-                                            >
-                                                <IconBell size={20} />
-                                                {unreadCount > 0 && (
-                                                    <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-rp-surface">
-                                                        {unreadCount > 99 ? "99+" : unreadCount}
-                                                    </span>
-                                                )}
-                                            </button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end" className="p-0 border-none bg-transparent shadow-none">
-                                            <NotificationDropdown onMarkAsRead={() => setUnreadCount(prev => Math.max(0, prev - 1))} />
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                )}
-
-                                <button
-                                    onClick={() => setShowMobileDrawer(true)}
-                                    className="flex items-center justify-center w-11 h-11 rounded-xl bg-rp-overlay hover:bg-rp-base text-rp-text transition-all active:scale-95"
-                                    aria-label="Open menu"
-                                >
-                                    <IconMenu2 size={22} />
-                                </button>
-                            </div>
-
-                            {/* Expand indicator when collapsed - Desktop only */}
-                            {isCollapsed && !isHovered && (
-                                <div className="hidden md:block text-rp-muted animate-pulse">
-                                    <IconChevronDown size={16} />
+                                    <button
+                                        onClick={() => setShowMobileDrawer(true)}
+                                        className="flex items-center justify-center w-11 h-11 rounded-xl bg-rp-overlay hover:bg-rp-base text-rp-text transition-all active:scale-95"
+                                        aria-label="Open menu"
+                                    >
+                                        <IconMenu2 size={22} />
+                                    </button>
                                 </div>
-                            )}
-                        </div>
-                    </div>
 
-                    {/* Divider + Categories - Only show when expanded on desktop */}
-                    {showExpanded && (
-                        <>
-                            <div className="hidden md:block h-px bg-gradient-to-r from-transparent via-rp-highlight-med to-transparent -mx-5 mb-3"></div>
-                            <div className="hidden md:flex gap-2 overflow-x-auto no-scrollbar pb-1">
-                                {CATEGORIES.map((category) => {
-                                    const Icon = category.icon
-                                    return (
-                                        <button
-                                            key={category.id}
-                                            onClick={() => handleCategoryClick(category.id)}
-                                            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all bg-rp-overlay hover:bg-rp-base hover:-translate-y-0.5 text-rp-text border-0"
-                                        >
-                                            <Icon size={14} className="shrink-0" />
-                                            {category.label}
-                                        </button>
-                                    )
-                                })}
+                                {/* Expand indicator when collapsed - Desktop only */}
+                                {isCollapsed && !isHovered && (
+                                    <div className="hidden md:block text-rp-muted animate-pulse">
+                                        <IconChevronDown size={16} />
+                                    </div>
+                                )}
                             </div>
-                        </>
+                        </div>
+
+                        {/* Divider + Categories - Only show when expanded on desktop */}
+                        {showExpanded && (
+                            <>
+                                <div className="hidden md:block h-px bg-gradient-to-r from-transparent via-rp-highlight-med to-transparent -mx-5 mb-3"></div>
+                                <div className="hidden md:flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                                    {CATEGORIES.map((category) => {
+                                        const Icon = category.icon
+                                        return (
+                                            <button
+                                                key={category.id}
+                                                onClick={() => handleCategoryClick(category.id)}
+                                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all bg-rp-overlay hover:bg-rp-base hover:-translate-y-0.5 text-rp-text border-0"
+                                            >
+                                                <Icon size={14} className="shrink-0" />
+                                                {category.label}
+                                            </button>
+                                        )
+                                    })}
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </div>
+
+                {/* Collapsed State - Floating Logo Pill */}
+                <div
+                    className={cn(
+                        "absolute left-1/2 -translate-x-1/2 transition-all duration-500 ease-out",
+                        showExpanded
+                            ? "opacity-0 scale-75 pointer-events-none top-2"
+                            : "opacity-100 scale-100 top-3"
                     )}
+                >
+                    <button
+                        onClick={() => {
+                            setIsCollapsed(false)
+                            setIsHovered(true)
+                        }}
+                        className="group relative"
+                    >
+                        {/* Glow effect on hover */}
+                        <div className="absolute inset-0 bg-rp-iris/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                        {/* Logo pill container */}
+                        <div className="relative bg-rp-surface/90 backdrop-blur-xl rounded-full px-4 py-2 shadow-lg border border-rp-highlight-med/50 hover:border-rp-iris/50 transition-all hover:shadow-rp-iris/20 hover:shadow-xl">
+                            <Image
+                                src="/logo.svg"
+                                alt="Remrin"
+                                width={80}
+                                height={28}
+                                className="h-7 w-auto"
+                            />
+                        </div>
+
+                        {/* Expand indicator */}
+                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="w-6 h-0.5 bg-rp-iris/50 rounded-full" />
+                        </div>
+                    </button>
                 </div>
             </header>
         </>
