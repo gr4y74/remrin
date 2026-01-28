@@ -4,6 +4,7 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { Buddy } from '@/hooks/useBuddyList';
 import { IconMessage, IconStar } from '@tabler/icons-react';
+import { PortraitCard } from '@/components/ui/PortraitCard';
 
 interface MobileBuddyListProps {
     buddies: Buddy[];
@@ -34,6 +35,23 @@ export const MobileBuddyList: React.FC<MobileBuddyListProps> = ({
         const displayName = buddy.nickname || buddy.buddy_username;
         const avatarUrl = buddy.avatar_url || '/images/default-avatar.png';
 
+        // Use PortraitCard for Bots/AI
+        if (buddy.buddy_type === 'bot') {
+            return (
+                <div key={buddy.buddy_id} className="w-1/2 p-2 inline-block align-top">
+                    <PortraitCard
+                        name={displayName}
+                        image={avatarUrl}
+                        status={buddy.status}
+                        statusMessage={buddy.away_message || (buddy.status === 'offline' && buddy.last_seen ? `Seen ${new Date(buddy.last_seen).toLocaleDateString()}` : undefined)}
+                        isFavorite={buddy.is_favorite}
+                        onClick={() => onBuddyClick(buddy)}
+                    />
+                </div>
+            );
+        }
+
+        // Standard List Item for Humans
         return (
             <button
                 key={buddy.buddy_id}
@@ -68,9 +86,7 @@ export const MobileBuddyList: React.FC<MobileBuddyListProps> = ({
                             ? buddy.away_message
                             : buddy.status === 'offline' && buddy.last_seen
                                 ? `Last seen ${new Date(buddy.last_seen).toLocaleDateString()}`
-                                : buddy.buddy_type === 'bot'
-                                    ? 'AI Character'
-                                    : buddy.status.charAt(0).toUpperCase() + buddy.status.slice(1)
+                                : buddy.status.charAt(0).toUpperCase() + buddy.status.slice(1)
                         }
                     </div>
                 </div>

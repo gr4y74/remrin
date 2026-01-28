@@ -52,7 +52,7 @@ export function CategorySection({ section, personas, onPersonaClick, className }
 
     return (
         <div className={cn("w-full px-4 py-6 md:py-8", className)}>
-            <div className="mx-auto max-w-7xl">
+            <div className="mx-auto w-full max-w-7xl">
                 {/* Section Header */}
                 <div className="mb-4 md:mb-6 flex items-center justify-between">
                     <div className="flex items-center gap-2 md:gap-3">
@@ -112,12 +112,7 @@ export function CategorySection({ section, personas, onPersonaClick, className }
                         <div
                             key={persona.id}
                             onClick={() => onPersonaClick(persona.id)}
-                            className="group relative shrink-0 cursor-pointer overflow-hidden rounded-xl border border-rp-iris/20 shadow-lg transition-all hover:-translate-y-1 active:scale-95 hover:shadow-2xl hover:border-rp-iris/40 snap-start"
-                            style={{
-                                width: "calc(100vw - 5rem)",
-                                maxWidth: "300px",
-                                height: "350px"
-                            }}
+                            className="group relative shrink-0 cursor-pointer overflow-hidden rounded-xl border border-rp-iris/20 shadow-lg transition-all hover:-translate-y-1 active:scale-95 hover:shadow-2xl hover:border-rp-iris/40 snap-start w-[200px] h-[280px] sm:w-[240px] sm:h-[320px] md:w-[280px] md:h-[350px]"
                         >
                             {/* Background Image */}
                             {persona.image_url ? (
@@ -125,7 +120,7 @@ export function CategorySection({ section, personas, onPersonaClick, className }
                                     src={persona.image_url}
                                     alt={persona.name}
                                     fill
-                                    sizes="(max-width: 768px) calc(100vw - 5rem), 300px"
+                                    sizes="(max-width: 640px) 200px, (max-width: 768px) 240px, 280px"
                                     className="object-cover transition-transform duration-300 group-hover:scale-110"
                                 />
                             ) : (

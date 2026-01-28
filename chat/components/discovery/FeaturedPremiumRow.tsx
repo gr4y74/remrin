@@ -87,7 +87,7 @@ export function FeaturedPremiumRow({ onPersonaClick, className }: FeaturedPremiu
     if (loading) {
         return (
             <div className={cn("w-full py-12", className)}>
-                <div className="mx-auto max-w-6xl px-4">
+                <div className="mx-auto w-full max-w-6xl px-4">
                     <div className="flex items-center justify-center py-20">
                         <div className="text-rp-muted">Loading premium showcase...</div>
                     </div>
@@ -108,7 +108,7 @@ export function FeaturedPremiumRow({ onPersonaClick, className }: FeaturedPremiu
 
     return (
         <div className={cn("w-full py-8 md:py-16 bg-black/40 rounded-xl md:rounded-3xl", className)}>
-            <div className="mx-auto max-w-6xl px-2 md:px-4 lg:px-8 relative">
+            <div className="mx-auto w-full max-w-6xl px-2 md:px-4 lg:px-8 relative">
                 {/* Navigation Arrows - Touch-friendly on mobile */}
                 <button
                     onClick={() => navigate("left")}

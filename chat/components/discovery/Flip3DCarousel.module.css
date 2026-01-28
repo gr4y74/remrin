@@ -12,6 +12,7 @@
 
     /* CSS Variables for Responsive Calc */
     --card-width: 260px;
+    --card-height: 400px;
     /* Negative gap creates the overlap/pyramid effect */
     --card-gap: -110px;
 }
@@ -28,6 +29,14 @@
     /* Space for reflection */
 }
 
+/* Adjust track positioning on mobile for better centering */
+@media (max-width: 480px) {
+    .carouselTrack {
+        left: calc(50% + 10px);
+        /* Slight offset to account for smaller card spacing */
+    }
+}
+
 .cardFlipContainer {
     /* Absolute positioning for all cards relative to track center */
     position: absolute;
@@ -36,11 +45,10 @@
 
     /* Center axis adjustment: Shift up/left by half dim */
     margin-left: calc(var(--card-width) / -2);
-    margin-top: -220px;
-    /* Half of 400 + 40 padding? 400/2 = 200. + small shift */
+    margin-top: calc(var(--card-height) / -2);
 
     width: var(--card-width);
-    height: 400px;
+    height: var(--card-height);
     perspective: 1500px;
 
     /* CIRCULAR POSITIONING LOGIC */
@@ -63,8 +71,15 @@
     filter: blur(var(--blur-amount));
     opacity: max(0, var(--opacity-val));
 
-    /* Reflection Effect */
+    /* Reflection Effect - Desktop only */
     -webkit-box-reflect: below 10px linear-gradient(to bottom, rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.25));
+}
+
+/* Disable reflection on mobile for performance */
+@media (max-width: 768px) {
+    .cardFlipContainer {
+        -webkit-box-reflect: none;
+    }
 }
 
 .cardFlipInner {
@@ -103,6 +118,15 @@
     overflow: hidden;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
     border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+@media (max-width: 480px) {
+
+    .cardFront,
+    .cardBack {
+        border-radius: 12px;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+    }
 }
 
 .cardFront {
@@ -149,17 +173,50 @@
 }
 
 /* Responsive Adjustments */
-@media (max-width: 768px) {
+
+/* Small mobile devices (up to 480px) */
+@media (max-width: 480px) {
     .carouselContainer {
-        min-height: 400px;
-        --card-width: 220px;
-        --card-gap: -80px;
+        min-height: 320px;
+        --card-width: 160px;
+        --card-height: 260px;
+        --card-gap: -60px;
+        perspective: 1200px;
     }
 
     .cardFlipContainer {
-        height: 340px;
-        margin-top: -190px;
-        /* Adjust vertical center */
+        perspective: 1000px;
+        --scale-factor: calc(1 - (var(--distance) * 0.25));
+        --blur-amount: calc(var(--distance) * 2px);
+    }
+}
+
+/* Mobile devices (481px to 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+    .carouselContainer {
+        min-height: 380px;
+        --card-width: 200px;
+        --card-height: 320px;
+        --card-gap: -80px;
+        perspective: 1500px;
+    }
+
+    .cardFlipContainer {
+        perspective: 1200px;
         --scale-factor: calc(1 - (var(--distance) * 0.2));
+    }
+}
+
+/* Tablets (769px to 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .carouselContainer {
+        min-height: 440px;
+        --card-width: 240px;
+        --card-height: 380px;
+        --card-gap: -100px;
+    }
+
+    .cardFlipContainer {
+        --scale-factor: calc(1 - (var(--distance) * 0.18));
     }
 }

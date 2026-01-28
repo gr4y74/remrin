@@ -35,8 +35,8 @@ export function RootLayoutContainer({ children, user }: RootLayoutContainerProps
                 <MinimalSidebar user={user} />
 
                 {/* Main Content - Offset by sidebar on desktop, full width on mobile */}
-                <main className="flex-1 md:ml-20 pb-20 md:pb-0">
-                    <div className="flex h-dvh flex-col items-center overflow-x-auto">
+                <main className="flex-1 md:ml-20 pb-20 md:pb-0 max-w-full overflow-x-hidden">
+                    <div className="flex h-dvh flex-col items-center w-full max-w-full">
                         {children}
                     </div>
                 </main>

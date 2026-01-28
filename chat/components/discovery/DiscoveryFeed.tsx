@@ -135,7 +135,7 @@ export function DiscoveryFeed({
 
     return (
         <div className="bg-rp-base min-h-screen">
-            <div className="mx-auto max-w-7xl px-4 py-8">
+            <div className="mx-auto w-full max-w-7xl px-4 py-8">
                 {/* Trending Section */}
                 {trendingPersonas.length > 0 && (
                     <section className="mb-10">

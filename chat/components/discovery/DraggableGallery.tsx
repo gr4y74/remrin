@@ -71,7 +71,7 @@ export function DraggableGallery({
             >
                 {/* Grid with centered auto-fit columns */}
                 <div
-                    className="mx-auto max-w-7xl"
+                    className="mx-auto w-full max-w-7xl"
                     style={{
                         display: "grid",
                         gridTemplateColumns: `repeat(auto-fit, minmax(200px, 1fr))`,

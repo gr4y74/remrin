@@ -57,7 +57,7 @@ export function TrendingHashtags({
     if (loading) {
         return (
             <div className={cn("w-full px-4 py-8", className)}>
-                <div className="mx-auto max-w-7xl">
+                <div className="mx-auto w-full max-w-7xl">
                     <div className="mb-6 flex items-center gap-2">
                         <IconTrendingUp size={24} className="text-rp-rose" />
                         <h2 className="font-tiempos-headline text-3xl font-semibold text-rp-text">
@@ -78,7 +78,7 @@ export function TrendingHashtags({
 
     return (
         <div className={cn("w-full px-4 py-8", className)}>
-            <div className="mx-auto max-w-7xl">
+            <div className="mx-auto w-full max-w-7xl">
                 {/* Section Header */}
                 <div className="mb-6 flex items-center justify-between">
                     <div className="flex items-center gap-2">

@@ -272,7 +272,7 @@ export default function HomePage() {
 
       {/* Rotating Promotional Banners */}
       {banners.length > 0 && (
-        <div className="container mx-auto px-4 md:px-6 lg:px-8">
+        <div className="container w-full mx-auto px-4 md:px-6 lg:px-8">
           <RotatingBanner banners={banners} />
         </div>
       )}
@@ -284,7 +284,7 @@ export default function HomePage() {
       />
 
       {/* Section 3: Featured Souls with 3D Carousel - Dynamic data */}
-      <section className="relative mt-6 md:mt-8">
+      <section className="relative mt-6 md:mt-8 overflow-hidden">
         <div className="mb-4 px-4 md:px-6 text-center">
           <h2 className="font-tiempos-headline inline-flex items-center gap-2 font-semibold text-2xl md:text-4xl" style={{ color: headingColor }}>
             <IconSparkles size={20} className="text-amber-400 md:hidden" />

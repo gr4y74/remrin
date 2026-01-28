@@ -53,21 +53,31 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
             </button>
 
             {/* Center: User Profile */}
-            <div className="flex items-center gap-2 flex-1 justify-center">
-                <div className="relative">
-                    <img
-                        src={avatarUrl}
-                        alt={displayName}
-                        className="w-8 h-8 rounded-full border-2 border-white/30 object-cover"
-                    />
-                    <div className={cn(
-                        "absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-[#5e2b8d]",
-                        statusColors[status]
-                    )} />
+            <div className="flex flex-col items-center justify-center flex-1">
+                <div className="flex items-center gap-2">
+                    <div className="relative">
+                        <img
+                            src={avatarUrl}
+                            alt={displayName}
+                            className="w-8 h-8 rounded-full border-2 border-white/30 object-cover"
+                        />
+                        <div className={cn(
+                            "absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-[#5e2b8d]",
+                            statusColors[status]
+                        )} />
+                    </div>
+                    <span className="text-white font-bold text-sm truncate max-w-[150px]">
+                        {displayName}
+                    </span>
                 </div>
-                <span className="text-white font-bold text-sm truncate max-w-[150px]">
-                    {displayName}
-                </span>
+
+                {/* Connection Debugger (Only visible if displayName is Guest or forced for now) */}
+                <div className="flex items-center gap-1 mt-0.5">
+                    <span className={cn("w-1.5 h-1.5 rounded-full", user?.username ? "bg-green-400 animate-pulse" : "bg-red-500")} />
+                    <span className="text-[10px] text-white/80 font-mono">
+                        {user?.username ? 'CONNECTED' : 'LOCAL MODE'}
+                    </span>
+                </div>
             </div>
 
             {/* Right: Notifications */}

@@ -61,7 +61,7 @@ export function TrendingSoulsList({ onPersonaClick, className }: TrendingSoulsLi
     if (loading) {
         return (
             <div className={cn("w-full px-4 py-8", className)}>
-                <div className="mx-auto max-w-7xl">
+                <div className="mx-auto w-full max-w-7xl">
                     <div className="mb-6">
                         <h2 className="font-tiempos-headline text-3xl font-semibold text-rp-text">
                             Trending Souls
@@ -78,7 +78,7 @@ export function TrendingSoulsList({ onPersonaClick, className }: TrendingSoulsLi
     if (trending.length === 0) {
         return (
             <div className={cn("w-full px-4 py-8", className)}>
-                <div className="mx-auto max-w-7xl">
+                <div className="mx-auto w-full max-w-7xl">
                     <div className="mb-6">
                         <h2 className="font-tiempos-headline text-3xl font-semibold text-rp-text">
                             Trending Souls
@@ -94,7 +94,7 @@ export function TrendingSoulsList({ onPersonaClick, className }: TrendingSoulsLi
 
     return (
         <div className={cn("w-full px-4 py-6 md:py-8", className)}>
-            <div className="mx-auto max-w-7xl">
+            <div className="mx-auto w-full max-w-7xl">
                 {/* Section Header */}
                 <div className="mb-4 md:mb-6">
                     <h2 className="font-tiempos-headline text-2xl md:text-3xl font-semibold text-rp-text">

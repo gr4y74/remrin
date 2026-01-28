@@ -381,7 +381,7 @@ export function FrontPageHeader({
                 {/* Glassmorphic Nav Container */}
                 <div
                     className={cn(
-                        "bg-rp-surface/90 backdrop-blur-xl rounded-2xl shadow-2xl max-w-[1400px] mx-auto transition-all duration-300 ease-out",
+                        "bg-rp-surface/90 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-[1400px] mx-auto transition-all duration-300 ease-out",
                         showExpanded ? "p-3 sm:p-4 md:p-5" : "p-2 md:p-3"
                     )}
                 >
