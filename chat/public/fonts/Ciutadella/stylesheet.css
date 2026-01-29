@@ -1,0 +1,120 @@
+@font-face {
+    font-family: 'Ciutadella Rounded';
+    src: url('CiutadellaRounded-MdIt.eot');
+    src: local('Ciutadella Rounded Medium Italic'), local('CiutadellaRounded-MdIt'),
+        url('CiutadellaRounded-MdIt.eot?#iefix') format('embedded-opentype'),
+        url('CiutadellaRounded-MdIt.woff2') format('woff2'),
+        url('CiutadellaRounded-MdIt.woff') format('woff'),
+        url('CiutadellaRounded-MdIt.ttf') format('truetype');
+    font-weight: 500;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Ciutadella Rounded';
+    src: url('CiutadellaRounded-BdIt.eot');
+    src: local('Ciutadella Rounded Bold Italic'), local('CiutadellaRounded-BdIt'),
+        url('CiutadellaRounded-BdIt.eot?#iefix') format('embedded-opentype'),
+        url('CiutadellaRounded-BdIt.woff2') format('woff2'),
+        url('CiutadellaRounded-BdIt.woff') format('woff'),
+        url('CiutadellaRounded-BdIt.ttf') format('truetype');
+    font-weight: bold;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Ciutadella Rounded';
+    src: url('CiutadellaRounded-SmBdIt.eot');
+    src: local('Ciutadella Rounded SemiBold Italic'), local('CiutadellaRounded-SmBdIt'),
+        url('CiutadellaRounded-SmBdIt.eot?#iefix') format('embedded-opentype'),
+        url('CiutadellaRounded-SmBdIt.woff2') format('woff2'),
+        url('CiutadellaRounded-SmBdIt.woff') format('woff'),
+        url('CiutadellaRounded-SmBdIt.ttf') format('truetype');
+    font-weight: 600;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Ciutadella Rounded';
+    src: url('CiutadellaRounded-LtIt.eot');
+    src: local('Ciutadella Rounded Light Italic'), local('CiutadellaRounded-LtIt'),
+        url('CiutadellaRounded-LtIt.eot?#iefix') format('embedded-opentype'),
+        url('CiutadellaRounded-LtIt.woff2') format('woff2'),
+        url('CiutadellaRounded-LtIt.woff') format('woff'),
+        url('CiutadellaRounded-LtIt.ttf') format('truetype');
+    font-weight: 300;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Ciutadella Rounded';
+    src: url('CiutadellaRounded-Lt.eot');
+    src: local('Ciutadella Rounded Light'), local('CiutadellaRounded-Lt'),
+        url('CiutadellaRounded-Lt.eot?#iefix') format('embedded-opentype'),
+        url('CiutadellaRounded-Lt.woff2') format('woff2'),
+        url('CiutadellaRounded-Lt.woff') format('woff'),
+        url('CiutadellaRounded-Lt.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Ciutadella Rounded';
+    src: url('CiutadellaRounded-RgIt.eot');
+    src: local('Ciutadella Rounded Italic'), local('CiutadellaRounded-RgIt'),
+        url('CiutadellaRounded-RgIt.eot?#iefix') format('embedded-opentype'),
+        url('CiutadellaRounded-RgIt.woff2') format('woff2'),
+        url('CiutadellaRounded-RgIt.woff') format('woff'),
+        url('CiutadellaRounded-RgIt.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Ciutadella Rounded';
+    src: url('CiutadellaRounded-Bd.eot');
+    src: local('Ciutadella Rounded Bold'), local('CiutadellaRounded-Bd'),
+        url('CiutadellaRounded-Bd.eot?#iefix') format('embedded-opentype'),
+        url('CiutadellaRounded-Bd.woff2') format('woff2'),
+        url('CiutadellaRounded-Bd.woff') format('woff'),
+        url('CiutadellaRounded-Bd.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Ciutadella Rounded';
+    src: url('CiutadellaRounded-Rg.eot');
+    src: local('Ciutadella Rounded'), local('CiutadellaRounded-Rg'),
+        url('CiutadellaRounded-Rg.eot?#iefix') format('embedded-opentype'),
+        url('CiutadellaRounded-Rg.woff2') format('woff2'),
+        url('CiutadellaRounded-Rg.woff') format('woff'),
+        url('CiutadellaRounded-Rg.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Ciutadella Rounded';
+    src: url('CiutadellaRounded-SmBd.eot');
+    src: local('Ciutadella Rounded SemiBold'), local('CiutadellaRounded-SmBd'),
+        url('CiutadellaRounded-SmBd.eot?#iefix') format('embedded-opentype'),
+        url('CiutadellaRounded-SmBd.woff2') format('woff2'),
+        url('CiutadellaRounded-SmBd.woff') format('woff'),
+        url('CiutadellaRounded-SmBd.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Ciutadella Rounded';
+    src: url('CiutadellaRounded-Md.eot');
+    src: local('Ciutadella Rounded Medium'), local('CiutadellaRounded-Md'),
+        url('CiutadellaRounded-Md.eot?#iefix') format('embedded-opentype'),
+        url('CiutadellaRounded-Md.woff2') format('woff2'),
+        url('CiutadellaRounded-Md.woff') format('woff'),
+        url('CiutadellaRounded-Md.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+

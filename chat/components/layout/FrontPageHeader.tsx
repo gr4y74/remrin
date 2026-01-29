@@ -135,25 +135,34 @@ export function FrontPageHeader({
                 return
             }
 
-            const scrollThreshold = 100
+            const scrollThreshold = 150 // Increased threshold
             let ticking = false
+            let lastUpdate = 0
+            const updateInterval = 100 // Minimum ms between state updates
 
             const handleScroll = () => {
                 if (ticking) return
 
                 ticking = true
                 requestAnimationFrame(() => {
+                    const now = Date.now()
                     const currentScrollY = container.scrollTop
 
-                    if (currentScrollY < scrollThreshold) {
-                        setIsCollapsed(false)
-                    } else if (currentScrollY > lastScrollY.current + 50) {
-                        // Increased threshold to reduce flickering
-                        setIsCollapsed(true)
-                        lastScrollY.current = currentScrollY
-                    } else if (currentScrollY < lastScrollY.current - 50) {
-                        setIsCollapsed(false)
-                        lastScrollY.current = currentScrollY
+                    // Only update state if enough time has passed (debounce)
+                    if (now - lastUpdate > updateInterval) {
+                        if (currentScrollY < scrollThreshold) {
+                            setIsCollapsed(false)
+                            lastUpdate = now
+                        } else if (currentScrollY > lastScrollY.current + 80) {
+                            // Large threshold to reduce sensitivity
+                            setIsCollapsed(true)
+                            lastScrollY.current = currentScrollY
+                            lastUpdate = now
+                        } else if (currentScrollY < lastScrollY.current - 80) {
+                            setIsCollapsed(false)
+                            lastScrollY.current = currentScrollY
+                            lastUpdate = now
+                        }
                     }
 
                     ticking = false
@@ -404,7 +413,7 @@ export function FrontPageHeader({
                             showExpanded ? "mb-4" : "mb-0"
                         )}>
                             {/* Center: Logo (absolute positioned) */}
-                            <Link href="/" className="absolute left-1/2 -translate-x-1/2 hidden md:block">
+                            <Link href="/" className="absolute left-1/2 -translate-x-1/2 z-10">
                                 <Image
                                     src="/logo.svg"
                                     alt="Remrin"
@@ -660,11 +669,14 @@ export function FrontPageHeader({
                 {/* Collapsed State - Floating Logo Pill */}
                 <div
                     className={cn(
-                        "absolute left-1/2 -translate-x-1/2 transition-all duration-500 ease-out",
+                        "absolute left-1/2 -translate-x-1/2 z-50",
+                        "transition-all duration-500 ease-out",
+                        "will-change-transform",
                         showExpanded
                             ? "opacity-0 scale-75 pointer-events-none top-2"
                             : "opacity-100 scale-100 top-3"
                     )}
+                    style={{ transform: 'translate3d(-50%, 0, 0)', backfaceVisibility: 'hidden' }}
                 >
                     <button
                         onClick={() => {
@@ -676,8 +688,8 @@ export function FrontPageHeader({
                         {/* Glow effect on hover */}
                         <div className="absolute inset-0 bg-rp-iris/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
 
-                        {/* Logo pill container */}
-                        <div className="relative bg-rp-surface/90 backdrop-blur-xl rounded-full px-4 py-2 shadow-lg border border-rp-highlight-med/50 hover:border-rp-iris/50 transition-all hover:shadow-rp-iris/20 hover:shadow-xl">
+                        {/* Logo pill container - solid background to prevent flicker */}
+                        <div className="relative bg-rp-surface rounded-full px-4 py-2 shadow-lg border border-rp-highlight-med/50 hover:border-rp-iris/50 transition-colors hover:shadow-rp-iris/20 hover:shadow-xl">
                             <Image
                                 src="/logo.svg"
                                 alt="Remrin"

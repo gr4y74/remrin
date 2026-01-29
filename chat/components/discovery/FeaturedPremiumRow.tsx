@@ -1,9 +1,10 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useRef } from "react"
 import { createClient } from "@/lib/supabase/client"
 import Image from "next/image"
-import { IconSparkles, IconChevronLeft, IconChevronRight, IconDiamond } from "@tabler/icons-react"
+import Link from "next/link"
+import { IconSparkles, IconChevronLeft, IconChevronRight, IconPlayerPause, IconPlayerPlay } from "@tabler/icons-react"
 import { cn } from "@/lib/utils"
 
 interface PremiumPersona {
@@ -21,17 +22,18 @@ interface FeaturedPremiumRowProps {
 }
 
 // Rarity badge colors
-const RARITY_STYLES = {
-    common: "from-gray-400 to-gray-500",
-    rare: "from-blue-400 to-cyan-500",
-    epic: "from-purple-400 to-pink-500",
-    legendary: "from-amber-400 to-orange-500"
+const RARITY_COLORS = {
+    common: "bg-gray-500",
+    rare: "bg-blue-500",
+    epic: "bg-purple-500",
+    legendary: "bg-amber-500"
 }
 
 export function FeaturedPremiumRow({ onPersonaClick, className }: FeaturedPremiumRowProps) {
     const [premium, setPremium] = useState<PremiumPersona[]>([])
     const [loading, setLoading] = useState(true)
-    const [currentIndex, setCurrentIndex] = useState(0)
+    const [isPaused, setIsPaused] = useState(false)
+    const trackRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         const fetchPremium = async () => {
@@ -76,20 +78,45 @@ export function FeaturedPremiumRow({ onPersonaClick, className }: FeaturedPremiu
         fetchPremium()
     }, [])
 
-    const navigate = useCallback((direction: "left" | "right") => {
+    const handleScroll = (direction: "left" | "right") => {
+        if (!trackRef.current) return
+        const track = trackRef.current
+        const cardWidth = track.querySelector(".product-card")?.clientWidth || 200
+        const gap = 16
+        const scrollAmount = cardWidth + gap
+
+        // Pause animation temporarily
+        track.style.animationPlayState = "paused"
+
         if (direction === "left") {
-            setCurrentIndex(prev => (prev > 0 ? prev - 1 : Math.max(0, premium.length - 1)))
+            track.scrollLeft -= scrollAmount
         } else {
-            setCurrentIndex(prev => (prev < premium.length - 1 ? prev + 1 : 0))
+            track.scrollLeft += scrollAmount
         }
-    }, [premium.length])
+
+        // Resume if not manually paused
+        if (!isPaused) {
+            setTimeout(() => {
+                if (trackRef.current) {
+                    trackRef.current.style.animationPlayState = "running"
+                }
+            }, 100)
+        }
+    }
+
+    const togglePause = () => {
+        setIsPaused(!isPaused)
+        if (trackRef.current) {
+            trackRef.current.style.animationPlayState = isPaused ? "running" : "paused"
+        }
+    }
 
     if (loading) {
         return (
-            <div className={cn("w-full py-12", className)}>
-                <div className="mx-auto w-full max-w-6xl px-4">
-                    <div className="flex items-center justify-center py-20">
-                        <div className="text-rp-muted">Loading premium showcase...</div>
+            <div className={cn("w-full py-8", className)}>
+                <div className="mx-auto max-w-[1400px] px-4">
+                    <div className="flex items-center justify-center py-16">
+                        <div className="text-rp-muted animate-pulse">Loading premium collection...</div>
                     </div>
                 </div>
             </div>
@@ -98,264 +125,169 @@ export function FeaturedPremiumRow({ onPersonaClick, className }: FeaturedPremiu
 
     if (premium.length === 0) return null
 
-    const featuredPersona = premium[currentIndex]
-    const packPersonas = [
-        premium[currentIndex % premium.length],
-        premium[(currentIndex + 1) % premium.length],
-        premium[(currentIndex + 2) % premium.length],
-        premium[(currentIndex + 3) % premium.length],
-    ]
+    // Duplicate items for seamless infinite scroll
+    const displayItems = [...premium, ...premium]
 
     return (
-        <div className={cn("w-full py-8 md:py-16 bg-black/40 rounded-xl md:rounded-3xl", className)}>
-            <div className="mx-auto w-full max-w-6xl px-2 md:px-4 lg:px-8 relative">
-                {/* Navigation Arrows - Touch-friendly on mobile */}
-                <button
-                    onClick={() => navigate("left")}
-                    className="absolute left-1 md:left-2 top-1/2 z-20 -translate-y-1/2 flex size-10 md:size-12 items-center justify-center rounded-full bg-white/10 text-white/80 backdrop-blur-lg transition-all hover:bg-white/20 active:scale-95 md:hover:scale-110"
-                    aria-label="Previous"
-                >
-                    <IconChevronLeft size={20} className="md:hidden" />
-                    <IconChevronLeft size={24} className="hidden md:block" />
-                </button>
-                <button
-                    onClick={() => navigate("right")}
-                    className="absolute right-1 md:right-2 top-1/2 z-20 -translate-y-1/2 flex size-10 md:size-12 items-center justify-center rounded-full bg-white/10 text-white/80 backdrop-blur-lg transition-all hover:bg-white/20 active:scale-95 md:hover:scale-110"
-                    aria-label="Next"
-                >
-                    <IconChevronRight size={20} className="md:hidden" />
-                    <IconChevronRight size={24} className="hidden md:block" />
-                </button>
-
-                {/* Main Layout - Mobile: Stack vertically, Desktop: Header Left, Card Right */}
-                <div className="flex flex-col gap-6 md:gap-8 lg:grid lg:grid-cols-[1fr_320px] items-start px-4 md:px-8 lg:px-12">
-                    {/* MOBILE: Featured Card First */}
-                    <div className="flex flex-col items-center lg:hidden order-1">
-                        {/* Title above card */}
-                        <div className="text-center mb-3">
-                            <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 px-3 py-1 mb-2">
-                                <IconDiamond size={14} className="text-purple-400" />
-                                <span className="text-xs font-semibold text-purple-300 uppercase tracking-wider">Featured Soul</span>
-                            </div>
-                            <h3 className="font-tiempos-headline text-2xl font-bold text-white">{featuredPersona.name}</h3>
-                        </div>
-
-                        {/* Vertical Card */}
-                        <div
-                            onClick={() => onPersonaClick(featuredPersona.id)}
-                            className="group relative cursor-pointer w-full max-w-[240px]"
-                        >
-                            {/* Glowing Border */}
-                            <div className={cn(
-                                "absolute -inset-1 rounded-2xl bg-gradient-to-br opacity-75 blur-sm transition-all group-hover:opacity-100 group-hover:blur-md",
-                                RARITY_STYLES[featuredPersona.rarity || "legendary"]
-                            )} />
-
-                            {/* Card Container */}
-                            <div className="relative overflow-hidden rounded-2xl" style={{ aspectRatio: "2.5/3.5" }}>
-                                {featuredPersona.image_url ? (
-                                    <Image
-                                        src={featuredPersona.image_url}
-                                        alt={featuredPersona.name}
-                                        fill
-                                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                                    />
-                                ) : (
-                                    <div className="h-full w-full bg-gradient-to-br from-purple-600 to-pink-600" />
-                                )}
-
-                                {/* Rarity Banner */}
-                                <div className="absolute left-0 right-0 top-0 flex justify-center">
-                                    <span className={cn(
-                                        "px-3 py-1 text-xs font-bold uppercase tracking-wider text-white bg-gradient-to-r rounded-b-lg shadow-lg flex items-center gap-1",
-                                        RARITY_STYLES[featuredPersona.rarity || "legendary"]
-                                    )}>
-                                        <IconSparkles size={12} />
-                                        {featuredPersona.rarity}
-                                    </span>
-                                </div>
-
-                                {/* Name & Stars at bottom */}
-                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/80 to-transparent p-3 text-center">
-                                    <p className="font-bold text-base text-white">{featuredPersona.name}</p>
-                                    <div className="flex justify-center gap-0.5 mt-1">
-                                        {[...Array(5)].map((_, i) => (
-                                            <span key={i} className="text-amber-400 text-xs">★</span>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Buttons below card */}
-                        <div className="flex items-center gap-3 mt-3">
-                            <button
-                                onClick={() => onPersonaClick(featuredPersona.id)}
-                                className="rounded-full bg-purple-500 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-purple-500/30 transition-all hover:bg-purple-400 active:scale-95"
-                            >
-                                Learn more
-                            </button>
-                        </div>
+        <div className={cn("w-full py-8 md:py-12", className)}>
+            <div className="mx-auto max-w-[1400px] px-4 md:px-6">
+                {/* Header */}
+                <div className="mb-6 md:mb-8 animate-fadeInUp">
+                    <div className="inline-flex items-center gap-2 bg-purple-500 text-white px-3 py-1.5 rounded-full text-sm font-semibold mb-3">
+                        <IconSparkles size={14} />
+                        Premium Collection
                     </div>
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-rp-text leading-tight mb-2">
+                        Discover, collect, connect.
+                        <br className="hidden sm:block" />
+                        <span className="text-rp-subtle">All in one place.</span>
+                    </h2>
+                    <p className="text-rp-subtle text-sm md:text-base mb-4">
+                        Exclusive premium souls available in the marketplace
+                    </p>
+                    <div className="flex flex-wrap gap-3">
+                        <Link
+                            href="/marketplace"
+                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-rp-text text-rp-base font-semibold text-sm hover:bg-rp-text/90 transition-all hover:-translate-y-0.5"
+                        >
+                            Browse All
+                        </Link>
+                        <button className="text-purple-400 font-semibold text-sm hover:text-purple-300 transition-colors">
+                            Learn more →
+                        </button>
+                    </div>
+                </div>
 
-                    {/* LEFT SIDE: Header + Soul Pack */}
-                    <div className="flex flex-col order-2 lg:order-1">
-                        {/* Section Header - Hidden on mobile, shown on desktop */}
-                        <div className="mb-6 md:mb-8 hidden lg:block">
-                            <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 px-4 py-1.5 mb-3">
-                                <IconDiamond size={16} className="text-purple-400" />
-                                <span className="text-xs font-semibold text-purple-300 uppercase tracking-wider">Premium Collection</span>
-                            </div>
-                            <h2 className="font-tiempos-headline text-3xl md:text-4xl font-bold text-white mb-2">
-                                Featured Souls
-                            </h2>
-                            <p className="text-white/60 text-sm md:text-base">
-                                Exclusive premium souls available in the marketplace
-                            </p>
-                        </div>
-
-                        {/* Soul Pack Section */}
-                        <div className="rounded-xl md:rounded-2xl bg-gradient-to-br from-gray-900/80 to-black/80 p-4 md:p-6 backdrop-blur-sm">
-                            <div className="text-center mb-3 md:mb-4">
-                                <h3 className="font-semibold text-lg md:text-xl text-white">Soul Pack</h3>
-                                <p className="text-white/50 text-xs md:text-sm">4 Premium Souls</p>
-                            </div>
-
-                            <div className="flex justify-center gap-2 md:gap-3 mb-4 md:mb-6">
+                {/* Carousel */}
+                <div className="relative">
+                    {/* Track Container */}
+                    <div className="overflow-hidden py-4 -my-4">
+                        <div
+                            ref={trackRef}
+                            className={cn(
+                                "flex gap-4 md:gap-6",
+                                !isPaused && "animate-carousel"
+                            )}
+                            style={{
+                                animationPlayState: isPaused ? "paused" : "running"
+                            }}
+                            onMouseEnter={() => {
+                                if (trackRef.current && !isPaused) {
+                                    trackRef.current.style.animationPlayState = "paused"
+                                }
+                            }}
+                            onMouseLeave={() => {
+                                if (trackRef.current && !isPaused) {
+                                    trackRef.current.style.animationPlayState = "running"
+                                }
+                            }}
+                        >
+                            {displayItems.map((persona, idx) => (
                                 <button
-                                    onClick={() => onPersonaClick(packPersonas[0]?.id)}
-                                    className="rounded-full bg-purple-500 px-4 md:px-5 py-1.5 md:py-2 text-xs md:text-sm font-semibold text-white transition-all hover:bg-purple-400 active:scale-95"
+                                    key={`${persona.id}-${idx}`}
+                                    onClick={() => onPersonaClick(persona.id)}
+                                    className="product-card flex-shrink-0 w-[140px] sm:w-[160px] md:w-[180px] lg:w-[200px] group text-left"
                                 >
-                                    Learn more
-                                </button>
-                                <button className="rounded-full border border-white/30 px-4 md:px-5 py-1.5 md:py-2 text-xs md:text-sm font-semibold text-white transition-all hover:bg-white/10 active:scale-95">
-                                    Buy
-                                </button>
-                            </div>
+                                    {/* Image Container */}
+                                    <div className="relative aspect-[3/4] rounded-xl overflow-hidden bg-rp-surface shadow-md mb-3 transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-xl">
+                                        {persona.image_url ? (
+                                            <Image
+                                                src={persona.image_url}
+                                                alt={persona.name}
+                                                fill
+                                                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full bg-gradient-to-br from-purple-600 to-pink-600" />
+                                        )}
 
-                            {/* Mobile: 2x2 Grid, Desktop: 4 Card Row */}
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
-                                {packPersonas.map((persona, idx) => (
-                                    <div
-                                        key={`${persona.id}-${idx}`}
-                                        onClick={() => onPersonaClick(persona.id)}
-                                        className="group/card relative cursor-pointer overflow-hidden rounded-lg md:rounded-xl transition-all hover:-translate-y-1 active:scale-95 hover:z-10"
-                                        style={{ aspectRatio: "2.5/3.5" }}
-                                    >
-                                        {/* Card Border Glow */}
-                                        <div className={cn(
-                                            "absolute -inset-0.5 rounded-lg md:rounded-xl bg-gradient-to-br opacity-75",
-                                            RARITY_STYLES[persona.rarity || "rare"]
-                                        )} />
+                                        {/* Rarity Badge */}
+                                        {persona.rarity && persona.rarity !== "common" && (
+                                            <span className={cn(
+                                                "absolute top-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase text-white shadow-sm",
+                                                RARITY_COLORS[persona.rarity]
+                                            )}>
+                                                {persona.rarity}
+                                            </span>
+                                        )}
 
-                                        <div className="relative h-full w-full overflow-hidden rounded-lg md:rounded-xl">
-                                            {persona.image_url ? (
-                                                <Image src={persona.image_url} alt={persona.name} fill className="object-cover" />
-                                            ) : (
-                                                <div className="h-full w-full bg-gradient-to-br from-purple-600 to-pink-600" />
-                                            )}
-
-                                            <div className="absolute left-0 right-0 top-0 flex justify-center">
-                                                <span className={cn(
-                                                    "px-1.5 md:px-2 py-0.5 text-[7px] md:text-[8px] font-bold uppercase tracking-wider text-white bg-gradient-to-r rounded-b",
-                                                    RARITY_STYLES[persona.rarity || "rare"]
-                                                )}>
-                                                    {persona.rarity}
-                                                </span>
-                                            </div>
-
-                                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-1.5 md:p-2">
-                                                <p className="truncate text-center text-[9px] md:text-[10px] font-bold text-white">{persona.name}</p>
-                                            </div>
+                                        {/* Hover Overlay */}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4">
+                                            <span className="bg-white text-rp-base px-4 py-1.5 rounded-full text-xs font-semibold shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                                                View Details
+                                            </span>
                                         </div>
                                     </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
 
-                    {/* DESKTOP: Featured Card (Vertical) - Hidden on mobile */}
-                    <div className="hidden lg:flex flex-col items-center order-2">
-                        {/* Title above card */}
-                        <div className="text-center mb-4">
-                            <p className="text-xs uppercase tracking-wider text-white/50 mb-1">Featured Soul</p>
-                            <h3 className="font-tiempos-headline text-3xl font-bold text-white">{featuredPersona.name}</h3>
-                        </div>
-
-                        {/* Vertical Card */}
-                        <div
-                            onClick={() => onPersonaClick(featuredPersona.id)}
-                            className="group relative cursor-pointer w-full max-w-[280px]"
-                        >
-                            {/* Glowing Border */}
-                            <div className={cn(
-                                "absolute -inset-1 rounded-2xl bg-gradient-to-br opacity-75 blur-sm transition-all group-hover:opacity-100 group-hover:blur-md",
-                                RARITY_STYLES[featuredPersona.rarity || "legendary"]
-                            )} />
-
-                            {/* Card Container */}
-                            <div className="relative overflow-hidden rounded-2xl" style={{ aspectRatio: "2.5/3.5" }}>
-                                {featuredPersona.image_url ? (
-                                    <Image
-                                        src={featuredPersona.image_url}
-                                        alt={featuredPersona.name}
-                                        fill
-                                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                                    />
-                                ) : (
-                                    <div className="h-full w-full bg-gradient-to-br from-purple-600 to-pink-600" />
-                                )}
-
-                                {/* Rarity Banner */}
-                                <div className="absolute left-0 right-0 top-0 flex justify-center">
-                                    <span className={cn(
-                                        "px-4 py-1 text-xs font-bold uppercase tracking-wider text-white bg-gradient-to-r rounded-b-lg shadow-lg flex items-center gap-1",
-                                        RARITY_STYLES[featuredPersona.rarity || "legendary"]
-                                    )}>
-                                        <IconSparkles size={12} />
-                                        {featuredPersona.rarity}
-                                    </span>
-                                </div>
-
-                                {/* Name & Stars at bottom */}
-                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/80 to-transparent p-4 text-center">
-                                    <p className="font-bold text-lg text-white">{featuredPersona.name}</p>
-                                    <div className="flex justify-center gap-0.5 mt-1">
-                                        {[...Array(5)].map((_, i) => (
-                                            <span key={i} className="text-amber-400 text-sm">★</span>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Buttons below card */}
-                        <div className="flex items-center gap-3 mt-4">
-                            <button
-                                onClick={() => onPersonaClick(featuredPersona.id)}
-                                className="rounded-full bg-purple-500 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-purple-500/30 transition-all hover:bg-purple-400"
-                            >
-                                Learn more
-                            </button>
+                                    {/* Info */}
+                                    <h3 className="font-semibold text-rp-text text-sm leading-tight line-clamp-2 mb-0.5">
+                                        {persona.name}
+                                    </h3>
+                                    {persona.description && (
+                                        <p className="text-rp-subtle text-xs line-clamp-1">
+                                            {persona.description}
+                                        </p>
+                                    )}
+                                </button>
+                            ))}
                         </div>
                     </div>
                 </div>
 
-                {/* Pagination Dots - Touch-friendly */}
-                <div className="mt-6 md:mt-10 flex justify-center gap-2">
-                    {premium.map((_, idx) => (
-                        <button
-                            key={idx}
-                            onClick={() => setCurrentIndex(idx)}
-                            className={cn(
-                                "h-2 rounded-full transition-all",
-                                idx === currentIndex ? "w-6 md:w-8 bg-purple-500" : "w-2 bg-white/30 hover:bg-white/50 active:bg-white/70"
-                            )}
-                            aria-label={`Go to slide ${idx + 1}`}
-                        />
-                    ))}
+                {/* Controls */}
+                <div className="flex justify-center items-center gap-3 mt-6">
+                    <button
+                        onClick={() => handleScroll("left")}
+                        className="w-10 h-10 rounded-full bg-rp-surface hover:bg-rp-overlay flex items-center justify-center text-rp-text transition-all hover:scale-105 shadow-sm"
+                        aria-label="Previous"
+                    >
+                        <IconChevronLeft size={18} />
+                    </button>
+                    <button
+                        onClick={togglePause}
+                        className="w-12 h-12 rounded-full bg-rp-surface hover:bg-rp-overlay flex items-center justify-center text-rp-text transition-all hover:scale-105 shadow-sm"
+                        aria-label={isPaused ? "Play" : "Pause"}
+                    >
+                        {isPaused ? <IconPlayerPlay size={20} /> : <IconPlayerPause size={20} />}
+                    </button>
+                    <button
+                        onClick={() => handleScroll("right")}
+                        className="w-10 h-10 rounded-full bg-rp-surface hover:bg-rp-overlay flex items-center justify-center text-rp-text transition-all hover:scale-105 shadow-sm"
+                        aria-label="Next"
+                    >
+                        <IconChevronRight size={18} />
+                    </button>
                 </div>
             </div>
+
+            {/* CSS for carousel animation */}
+            <style jsx>{`
+                @keyframes carousel {
+                    0% {
+                        transform: translateX(0);
+                    }
+                    100% {
+                        transform: translateX(-50%);
+                    }
+                }
+                .animate-carousel {
+                    animation: carousel 40s linear infinite;
+                    will-change: transform;
+                }
+                .animate-fadeInUp {
+                    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+                }
+                @keyframes fadeInUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+            `}</style>
         </div>
     )
 }
