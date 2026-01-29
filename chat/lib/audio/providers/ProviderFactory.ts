@@ -16,6 +16,7 @@ import { IAudioProvider } from './AudioProvider.interface';
 import { EdgeTTSProvider, getEdgeTTSProvider } from './EdgeTTSProvider';
 import { KokoroProvider, getKokoroProvider } from './KokoroProvider';
 import { ElevenLabsProvider, getElevenLabsProvider } from './ElevenLabsProvider';
+import { Qwen3TTSProvider, getQwen3TTSProvider } from './Qwen3TTSProvider';
 import { VoiceProvider } from '@/types/audio';
 
 // ============================================================================
@@ -100,6 +101,17 @@ export class ProviderFactory {
             priority: 0, // Highest priority
             description: 'ElevenLabs - Ultra-realistic voice cloning and generation',
         });
+
+        // Qwen3-TTS - Self-hosted voice cloning and design
+        this.providerConfigs.set('qwen3', {
+            name: 'qwen3',
+            displayName: 'Qwen3-TTS',
+            available: !!(process.env.QWEN_ENDPOINT || process.env.QWEN_API_KEY),
+            requiresAuth: false, // Self-hosted doesn't need API key
+            requiresPremium: false, // Available to all tiers (free when self-hosted)
+            priority: 0, // Same priority as ElevenLabs for premium features
+            description: 'Qwen3-TTS (Self-Hosted) - Voice cloning, voice design from descriptions, 10 languages, FREE',
+        });
     }
 
     /**
@@ -138,6 +150,9 @@ export class ProviderFactory {
 
             case 'elevenlabs':
                 return getElevenLabsProvider();
+
+            case 'qwen3':
+                return getQwen3TTSProvider();
 
             default:
                 throw new Error(`Unknown provider type: ${type}`);

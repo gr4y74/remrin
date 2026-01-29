@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Check, Lock, Sparkles, Zap, Globe } from "lucide-react"
+import { Check, Lock, Sparkles, Zap, Globe, Wand2 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import {
@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
-export type ProviderId = "edge-tts" | "kokoro" | "elevenlabs"
+export type ProviderId = "edge-tts" | "kokoro" | "elevenlabs" | "qwen3"
 
 interface ProviderSelectorProps {
     selectedProvider: ProviderId
@@ -30,6 +30,7 @@ interface ProviderOption {
     quality: "Basic" | "High" | "Ultra"
     cost: "Free" | "Low" | "High"
     isPremium: boolean
+    features?: string[]
 }
 
 const PROVIDERS: ProviderOption[] = [
@@ -52,6 +53,16 @@ const PROVIDERS: ProviderOption[] = [
         isPremium: false,
     },
     {
+        id: "qwen3",
+        name: "Qwen3-TTS",
+        description: "Voice cloning & design from description. 10 languages.",
+        icon: <Wand2 className="h-5 w-5 text-cyan-400" />,
+        quality: "Ultra",
+        cost: "Low",
+        isPremium: false,
+        features: ["voice-cloning", "voice-design"],
+    },
+    {
         id: "elevenlabs",
         name: "ElevenLabs",
         description: "Industry standard for realism and emotion.",
@@ -59,6 +70,7 @@ const PROVIDERS: ProviderOption[] = [
         quality: "Ultra",
         cost: "High",
         isPremium: true,
+        features: ["voice-cloning"],
     },
 ]
 

@@ -109,12 +109,14 @@ const COST_PER_CHARACTER: Record<VoiceProvider, number> = {
     edge: 0, // Free
     kokoro: 0, // Self-hosted
     elevenlabs: 0.00003, // $0.30 per 1000 chars (standard tier)
+    qwen3: 0, // Self-hosted (free when running locally)
 };
 
 const COST_PER_CHARACTER_PREMIUM: Record<VoiceProvider, number> = {
     edge: 0,
     kokoro: 0,
     elevenlabs: 0.00009, // $0.90 per 1000 chars (professional tier)
+    qwen3: 0, // Self-hosted (free)
 };
 
 // ============================================================================
@@ -506,6 +508,7 @@ export class CostTracker {
             edge: { characters: 0, cost: 0, count: 0 },
             kokoro: { characters: 0, cost: 0, count: 0 },
             elevenlabs: { characters: 0, cost: 0, count: 0 },
+            qwen3: { characters: 0, cost: 0, count: 0 },
         };
 
         for (const record of records) {

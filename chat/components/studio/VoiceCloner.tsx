@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Upload, Mic, Loader2, Sparkles, CheckCircle2 } from "lucide-react"
+import { Upload, Mic, Loader2, Sparkles, CheckCircle2, Wand2 } from "lucide-react"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
@@ -21,9 +21,31 @@ import {
     TabsList,
     TabsTrigger,
 } from "@/components/ui/tabs"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { Progress } from "@/components/ui/progress"
 import { AudioRecorder } from "./AudioRecorder"
 import { AudioWaveform } from "./AudioWaveform"
+
+type CloningProvider = 'qwen3' | 'elevenlabs';
+
+const PROVIDER_INFO: Record<CloningProvider, { name: string; duration: string; description: string }> = {
+    qwen3: {
+        name: 'Qwen3-TTS',
+        duration: '3-30 seconds',
+        description: 'Fast cloning with just 3 seconds of audio. Best results with 10-30 seconds.',
+    },
+    elevenlabs: {
+        name: 'ElevenLabs',
+        duration: '30-60 seconds',
+        description: 'Premium cloning with high fidelity. Works best with 30-60 seconds of clear speech.',
+    },
+};
 
 interface VoiceClonerProps {
     onSuccess?: (voiceId: string) => void
@@ -33,6 +55,7 @@ export function VoiceCloner({ onSuccess }: VoiceClonerProps) {
     const [name, setName] = React.useState("")
     const [description, setDescription] = React.useState("")
     const [activeTab, setActiveTab] = React.useState("record")
+    const [provider, setProvider] = React.useState<CloningProvider>('qwen3')
 
     // File upload state
     const [uploadFile, setUploadFile] = React.useState<File | null>(null)
@@ -91,6 +114,7 @@ export function VoiceCloner({ onSuccess }: VoiceClonerProps) {
             formData.append("name", name)
             formData.append("description", description)
             formData.append("file", audioSource)
+            formData.append("provider", provider)
 
             // Simulate progress while uploading
             const interval = setInterval(() => {
@@ -141,14 +165,41 @@ export function VoiceCloner({ onSuccess }: VoiceClonerProps) {
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <Sparkles className="h-5 w-5 text-primary" />
-                    Create New Voice
+                    Clone a Voice
                 </CardTitle>
                 <CardDescription>
                     Clone a voice by uploading a sample or recording directly.
-                    Best results with 30-60 seconds of clear speech.
+                    {provider === 'qwen3' ? ' Best results with 10-30 seconds of clear speech.' : ' Best results with 30-60 seconds of clear speech.'}
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+                {/* Provider Selection */}
+                <div className="space-y-2">
+                    <Label>Cloning Provider</Label>
+                    <Select value={provider} onValueChange={(v) => setProvider(v as CloningProvider)} disabled={loading}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select provider" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="qwen3">
+                                <div className="flex items-center gap-2">
+                                    <Wand2 className="h-4 w-4 text-cyan-400" />
+                                    Qwen3-TTS (3-30s)
+                                </div>
+                            </SelectItem>
+                            <SelectItem value="elevenlabs">
+                                <div className="flex items-center gap-2">
+                                    <Sparkles className="h-4 w-4 text-purple-400" />
+                                    ElevenLabs (30-60s)
+                                </div>
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <p className="text-xs text-muted-foreground">
+                        {PROVIDER_INFO[provider].description}
+                    </p>
+                </div>
+
                 <div className="grid gap-4">
                     <div className="space-y-2">
                         <Label htmlFor="voice-name">Voice Name</Label>

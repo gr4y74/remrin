@@ -1,10 +1,14 @@
 "use client"
 
-import { useCallback, useRef } from "react"
+import { useCallback, useRef, useState } from "react"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { StudioPersona, PersonaMetadata } from "../types"
-import { IconMicrophone, IconUpload, IconLoader2 } from "@tabler/icons-react"
+import { IconMicrophone, IconUpload, IconLoader2, IconWand, IconMusic } from "@tabler/icons-react"
+import { VoiceCloner } from "@/components/studio/VoiceCloner"
+import { VoiceDesigner } from "@/components/studio/VoiceDesigner"
+import { ProviderSelector, ProviderId } from "@/components/studio/ProviderSelector"
 
 interface VoiceTabProps {
     persona: StudioPersona
@@ -17,6 +21,7 @@ interface VoiceTabProps {
 
 export function VoiceTab({ persona, metadata, updateField, updateMetadata, uploadFile, uploading }: VoiceTabProps) {
     const audioInputRef = useRef<HTMLInputElement>(null)
+    const [selectedProvider, setSelectedProvider] = useState<ProviderId>("qwen3")
 
     const handleAudioUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -28,9 +33,138 @@ export function VoiceTab({ persona, metadata, updateField, updateMetadata, uploa
         }
     }, [uploadFile, updateMetadata])
 
+    const handleVoiceSelect = (voiceId: string, voiceName?: string) => {
+        updateField('voice_id', voiceId)
+        if (voiceName) {
+            updateMetadata('voice_name' as any, voiceName)
+        }
+    }
+
     return (
         <div className="space-y-6">
-            {/* Voice Sample Upload */}
+            {/* Voice Configuration Tabs */}
+            <Tabs defaultValue="select" className="w-full">
+                <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="select" className="flex items-center gap-2">
+                        <IconMusic size={16} />
+                        Select Voice
+                    </TabsTrigger>
+                    <TabsTrigger value="clone" className="flex items-center gap-2">
+                        <IconMicrophone size={16} />
+                        Clone Voice
+                    </TabsTrigger>
+                    <TabsTrigger value="design" className="flex items-center gap-2">
+                        <IconWand size={16} />
+                        Design Voice
+                    </TabsTrigger>
+                </TabsList>
+
+                {/* Select Voice Tab */}
+                <TabsContent value="select" className="mt-4 space-y-6">
+                    {/* Provider Selection */}
+                    <div className="space-y-2">
+                        <Label>TTS Provider</Label>
+                        <ProviderSelector
+                            selectedProvider={selectedProvider}
+                            onSelect={setSelectedProvider}
+                            userTier="free"
+                        />
+                    </div>
+
+                    {/* Voice ID */}
+                    <div className="space-y-2">
+                        <Label htmlFor="voice_id">Voice ID</Label>
+                        <Input
+                            id="voice_id"
+                            value={persona.voice_id || ''}
+                            onChange={(e) => updateField('voice_id', e.target.value)}
+                            placeholder={
+                                selectedProvider === 'qwen3'
+                                    ? "e.g., qwen3_female_01 or a cloned/designed voice ID"
+                                    : selectedProvider === 'elevenlabs'
+                                        ? "e.g., ThT5KcBeYtu3NO4"
+                                        : "e.g., alloy or nova"
+                            }
+                            className="border-rp-highlight-med bg-rp-surface font-mono"
+                        />
+                        <p className="text-xs text-rp-muted">
+                            {selectedProvider === 'qwen3'
+                                ? "Qwen3-TTS supports 10 languages with ultra-low latency. Use Clone or Design tabs for custom voices."
+                                : selectedProvider === 'elevenlabs'
+                                    ? "ElevenLabs voice ID for ultra-realistic synthesis."
+                                    : "The voice synthesis ID for text-to-speech."
+                            }
+                        </p>
+                    </div>
+
+                    {/* Quick Presets */}
+                    <div className="space-y-2">
+                        <Label>Quick Presets</Label>
+                        <div className="flex flex-wrap gap-2">
+                            {selectedProvider === 'qwen3' ? (
+                                // Qwen3 presets
+                                [
+                                    { id: 'qwen3_female_01', name: 'Harmony (Female)' },
+                                    { id: 'qwen3_female_02', name: 'Luna (Soft)' },
+                                    { id: 'qwen3_female_03', name: 'Sakura (Anime)' },
+                                    { id: 'qwen3_male_01', name: 'Atlas (Deep)' },
+                                    { id: 'qwen3_male_02', name: 'Echo (Narrator)' },
+                                    { id: 'qwen3_male_03', name: 'Ryu (Anime)' },
+                                ].map((preset) => (
+                                    <button
+                                        key={preset.id}
+                                        type="button"
+                                        onClick={() => updateField('voice_id', preset.id)}
+                                        className={`rounded-lg border px-3 py-1.5 text-sm transition-colors ${persona.voice_id === preset.id
+                                            ? 'border-cyan-500 bg-cyan-500/20 text-cyan-300'
+                                            : 'border-rp-highlight-med bg-rp-surface text-rp-subtle hover:border-rp-muted'
+                                            }`}
+                                    >
+                                        {preset.name}
+                                    </button>
+                                ))
+                            ) : (
+                                // OpenAI/other presets
+                                [
+                                    { id: 'alloy', name: 'Alloy (Neutral)' },
+                                    { id: 'echo', name: 'Echo (Male)' },
+                                    { id: 'fable', name: 'Fable (Expressive)' },
+                                    { id: 'nova', name: 'Nova (Female)' },
+                                    { id: 'shimmer', name: 'Shimmer (Soft)' }
+                                ].map((preset) => (
+                                    <button
+                                        key={preset.id}
+                                        type="button"
+                                        onClick={() => updateField('voice_id', preset.id)}
+                                        className={`rounded-lg border px-3 py-1.5 text-sm transition-colors ${persona.voice_id === preset.id
+                                            ? 'border-orange-500 bg-orange-500/20 text-orange-300'
+                                            : 'border-rp-highlight-med bg-rp-surface text-rp-subtle hover:border-rp-muted'
+                                            }`}
+                                    >
+                                        {preset.name}
+                                    </button>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </TabsContent>
+
+                {/* Clone Voice Tab */}
+                <TabsContent value="clone" className="mt-4">
+                    <VoiceCloner
+                        onSuccess={(voiceId) => handleVoiceSelect(voiceId)}
+                    />
+                </TabsContent>
+
+                {/* Design Voice Tab (Qwen3 unique feature!) */}
+                <TabsContent value="design" className="mt-4">
+                    <VoiceDesigner
+                        onSuccess={(voiceId, voiceName) => handleVoiceSelect(voiceId, voiceName)}
+                    />
+                </TabsContent>
+            </Tabs>
+
+            {/* Voice Sample Upload (for preview) */}
             <div className="space-y-2">
                 <Label>Voice Sample (for preview)</Label>
                 <div
@@ -65,48 +199,25 @@ export function VoiceTab({ persona, metadata, updateField, updateMetadata, uploa
                         disabled={uploading}
                     />
                 </div>
-            </div>
-
-            {/* Voice ID */}
-            <div className="space-y-2">
-                <Label htmlFor="voice_id">Voice ID (ElevenLabs / OpenAI)</Label>
-                <Input
-                    id="voice_id"
-                    value={persona.voice_id || ''}
-                    onChange={(e) => updateField('voice_id', e.target.value)}
-                    placeholder="e.g., ThT5KcBeYtu3NO4 or alloy"
-                    className="border-rp-highlight-med bg-rp-surface font-mono"
-                />
                 <p className="text-xs text-rp-muted">
-                    The voice synthesis ID for text-to-speech. Leave blank to use default.
+                    Optional: Upload a sample to preview how your character sounds before publishing.
                 </p>
             </div>
 
-            {/* Voice Presets */}
-            <div className="space-y-2">
-                <Label>Quick Presets</Label>
-                <div className="flex flex-wrap gap-2">
-                    {[
-                        { id: 'alloy', name: 'Alloy (Neutral)' },
-                        { id: 'echo', name: 'Echo (Male)' },
-                        { id: 'fable', name: 'Fable (Expressive)' },
-                        { id: 'nova', name: 'Nova (Female)' },
-                        { id: 'shimmer', name: 'Shimmer (Soft)' }
-                    ].map((preset) => (
-                        <button
-                            key={preset.id}
-                            type="button"
-                            onClick={() => updateField('voice_id', preset.id)}
-                            className={`rounded-lg border px-3 py-1.5 text-sm transition-colors ${persona.voice_id === preset.id
-                                ? 'border-orange-500 bg-orange-500/20 text-orange-300'
-                                : 'border-rp-highlight-med bg-rp-surface text-rp-subtle hover:border-rp-muted'
-                                }`}
-                        >
-                            {preset.name}
-                        </button>
-                    ))}
+            {/* Current Voice Status */}
+            {persona.voice_id && (
+                <div className="rounded-lg bg-rp-overlay/50 p-4">
+                    <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-cyan-500 to-blue-500">
+                            <IconMicrophone size={20} className="text-white" />
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium text-rp-text">Current Voice</p>
+                            <p className="font-mono text-xs text-rp-subtle">{persona.voice_id}</p>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     )
 }

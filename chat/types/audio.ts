@@ -8,7 +8,7 @@ import { z } from 'zod';
 /**
  * Voice Provider Types
  */
-export type VoiceProvider = 'edge' | 'kokoro' | 'elevenlabs';
+export type VoiceProvider = 'edge' | 'kokoro' | 'elevenlabs' | 'qwen3';
 
 
 /**
@@ -98,7 +98,7 @@ export type AudioUploadResponse = z.infer<typeof audioUploadResponseSchema>;
 
 // Voice Settings Update Request
 export const voiceSettingsUpdateSchema = z.object({
-    voice_provider: z.enum(['edge', 'kokoro', 'elevenlabs']).optional(),
+    voice_provider: z.enum(['edge', 'kokoro', 'elevenlabs', 'qwen3']).optional(),
     voice_id: z.string().optional(),
     voice_settings: z.record(z.unknown()).optional(),
 });
@@ -110,7 +110,7 @@ export const ttsGenerateSchema = z.object({
     text: z.string().min(1, 'Text is required').max(5000, 'Text too long'),
     personaId: z.string().uuid('Invalid persona ID'),
     voiceId: z.string().optional(),
-    provider: z.enum(['edge', 'kokoro', 'elevenlabs']).optional(),
+    provider: z.enum(['edge', 'kokoro', 'elevenlabs', 'qwen3']).optional(),
     settings: z.record(z.unknown()).optional(),
 });
 

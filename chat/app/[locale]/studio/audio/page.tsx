@@ -44,6 +44,12 @@ const MOCK_VOICES: Record<ProviderId, { id: string; name: string; emotions?: str
         { id: "k_01", name: "Kokoro A", emotions: ["neutral", "happy", "sad"] },
         { id: "k_02", name: "Kokoro B", emotions: ["neutral", "angry", "whisper"] },
     ],
+    "qwen3": [
+        { id: "qwen3_female_01", name: "Harmony (Female)" },
+        { id: "qwen3_female_03", name: "Sakura (Anime)" },
+        { id: "qwen3_male_01", name: "Atlas (Deep)" },
+        { id: "qwen3_male_03", name: "Ryu (Anime)" },
+    ],
     "elevenlabs": [
         { id: "el_01", name: "Rachel" },
         { id: "el_02", name: "Drew" },
@@ -142,10 +148,11 @@ export default function AudioStudioPage() {
                     </div>
 
                     <div className="rounded-lg bg-primary/5 p-4 text-sm text-muted-foreground">
-                        <h4 className="font-semibold text-foreground mb-1">About {provider === 'edge-tts' ? 'Edge TTS' : provider === 'kokoro' ? 'Kokoro' : 'ElevenLabs'}</h4>
+                        <h4 className="font-semibold text-foreground mb-1">About {provider === 'edge-tts' ? 'Edge TTS' : provider === 'kokoro' ? 'Kokoro' : provider === 'qwen3' ? 'Qwen3-TTS' : 'ElevenLabs'}</h4>
                         <p>
                             {provider === 'edge-tts' && "Great for free, unlimited generation with standard voices."}
                             {provider === 'kokoro' && "Balanced choice for high quality without high costs."}
+                            {provider === 'qwen3' && "Voice cloning from 3-second samples and design voices from text descriptions."}
                             {provider === 'elevenlabs' && "Premium voices with the most realistic intonation."}
                         </p>
                     </div>
