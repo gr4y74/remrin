@@ -140,7 +140,9 @@ export class Qwen3TTSProvider extends BaseAudioProvider {
 
     private endpoint: string;
     private apiKey: string;
+    private hfApiKey: string;
     private isSelfHosted: boolean;
+    private isHF: boolean;
     private activeRequests = 0;
     private voiceCache: Map<string, Qwen3Voice> = new Map();
     private voiceCacheTimestamp: number = 0;
@@ -149,20 +151,27 @@ export class Qwen3TTSProvider extends BaseAudioProvider {
     constructor(
         endpoint?: string,
         apiKey?: string,
+        hfApiKey?: string,
         retryConfig?: Partial<RetryConfig>,
         rateLimitConfig?: Partial<RateLimitConfig>
     ) {
         super(retryConfig, rateLimitConfig);
 
-        // Check for self-hosted endpoint first (preferred)
+        // Check for configurations (order of priority: self-hosted -> HF -> Cloud)
         this.endpoint = endpoint || process.env.QWEN_ENDPOINT || '';
         this.apiKey = apiKey || process.env.QWEN_API_KEY || '';
-        this.isSelfHosted = !!this.endpoint;
+        this.hfApiKey = hfApiKey || process.env.HF_API_KEY || process.env.HUGGINGFACE_API_KEY || '';
 
-        if (!this.endpoint && !this.apiKey) {
-            console.warn('[Qwen3-TTS] No configuration found. Set QWEN_ENDPOINT for self-hosted or QWEN_API_KEY for cloud API.');
+        this.isSelfHosted = !!this.endpoint && !this.endpoint.includes('huggingface.co');
+        this.isHF = !!this.hfApiKey || (!!this.endpoint && this.endpoint.includes('huggingface.co'));
+
+        if (!this.endpoint && !this.apiKey && !this.hfApiKey) {
+            console.warn('[Qwen3-TTS] No configuration found. Set QWEN_ENDPOINT, QWEN_API_KEY, or HF_API_KEY.');
         } else if (this.isSelfHosted) {
             console.log(`[Qwen3-TTS] Using self-hosted endpoint: ${this.endpoint}`);
+        } else if (this.isHF) {
+            const hfModel = this.endpoint || 'Qwen/Qwen3-TTS-12Hz-1.7B-Base';
+            console.log(`[Qwen3-TTS] Using Hugging Face Inference API: ${hfModel}`);
         } else {
             console.log('[Qwen3-TTS] Using DashScope cloud API');
         }
@@ -188,7 +197,7 @@ export class Qwen3TTSProvider extends BaseAudioProvider {
      * Check if provider is configured
      */
     isConfigured(): boolean {
-        return this.isSelfHosted || !!this.apiKey;
+        return this.isSelfHosted || this.isHF || !!this.apiKey;
     }
 
     /**
@@ -207,7 +216,7 @@ export class Qwen3TTSProvider extends BaseAudioProvider {
         // Validate configuration
         if (!this.isConfigured()) {
             throw new AudioProviderError(
-                'Qwen3-TTS not configured. Set QWEN_ENDPOINT for self-hosted deployment.',
+                'Qwen3-TTS not configured. Set QWEN_ENDPOINT, QWEN_API_KEY, or HF_API_KEY.',
                 'AUTH_ERROR',
                 this.name,
                 false
@@ -257,7 +266,7 @@ export class Qwen3TTSProvider extends BaseAudioProvider {
     }
 
     /**
-     * Perform the actual TTS generation using OpenAI-compatible API
+     * Perform the actual TTS generation using OpenAI-compatible API or HF Inference API
      */
     private async performGeneration(
         text: string,
@@ -266,38 +275,61 @@ export class Qwen3TTSProvider extends BaseAudioProvider {
         instructions?: string,
         requestId?: string
     ): Promise<ArrayBuffer> {
-        // OpenAI-compatible request format
-        const requestBody: OpenAITTSRequest = {
-            model: 'qwen3-tts',  // Model name for self-hosted server
-            input: text,
-            voice: voiceId,
-            response_format: 'mp3',
-            speed: options.rate || 1.0,
-            ...(instructions && { instructions }),
+        // Build URL and Headers based on mode
+        let url: string;
+        const headers: Record<string, string> = {
+            'Content-Type': 'application/json',
         };
+        let body: string;
+
+        if (this.isHF) {
+            // Hugging Face Inference API
+            const model = this.endpoint && this.endpoint.includes('huggingface.co')
+                ? this.endpoint
+                : `https://api-inference.huggingface.co/models/${this.endpoint || 'Qwen/Qwen3-TTS-12Hz-1.7B-Base'}`;
+
+            url = model;
+            headers['Authorization'] = `Bearer ${this.hfApiKey}`;
+
+            // Hugging Face payload format
+            body = JSON.stringify({
+                inputs: text,
+                parameters: {
+                    voice: voiceId,
+                    task: 'text-to-speech',
+                    ...(instructions && { instructions }),
+                }
+            });
+        } else {
+            // Self-hosted or Cloud (DashScope)
+            url = this.isSelfHosted
+                ? `${this.endpoint}/v1/audio/speech`
+                : 'https://dashscope.aliyuncs.com/api/v1/services/aigc/text2audio/generation';
+
+            if (!this.isSelfHosted && this.apiKey) {
+                headers['Authorization'] = `Bearer ${this.apiKey}`;
+            }
+
+            // OpenAI-compatible request format
+            const requestBody: OpenAITTSRequest = {
+                model: 'qwen3-tts',
+                input: text,
+                voice: voiceId,
+                response_format: 'mp3',
+                speed: options.rate || 1.0,
+                ...(instructions && { instructions }),
+            };
+            body = JSON.stringify(requestBody);
+        }
 
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
 
         try {
-            // Build URL based on mode
-            const url = this.isSelfHosted
-                ? `${this.endpoint}/v1/audio/speech`
-                : 'https://dashscope.aliyuncs.com/api/v1/services/aigc/text2audio/generation';
-
-            const headers: Record<string, string> = {
-                'Content-Type': 'application/json',
-            };
-
-            // Add auth header if using cloud API
-            if (!this.isSelfHosted && this.apiKey) {
-                headers['Authorization'] = `Bearer ${this.apiKey}`;
-            }
-
             const response = await fetch(url, {
                 method: 'POST',
                 headers,
-                body: JSON.stringify(requestBody),
+                body,
                 signal: controller.signal,
             });
 

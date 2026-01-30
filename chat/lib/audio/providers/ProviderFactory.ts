@@ -102,15 +102,15 @@ export class ProviderFactory {
             description: 'ElevenLabs - Ultra-realistic voice cloning and generation',
         });
 
-        // Qwen3-TTS - Self-hosted voice cloning and design
+        // Qwen3-TTS - Cloud, Self-hosted, or Hugging Face
         this.providerConfigs.set('qwen3', {
             name: 'qwen3',
             displayName: 'Qwen3-TTS',
-            available: !!(process.env.QWEN_ENDPOINT || process.env.QWEN_API_KEY),
-            requiresAuth: false, // Self-hosted doesn't need API key
-            requiresPremium: false, // Available to all tiers (free when self-hosted)
-            priority: 0, // Same priority as ElevenLabs for premium features
-            description: 'Qwen3-TTS (Self-Hosted) - Voice cloning, voice design from descriptions, 10 languages, FREE',
+            available: !!(process.env.QWEN_ENDPOINT || process.env.QWEN_API_KEY || process.env.HF_API_KEY || process.env.HUGGINGFACE_API_KEY),
+            requiresAuth: false, // Self-hosted or HF doesn't necessarily need Remrin auth
+            requiresPremium: false,
+            priority: 0,
+            description: 'Qwen3-TTS - Voice cloning and design (supports HF Inference API)',
         });
     }
 
