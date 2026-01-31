@@ -279,7 +279,7 @@ function ChatUIInner({
 
             {/* Fixed Bottom Input - Mobile Optimized */}
             <div className="relative z-10 shrink-0 chat-input-fixed px-3 md:px-4 pt-3 pb-safe-area-inset-bottom md:pb-6">
-                <div className="mx-auto max-w-3xl rounded-2xl bg-rp-base/80 md:bg-rp-base/20 backdrop-blur-md border border-white/10 p-2 md:p-3 shadow-lg">
+                <div className="mx-auto max-w-3xl rounded-2xl bg-rp-base/20 backdrop-blur-md border border-white/10 p-2 md:p-3 shadow-lg">
                     <ChatInput
                         placeholder={personaName ? `Message ${personaName}...` : 'Message Remrin...'}
                         onMemorySearch={onMemorySearchTrigger}
@@ -363,6 +363,14 @@ export function ChatUIV2({
     const [memorySearchQuery, setMemorySearchQuery] = useState('')
     const [isVisualNovelMode, setIsVisualNovelMode] = useState(false)
     const [isCallActive, setIsCallActive] = useState(false)
+
+    // Detect mobile and set visual novel mode as default
+    React.useEffect(() => {
+        const isMobile = window.innerWidth < 768
+        if (isMobile && !isVisualNovelMode) {
+            setIsVisualNovelMode(true)
+        }
+    }, [])
 
     // Sync state with props
     React.useEffect(() => {

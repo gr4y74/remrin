@@ -35,13 +35,22 @@ export function MobileNav() {
                     let href = item.href
                     let isDisabled = false
 
+                    // Profile: use the user's profile URL with locale
                     if (item.label === "Profile") {
-                        href = `/${pathname.split("/")[1]}${getUserProfileUrl(profile?.username || "")}`
+                        if (profile?.username) {
+                            const locale = pathname.split("/")[1] || "en"
+                            href = `/${locale}/profile/${profile.username}`
+                        } else {
+                            isDisabled = true
+                            href = "#"
+                        }
                     }
 
+                    // Chat: navigate to chat page with workspace context
                     if (item.label === "Chat") {
                         if (selectedWorkspace) {
-                            href = `/${pathname.split("/")[1]}/${selectedWorkspace.id}/chat`
+                            const locale = pathname.split("/")[1] || "en"
+                            href = `/${locale}/${selectedWorkspace.id}/chat`
                         } else {
                             isDisabled = true
                             href = "#"

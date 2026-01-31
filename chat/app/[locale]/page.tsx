@@ -272,7 +272,7 @@ export default function HomePage() {
 
       {/* Rotating Promotional Banners */}
       {banners.length > 0 && (
-        <div className="container w-full mx-auto px-4 md:px-6 lg:px-8">
+        <div className="container w-full mx-auto px-4 md:px-6 lg:px-8 pt-20 sm:pt-24 md:pt-28">
           <RotatingBanner banners={banners} />
         </div>
       )}

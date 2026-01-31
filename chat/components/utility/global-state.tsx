@@ -165,9 +165,8 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
     })
   }, [selectedPersona?.id])
 
-
-
-  const backgroundUrl = (selectedPersona as any)?.background_url
+  // Background URL with fallback to image_url
+  const backgroundUrl = (selectedPersona as any)?.background_url || (selectedPersona as any)?.image_url
 
   // Load background when persona changes
   useEffect(() => {
@@ -182,7 +181,7 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         }
       }
 
-      // 2. Try persona's default background from DB
+      // 2. Try persona's background_url or image_url as fallback
       if (backgroundUrl) {
         setActiveBackgroundUrlState(backgroundUrl)
         return

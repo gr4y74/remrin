@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef, useContext } from "react"
+import { useTheme } from "next-themes"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
@@ -65,10 +66,21 @@ export function FrontPageHeader({
     const [showUserMenu, setShowUserMenu] = useState(false)
     const [showMobileDrawer, setShowMobileDrawer] = useState(false)
     const [unreadCount, setUnreadCount] = useState(0)
+    const [isHeaderExpanded, setIsHeaderExpanded] = useState(false)
+    const [expandedByClick, setExpandedByClick] = useState(false)
+    const [mounted, setMounted] = useState(false)
+    const { resolvedTheme } = useTheme()
     const lastScrollY = useRef(0)
     const userMenuRef = useRef<HTMLDivElement>(null)
+    const headerRef = useRef<HTMLDivElement>(null)
+    const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
     const isLoggedIn = !!profile
+
+    // Track mounted state for theme
+    useEffect(() => {
+        setMounted(true)
+    }, [])
 
     // Check localStorage for banner dismissal
     useEffect(() => {
@@ -215,6 +227,35 @@ export function FrontPageHeader({
     }
 
     const showExpanded = !isCollapsed || isHovered
+
+    // Dropdown header handlers
+    const handleLogoClick = () => {
+        setIsHeaderExpanded(!isHeaderExpanded)
+        setExpandedByClick(!isHeaderExpanded)
+        if (hoverTimeoutRef.current) {
+            clearTimeout(hoverTimeoutRef.current)
+        }
+    }
+
+    const handleLogoHover = () => {
+        if (!expandedByClick) {
+            if (hoverTimeoutRef.current) {
+                clearTimeout(hoverTimeoutRef.current)
+            }
+            setIsHeaderExpanded(true)
+        }
+    }
+
+    const handleHeaderMouseLeave = () => {
+        if (!expandedByClick) {
+            if (hoverTimeoutRef.current) {
+                clearTimeout(hoverTimeoutRef.current)
+            }
+            hoverTimeoutRef.current = setTimeout(() => {
+                setIsHeaderExpanded(false)
+            }, 300)
+        }
+    }
 
     return (
         <>
@@ -364,10 +405,43 @@ export function FrontPageHeader({
                 </div>
             </div>
 
+            {/* Large Logo - Default State */}
+            {!isHeaderExpanded && (
+                <div className="fixed top-0 left-0 right-0 z-50 flex justify-center py-6 sm:py-8 pointer-events-none">
+                    <button
+                        onClick={handleLogoClick}
+                        onMouseEnter={handleLogoHover}
+                        className="pointer-events-auto transition-transform duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-rp-iris/50 rounded-lg"
+                        aria-label="Expand navigation"
+                    >
+                        {mounted && (
+                            <Image
+                                src={resolvedTheme === "light" ? "/logo_dark.svg" : "/logo.svg"}
+                                alt="Remrin"
+                                width={250}
+                                height={60}
+                                className="h-12 sm:h-14 md:h-16 w-auto"
+                                priority
+                            />
+                        )}
+                    </button>
+                </div>
+            )}
+
+            {/* Dropdown Header - Expanded State */}
             <header
-                className="sticky top-0 z-40 w-full px-2 sm:px-4 py-2 transition-all duration-300"
+                ref={headerRef}
+                className={cn(
+                    "fixed top-0 left-0 right-0 z-40 w-full px-2 sm:px-4 transition-all duration-500 ease-out",
+                    isHeaderExpanded
+                        ? "translate-y-0 opacity-100 pointer-events-auto"
+                        : "-translate-y-full opacity-0 pointer-events-none"
+                )}
                 onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
+                onMouseLeave={() => {
+                    setIsHovered(false)
+                    handleHeaderMouseLeave()
+                }}
             >
                 {/* Extension Banner - only show when expanded */}
                 {showBanner && showExpanded && (
@@ -392,57 +466,34 @@ export function FrontPageHeader({
                     </div>
                 )}
 
-                {/* Glassmorphic Nav Container - Fades on collapse */}
-                <div
-                    className={cn(
-                        "mx-auto max-w-[1400px] w-full overflow-hidden transition-all duration-500 ease-out",
-                        showExpanded
-                            ? "opacity-100 max-h-[200px]"
-                            : "opacity-0 max-h-0 pointer-events-none"
-                    )}
-                >
-                    <div
-                        className={cn(
-                            "bg-rp-surface/90 backdrop-blur-xl rounded-2xl shadow-2xl w-full transition-all duration-300 ease-out",
-                            showExpanded ? "p-3 sm:p-4 md:p-5" : "p-2 md:p-3"
-                        )}
-                    >
-                        {/* Top Row - Always visible */}
-                        <div className={cn(
-                            "flex items-center justify-between gap-2 sm:gap-4 transition-all duration-300 relative",
-                            showExpanded ? "mb-4" : "mb-0"
-                        )}>
-                            {/* Center: Logo (absolute positioned) */}
-                            <Link href="/" className="absolute left-1/2 -translate-x-1/2 z-10">
-                                <Image
-                                    src="/logo.svg"
-                                    alt="Remrin"
-                                    width={120}
-                                    height={40}
-                                    className="h-10 w-auto"
-                                    priority
-                                />
+                {/* Glassmorphic Nav Container */}
+                <div className="mx-auto max-w-[1400px] w-full overflow-hidden transition-all duration-300 ease-out opacity-100 mt-2">
+                    <div className="bg-rp-surface/90 backdrop-blur-xl rounded-2xl shadow-2xl w-full p-3 sm:p-4 md:p-5">
+                        {/* Top Row */}
+                        <div className="flex items-center gap-3 sm:gap-4 transition-all duration-300 mb-4">
+                            {/* Left: Logo */}
+                            <Link href="/" className="shrink-0">
+                                {mounted && (
+                                    <Image
+                                        src={resolvedTheme === "light" ? "/logo_dark.svg" : "/logo.svg"}
+                                        alt="Remrin"
+                                        width={166}
+                                        height={40}
+                                        className="h-10 w-auto"
+                                        priority
+                                    />
+                                )}
                             </Link>
-                            {/* Left: Wallet + Search */}
-                            <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
-                                {/* Wallet Icon (replaces S logo) */}
-                                <Link href={isLoggedIn ? "/wallet" : "/login"} className="shrink-0">
-                                    <div className={cn(
-                                        "bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center text-white hover:scale-105 transition-all cursor-pointer",
-                                        showExpanded ? "w-8 h-8 sm:w-10 sm:h-10" : "w-7 h-7 sm:w-8 sm:h-8"
-                                    )}>
-                                        <IconWallet size={showExpanded ? 18 : 16} className="sm:w-[22px] sm:h-[22px]" />
-                                    </div>
-                                </Link>
 
-                                {/* Search Bar - collapses to icon when mini or on mobile */}
+                            {/* Center: Search Bar - Expanded */}
+                            <div className="flex-1 min-w-0 max-w-[700px]">
                                 {showExpanded ? (
-                                    <div className="hidden sm:flex flex-1 max-w-[500px] transition-all duration-300">
+                                    <div className="hidden sm:flex w-full transition-all duration-300">
                                         <SearchSouls onResultClick={onSearchResultClick} />
                                     </div>
                                 ) : (
                                     <button
-                                        className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-rp-overlay/50 hover:bg-rp-overlay text-rp-subtle text-sm transition-all"
+                                        className="hidden sm:flex items-center gap-2 w-full px-3 py-1.5 rounded-lg bg-rp-overlay/50 hover:bg-rp-overlay text-rp-subtle text-sm transition-all"
                                         onClick={() => setIsHovered(true)}
                                     >
                                         <IconSearch size={16} />
@@ -460,7 +511,18 @@ export function FrontPageHeader({
                             </div>
 
                             {/* Right: Actions */}
-                            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                            <div className="flex items-center gap-1.5 shrink-0">
+                                {/* Wallet Button - Desktop only, matches other action buttons */}
+                                <Link
+                                    href={isLoggedIn ? "/wallet" : "/login"}
+                                    className={cn(
+                                        "hidden md:flex items-center justify-center rounded-xl bg-rp-overlay hover:bg-rp-base text-rp-text transition-all",
+                                        showExpanded ? "w-10 h-10" : "w-8 h-8"
+                                    )}
+                                >
+                                    <IconWallet size={showExpanded ? 20 : 16} />
+                                </Link>
+
                                 {/* Subscribe Button - Hidden on mobile */}
                                 <Link
                                     href="/pricing"
@@ -642,68 +704,26 @@ export function FrontPageHeader({
                             </div>
                         </div>
 
-                        {/* Divider + Categories - Only show when expanded on desktop */}
-                        {showExpanded && (
-                            <>
-                                <div className="hidden md:block h-px bg-gradient-to-r from-transparent via-rp-highlight-med to-transparent -mx-5 mb-3"></div>
-                                <div className="hidden md:flex gap-2 overflow-x-auto no-scrollbar pb-1">
-                                    {CATEGORIES.map((category) => {
-                                        const Icon = category.icon
-                                        return (
-                                            <button
-                                                key={category.id}
-                                                onClick={() => handleCategoryClick(category.id)}
-                                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all bg-rp-overlay hover:bg-rp-base hover:-translate-y-0.5 text-rp-text border-0"
-                                            >
-                                                <Icon size={14} className="shrink-0" />
-                                                {category.label}
-                                            </button>
-                                        )
-                                    })}
-                                </div>
-                            </>
-                        )}
+                        {/* Divider + Categories */}
+                        <>
+                            <div className="hidden md:block h-px bg-gradient-to-r from-transparent via-rp-highlight-med to-transparent -mx-5 mb-3"></div>
+                            <div className="hidden md:flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                                {CATEGORIES.map((category) => {
+                                    const Icon = category.icon
+                                    return (
+                                        <button
+                                            key={category.id}
+                                            onClick={() => handleCategoryClick(category.id)}
+                                            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all bg-rp-overlay hover:bg-rp-base hover:-translate-y-0.5 text-rp-text border-0"
+                                        >
+                                            <Icon size={14} className="shrink-0" />
+                                            {category.label}
+                                        </button>
+                                    )
+                                })}
+                            </div>
+                        </>
                     </div>
-                </div>
-
-                {/* Collapsed State - Floating Logo Pill */}
-                <div
-                    className={cn(
-                        "absolute left-1/2 -translate-x-1/2 z-50",
-                        "transition-all duration-500 ease-out",
-                        "will-change-transform",
-                        showExpanded
-                            ? "opacity-0 scale-75 pointer-events-none top-2"
-                            : "opacity-100 scale-100 top-3"
-                    )}
-                    style={{ transform: 'translate3d(-50%, 0, 0)', backfaceVisibility: 'hidden' }}
-                >
-                    <button
-                        onClick={() => {
-                            setIsCollapsed(false)
-                            setIsHovered(true)
-                        }}
-                        className="group relative"
-                    >
-                        {/* Glow effect on hover */}
-                        <div className="absolute inset-0 bg-rp-iris/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-
-                        {/* Logo pill container - solid background to prevent flicker */}
-                        <div className="relative bg-rp-surface rounded-full px-4 py-2 shadow-lg border border-rp-highlight-med/50 hover:border-rp-iris/50 transition-colors hover:shadow-rp-iris/20 hover:shadow-xl">
-                            <Image
-                                src="/logo.svg"
-                                alt="Remrin"
-                                width={80}
-                                height={28}
-                                className="h-7 w-auto"
-                            />
-                        </div>
-
-                        {/* Expand indicator */}
-                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <div className="w-6 h-0.5 bg-rp-iris/50 rounded-full" />
-                        </div>
-                    </button>
                 </div>
             </header>
         </>

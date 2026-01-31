@@ -63,6 +63,7 @@ export function MinimalSidebar({ user }: MinimalSidebarProps) {
     }, [])
 
     const logoSrc = resolvedTheme === "light" ? "/logo_dark.svg" : "/logo.svg"
+    const logoSmSrc = resolvedTheme === "light" ? "/logo_sm_dark.svg" : "/logo_sm.svg"
 
     return (
         <motion.nav
@@ -77,27 +78,29 @@ export function MinimalSidebar({ user }: MinimalSidebarProps) {
             <div className="border-rp-muted/20 relative flex h-14 shrink-0 items-center justify-center overflow-hidden border-b">
                 <Link href="/" className="flex items-center justify-center transition-transform duration-300 ease-out hover:rotate-[-5deg] hover:scale-105 mt-[7px]">
                     {/* Small logo - visible when collapsed */}
-                    <Image
-                        src="/logo_sm.svg"
-                        alt="Remrin"
-                        width={45}
-                        height={45}
-                        priority
-                        className={cn(
-                            "transition-all duration-300",
-                            isExpanded ? "absolute opacity-0 scale-75" : "opacity-100 scale-100"
-                        )}
-                    />
+                    {mounted && (
+                        <Image
+                            src={logoSmSrc}
+                            alt="Remrin"
+                            width={45}
+                            height={45}
+                            priority
+                            className={cn(
+                                "transition-all duration-300",
+                                isExpanded ? "absolute opacity-0 scale-75" : "opacity-100 scale-100"
+                            )}
+                        />
+                    )}
                     {/* Full wordmark - visible when expanded */}
                     {mounted && (
                         <Image
                             src={logoSrc}
                             alt="Remrin.ai"
-                            width={96}
-                            height={26}
+                            width={166}
+                            height={40}
                             priority
                             className={cn(
-                                "h-[26px] w-auto transition-all duration-300",
+                                "h-[40px] w-auto transition-all duration-300",
                                 isExpanded
                                     ? "opacity-100 scale-100 relative"
                                     : "absolute opacity-0 scale-90 pointer-events-none"

@@ -2,13 +2,23 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { FC } from "react"
+import { FC, useEffect, useState } from "react"
+import { useTheme } from "next-themes"
 
 interface BrandProps {
   theme?: "dark" | "light"
 }
 
 export const Brand: FC<BrandProps> = ({ theme = "dark" }) => {
+  const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const logoSrc = mounted && resolvedTheme === "light" ? "/logo_dark.svg" : "/logo.svg"
+
   return (
     <Link
       className="flex cursor-pointer items-center justify-center transition-opacity hover:opacity-80"
@@ -16,7 +26,7 @@ export const Brand: FC<BrandProps> = ({ theme = "dark" }) => {
       rel="noopener noreferrer"
     >
       <Image
-        src="/logo.svg"
+        src={logoSrc}
         alt="Remrin"
         width={72}
         height={72}
