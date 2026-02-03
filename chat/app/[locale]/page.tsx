@@ -258,167 +258,165 @@ export default function HomePage() {
       showHeader={false}
       showFooter={false}
       fullBleed
-      className="!bg-transparent text-rp-text relative isolate"
+      className="!bg-transparent text-rp-text"
     >
-      {/* Animated Wave Background - positioned below all content */}
-      <WaveBackground
-        className="absolute inset-0 pointer-events-none"
-        colorScheme="purple"
-        style={{ zIndex: -1 }}
+      {/* Animated Wave Background - fixed to viewport, lowest possible z-index */}
+      <div className="fixed inset-0 pointer-events-none" style={{ zIndex: -9999 }}>
+        <WaveBackground
+          className="absolute inset-0"
+          colorScheme="purple"
+        />
+      </div>
+
+      {/* Section 2: Header with Extension Banner, Search, Categories, Auth Buttons */}
+      <FrontPageHeader
+        onSearchResultClick={handlePersonaClick}
       />
 
-      {/* Main Content Wrapper - ensures all content stacks above waves */}
-      <div className="relative" style={{ zIndex: 1, transformStyle: 'flat' }}>
-        {/* Section 2: Header with Extension Banner, Search, Categories, Auth Buttons */}
-        <FrontPageHeader
-          onSearchResultClick={handlePersonaClick}
-        />
+      {/* Rotating Promotional Banners */}
+      {banners.length > 0 && (
+        <div className="container w-full mx-auto px-4 md:px-6 lg:px-8 pt-20 sm:pt-24 md:pt-28">
+          <RotatingBanner banners={banners} />
+        </div>
+      )}
 
-        {/* Rotating Promotional Banners */}
-        {banners.length > 0 && (
-          <div className="container w-full mx-auto px-4 md:px-6 lg:px-8 pt-20 sm:pt-24 md:pt-28">
-            <RotatingBanner banners={banners} />
+      {/* Onboarding Modal */}
+      <OnboardingModal
+        open={showOnboarding}
+        onClose={completeOnboarding}
+      />
+
+      {/* Section 3: Featured Souls with 3D Carousel - Dynamic data */}
+      <section className="relative mt-6 md:mt-8 overflow-visible">
+        <div className="mb-4 px-4 md:px-6 text-center">
+          <h2 className="font-tiempos-headline inline-flex items-center gap-2 font-semibold text-2xl md:text-4xl" style={{ color: headingColor }}>
+            <IconSparkles size={20} className="text-amber-400 md:hidden" />
+            <IconSparkles size={24} className="text-amber-400 hidden md:inline" />
+            Featured Souls
+            <IconSparkles size={20} className="text-amber-400 md:hidden" />
+            <IconSparkles size={24} className="text-amber-400 hidden md:inline" />
+          </h2>
+        </div>
+
+        {loading ? (
+          <div className="px-6 flex justify-center">
+            <Skeleton className="w-[300px] h-[400px] md:w-[600px] md:h-[500px] rounded-3xl" />
           </div>
-        )}
-
-        {/* Onboarding Modal */}
-        <OnboardingModal
-          open={showOnboarding}
-          onClose={completeOnboarding}
-        />
-
-        {/* Section 3: Featured Souls with 3D Carousel - Dynamic data */}
-        <section className="relative mt-6 md:mt-8 overflow-hidden">
-          <div className="mb-4 px-4 md:px-6 text-center">
-            <h2 className="font-tiempos-headline inline-flex items-center gap-2 font-semibold text-2xl md:text-4xl" style={{ color: headingColor }}>
-              <IconSparkles size={20} className="text-amber-400 md:hidden" />
-              <IconSparkles size={24} className="text-amber-400 hidden md:inline" />
-              Featured Souls
-              <IconSparkles size={20} className="text-amber-400 md:hidden" />
-              <IconSparkles size={24} className="text-amber-400 hidden md:inline" />
-            </h2>
-          </div>
-
-          {loading ? (
-            <div className="px-6 flex justify-center">
-              <Skeleton className="w-[300px] h-[400px] md:w-[600px] md:h-[500px] rounded-3xl" />
-            </div>
-          ) : (
-            <FeaturedCarousel
-              characters={carouselItems.map(p => ({
-                id: p.id,
-                name: p.name,
-                imageUrl: p.image_url,
-                isFeatured: true
-              }))}
-              onCharacterClick={handlePersonaClick}
-            />
-          )}
-        </section>
-
-        {/* Section 4: Trending Souls - NEW */}
-        <TrendingSoulsList onPersonaClick={handlePersonaClick} />
-
-        {/* Section 5: Featured Premium - NEW */}
-        <FeaturedPremiumRow onPersonaClick={handlePersonaClick} />
-
-        {/* Section 5.5: Dynamic Content Sections (Kids, Gaming, etc.) - NEW */}
-        {/* Section 5.5: Dynamic Content Sections (Kids, Gaming, etc.) - NEW */}
-        {contentSections.map(section => (
-          <div key={section.id} id={section.slug} className="scroll-mt-24">
-            <CategorySection
-              section={section}
-              personas={section.personas}
-              onPersonaClick={handlePersonaClick}
-            />
-          </div>
-        ))}
-
-        {/* Section 6: Explore All Souls - Updated with gacha-style cards */}
-        <section id="explore-souls" className="relative mt-6 md:mt-8" data-section="explore-souls">
-          <div className="mb-4 flex flex-col items-center gap-2 px-4 md:px-6">
-            <h2 className="font-tiempos-headline font-semibold inline-flex items-center gap-2 text-2xl md:text-4xl" style={{ color: headingColor }}>
-              <IconSparkles size={20} className="text-purple-400 md:hidden" />
-              <IconSparkles size={24} className="text-purple-400 hidden md:inline" />
-              Explore Souls
-              <IconSparkles size={20} className="text-purple-400 md:hidden" />
-              <IconSparkles size={24} className="text-purple-400 hidden md:inline" />
-            </h2>
-            <Link
-              href="#explore-souls"
-              className="flex items-center gap-1 text-sm text-purple-400 transition-colors hover:text-purple-300"
-            >
-              View all
-              <IconArrowRight size={16} />
-            </Link>
-          </div>
-
-          <DraggableGallery
-            items={galleryItems.map(p => ({
+        ) : (
+          <FeaturedCarousel
+            characters={carouselItems.map(p => ({
               id: p.id,
               name: p.name,
-              description: p.description,
               imageUrl: p.image_url,
-              rarity: p.rarity,
-              messageCount: p.message_count,
-              followersCount: p.follower_count
+              isFeatured: true
             }))}
-            onItemClick={handlePersonaClick}
+            onCharacterClick={handlePersonaClick}
           />
-        </section>
+        )}
+      </section>
 
-        {/* Quick Actions Section */}
-        <section className="relative mt-6 md:mt-8 border-t border-rp-iris/20 py-8 md:py-12">
-          <div className="mx-auto grid max-w-4xl grid-cols-1 gap-6 px-6 md:grid-cols-3">
-            <Link
-              href="/summon"
-              className="group rounded-2xl border border-amber-500/20 bg-gradient-to-br from-amber-500/10 to-orange-500/10 p-6 transition-colors hover:border-amber-500/40"
-            >
-              <IconDiamond size={32} className="mb-4 text-amber-400" />
-              <h3 className="font-tiempos-headline mb-2 font-semibold text-rp-text transition-colors group-hover:text-amber-400">
-                Soul Summons
-              </h3>
-              <p className="text-sm text-rp-muted">
-                Try your luck to summon rare and legendary Souls
-              </p>
-            </Link>
+      {/* Section 4: Trending Souls - NEW */}
+      <TrendingSoulsList onPersonaClick={handlePersonaClick} />
 
-            <Link
-              href="/studio"
-              className="group rounded-2xl border border-purple-500/20 bg-gradient-to-br from-purple-500/10 to-pink-500/10 p-6 transition-colors hover:border-purple-500/40"
-            >
-              <IconSparkles size={32} className="mb-4 text-purple-400" />
-              <h3 className="font-tiempos-headline mb-2 font-semibold text-rp-text transition-colors group-hover:text-purple-400">
-                Soul Studio
-              </h3>
-              <p className="text-sm text-rp-muted">
-                Create and customize your own unique Souls
-              </p>
-            </Link>
+      {/* Section 5: Featured Premium - NEW */}
+      <FeaturedPremiumRow onPersonaClick={handlePersonaClick} />
 
-            <Link
-              href="/marketplace"
-              className="group rounded-2xl border border-cyan-500/20 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 p-6 transition-colors hover:border-cyan-500/40"
-            >
-              <svg className="mb-4 size-8 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <path d="M16 10a4 4 0 0 1-8 0" />
-              </svg>
-              <h3 className="font-tiempos-headline mb-2 font-semibold text-rp-text transition-colors group-hover:text-cyan-400">
-                Soul Bazaar
-              </h3>
-              <p className="text-sm text-rp-muted">
-                Buy and sell Souls from the community
-              </p>
-            </Link>
-          </div>
-        </section>
+      {/* Section 5.5: Dynamic Content Sections (Kids, Gaming, etc.) - NEW */}
+      {/* Section 5.5: Dynamic Content Sections (Kids, Gaming, etc.) - NEW */}
+      {contentSections.map(section => (
+        <div key={section.id} id={section.slug} className="scroll-mt-24">
+          <CategorySection
+            section={section}
+            personas={section.personas}
+            onPersonaClick={handlePersonaClick}
+          />
+        </div>
+      ))}
+
+      {/* Section 6: Explore All Souls - Updated with gacha-style cards */}
+      <section id="explore-souls" className="relative mt-6 md:mt-8" data-section="explore-souls">
+        <div className="mb-4 flex flex-col items-center gap-2 px-4 md:px-6">
+          <h2 className="font-tiempos-headline font-semibold inline-flex items-center gap-2 text-2xl md:text-4xl" style={{ color: headingColor }}>
+            <IconSparkles size={20} className="text-purple-400 md:hidden" />
+            <IconSparkles size={24} className="text-purple-400 hidden md:inline" />
+            Explore Souls
+            <IconSparkles size={20} className="text-purple-400 md:hidden" />
+            <IconSparkles size={24} className="text-purple-400 hidden md:inline" />
+          </h2>
+          <Link
+            href="#explore-souls"
+            className="flex items-center gap-1 text-sm text-purple-400 transition-colors hover:text-purple-300"
+          >
+            View all
+            <IconArrowRight size={16} />
+          </Link>
+        </div>
+
+        <DraggableGallery
+          items={galleryItems.map(p => ({
+            id: p.id,
+            name: p.name,
+            description: p.description,
+            imageUrl: p.image_url,
+            rarity: p.rarity,
+            messageCount: p.message_count,
+            followersCount: p.follower_count
+          }))}
+          onItemClick={handlePersonaClick}
+        />
+      </section>
+
+      {/* Quick Actions Section */}
+      <section className="relative mt-6 md:mt-8 border-t border-rp-iris/20 py-8 md:py-12">
+        <div className="mx-auto grid max-w-4xl grid-cols-1 gap-6 px-6 md:grid-cols-3">
+          <Link
+            href="/summon"
+            className="group rounded-2xl border border-amber-500/20 bg-gradient-to-br from-amber-500/10 to-orange-500/10 p-6 transition-colors hover:border-amber-500/40"
+          >
+            <IconDiamond size={32} className="mb-4 text-amber-400" />
+            <h3 className="font-tiempos-headline mb-2 font-semibold text-rp-text transition-colors group-hover:text-amber-400">
+              Soul Summons
+            </h3>
+            <p className="text-sm text-rp-muted">
+              Try your luck to summon rare and legendary Souls
+            </p>
+          </Link>
+
+          <Link
+            href="/studio"
+            className="group rounded-2xl border border-purple-500/20 bg-gradient-to-br from-purple-500/10 to-pink-500/10 p-6 transition-colors hover:border-purple-500/40"
+          >
+            <IconSparkles size={32} className="mb-4 text-purple-400" />
+            <h3 className="font-tiempos-headline mb-2 font-semibold text-rp-text transition-colors group-hover:text-purple-400">
+              Soul Studio
+            </h3>
+            <p className="text-sm text-rp-muted">
+              Create and customize your own unique Souls
+            </p>
+          </Link>
+
+          <Link
+            href="/marketplace"
+            className="group rounded-2xl border border-cyan-500/20 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 p-6 transition-colors hover:border-cyan-500/40"
+          >
+            <svg className="mb-4 size-8 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <path d="M16 10a4 4 0 0 1-8 0" />
+            </svg>
+            <h3 className="font-tiempos-headline mb-2 font-semibold text-rp-text transition-colors group-hover:text-cyan-400">
+              Soul Bazaar
+            </h3>
+            <p className="text-sm text-rp-muted">
+              Buy and sell Souls from the community
+            </p>
+          </Link>
+        </div>
+      </section>
 
 
-        {/* Section 7: Footer - KEEP AS IS */}
-        <Footer />
-      </div>
+      {/* Section 7: Footer - KEEP AS IS */}
+      <Footer />
     </PageTemplate>
   )
 }

@@ -7,12 +7,10 @@
     min-height: 480px;
     z-index: 20;
     isolation: isolate;
-    transform: translateZ(0);
-    /* Forces GPU layer + stacking context boundary */
-    /* Creates a new stacking context above waves */
     perspective: 2000px;
     overflow: hidden;
-    background: transparent;
+    /* Opaque dark background to block wave background from showing through */
+    background: linear-gradient(to bottom, rgba(35, 33, 54, 0.98), rgba(35, 33, 54, 0.95));
 
     /* CSS Variables for Responsive Calc */
     --card-width: 260px;
