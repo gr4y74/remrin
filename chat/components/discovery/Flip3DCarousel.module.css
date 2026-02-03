@@ -6,6 +6,10 @@
     width: 100%;
     min-height: 480px;
     z-index: 20;
+    isolation: isolate;
+    transform: translateZ(0);
+    /* Forces GPU layer + stacking context boundary */
+    /* Creates a new stacking context above waves */
     perspective: 2000px;
     overflow: hidden;
     background: transparent;
@@ -71,16 +75,10 @@
     filter: blur(var(--blur-amount));
     opacity: max(0, var(--opacity-val));
 
-    /* Reflection Effect - Desktop only */
-    -webkit-box-reflect: below 10px linear-gradient(to bottom, rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.25));
+    /* Reflection removed - was causing z-index stacking issues with wave background */
 }
 
-/* Disable reflection on mobile for performance */
-@media (max-width: 768px) {
-    .cardFlipContainer {
-        -webkit-box-reflect: none;
-    }
-}
+
 
 .cardFlipInner {
     position: relative;

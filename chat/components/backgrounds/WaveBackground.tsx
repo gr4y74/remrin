@@ -1,19 +1,22 @@
 "use client"
 
 import { cn } from "@/lib/utils"
+import { CSSProperties } from "react"
 
 interface WaveBackgroundProps {
     className?: string
     colorScheme?: 'purple' | 'custom'
     customColors?: string[]
     opacity?: number
+    style?: CSSProperties
 }
 
 export function WaveBackground({
     className,
     colorScheme = 'purple',
     customColors,
-    opacity = 1
+    opacity = 1,
+    style
 }: WaveBackgroundProps) {
     // Remrin purple gradient colors (from lightest to deepest)
     const purpleColors = [
@@ -32,7 +35,7 @@ export function WaveBackground({
     return (
         <div
             className={cn("pointer-events-none overflow-hidden", className)}
-            style={{ opacity }}
+            style={{ opacity, ...style }}
             aria-hidden="true"
         >
             <svg
