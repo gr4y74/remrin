@@ -40,7 +40,7 @@ export function WaveBackground({
         >
             <svg
                 className="waves"
-                viewBox="0 0 900 450"
+                viewBox="0 -220 900 670"
                 width="100%"
                 height="100%"
                 preserveAspectRatio="none"
