@@ -163,7 +163,7 @@ export function FeedLayout({
     return (
         <div
             ref={containerRef}
-            className="relative h-[calc(100vh-120px)] flex items-center justify-center bg-rp-base overflow-hidden"
+            className="relative h-[calc(100vh-120px)] flex items-center justify-center overflow-hidden"
         >
             {/* Main Content Container */}
             <div className="flex items-center justify-center max-w-7xl w-full px-4 h-full py-8 gap-8">
