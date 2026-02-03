@@ -76,11 +76,7 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
     <>
       <CommandK />
 
-      {/* Ambient Orbs Background - appears on all pages */}
-      <div className="pointer-events-none fixed inset-0 z-[1] overflow-hidden">
-        <div className="absolute right-[-10%] top-[-10%] size-[600px] rounded-full bg-rp-iris/10 blur-[100px]" />
-        <div className="absolute bottom-[10%] left-[-10%] size-[500px] rounded-full bg-rp-rose/10 blur-[100px]" />
-      </div>
+      <CommandK />
 
       {/* Full-Width Background Layer */}
       {selectedPersona?.id === MOTHER_OF_SOULS_ID ? (
