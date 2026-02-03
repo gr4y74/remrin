@@ -5,7 +5,7 @@
     position: relative;
     width: 100%;
     min-height: 480px;
-    z-index: 10;
+    z-index: 20;
     perspective: 2000px;
     overflow: hidden;
     background: transparent;
