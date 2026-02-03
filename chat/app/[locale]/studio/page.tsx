@@ -133,13 +133,7 @@ export default function StudioPage() {
     const isApproved = persona.status === 'approved'
 
     return (
-        <div className="flex h-screen flex-col bg-rp-base text-rp-text">
-            {/* Ambient Orbs Background */}
-            <div className="pointer-events-none fixed inset-0 z-[1] overflow-hidden">
-                <div className="absolute right-[-10%] top-[-10%] size-[600px] rounded-full bg-rp-iris/10 blur-[100px]" />
-                <div className="absolute bottom-[10%] left-[-10%] size-[500px] rounded-full bg-rp-rose/10 blur-[100px]" />
-            </div>
-
+        <div className="flex h-screen flex-col text-rp-text">
             {/* Mobile Experience Warning Banner */}
             <div className="block md:hidden bg-amber-500/10 border-b border-amber-500/20 px-4 py-3">
                 <div className="flex items-center gap-3">

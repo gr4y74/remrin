@@ -175,7 +175,7 @@ export function FeedPageClient({
     }
 
     return (
-        <div className="bg-rp-base min-h-screen">
+        <div className="min-h-screen">
             {/* Header */}
             <div className={cn(
                 "sticky top-0 z-10 bg-rp-base/80 backdrop-blur-sm transition-transform duration-300",

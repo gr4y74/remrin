@@ -104,7 +104,7 @@ export default function SummonClient() {
     }
 
     return (
-        <div className="relative min-h-screen w-full bg-rp-base text-white">
+        <div className="relative min-h-screen w-full text-white">
             {/* Removed starry background and gradient orbs */}
 
             <div className="relative z-10 container mx-auto px-4 py-8 md:px-8 md:py-12">

@@ -88,7 +88,7 @@ export function WalletPageClient({
     const [isTopUpOpen, setIsTopUpOpen] = useState(false)
 
     return (
-        <div className="bg-rp-base min-h-screen w-full">
+        <div className="min-h-screen w-full">
             <div className="mx-auto max-w-6xl px-4 py-8 md:px-8">
                 {/* Header */}
                 <div className="mb-10 flex flex-col gap-2">
