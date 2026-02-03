@@ -9,8 +9,10 @@
     isolation: isolate;
     perspective: 2000px;
     overflow: hidden;
-    /* Opaque dark background to block wave background from showing through */
-    background: linear-gradient(to bottom, rgba(35, 33, 54, 0.98), rgba(35, 33, 54, 0.95));
+    /* Subtle blur effect to diffuse waves without harsh opaque background */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    background: rgba(35, 33, 54, 0.3);
 
     /* CSS Variables for Responsive Calc */
     --card-width: 260px;
