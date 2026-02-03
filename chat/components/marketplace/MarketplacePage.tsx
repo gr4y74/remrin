@@ -96,7 +96,7 @@ export function MarketplacePage({
     }, [])
 
     return (
-        <div className="bg-rp-base flex size-full flex-col overflow-hidden">
+        <div className="flex size-full flex-col overflow-hidden">
             {/* Header */}
             <div className="border-rp-muted/20 bg-rp-base/50 border-b px-6 py-4 backdrop-blur-sm">
                 <div className="mx-auto max-w-7xl">
