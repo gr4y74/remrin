@@ -34,6 +34,7 @@ export const WorkspaceSwitcher: FC<WorkspaceSwitcherProps> = ({ }) => {
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState("")
   const [search, setSearch] = useState("")
+  const [brokenImages, setBrokenImages] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     if (!selectedWorkspace) return
@@ -106,7 +107,7 @@ export const WorkspaceSwitcher: FC<WorkspaceSwitcherProps> = ({ }) => {
         <div className="flex items-center truncate">
           {selectedWorkspace && (
             <div className="flex items-center">
-              {workspaceImage ? (
+              {workspaceImage && !brokenImages[selectedWorkspace.id] ? (
                 <Image
                   style={{ width: "22px", height: "22px" }}
                   className="mr-2 rounded"
@@ -114,6 +115,7 @@ export const WorkspaceSwitcher: FC<WorkspaceSwitcherProps> = ({ }) => {
                   width={22}
                   height={22}
                   alt={selectedWorkspace.name}
+                  onError={() => setBrokenImages(prev => ({ ...prev, [selectedWorkspace.id]: true }))}
                 />
               ) : (
                 <IconComponent className="mb-0.5 mr-2" size={22} />
@@ -160,7 +162,7 @@ export const WorkspaceSwitcher: FC<WorkspaceSwitcherProps> = ({ }) => {
                     variant="ghost"
                     onClick={() => handleSelect(workspace.id)}
                   >
-                    {image ? (
+                    {image && !brokenImages[workspace.id] ? (
                       <Image
                         style={{ width: "28px", height: "28px" }}
                         className="mr-3 rounded"
@@ -168,6 +170,7 @@ export const WorkspaceSwitcher: FC<WorkspaceSwitcherProps> = ({ }) => {
                         width={28}
                         height={28}
                         alt={workspace.name}
+                        onError={() => setBrokenImages(prev => ({ ...prev, [workspace.id]: true }))}
                       />
                     ) : (
                       <IconHome className="mr-3" size={28} />
@@ -199,7 +202,7 @@ export const WorkspaceSwitcher: FC<WorkspaceSwitcherProps> = ({ }) => {
                     variant="ghost"
                     onClick={() => handleSelect(workspace.id)}
                   >
-                    {image ? (
+                    {image && !brokenImages[workspace.id] ? (
                       <Image
                         style={{ width: "28px", height: "28px" }}
                         className="mr-3 rounded"
@@ -207,6 +210,7 @@ export const WorkspaceSwitcher: FC<WorkspaceSwitcherProps> = ({ }) => {
                         width={28}
                         height={28}
                         alt={workspace.name}
+                        onError={() => setBrokenImages(prev => ({ ...prev, [workspace.id]: true }))}
                       />
                     ) : (
                       <IconBuilding className="mr-3" size={28} />

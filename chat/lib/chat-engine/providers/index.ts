@@ -15,6 +15,7 @@ import {
     ChatChunk
 } from '../types'
 import { openrouterProvider } from './openrouter'
+import { openaiProvider } from './openai'
 import { deepseekProvider } from './deepseek'
 import { claudeProvider } from './claude'
 import { geminiProvider } from './gemini'
@@ -22,6 +23,7 @@ import { geminiProvider } from './gemini'
 // Registry of all available providers
 const PROVIDERS: Record<ProviderId, IChatProvider> = {
     openrouter: openrouterProvider, // FREE default
+    openai: openaiProvider,
     deepseek: deepseekProvider,
     claude: claudeProvider,
     gemini: geminiProvider,

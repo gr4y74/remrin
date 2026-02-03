@@ -22,7 +22,7 @@ export interface TierConfig {
 export const TIER_CONFIGS: Record<UserTier, TierConfig> = {
     free: {
         tier: 'free',
-        allowedProviders: ['openrouter'], // FREE - no credits needed
+        allowedProviders: ['openrouter', 'openai'], // ADDED: openai as fallback
         allowedCapabilities: ['basic-search'],
         rateLimitPerHour: 50,
         maxContextLength: 8000,
@@ -30,7 +30,7 @@ export const TIER_CONFIGS: Record<UserTier, TierConfig> = {
     },
     pro: {
         tier: 'pro',
-        allowedProviders: ['openrouter', 'deepseek', 'claude'],
+        allowedProviders: ['openrouter', 'openai', 'deepseek', 'claude'],
         allowedCapabilities: ['basic-search', 'full-search', 'file-upload'],
         rateLimitPerHour: 200,
         maxContextLength: 32000,
@@ -38,7 +38,7 @@ export const TIER_CONFIGS: Record<UserTier, TierConfig> = {
     },
     premium: {
         tier: 'premium',
-        allowedProviders: ['openrouter', 'deepseek', 'claude', 'gemini'],
+        allowedProviders: ['openrouter', 'openai', 'deepseek', 'claude', 'gemini'],
         allowedCapabilities: ['basic-search', 'full-search', 'file-upload', 'reasoning'],
         rateLimitPerHour: 500,
         maxContextLength: 128000,
@@ -46,7 +46,7 @@ export const TIER_CONFIGS: Record<UserTier, TierConfig> = {
     },
     enterprise: {
         tier: 'enterprise',
-        allowedProviders: ['openrouter', 'deepseek', 'claude', 'gemini', 'custom'],
+        allowedProviders: ['openrouter', 'openai', 'deepseek', 'claude', 'gemini', 'custom'],
         allowedCapabilities: ['basic-search', 'full-search', 'file-upload', 'reasoning', 'custom-api'],
         rateLimitPerHour: -1, // Unlimited
         maxContextLength: 200000,
@@ -58,7 +58,7 @@ export const TIER_CONFIGS: Record<UserTier, TierConfig> = {
 // Providers
 // ============================================================================
 
-export type ProviderId = 'openrouter' | 'deepseek' | 'claude' | 'gemini' | 'custom'
+export type ProviderId = 'openrouter' | 'openai' | 'deepseek' | 'claude' | 'gemini' | 'custom'
 
 export interface ProviderConfig {
     id: ProviderId
@@ -79,6 +79,15 @@ export const PROVIDER_CONFIGS: Record<ProviderId, ProviderConfig> = {
         isEnabled: true,
         defaultModel: 'meta-llama/llama-3.3-70b-instruct:free',
         maxTokens: 8192
+    },
+    openai: {
+        id: 'openai',
+        name: 'OpenAI',
+        apiEndpoint: 'https://api.openai.com/v1/chat/completions',
+        apiKeyEnv: 'OPENAI_API_KEY',
+        isEnabled: true,
+        defaultModel: 'gpt-4o-mini',
+        maxTokens: 16384
     },
     deepseek: {
         id: 'deepseek',

@@ -84,7 +84,7 @@ export class ProviderFactory {
         this.providerConfigs.set('kokoro', {
             name: 'kokoro',
             displayName: 'Kokoro-82M',
-            available: true, // Checked on first use
+            available: !!process.env.KOKORO_API_URL, // Only available if configured
             requiresAuth: false,
             requiresPremium: false,
             priority: 1, // Higher priority than Edge

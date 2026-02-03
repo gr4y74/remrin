@@ -23,9 +23,22 @@ const MOBILE_NAV = [
 ]
 
 
+
 export function MobileNav() {
     const pathname = usePathname()
     const { selectedWorkspace, profile } = useContext(RemrinContext)
+
+    // Hide mobile nav on character chat pages, messenger, or when actively chatting
+    // This prevents the nav from blocking the chat input at the bottom
+    const isPersonaChatPage =
+        pathname?.includes('/character/') ||
+        pathname?.includes('/chat-v2/') ||
+        pathname?.includes('/chat/') ||
+        pathname?.endsWith('/chat') ||
+        pathname?.includes('/aol/messenger')
+    if (isPersonaChatPage) {
+        return null
+    }
 
     return (
         <nav className="bg-rp-surface/95 border-rp-muted/20 fixed bottom-0 left-0 right-0 z-50 border-t backdrop-blur-lg md:hidden">

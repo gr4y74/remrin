@@ -16,6 +16,7 @@ import { RotatingBanner, Banner } from "@/components/discovery/RotatingBanner"
 import { PageTemplate, Footer, FrontPageHeader } from "@/components/layout"
 import { RemrinContext } from "@/context/context"
 import { IconSparkles, IconDiamond, IconArrowRight } from "@tabler/icons-react"
+import { WaveBackground } from "@/components/backgrounds/WaveBackground"
 import { LottieLoader } from "@/components/ui/lottie-loader"
 import { Skeleton } from "@/components/ui/skeleton"
 import { OnboardingModal } from "@/components/onboarding/OnboardingModal"
@@ -257,13 +258,10 @@ export default function HomePage() {
       showHeader={false}
       showFooter={false}
       fullBleed
-      className="text-rp-text"
+      className="!bg-transparent text-rp-text"
     >
-      {/* Ambient Orbs Background */}
-      <div className="pointer-events-none fixed inset-0 z-[1] overflow-hidden">
-        <div className="absolute right-[-10%] top-[-10%] size-[600px] rounded-full bg-rp-iris/10 blur-[100px]" />
-        <div className="absolute bottom-[10%] left-[-10%] size-[500px] rounded-full bg-rp-rose/10 blur-[100px]" />
-      </div>
+      {/* Animated Wave Background */}
+      <WaveBackground className="fixed inset-0 -z-10" colorScheme="purple" />
 
       {/* Section 2: Header with Extension Banner, Search, Categories, Auth Buttons */}
       <FrontPageHeader
@@ -284,7 +282,7 @@ export default function HomePage() {
       />
 
       {/* Section 3: Featured Souls with 3D Carousel - Dynamic data */}
-      <section className="relative mt-6 md:mt-8 overflow-hidden">
+      <section className="relative z-10 mt-6 md:mt-8 overflow-hidden">
         <div className="mb-4 px-4 md:px-6 text-center">
           <h2 className="font-tiempos-headline inline-flex items-center gap-2 font-semibold text-2xl md:text-4xl" style={{ color: headingColor }}>
             <IconSparkles size={20} className="text-amber-400 md:hidden" />
@@ -364,7 +362,7 @@ export default function HomePage() {
       </section>
 
       {/* Quick Actions Section */}
-      <section className="relative mt-6 md:mt-8 border-t border-rp-iris/20 bg-rp-surface dark:bg-rp-base py-8 md:py-12">
+      <section className="relative mt-6 md:mt-8 border-t border-rp-iris/20 py-8 md:py-12">
         <div className="mx-auto grid max-w-4xl grid-cols-1 gap-6 px-6 md:grid-cols-3">
           <Link
             href="/summon"

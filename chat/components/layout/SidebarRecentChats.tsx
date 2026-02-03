@@ -116,6 +116,7 @@ export function SidebarRecentChats({ isExpanded, maxChats = 20, showDemo = false
         lastChatAt: string
         workspaceId: string
     }>>([])
+    const [brokenImages, setBrokenImages] = useState<Record<string, boolean>>({})
 
     const { selectedWorkspace } = useContext(RemrinContext)
 
@@ -232,17 +233,18 @@ export function SidebarRecentChats({ isExpanded, maxChats = 20, showDemo = false
                                     "group-hover:scale-105",
                                     isExpanded ? "size-8" : "size-9"
                                 )}>
-                                    {chat.imageUrl ? (
+                                    {chat.imageUrl && !brokenImages[chat.id] ? (
                                         <Image
                                             src={chat.imageUrl}
                                             alt={chat.name}
                                             fill
                                             sizes="36px"
                                             className="object-cover"
+                                            onError={() => setBrokenImages(prev => ({ ...prev, [chat.id]: true }))}
                                         />
                                     ) : (
                                         <div className="flex size-full items-center justify-center bg-rp-iris/20 text-rp-iris">
-                                            <IconMessage size={14} />
+                                            <IconMessage size={isExpanded ? 14 : 16} />
                                         </div>
                                     )}
                                 </div>

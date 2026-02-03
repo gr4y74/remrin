@@ -389,11 +389,10 @@
     left: 0;
     right: 0;
     z-index: 30;
-    background: hsl(var(--rp-base) / 0.95);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-top: 1px solid hsl(var(--border) / 0.5);
-    padding-bottom: max(env(safe-area-inset-bottom), 8px);
+    /* Transparent background - the input box itself has its own styling */
+    background: transparent;
+    /* Lift the input 20px up from the safe area to prevent it from feeling crushed */
+    padding-bottom: calc(max(env(safe-area-inset-bottom), 8px) + 20px);
   }
 
   /* Mobile message bubble - larger touch targets */
@@ -482,7 +481,8 @@
     height: 33.333vh;
     background: linear-gradient(to top, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.7) 70%, transparent);
     padding: 1rem;
-    padding-bottom: max(env(safe-area-inset-bottom), 1rem);
+    /* Lift the VN text box on mobile to match classic mode and prevent safe-area crowding */
+    padding-bottom: calc(max(env(safe-area-inset-bottom), 1rem) + 20px);
     display: flex;
     flex-direction: column;
     justify-content: flex-end;

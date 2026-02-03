@@ -32,6 +32,7 @@ export function SidebarUserSection({ isExpanded, onProfileClick, initialUser }: 
     const [user, setUser] = useState<User | null>(initialUser ?? null)
     const [showDropdown, setShowDropdown] = useState(false)
     const [imageKey, setImageKey] = useState(Date.now()) // For forcing image reload
+    const [imageError, setImageError] = useState(false)
     const dropdownRef = useRef<HTMLDivElement>(null)
     const router = useRouter()
     const supabase = useMemo(() => createClient(), [])
@@ -163,7 +164,7 @@ export function SidebarUserSection({ isExpanded, onProfileClick, initialUser }: 
                         "relative shrink-0",
                         !isExpanded && "-translate-x-[2.5px]"
                     )}>
-                        {avatarUrl ? (
+                        {avatarUrl && !imageError ? (
                             <div className="relative size-9">
                                 <Image
                                     key={imageKey}
@@ -173,6 +174,7 @@ export function SidebarUserSection({ isExpanded, onProfileClick, initialUser }: 
                                     fill
                                     sizes="36px"
                                     unoptimized
+                                    onError={() => setImageError(true)}
                                 />
                             </div>
                         ) : (
