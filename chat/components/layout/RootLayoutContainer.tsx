@@ -7,6 +7,8 @@ import { GlobalState } from "@/components/utility/global-state"
 import { ReactNode } from "react"
 import { cn } from "@/lib/utils"
 
+import { BackgroundManager } from "./BackgroundManager"
+
 interface RootLayoutContainerProps {
     children: ReactNode
     user: any
@@ -39,6 +41,7 @@ export function RootLayoutContainer({ children, user }: RootLayoutContainerProps
     return (
         <div className="flex min-h-screen">
             <GlobalState>
+                <BackgroundManager />
                 {/* Desktop Sidebar - Hidden on mobile */}
                 <MinimalSidebar user={user} />
 

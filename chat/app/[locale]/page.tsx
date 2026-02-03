@@ -260,13 +260,7 @@ export default function HomePage() {
       fullBleed
       className="!bg-transparent text-rp-text"
     >
-      {/* Animated Wave Background - fixed to viewport, lowest possible z-index */}
-      <div className="fixed inset-0 pointer-events-none" style={{ zIndex: -9999 }}>
-        <WaveBackground
-          className="absolute inset-0"
-          colorScheme="purple"
-        />
-      </div>
+      {/* Section 2: Header with Extension Banner, Search, Categories, Auth Buttons */}
 
       {/* Section 2: Header with Extension Banner, Search, Categories, Auth Buttons */}
       <FrontPageHeader
