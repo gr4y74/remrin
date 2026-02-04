@@ -62,17 +62,30 @@ export function BackgroundManager() {
             'hsl(35 60% 40% / 0.7)',   // Bronze
             'hsl(197 30% 25% / 0.8)',  // Dark Pine
             'hsl(267 57% 28% / 0.9)'   // Dark Base
+        ],
+        // Discover - Geode Palette (from geode.html)
+        discover: [
+            'hsl(41 83% 76% / 0.4)',   // Yellowish/Tan (#f4d48e)
+            'hsl(24 85% 72% / 0.5)',   // Orange/Peach (#f5ae7d)
+            'hsl(6 81% 62% / 0.6)',    // Red/Coral (#EC5F4F)
+            'hsl(356 64% 54% / 0.7)',  // Crimson (#D5404A)
+            'hsl(345 57% 43% / 0.8)',  // Dark Red/Wine (#AD2F4F)
+            'hsl(344 59% 31% / 0.9)'   // Deep Berry (#7F213A)
         ]
     }), [])
 
     const getTheme = () => {
         if (!pathname) return themes.default
 
+        const isHome = pathname === '/' || /^\/[a-z]{2}(\/)?$/.test(pathname)
+        if (isHome) return themes.discover
+
         if (pathname.includes('/feed')) return themes.feed
         if (pathname.includes('/summon')) return themes.summon
         if (pathname.includes('/marketplace')) return themes.marketplace
         if (pathname.includes('/studio')) return themes.studio
         if (pathname.includes('/wallet')) return themes.wallet
+        if (pathname.includes('/discover.old')) return themes.discover
 
         // Chat pages usually want less distraction, maybe keep default or specific?
         // Staying with default for now as it's the brand identity

@@ -20,9 +20,11 @@ export default function SummonClient() {
     const {
         pools,
         poolItems,
+        pityStatus,
         performPull,
         fetchPools,
         fetchPoolItems,
+        getPityStatus,
         pulling,
         error: gachaError
     } = useGacha(userId)
@@ -65,6 +67,20 @@ export default function SummonClient() {
             }
         })
     }, [pools, fetchPoolItems, poolItems])
+
+    // Track current pool for pity status
+    const [currentPoolId, setCurrentPoolId] = useState<string | null>(null)
+
+    // Fetch pity status when pool changes
+    const handlePoolChange = (poolId: string) => {
+        setCurrentPoolId(poolId)
+        if (userId) {
+            getPityStatus(poolId)
+        }
+    }
+
+    // Get current pool's pity status
+    const currentPityStatus = currentPoolId ? pityStatus[currentPoolId] : null
 
     const handleSinglePull = async (poolId: string) => {
         if (!userId) {
@@ -153,8 +169,10 @@ export default function SummonClient() {
                 pools={pools}
                 poolItems={poolItems}
                 userBalance={userBalance}
+                pityStatus={currentPityStatus}
                 onSinglePull={handleSinglePull}
                 onTenPull={handleTenPull}
+                onPoolChange={handlePoolChange}
                 isPulling={pulling}
             />
 
