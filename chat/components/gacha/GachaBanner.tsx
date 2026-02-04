@@ -217,7 +217,7 @@ export function GachaBanner({
     }
 
     return (
-        <div className={cn("relative w-full", className)}>
+        <div className={cn("relative w-full z-10", className)}>
             {/* Section Header with subtle animation */}
             <div className="mb-8 px-6 text-center">
                 <h2 className={`${TYPOGRAPHY.heading.h2} text-rp-text mb-2 inline-flex items-center gap-2`}>

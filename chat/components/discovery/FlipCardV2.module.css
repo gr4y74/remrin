@@ -1,0 +1,218 @@
+/* FlipCardV2.module.css - New blurred background design */
+
+.flipCardContainer {
+    position: relative;
+    width: 258px;
+    height: 398px;
+    perspective: 1500px;
+    cursor: pointer;
+}
+
+.flipCardInner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+}
+
+/* Hover flip effect */
+.flipCardContainer:hover .flipCardInner {
+    transform: rotateY(180deg);
+}
+
+.cardFront,
+.cardBack {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.cardFront {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+.cardBack {
+    transform: rotateY(180deg);
+}
+
+/* NEW DESIGN - Blurred background overlay */
+.blurredBackground {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.blurredBackgroundImage {
+    position: absolute;
+    inset: 0;
+}
+
+.blurredBackgroundOverlay {
+    position: absolute;
+    inset: 0;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    background: rgba(0, 0, 0, 0.4);
+}
+
+/* Content container with glassmorphism */
+.cardBackContent {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+/* Header */
+.cardBackHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.brandingText {
+    font-family: 'Outfit', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: white;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.creativityScore {
+    font-family: monospace;
+    font-size: 12px;
+    font-weight: bold;
+    color: #f59e0b;
+    text-align: right;
+}
+
+.creativityLabel {
+    font-size: 8px;
+    color: rgba(156, 163, 175, 1);
+    display: block;
+    letter-spacing: 0.05em;
+}
+
+/* Featured Badge */
+.featuredBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    background: rgba(245, 158, 11, 0.15);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    margin-bottom: 16px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #fbbf24;
+    text-transform: uppercase;
+    width: fit-content;
+}
+
+/* Description */
+.description {
+    font-size: 13px;
+    font-style: italic;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 20px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Traits */
+.traitsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.traitTag {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    font-size: 10px;
+    font-weight: 600;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Stats */
+.statsContainer {
+    display: flex;
+    gap: 16px;
+    margin-top: auto;
+    margin-bottom: 16px;
+}
+
+.statItem {
+    display: flex;
+    flex-direction: column;
+}
+
+.statLabel {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(156, 163, 175, 1);
+    margin-bottom: 4px;
+}
+
+.statValue {
+    font-family: monospace;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+}
+
+/* CTA Button */
+.chatNowButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 24px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    border: 1px solid rgba(245, 158, 11, 0.5);
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: white;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.chatNowButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(245, 158, 11, 0.5);
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+}
+
+.chatNowButton:active {
+    transform: translateY(0);
+}

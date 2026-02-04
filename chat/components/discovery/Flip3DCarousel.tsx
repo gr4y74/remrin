@@ -212,101 +212,70 @@ export function Flip3DCarousel({ personas }: Flip3DCarouselProps) {
                                         </div>
                                     </div>
 
-                                    {/* BACK (Trading Style) */}
+                                    {/* BACK (New Blurred Background Design) */}
                                     <div className={styles.cardBack}>
-                                        <div className="relative h-full w-full bg-gradient-to-br from-amber-500 via-yellow-600 to-red-700 p-3">
-                                            {/* Holo Foil Overlay */}
-                                            <div className={styles.holoFoil} />
+                                        {/* Blurred Background */}
+                                        <div className="absolute inset-0 z-0">
+                                            <div className="absolute inset-0">
+                                                <Image
+                                                    src={persona.imageUrl || '/placeholder-persona.png'}
+                                                    alt=""
+                                                    fill
+                                                    className="object-cover"
+                                                    sizes="320px"
+                                                />
+                                            </div>
+                                            <div className="absolute inset-0 backdrop-blur-2xl bg-black/40" />
+                                        </div>
 
-                                            {/* Card Content Inner */}
-                                            <div className="relative z-10 flex h-full w-full flex-col overflow-hidden rounded-[14px] bg-[#0a0a0f]/95">
-
-                                                {/* Header */}
-                                                <div className="flex items-center justify-between border-b border-white/10 px-3.5 py-2.5">
-                                                    <div className="font-outfit text-lg font-extrabold uppercase tracking-wide text-white">
-                                                        {persona.name}
-                                                    </div>
-                                                    <div className="font-mono text-xs font-bold text-amber-500">
-                                                        <span className="mr-1 text-[10px] text-gray-500">CREATIVITY</span>
-                                                        {Math.round(displayCreativity)}
-                                                    </div>
+                                        {/* Content with Glassmorphism */}
+                                        <div className="relative z-10 flex h-full flex-col p-5 bg-black/20 backdrop-blur-sm">
+                                            {/* Header */}
+                                            <div className="flex items-center justify-between mb-4">
+                                                <div className="font-outfit text-2xl font-extrabold tracking-widest text-white drop-shadow-lg uppercase">
+                                                    {persona.name}
                                                 </div>
-
-                                                {/* Art Box */}
-                                                <div className="relative h-48 w-full border-b-4 border-amber-500 bg-black">
-                                                    <Image
-                                                        src={persona.imageUrl || '/placeholder-persona.png'}
-                                                        alt={persona.name}
-                                                        fill
-                                                        className="object-cover object-top"
-                                                        sizes="320px"
-                                                    />
-                                                    <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/90 to-transparent px-3.5 pb-1.5 pt-5 text-xs italic text-white/80">
-                                                        {persona.category || "Unknown Entity"}
-                                                    </div>
-                                                </div>
-
-                                                {/* Body */}
-                                                <div className="flex flex-1 flex-col gap-3 p-3.5">
-                                                    {/* Traits */}
-                                                    <div className="flex flex-wrap gap-1.5">
-                                                        {displayTraits.map((t, i) => (
-                                                            <span key={i} className="rounded border border-white/10 bg-white/10 px-2 py-0.5 text-[10px] uppercase tracking-wider text-white">
-                                                                {t}
-                                                            </span>
-                                                        ))}
-                                                    </div>
-
-                                                    {/* Bio */}
-                                                    <div className="border-l-2 border-zinc-800 pl-2 text-xs italic leading-relaxed text-zinc-300">
-                                                        {persona.description ? (
-                                                            <span className="line-clamp-3">{persona.description}</span>
-                                                        ) : "No bio available."}
-                                                    </div>
-
-                                                    {/* Stats Bars */}
-                                                    <div className="mt-auto flex flex-col gap-1.5">
-                                                        <div className="flex items-center gap-2.5 font-mono text-[10px]">
-                                                            <span className="w-12 text-zinc-500">LOGIC</span>
-                                                            <div className="h-1 flex-1 overflow-hidden rounded bg-zinc-800">
-                                                                <div
-                                                                    className={styles.statBarFill}
-                                                                    style={{ width: `${displayStats.logic}%`, background: '#f59e0b' }}
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                        <div className="flex items-center gap-2.5 font-mono text-[10px]">
-                                                            <span className="w-12 text-zinc-500">EMPATHY</span>
-                                                            <div className="h-1 flex-1 overflow-hidden rounded bg-zinc-800">
-                                                                <div
-                                                                    className={styles.statBarFill}
-                                                                    style={{ width: `${displayStats.empathy}%`, background: '#f59e0b' }}
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                {/* Footer */}
-                                                <div className="flex items-center justify-between border-t border-white/10 bg-[#111] px-3.5 py-2">
-                                                    <div className="flex flex-col items-center">
-                                                        <div className="font-outfit text-sm font-extrabold tracking-widest text-white">REMRIN</div>
-                                                        <div className="font-mono text-[8px] text-zinc-500 tracking-wider">
-                                                            {persona.setId || "#001-BETA"} • 2026
-                                                        </div>
-                                                    </div>
-                                                    {/* QR Chip graphic */}
-                                                    <div className="h-10 w-10 rounded bg-white p-0.5">
-                                                        <svg viewBox="0 0 100 100" fill="none" className="h-full w-full">
-                                                            <rect width="100" height="100" fill="white" />
-                                                            <rect x="15" y="15" width="25" height="25" fill="black" />
-                                                            <rect x="60" y="15" width="25" height="25" fill="black" />
-                                                            <rect x="15" y="60" width="25" height="25" fill="black" />
-                                                            <rect x="50" y="50" width="20" height="20" fill="black" />
-                                                        </svg>
-                                                    </div>
+                                                <div className="font-mono text-xs font-bold text-amber-500 text-right">
+                                                    <span className="block text-[8px] text-gray-500 tracking-wider">CREATIVITY</span>
+                                                    {Math.round(displayCreativity)}
                                                 </div>
                                             </div>
+
+                                            {/* Featured Badge */}
+                                            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-amber-500/40 bg-amber-500/15 backdrop-blur-md mb-4 text-[11px] font-bold tracking-wider text-amber-400 uppercase w-fit">
+                                                ✨ Featured Soul
+                                            </div>
+
+                                            {/* Description */}
+                                            <div className="text-[13px] italic leading-relaxed text-white/85 mb-5 drop-shadow-md">
+                                                {persona.description || "A mysterious soul waiting to be discovered."}
+                                            </div>
+
+                                            {/* Traits */}
+                                            <div className="flex flex-wrap gap-2 mb-5">
+                                                {displayTraits.map((trait, i) => (
+                                                    <span key={i} className="px-3 py-1.5 rounded-lg border border-white/20 bg-white/10 backdrop-blur-sm text-[10px] font-semibold text-white uppercase tracking-wide">
+                                                        {trait}
+                                                    </span>
+                                                ))}
+                                            </div>
+
+                                            {/* Stats */}
+                                            <div className="flex gap-4 mt-auto mb-4">
+                                                <div className="flex flex-col">
+                                                    <div className="text-[9px] uppercase tracking-wider text-gray-400 mb-1">Chats</div>
+                                                    <div className="font-mono text-base font-bold text-white">{displayStats.logic * 4}</div>
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <div className="text-[9px] uppercase tracking-wider text-gray-400 mb-1">Follows</div>
+                                                    <div className="font-mono text-base font-bold text-white">{displayStats.empathy * 2}</div>
+                                                </div>
+                                            </div>
+
+                                            {/* Chat Now CTA */}
+                                            <button className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 border border-amber-500/50 font-outfit text-sm font-extrabold tracking-widest text-white uppercase transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-amber-500/30">
+                                                💬 Chat Now
+                                            </button>
                                         </div>
                                     </div>
                                 </div>

@@ -1,9 +1,9 @@
 "use client"
 
 import { useRef } from "react"
-import Image from "next/image"
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react"
 import { cn } from "@/lib/utils"
+import { FlipCard, FlipCardPersona } from "./FlipCard"
 
 interface Persona {
     id: string
@@ -38,7 +38,7 @@ export function CategorySection({ section, personas, onPersonaClick, className }
 
     const scroll = (direction: "left" | "right") => {
         if (scrollContainerRef.current) {
-            const scrollAmount = 320 // Card width + gap
+            const scrollAmount = 278 // 258px card width + 20px gap
             scrollContainerRef.current.scrollBy({
                 left: direction === "left" ? -scrollAmount : scrollAmount,
                 behavior: "smooth"
@@ -49,6 +49,17 @@ export function CategorySection({ section, personas, onPersonaClick, className }
     if (personas.length === 0) {
         return null // Don't render empty sections
     }
+
+    // Convert Persona to FlipCardPersona format
+    const convertToFlipCardPersona = (persona: Persona): FlipCardPersona => ({
+        id: persona.id,
+        name: persona.name,
+        imageUrl: persona.image_url,
+        category: section.name,
+        description: persona.description,
+        // Optional fields will use placeholder data from FlipCard
+        subtitle: `${persona.persona_stats?.total_chats?.toLocaleString() || 0} chats`,
+    })
 
     return (
         <div className={cn("w-full px-4 py-6 md:py-8", className)}>
@@ -102,62 +113,17 @@ export function CategorySection({ section, personas, onPersonaClick, className }
                     <IconChevronRight size={14} />
                 </div>
 
-                {/* Scrollable Row with Snap Scroll */}
+                {/* Scrollable Row with FlipCards */}
                 <div
                     ref={scrollContainerRef}
-                    className="flex gap-3 md:gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scroll-pl-4 md:scroll-pl-0 [&::-webkit-scrollbar]:hidden"
+                    className="flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory scroll-pl-4 md:scroll-pl-0 [&::-webkit-scrollbar]:hidden"
                     style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
                 >
                     {personas.map((persona) => (
-                        <div
-                            key={persona.id}
-                            onClick={() => onPersonaClick(persona.id)}
-                            className="group relative shrink-0 cursor-pointer overflow-hidden rounded-xl border border-rp-iris/20 shadow-lg transition-all hover:-translate-y-1 active:scale-95 hover:shadow-2xl hover:border-rp-iris/40 snap-start w-[200px] h-[280px] sm:w-[240px] sm:h-[320px] md:w-[280px] md:h-[350px]"
-                        >
-                            {/* Background Image */}
-                            {persona.image_url ? (
-                                <Image
-                                    src={persona.image_url}
-                                    alt={persona.name}
-                                    fill
-                                    sizes="(max-width: 640px) 200px, (max-width: 768px) 240px, 280px"
-                                    className="object-cover transition-transform duration-300 group-hover:scale-110"
-                                />
-                            ) : (
-                                <div className="absolute inset-0 bg-gradient-to-br from-rp-iris/50 to-rp-rose/50" />
-                            )}
-
-                            {/* Gradient Overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-
-                            {/* Content */}
-                            <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4">
-                                <h3 className="font-tiempos-headline text-lg md:text-xl font-semibold text-white drop-shadow-lg">
-                                    {persona.name}
-                                </h3>
-                                {persona.description && (
-                                    <p className="mt-1 line-clamp-2 text-xs md:text-sm text-white/80">
-                                        {persona.description}
-                                    </p>
-                                )}
-                                {persona.persona_stats && (
-                                    <div className="mt-2 flex gap-2 md:gap-3 text-[10px] md:text-xs text-white/70">
-                                        {persona.persona_stats.total_chats !== undefined && (
-                                            <span>{persona.persona_stats.total_chats.toLocaleString()} chats</span>
-                                        )}
-                                        {persona.persona_stats.followers_count !== undefined && (
-                                            <span>{persona.persona_stats.followers_count.toLocaleString()} followers</span>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Hover Glow Effect */}
-                            <div
-                                className="pointer-events-none absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100"
-                                style={{
-                                    background: `linear-gradient(to top, ${section.color || '#6366f1'}20, transparent)`
-                                }}
+                        <div key={persona.id} className="shrink-0 snap-start">
+                            <FlipCard
+                                persona={convertToFlipCardPersona(persona)}
+                                onClick={() => onPersonaClick(persona.id)}
                             />
                         </div>
                     ))}

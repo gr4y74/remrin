@@ -15,8 +15,8 @@
     background: rgba(35, 33, 54, 0.3);
 
     /* CSS Variables for Responsive Calc */
-    --card-width: 260px;
-    --card-height: 400px;
+    --card-width: 258px;
+    --card-height: 398px;
     /* Negative gap creates the overlap/pyramid effect */
     --card-gap: -110px;
 }

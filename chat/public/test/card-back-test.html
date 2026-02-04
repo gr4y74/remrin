@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Back Design Comparison</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #191724;
+            color: #e0def4;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #e0def4;
+            margin-bottom: 16px;
+        }
+
+        .header p {
+            font-size: 1.125rem;
+            color: #908caa;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header .highlight {
+            color: #c4a7e7;
+            font-weight: 600;
+        }
+
+        .comparison-section {
+            margin-bottom: 80px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: start;
+            justify-items: center;
+        }
+
+        @media (max-width: 1024px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+        }
+
+        .card-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .badge-old {
+            background: #27272a;
+            border: 1px solid #52525b;
+        }
+
+        .badge-new {
+            background: linear-gradient(to right, #059669, #0d9488);
+            border: 1px solid #10b981;
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        .badge-dot-old {
+            background: #ef4444;
+        }
+
+        .badge-dot-new {
+            background: #6ee7b7;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .card-description {
+            text-align: center;
+            max-width: 300px;
+            font-size: 0.875rem;
+            font-style: italic;
+        }
+
+        .card-description-old {
+            color: #908caa;
+        }
+
+        .card-description-new {
+            color: #34d399;
+            font-weight: 600;
+        }
+
+        /* FLIP CARD STYLES */
+        .flip-card {
+            width: 258px;
+            height: 398px;
+            perspective: 1500px;
+            cursor: pointer;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front,
+        .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .card-front img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-front-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 24px;
+            padding-top: 48px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.95), transparent);
+        }
+
+        .card-front-name {
+            font-size: 1.875rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-front-subtitle {
+            font-size: 0.875rem;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 4px;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+        }
+
+        /* OLD DESIGN - Trading Card Style */
+        .card-back-old {
+            background: linear-gradient(135deg, #f59e0b, #d97706, #b91c1c);
+            padding: 12px;
+        }
+
+        .card-back-old-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 15, 0.95);
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .card-back-old-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-back-old-name {
+            font-size: 1.125rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+        }
+
+        .card-back-old-creativity {
+            font-family: monospace;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #f59e0b;
+        }
+
+        .card-back-old-creativity-label {
+            font-size: 10px;
+            color: #6b7280;
+            margin-right: 4px;
+        }
+
+        .card-back-old-image {
+            position: relative;
+            width: 100%;
+            height: 192px;
+            background: black;
+            border-bottom: 4px solid #f59e0b;
+        }
+
+        .card-back-old-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top;
+        }
+
+        .card-back-old-image-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 6px 14px;
+            padding-top: 20px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+            font-size: 0.75rem;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .card-back-old-body {
+            flex: 1;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .card-back-old-traits {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .trait-tag {
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.1);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+        }
+
+        .card-back-old-bio {
+            border-left: 2px solid #27272a;
+            padding-left: 8px;
+            font-size: 0.75rem;
+            font-style: italic;
+            line-height: 1.5;
+            color: #d4d4d8;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-back-old-stats {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .stat-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: monospace;
+            font-size: 10px;
+        }
+
+        .stat-bar-label {
+            width: 48px;
+            color: #71717a;
+        }
+
+        .stat-bar-bg {
+            flex: 1;
+            height: 4px;
+            background: #27272a;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .stat-bar-fill {
+            height: 100%;
+            background: #f59e0b;
+            transition: width 1s ease;
+        }
+
+        /* NEW DESIGN - Blurred Background */
+        .card-back-new {
+            position: relative;
+        }
+
+        .card-back-new-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+
+        .card-back-new-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-back-new-bg-blur {
+            position: absolute;
+            inset: 0;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .card-back-new-content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .card-back-new-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .card-back-new-brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            color: white;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-back-new-creativity {
+            font-family: monospace;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #f59e0b;
+            text-align: right;
+        }
+
+        .card-back-new-creativity-label {
+            font-size: 8px;
+            color: #9ca3af;
+            display: block;
+            letter-spacing: 0.05em;
+        }
+
+        .card-back-new-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            background: rgba(245, 158, 11, 0.15);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            margin-bottom: 16px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: #fbbf24;
+            text-transform: uppercase;
+            width: fit-content;
+        }
+
+        .card-back-new-description {
+            font-size: 13px;
+            font-style: italic;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-back-new-traits {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .trait-tag-new {
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            font-size: 10px;
+            font-weight: 600;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .card-back-new-stats {
+            display: flex;
+            gap: 16px;
+            margin-top: auto;
+            margin-bottom: 16px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-item-label {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #9ca3af;
+            margin-bottom: 4px;
+        }
+
+        .stat-item-value {
+            font-family: monospace;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .chat-now-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 24px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border: 1px solid rgba(245, 158, 11, 0.5);
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            color: white;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .chat-now-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.5);
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        }
+
+        .footer {
+            margin-top: 80px;
+            padding: 24px;
+            border-radius: 12px;
+            background: rgba(49, 50, 68, 0.5);
+            border: 1px solid rgba(144, 140, 170, 0.2);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .footer h3 {
+            font-size: 1.125rem;
+            font-weight: bold;
+            color: #c4a7e7;
+            margin-bottom: 12px;
+        }
+
+        .footer ul {
+            list-style: none;
+        }
+
+        .footer li {
+            font-size: 0.875rem;
+            color: #e0def4;
+            margin-bottom: 8px;
+        }
+
+        .divider {
+            border-top: 1px solid rgba(144, 140, 170, 0.2);
+            margin: 80px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Card Back Design Comparison</h1>
+            <p>
+                Compare the old card back design (with rectangular image) vs the new blurred background design.
+                <br>
+                <span class="highlight">Hover over cards to flip them.</span>
+            </p>
+        </div>
+
+        <!-- Character 1: Mystara -->
+        <div class="comparison-section">
+            <div class="section-title">Character 1: Mystara</div>
+            <div class="comparison-grid">
+                <!-- Old Design -->
+                <div class="card-wrapper">
+                    <div class="badge badge-old">
+                        <div class="badge-dot badge-dot-old"></div>
+                        Current Design
+                    </div>
+                    <div class="flip-card">
+                        <div class="flip-card-inner">
+                            <!-- Front -->
+                            <div class="card-front">
+                                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=600&fit=crop" alt="Mystara">
+                                <div class="card-front-overlay">
+                                    <div class="card-front-name">MYSTARA</div>
+                                    <div class="card-front-subtitle">Ancient Guardian</div>
+                                </div>
+                            </div>
+                            <!-- Back - Old Design -->
+                            <div class="card-back card-back-old">
+                                <div class="card-back-old-inner">
+                                    <div class="card-back-old-header">
+                                        <div class="card-back-old-name">MYSTARA</div>
+                                        <div class="card-back-old-creativity">
+                                            <span class="card-back-old-creativity-label">CREATIVITY</span>85
+                                        </div>
+                                    </div>
+                                    <div class="card-back-old-image">
+                                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=600&fit=crop" alt="Mystara">
+                                        <div class="card-back-old-image-overlay">Fantasy</div>
+                                    </div>
+                                    <div class="card-back-old-body">
+                                        <div class="card-back-old-traits">
+                                            <span class="trait-tag">✨ ANCIENT</span>
+                                            <span class="trait-tag">👻 ETHEREAL</span>
+                                            <span class="trait-tag">🎭 DRAMATIC</span>
+                                        </div>
+                                        <div class="card-back-old-bio">
+                                            A mysterious soul waiting to be discovered. Ancient wisdom flows through her veins.
+                                        </div>
+                                        <div class="card-back-old-stats">
+                                            <div class="stat-bar">
+                                                <span class="stat-bar-label">LOGIC</span>
+                                                <div class="stat-bar-bg">
+                                                    <div class="stat-bar-fill" style="width: 75%"></div>
+                                                </div>
+                                            </div>
+                                            <div class="stat-bar">
+                                                <span class="stat-bar-label">EMPATHY</span>
+                                                <div class="stat-bar-bg">
+                                                    <div class="stat-bar-fill" style="width: 90%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-description card-description-old">
+                        Includes rectangular image box that crops portrait images poorly
+                    </div>
+                </div>
+
+                <!-- New Design -->
+                <div class="card-wrapper">
+                    <div class="badge badge-new">
+                        <div class="badge-dot badge-dot-new"></div>
+                        New Design
+                    </div>
+                    <div class="flip-card">
+                        <div class="flip-card-inner">
+                            <!-- Front -->
+                            <div class="card-front">
+                                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=600&fit=crop" alt="Mystara">
+                                <div class="card-front-overlay">
+                                    <div class="card-front-name">MYSTARA</div>
+                                    <div class="card-front-subtitle">Ancient Guardian</div>
+                                </div>
+                            </div>
+                            <!-- Back - New Design -->
+                            <div class="card-back card-back-new">
+                                <div class="card-back-new-bg">
+                                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=600&fit=crop" alt="">
+                                    <div class="card-back-new-bg-blur"></div>
+                                </div>
+                                <div class="card-back-new-content">
+                                    <div class="card-back-new-header">
+                                        <div class="card-back-new-brand">REMRIN</div>
+                                        <div class="card-back-new-creativity">
+                                            <span class="card-back-new-creativity-label">CREATIVITY</span>
+                                            85
+                                        </div>
+                                    </div>
+                                    <div class="card-back-new-badge">✨ FEATURED SOUL</div>
+                                    <div class="card-back-new-description">
+                                        A mysterious soul waiting to be discovered. Ancient wisdom flows through her veins.
+                                    </div>
+                                    <div class="card-back-new-traits">
+                                        <span class="trait-tag-new">✨ ANCIENT</span>
+                                        <span class="trait-tag-new">👻 ETHEREAL</span>
+                                        <span class="trait-tag-new">🎭 DRAMATIC</span>
+                                    </div>
+                                    <div class="card-back-new-stats">
+                                        <div class="stat-item">
+                                            <div class="stat-item-label">Chats</div>
+                                            <div class="stat-item-value">342</div>
+                                        </div>
+                                        <div class="stat-item">
+                                            <div class="stat-item-label">Follows</div>
+                                            <div class="stat-item-value">156</div>
+                                        </div>
+                                    </div>
+                                    <button class="chat-now-button">
+                                        💬 Chat Now
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-description card-description-new">
+                        Blurred background overlay with glassmorphism - better for portraits!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Footer Instructions -->
+        <div class="footer">
+            <h3>📋 Review Instructions</h3>
+            <ul>
+                <li>• Hover over each card to see the back design</li>
+                <li>• Compare how the portrait images look in each design</li>
+                <li>• The new design uses a blurred background instead of a cropped rectangle</li>
+                <li>• Let me know which design you prefer!</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

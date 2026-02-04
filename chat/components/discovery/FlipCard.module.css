@@ -1,0 +1,77 @@
+/* FlipCard.module.css - Reusable flip card styles */
+
+.flipCardContainer {
+    position: relative;
+    width: 258px;
+    height: 398px;
+    perspective: 1500px;
+    cursor: pointer;
+}
+
+.flipCardInner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+}
+
+/* Hover flip effect */
+.flipCardContainer:hover .flipCardInner {
+    transform: rotateY(180deg);
+}
+
+.cardFront,
+.cardBack {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.cardFront {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+.cardBack {
+    transform: rotateY(180deg);
+    background: linear-gradient(135deg, #f59e0b, #d97706, #b91c1c);
+}
+
+/* HOLO FOIL */
+.holoFoil {
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    background: linear-gradient(115deg,
+            transparent 20%,
+            rgba(255, 255, 255, 0.1) 25%,
+            rgba(255, 0, 204, 0.1) 30%,
+            rgba(0, 204, 255, 0.1) 35%,
+            transparent 40%);
+    background-size: 200% 200%;
+    opacity: 0.6;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    z-index: 10;
+    animation: holoShift 4s linear infinite;
+}
+
+@keyframes holoShift {
+    0% {
+        background-position: 150% 0%;
+    }
+
+    100% {
+        background-position: -50% 0%;
+    }
+}
+
+/* STAT BARS ANIMATION */
+.statBarFill {
+    transition: width 1s ease;
+}

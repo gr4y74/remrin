@@ -7,5 +7,6 @@ export { TrendingSoulsList } from "./TrendingSoulsList"
 export { FeaturedPremiumRow } from "./FeaturedPremiumRow"
 export { TrendingHashtags } from "./TrendingHashtags"
 export { CategorySection } from "./CategorySection"
+export { FlipCard } from "./FlipCard"
 
 
