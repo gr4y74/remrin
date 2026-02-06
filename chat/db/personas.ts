@@ -5,7 +5,7 @@ export const getPersonasByOwnerId = async (ownerId: string) => {
     const { data: personas, error } = await supabase
         .from("personas")
         .select("*")
-        .eq("owner_id", ownerId)
+        .eq("creator_id", ownerId)
         .order("created_at", { ascending: false })
 
     if (error) {
@@ -22,7 +22,7 @@ export const getUserCollection = async (userId: string) => {
     const { data: owned, error: ownedError } = await supabase
         .from("personas")
         .select("*")
-        .eq("owner_id", userId)
+        .eq("creator_id", userId)
 
     if (ownedError) console.error("Error fetching owned personas:", ownedError.message)
 

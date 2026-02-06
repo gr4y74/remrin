@@ -44,11 +44,11 @@ export async function POST(request: NextRequest) {
         // Verify user owns the persona
         const { data: persona, error: personaError } = await supabase
             .from('personas')
-            .select('id, owner_id')
+            .select('id, creator_id')
             .eq('id', personaId)
             .single()
 
-        if (personaError || persona.owner_id !== user.id) {
+        if (personaError || persona.creator_id !== user.id) {
             return NextResponse.json({ error: 'Unauthorized - not persona owner' }, { status: 403 })
         }
 

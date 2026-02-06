@@ -27,7 +27,7 @@ export async function POST(request: Request) {
         const { data: existingPersonas } = await supabase
             .from("personas")
             .select("name")
-            .eq("owner_id", user.id)
+            .eq("creator_id", user.id)
 
         const existingNames = new Set(existingPersonas?.map(p => p.name) || [])
 

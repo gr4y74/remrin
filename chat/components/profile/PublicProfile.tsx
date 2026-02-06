@@ -82,7 +82,7 @@ export function PublicProfile() {
             const { data: personasData } = await supabase
                 .from('personas')
                 .select('*')
-                .eq('owner_id', userId) // Using owner_id as per personas schema
+                .eq('creator_id', userId) // Using creator_id as per personas schema
                 .eq('visibility', 'PUBLIC')
                 .order('created_at', { ascending: false })
 

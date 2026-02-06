@@ -159,7 +159,7 @@ export function useCollection(userId: string | undefined): UseCollectionResult {
             const { data: created } = await supabase
                 .from("personas")
                 .select("id, name, image_url, rarity:metadata->rarity") // Assuming rarity in metadata for created, or default to common
-                .eq("owner_id", userId)
+                .eq("creator_id", userId)
 
             // Add created to the map
             created?.forEach((p: any) => {

@@ -34,11 +34,11 @@ export async function POST(request: Request) {
         // 1. Check Ownership
         const { data: persona } = await supabase
             .from("personas")
-            .select("owner_id, name, description")
+            .select("creator_id, name, description")
             .eq("id", persona_id)
             .single()
 
-        if (!persona || persona.owner_id !== user.id) {
+        if (!persona || persona.creator_id !== user.id) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 403 })
         }
 

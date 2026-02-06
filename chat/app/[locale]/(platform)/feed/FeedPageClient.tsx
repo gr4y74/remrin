@@ -290,7 +290,7 @@ function CreateMomentButton({
             const { data } = await supabase
                 .from('personas')
                 .select('id, name, image_url')
-                .eq('owner_id', user.id)
+                .eq('creator_id', user.id)
 
             if (data) setPersonas(data)
             setIsLoading(false)

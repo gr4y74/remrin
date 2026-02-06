@@ -14,7 +14,7 @@ export async function GET(
         // 1. Fetch the target persona's data
         const { data: targetPersona, error: targetError } = await supabase
             .from("personas")
-            .select("category, metadata, owner_id")
+            .select("category, metadata, creator_id")
             .eq("id", personaId)
             .single()
 
@@ -25,7 +25,7 @@ export async function GET(
         const targetMetadata = targetPersona.metadata as Record<string, any>
         const targetTags = Array.isArray(targetMetadata?.tags) ? targetMetadata.tags : []
         const targetCategory = targetPersona.category
-        const targetOwnerId = targetPersona.owner_id
+        const targetOwnerId = targetPersona.creator_id
 
         // 2. Fetch potential candidates
         // We limit to public personas and exclude the current one
@@ -37,7 +37,7 @@ export async function GET(
                 description,
                 image_url,
                 category,
-                owner_id,
+                creator_id,
                 metadata
             `)
             .eq("visibility", "public")
@@ -75,7 +75,7 @@ export async function GET(
             }
 
             // Same creator weight
-            if (candidate.owner_id && candidate.owner_id === targetOwnerId) {
+            if (candidate.creator_id && candidate.creator_id === targetOwnerId) {
                 score += 3
             }
 

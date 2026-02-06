@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
         const { data: ownedSouls, error: soulsError } = await supabase
             .from("personas")
             .select("id, name, image_url, category")
-            .eq("owner_id", userId)
+            .eq("creator_id", userId)
 
         if (soulsError) throw soulsError
 

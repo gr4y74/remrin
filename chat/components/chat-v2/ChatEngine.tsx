@@ -275,7 +275,7 @@ export function ChatEngineProvider({
                             }
 
                             if (json.type === 'followup' && json.content) {
-                                // Handle following up
+                                // ... (retaining followup logic)
                                 setIsFollowingUp(true)
                                 setTimeout(() => {
                                     setIsFollowingUp(false)
@@ -295,6 +295,10 @@ export function ChatEngineProvider({
                                 }, 500)
                             }
                         } catch (e) {
+                            // If it's a known error we threw, rethrow it to the outer catch
+                            if (e instanceof Error && (e.message.includes('429') || e.message.includes('API error'))) {
+                                throw e
+                            }
                             console.error(`[ChatEngine] Failed to parse SSE data: ${e}`, data)
                         }
                     }

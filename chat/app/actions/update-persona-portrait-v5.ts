@@ -3,8 +3,12 @@
 import { createClient } from "@/lib/supabase/server"
 import { cookies } from "next/headers"
 
-export async function updatePersonaImageActions(formData: FormData) {
-    console.log("🚀 [ServerAction] updatePersonaImageActions called", {
+/**
+ * New Persona Portrait Update Action (v5)
+ * Distinct name to force Next.js to bypass any old cache/recompilation issues.
+ */
+export async function updatePersonaPortraitV5Action(formData: FormData) {
+    console.log("🚀 [ServerActionV5] updatePersonaPortraitV5Action called", {
         personaId: formData.get('personaId'),
         type: formData.get('type')
     })
@@ -15,7 +19,7 @@ export async function updatePersonaImageActions(formData: FormData) {
         const type = (formData.get('type') as string) || 'avatar'
 
         if (!file || !personaId) {
-            return { error: "V4: Missing file or persona ID" }
+            return { error: "V5: Missing file or persona ID" }
         }
 
         const cookieStore = cookies()
@@ -23,9 +27,10 @@ export async function updatePersonaImageActions(formData: FormData) {
         const { data: { user } } = await supabase.auth.getUser()
 
         if (!user) {
-            return { error: "V4: Unauthorized" }
+            return { error: "V5: Unauthorized" }
         }
 
+        // Verify ownership
         const { data: persona } = await supabase
             .from('personas')
             .select('creator_id')
@@ -33,15 +38,17 @@ export async function updatePersonaImageActions(formData: FormData) {
             .single()
 
         if (!persona || persona.creator_id !== user.id) {
-            return { error: "V4: You do not have permission to edit this character" }
+            return { error: "V5: You do not have permission to edit this character" }
         }
 
+        // Determine bucket
         const bucketName = type === 'hero' ? 'persona_hero_images' : 'persona_images'
         const fileExt = file.name.split('.').pop() || 'png'
         const fileName = `${personaId}_${Date.now()}.${fileExt}`
 
-        console.log(`📡 [ServerAction] Uploading to bucket: ${bucketName}, path: ${fileName}`)
+        console.log(`📡 [ServerActionV5] Uploading to bucket: ${bucketName}, path: ${fileName}`)
 
+        // Upload directly to the new buckets
         const { data: uploadData, error: uploadError } = await supabase.storage
             .from(bucketName)
             .upload(fileName, file, {
@@ -50,14 +57,16 @@ export async function updatePersonaImageActions(formData: FormData) {
             })
 
         if (uploadError) {
-            console.error("❌ [ServerAction] Storage upload error:", uploadError)
-            return { error: `V4_STORAGE_ERROR: ${uploadError.message}` }
+            console.error("❌ [ServerActionV5] Storage upload error:", uploadError)
+            return { error: `V5_STORAGE_ERROR: ${uploadError.message}` }
         }
 
+        // Get public URL
         const { data: { publicUrl } } = supabase.storage
             .from(bucketName)
             .getPublicUrl(fileName)
 
+        // Update persona record
         const updateData: any = {}
         if (type === 'hero') {
             updateData.hero_image_url = publicUrl
@@ -71,15 +80,15 @@ export async function updatePersonaImageActions(formData: FormData) {
             .eq('id', personaId)
 
         if (updateError) {
-            console.error("❌ [ServerAction] DB Update error:", updateError)
-            return { error: "V4: Failed to update persona record" }
+            console.error("❌ [ServerActionV5] DB Update error:", updateError)
+            return { error: "V5: Failed to update persona record" }
         }
 
-        console.log(`✅ [ServerAction] Successfully updated persona ${type} image`)
+        console.log(`✅ [ServerActionV5] Successfully updated persona ${type} image`)
         return { success: true, url: publicUrl }
 
     } catch (error: any) {
-        console.error("💥 [ServerAction] Unexpected error:", error)
-        return { error: `V4_EXCEPTION: ${error.message || "An unexpected error occurred"}` }
+        console.error("💥 [ServerActionV5] Unexpected error:", error)
+        return { error: `V5_EXCEPTION: ${error.message || "An unexpected error occurred"}` }
     }
 }

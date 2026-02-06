@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
         // Verify user owns or has permission to modify this persona
         const { data: persona, error: personaError } = await supabase
             .from('personas')
-            .select('id, owner_id, name')
+            .select('id, creator_id, name')
             .eq('id', personaId)
             .single();
 
@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
 
         const isAdmin = profile?.is_admin || false;
 
-        if (persona.owner_id !== user.id && !isAdmin) {
+        if (persona.creator_id !== user.id && !isAdmin) {
             console.error(`[Audio Upload] Permission denied: User ${user.id} does not own persona ${personaId}`);
             return NextResponse.json(
                 { success: false, error: 'Permission denied' } as AudioUploadResponse,

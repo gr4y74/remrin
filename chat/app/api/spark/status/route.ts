@@ -39,7 +39,7 @@ export async function GET(request: Request) {
                 .from("personas")
                 .update({ video_url: videoUrl })
                 .eq("id", personaId)
-                .eq("owner_id", user.id) // Security check
+                .eq("creator_id", user.id) // Security check
 
             if (error) throw error
 

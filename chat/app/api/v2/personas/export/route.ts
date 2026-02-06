@@ -20,7 +20,7 @@ export async function GET() {
         const { data: personas, error: fetchError } = await supabase
             .from("personas")
             .select("name, tagline, description, system_prompt, intro_message, image_url, voice_id, safety_level, visibility, category, tags, metadata, config")
-            .eq("owner_id", user.id)
+            .eq("creator_id", user.id)
 
         if (fetchError) {
             console.error("Error fetching personas for export:", fetchError)

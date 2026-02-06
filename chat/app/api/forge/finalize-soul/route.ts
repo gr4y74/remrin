@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
         const { count, error: countError } = await supabase
             .from('personas')
             .select('*', { count: 'exact', head: true })
-            .eq('owner_id', user.id)
+            .eq('creator_id', user.id)
             .gte('created_at', startOfMonth.toISOString())
 
         if (countError) {
@@ -153,7 +153,7 @@ export async function POST(request: NextRequest) {
         const { data: persona, error: insertError } = await supabase
             .from("personas")
             .insert({
-                owner_id: user.id,
+                creator_id: user.id,
                 name: soulData.name,
                 description: soulData.essence,
                 system_prompt: compiledPrompt,

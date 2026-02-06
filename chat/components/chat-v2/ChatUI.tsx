@@ -22,6 +22,10 @@ import { MOOD_EMOJI, MoodType } from '@/lib/chat-engine/mood'
 import Image from 'next/image'
 import { MOTHER_OF_SOULS_ID } from '@/lib/forge/is-mother-chat'
 import { useRecentChats } from '@/hooks/useRecentChats'
+import { PersonaSettingsModal } from '@/components/chat/PersonaSettingsModal'
+import { toast } from 'sonner'
+import { updatePersonaPortraitV5Action } from '@/app/actions/update-persona-portrait-v5'
+import { useParams } from 'next/navigation'
 
 interface ChatUIV2Props {
     userId?: string
@@ -79,16 +83,115 @@ function ChatUIInner({
         setActiveBackgroundUrl
     } = useContext(RemrinContext)
 
+    const params = useParams()
+    const locale = params.locale as string
+
+    // 1. Global Mute State
+    const [isGlobalMuted, setIsGlobalMuted] = useState(false)
+    const [showPersonalizeModal, setShowPersonalizeModal] = useState(false)
+    const [isSparking, setIsSparking] = useState(false)
+
+    // Load mute state from localStorage
+    useEffect(() => {
+        const savedMute = localStorage.getItem('remrin_global_mute') === 'true'
+        setIsGlobalMuted(savedMute)
+    }, [])
+
+    const handleToggleMute = () => {
+        const newState = !isGlobalMuted
+        setIsGlobalMuted(newState)
+        localStorage.setItem('remrin_global_mute', String(newState))
+        toast(newState ? "Audio Muted" : "Audio Unmuted", {
+            description: newState ? "Character voices are now disabled." : "Character voices are now enabled."
+        })
+    }
+
+    // Handlers for top bar dropdown
+    const handleSparkOfLife = async () => {
+        if (!profile || !personaId) return;
+
+        if (!confirm(`Ignite the Spark of Life for 50 Aether?\n\nThis will generate a living video portrait for ${personaName}.`)) return;
+
+        setIsSparking(true)
+        const toastId = toast.loading("Igniting Spark of Life...")
+
+        try {
+            const response = await fetch("/api/spark/create", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    persona_id: personaId,
+                    image_url: personaImage
+                })
+            })
+
+            const data = await response.json()
+            if (!response.ok) throw new Error(data.error || "Failed to start generation")
+
+            toast.message("Spark ignited! Breathing life into soul...", {
+                description: "This may take several minutes, please be patient.",
+                id: toastId,
+                duration: 10000
+            })
+
+            const predictionId = data.predictionId
+            const pollInterval = setInterval(async () => {
+                try {
+                    const statusRes = await fetch(`/api/spark/status?id=${predictionId}&personaId=${personaId}`)
+                    const statusData = await statusRes.json()
+
+                    if (statusData.status === "succeeded") {
+                        clearInterval(pollInterval)
+                        setIsSparking(false)
+                        toast.success("It is alive! Refresh to see changes.", { id: toastId })
+                        window.location.reload()
+                    } else if (statusData.status === "failed") {
+                        clearInterval(pollInterval)
+                        setIsSparking(false)
+                        toast.error("The spark faded. Please try again.", { id: toastId })
+                    }
+                } catch (e) {
+                    console.error("Polling error", e)
+                }
+            }, 3000)
+
+        } catch (error: any) {
+            setIsSparking(false)
+            toast.error(error.message, { id: toastId })
+        }
+    }
+
+    const handleChangeHeroImage = () => {
+        const fileInput = document.createElement('input')
+        fileInput.type = 'file'
+        fileInput.accept = 'image/*'
+        fileInput.onchange = async (e: any) => {
+            const file = e.target.files?.[0]
+            if (!file || !personaId) return
+
+            const toastId = toast.loading("Uploading new portrait...")
+            try {
+                const formData = new FormData()
+                formData.append('file', file)
+                formData.append('personaId', personaId)
+                formData.append('type', 'hero')
+
+                const result = await updatePersonaPortraitV5Action(formData)
+                if (result.error) throw new Error(result.error)
+
+                toast.success("Hero image updated!", { id: toastId })
+                window.location.reload()
+            } catch (err: any) {
+                toast.error(err.message, { id: toastId })
+            }
+        }
+        fileInput.click()
+    }
+
     // Find current persona details from context if possible
     const currentPersona = personas.find(p => p.id === personaId)
-
-    // Track chat when user sends a message
-    useEffect(() => {
-        if (messages.length > 0 && personaId && personaName && personaImage && selectedWorkspace) {
-            // Track this chat in recent chats
-            trackChat(personaId, personaName, personaImage, selectedWorkspace.id)
-        }
-    }, [messages.length, personaId, personaName, personaImage, selectedWorkspace, trackChat])
+    const isOwner = profile?.user_id === currentPersona?.creator_id
+    const hasVideo = !!personaVideoUrl
 
     // Determine if we should show desaturation (low battery)
     const isLowBattery = moodState.battery < 30
@@ -223,10 +326,6 @@ function ChatUIInner({
                         description={currentPersona?.description || ""}
                         creatorName={currentPersona?.creator_id === 'system' ? 'System' : 'Creator'}
                         onViewProfile={() => setIsCharacterPanelOpen(true)}
-                        onSettings={() => {
-                            // TODO: Implement Chat Settings Modal
-                            alert("Chat Settings coming soon!")
-                        }}
                         moodState={{
                             mood: moodState.mood,
                             emoji: MOOD_EMOJI[moodState.mood as MoodType] || '😊',
@@ -238,8 +337,26 @@ function ChatUIInner({
                         setChatBackgroundEnabled={setChatBackgroundEnabled}
                         setActiveBackgroundUrl={setActiveBackgroundUrl}
                         welcomeAudioUrl={welcomeAudioUrl}
+                        onPersonalize={() => setShowPersonalizeModal(true)}
+                        isGlobalMuted={isGlobalMuted}
+                        onToggleMute={handleToggleMute}
+                        onSparkOfLife={handleSparkOfLife}
+                        isSparking={isSparking}
+                        onChangeHeroImage={handleChangeHeroImage}
+                        isOwner={isOwner}
+                        hasVideo={hasVideo}
                     />
                 </div>
+            )}
+
+            {/* Persona Personalization Modal */}
+            {personaId && (
+                <PersonaSettingsModal
+                    isOpen={showPersonalizeModal}
+                    onClose={() => setShowPersonalizeModal(false)}
+                    personaId={personaId}
+                    personaName={personaName || "this soul"}
+                />
             )}
 
 

@@ -28,7 +28,7 @@ export default async function CharacterPage({ params }: CharacterPageProps) {
       background_url,
       category,
       metadata,
-      owner_id,
+      creator_id,
       visibility,
       welcome_audio_url
     `)
@@ -41,7 +41,7 @@ export default async function CharacterPage({ params }: CharacterPageProps) {
 
     // Only show public/approved personas (or owned by current user)
     const { data: { user } } = await supabase.auth.getUser()
-    const isOwner = user?.id === persona.owner_id
+    const isOwner = user?.id === persona.creator_id
     const isPublic = persona.visibility?.toLowerCase() === "public"
 
     if (!isPublic && !isOwner) {
@@ -70,11 +70,11 @@ export default async function CharacterPage({ params }: CharacterPageProps) {
 
     // Fetch creator profile if available
     let creatorName: string | null = null
-    if (persona.owner_id) {
+    if (persona.creator_id) {
         const { data: ownerProfile } = await supabase
             .from("profiles")
             .select("display_name, username")
-            .eq("user_id", persona.owner_id)
+            .eq("user_id", persona.creator_id)
             .single()
 
         if (ownerProfile) {

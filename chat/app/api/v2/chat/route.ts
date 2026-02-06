@@ -203,10 +203,11 @@ export async function POST(request: NextRequest) {
                             followUpPrompt,
                             { temperature: 0.8, maxTokens: 100 }
                         )) {
-                            followUpContent += chunk
+                            const content = chunk.content || ''
+                            followUpContent += content
                             const followUpData = JSON.stringify({
                                 type: 'followup',
-                                content: chunk,
+                                content: content,
                                 provider: providerInfo.id
                             })
                             controller.enqueue(encoder.encode(`data: ${followUpData}\n\n`))

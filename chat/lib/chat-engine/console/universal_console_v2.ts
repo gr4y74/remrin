@@ -130,13 +130,13 @@ async function checkRateLimit(userId: string): Promise<{ allowed: boolean; remai
 async function checkPersonaAccess(userId: string, personaId: string): Promise<boolean> {
   const { data: persona } = await supabase
     .from('personas')
-    .select('visibility, owner_id')
+    .select('visibility, creator_id')
     .eq('id', personaId)
     .single();
 
   if (!persona) return false;
   if (persona.visibility === 'PUBLIC') return true;
-  if (persona.owner_id === userId) return true;
+  if (persona.creator_id === userId) return true;
 
   const { data: access } = await supabase
     .from('persona_access')
@@ -146,6 +146,101 @@ async function checkPersonaAccess(userId: string, personaId: string): Promise<bo
     .single();
 
   return !!access;
+}
+
+// ─────────────────────────────────────────────────────────────
+// USER PERSONA SETTINGS (PERSONALIZATION)
+// ─────────────────────────────────────────────────────────────
+async function getUserPersonaSettings(userId: string, personaId: string): Promise<string> {
+  const { data: settings } = await supabase
+    .from('persona_user_settings')
+    .select('settings')
+    .eq('user_id', userId)
+    .eq('persona_id', personaId)
+    .single();
+
+  if (!settings?.settings) return "";
+
+  const s = settings.settings as any;
+  const sections: string[] = [];
+
+  // Identity section
+  if (s.identity?.call_me) {
+    sections.push(`The user's name is: ${s.identity.call_me}`);
+  }
+  if (s.identity?.my_pronouns) {
+    sections.push(`User pronouns: ${s.identity.my_pronouns}`);
+  }
+  if (s.identity?.my_description) {
+    sections.push(`About the user: ${s.identity.my_description}`);
+  }
+  if (s.identity?.my_personality) {
+    sections.push(`User personality: ${s.identity.my_personality}`);
+  }
+
+  // Relationship section
+  if (s.relationship?.type) {
+    sections.push(`Your relationship: ${s.relationship.type}`);
+  }
+  if (s.relationship?.dynamic) {
+    sections.push(`Relationship dynamic: ${s.relationship.dynamic}`);
+  }
+  if (s.relationship?.history) {
+    sections.push(`Your history together: ${s.relationship.history}`);
+  }
+  if (s.relationship?.boundaries) {
+    sections.push(`Communication boundaries: ${s.relationship.boundaries}`);
+  }
+
+  // World section
+  if (s.world?.setting) {
+    sections.push(`Setting/World: ${s.world.setting}`);
+  }
+  if (s.world?.important_people?.length > 0) {
+    const people = s.world.important_people
+      .map((p: any) => `  • ${p.name} (${p.relation}): ${p.notes || ''}`)
+      .join('\n');
+    sections.push(`Important people in user's life:\n${people}`);
+  }
+  if (s.world?.important_places?.length > 0) {
+    const places = s.world.important_places
+      .map((p: any) => `  • ${p.name}: ${p.notes || ''}`)
+      .join('\n');
+    sections.push(`Important places:\n${places}`);
+  }
+  if (s.world?.custom_lore) {
+    sections.push(`Background/Lore: ${s.world.custom_lore}`);
+  }
+
+  // Preferences section
+  if (s.preferences?.response_style && s.preferences.response_style !== 'adaptive') {
+    sections.push(`Preferred response style: ${s.preferences.response_style}`);
+  }
+  if (s.preferences?.custom_instructions) {
+    sections.push(`Special instructions: ${s.preferences.custom_instructions}`);
+  }
+
+  // Voice section
+  if (s.voice?.nickname_for_me) {
+    sections.push(`Call the user: "${s.voice.nickname_for_me}"`);
+  }
+  if (s.voice?.her_catchphrases?.length > 0) {
+    sections.push(`Use these catchphrases occasionally: ${s.voice.her_catchphrases.join(', ')}`);
+  }
+  if (s.voice?.topics_to_avoid?.length > 0) {
+    sections.push(`Avoid these topics: ${s.voice.topics_to_avoid.join(', ')}`);
+  }
+  if (s.voice?.topics_she_loves?.length > 0) {
+    sections.push(`Topics this user enjoys: ${s.voice.topics_she_loves.join(', ')}`);
+  }
+
+  if (sections.length === 0) return "";
+
+  return `
+[🔐 USER PERSONALIZATION - PRIVATE TO THIS USER]
+${sections.join('\n')}
+[END USER PERSONALIZATION]
+  `.trim();
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -482,6 +577,8 @@ async function buildSystemPrompt(
   const sharedFacts = await getSharedFacts(userId);
   const handoffContext = isMultiPersona ? "" : await getHandoffContext(userId, personas[0].id);
   const relationshipContext = isMultiPersona ? "" : await getRelationshipContext(userId, personas[0].id);
+  // NEW: Fetch user's personalization settings for this persona
+  const userPersonalization = isMultiPersona ? "" : await getUserPersonaSettings(userId, personas[0].id);
 
   // Load lockets for all personas
   const locketPromises = personas.map(async (p) => {
@@ -577,6 +674,8 @@ ${locketText || "None yet."}
 
 [SHARED FACTS ABOUT THE USER]:
 ${sharedFacts || "None yet."}
+
+${userPersonalization}
 
 ${relationshipContext}
 

@@ -14,7 +14,11 @@ import {
   IconBook,
   IconMessage,
   IconPhoto,
-  IconDotsVertical
+  IconDotsVertical,
+  IconVolume,
+  IconVolumeOff,
+  IconSparkles,
+  IconBolt
 } from '@tabler/icons-react'
 import { cn } from "@/lib/utils"
 import Image from "next/image"
@@ -54,6 +58,15 @@ interface MiniProfileProps {
   setChatBackgroundEnabled?: (enabled: boolean) => void
   setActiveBackgroundUrl?: (url: string) => void
   welcomeAudioUrl?: string | null
+  // New personalization props
+  onPersonalize?: () => void
+  isGlobalMuted?: boolean
+  onToggleMute?: () => void
+  onSparkOfLife?: () => void
+  isSparking?: boolean
+  onChangeHeroImage?: () => void
+  isOwner?: boolean
+  hasVideo?: boolean
 }
 
 export const MiniProfile: React.FC<MiniProfileProps> = ({
@@ -75,7 +88,15 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
   profile,
   setChatBackgroundEnabled,
   setActiveBackgroundUrl,
-  welcomeAudioUrl
+  welcomeAudioUrl,
+  onPersonalize,
+  isGlobalMuted = false,
+  onToggleMute,
+  onSparkOfLife,
+  isSparking = false,
+  onChangeHeroImage,
+  isOwner = false,
+  hasVideo = false
 }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -247,22 +268,83 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
                 </button>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent align="end" className="w-48 bg-rp-surface border-rp-overlay shadow-2xl">
+              <DropdownMenuContent align="end" className="w-56 bg-rp-surface border-rp-overlay shadow-2xl p-1.5">
+                {/* Mute Audio Toggle */}
                 <DropdownMenuItem
-                  className="text-rp-text focus:bg-rp-overlay focus:text-rp-text cursor-pointer py-2.5"
-                  onClick={onSettings}
+                  className="text-rp-text focus:bg-rp-overlay focus:text-rp-text cursor-pointer py-2.5 rounded-lg"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onToggleMute?.();
+                  }}
                 >
-                  <IconSettings size={18} className="mr-2" />
-                  Chat Settings
+                  {isGlobalMuted ? <IconVolumeOff size={18} className="mr-2 text-red-400" /> : <IconVolume size={18} className="mr-2 text-emerald-400" />}
+                  <div className="flex flex-1 items-center justify-between">
+                    <span>{isGlobalMuted ? "Unmute Audio" : "Mute Audio"}</span>
+                    <div className={cn(
+                      "w-8 h-4 rounded-full p-0.5 transition-colors relative ml-2",
+                      isGlobalMuted ? "bg-rp-muted/30" : "bg-rp-iris"
+                    )}>
+                      <div className={cn(
+                        "size-3 bg-white rounded-full shadow-sm transition-transform",
+                        isGlobalMuted ? "translate-x-0" : "translate-x-4"
+                      )} />
+                    </div>
+                  </div>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-rp-highlight-low/20" />
+
+                {/* Personalize Button */}
                 <DropdownMenuItem
-                  className="text-rp-text focus:bg-rp-overlay focus:text-rp-text cursor-pointer py-2.5"
+                  className="text-rp-text focus:bg-rp-overlay focus:text-rp-text cursor-pointer py-2.5 rounded-lg"
+                  onClick={onPersonalize}
+                >
+                  <IconSparkles size={18} className="mr-2 text-rp-foam" />
+                  <div className="flex flex-1 items-center justify-between">
+                    <span>Personalize</span>
+                    <span className="text-[9px] bg-rp-foam/20 text-rp-foam px-1.5 py-0.5 rounded font-bold">NEW</span>
+                  </div>
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator className="bg-rp-highlight-low/10 my-1" />
+
+                {/* Change Background (Always available) */}
+                <DropdownMenuItem
+                  className="text-rp-text focus:bg-rp-overlay focus:text-rp-text cursor-pointer py-2.5 rounded-lg"
                   onClick={() => fileInputRef.current?.click()}
                 >
-                  <IconPhoto size={18} className="mr-2" />
+                  <IconPhoto size={18} className="mr-2 text-rp-love" />
                   Change Background
                 </DropdownMenuItem>
+
+                {/* Owner Only Actions */}
+                {isOwner && (
+                  <>
+                    <DropdownMenuSeparator className="bg-rp-highlight-low/10 my-1" />
+
+                    {/* Spark of Life */}
+                    {!hasVideo && (
+                      <DropdownMenuItem
+                        className="text-rp-text focus:bg-rp-overlay focus:text-rp-text cursor-pointer py-2.5 rounded-lg"
+                        onClick={onSparkOfLife}
+                        disabled={isSparking}
+                      >
+                        <IconBolt size={18} className={cn("mr-2", isSparking ? "animate-spin text-rp-rose" : "text-rp-rose")} />
+                        <div className="flex flex-1 items-center justify-between">
+                          <span>Spark of Life</span>
+                          <span className="text-[9px] bg-rp-rose/20 text-rp-rose px-1.5 py-0.5 rounded font-bold">50 A</span>
+                        </div>
+                      </DropdownMenuItem>
+                    )}
+
+                    {/* Change Hero Image */}
+                    <DropdownMenuItem
+                      className="text-rp-text focus:bg-rp-overlay focus:text-rp-text cursor-pointer py-2.5 rounded-lg"
+                      onClick={onChangeHeroImage}
+                    >
+                      <IconPhoto size={18} className="mr-2 text-emerald-400" />
+                      Change Hero Portrait
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import {
@@ -12,11 +12,6 @@ import {
     IconUpload,
     IconX,
     IconTrash,
-    IconMusic,
-    IconPlayerPlay,
-    IconPlayerPause,
-    IconVolume,
-    IconWaveSine,
     IconSparkles,
     IconPencil
 } from "@tabler/icons-react"
@@ -30,13 +25,10 @@ interface Persona {
     id: string
     name: string
     image_url: string | null
+    hero_image_url: string | null
     video_url: string | null
-    background_url: string | null
-    welcome_audio_url: string | null
-    welcome_message: string | null
     description: string | null
     category: string | null
-    tagline?: string | null
     system_prompt?: string | null
     intro_message?: string | null
     safety_level?: string | null
@@ -46,67 +38,6 @@ interface Persona {
     config?: Record<string, any> | null
 }
 
-// Simple audio player component
-const AudioPlayer = ({ src, onDelete }: { src: string; onDelete: () => void }) => {
-    const [isPlaying, setIsPlaying] = useState(false)
-    const [duration, setDuration] = useState(0)
-    const [currentTime, setCurrentTime] = useState(0)
-    const audioRef = useRef<HTMLAudioElement | null>(null)
-
-    const togglePlay = () => {
-        if (audioRef.current) {
-            if (isPlaying) {
-                audioRef.current.pause()
-            } else {
-                audioRef.current.play()
-            }
-            setIsPlaying(!isPlaying)
-        }
-    }
-
-    const formatTime = (time: number) => {
-        const mins = Math.floor(time / 60)
-        const secs = Math.floor(time % 60)
-        return `${mins}:${secs.toString().padStart(2, '0')}`
-    }
-
-    return (
-        <div className="rounded-xl border border-rp-highlight-med bg-black/20 p-4">
-            <div className="flex items-center gap-4">
-                <button
-                    onClick={togglePlay}
-                    className="flex size-10 items-center justify-center rounded-full bg-rp-iris text-white hover:bg-rp-iris/90 transition-colors"
-                >
-                    {isPlaying ? <IconPlayerPause size={18} /> : <IconPlayerPlay size={18} fill="currentColor" />}
-                </button>
-                <div className="flex-1">
-                    <div className="h-2 w-full rounded bg-rp-base/50">
-                        <div
-                            className="h-full rounded bg-rp-iris"
-                            style={{ width: `${(currentTime / duration) * 100 || 0}%` }}
-                        />
-                    </div>
-                    <div className="flex justify-between text-xs text-rp-muted mt-1">
-                        <span>{formatTime(currentTime)}</span>
-                        <span>{formatTime(duration)}</span>
-                    </div>
-                </div>
-                <Button variant="ghost" size="sm" onClick={onDelete} className="text-rp-muted hover:text-red-400">
-                    <IconX size={16} />
-                </Button>
-            </div>
-            <audio
-                ref={audioRef}
-                src={src}
-                onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
-                onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
-                onEnded={() => setIsPlaying(false)}
-                className="hidden"
-            />
-        </div>
-    )
-}
-
 export default function StudioManagerPage() {
     const [personas, setPersonas] = useState<Persona[]>([])
     const [loading, setLoading] = useState(true)
@@ -114,7 +45,6 @@ export default function StudioManagerPage() {
     const [selectedPersona, setSelectedPersona] = useState<Persona | null>(null)
     const [uploading, setUploading] = useState(false)
     const [deleting, setDeleting] = useState(false)
-    const [userId, setUserId] = useState<string | null>(null)
 
     const supabase = createClient()
     const router = useRouter()
@@ -127,11 +57,10 @@ export default function StudioManagerPage() {
                 router.push('/login')
                 return
             }
-            setUserId(user.id)
 
             const { data, error } = await supabase
                 .from('personas')
-                .select('id, name, image_url, video_url, background_url, welcome_audio_url, welcome_message, description, category, tagline, system_prompt, intro_message, safety_level, tags, voice_id, metadata, config')
+                .select('id, name, image_url, hero_image_url, video_url, description, category, system_prompt, intro_message, safety_level, tags, voice_id, metadata, config')
                 .eq('creator_id', user.id)
                 .order('created_at', { ascending: false })
 
@@ -157,18 +86,19 @@ export default function StudioManagerPage() {
         }
 
         setUploading(true)
-        const toastId = toast.loading("Uploading image...")
+        const toastId = toast.loading("Uploading avatar...")
 
         try {
             const bucketName = 'persona_images'
             const fileExt = file.name.split('.').pop()
             const fileName = `${selectedPersona.id}_${Date.now()}.${fileExt}`
 
+            // Upload directly to the bucket
             const { error: uploadError } = await supabase.storage
                 .from(bucketName)
                 .upload(fileName, file)
 
-            if (uploadError) throw new Error("Upload failed")
+            if (uploadError) throw uploadError
 
             const { data: { publicUrl } } = supabase.storage
                 .from(bucketName)
@@ -181,12 +111,58 @@ export default function StudioManagerPage() {
 
             if (dbError) throw dbError
 
-            toast.success("Image updated!", { id: toastId })
+            toast.success("Avatar updated!", { id: toastId })
             setPersonas(prev => prev.map(p =>
                 p.id === selectedPersona.id ? { ...p, image_url: publicUrl } : p
             ))
             setSelectedPersona(prev => prev ? { ...prev, image_url: publicUrl } : null)
         } catch (e: any) {
+            console.error("Avatar upload error:", e)
+            toast.error(e.message || "Upload failed", { id: toastId })
+        } finally {
+            setUploading(false)
+        }
+    }
+
+    const handleHeroImageUpload = async (file: File) => {
+        if (!selectedPersona) return
+        if (!file.type.startsWith('image/')) {
+            toast.error("Please upload an image file")
+            return
+        }
+
+        setUploading(true)
+        const toastId = toast.loading("Uploading hero portrait...")
+
+        try {
+            const bucketName = 'persona_hero_images'
+            const fileExt = file.name.split('.').pop()
+            const fileName = `${selectedPersona.id}_${Date.now()}.${fileExt}`
+
+            const { error: uploadError } = await supabase.storage
+                .from(bucketName)
+                .upload(fileName, file)
+
+            if (uploadError) throw uploadError
+
+            const { data: { publicUrl } } = supabase.storage
+                .from(bucketName)
+                .getPublicUrl(fileName)
+
+            const { error: dbError } = await supabase
+                .from('personas')
+                .update({ hero_image_url: publicUrl })
+                .eq('id', selectedPersona.id)
+
+            if (dbError) throw dbError
+
+            toast.success("Hero image updated!", { id: toastId })
+            setPersonas(prev => prev.map(p =>
+                p.id === selectedPersona.id ? { ...p, hero_image_url: publicUrl } : p
+            ))
+            setSelectedPersona(prev => prev ? { ...prev, hero_image_url: publicUrl } : null)
+        } catch (e: any) {
+            console.error("Hero upload error:", e)
             toast.error(e.message || "Upload failed", { id: toastId })
         } finally {
             setUploading(false)
@@ -237,85 +213,6 @@ export default function StudioManagerPage() {
         }
     }
 
-    const handleBackgroundUpload = async (file: File) => {
-        if (!selectedPersona) return
-        if (!file.type.startsWith('image/')) {
-            toast.error("Please upload an image file")
-            return
-        }
-
-        setUploading(true)
-        const toastId = toast.loading("Uploading background...")
-
-        try {
-            const bucketName = 'persona_backgrounds'
-            const fileExt = file.name.split('.').pop()
-            const fileName = `${selectedPersona.id}_${Date.now()}.${fileExt}`
-
-            const { error: uploadError } = await supabase.storage
-                .from(bucketName)
-                .upload(fileName, file)
-
-            if (uploadError) throw new Error("Upload failed")
-
-            const { data: { publicUrl } } = supabase.storage
-                .from(bucketName)
-                .getPublicUrl(fileName)
-
-            const { error: dbError } = await supabase
-                .from('personas')
-                .update({ background_url: publicUrl })
-                .eq('id', selectedPersona.id)
-
-            if (dbError) throw dbError
-
-            toast.success("Background updated!", { id: toastId })
-            setPersonas(prev => prev.map(p =>
-                p.id === selectedPersona.id ? { ...p, background_url: publicUrl } : p
-            ))
-            setSelectedPersona(prev => prev ? { ...prev, background_url: publicUrl } : null)
-        } catch (e: any) {
-            toast.error(e.message || "Upload failed", { id: toastId })
-        } finally {
-            setUploading(false)
-        }
-    }
-
-    const handleAudioUpload = async (file: File) => {
-        if (!selectedPersona) return
-        if (!file.type.startsWith('audio/')) {
-            toast.error("Please upload an audio file")
-            return
-        }
-
-        setUploading(true)
-        const toastId = toast.loading("Uploading audio...")
-
-        try {
-            const formData = new FormData()
-            formData.append('personaId', selectedPersona.id)
-            formData.append('file', file)
-
-            const response = await fetch('/api/audio/upload', {
-                method: 'POST',
-                body: formData,
-            })
-
-            const result = await response.json()
-            if (!response.ok) throw new Error(result.error)
-
-            toast.success("Audio uploaded!", { id: toastId })
-            setPersonas(prev => prev.map(p =>
-                p.id === selectedPersona.id ? { ...p, welcome_audio_url: result.audioUrl } : p
-            ))
-            setSelectedPersona(prev => prev ? { ...prev, welcome_audio_url: result.audioUrl } : null)
-        } catch (e: any) {
-            toast.error(e.message || "Upload failed", { id: toastId })
-        } finally {
-            setUploading(false)
-        }
-    }
-
     const handleRemoveVideo = async () => {
         if (!selectedPersona || !confirm("Remove video?")) return
         try {
@@ -323,30 +220,6 @@ export default function StudioManagerPage() {
             toast.success("Video removed")
             setPersonas(prev => prev.map(p => p.id === selectedPersona.id ? { ...p, video_url: null } : p))
             setSelectedPersona(prev => prev ? { ...prev, video_url: null } : null)
-        } catch (e: any) {
-            toast.error(e.message)
-        }
-    }
-
-    const handleRemoveBackground = async () => {
-        if (!selectedPersona || !confirm("Remove background?")) return
-        try {
-            await supabase.from('personas').update({ background_url: null }).eq('id', selectedPersona.id)
-            toast.success("Background removed")
-            setPersonas(prev => prev.map(p => p.id === selectedPersona.id ? { ...p, background_url: null } : p))
-            setSelectedPersona(prev => prev ? { ...prev, background_url: null } : null)
-        } catch (e: any) {
-            toast.error(e.message)
-        }
-    }
-
-    const handleRemoveAudio = async () => {
-        if (!selectedPersona || !confirm("Remove audio?")) return
-        try {
-            await supabase.from('personas').update({ welcome_audio_url: null }).eq('id', selectedPersona.id)
-            toast.success("Audio removed")
-            setPersonas(prev => prev.map(p => p.id === selectedPersona.id ? { ...p, welcome_audio_url: null } : p))
-            setSelectedPersona(prev => prev ? { ...prev, welcome_audio_url: null } : null)
         } catch (e: any) {
             toast.error(e.message)
         }
@@ -486,10 +359,10 @@ export default function StudioManagerPage() {
                                 </h3>
                                 <div className="rounded-xl border border-rp-highlight-med bg-rp-overlay/50 p-6">
                                     <SoulEditor
+                                        key={selectedPersona.id}
                                         personaId={selectedPersona.id}
                                         initialData={{
                                             name: selectedPersona.name,
-                                            tagline: selectedPersona.tagline || undefined,
                                             description: selectedPersona.description || undefined,
                                             system_prompt: selectedPersona.system_prompt || undefined,
                                             intro_message: selectedPersona.intro_message || undefined,
@@ -507,112 +380,73 @@ export default function StudioManagerPage() {
                                 </div>
                             </div>
 
-                            {/* AVATAR SECTION */}
-                            <div>
-                                <h3 className="mb-4 font-semibold flex items-center gap-2">
-                                    <IconPhoto className="text-rp-iris" />
-                                    Avatar
-                                </h3>
-                                <div className="flex items-start gap-8">
-                                    <div className="relative size-32 shrink-0 overflow-hidden rounded-xl border-2 border-rp-highlight-med bg-rp-base">
-                                        {selectedPersona.image_url ? (
-                                            <Image src={selectedPersona.image_url} alt={selectedPersona.name} fill className="object-cover" />
-                                        ) : (
-                                            <div className="flex size-full items-center justify-center text-rp-muted">
-                                                <IconPhoto size={32} />
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div>
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
-                                            className="hidden"
-                                            id="image-upload"
-                                            disabled={uploading}
-                                        />
-                                        <label htmlFor="image-upload" className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rp-surface border border-rp-highlight-med hover:bg-rp-highlight-low transition-colors">
-                                            <IconUpload size={18} />
-                                            <span>Upload Avatar</span>
-                                        </label>
-                                        <p className="mt-2 text-xs text-rp-muted">Square image recommended</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* BACKGROUND SECTION */}
-                            <div>
-                                <h3 className="mb-4 font-semibold flex items-center gap-2">
-                                    <IconPhoto className="text-rp-foam" />
-                                    Background
-                                </h3>
-                                <div className="grid grid-cols-2 gap-8">
-                                    <div className="rounded-xl border border-rp-highlight-med bg-black/20 overflow-hidden relative group h-32">
-                                        {selectedPersona.background_url ? (
-                                            <div className="relative h-full w-full">
-                                                <Image src={selectedPersona.background_url} alt="Background" fill className="object-cover" />
-                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                    <Button variant="destructive" size="sm" onClick={handleRemoveBackground}>
-                                                        <IconX size={16} className="mr-1" />Remove
-                                                    </Button>
+                            {/* IMAGES SECTION */}
+                            <div className="grid grid-cols-2 gap-8">
+                                {/* AVATAR */}
+                                <div>
+                                    <h3 className="mb-4 font-semibold flex items-center gap-2">
+                                        <IconPhoto className="text-rp-iris" />
+                                        Avatar (Circle)
+                                    </h3>
+                                    <div className="flex items-start gap-4">
+                                        <div className="relative size-24 shrink-0 overflow-hidden rounded-full border-2 border-rp-highlight-med bg-rp-base">
+                                            {selectedPersona.image_url ? (
+                                                <Image src={selectedPersona.image_url} alt={selectedPersona.name} fill className="object-cover" />
+                                            ) : (
+                                                <div className="flex size-full items-center justify-center text-rp-muted">
+                                                    <IconPhoto size={24} />
                                                 </div>
-                                            </div>
-                                        ) : (
-                                            <div className="flex h-full flex-col items-center justify-center text-rp-muted">
-                                                <IconPhoto size={32} className="opacity-20" />
-                                                <p className="text-xs">No background</p>
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div>
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={(e) => e.target.files?.[0] && handleBackgroundUpload(e.target.files[0])}
-                                            className="hidden"
-                                            id="bg-upload"
-                                            disabled={uploading}
-                                        />
-                                        <label htmlFor="bg-upload" className="cursor-pointer rounded-xl border-2 border-dashed border-rp-highlight-med bg-rp-base/50 p-6 text-center transition-colors hover:border-rp-foam flex flex-col items-center">
-                                            <IconUpload size={24} className="text-rp-foam mb-2" />
-                                            <span>Upload Background</span>
-                                        </label>
+                                            )}
+                                        </div>
+                                        <div>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
+                                                className="hidden"
+                                                id="avatar-upload"
+                                                disabled={uploading}
+                                            />
+                                            <label htmlFor="avatar-upload" className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rp-surface border border-rp-highlight-med hover:bg-rp-highlight-low transition-colors text-sm">
+                                                <IconUpload size={16} />
+                                                <span>Upload Avatar</span>
+                                            </label>
+                                            <p className="mt-2 text-[10px] text-rp-muted">Shown in chat circles</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* AUDIO SECTION */}
-                            <div>
-                                <h3 className="mb-4 font-semibold flex items-center gap-2">
-                                    <IconMusic className="text-rp-rose" />
-                                    Welcome Audio
-                                </h3>
-                                <div className="grid grid-cols-2 gap-8">
-                                    <div>
-                                        {selectedPersona.welcome_audio_url ? (
-                                            <AudioPlayer src={selectedPersona.welcome_audio_url} onDelete={handleRemoveAudio} />
-                                        ) : (
-                                            <div className="rounded-xl border border-rp-highlight-med bg-black/20 p-8 text-center">
-                                                <IconMusic size={32} className="mx-auto mb-2 opacity-20" />
-                                                <p className="text-rp-muted text-sm">No audio</p>
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div>
-                                        <input
-                                            type="file"
-                                            accept="audio/*"
-                                            onChange={(e) => e.target.files?.[0] && handleAudioUpload(e.target.files[0])}
-                                            className="hidden"
-                                            id="audio-upload"
-                                            disabled={uploading}
-                                        />
-                                        <label htmlFor="audio-upload" className="cursor-pointer rounded-xl border-2 border-dashed border-rp-highlight-med bg-rp-base/50 p-6 text-center transition-colors hover:border-rp-rose flex flex-col items-center">
-                                            <IconUpload size={24} className="text-rp-rose mb-2" />
-                                            <span>Upload Audio</span>
-                                            <p className="text-xs text-rp-muted mt-1">MP3, WAV (Max 10MB)</p>
-                                        </label>
+                                {/* HERO PORTRAIT */}
+                                <div>
+                                    <h3 className="mb-4 font-semibold flex items-center gap-2">
+                                        <IconPhoto className="text-emerald-400" />
+                                        Hero Portrait (Banner)
+                                    </h3>
+                                    <div className="flex items-start gap-4">
+                                        <div className="relative w-full h-24 overflow-hidden rounded-xl border-2 border-rp-highlight-med bg-rp-base">
+                                            {selectedPersona.hero_image_url ? (
+                                                <Image src={selectedPersona.hero_image_url} alt={selectedPersona.name} fill className="object-cover" />
+                                            ) : (
+                                                <div className="flex size-full items-center justify-center text-rp-muted">
+                                                    <IconPhoto size={24} />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="shrink-0">
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={(e) => e.target.files?.[0] && handleHeroImageUpload(e.target.files[0])}
+                                                className="hidden"
+                                                id="hero-upload"
+                                                disabled={uploading}
+                                            />
+                                            <label htmlFor="hero-upload" className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rp-surface border border-rp-highlight-med hover:bg-rp-highlight-low transition-colors text-sm">
+                                                <IconUpload size={16} />
+                                                <span>Upload Hero</span>
+                                            </label>
+                                            <p className="mt-2 text-[10px] text-rp-muted">Large vertical/sq portrait</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

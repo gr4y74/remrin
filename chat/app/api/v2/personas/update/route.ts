@@ -36,7 +36,7 @@ export async function PATCH(request: Request) {
         // Verify ownership - user must own the persona to update it
         const { data: existingPersona, error: fetchError } = await supabase
             .from("personas")
-            .select("id, owner_id, name")
+            .select("id, creator_id, name")
             .eq("id", persona_id)
             .single()
 
@@ -52,7 +52,7 @@ export async function PATCH(request: Request) {
             .single()
 
         const isAdmin = profile?.is_admin === true
-        const isOwner = existingPersona.owner_id === user.id
+        const isOwner = existingPersona.creator_id === user.id
 
         if (!isAdmin && !isOwner) {
             return NextResponse.json({ error: "You don't have permission to update this persona" }, { status: 403 })
@@ -63,7 +63,7 @@ export async function PATCH(request: Request) {
 
         // Core soul fields
         if (soul_data.name !== undefined) updatePayload.name = soul_data.name
-        if (soul_data.tagline !== undefined) updatePayload.tagline = soul_data.tagline
+        // Note: tagline is stored in config, not as a top-level column
         if (soul_data.description !== undefined) updatePayload.description = soul_data.description
         if (soul_data.system_prompt !== undefined) updatePayload.system_prompt = soul_data.system_prompt
         if (soul_data.intro_message !== undefined) updatePayload.intro_message = soul_data.intro_message
@@ -78,14 +78,19 @@ export async function PATCH(request: Request) {
             updatePayload.metadata = soul_data.metadata
         }
         if (soul_data.config !== undefined) {
-            updatePayload.config = soul_data.config
+            // Include tagline in config if provided
+            const configData = { ...soul_data.config }
+            if (soul_data.tagline !== undefined) {
+                configData.tagline = soul_data.tagline
+            }
+            updatePayload.config = configData
+        } else if (soul_data.tagline !== undefined) {
+            // If only tagline provided without config, set it in config
+            updatePayload.config = { tagline: soul_data.tagline }
         }
 
-        // Add updated_at timestamp
-        updatePayload.updated_at = new Date().toISOString()
-
-        if (Object.keys(updatePayload).length === 1) {
-            // Only updated_at was set, no actual changes
+        if (Object.keys(updatePayload).length === 0) {
+            // No actual changes
             return NextResponse.json({ error: "No valid fields to update" }, { status: 400 })
         }
 
@@ -159,7 +164,7 @@ export async function GET(request: Request) {
             .single()
 
         const isAdmin = profile?.is_admin === true
-        const isOwner = persona.owner_id === user.id
+        const isOwner = persona.creator_id === user.id
 
         if (!isAdmin && !isOwner) {
             return NextResponse.json({ error: "You don't have permission to view this persona's details" }, { status: 403 })

@@ -78,7 +78,7 @@ export default async function ProfilePage({ params }: { params: { userId: string
         supabase
             .from('personas')
             .select('*')
-            .eq('user_id', profileBase.user_id)
+            .eq('creator_id', profileBase.user_id)
             .order('created_at', { ascending: false })
     ]);
 

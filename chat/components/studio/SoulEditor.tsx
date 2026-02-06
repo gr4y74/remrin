@@ -26,8 +26,8 @@ interface SoulData {
     tags?: string[]
     voice_id?: string
     image_url?: string
+    hero_image_url?: string
     metadata?: {
-        hero_image_url?: string
         hero_video_url?: string
         appearance_prompt?: string
         vibe_keywords?: string[]
@@ -61,6 +61,12 @@ export function SoulEditor({ personaId, initialData, onSave, onUpdate, isAdmin =
     const [showAdvanced, setShowAdvanced] = useState(false)
     const [hasChanges, setHasChanges] = useState(false)
     const fileInputRef = useRef<HTMLInputElement>(null)
+
+    // Sync state with props when character changes
+    React.useEffect(() => {
+        setSoulData(initialData || {})
+        setHasChanges(false)
+    }, [personaId, initialData])
 
     const updateField = useCallback(<K extends keyof SoulData>(field: K, value: SoulData[K]) => {
         setSoulData(prev => ({ ...prev, [field]: value }))
