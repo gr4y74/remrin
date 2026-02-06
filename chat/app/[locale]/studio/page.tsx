@@ -31,7 +31,8 @@ import {
     IconX,
     IconDna,
     IconChartBar,
-    IconFileDownload
+    IconFileDownload,
+    IconPencil
 } from "@tabler/icons-react"
 import { toast } from "sonner"
 
@@ -164,6 +165,15 @@ export default function StudioPage() {
                             </span>
                         )}
                     </h1>
+
+                    {/* Manager Link */}
+                    <Link
+                        href="/studio/manager"
+                        className="flex items-center gap-2 rounded-lg border border-rp-highlight-med px-3 py-1.5 text-sm text-rp-subtle transition-colors hover:bg-rp-overlay hover:text-rp-text"
+                    >
+                        <IconPencil size={16} />
+                        <span className="hidden sm:inline">My Souls</span>
+                    </Link>
 
                     {/* Moderation Status Badge */}
                     {persona.id && (

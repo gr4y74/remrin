@@ -317,7 +317,7 @@ export function GachaBanner({
                                     )}
                                     style={{
                                         background: index === cardIndex
-                                            ? RARITY_COLORS[item.rarity].gradient
+                                            ? RARITY_COLORS[item.rarity].primary
                                             : 'rgba(255,255,255,0.2)',
                                         boxShadow: index === cardIndex
                                             ? `0 0 10px ${RARITY_COLORS[item.rarity].glow}`

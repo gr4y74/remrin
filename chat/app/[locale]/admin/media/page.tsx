@@ -18,12 +18,14 @@ import {
     IconPlayerPlay,
     IconPlayerPause,
     IconVolume,
-    IconWaveSine
+    IconWaveSine,
+    IconSparkles
 } from "@tabler/icons-react"
 import Link from "next/link"
 import Image from "next/image"
 import { toast } from "sonner"
 import { AdminPasswordGate } from "@/components/admin/AdminPasswordGate"
+import { SoulEditor } from "@/components/studio/SoulEditor"
 
 interface Persona {
     id: string
@@ -36,6 +38,15 @@ interface Persona {
     description: string | null
     category: string | null
     is_default_media_set: boolean | null
+    // Soul fields for SoulEditor
+    tagline?: string | null
+    system_prompt?: string | null
+    intro_message?: string | null
+    safety_level?: string | null
+    tags?: string[] | null
+    voice_id?: string | null
+    metadata?: Record<string, any> | null
+    config?: Record<string, any> | null
 }
 
 const AudioPlayer = ({ src, onDelete, autoPlay = false }: { src: string, onDelete: () => void, autoPlay?: boolean }) => {
@@ -194,7 +205,7 @@ export default function MediaManagerPage() {
         try {
             const { data, error } = await supabase
                 .from('personas')
-                .select('id, name, image_url, video_url, background_url, welcome_audio_url, welcome_message, description, category, is_default_media_set')
+                .select('id, name, image_url, video_url, background_url, welcome_audio_url, welcome_message, description, category, is_default_media_set, tagline, system_prompt, intro_message, safety_level, tags, voice_id, metadata, config')
                 .order('created_at', { ascending: false })
 
             if (error) throw error
@@ -928,6 +939,36 @@ export default function MediaManagerPage() {
                                                 Tip: Use the &quot;Spark of Life&quot; feature to generate videos from images automatically.
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+
+                                {/* SOUL EDITOR SECTION */}
+                                <div>
+                                    <h3 className="mb-4 font-semibold flex items-center gap-2">
+                                        <IconSparkles className="text-rp-gold" />
+                                        Soul Editor
+                                        <span className="text-xs font-normal text-rp-muted ml-2">(Import/Edit persona data)</span>
+                                    </h3>
+                                    <div className="rounded-xl border border-rp-highlight-med bg-rp-overlay/50 p-6">
+                                        <SoulEditor
+                                            personaId={selectedPersona.id}
+                                            initialData={{
+                                                name: selectedPersona.name,
+                                                tagline: selectedPersona.tagline || undefined,
+                                                description: selectedPersona.description || undefined,
+                                                system_prompt: selectedPersona.system_prompt || undefined,
+                                                intro_message: selectedPersona.intro_message || undefined,
+                                                safety_level: (selectedPersona.safety_level as any) || "ADULT",
+                                                category: selectedPersona.category || undefined,
+                                                tags: selectedPersona.tags || undefined,
+                                                voice_id: selectedPersona.voice_id || undefined,
+                                                image_url: selectedPersona.image_url || undefined,
+                                                metadata: selectedPersona.metadata || undefined,
+                                                config: selectedPersona.config || undefined
+                                            }}
+                                            onUpdate={loadPersonas}
+                                            isAdmin={true}
+                                        />
                                     </div>
                                 </div>
                             </div>
