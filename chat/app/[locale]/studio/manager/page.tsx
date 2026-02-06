@@ -132,7 +132,7 @@ export default function StudioManagerPage() {
             const { data, error } = await supabase
                 .from('personas')
                 .select('id, name, image_url, video_url, background_url, welcome_audio_url, welcome_message, description, category, tagline, system_prompt, intro_message, safety_level, tags, voice_id, metadata, config')
-                .eq('owner_id', user.id)
+                .eq('creator_id', user.id)
                 .order('created_at', { ascending: false })
 
             if (error) throw error
