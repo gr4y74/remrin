@@ -4,9 +4,11 @@ import { cn } from "@/lib/utils"
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react"
 import { useState } from "react"
 
+import { StudioParameters } from "./StudioControls"
+
 interface ParameterControlsProps {
     onParamChange: (key: string, value: any) => void
-    parameters: any
+    parameters: StudioParameters
 }
 
 export function ParameterControls({ onParamChange, parameters }: ParameterControlsProps) {

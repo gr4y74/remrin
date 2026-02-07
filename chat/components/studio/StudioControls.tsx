@@ -7,6 +7,16 @@ import { ModelSelector } from "./ModelSelector"
 import { ParameterControls } from "./ParameterControls"
 import { IconSparkles, IconLoader2, IconCircleX } from "@tabler/icons-react"
 
+export interface StudioParameters {
+    preference: 'speed' | 'quality'
+    aspect_ratio: string
+    ye_newe: boolean
+    ye_olde: boolean
+    guidance: number
+    steps: number
+    [key: string]: any // To allow for dynamic keys in handleParamChange
+}
+
 interface StudioControlsProps {
     type: 'image' | 'video' | 'edit'
     models: any[]
@@ -18,7 +28,7 @@ interface StudioControlsProps {
 
 export function StudioControls({ type, models, selectedModelId, setSelectedModelId, onGenerate, isGenerating }: StudioControlsProps) {
     const [prompt, setPrompt] = useState("")
-    const [parameters, setParameters] = useState<any>({
+    const [parameters, setParameters] = useState<StudioParameters>({
         preference: 'quality',
         aspect_ratio: '1:1',
         ye_newe: false,
@@ -28,7 +38,7 @@ export function StudioControls({ type, models, selectedModelId, setSelectedModel
     })
 
     const handleParamChange = (key: string, value: any) => {
-        setParameters(prev => ({ ...prev, [key]: value }))
+        setParameters((prev: StudioParameters) => ({ ...prev, [key]: value }))
     }
 
     const selectedModel = models.find(m => m.id === selectedModelId)
