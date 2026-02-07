@@ -127,7 +127,7 @@ export function ModelSelector({ models, selectedModelId, onSelect }: ModelSelect
 
             {/* 3. Detailed Model Dropdown (View all) */}
             <div className="space-y-2">
-                <Select value={selectedModelId} onValueChange={onSelect}>
+                <Select value={selectedModelId ?? undefined} onValueChange={onSelect}>
                     <SelectTrigger className="w-full h-11 bg-rp-surface border-rp-highlight-low hover:bg-rp-highlight-low/10 text-rp-text rounded-xl focus:ring-rp-iris">
                         <SelectValue placeholder="Select a model style">
                             {selectedModel ? (
