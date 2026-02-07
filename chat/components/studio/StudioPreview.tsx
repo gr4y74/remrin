@@ -7,28 +7,66 @@ import Image from "next/image"
 interface StudioPreviewProps {
     status: 'idle' | 'generating' | 'completed' | 'failed'
     outputUrl?: string
+    previewUrl?: string
+    previewName?: string
     error?: string
     onReset: () => void
     onRegenerate: () => void
 }
 
-export function StudioPreview({ status, outputUrl, error, onReset, onRegenerate }: StudioPreviewProps) {
+export function StudioPreview({ status, outputUrl, previewUrl, previewName, error, onReset, onRegenerate }: StudioPreviewProps) {
+    const isVideo = previewUrl?.toLowerCase().endsWith('.mp4');
+
     return (
         <div className="flex flex-col h-full bg-rp-base relative overflow-hidden">
             {/* Background Grain/Noise Effect */}
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('/images/noise.png')] bg-repeat" />
 
             <div className="flex-1 flex items-center justify-center p-8 md:p-12 relative z-10">
-                {/* Idle State */}
+                {/* Idle/Preview State */}
                 {status === 'idle' && (
-                    <div className="flex flex-col items-center gap-6 animate-in fade-in zoom-in duration-500 text-center max-w-md">
-                        <div className="size-32 rounded-full bg-rp-overlay/30 flex items-center justify-center border border-rp-highlight-low shadow-inner">
-                            <IconPhoto size={64} className="text-rp-muted/50" />
-                        </div>
-                        <div className="space-y-2">
-                            <h2 className="text-2xl font-bold text-rp-text">Ready to Create</h2>
-                            <p className="text-rp-muted">Configure your settings in the left panel and describe what you want to see. Your masterpiece is just a prompt away.</p>
-                        </div>
+                    <div className="w-full h-full flex flex-col items-center justify-center gap-6 animate-in fade-in zoom-in duration-500">
+                        {previewUrl ? (
+                            <div className="w-full h-full flex flex-col items-center justify-center gap-6">
+                                <div className="relative group max-w-[90%] max-h-[80%] rounded-2xl overflow-hidden shadow-2xl border border-rp-highlight-low ring-1 ring-rp-highlight-low/20 aspect-square md:aspect-auto">
+                                    {isVideo ? (
+                                        <video
+                                            src={previewUrl}
+                                            className="max-w-full max-h-full object-contain bg-rp-surface"
+                                            autoPlay
+                                            muted
+                                            loop
+                                            playsInline
+                                        />
+                                    ) : (
+                                        <img
+                                            src={previewUrl}
+                                            alt={previewName || "Style preview"}
+                                            className="max-w-full max-h-full object-contain bg-rp-surface"
+                                        />
+                                    )}
+                                    <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
+                                        <p className="text-white text-sm font-bold uppercase tracking-widest text-center shadow-sm">
+                                            Style: {previewName}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="text-center space-y-1">
+                                    <h2 className="text-xl font-bold text-rp-text">Ready to Create</h2>
+                                    <p className="text-rp-muted text-sm">Your masterpiece is just a prompt away.</p>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center gap-6 text-center max-w-md">
+                                <div className="size-32 rounded-full bg-rp-overlay/30 flex items-center justify-center border border-rp-highlight-low shadow-inner">
+                                    <IconPhoto size={64} className="text-rp-muted/50" />
+                                </div>
+                                <div className="space-y-2">
+                                    <h2 className="text-2xl font-bold text-rp-text">Ready to Create</h2>
+                                    <p className="text-rp-muted">Configure your settings in the left panel and describe what you want to see. Your masterpiece is just a prompt away.</p>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 )}
 

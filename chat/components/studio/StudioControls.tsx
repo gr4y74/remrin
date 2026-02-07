@@ -10,13 +10,14 @@ import { IconSparkles, IconLoader2, IconCircleX } from "@tabler/icons-react"
 interface StudioControlsProps {
     type: 'image' | 'video' | 'edit'
     models: any[]
+    selectedModelId: string | null
+    setSelectedModelId: (id: string) => void
     onGenerate: (data: any) => void
     isGenerating: boolean
 }
 
-export function StudioControls({ type, models, onGenerate, isGenerating }: StudioControlsProps) {
+export function StudioControls({ type, models, selectedModelId, setSelectedModelId, onGenerate, isGenerating }: StudioControlsProps) {
     const [prompt, setPrompt] = useState("")
-    const [selectedModelId, setSelectedModelId] = useState(models[0]?.id)
     const [parameters, setParameters] = useState<any>({
         preference: 'quality',
         aspect_ratio: '1:1',

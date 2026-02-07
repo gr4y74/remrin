@@ -78,36 +78,50 @@ export function ModelSelector({ models, selectedModelId, onSelect }: ModelSelect
                         <IconRotate size={20} />
                     </button>
 
-                    {featuredStyles.map((model) => (
-                        <button
-                            key={model.id}
-                            onClick={() => onSelect(model.id)}
-                            className={cn(
-                                "relative size-12 rounded-lg overflow-hidden border-2 transition-all shrink-0 group",
-                                selectedModelId === model.id
-                                    ? "border-rp-iris ring-2 ring-rp-iris/30 scale-105"
-                                    : "border-rp-highlight-low hover:border-rp-muted"
-                            )}
-                        >
-                            {model.thumbnail_url ? (
-                                <Image
-                                    src={model.thumbnail_url}
-                                    alt={model.display_name}
-                                    fill
-                                    className="object-cover"
-                                />
-                            ) : (
-                                <div className="size-full bg-rp-overlay flex items-center justify-center text-[10px] font-bold">
-                                    {model.display_name.charAt(0)}
-                                </div>
-                            )}
-                            {selectedModelId === model.id && (
-                                <div className="absolute inset-0 bg-rp-iris/20 flex items-center justify-center">
-                                    <IconCheck size={16} className="text-white drop-shadow-md" />
-                                </div>
-                            )}
-                        </button>
-                    ))}
+                    {featuredStyles.map((model) => {
+                        const isVideo = model.thumbnail_url?.toLowerCase().endsWith('.mp4');
+                        return (
+                            <button
+                                key={model.id}
+                                onClick={() => onSelect(model.id)}
+                                className={cn(
+                                    "relative size-12 rounded-lg overflow-hidden border-2 transition-all shrink-0 group",
+                                    selectedModelId === model.id
+                                        ? "border-rp-iris ring-2 ring-rp-iris/30 scale-105"
+                                        : "border-rp-highlight-low hover:border-rp-muted"
+                                )}
+                            >
+                                {model.thumbnail_url ? (
+                                    isVideo ? (
+                                        <video
+                                            src={model.thumbnail_url}
+                                            className="size-full object-cover"
+                                            autoPlay
+                                            muted
+                                            loop
+                                            playsInline
+                                        />
+                                    ) : (
+                                        <Image
+                                            src={model.thumbnail_url}
+                                            alt={model.display_name}
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    )
+                                ) : (
+                                    <div className="size-full bg-rp-overlay flex items-center justify-center text-[10px] font-bold">
+                                        {model.display_name.charAt(0)}
+                                    </div>
+                                )}
+                                {selectedModelId === model.id && (
+                                    <div className="absolute inset-0 bg-rp-iris/20 flex items-center justify-center">
+                                        <IconCheck size={16} className="text-white drop-shadow-md" />
+                                    </div>
+                                )}
+                            </button>
+                        );
+                    })}
                 </div>
             </div>
 

@@ -1,8 +1,8 @@
 
-const { Client } = require("pg");
-const fs = require("fs");
-const path = require("path");
-const dotenv = require("dotenv");
+import { Client } from "pg";
+import fs from "fs";
+import path from "path";
+import dotenv from "dotenv";
 
 dotenv.config({ path: ".env.local" });
 
@@ -27,14 +27,16 @@ async function applyMigrations() {
         for (const migrationPath of migrations) {
             console.log(`📜 Applying migration: ${migrationPath}`);
             const sql = fs.readFileSync(path.join(process.cwd(), migrationPath), "utf-8");
-            // We split the SQL into individual statements if necessary, but pg.query(sql) often works for multiple commands
             await client.query(sql);
             console.log(`✅ Applied ${migrationPath}`);
         }
 
         console.log("✨ All migrations applied successfully!");
-    } catch (err) {
+    } catch (err: any) {
         console.error("❌ Migration failed:", err.message);
+        if (err.message.includes("already exists")) {
+            console.log("Note: Some tables/records already exist, which is fine if they match.");
+        }
     } finally {
         await client.end();
     }

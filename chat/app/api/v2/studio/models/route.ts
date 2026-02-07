@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import staticModels from "@/lib/studio/models.json";
 
 export async function GET(request: Request) {
     try {
@@ -20,14 +21,22 @@ export async function GET(request: Request) {
             query = query.eq('type', type);
         }
 
-        const { data: models, error } = await query;
+        const { data: dbModels, error } = await query;
 
-        if (error) {
-            return NextResponse.json({ error: error.message }, { status: 500 });
+        // Fallback to static models if DB query fails or returns nothing
+        if (error || !dbModels || dbModels.length === 0) {
+            console.warn(`Studio API: Falling back to static models${error ? ` due to error: ${error.message}` : ''}`);
+            let filteredModels = staticModels;
+            if (type) {
+                filteredModels = staticModels.filter(m => m.type === type);
+            }
+            return NextResponse.json({ models: filteredModels });
         }
 
-        return NextResponse.json({ models });
+        return NextResponse.json({ models: dbModels });
     } catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        // Even on catch, try to return static models
+        console.error("Studio API Exception:", error);
+        return NextResponse.json({ models: staticModels });
     }
 }

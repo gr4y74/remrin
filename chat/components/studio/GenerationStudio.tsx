@@ -11,8 +11,9 @@ interface GenerationStudioProps {
 
 export function GenerationStudio({ initialType = 'image' }: GenerationStudioProps) {
     const [type, setType] = useState(initialType)
-    const [models, setModels] = useState([])
+    const [models, setModels] = useState<any[]>([])
     const [loadingModels, setLoadingModels] = useState(true)
+    const [selectedModelId, setSelectedModelId] = useState<string | null>(null)
     const [isGenerating, setIsGenerating] = useState(false)
     const [status, setStatus] = useState<'idle' | 'generating' | 'completed' | 'failed'>('idle')
     const [currentGenerationId, setCurrentGenerationId] = useState<string | null>(null)
@@ -27,6 +28,9 @@ export function GenerationStudio({ initialType = 'image' }: GenerationStudioProp
             const data = await res.json()
             if (data.models) {
                 setModels(data.models)
+                if (!selectedModelId && data.models.length > 0) {
+                    setSelectedModelId(data.models[0].id)
+                }
             }
         } catch (err) {
             console.error("Failed to fetch models:", err)
@@ -34,7 +38,7 @@ export function GenerationStudio({ initialType = 'image' }: GenerationStudioProp
         } finally {
             setLoadingModels(false)
         }
-    }, [type])
+    }, [type, selectedModelId])
 
     useEffect(() => {
         fetchModels()
@@ -105,20 +109,26 @@ export function GenerationStudio({ initialType = 'image' }: GenerationStudioProp
         setError(undefined)
     }
 
+    const selectedModel = models.find(m => m.id === selectedModelId)
+
     return (
         <div className="grid grid-cols-1 md:grid-cols-[400px_1fr] h-full overflow-hidden">
             <StudioControls
                 type={type}
                 models={models}
+                selectedModelId={selectedModelId}
+                setSelectedModelId={setSelectedModelId}
                 onGenerate={handleGenerate}
                 isGenerating={isGenerating}
             />
             <StudioPreview
                 status={status}
                 outputUrl={outputUrl}
+                previewUrl={selectedModel?.thumbnail_url}
+                previewName={selectedModel?.display_name}
                 error={error}
                 onReset={handleReset}
-                onRegenerate={() => currentGenerationId && handleGenerate({})} // Simplified, would need original data
+                onRegenerate={() => currentGenerationId && handleGenerate({})}
             />
         </div>
     )
