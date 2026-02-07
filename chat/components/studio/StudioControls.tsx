@@ -21,7 +21,7 @@ interface StudioControlsProps {
     type: 'image' | 'video' | 'edit'
     models: any[]
     selectedModelId: string | null
-    setSelectedModelId: (id: string) => void
+    setSelectedModelId: (id: string | null) => void
     onGenerate: (data: any) => void
     isGenerating: boolean
 }
