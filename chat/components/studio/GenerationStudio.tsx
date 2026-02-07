@@ -6,10 +6,10 @@ import { StudioPreview } from "./StudioPreview"
 import { toast } from "sonner"
 
 interface GenerationStudioProps {
-    initialType?: 'image' | 'video' | 'edit'
+    type?: 'image' | 'video' | 'edit'
 }
 
-export function GenerationStudio({ initialType = 'image' }: GenerationStudioProps) {
+export function GenerationStudio({ type: initialType = 'image' }: GenerationStudioProps) {
     const [type, setType] = useState(initialType)
     const [models, setModels] = useState<any[]>([])
     const [loadingModels, setLoadingModels] = useState(true)
