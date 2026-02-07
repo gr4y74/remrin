@@ -1,0 +1,176 @@
+{
+  "image": [
+    {
+      "model_id": "black-forest-labs/flux-1.1-pro",
+      "display_name": "Flux 1.1 Pro",
+      "sample_url": "https://replicate.delivery/czjl/XetPfMnnBtnyLUNiNcnl2Hneyeo8AsfsOl2AG5Znql5f3VK9E/tmpuv7lgrx7.jpg",
+      "local_path": "samples/image/black-forest-labs_flux-1.1-pro.jpg"
+    },
+    {
+      "model_id": "black-forest-labs/flux-pro",
+      "display_name": "Flux Pro",
+      "sample_url": "https://tjzk.replicate.delivery/models_organizations_avatar/01ed70be-0d47-4a4a-85fb-32c02cdd4ab5/bfl.png",
+      "local_path": "samples/image/black-forest-labs_flux-pro.png"
+    },
+    {
+      "model_id": "black-forest-labs/flux-dev",
+      "display_name": "Flux Dev",
+      "sample_url": "https://replicate.delivery/xezq/56Y1CoASEA69MxWfuLASTFCLrvFadHSwW8edVlYGOK1YW9DVA/out-0.webp",
+      "local_path": "samples/image/black-forest-labs_flux-dev.webp"
+    },
+    {
+      "model_id": "black-forest-labs/flux-schnell",
+      "display_name": "Flux Schnell",
+      "sample_url": "https://replicate.delivery/yhqm/A8gbZlebANWBFSU1mTWSznUwZ0XGtflFAQ8DT35trPNvUaUTA/out-0.webp",
+      "local_path": "samples/image/black-forest-labs_flux-schnell.webp"
+    },
+    {
+      "model_id": "recraft-ai/recraft-v3",
+      "display_name": "Recraft V3",
+      "sample_url": "https://replicate.delivery/czjl/fgwfgBKfiwPnyJNg4zCJzSUN314LY34eUYgE682aTDYdtGvOB/output.png",
+      "local_path": "samples/image/recraft-ai_recraft-v3.png"
+    },
+    {
+      "model_id": "ideogram-ai/ideogram-v2",
+      "display_name": "Ideogram V2",
+      "sample_url": "https://replicate.delivery/czjl/wPuHfFHPOGxqbC3r1rJbEomny4eprgwRVpjIP7pN7oKf6pSnA/R8_ideogram.png",
+      "local_path": "samples/image/ideogram-ai_ideogram-v2.png"
+    },
+    {
+      "model_id": "playgroundai/playground-v2.5",
+      "display_name": "Playground V2.5",
+      "sample_url": "https://tjzk.replicate.delivery/models_models_featured_image/489d0931-1c41-40b2-a44b-0991de35443b/gemini-3-flash-model-2096x118.webp",
+      "local_path": "samples/image/playgroundai_playground-v2.5.webp"
+    },
+    {
+      "model_id": "stability-ai/sdxl",
+      "display_name": "SDXL",
+      "sample_url": "https://replicate.delivery/pbxt/V1IpaG4oVXofGyZcPxhhVVfEFvaMx9lMzqR9Fh4RpsRwyyTRA/out-0.png",
+      "local_path": "samples/image/stability-ai_sdxl.png"
+    },
+    {
+      "model_id": "bytedance/sdxl-lightning-4step",
+      "display_name": "SDXL Lightning",
+      "sample_url": "https://replicate.delivery/yhqm/VyD24fDyzM2nQSg0nQc58W2EIj16hGcWKrXJozjAMR1BeidTA/out-0.png",
+      "local_path": "samples/image/bytedance_sdxl-lightning-4step.png"
+    }
+  ],
+  "video": [
+    {
+      "model_id": "minimax/video-01",
+      "display_name": "Minimax Video-01",
+      "sample_url": "https://replicate.delivery/czjl/8pSDBTD6zI44ARtleIewvQEC5wMbrK7iI0mKPSBJRrKx4J1TA/tmplqk00zq0.output.mp4",
+      "local_path": "samples/video/minimax_video-01.mp4"
+    },
+    {
+      "model_id": "genmo/mochi-1-preview",
+      "display_name": "Mochi 1 Preview",
+      "sample_url": "https://tjzk.replicate.delivery/models_models_featured_image/489d0931-1c41-40b2-a44b-0991de35443b/gemini-3-flash-model-2096x118.webp",
+      "local_path": "samples/video/genmo_mochi-1-preview.webp"
+    },
+    {
+      "model_id": "tencent/hunyuan-video",
+      "display_name": "Hunyuan Video",
+      "sample_url": "https://replicate.delivery/xezq/LWCE40Sd0p46AFKaeeqLckTtEoCe9ERt71OwABwCNN77q6QoA/output_49895.mp4",
+      "local_path": "samples/video/tencent_hunyuan-video.mp4"
+    },
+    {
+      "model_id": "lightricks/ltx-video",
+      "display_name": "LTX Video",
+      "sample_url": "https://replicate.delivery/yhqm/WjvukHay2258P9UFGYkGiMKr7exu9eeSs27782SR7fBcUiXPB/R8_LTX_00001.mp4",
+      "local_path": "samples/video/lightricks_ltx-video.mp4"
+    },
+    {
+      "model_id": "fofr/cogvideox-5b",
+      "display_name": "CogVideoX 5B",
+      "sample_url": "https://tjzk.replicate.delivery/models_models_featured_image/e32c60b0-a5e4-4846-b5e9-752df87ed6c5/replicate-klein-cover.jpg",
+      "local_path": "samples/video/fofr_cogvideox-5b.jpg"
+    },
+    {
+      "model_id": "stability-ai/stable-video-diffusion",
+      "display_name": "Stable Video Diffusion",
+      "sample_url": "https://tjzk.replicate.delivery/models_models_featured_image/2e35026c-1f46-4bbe-a314-e27079e943fa/seedream-45-sm.jpg",
+      "local_path": "samples/video/stability-ai_stable-video-diffusion.jpg"
+    },
+    {
+      "model_id": "lucataco/animate-diff",
+      "display_name": "Animate Diff",
+      "sample_url": "https://replicate.delivery/pbxt/FeVB9R2sarznfUHHxQxIvoEtpidL2HGtvnzK61dmhsJuesJlA/out.mp4",
+      "local_path": "samples/video/lucataco_animate-diff.mp4"
+    },
+    {
+      "model_id": "deforum/deforum_stable_diffusion",
+      "display_name": "Deforum",
+      "sample_url": "https://replicate.delivery/mgxm/873a1cc7-0427-4e8d-ab3c-02ef5282c377/out.mp4",
+      "local_path": "samples/video/deforum_deforum_stable_diffusion.mp4"
+    },
+    {
+      "model_id": "fofr/live-portrait",
+      "display_name": "Live Portrait",
+      "sample_url": "https://replicate.delivery/pbxt/L0gy7uyLE5UP0uz12cndDdSOIgw5R3rV5N6G2pbt7kEK9dCr/0_3.webp",
+      "local_path": "samples/video/fofr_live-portrait.webp"
+    }
+  ],
+  "edit": [
+    {
+      "model_id": "stability-ai/stable-diffusion-inpainting",
+      "display_name": "SD Inpainting",
+      "sample_url": "https://replicate.delivery/pbxt/xs0pPOUM6HKmPlJJBXqKfE1YsiMzgNsCuGedlX0VqvPYifLgA/out-0.png",
+      "local_path": "samples/edit/stability-ai_stable-diffusion-inpainting.png"
+    },
+    {
+      "model_id": "fofr/face-to-sticker",
+      "display_name": "Face to Sticker",
+      "sample_url": "https://replicate.delivery/xezq/vvHSs2p5vPJtPRNW7ffCYt54fwP43r8I3kG4LPfoCCMaMBWPB/ComfyUI_00002_.png",
+      "local_path": "samples/edit/fofr_face-to-sticker.png"
+    },
+    {
+      "model_id": "fofr/become-image",
+      "display_name": "Become Image",
+      "sample_url": "https://replicate.delivery/pbxt/KYEdDz93eyPMIR0zltb9SzZ4lLTQkH0CfMcmnaGD5wHbA7Dt/MTk4MTczMTkzNzI1Mjg5NjYy.webp",
+      "local_path": "samples/edit/fofr_become-image.webp"
+    },
+    {
+      "model_id": "sczhou/codeformer",
+      "display_name": "CodeFormer",
+      "sample_url": "https://replicate.delivery/mgxm/a11098b0-a18a-4c02-a19a-9a7045d68426/010.jpg",
+      "local_path": "samples/edit/sczhou_codeformer.jpg"
+    },
+    {
+      "model_id": "tencentarc/gfpgan",
+      "display_name": "GFPGAN",
+      "sample_url": "https://replicate.delivery/mgxm/59d9390c-b415-47e0-a907-f81b0d9920f1/187400315-87a90ac9-d231-45d6-b377-38702bd1838f.jpg",
+      "local_path": "samples/edit/tencentarc_gfpgan.jpg"
+    },
+    {
+      "model_id": "nightmareai/real-esrgan",
+      "display_name": "Real-ESRGAN",
+      "sample_url": "https://replicate.delivery/pbxt/Ing7Fa4YMk6YtcoG1YZnaK3UwbgDB5guRc5M2dEjV6ODNLMl/cat.jpg",
+      "local_path": "samples/edit/nightmareai_real-esrgan.jpg"
+    },
+    {
+      "model_id": "fofr/remove-bg",
+      "display_name": "Remove BG",
+      "sample_url": "https://tjzk.replicate.delivery/models_models_featured_image/e32c60b0-a5e4-4846-b5e9-752df87ed6c5/replicate-klein-cover.jpg",
+      "local_path": "samples/edit/fofr_remove-bg.jpg"
+    },
+    {
+      "model_id": "fofr/controlnet",
+      "display_name": "ControlNet",
+      "sample_url": "https://tjzk.replicate.delivery/models_models_featured_image/489d0931-1c41-40b2-a44b-0991de35443b/gemini-3-flash-model-2096x118.webp",
+      "local_path": "samples/edit/fofr_controlnet.webp"
+    },
+    {
+      "model_id": "rosebud-ai/clip-interrogator",
+      "display_name": "CLIP Interrogator",
+      "sample_url": "https://tjzk.replicate.delivery/models_models_featured_image/85cdf19c-b458-4d8a-a40c-932740df8a86/Kling_v2.6_Pro_1.mp4",
+      "local_path": "samples/edit/rosebud-ai_clip-interrogator.mp4"
+    },
+    {
+      "model_id": "fofr/image-blend",
+      "display_name": "Image Blend",
+      "sample_url": "https://tjzk.replicate.delivery/models_models_featured_image/b77cfc0f-207d-47c5-918b-0f824a368605/qwen3.jpg",
+      "local_path": "samples/edit/fofr_image-blend.jpg"
+    }
+  ]
+}

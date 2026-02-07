@@ -5,17 +5,19 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { PersonaMetadata } from "../types"
-import { IconPhoto, IconSparkles, IconLoader2 } from "@tabler/icons-react"
+import { IconPhoto, IconSparkles, IconLoader2, IconRocket } from "@tabler/icons-react"
 import Image from "next/image"
+import Link from "next/link"
 
 interface VisualsTabProps {
     metadata: PersonaMetadata
     updateMetadata: <K extends keyof PersonaMetadata>(field: K, value: PersonaMetadata[K]) => void
     uploadFile: (file: File, bucket: string, folder: string) => Promise<string | null>
     uploading: boolean
+    personaId?: string
 }
 
-export function VisualsTab({ metadata, updateMetadata, uploadFile, uploading }: VisualsTabProps) {
+export function VisualsTab({ metadata, updateMetadata, uploadFile, uploading, personaId }: VisualsTabProps) {
     const heroInputRef = useRef<HTMLInputElement>(null)
     const videoInputRef = useRef<HTMLInputElement>(null)
 
@@ -47,6 +49,27 @@ export function VisualsTab({ metadata, updateMetadata, uploadFile, uploading }: 
 
     return (
         <div className="space-y-6">
+            {/* AI Studio Banner */}
+            <div className="relative group overflow-hidden rounded-2xl bg-gradient-to-r from-rp-iris/20 via-purple-500/10 to-rp-foam/20 border border-rp-iris/30 p-6 flex items-center justify-between">
+                <div className="space-y-1 relative z-10">
+                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                        <IconSparkles className="text-rp-gold animate-pulse" size={20} />
+                        AI Generation Studio
+                    </h3>
+                    <p className="text-sm text-rp-subtle">
+                        Generate high-fidelity portraits and cinematic videos for your Soul.
+                    </p>
+                </div>
+                <Link
+                    href="/studio/visuals"
+                    className="relative z-10 px-6 py-2.5 bg-rp-iris hover:bg-rp-iris/90 text-white rounded-xl shadow-lg transition-all active:scale-95 font-bold flex items-center gap-2"
+                >
+                    Launch Studio
+                    <IconRocket size={18} />
+                </Link>
+                {/* Decorative Elements */}
+                <div className="absolute -right-8 -bottom-8 size-32 bg-rp-iris/20 rounded-full blur-3xl group-hover:bg-rp-iris/30 transition-all" />
+            </div>
             {/* Hero Image */}
             <div className="space-y-2">
                 <Label>Hero Image (Store Background)</Label>

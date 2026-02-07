@@ -678,4 +678,26 @@
       height: 30vw;
     }
   }
+
+  /* AI Studio Animations */
+  @keyframes scan {
+    0% { top: 0; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+  }
+
+  @keyframes progress-drift {
+    0% { transform: translateX(-100%); }
+    50% { transform: translateX(-10%); }
+    100% { transform: translateX(0%); }
+  }
+
+  .animate-scan {
+    animation: scan 3s linear infinite;
+  }
+
+  .animate-progress {
+    animation: progress-drift 15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
 }
