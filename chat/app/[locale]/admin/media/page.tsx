@@ -205,7 +205,7 @@ export default function MediaManagerPage() {
         try {
             const { data, error } = await supabase
                 .from('personas')
-                .select('id, name, image_url, video_url, background_url, welcome_audio_url, welcome_message, description, category, is_default_media_set, tagline, system_prompt, intro_message, safety_level, tags, voice_id, metadata, config')
+                .select('id, name, image_url, video_url, background_url, welcome_audio_url, welcome_message, description, category, is_default_media_set, system_prompt, intro_message, safety_level, tags, voice_id, metadata, config')
                 .order('created_at', { ascending: false })
 
             if (error) throw error

@@ -19,6 +19,8 @@ async function applyMigrations() {
         console.log("✅ Connected to Postgres!");
 
         const migrations = [
+            "supabase/migrations/20260206_fix_personas_and_buckets.sql",
+            "supabase/migrations/20260208_add_persona_metadata_column.sql",
             "supabase/migrations/20260206_ai_studio.sql",
             "supabase/migrations/20260206_ai_studio_seeds.sql",
             "supabase/migrations/20260207_ai_studio_expanded_seeds.sql"
