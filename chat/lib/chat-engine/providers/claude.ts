@@ -53,7 +53,7 @@ export class ClaudeProvider extends BaseChatProvider {
         systemPrompt: string,
         options: ProviderOptions
     ): AsyncGenerator<ChatChunk, void, unknown> {
-        const apiKey = this.getApiKey()
+        const apiKey = this.getApiKey(options)
         if (!apiKey) {
             throw new Error('Anthropic API key not configured')
         }

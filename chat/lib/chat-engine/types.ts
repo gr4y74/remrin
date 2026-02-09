@@ -279,6 +279,7 @@ export interface ProviderOptions {
     model?: string
     abortSignal?: AbortSignal
     tools?: ToolDescriptor[]
+    apiKey?: string // Optional override for database-stored keys
 }
 
 // ============================================================================

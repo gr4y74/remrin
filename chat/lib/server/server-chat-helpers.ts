@@ -64,6 +64,7 @@ async function addApiKeysToProfile(profile: Tables<"profiles">, globalKeys: Reco
     [VALID_ENV_KEYS.PERPLEXITY_API_KEY]: { profileKey: "perplexity_api_key", provider: "perplexity" },
     [VALID_ENV_KEYS.AZURE_OPENAI_API_KEY]: { profileKey: "azure_openai_api_key", provider: "azure" },
     [VALID_ENV_KEYS.OPENROUTER_API_KEY]: { profileKey: "openrouter_api_key", provider: "openrouter" },
+    [VALID_ENV_KEYS.DEEPSEEK_API_KEY]: { profileKey: "deepseek_api_key" as any, provider: "deepseek" },
 
     [VALID_ENV_KEYS.OPENAI_ORGANIZATION_ID]: { profileKey: "openai_organization_id" },
 

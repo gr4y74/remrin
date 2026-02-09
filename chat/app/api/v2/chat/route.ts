@@ -134,6 +134,21 @@ export async function POST(request: NextRequest) {
 
         // Get provider info for logging
         const providerInfo = providerManager.getProviderInfo()
+
+        // Fetch global API keys from the secure api_keys table
+        // Use service role client to bypass RLS for this internal check
+        const { data: globalKeys } = await supabase
+            .from('api_keys')
+            .select('provider, api_key')
+
+        const globalKeysMap: Record<string, string> = (globalKeys || []).reduce((acc: any, k: any) => {
+            acc[k.provider] = k.api_key
+            return acc
+        }, {})
+
+        // Priority Provider Key: Database > Environment (handled in BaseChatProvider if not passed here)
+        const providerKey = globalKeysMap[providerInfo.id]
+
         console.log(`🚀 [ChatEngine] Request from ${userTier} tier user, using ${providerInfo.name}${isMother ? ' (Mother Mode)' : ''}`)
 
         // Create streaming response
@@ -158,7 +173,8 @@ export async function POST(request: NextRequest) {
                         systemPrompt,
                         {
                             temperature: isMother ? 0.8 : 0.7,
-                            tools: tools as ToolDescriptor[]
+                            tools: tools as ToolDescriptor[],
+                            apiKey: providerKey
                         }
                     )) {
                         if (chunk.content) fullContent += chunk.content

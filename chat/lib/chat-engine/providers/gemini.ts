@@ -53,7 +53,7 @@ export class GeminiProvider extends BaseChatProvider {
         systemPrompt: string,
         options: ProviderOptions
     ): AsyncGenerator<ChatChunk, void, unknown> {
-        const apiKey = this.getApiKey()
+        const apiKey = this.getApiKey(options)
         if (!apiKey) {
             throw new Error('Google Gemini API key not configured')
         }

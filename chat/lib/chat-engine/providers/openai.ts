@@ -79,7 +79,7 @@ export class OpenAIProvider extends BaseChatProvider {
         systemPrompt: string,
         options: ProviderOptions
     ): AsyncGenerator<ChatChunk, void, unknown> {
-        const apiKey = this.getApiKey()
+        const apiKey = this.getApiKey(options)
         if (!apiKey) {
             throw new Error('OpenAI API key not configured')
         }

@@ -92,7 +92,7 @@ export class OpenRouterProvider extends BaseChatProvider {
         systemPrompt: string,
         options: ProviderOptions
     ): AsyncGenerator<ChatChunk, void, unknown> {
-        const apiKey = this.getApiKey()
+        const apiKey = this.getApiKey(options)
         if (!apiKey) {
             throw new Error('OpenRouter API key not configured. Add OPENROUTER_API_KEY to .env.local')
         }

@@ -23,9 +23,10 @@ export abstract class BaseChatProvider implements IChatProvider {
     }
 
     /**
-     * Get the API key from environment
+     * Get the API key from options override or environment
      */
-    protected getApiKey(): string | null {
+    protected getApiKey(options?: ProviderOptions): string | null {
+        if (options?.apiKey) return options.apiKey
         if (!this.config.apiKeyEnv) return null
         return process.env[this.config.apiKeyEnv] || null
     }
@@ -33,9 +34,9 @@ export abstract class BaseChatProvider implements IChatProvider {
     /**
      * Check if provider is available (has API key and is enabled)
      */
-    isAvailable(): boolean {
+    isAvailable(options?: ProviderOptions): boolean {
         if (!this.config.isEnabled) return false
-        const apiKey = this.getApiKey()
+        const apiKey = this.getApiKey(options)
         return !!apiKey && apiKey.length > 0
     }
 

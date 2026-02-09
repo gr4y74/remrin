@@ -133,7 +133,7 @@ export default function AdminPage() {
                             <Link
                                 key={module.title}
                                 href={module.href}
-                                className="group relative block rounded-xl border border-rp-highlight-med bg-rp-surface p-6 transition-all hover:border-rp-highlight-high hover:bg-rp-overlay"
+                                className="group relative block rounded-xl border border-transparent bg-transparent p-6 transition-all hover:border-rp-highlight-high hover:bg-rp-overlay"
                             >
                                 <div className={`inline-flex rounded-lg bg-gradient-to-br p-3 ${module.color} mb-4`}>
                                     <module.icon size={24} className="text-white" />
@@ -180,4 +180,3 @@ export default function AdminPage() {
         </AdminPasswordGate>
     )
 }
-

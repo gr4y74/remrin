@@ -143,7 +143,7 @@ export default function AdminSettingsPage() {
 
     return (
         <AdminPasswordGate>
-            <div className="min-h-screen bg-rp-base text-rp-text">
+            <div className="min-h-screen w-full bg-transparent text-rp-text">
                 {/* Header */}
                 <header className="border-b border-rp-highlight-med px-6 py-4">
                     <div className="flex items-center gap-4">
