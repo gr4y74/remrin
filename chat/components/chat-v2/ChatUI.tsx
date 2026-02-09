@@ -69,7 +69,7 @@ function ChatUIInner({
     toggleVisualNovelMode: () => void
     onStartCall?: () => void
 }) {
-    const { messages, personaId } = useChatEngine()
+    const { messages, personaId, isLoadingHistory } = useChatEngine()
     const moodState = useMood()
     const { trackChat } = useRecentChats()
     const {
@@ -363,7 +363,14 @@ function ChatUIInner({
 
             {/* Messages Area - Scrollable between header and input */}
             <div className="flex flex-1 flex-col relative z-10 overflow-hidden chat-messages-mobile">
-                {messages.length === 0 ? (
+                {isLoadingHistory ? (
+                    <div className="flex flex-1 flex-col items-center justify-center px-4 py-8">
+                        <div className="flex flex-col items-center gap-3">
+                            <div className="w-8 h-8 border-2 border-rp-iris border-t-transparent rounded-full animate-spin" />
+                            <p className="text-rp-muted animate-pulse">Restoring memory...</p>
+                        </div>
+                    </div>
+                ) : messages.length === 0 ? (
                     <div className="flex flex-1 flex-col items-center justify-center px-4 py-8">
                         {showSoulGallery && userId ? (
                             // Show Soul Gallery for persona selection

@@ -35,6 +35,7 @@ interface ChatEngineState {
     isFollowingUp: boolean
     moodState: MoodState
     toolState: { name: string; status: 'idle' | 'running' | 'complete' | 'error' } | null
+    isLoadingHistory: boolean
 }
 
 interface ChatEngineActions {
@@ -79,6 +80,8 @@ export function ChatEngineProvider({
     const [moodState, setMoodState] = useState<MoodState>(getInitialMoodState())
     const [toolState, setToolState] = useState<{ name: string; status: 'idle' | 'running' | 'complete' | 'error' } | null>(null)
 
+    const [isLoadingHistory, setIsLoadingHistory] = useState(false)
+
     const abortControllerRef = useRef<AbortController | null>(null)
     const messagesRef = useRef<ChatMessageContent[]>([])
 
@@ -88,18 +91,54 @@ export function ChatEngineProvider({
     }, [messages])
 
     /**
-     * Handle intro message for new chats
+     * Load history when persona changes
      */
     useEffect(() => {
-        if (messages.length === 0 && personaIntroMessage) {
-            console.log("🕯️ [ChatEngine] Seeding intro message from persona...")
-            setMessages([{
-                role: 'assistant',
-                content: personaIntroMessage,
-                timestamp: new Date()
-            }])
+        if (!personaId) {
+            setMessages([])
+            return
         }
-    }, [personaIntroMessage, messages.length])
+
+        const fetchHistory = async () => {
+            setIsLoadingHistory(true)
+            try {
+                console.log(`📜 [ChatEngine] Loading history for persona ${personaId}...`)
+                const res = await fetch(`/api/v2/chat/history?personaId=${personaId}`, {
+                    credentials: 'include'
+                })
+
+                if (res.ok) {
+                    const history = await res.json()
+
+                    if (history && history.length > 0) {
+                        console.log(`📜 [ChatEngine] Loaded ${history.length} messages`)
+                        // Convert timestamps
+                        const processedHistory = history.map((msg: any) => ({
+                            ...msg,
+                            timestamp: new Date(msg.timestamp)
+                        }))
+                        setMessages(processedHistory)
+                    } else if (personaIntroMessage) {
+                        // Only show intro if NO history exists
+                        console.log("🕯️ [ChatEngine] No history, seeding intro message...")
+                        setMessages([{
+                            role: 'assistant',
+                            content: personaIntroMessage,
+                            timestamp: new Date()
+                        }])
+                    } else {
+                        setMessages([])
+                    }
+                }
+            } catch (e) {
+                console.error('❌ [ChatEngine] Failed to load history:', e)
+            } finally {
+                setIsLoadingHistory(false)
+            }
+        }
+
+        fetchHistory()
+    }, [personaId, personaIntroMessage])
 
     /**
      * Send a message and stream the response
@@ -156,6 +195,7 @@ export function ChatEngineProvider({
             const response = await fetch('/api/v2/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
                 body: JSON.stringify({
                     messages: messagesToSend,
                     personaId,
@@ -331,7 +371,9 @@ export function ChatEngineProvider({
                         () => setToolState({ name: toolName, status: 'running' }),
                         (imageUrl) => {
                             setToolState({ name: toolName, status: 'complete' })
-                        }
+                        },
+                        (data) => { }, // onReveal (empty for now as loop handles it? Wait, checking signature... arg 5 is onReveal)
+                        personaId
                     )
 
                     console.log(`✅ [ChatEngine] Tool ${toolName} completed:`, result.success)
@@ -458,7 +500,8 @@ export function ChatEngineProvider({
         clearMessages,
         setSystemPrompt,
         addSystemMessage,
-        rewind
+        rewind,
+        isLoadingHistory
     }), [
         messages,
         isGenerating,
@@ -473,9 +516,9 @@ export function ChatEngineProvider({
         stopGeneration,
         clearMessages,
         setSystemPrompt,
-        setSystemPrompt,
         addSystemMessage,
-        rewind
+        rewind,
+        isLoadingHistory
     ])
 
     return (

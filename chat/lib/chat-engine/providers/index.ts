@@ -12,7 +12,8 @@ import {
     TIER_CONFIGS,
     ChatMessageContent,
     ProviderOptions,
-    ChatChunk
+    ChatChunk,
+    LLMConfig
 } from '../types'
 import { openrouterProvider } from './openrouter'
 import { openaiProvider } from './openai'
@@ -27,26 +28,49 @@ const PROVIDERS: Record<ProviderId, IChatProvider> = {
     deepseek: deepseekProvider,
     claude: claudeProvider,
     gemini: geminiProvider,
-    custom: null as any // Will be initialized per-user for enterprise
+    custom: null as any, // Will be initialized per-user for enterprise
+    anthropic: null as any,
+    mistral: null as any,
+    perplexity: null as any,
+    groq: null as any
 }
 
 export class ProviderManager {
     private userTier: UserTier
     private preferredProvider?: ProviderId
+    private dynamicConfig?: LLMConfig[]
 
-    constructor(userTier: UserTier, preferredProvider?: ProviderId) {
+    constructor(userTier: UserTier, preferredProvider?: ProviderId, dynamicConfig?: LLMConfig[]) {
         this.userTier = userTier
         this.preferredProvider = preferredProvider
+        this.dynamicConfig = dynamicConfig
     }
 
     /**
      * Get list of providers available to this user's tier
+     * Filters out providers disabled in dynamic config
      */
     getAvailableProviders(): IChatProvider[] {
         const tierConfig = TIER_CONFIGS[this.userTier]
         const available: IChatProvider[] = []
 
+        // Create a map of enabled status from dynamic config
+        const configMap = new Map<string, boolean>()
+        if (this.dynamicConfig) {
+            this.dynamicConfig.forEach(c => {
+                configMap.set(c.provider, c.is_enabled)
+            })
+        }
+
         for (const providerId of tierConfig.allowedProviders) {
+            // Check dynamic config if available
+            if (this.dynamicConfig) {
+                const config = this.dynamicConfig.find(c => c.provider === providerId || c.model_id.startsWith(providerId))
+                if (config && !config.is_enabled) {
+                    continue // Skip if explicitly disabled
+                }
+            }
+
             const provider = PROVIDERS[providerId]
             if (provider && provider.isAvailable()) {
                 available.push(provider)
@@ -58,15 +82,38 @@ export class ProviderManager {
 
     /**
      * Get the best provider for this user
-     * Priority: preferred > first available by tier
+     * Priority: preferred > first available by tier (respecting dynamic config)
      */
     getProvider(): IChatProvider {
         const tierConfig = TIER_CONFIGS[this.userTier]
 
+        // Create a map of enabled status from dynamic config
+        const configMap = new Map<string, boolean>()
+        if (this.dynamicConfig) {
+            this.dynamicConfig.forEach(c => {
+                configMap.set(c.provider, c.is_enabled)
+            })
+        }
+
+        // Helper to check if enabled
+        const isEnabled = (pid: ProviderId) => {
+            if (!this.dynamicConfig) return true
+
+            // Find config for this provider
+            // We match against the 'provider' field in LLMConfig which should correspond to ProviderId
+            const config = this.dynamicConfig.find(c => c.provider === pid || c.model_id.startsWith(pid))
+
+            if (config) {
+                return config.is_enabled
+            }
+
+            return true // Default to true if no specific config found
+        }
+
         // If user has a preferred provider and it's allowed for their tier
         if (this.preferredProvider && tierConfig.allowedProviders.includes(this.preferredProvider)) {
             const preferred = PROVIDERS[this.preferredProvider]
-            if (preferred && preferred.isAvailable()) {
+            if (preferred && preferred.isAvailable() && isEnabled(this.preferredProvider)) {
                 return preferred
             }
         }
@@ -74,13 +121,17 @@ export class ProviderManager {
         // Fall back to first available provider for this tier
         for (const providerId of tierConfig.allowedProviders) {
             const provider = PROVIDERS[providerId]
-            if (provider && provider.isAvailable()) {
+            if (provider && provider.isAvailable() && isEnabled(providerId)) {
                 return provider
             }
         }
 
-        // Should never happen, but fallback to DeepSeek
-        throw new Error('No available chat providers configured')
+        // EXPLICIT FALLBACK: If nothing else works, force DeepSeek
+        // This prevents the 500 error when config is messed up
+        console.warn('[ProviderManager] No providers found via config. Forcing DeepSeek fallback.')
+        return PROVIDERS['deepseek']
+
+        // throw new Error('No available chat providers configured')
     }
 
     /**
@@ -94,7 +145,7 @@ export class ProviderManager {
     /**
      * Send message using the best available provider
      */
-    async *sendMessage(
+    async * sendMessage(
         messages: ChatMessageContent[],
         systemPrompt: string,
         options: ProviderOptions = {}
@@ -104,6 +155,15 @@ export class ProviderManager {
         console.log(`🤖 [ChatEngine] Using provider: ${provider.name} for ${this.userTier} tier`)
 
         yield* provider.sendMessage(messages, systemPrompt, options)
+    }
+
+    /**
+     * Estimate tokens for prompt (messages + system prompt)
+     */
+    estimatePromptTokens(messages: ChatMessageContent[], systemPrompt: string): number {
+        const provider = this.getProvider()
+        const totalChars = messages.reduce((sum, msg) => sum + (msg.content?.length || 0), 0) + (systemPrompt?.length || 0)
+        return Math.ceil(totalChars / 4)
     }
 
     /**
@@ -120,9 +180,10 @@ export class ProviderManager {
  */
 export function createProviderManager(
     userTier: UserTier,
-    preferredProvider?: ProviderId
+    preferredProvider?: ProviderId,
+    dynamicConfig?: LLMConfig[]
 ): ProviderManager {
-    return new ProviderManager(userTier, preferredProvider)
+    return new ProviderManager(userTier, preferredProvider, dynamicConfig)
 }
 
 /**

@@ -9,6 +9,13 @@ import { NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers'
 import { createProviderManager } from '@/lib/chat-engine/providers'
+import fs from 'fs'
+
+function debugLog(msg: string) {
+    const log = `[${new Date().toISOString()}] ${msg}\n`
+    fs.appendFileSync('/tmp/chat-debug.log', log)
+    console.log(msg)
+}
 import {
     ChatRequest,
     ChatMessageContent,
@@ -22,6 +29,10 @@ import { SOUL_FORGE_TOOLS } from '@/lib/tools/soul-forge-tools'
 import { SEARCH_TOOLS } from '@/lib/tools/search-tools'
 import { ToolDescriptor } from '@/lib/chat-engine/types'
 import { CarrotEngine, CarrotPersona } from '@/lib/chat-engine/carrot'
+import { buildConsoleSystemPrompt } from '@/lib/forge/console-adapter'
+import { LOCKET_TOOLS, handleUpdateLocket, UpdateLocketParams } from '@/lib/tools/locket-tools'
+import { getOrCreateChatSession, saveMessage } from '@/lib/chat-engine/persistence'
+import { MEMORY_TOOLS } from '@/lib/tools/memory-tools'
 
 export const runtime = 'nodejs' // Use Node.js runtime for streaming
 
@@ -105,14 +116,31 @@ export async function POST(request: NextRequest) {
 
         // Get persona and system prompt (persona prompt takes priority)
         const persona = await getPersona(personaId)
-        const systemPrompt = persona?.system_prompt || customSystemPrompt ||
-            'You are a helpful AI assistant. Be concise but thorough in your responses.'
 
-        // Create provider manager based on user's tier
+        // Use Console Adapter to build enhanced system prompt (Locket + Facts + Mood)
+        let systemPrompt = customSystemPrompt || ''
+
+        if (persona) {
+            systemPrompt = await buildConsoleSystemPrompt(persona as any, user.id)
+        } else if (!systemPrompt) {
+            systemPrompt = 'You are a helpful AI assistant. Be concise but thorough in your responses.'
+        }
+
+        // Fetch LLM configuration from database
+        const { data: llmConfigs } = await supabase
+            .from('llm_config')
+            .select('*')
+            .order('priority', { ascending: false })
+
+        // Create provider manager based on user's tier, passing dynamic config
         const providerManager = createProviderManager(
             userTier,
-            preferredProvider as ProviderId | undefined
+            preferredProvider as ProviderId | undefined,
+            llmConfigs || undefined
         )
+
+        let providerInfo = providerManager.getProviderInfo()
+        debugLog(`🚀 [ChatEngine] Selected Provider for ${user.id} (${userTier}): ${providerInfo.name} (${providerInfo.id})`)
 
         // Check if this is the Mother of Souls
         const isMother = isMotherOfSouls(persona as any)
@@ -120,6 +148,14 @@ export async function POST(request: NextRequest) {
         // Build tools array - all personas get search, Mother gets additional Soul Forge tools
         const tools: ToolDescriptor[] = [
             ...SEARCH_TOOLS.map(t => ({
+                type: t.type,
+                function: t.function
+            })),
+            ...LOCKET_TOOLS.map(t => ({
+                type: t.type,
+                function: t.function
+            })),
+            ...MEMORY_TOOLS.map(t => ({
                 type: t.type,
                 function: t.function
             }))
@@ -133,7 +169,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Get provider info for logging
-        const providerInfo = providerManager.getProviderInfo()
+        providerInfo = providerManager.getProviderInfo()
 
         // Fetch global API keys from the secure api_keys table
         // Use service role client to bypass RLS for this internal check
@@ -156,6 +192,25 @@ export async function POST(request: NextRequest) {
         const stream = new ReadableStream({
             async start(controller) {
                 try {
+                    // --- PERSISTENCE: Get/Create Chat Session & Save User Message ---
+                    let chatId: string | null = null
+                    if (personaId) {
+                        try {
+                            const supabaseService = createClient(cookieStore) // Use existing client
+                            chatId = await getOrCreateChatSession(supabaseService, user.id, personaId)
+                            console.log(`💾 [Persistence] Chat Session ID: ${chatId}`)
+
+                            // Save User Message
+                            // Use the LAST user message (current one)
+                            const lastUserMsg = messages[messages.length - 1]
+                            if (lastUserMsg.role === 'user') {
+                                await saveMessage(supabaseService, chatId, user.id, lastUserMsg)
+                            }
+                        } catch (e) {
+                            console.error('❌ [Persistence] Failed to init session or save user msg:', e)
+                        }
+                    }
+
                     // Convert messages to the expected format - PRESERVE tool fields!
                     const formattedMessages: ChatMessageContent[] = messages.map(msg => ({
                         role: msg.role,
@@ -165,16 +220,27 @@ export async function POST(request: NextRequest) {
                         metadata: (msg as any).tool_calls ? { toolCalls: (msg as any).tool_calls } : undefined
                     }))
 
+                    const estimatedPromptTokens = providerManager.estimatePromptTokens(formattedMessages, systemPrompt)
+                    debugLog(`📊 [CreditSafety] Estimated Prompt Tokens: ${estimatedPromptTokens}`)
+
                     // Stream response from provider
                     let tokenCount = 0
                     let fullContent = '' // Accumulate full response for follow-up
+
+                    debugLog(`📡 [ChatEngine] Sending request to ${providerInfo.id} for persona ${persona?.name || 'unknown'}`)
+                    debugLog(`🛠️ [ChatEngine] Tools count: ${tools.length}`)
+                    if (tools.length > 0) debugLog(`🛠️ [ChatEngine] Tools: ${JSON.stringify(tools.map(t => t.function.name))}`)
+                    debugLog(`📝 [ChatEngine] System Prompt Snippet: ${systemPrompt.substring(0, 300)}...`)
+                    debugLog(`💬 [ChatEngine] Last Message: ${formattedMessages[formattedMessages.length - 1].content.substring(0, 100)}`)
+
                     for await (const chunk of providerManager.sendMessage(
                         formattedMessages,
                         systemPrompt,
                         {
                             temperature: isMother ? 0.8 : 0.7,
                             tools: tools as ToolDescriptor[],
-                            apiKey: providerKey
+                            apiKey: providerKey,
+                            model: 'deepseek-chat' // STRICT: Always use deepseek-chat to prevent reasoner burn
                         }
                     )) {
                         if (chunk.content) fullContent += chunk.content
@@ -192,7 +258,18 @@ export async function POST(request: NextRequest) {
                     // Send done signal
                     controller.enqueue(encoder.encode(`data: [DONE]\n\n`))
 
-                    console.log(`✅ [ChatEngine] Response complete, ~${tokenCount} tokens`)
+                    console.log(`✅ [ChatEngine] Response complete, ~${tokenCount} tokens for provider ${providerInfo.id}`)
+
+                    // --- PERSISTENCE: Save Assistant Response ---
+                    if (chatId && fullContent) {
+                        const supabaseService = createClient(cookieStore)
+                        await saveMessage(supabaseService, chatId, user.id, {
+                            role: 'assistant',
+                            content: fullContent,
+                            timestamp: new Date()
+                        }, providerInfo.id)
+                        console.log(`💾 [Persistence] Saved assistant response`)
+                    }
 
                     // --- Carrot Follow-up Logic ---
                     if (persona && CarrotEngine.shouldGenerateFollowUp(formattedMessages, persona)) {
@@ -233,9 +310,13 @@ export async function POST(request: NextRequest) {
                     }
 
                 } catch (error) {
-                    console.error('❌ [ChatEngine] Error:', error)
+                    debugLog(`❌ [ChatEngine] Streaming Error: ${error instanceof Error ? error.message : String(error)}`)
+                    if (error instanceof Error && error.stack) debugLog(error.stack)
+
                     const errorData = JSON.stringify({
-                        error: error instanceof Error ? error.message : 'Unknown error'
+                        error: error instanceof Error ? error.message : 'Unknown error',
+                        provider: providerInfo.id,
+                        stack: error instanceof Error ? error.stack : undefined
                     })
                     controller.enqueue(encoder.encode(`data: ${errorData}\n\n`))
                 } finally {
@@ -254,6 +335,7 @@ export async function POST(request: NextRequest) {
         })
 
     } catch (error) {
+        console.error('❌ [ChatEngine] CRITICAL ERROR:', error)
         return handleApiError(error)
     }
 }

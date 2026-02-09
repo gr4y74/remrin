@@ -13,6 +13,7 @@ import type {
     ShowSoulRevealParams,
     ShowSoulRevealResult
 } from '@/lib/tools/soul-forge-tools'
+import { UpdateLocketParams } from '@/lib/tools/locket-tools'
 import { type SearchToolArgs, type SearchToolResult } from '@/lib/types/search-tools'
 
 /**
@@ -158,7 +159,8 @@ export async function routeForgeToolCall(
     params: unknown,
     onPortraitStart?: () => void,
     onPortraitComplete?: (imageUrl: string) => void,
-    onReveal?: (data: SoulRevealData) => void
+    onReveal?: (data: SoulRevealData) => void,
+    personaId?: string
 ): Promise<{ success: boolean; result: unknown; error?: string }> {
     try {
         switch (toolName) {
@@ -228,6 +230,45 @@ export async function routeForgeToolCall(
                 }
 
                 return { success: result.success, result, error: result.error }
+            }
+
+            case 'update_locket': {
+                console.log('🔒 [Tool Router] Updating Locket:', params)
+                try {
+                    const response = await fetch('/api/v2/locket', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ ...params as UpdateLocketParams, personaId })
+                    })
+
+                    if (!response.ok) throw new Error('Failed to update locket')
+
+                    const result = await response.json()
+                    return { success: true, result }
+                } catch (e) {
+                    return { success: false, result: null, error: 'Locket update failed' }
+                }
+            }
+
+            case 'search_memories': {
+                console.log('🧠 [Tool Router] Searching Memories:', params)
+                try {
+                    const response = await fetch('/api/v2/memories/search', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ ...params as any, personaId })
+                    })
+
+                    if (!response.ok) throw new Error('Failed to search memories')
+
+                    const result = await response.json()
+                    return { success: true, result }
+                } catch (e) {
+                    console.error('[Tool Router] Memory search failed:', e)
+                    return { success: false, result: null, error: 'Memory search failed' }
+                }
             }
 
             default:

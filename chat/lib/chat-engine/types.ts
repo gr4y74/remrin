@@ -19,6 +19,19 @@ export interface TierConfig {
     maxSoulsPerMonth: number
 }
 
+export interface LLMConfig {
+    id: string
+    provider: ProviderId
+    model_id: string
+    display_name: string
+    is_default: boolean
+    is_enabled: boolean
+    requires_premium: boolean
+    web_search_enabled: boolean
+    priority: number
+    api_key_configured: boolean
+}
+
 export const TIER_CONFIGS: Record<UserTier, TierConfig> = {
     free: {
         tier: 'free',
@@ -58,7 +71,7 @@ export const TIER_CONFIGS: Record<UserTier, TierConfig> = {
 // Providers
 // ============================================================================
 
-export type ProviderId = 'openrouter' | 'openai' | 'deepseek' | 'claude' | 'gemini' | 'custom'
+export type ProviderId = 'openrouter' | 'openai' | 'deepseek' | 'claude' | 'gemini' | 'custom' | 'anthropic' | 'mistral' | 'perplexity' | 'groq'
 
 export interface ProviderConfig {
     id: ProviderId
@@ -123,6 +136,42 @@ export const PROVIDER_CONFIGS: Record<ProviderId, ProviderConfig> = {
         apiKeyEnv: '', // User-defined
         isEnabled: true,
         defaultModel: '',
+        maxTokens: 8192
+    },
+    anthropic: {
+        id: 'anthropic',
+        name: 'Anthropic',
+        apiEndpoint: 'https://api.anthropic.com/v1/messages',
+        apiKeyEnv: 'ANTHROPIC_API_KEY',
+        isEnabled: true,
+        defaultModel: 'claude-3-opus-20240229',
+        maxTokens: 4096
+    },
+    mistral: {
+        id: 'mistral',
+        name: 'Mistral AI',
+        apiEndpoint: 'https://api.mistral.ai/v1/chat/completions',
+        apiKeyEnv: 'MISTRAL_API_KEY',
+        isEnabled: true,
+        defaultModel: 'mistral-large-latest',
+        maxTokens: 8192
+    },
+    perplexity: {
+        id: 'perplexity',
+        name: 'Perplexity',
+        apiEndpoint: 'https://api.perplexity.ai/chat/completions',
+        apiKeyEnv: 'PERPLEXITY_API_KEY',
+        isEnabled: true,
+        defaultModel: 'sonar-medium-online',
+        maxTokens: 4096
+    },
+    groq: {
+        id: 'groq',
+        name: 'Groq',
+        apiEndpoint: 'https://api.groq.com/openai/v1/chat/completions',
+        apiKeyEnv: 'GROQ_API_KEY',
+        isEnabled: true,
+        defaultModel: 'llama3-70b-8192',
         maxTokens: 8192
     }
 }

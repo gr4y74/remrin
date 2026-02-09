@@ -7,7 +7,7 @@
  */
 
 import { Tables } from "@/supabase/types"
-import { createClient } from "@/lib/supabase/client"
+import { createAdminClient } from "@/lib/supabase/server"
 
 // Relationship tiers from Universal Console
 const RELATIONSHIP_TIERS = {
@@ -60,7 +60,7 @@ export function getSafetyInjection(safetyLevel: string): string {
  * Fetch locket truths for a persona
  */
 export async function getPersonaLocket(personaId: string): Promise<string[]> {
-    const supabase = createClient()
+    const supabase = createAdminClient()
 
     const { data: lockets } = await supabase
         .from('persona_lockets')
@@ -74,7 +74,7 @@ export async function getPersonaLocket(personaId: string): Promise<string[]> {
  * Fetch shared facts for a user
  */
 export async function getSharedFacts(userId: string): Promise<string[]> {
-    const supabase = createClient()
+    const supabase = createAdminClient()
 
     const { data: facts } = await supabase
         .from('shared_facts')
@@ -89,7 +89,7 @@ export async function getSharedFacts(userId: string): Promise<string[]> {
  * Get message count between user and persona (for relationship level)
  */
 export async function getMessageCount(userId: string, personaId: string): Promise<number> {
-    const supabase = createClient()
+    const supabase = createAdminClient()
 
     const { count } = await supabase
         .from('messages')
