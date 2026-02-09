@@ -321,6 +321,7 @@ function ChatUIInner({
             {personaId && (
                 <div className="relative z-10 shrink-0">
                     <MiniProfile
+                        personaId={personaId}
                         personaName={personaName}
                         personaImage={personaImage}
                         description={currentPersona?.description || ""}

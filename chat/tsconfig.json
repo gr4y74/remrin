@@ -41,6 +41,7 @@
     "public/icons/anicons",
     "lib/chat-engine/console",
     "supabase/functions",
-    "scripts"
+    "scripts",
+    "telegram-bot"
   ]
 }

@@ -18,7 +18,8 @@ import {
   IconVolume,
   IconVolumeOff,
   IconSparkles,
-  IconBolt
+  IconBolt,
+  IconDownload
 } from '@tabler/icons-react'
 import { cn } from "@/lib/utils"
 import Image from "next/image"
@@ -30,6 +31,7 @@ import { WelcomeAudioPlayer } from "@/components/audio/WelcomeAudioPlayer"
 
 
 interface MiniProfileProps {
+  personaId?: string
   personaName?: string
   personaImage?: string
   description?: string
@@ -70,6 +72,7 @@ interface MiniProfileProps {
 }
 
 export const MiniProfile: React.FC<MiniProfileProps> = ({
+  personaId,
   personaName = "Persona",
   personaImage,
   description,
@@ -120,6 +123,12 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
       console.error("Upload error:", error)
       toast.error(error.message || "Failed to upload background", { id: loadingToast })
     }
+  }
+
+  const handleDownloadSoul = () => {
+    if (!personaId) return
+    window.location.href = `/api/v2/persona/${personaId}/export`
+    toast.success("Downloading Soul...")
   }
 
   return (
@@ -302,6 +311,15 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
                     <span>Personalize</span>
                     <span className="text-[9px] bg-rp-foam/20 text-rp-foam px-1.5 py-0.5 rounded font-bold">NEW</span>
                   </div>
+                </DropdownMenuItem>
+
+                {/* Download Soul Button */}
+                <DropdownMenuItem
+                  className="text-rp-text focus:bg-rp-overlay focus:text-rp-text cursor-pointer py-2.5 rounded-lg"
+                  onClick={handleDownloadSoul}
+                >
+                  <IconDownload size={18} className="mr-2 text-rp-iris" />
+                  <span>Download Soul</span>
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator className="bg-rp-highlight-low/10 my-1" />
