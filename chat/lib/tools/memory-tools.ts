@@ -10,13 +10,13 @@ export const MEMORY_SEARCH_TOOL: ToolDescriptor = {
     type: 'function',
     function: {
         name: 'search_memories',
-        description: 'Search your long-term memory for past conversations, facts, and experiences with the user. Use this when the user asks "do you remember...", "what did we talk about...", or asks about specific past dates/events.',
+        description: 'Search your long-term memory database for PAST CONVERSATIONS and interactions with this specific user. Use this tool when the user asks about previous chats, specific dates, or past topics you discussed together. Examples: "do you remember when we talked about...", "what did I tell you about...", "we discussed this on [date]", "who is [topic we discussed before]". This retrieves YOUR actual conversation history, not general knowledge.',
         parameters: {
             type: 'object',
             properties: {
                 query: {
                     type: 'string',
-                    description: 'The search query to look up in the memory database. Be descriptive.'
+                    description: 'The search query to find in past conversations. Include key topics, dates, or specific phrases the user mentioned. Examples: "V8 engine November 2025", "what user told me about preferences", "conversation about JavaScript"'
                 },
                 limit: {
                     type: 'number',

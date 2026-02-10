@@ -40,7 +40,7 @@ export const runtime = 'nodejs' // Use Node.js runtime for streaming
  * Get user's subscription tier from profile
  */
 async function getUserTier(userId: string): Promise<UserTier> {
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
     const { data: profile } = await supabase
@@ -66,7 +66,7 @@ async function getUserTier(userId: string): Promise<UserTier> {
 async function getPersona(personaId: string | undefined): Promise<CarrotPersona | null> {
     if (!personaId) return null
 
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
     const { data: persona } = await supabase
@@ -81,7 +81,7 @@ async function getPersona(personaId: string | undefined): Promise<CarrotPersona 
 export async function POST(request: NextRequest) {
     try {
         // Get current user
-        const cookieStore = cookies()
+        const cookieStore = await cookies()
         const supabase = createClient(cookieStore)
 
         const { data: { user } } = await supabase.auth.getUser()
@@ -114,14 +114,77 @@ export async function POST(request: NextRequest) {
         // Get user's tier
         const userTier = await getUserTier(user.id)
 
+        debugLog(`🔍 [Memory] Request Body: personaId=${personaId}, messages=${messages?.length}`)
+
         // Get persona and system prompt (persona prompt takes priority)
         const persona = await getPersona(personaId)
+        debugLog(`🔍 [Memory] getPersona result: ${persona ? persona.name : 'NULL'}`)
 
-        // Use Console Adapter to build enhanced system prompt (Locket + Facts + Mood)
+        //Use Console Adapter to build enhanced system prompt (Locket + Facts + Mood + Auto-injected Memories)
         let systemPrompt = customSystemPrompt || ''
 
         if (persona) {
-            systemPrompt = await buildConsoleSystemPrompt(persona as any, user.id)
+            debugLog(`🧠 [Memory] TRACE-1: persona found, id=${persona.id}, building prompt...`)
+            try {
+                systemPrompt = await buildConsoleSystemPrompt(persona as any, user.id)
+                debugLog(`🧠 [Memory] TRACE-2: prompt built, length=${systemPrompt.length}`)
+            } catch (e: any) {
+                debugLog(`🧠 [Memory] TRACE-ERR: buildConsoleSystemPrompt failed: ${e.message}`)
+                systemPrompt = persona.system_prompt || ''
+            }
+
+            // === AUTO-INJECT RELEVANT MEMORIES ===
+            const lastUserMessage = messages.filter(m => m.role === 'user').slice(-1)[0]
+            const userText = lastUserMessage?.content || ''
+            debugLog(`🧠 [Memory Auto-Inject] User message: "${userText.substring(0, 60)}..."`)
+
+            if (userText.length > 3) {
+                try {
+                    // Extract keywords (remove stop words)
+                    const stopWords = new Set(['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'is', 'are', 'was', 'were', 'be', 'been', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'should', 'could', 'can', 'may', 'might', 'tell', 'me', 'about', 'what', 'who', 'when', 'where', 'why', 'how', 'you', 'your', 'remember', 'know'])
+                    const keywords = userText.toLowerCase()
+                        .replace(/[^a-z0-9\s-]/g, ' ')
+                        .split(/\s+/)
+                        .filter(w => w.length > 2 && !stopWords.has(w))
+
+                    debugLog(`🧠 [Memory Auto-Inject] Keywords: ${JSON.stringify(keywords)}`)
+
+                    if (keywords.length > 0) {
+                        // Use service role client to search memories
+                        const adminSupabase = (await import('@/lib/supabase/server')).createAdminClient()
+
+                        const filters = keywords.map(k => `content.ilike.%${k}%`).join(',')
+                        debugLog(`🧠 [Memory Auto-Inject] Filters: ${filters}`)
+
+                        const { data: memories, error: memError } = await adminSupabase
+                            .from('memories')
+                            .select('content, created_at, role, importance')
+                            .eq('user_id', user.id)
+                            .eq('persona_id', personaId)
+                            .or(filters)
+                            .order('importance', { ascending: false })
+                            .order('created_at', { ascending: false })
+                            .limit(5)
+
+                        debugLog(`🧠 [Memory Auto-Inject] Query result: ${memories?.length || 0} memories, error: ${memError?.message || 'none'}`)
+
+                        if (memories && memories.length > 0) {
+                            const memoryLines = ['\n[📚 RELEVANT PAST MEMORIES]', 'The following are memories from your past conversations with this user:', '']
+                            memories.forEach((mem, idx) => {
+                                const date = new Date(mem.created_at).toLocaleDateString()
+                                const speaker = mem.role === 'user' ? 'User said' : 'You said'
+                                memoryLines.push(`${idx + 1}. [${date}] ${speaker}: "${mem.content.substring(0, 200)}${mem.content.length > 200 ? '...' : '"'}`)
+                            })
+                            memoryLines.push('')
+                            systemPrompt += memoryLines.join('\n')
+                            debugLog(`🧠 [Memory Auto-Inject] Injected ${memories.length} memories into system prompt`)
+                        }
+                    }
+                } catch (memErr: any) {
+                    debugLog(`🧠 [Memory Auto-Inject] Error: ${memErr.message}`)
+                }
+            }
+            // === END AUTO-INJECT ===
         } else if (!systemPrompt) {
             systemPrompt = 'You are a helpful AI assistant. Be concise but thorough in your responses.'
         }
@@ -221,7 +284,8 @@ export async function POST(request: NextRequest) {
                     }))
 
                     const estimatedPromptTokens = providerManager.estimatePromptTokens(formattedMessages, systemPrompt)
-                    debugLog(`📊 [CreditSafety] Estimated Prompt Tokens: ${estimatedPromptTokens}`)
+                    const totalChars = formattedMessages.reduce((sum, m) => sum + (m.content?.length || 0), 0) + (systemPrompt?.length || 0)
+                    debugLog(`📊 [CreditSafety] Estimated Prompt Tokens: ${estimatedPromptTokens} (Total Chars: ${totalChars})`)
 
                     // Stream response from provider
                     let tokenCount = 0
@@ -230,29 +294,42 @@ export async function POST(request: NextRequest) {
                     debugLog(`📡 [ChatEngine] Sending request to ${providerInfo.id} for persona ${persona?.name || 'unknown'}`)
                     debugLog(`🛠️ [ChatEngine] Tools count: ${tools.length}`)
                     if (tools.length > 0) debugLog(`🛠️ [ChatEngine] Tools: ${JSON.stringify(tools.map(t => t.function.name))}`)
-                    debugLog(`📝 [ChatEngine] System Prompt Snippet: ${systemPrompt.substring(0, 300)}...`)
+                    debugLog(`📝 [ChatEngine] System Prompt Length: ${systemPrompt.length}`)
+                    debugLog(`📊 [ChatEngine] Messages Count: ${formattedMessages.length}, Total Chars: ${totalChars}`)
                     debugLog(`💬 [ChatEngine] Last Message: ${formattedMessages[formattedMessages.length - 1].content.substring(0, 100)}`)
 
-                    for await (const chunk of providerManager.sendMessage(
-                        formattedMessages,
-                        systemPrompt,
-                        {
-                            temperature: isMother ? 0.8 : 0.7,
-                            tools: tools as ToolDescriptor[],
-                            apiKey: providerKey,
-                            model: 'deepseek-chat' // STRICT: Always use deepseek-chat to prevent reasoner burn
-                        }
-                    )) {
-                        if (chunk.content) fullContent += chunk.content
+                    try {
+                        for await (const chunk of providerManager.sendMessage(
+                            formattedMessages,
+                            systemPrompt,
+                            {
+                                temperature: isMother ? 0.8 : 0.7,
+                                tools: tools as ToolDescriptor[],
+                                apiKey: providerKey,
+                                model: 'deepseek-chat' // STRICT: Always use deepseek-chat to prevent reasoner burn
+                            }
+                        )) {
+                            if (chunk.content) fullContent += chunk.content
 
-                        // Send chunk as SSE
-                        const data = JSON.stringify({
-                            content: chunk.content,
-                            toolCalls: chunk.toolCalls,
-                            provider: providerInfo.id
+                            // Send chunk as SSE
+                            const data = JSON.stringify({
+                                content: chunk.content,
+                                toolCalls: chunk.toolCalls,
+                                provider: providerInfo.id
+                            })
+                            controller.enqueue(encoder.encode(`data: ${data}\n\n`))
+                            tokenCount += Math.ceil((chunk.content?.length || 0) / 4)
+                        }
+                    } catch (streamError: any) {
+                        debugLog(`❌ [ChatEngine] Streaming Error Details: ${streamError.message}`)
+                        if (streamError.stack) debugLog(`❌ [ChatEngine] Stack Trace: ${streamError.stack}`)
+
+                        const errorData = JSON.stringify({
+                            error: streamError.message || 'Stream failed',
+                            provider: providerInfo.id,
+                            stack: streamError.stack
                         })
-                        controller.enqueue(encoder.encode(`data: ${data}\n\n`))
-                        tokenCount += Math.ceil((chunk.content?.length || 0) / 4)
+                        controller.enqueue(encoder.encode(`data: ${errorData}\n\n`))
                     }
 
                     // Send done signal

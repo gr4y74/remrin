@@ -264,6 +264,8 @@ export async function routeForgeToolCall(
                     if (!response.ok) throw new Error('Failed to search memories')
 
                     const result = await response.json()
+                    console.log('🧠 [Tool Router] Memory search results:', result.length, 'memories found')
+                    console.log('🧠 [Tool Router] Results preview:', JSON.stringify(result.slice(0, 2), null, 2))
                     return { success: true, result }
                 } catch (e) {
                     console.error('[Tool Router] Memory search failed:', e)

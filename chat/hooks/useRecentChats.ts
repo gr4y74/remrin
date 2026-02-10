@@ -1,10 +1,6 @@
-/**
- * useRecentChats - Hook to track and manage recent chat sessions
- */
-
 "use client"
 
-import { useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 interface RecentChatEntry {
     personaId: string
@@ -16,7 +12,53 @@ interface RecentChatEntry {
 
 const MAX_RECENT_CHATS = 20
 
+const RECENT_CHATS_EVENT = 'remrin-recent-chats-updated'
+
 export function useRecentChats() {
+    const [recentChats, setRecentChats] = useState<RecentChatEntry[]>([])
+
+    // Load and listen for changes
+    useEffect(() => {
+        if (typeof window === 'undefined') return
+
+        const loadChats = () => {
+            try {
+                const stored = localStorage.getItem('recentChats')
+                if (stored) {
+                    setRecentChats(JSON.parse(stored))
+                } else {
+                    setRecentChats([])
+                }
+            } catch (error) {
+                console.error('Error loading recent chats:', error)
+            }
+        }
+
+        // Initial load
+        loadChats()
+
+        // Handle custom event (same tab)
+        const handleCustomEvent = () => loadChats()
+        window.addEventListener(RECENT_CHATS_EVENT as any, handleCustomEvent)
+
+        // Handle storage event (other tabs)
+        const handleStorageEvent = (e: StorageEvent) => {
+            if (e.key === 'recentChats') {
+                loadChats()
+            }
+        }
+        window.addEventListener('storage', handleStorageEvent)
+
+        return () => {
+            window.removeEventListener(RECENT_CHATS_EVENT as any, handleCustomEvent)
+            window.removeEventListener('storage', handleStorageEvent)
+        }
+    }, [])
+
+    const notifyUpdate = () => {
+        window.dispatchEvent(new CustomEvent(RECENT_CHATS_EVENT))
+    }
+
     /**
      * Add or update a chat in the recent chats list
      */
@@ -31,13 +73,13 @@ export function useRecentChats() {
         try {
             // Get existing chats
             const stored = localStorage.getItem('recentChats')
-            let recentChats: RecentChatEntry[] = stored ? JSON.parse(stored) : []
+            let recentChatsData: RecentChatEntry[] = stored ? JSON.parse(stored) : []
 
             // Remove existing entry for this persona if it exists
-            recentChats = recentChats.filter(chat => chat.personaId !== personaId)
+            recentChatsData = recentChatsData.filter(chat => chat.personaId !== personaId)
 
             // Add new entry at the beginning
-            recentChats.unshift({
+            recentChatsData.unshift({
                 personaId,
                 personaName,
                 personaImage,
@@ -46,10 +88,11 @@ export function useRecentChats() {
             })
 
             // Keep only the most recent MAX_RECENT_CHATS
-            recentChats = recentChats.slice(0, MAX_RECENT_CHATS)
+            recentChatsData = recentChatsData.slice(0, MAX_RECENT_CHATS)
 
             // Save back to localStorage
-            localStorage.setItem('recentChats', JSON.stringify(recentChats))
+            localStorage.setItem('recentChats', JSON.stringify(recentChatsData))
+            notifyUpdate()
         } catch (error) {
             console.error('Error tracking recent chat:', error)
         }
@@ -61,6 +104,7 @@ export function useRecentChats() {
     const clearRecentChats = useCallback(() => {
         if (typeof window === 'undefined') return
         localStorage.removeItem('recentChats')
+        notifyUpdate()
     }, [])
 
     /**
@@ -73,15 +117,17 @@ export function useRecentChats() {
             const stored = localStorage.getItem('recentChats')
             if (!stored) return
 
-            let recentChats: RecentChatEntry[] = JSON.parse(stored)
-            recentChats = recentChats.filter(chat => chat.personaId !== personaId)
-            localStorage.setItem('recentChats', JSON.stringify(recentChats))
+            let recentChatsData: RecentChatEntry[] = JSON.parse(stored)
+            recentChatsData = recentChatsData.filter(chat => chat.personaId !== personaId)
+            localStorage.setItem('recentChats', JSON.stringify(recentChatsData))
+            notifyUpdate()
         } catch (error) {
             console.error('Error removing recent chat:', error)
         }
     }, [])
 
     return {
+        recentChats,
         trackChat,
         clearRecentChats,
         removeChat

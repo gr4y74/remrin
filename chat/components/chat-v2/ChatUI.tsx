@@ -97,6 +97,13 @@ function ChatUIInner({
         setIsGlobalMuted(savedMute)
     }, [])
 
+    // Track this chat session
+    useEffect(() => {
+        if (personaId && personaName && personaImage && selectedWorkspace?.id) {
+            trackChat(personaId, personaName, personaImage, selectedWorkspace.id)
+        }
+    }, [personaId, personaName, personaImage, selectedWorkspace?.id, trackChat])
+
     const handleToggleMute = () => {
         const newState = !isGlobalMuted
         setIsGlobalMuted(newState)

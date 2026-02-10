@@ -173,6 +173,7 @@ export async function buildConsoleSystemPrompt(
     sections.push('- If user shares critical info (medical, preferences, identity), consider it remembered')
     sections.push('- Be natural, avoid robotic phrases')
     sections.push('- Adjust formality based on relationship level')
+    sections.push('- **IMPORTANT**: When user asks about PAST CONVERSATIONS, specific dates, or says "do you remember", ALWAYS use the search_memories tool to retrieve actual conversation history')
 
     return sections.join('\n')
 }

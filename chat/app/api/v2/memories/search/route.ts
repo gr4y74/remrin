@@ -10,7 +10,7 @@ export const runtime = 'nodejs'
  */
 export async function POST(request: NextRequest) {
     try {
-        const cookieStore = cookies()
+        const cookieStore = await cookies()
         const supabase = createClient(cookieStore)
 
         const { data: { user } } = await supabase.auth.getUser()
@@ -26,6 +26,10 @@ export async function POST(request: NextRequest) {
 
         // 1. Search memories table (past conversations)
         const keywords = query.split(/\s+/).filter((k: string) => k.length > 2)
+
+        console.log(`[Memory Search] user_id: ${user.id}, personaId: ${personaId}, query: ${query}`);
+        console.log(`[Memory Search] Keywords:`, keywords);
+
         let memoryQuery = supabase
             .from('memories')
             .select('*')
@@ -40,13 +44,17 @@ export async function POST(request: NextRequest) {
         // If keywords exist, use them for more flexible matching
         if (keywords.length > 0) {
             const filters = keywords.map((k: string) => `content.ilike.%${k}%`).join(',')
+            console.log(`[Memory Search] Using OR filters:`, filters);
             memoryQuery = memoryQuery.or(filters)
         } else {
+            console.log(`[Memory Search] Using simple ilike: %${query}%`);
             memoryQuery = memoryQuery.ilike('content', `%${query}%`)
         }
 
         const { data: memories, error: memError } = await memoryQuery
         if (memError) throw memError
+
+        console.log(`[Memory Search] Found ${memories?.length || 0} memories from table`);
 
         // 2. Search persona_lockets table (immutable truths)
         let locketResults: any[] = []

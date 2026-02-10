@@ -76,7 +76,7 @@ export class DeepSeekProvider extends BaseChatProvider {
     }
 
     /**
-     * Send message and stream response
+     * Send message and stream response with retries
      */
     async *sendMessage(
         messages: ChatMessageContent[],
@@ -90,44 +90,75 @@ export class DeepSeekProvider extends BaseChatProvider {
 
         const formattedMessages = this.formatMessages(messages, systemPrompt)
 
-        const response = await fetch(this.config.apiEndpoint, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`
-            },
-            body: JSON.stringify({
-                model: options.model || this.config.defaultModel,
-                messages: formattedMessages,
-                temperature: options.temperature ?? 0.7,
-                max_tokens: options.maxTokens || this.config.maxTokens,
-                stream: true,
-                tools: options.tools
-            }),
-            signal: options.abortSignal
-        })
+        const timeoutSignal = AbortSignal.timeout(60000) // 1 minute timeout
+        const finalSignal = options.abortSignal
+            ? AbortSignal.any([options.abortSignal, timeoutSignal])
+            : timeoutSignal
 
-        if (!response.ok) {
-            const error = await response.json().catch(() => ({}))
-            throw new Error(
-                `DeepSeek API error: ${response.status} - ${error.error?.message || 'Unknown error'}`
-            )
-        }
+        console.log(`📡 [DeepSeek] Sending request to ${this.config.apiEndpoint} (Size: ${JSON.stringify(formattedMessages).length} chars)`)
 
-        // Parse SSE stream
-        yield* this.parseSSEStream(
-            response,
-            (data) => {
-                const choice = data.choices?.[0]
-                if (!choice) return null
+        const MAX_RETRIES = 3
+        let lastError: any = null
 
-                return {
-                    content: choice.delta?.content || undefined,
-                    toolCalls: choice.delta?.tool_calls || undefined
+        for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+            try {
+                const response = await fetch(this.config.apiEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: options.model || this.config.defaultModel,
+                        messages: formattedMessages,
+                        temperature: options.temperature ?? 0.7,
+                        max_tokens: options.maxTokens || this.config.maxTokens,
+                        stream: true,
+                        tools: options.tools
+                    }),
+                    signal: finalSignal,
+                    keepalive: true // [STABILITY] Use keepalive to maintain connection
+                })
+
+                if (!response.ok) {
+                    const error = await response.json().catch(() => ({}))
+                    throw new Error(
+                        `DeepSeek API error: ${response.status} - ${error.error?.message || 'Unknown error'}`
+                    )
                 }
-            },
-            options.abortSignal
-        )
+
+                // Parse SSE stream
+                yield* this.parseSSEStream(
+                    response,
+                    (data) => {
+                        const choice = data.choices?.[0]
+                        if (!choice) return null
+
+                        return {
+                            content: choice.delta?.content || undefined,
+                            toolCalls: choice.delta?.tool_calls || undefined
+                        }
+                    },
+                    options.abortSignal
+                )
+
+                return // Success!
+            } catch (error: any) {
+                lastError = error
+                const isNetworkError = error.message?.includes('fetch failed') || error.name === 'TypeError'
+
+                console.error(`❌ [DeepSeek] Attempt ${attempt}/${MAX_RETRIES} failed: ${error.message}${error.cause ? ` (Cause: ${error.cause})` : ''}`)
+
+                if (attempt < MAX_RETRIES && isNetworkError) {
+                    const delay = Math.pow(2, attempt) * 1000 // Exponential backoff: 2s, 4s, 8s
+                    console.log(`🔄 [DeepSeek] Retrying in ${delay}ms...`)
+                    await new Promise(resolve => setTimeout(resolve, delay))
+                    continue
+                }
+
+                throw error
+            }
+        }
     }
 }
 

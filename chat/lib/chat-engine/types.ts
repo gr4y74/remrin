@@ -105,7 +105,7 @@ export const PROVIDER_CONFIGS: Record<ProviderId, ProviderConfig> = {
     deepseek: {
         id: 'deepseek',
         name: 'DeepSeek',
-        apiEndpoint: 'https://api.deepseek.com/v1/chat/completions',
+        apiEndpoint: 'https://api.deepseek.com/chat/completions',
         apiKeyEnv: 'DEEPSEEK_API_KEY',
         isEnabled: true,
         defaultModel: 'deepseek-chat',

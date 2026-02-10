@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useMemo, useContext } from "react"
+import { useState, useMemo, useContext } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import Image from "next/image"
@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils"
 import { IconMessage } from "@tabler/icons-react"
 import { RemrinContext } from "@/context/context"
 import { MOTHER_OF_SOULS_ID } from "@/lib/forge/is-mother-chat"
+import { useRecentChats } from "@/hooks/useRecentChats"
 
 interface SidebarRecentChatsProps {
     isExpanded: boolean
@@ -107,34 +108,9 @@ function groupChatsByTime(chats: ChatItem[]): GroupedChats[] {
  * and full names when expanded. Groups chats by time periods.
  */
 export function SidebarRecentChats({ isExpanded, maxChats = 20, showDemo = false }: SidebarRecentChatsProps) {
-    // Use state to prevent hydration errors
-    const [mounted, setMounted] = useState(false)
-    const [recentChatsData, setRecentChatsData] = useState<Array<{
-        personaId: string
-        personaName: string
-        personaImage: string
-        lastChatAt: string
-        workspaceId: string
-    }>>([])
     const [brokenImages, setBrokenImages] = useState<Record<string, boolean>>({})
-
+    const { recentChats: recentChatsData } = useRecentChats()
     const { selectedWorkspace } = useContext(RemrinContext)
-
-    // Load recent chats from localStorage only on client side
-    useEffect(() => {
-        setMounted(true)
-
-        if (showDemo) return
-
-        try {
-            const stored = localStorage.getItem('recentChats')
-            if (stored) {
-                setRecentChatsData(JSON.parse(stored))
-            }
-        } catch (error) {
-            console.error('Error loading recent chats:', error)
-        }
-    }, [showDemo])
 
 
 
@@ -146,9 +122,6 @@ export function SidebarRecentChats({ isExpanded, maxChats = 20, showDemo = false
         if (showDemo) {
             chats = DEMO_CHATS.slice(0, maxChats)
         } else {
-            // Don't render until mounted to prevent hydration errors
-            if (!mounted) return []
-
             // Sort by most recent
             const sorted = [...recentChatsData].sort((a, b) =>
                 new Date(b.lastChatAt).getTime() - new Date(a.lastChatAt).getTime()
@@ -173,7 +146,7 @@ export function SidebarRecentChats({ isExpanded, maxChats = 20, showDemo = false
         }
 
         return groupChatsByTime(chats)
-    }, [maxChats, showDemo, mounted, recentChatsData])
+    }, [maxChats, showDemo, recentChatsData])
 
     // Don't render if no recent chats (and not in demo mode)
     if (groupedChats.length === 0) {
