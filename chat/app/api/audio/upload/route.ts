@@ -57,11 +57,20 @@ export async function POST(request: NextRequest) {
         const formData = await request.formData();
         const personaId = formData.get('personaId') as string;
         const file = formData.get('file') as File;
+        const type = (formData.get('type') as string) || 'welcome'; // 'welcome' or 'music'
 
         // Validate inputs
         if (!personaId || !file) {
             return NextResponse.json(
                 { success: false, error: 'Missing personaId or file' } as AudioUploadResponse,
+                { status: 400 }
+            );
+        }
+
+        // Validate type
+        if (!['welcome', 'music'].includes(type)) {
+            return NextResponse.json(
+                { success: false, error: 'Invalid upload type. Must be "welcome" or "music"' } as AudioUploadResponse,
                 { status: 400 }
             );
         }
@@ -97,7 +106,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        console.log(`[Audio Upload] User ${user.id} uploading audio for persona ${personaId}`);
+        console.log(`[Audio Upload] User ${user.id} uploading ${type} audio for persona ${personaId}`);
         console.log(`[Audio Upload] File: ${file.name}, Size: ${file.size} bytes, Type: ${file.type}`);
 
         // Verify user owns or has permission to modify this persona
@@ -135,7 +144,8 @@ export async function POST(request: NextRequest) {
         // Generate unique file path
         const fileExt = file.name.split('.').pop() || 'mp3';
         const timestamp = Date.now();
-        const filePath = `${personaId}/welcome_audio_${timestamp}.${fileExt}`;
+        const prefix = type === 'music' ? 'music/' : '';
+        const filePath = `${personaId}/${prefix}${type}_audio_${timestamp}.${fileExt}`;
 
         // Convert File to ArrayBuffer
         const arrayBuffer = await file.arrayBuffer();
@@ -164,11 +174,16 @@ export async function POST(request: NextRequest) {
         const audioUrl = urlData.publicUrl;
 
         // Update persona record with new audio URL
+        const updateData: Record<string, string> = {};
+        if (type === 'music') {
+            updateData.background_music_url = audioUrl;
+        } else {
+            updateData.welcome_audio_url = audioUrl;
+        }
+
         const { error: updateError } = await supabase
             .from('personas')
-            .update({
-                welcome_audio_url: audioUrl,
-            })
+            .update(updateData)
             .eq('id', personaId);
 
         if (updateError) {

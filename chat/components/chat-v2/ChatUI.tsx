@@ -38,6 +38,7 @@ interface ChatUIV2Props {
     userTier?: UserTier
     showSoulGallery?: boolean
     welcomeAudioUrl?: string | null
+    backgroundMusicUrl?: string | null
 }
 
 
@@ -50,6 +51,7 @@ function ChatUIInner({
     personaVideoUrl,
     personaName,
     welcomeAudioUrl,
+    backgroundMusicUrl,
     showSoulGallery = false,
     onSoulSelect,
     onMemorySearchTrigger,
@@ -62,6 +64,7 @@ function ChatUIInner({
     personaVideoUrl?: string | null
     personaName?: string
     welcomeAudioUrl?: string | null
+    backgroundMusicUrl?: string | null
     showSoulGallery?: boolean
     onSoulSelect?: (personaId: string, personaData: any) => void
     onMemorySearchTrigger?: (query: string) => void
@@ -89,6 +92,7 @@ function ChatUIInner({
     // 1. Global Mute State
     const [isGlobalMuted, setIsGlobalMuted] = useState(false)
     const [showPersonalizeModal, setShowPersonalizeModal] = useState(false)
+    const [personalizeTab, setPersonalizeTab] = useState("identity")
     const [isSparking, setIsSparking] = useState(false)
 
     // Load mute state from localStorage
@@ -345,7 +349,11 @@ function ChatUIInner({
                         setChatBackgroundEnabled={setChatBackgroundEnabled}
                         setActiveBackgroundUrl={setActiveBackgroundUrl}
                         welcomeAudioUrl={welcomeAudioUrl}
-                        onPersonalize={() => setShowPersonalizeModal(true)}
+                        backgroundMusicUrl={backgroundMusicUrl}
+                        onPersonalize={(tab?: string) => {
+                            if (tab) setPersonalizeTab(tab)
+                            setShowPersonalizeModal(true)
+                        }}
                         isGlobalMuted={isGlobalMuted}
                         onToggleMute={handleToggleMute}
                         onSparkOfLife={handleSparkOfLife}
@@ -364,6 +372,7 @@ function ChatUIInner({
                     onClose={() => setShowPersonalizeModal(false)}
                     personaId={personaId}
                     personaName={personaName || "this soul"}
+                    defaultTab={personalizeTab}
                 />
             )}
 
@@ -372,9 +381,9 @@ function ChatUIInner({
             <div className="flex flex-1 flex-col relative z-10 overflow-hidden chat-messages-mobile">
                 {isLoadingHistory ? (
                     <div className="flex flex-1 flex-col items-center justify-center px-4 py-8">
-                        <div className="flex flex-col items-center gap-3">
-                            <div className="w-8 h-8 border-2 border-rp-iris border-t-transparent rounded-full animate-spin" />
-                            <p className="text-rp-muted animate-pulse">Restoring memory...</p>
+                        <div className="flex flex-col items-center gap-3 rounded-2xl border border-white/10 bg-rp-surface/60 p-6 shadow-xl backdrop-blur-md">
+                            <div className="h-8 w-8 animate-spin rounded-full border-2 border-rp-iris border-t-transparent" />
+                            <p className="text-rp-text animate-pulse font-medium">Restoring memory...</p>
                         </div>
                     </div>
                 ) : messages.length === 0 ? (
@@ -388,11 +397,11 @@ function ChatUIInner({
                             />
                         ) : (
                             // Show default welcome screen
-                            <div className="flex max-w-sm flex-col items-center text-center animate-in fade-in zoom-in duration-500">
-                                <h2 className="mb-2 text-2xl font-bold text-rp-text">
+                            <div className="flex max-w-sm flex-col items-center text-center animate-in fade-in zoom-in duration-500 rounded-3xl border border-white/10 bg-rp-surface/60 p-10 shadow-2xl backdrop-blur-md">
+                                <h2 className="mb-2 text-2xl font-bold text-rp-text drop-shadow-sm">
                                     Speak with {personaName || 'the Soul'}
                                 </h2>
-                                <p className="mb-8 text-rp-muted">
+                                <p className="text-rp-text/80 leading-relaxed font-medium">
                                     {personaId
                                         ? `Connecting with the frequency of ${personaName}...`
                                         : "Choose a Soul from the library or gallery to begin your journey."
@@ -466,6 +475,7 @@ export function ChatUIV2({
     personaSystemPrompt: initialPersonaSystemPrompt,
     personaIntroMessage: initialPersonaIntroMessage,
     welcomeAudioUrl: initialWelcomeAudioUrl,
+    backgroundMusicUrl: initialBackgroundMusicUrl,
     userTier = 'free',
     showSoulGallery = false
 }: ChatUIV2Props) {
@@ -477,6 +487,7 @@ export function ChatUIV2({
         systemPrompt?: string
         introMessage?: string
         welcomeAudioUrl?: string | null
+        backgroundMusicUrl?: string | null
     } | null>(
         initialPersonaId
             ? {
@@ -486,7 +497,8 @@ export function ChatUIV2({
                 name: initialPersonaName,
                 systemPrompt: initialPersonaSystemPrompt,
                 introMessage: initialPersonaIntroMessage,
-                welcomeAudioUrl: initialWelcomeAudioUrl
+                welcomeAudioUrl: initialWelcomeAudioUrl,
+                backgroundMusicUrl: initialBackgroundMusicUrl
             }
             : null
     )
@@ -514,10 +526,11 @@ export function ChatUIV2({
                 name: initialPersonaName,
                 systemPrompt: initialPersonaSystemPrompt,
                 introMessage: initialPersonaIntroMessage,
-                welcomeAudioUrl: initialWelcomeAudioUrl
+                welcomeAudioUrl: initialWelcomeAudioUrl,
+                backgroundMusicUrl: initialBackgroundMusicUrl
             })
         }
-    }, [initialPersonaId, initialPersonaImage, initialPersonaVideoUrl, initialPersonaName, initialPersonaSystemPrompt, initialPersonaIntroMessage, initialWelcomeAudioUrl])
+    }, [initialPersonaId, initialPersonaImage, initialPersonaVideoUrl, initialPersonaName, initialPersonaSystemPrompt, initialPersonaIntroMessage, initialWelcomeAudioUrl, initialBackgroundMusicUrl])
 
     const handleSoulSelect = (personaId: string, personaData: any) => {
         setSelectedPersona({
@@ -527,7 +540,8 @@ export function ChatUIV2({
             name: personaData.name,
             systemPrompt: personaData.system_prompt || personaData.description,
             introMessage: personaData.intro_message,
-            welcomeAudioUrl: personaData.welcome_audio_url
+            welcomeAudioUrl: personaData.welcome_audio_url,
+            backgroundMusicUrl: personaData.background_music_url
         })
     }
 
@@ -557,6 +571,7 @@ export function ChatUIV2({
                     isVisualNovelMode={isVisualNovelMode}
                     toggleVisualNovelMode={() => setIsVisualNovelMode(!isVisualNovelMode)}
                     welcomeAudioUrl={selectedPersona?.welcomeAudioUrl || initialWelcomeAudioUrl}
+                    backgroundMusicUrl={selectedPersona?.backgroundMusicUrl || initialBackgroundMusicUrl}
                     onStartCall={() => setIsCallActive(true)}
                 />
                 <MemorySearchModal

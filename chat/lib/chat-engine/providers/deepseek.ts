@@ -95,7 +95,8 @@ export class DeepSeekProvider extends BaseChatProvider {
             ? AbortSignal.any([options.abortSignal, timeoutSignal])
             : timeoutSignal
 
-        console.log(`📡 [DeepSeek] Sending request to ${this.config.apiEndpoint} (Size: ${JSON.stringify(formattedMessages).length} chars)`)
+        const model = options.model || this.config.defaultModel
+        console.log(`📡 [DeepSeek] Sending request using model: ${model} to ${this.config.apiEndpoint} (Size: ${JSON.stringify(formattedMessages).length} chars)`)
 
         const MAX_RETRIES = 3
         let lastError: any = null

@@ -26,6 +26,7 @@ import Image from "next/image"
 import { toast } from "sonner"
 import { AdminPasswordGate } from "@/components/admin/AdminPasswordGate"
 import { SoulEditor } from "@/components/studio/SoulEditor"
+import { BackgroundMusicPlayer } from "@/components/audio/BackgroundMusicPlayer"
 
 interface Persona {
     id: string
@@ -34,6 +35,7 @@ interface Persona {
     video_url: string | null
     background_url: string | null
     welcome_audio_url: string | null
+    background_music_url: string | null
     welcome_message: string | null
     description: string | null
     category: string | null
@@ -56,15 +58,12 @@ const AudioPlayer = ({ src, onDelete, autoPlay = false }: { src: string, onDelet
         }
     }, [])
 
-    // Simple wrapper around native audio for now, with custom controls
-    // In a full implementation we would use Web Audio API for waveform
     const [isPlaying, setIsPlaying] = useState(autoPlay)
     const [isLooping, setIsLooping] = useState(false)
     const [duration, setDuration] = useState(0)
     const [currentTime, setCurrentTime] = useState(0)
     const [volume, setVolume] = useState(0.5)
 
-    // We use a ref to access the audio element instance for control methods
     const audioInstance = useRef<HTMLAudioElement | null>(null)
 
     const togglePlay = () => {
@@ -128,7 +127,6 @@ const AudioPlayer = ({ src, onDelete, autoPlay = false }: { src: string, onDelet
                         </button>
 
                         <div className="flex-1 space-y-1">
-                            {/* Fake Waveform Visual for aesthetic using CSS gradients */}
                             <div className="h-8 w-full rounded bg-rp-base/50 flex items-center justify-center overflow-hidden relative">
                                 <div className="absolute inset-0 flex items-end justify-between px-1 gap-px opacity-50">
                                     {Array.from({ length: 40 }).map((_, i) => (
@@ -205,7 +203,7 @@ export default function MediaManagerPage() {
         try {
             const { data, error } = await supabase
                 .from('personas')
-                .select('id, name, image_url, video_url, background_url, welcome_audio_url, welcome_message, description, category, is_default_media_set, system_prompt, intro_message, safety_level, tags, voice_id, metadata, config')
+                .select('id, name, image_url, video_url, background_url, welcome_audio_url, background_music_url, welcome_message, description, category, is_default_media_set, system_prompt, intro_message, safety_level, tags, voice_id, metadata, config')
                 .order('created_at', { ascending: false })
 
             if (error) throw error
@@ -378,7 +376,6 @@ export default function MediaManagerPage() {
     const handleAudioUpload = async (file: File) => {
         if (!selectedPersona) return
 
-        // Basic validation
         if (!file.type.startsWith('audio/')) {
             toast.error("Please upload an audio file")
             return
@@ -424,10 +421,32 @@ export default function MediaManagerPage() {
         }
     }
 
+    const handleMusicUpload = async (file: File) => {
+        if (!selectedPersona) return
+        setUploading(true)
+        const toastId = toast.loading("Uploading music...")
+        try {
+            const formData = new FormData()
+            formData.append('personaId', selectedPersona.id)
+            formData.append('file', file)
+            formData.append('type', 'music')
+            const response = await fetch('/api/audio/upload', { method: 'POST', body: formData })
+            const result = await response.json()
+            if (!response.ok) throw new Error(result.error || "Upload failed")
+            const publicUrl = result.audioUrl
+            toast.success("Music uploaded successfully!", { id: toastId })
+            setPersonas(prev => prev.map(p => p.id === selectedPersona.id ? { ...p, background_music_url: publicUrl } : p))
+            setSelectedPersona(prev => prev ? { ...prev, background_music_url: publicUrl } : null)
+        } catch (e: any) {
+            console.error(e)
+            toast.error(e.message || "Upload failed", { id: toastId })
+        } finally {
+            setUploading(false)
+        }
+    }
+
     const handleSaveWelcomeMessage = async () => {
         if (!selectedPersona) return
-
-        // Optimistic update already happened in UI state, now sync to DB
         try {
             const { error } = await supabase
                 .from('personas')
@@ -435,10 +454,7 @@ export default function MediaManagerPage() {
                 .eq('id', selectedPersona.id)
 
             if (error) throw error
-
-            // Silent success or small toast
             toast.success("Transcript saved", { duration: 1500 })
-
         } catch (e: any) {
             toast.error("Failed to save transcript")
             console.error(e)
@@ -465,13 +481,29 @@ export default function MediaManagerPage() {
             setSelectedPersona(prev => prev ? { ...prev, welcome_audio_url: null } : null)
 
         } catch (e: any) {
-            toast.error(e.message)
+            console.error(e)
+            toast.error(e.message || "Failed to remove audio")
+        }
+    }
+
+    const handleRemoveMusic = async () => {
+        if (!selectedPersona || !selectedPersona.background_music_url) return
+        if (!confirm("Are you sure you want to remove the background music?")) return
+        const toastId = toast.loading("Removing music...")
+        try {
+            const { error } = await supabase.from('personas').update({ background_music_url: null }).eq('id', selectedPersona.id)
+            if (error) throw error
+            toast.success("Music removed successfully!", { id: toastId })
+            setPersonas(prev => prev.map(p => p.id === selectedPersona.id ? { ...p, background_music_url: null } : p))
+            setSelectedPersona(prev => prev ? { ...prev, background_music_url: null } : null)
+        } catch (e: any) {
+            console.error(e)
+            toast.error(e.message || "Failed to remove music", { id: toastId })
         }
     }
 
     const handleSetAsDefault = async () => {
         if (!selectedPersona) return
-
         try {
             const { error } = await supabase
                 .from('personas')
@@ -479,14 +511,12 @@ export default function MediaManagerPage() {
                 .eq('id', selectedPersona.id)
 
             if (error) throw error
-
             toast.success("Media set as default! This will persist across server restarts.")
 
             setPersonas(prev => prev.map(p =>
                 p.id === selectedPersona.id ? { ...p, is_default_media_set: true } : p
             ))
             setSelectedPersona(prev => prev ? { ...prev, is_default_media_set: true } : null)
-
         } catch (e: any) {
             toast.error(e.message || "Failed to set as default")
         }
@@ -495,7 +525,6 @@ export default function MediaManagerPage() {
     const handleRemoveVideo = async () => {
         if (!selectedPersona) return
         if (!confirm("Are you sure you want to remove the video?")) return
-
         try {
             const { error } = await supabase
                 .from('personas')
@@ -503,14 +532,12 @@ export default function MediaManagerPage() {
                 .eq('id', selectedPersona.id)
 
             if (error) throw error
-
             toast.success("Video removed")
 
             setPersonas(prev => prev.map(p =>
                 p.id === selectedPersona.id ? { ...p, video_url: null } : p
             ))
             setSelectedPersona(prev => prev ? { ...prev, video_url: null } : null)
-
         } catch (e: any) {
             toast.error(e.message)
         }
@@ -519,7 +546,6 @@ export default function MediaManagerPage() {
     const handleRemoveBackground = async () => {
         if (!selectedPersona) return
         if (!confirm("Are you sure you want to remove the background?")) return
-
         try {
             const { error } = await supabase
                 .from('personas')
@@ -527,14 +553,12 @@ export default function MediaManagerPage() {
                 .eq('id', selectedPersona.id)
 
             if (error) throw error
-
             toast.success("Background removed")
 
             setPersonas(prev => prev.map(p =>
                 p.id === selectedPersona.id ? { ...p, background_url: null } : p
             ))
             setSelectedPersona(prev => prev ? { ...prev, background_url: null } : null)
-
         } catch (e: any) {
             toast.error(e.message)
         }
@@ -542,13 +566,11 @@ export default function MediaManagerPage() {
 
     const handleDeleteCharacter = async () => {
         if (!selectedPersona) return
-
         const confirmText = `Are you sure you want to DELETE "${selectedPersona.name}"? This action cannot be undone and will remove all associated data.`
         if (!confirm(confirmText)) return
 
         setDeleting(true)
         const toastId = toast.loading("Deleting character...")
-
         try {
             const { error } = await supabase
                 .from('personas')
@@ -556,12 +578,9 @@ export default function MediaManagerPage() {
                 .eq('id', selectedPersona.id)
 
             if (error) throw error
-
             toast.success(`${selectedPersona.name} has been deleted`, { id: toastId })
-
             setPersonas(prev => prev.filter(p => p.id !== selectedPersona.id))
             setSelectedPersona(null)
-
         } catch (e: any) {
             console.error(e)
             toast.error(e.message || "Failed to delete character", { id: toastId })
@@ -578,7 +597,6 @@ export default function MediaManagerPage() {
     return (
         <AdminPasswordGate>
             <div className="min-h-screen bg-rp-base text-rp-text">
-                {/* Header */}
                 <header className="sticky top-0 z-10 border-b border-rp-highlight-med bg-rp-base/80 px-6 py-4 backdrop-blur-md">
                     <div className="mx-auto flex max-w-7xl items-center justify-between">
                         <div className="flex items-center gap-4">
@@ -599,7 +617,6 @@ export default function MediaManagerPage() {
                 </header>
 
                 <main className="mx-auto flex h-[calc(100vh-73px)] max-w-7xl gap-6 p-6">
-                    {/* List Column */}
                     <div className="flex w-1/3 flex-col gap-4">
                         <div className="relative">
                             <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-rp-muted" size={18} />
@@ -631,7 +648,6 @@ export default function MediaManagerPage() {
                                                     <Image src={persona.image_url} alt={persona.name} fill className="object-cover" />
                                                 ) : <IconPhoto className="m-auto text-rp-muted" />}
 
-                                                {/* Indicators */}
                                                 {persona.video_url && (
                                                     <div className="absolute top-0 right-0 p-1 bg-black/50 rounded-bl-lg">
                                                         <IconVideo size={10} className="text-white" />
@@ -654,11 +670,9 @@ export default function MediaManagerPage() {
                         </div>
                     </div>
 
-                    {/* Editor Column */}
                     <div className="flex-1 rounded-xl border border-rp-highlight-med bg-rp-surface p-6 overflow-auto">
                         {selectedPersona ? (
                             <div className="flex flex-col gap-8">
-                                {/* Header */}
                                 <div className="flex items-start justify-between gap-6">
                                     <div className="flex items-start gap-6">
                                         <div className="relative size-24 shrink-0 overflow-hidden rounded-xl border-2 border-rp-highlight-med">
@@ -673,7 +687,6 @@ export default function MediaManagerPage() {
                                         </div>
                                     </div>
 
-                                    {/* Action Buttons */}
                                     <div className="flex gap-2">
                                         <Button
                                             variant={selectedPersona.is_default_media_set ? "default" : "outline"}
@@ -740,7 +753,6 @@ export default function MediaManagerPage() {
                                         Background Image
                                     </h3>
                                     <div className="grid grid-cols-2 gap-8">
-                                        {/* Preview */}
                                         <div className="rounded-xl border border-rp-highlight-med bg-black/20 overflow-hidden relative group h-48">
                                             {selectedPersona.background_url ? (
                                                 <div className="relative h-full w-full">
@@ -760,7 +772,6 @@ export default function MediaManagerPage() {
                                             )}
                                         </div>
 
-                                        {/* Upload */}
                                         <div className="flex flex-col gap-4 justify-center">
                                             <input
                                                 type="file"
@@ -779,9 +790,6 @@ export default function MediaManagerPage() {
                                                     )}
                                                 </div>
                                                 <h4 className="font-semibold">Upload Background</h4>
-                                                <p className="mt-1 text-sm text-rp-subtle">
-                                                    Recommended: 16:9 or wider
-                                                </p>
                                             </label>
                                         </div>
                                     </div>
@@ -808,7 +816,6 @@ export default function MediaManagerPage() {
                                                 </div>
                                             )}
 
-                                            {/* Transcript / Message Input */}
                                             <div className="space-y-2">
                                                 <label className="text-xs font-semibold uppercase tracking-wider text-rp-subtle">
                                                     Transcript / Welcome Message
@@ -816,7 +823,7 @@ export default function MediaManagerPage() {
                                                 <div className="relative">
                                                     <textarea
                                                         className="w-full rounded-lg border border-rp-highlight-med bg-rp-base p-3 text-sm focus:border-rp-iris focus:outline-none min-h-[100px] resize-none"
-                                                        placeholder="Enter the text that corresponds to this audio..."
+                                                        placeholder="Enter text..."
                                                         value={selectedPersona.welcome_message || ""}
                                                         onChange={(e) => {
                                                             const val = e.target.value;
@@ -831,7 +838,6 @@ export default function MediaManagerPage() {
                                             </div>
                                         </div>
 
-                                        {/* Upload New Audio */}
                                         <div className="flex flex-col gap-4 justify-start">
                                             <div className="rounded-xl border-2 border-dashed border-rp-highlight-med bg-rp-base/50 p-8 text-center transition-colors hover:border-rp-rose hover:bg-rp-rose/5">
                                                 <input
@@ -851,22 +857,61 @@ export default function MediaManagerPage() {
                                                         )}
                                                     </div>
                                                     <h4 className="font-semibold">Upload Audio</h4>
-                                                    <p className="mt-1 text-sm text-rp-subtle">
-                                                        MP3, WAV, OGG (Max 10MB)
-                                                    </p>
                                                 </label>
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
 
-                                            <div className="space-y-4 rounded-xl border border-rp-highlight-med bg-rp-surface p-4">
-                                                <div className="flex items-center justify-between">
-                                                    <span className="text-sm font-medium">Auto-play on load</span>
-                                                    <div className="h-5 w-9 rounded-full bg-rp-highlight-med relative cursor-not-allowed opacity-50">
-                                                        <div className="absolute left-1 top-1 h-3 w-3 rounded-full bg-white" />
+                                {/* BACKGROUND MUSIC SECTION */}
+                                <div>
+                                    <h3 className="mb-4 font-semibold flex items-center gap-1.5">
+                                        <IconMusic className="text-rp-gold" size={20} />
+                                        Background Music
+                                    </h3>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                        <div className="flex flex-col gap-4">
+                                            {selectedPersona.background_music_url ? (
+                                                <div className="rounded-xl border border-rp-highlight-med bg-black/20 p-6 flex flex-col items-center justify-center min-h-[160px]">
+                                                    <div className="flex flex-col items-center gap-4 w-full">
+                                                        <BackgroundMusicPlayer
+                                                            musicUrl={selectedPersona.background_music_url}
+                                                        />
+                                                        <Button variant="outline" size="sm" onClick={handleRemoveMusic} className="text-rp-love hover:bg-rp-love/10 border-rp-love/20 h-8">
+                                                            <IconTrash size={14} className="mr-1.5" />
+                                                            Remove Music
+                                                        </Button>
                                                     </div>
                                                 </div>
-                                                <div className="text-[10px] text-rp-muted">
-                                                    * Auto-play settings are controlled by the client application preferences.
+                                            ) : (
+                                                <div className="rounded-xl border border-rp-highlight-med bg-black/20 p-8 text-center h-40 flex flex-col items-center justify-center text-rp-muted">
+                                                    <IconMusic size={32} className="mb-2 opacity-20" />
+                                                    <p>No background music</p>
                                                 </div>
+                                            )}
+                                        </div>
+
+                                        <div className="flex flex-col gap-4 justify-start">
+                                            <div className="rounded-xl border-2 border-dashed border-rp-highlight-med bg-rp-base/50 p-8 text-center transition-colors hover:border-rp-gold hover:bg-rp-gold/5">
+                                                <input
+                                                    type="file"
+                                                    accept="audio/*"
+                                                    onChange={(e) => e.target.files?.[0] && handleMusicUpload(e.target.files[0])}
+                                                    className="hidden"
+                                                    id="music-upload-admin"
+                                                    disabled={uploading}
+                                                />
+                                                <label htmlFor="music-upload-admin" className="flex flex-col items-center cursor-pointer">
+                                                    <div className={`mb-4 flex size-12 items-center justify-center rounded-full ${uploading ? 'bg-rp-muted' : 'bg-rp-gold/20 text-rp-gold'}`}>
+                                                        {uploading ? (
+                                                            <div className="h-6 w-6 animate-spin rounded-full border-2 border-rp-text border-t-transparent" />
+                                                        ) : (
+                                                            <IconUpload size={24} />
+                                                        )}
+                                                    </div>
+                                                    <h4 className="font-semibold">Upload Music Track</h4>
+                                                </label>
                                             </div>
                                         </div>
                                     </div>
@@ -880,7 +925,6 @@ export default function MediaManagerPage() {
                                     </h3>
 
                                     <div className="grid grid-cols-2 gap-8 h-[400px]">
-                                        {/* Preview Area */}
                                         <div className="rounded-xl border border-rp-highlight-med bg-black/20 overflow-hidden relative group">
                                             {selectedPersona.video_url ? (
                                                 <div className="relative h-full w-full">
@@ -903,12 +947,10 @@ export default function MediaManagerPage() {
                                                 <div className="flex h-full flex-col items-center justify-center text-rp-muted p-6 text-center">
                                                     <IconVideo size={48} className="mb-2 opacity-20" />
                                                     <p>No video attached.</p>
-                                                    <p className="text-xs mt-1">Video will play instead of the static image.</p>
                                                 </div>
                                             )}
                                         </div>
 
-                                        {/* Upload Area */}
                                         <div className="flex flex-col gap-4 justify-center">
                                             <div className="rounded-xl border-2 border-dashed border-rp-highlight-med bg-rp-base/50 p-8 text-center transition-colors hover:border-rp-iris hover:bg-rp-iris/5">
                                                 <input
@@ -928,15 +970,7 @@ export default function MediaManagerPage() {
                                                         )}
                                                     </div>
                                                     <h4 className="font-semibold">Upload New Video</h4>
-                                                    <p className="mt-1 text-sm text-rp-subtle">
-                                                        Supports MP4, WebM. <br />
-                                                        Recommended ratio 9:16 (Portrait)
-                                                    </p>
                                                 </label>
-                                            </div>
-
-                                            <div className="text-xs text-rp-muted text-center max-w-xs mx-auto">
-                                                Tip: Use the &quot;Spark of Life&quot; feature to generate videos from images automatically.
                                             </div>
                                         </div>
                                     </div>
@@ -947,7 +981,6 @@ export default function MediaManagerPage() {
                                     <h3 className="mb-4 font-semibold flex items-center gap-2">
                                         <IconSparkles className="text-rp-gold" />
                                         Soul Editor
-                                        <span className="text-xs font-normal text-rp-muted ml-2">(Import/Edit persona data)</span>
                                     </h3>
                                     <div className="rounded-xl border border-rp-highlight-med bg-rp-overlay/50 p-6">
                                         <SoulEditor
@@ -980,7 +1013,7 @@ export default function MediaManagerPage() {
                         )}
                     </div>
                 </main>
-            </div >
-        </AdminPasswordGate >
+            </div>
+        </AdminPasswordGate>
     )
 }

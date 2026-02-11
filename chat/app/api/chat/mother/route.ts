@@ -64,7 +64,13 @@ export async function POST(request: NextRequest) {
             apiKey: apiKey
         })
 
-        const MODEL = modelConfig.modelId
+        // STRICT CREDIT SAFETY: If provider is deepseek, force deepseek-chat unless reasoner is specifically needed
+        let MODEL = modelConfig.modelId
+        if (modelConfig.provider === 'deepseek' && MODEL !== 'deepseek-chat') {
+            console.log(`🛡️ [Mother] Overriding ${MODEL} to deepseek-chat for credit safety`)
+            MODEL = 'deepseek-chat'
+        }
+
         console.log(`🕯️ [Mother of Souls] Starting ritual chat with ${MODEL}...`)
 
         // Build conversation with Mother's system prompt

@@ -52,8 +52,15 @@ export async function POST(
 
     // 5. Generate Response
     try {
+        // STRICT CREDIT SAFETY: Force deepseek-chat for standard persona conversations
+        let MODEL = modelConfig.modelId;
+        if (modelConfig.provider === 'deepseek' && MODEL !== 'deepseek-chat') {
+            console.log(`🛡️ [Persona Chat] Overriding ${MODEL} to deepseek-chat for credit safety`);
+            MODEL = 'deepseek-chat';
+        }
+
         const response = await openai.chat.completions.create({
-            model: modelConfig.modelId,
+            model: MODEL,
             messages: [
                 { role: 'system', content: persona.system_prompt },
                 ...formattedHistory,

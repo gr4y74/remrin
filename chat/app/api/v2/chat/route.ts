@@ -371,7 +371,11 @@ export async function POST(request: NextRequest) {
                         for await (const chunk of providerManager.sendMessage(
                             messagesWithResponse,
                             followUpPrompt,
-                            { temperature: 0.8, maxTokens: 100 }
+                            {
+                                temperature: 0.8,
+                                maxTokens: 100,
+                                model: 'deepseek-chat' // STRICT: Always use deepseek-chat for follow-ups to save credits
+                            }
                         )) {
                             const content = chunk.content || ''
                             followUpContent += content

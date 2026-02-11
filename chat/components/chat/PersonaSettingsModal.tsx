@@ -9,14 +9,16 @@ import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
-import { IconUser, IconHeart, IconWorld, IconSettings, IconMicrophone, IconPlus, IconTrash, IconLoader2, IconSparkles } from '@tabler/icons-react'
+import { IconUser, IconHeart, IconWorld, IconSettings, IconMicrophone, IconPlus, IconTrash, IconLoader2, IconSparkles, IconMusic, IconUpload, IconX } from '@tabler/icons-react'
 import { toast } from 'sonner'
+import { BackgroundMusicPlayer } from '@/components/audio/BackgroundMusicPlayer'
 
 interface PersonaSettingsModalProps {
     isOpen: boolean
     onClose: () => void
     personaId: string
     personaName: string
+    defaultTab?: string
 }
 
 interface PersonSettings {
@@ -102,12 +104,23 @@ export function PersonaSettingsModal({
     isOpen,
     onClose,
     personaId,
-    personaName
+    personaName,
+    defaultTab = "identity"
 }: PersonaSettingsModalProps) {
     const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
     const [loading, setLoading] = useState(false)
     const [saving, setSaving] = useState(false)
     const [hasCustomizations, setHasCustomizations] = useState(false)
+    const [backgroundMusicUrl, setBackgroundMusicUrl] = useState<string | null>(null)
+    const [uploading, setUploading] = useState(false)
+    const [activeTab, setActiveTab] = useState(defaultTab)
+
+    // Sync active tab with defaultTab prop when modal opens
+    useEffect(() => {
+        if (isOpen && defaultTab) {
+            setActiveTab(defaultTab)
+        }
+    }, [isOpen, defaultTab])
 
     // Fetch existing settings
     const fetchSettings = useCallback(async () => {
@@ -127,6 +140,7 @@ export function PersonaSettingsModal({
                     voice: { ...DEFAULT_SETTINGS.voice, ...data.settings?.voice }
                 }))
                 setHasCustomizations(data.has_customizations)
+                setBackgroundMusicUrl(data.background_music_url || null)
             }
         } catch (err) {
             console.error("Failed to fetch settings:", err)
@@ -250,27 +264,31 @@ export function PersonaSettingsModal({
                     </DialogTitle>
                 </DialogHeader>
 
-                <Tabs defaultValue="identity" className="w-full">
-                    <TabsList className="grid w-full grid-cols-5 bg-rp-base">
-                        <TabsTrigger value="identity" className="flex items-center gap-1.5 text-xs">
-                            <IconUser className="h-4 w-4" />
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                    <TabsList className="grid w-full grid-cols-6 bg-rp-base p-0.5 h-auto">
+                        <TabsTrigger value="identity" className="flex items-center gap-1.5 text-[10px] sm:text-xs py-2 px-1">
+                            <IconUser className="h-3.5 w-3.5" />
                             <span className="hidden sm:inline">Identity</span>
                         </TabsTrigger>
-                        <TabsTrigger value="relationship" className="flex items-center gap-1.5 text-xs">
-                            <IconHeart className="h-4 w-4" />
+                        <TabsTrigger value="relationship" className="flex items-center gap-1.5 text-[10px] sm:text-xs py-2 px-1">
+                            <IconHeart className="h-3.5 w-3.5" />
                             <span className="hidden sm:inline">Relationship</span>
                         </TabsTrigger>
-                        <TabsTrigger value="world" className="flex items-center gap-1.5 text-xs">
-                            <IconWorld className="h-4 w-4" />
+                        <TabsTrigger value="world" className="flex items-center gap-1.5 text-[10px] sm:text-xs py-2 px-1">
+                            <IconWorld className="h-3.5 w-3.5" />
                             <span className="hidden sm:inline">World</span>
                         </TabsTrigger>
-                        <TabsTrigger value="preferences" className="flex items-center gap-1.5 text-xs">
-                            <IconSettings className="h-4 w-4" />
+                        <TabsTrigger value="preferences" className="flex items-center gap-1.5 text-[10px] sm:text-xs py-2 px-1">
+                            <IconSettings className="h-3.5 w-3.5" />
                             <span className="hidden sm:inline">Prefs</span>
                         </TabsTrigger>
-                        <TabsTrigger value="voice" className="flex items-center gap-1.5 text-xs">
-                            <IconMicrophone className="h-4 w-4" />
+                        <TabsTrigger value="voice" className="flex items-center gap-1.5 text-[10px] sm:text-xs py-2 px-1">
+                            <IconMicrophone className="h-3.5 w-3.5" />
                             <span className="hidden sm:inline">Voice</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="music" className="flex items-center gap-1.5 text-[10px] sm:text-xs py-2 px-1">
+                            <IconMusic className="h-3.5 w-3.5" />
+                            <span className="hidden sm:inline">Music</span>
                         </TabsTrigger>
                     </TabsList>
 
@@ -542,6 +560,105 @@ export function PersonaSettingsModal({
                                     onChange={(e) => updateSetting('voice', 'topics_she_loves', e.target.value.split(',').map(s => s.trim()).filter(Boolean))}
                                     className="bg-rp-base border-rp-muted/30"
                                 />
+                            </div>
+                        </TabsContent>
+
+                        {/* Music Tab */}
+                        <TabsContent value="music" className="space-y-6 mt-0">
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <h4 className="text-sm font-semibold text-rp-text">Background Music</h4>
+                                        <p className="text-xs text-rp-subtle mt-1">Looped music that plays during your conversation.</p>
+                                    </div>
+                                    {backgroundMusicUrl && (
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={async () => {
+                                                if (confirm('Remove background music?')) {
+                                                    try {
+                                                        const res = await fetch(`/api/personas/${personaId}/music`, { method: 'DELETE' })
+                                                        if (res.ok) {
+                                                            setBackgroundMusicUrl(null)
+                                                            toast.success('Music removed')
+                                                        }
+                                                    } catch (err) {
+                                                        toast.error('Failed to remove music')
+                                                    }
+                                                }
+                                            }}
+                                            className="text-rp-love hover:bg-rp-love/10"
+                                        >
+                                            <IconTrash className="h-4 w-4 mr-1" /> Remove
+                                        </Button>
+                                    )}
+                                </div>
+
+                                {backgroundMusicUrl ? (
+                                    <div className="bg-rp-base/50 rounded-xl p-6 border border-rp-muted/20 flex flex-col items-center gap-4">
+                                        <BackgroundMusicPlayer
+                                            musicUrl={backgroundMusicUrl}
+                                            className="scale-110"
+                                        />
+                                        <p className="text-[10px] text-rp-muted font-mono uppercase tracking-widest">Active Track</p>
+                                    </div>
+                                ) : (
+                                    <div className="rounded-xl border-2 border-dashed border-rp-muted/20 bg-rp-base/30 p-10 text-center flex flex-col items-center">
+                                        <IconMusic className="h-10 w-10 text-rp-muted opacity-30 mb-4" />
+                                        <p className="text-sm text-rp-subtle mb-6">No background music set for this character.</p>
+
+                                        <input
+                                            type="file"
+                                            accept="audio/*"
+                                            onChange={async (e) => {
+                                                const file = e.target.files?.[0]
+                                                if (!file) return
+
+                                                setUploading(true)
+                                                const toastId = toast.loading("Uploading music...")
+
+                                                try {
+                                                    const formData = new FormData()
+                                                    formData.append('personaId', personaId)
+                                                    formData.append('file', file)
+                                                    formData.append('type', 'music')
+
+                                                    const res = await fetch('/api/audio/upload', {
+                                                        method: 'POST',
+                                                        body: formData
+                                                    })
+
+                                                    const result = await res.json()
+                                                    if (!res.ok) throw new Error(result.error || "Upload failed")
+
+                                                    setBackgroundMusicUrl(result.audioUrl)
+                                                    toast.success("Music uploaded successfully!", { id: toastId })
+                                                } catch (err: any) {
+                                                    toast.error(err.message || "Upload failed", { id: toastId })
+                                                } finally {
+                                                    setUploading(false)
+                                                }
+                                            }}
+                                            className="hidden"
+                                            id="music-upload"
+                                            disabled={uploading}
+                                        />
+                                        <label htmlFor="music-upload" className="cursor-pointer inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-rp-iris/20 border border-rp-iris/30 text-white hover:bg-rp-iris/30 transition-all font-bold text-xs uppercase tracking-widest">
+                                            {uploading ? <IconLoader2 className="h-4 w-4 animate-spin" /> : <IconUpload className="h-4 w-4" />}
+                                            Upload Audio Track
+                                        </label>
+                                    </div>
+                                )}
+
+                                <div className="bg-rp-overlay/20 rounded-lg p-4 border border-rp-muted/10">
+                                    <h5 className="text-[10px] font-bold text-rp-iris uppercase tracking-widest mb-2">Music Guidelines</h5>
+                                    <ul className="text-[10px] space-y-1.5 text-rp-subtle list-disc pl-4">
+                                        <li>Recommended: Looping ambient tracks or instrumental music</li>
+                                        <li>File size limit: 10MB (MP3, WAV, OGG)</li>
+                                        <li>Background music complements the character voice and personality</li>
+                                    </ul>
+                                </div>
                             </div>
                         </TabsContent>
                     </div>

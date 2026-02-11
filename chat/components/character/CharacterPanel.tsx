@@ -20,7 +20,8 @@ import {
     IconSparkles,
     IconWaveSine,
     IconVolume,
-    IconVolumeOff
+    IconVolumeOff,
+    IconMusic
 } from "@tabler/icons-react"
 import { FC, useContext, useState, useMemo } from "react"
 import Image from "next/image"
@@ -82,6 +83,7 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
     const [isSparking, setIsSparking] = useState(false)
     const [isGlobalMuted, setIsGlobalMuted] = useState(false)
     const [showPersonalizeModal, setShowPersonalizeModal] = useState(false)
+    const [personalizeTab, setPersonalizeTab] = useState("identity")
 
     // Check global mute state
     useReactEffect(() => {
@@ -323,7 +325,16 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                     {/* Gradient overlay at bottom for text readability */}
                     <div className="absolute inset-0 bg-gradient-to-t from-rp-surface via-transparent to-transparent" />
                     <div className="absolute right-3 top-3 flex items-center gap-2">
-
+                        <button
+                            onClick={() => {
+                                setPersonalizeTab("music")
+                                setShowPersonalizeModal(true)
+                            }}
+                            className="p-2 rounded-full bg-rp-surface/40 backdrop-blur-md border border-white/10 text-white hover:bg-rp-iris/30 hover:border-rp-iris/50 transition-all shadow-xl group"
+                            title="Background Music Settings"
+                        >
+                            <IconMusic size={18} className="group-hover:scale-110 transition-transform" />
+                        </button>
                     </div>
                     {/* Collapse handle - Talkie style (centered at bottom) */}
                     <button
@@ -847,6 +858,7 @@ export const CharacterPanel: FC<CharacterPanelProps> = ({
                     onClose={() => setShowPersonalizeModal(false)}
                     personaId={selectedPersona.id}
                     personaName={selectedPersona.name}
+                    defaultTab={personalizeTab}
                 />
             )}
         </>

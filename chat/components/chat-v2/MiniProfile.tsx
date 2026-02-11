@@ -19,7 +19,10 @@ import {
   IconVolumeOff,
   IconSparkles,
   IconBolt,
-  IconDownload
+  IconDownload,
+  IconMusic,
+  IconMicrophone,
+  IconUser
 } from '@tabler/icons-react'
 import { cn } from "@/lib/utils"
 import Image from "next/image"
@@ -28,6 +31,7 @@ import { uploadChatBackground, getChatBackgroundFromStorage } from "@/db/storage
 import { toast } from "sonner"
 import { WithTooltip } from "@/components/ui/with-tooltip"
 import { WelcomeAudioPlayer } from "@/components/audio/WelcomeAudioPlayer"
+import { BackgroundMusicPlayer } from "@/components/audio/BackgroundMusicPlayer"
 
 
 interface MiniProfileProps {
@@ -60,8 +64,9 @@ interface MiniProfileProps {
   setChatBackgroundEnabled?: (enabled: boolean) => void
   setActiveBackgroundUrl?: (url: string) => void
   welcomeAudioUrl?: string | null
+  backgroundMusicUrl?: string | null
   // New personalization props
-  onPersonalize?: () => void
+  onPersonalize?: (tab?: string) => void
   isGlobalMuted?: boolean
   onToggleMute?: () => void
   onSparkOfLife?: () => void
@@ -92,6 +97,7 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
   setChatBackgroundEnabled,
   setActiveBackgroundUrl,
   welcomeAudioUrl,
+  backgroundMusicUrl,
   onPersonalize,
   isGlobalMuted = false,
   onToggleMute,
@@ -140,6 +146,7 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
             <button
               onClick={onBack}
               className="p-1 -ml-1 text-white hover:text-white/80 transition-colors"
+              title="Back"
             >
               <IconArrowLeft size={20} />
             </button>
@@ -149,6 +156,7 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
           <button
             onClick={() => setIsExpanded(!isExpanded)}
             className="relative group transition-transform active:scale-95"
+            title={isExpanded ? "Hide character profile" : "View character profile"}
           >
             <div className="relative size-11 overflow-hidden rounded-full ring-2 ring-rp-highlight-med group-hover:ring-rp-iris">
               {personaImage ? (
@@ -205,6 +213,18 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
             </div>
           )}
 
+          {/* Background Music Player */}
+          {backgroundMusicUrl && !isExpanded && (
+            <div className="mr-1">
+              <BackgroundMusicPlayer
+                musicUrl={backgroundMusicUrl}
+                autoPlay={true}
+                className="[&_button]:size-8 [&_button]:bg-transparent [&_button]:border-white/10 [&_button:hover]:bg-white/10 [&_svg]:size-3.5"
+                compact
+              />
+            </div>
+          )}
+
           {/* Mood (Visible when collapsed) - No pill, just emoji + battery */}
           {!isExpanded && moodState && (
             <div className="flex items-center gap-2 mr-1">
@@ -228,7 +248,7 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
                           moodState.battery > 70 ? "bg-rp-iris" :
                             moodState.battery > 30 ? "bg-rp-gold" : "bg-rp-love"
                         )}
-                        style={{ width: `${moodState.battery}%` }}
+                        style={{ width: `${moodState.battery}%` } as React.CSSProperties}
                       />
                     </div>
                   </div>
@@ -262,17 +282,19 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
 
           {/* Quick Settings Dropdown - Icon only */}
           <div className="relative">
+            <label htmlFor="background-upload-chat" className="sr-only">Upload Chat Background</label>
             <input
               type="file"
               ref={fileInputRef}
               className="hidden"
               accept="image/*"
+              id="background-upload-chat"
               onChange={handleBackgroundUpload}
             />
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="p-2 text-white hover:text-white/80 transition-colors">
+                <button className="p-2 text-white hover:text-white/80 transition-colors" title="Chat Settings">
                   <IconDotsVertical size={18} />
                 </button>
               </DropdownMenuTrigger>
@@ -304,7 +326,7 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
                 {/* Personalize Button */}
                 <DropdownMenuItem
                   className="text-rp-text focus:bg-rp-overlay focus:text-rp-text cursor-pointer py-2.5 rounded-lg"
-                  onClick={onPersonalize}
+                  onClick={() => onPersonalize?.()}
                 >
                   <IconSparkles size={18} className="mr-2 text-rp-foam" />
                   <div className="flex flex-1 items-center justify-between">
@@ -420,31 +442,88 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
                 )}
               </div>
 
-              {/* Traits - Simplified, no pills */}
-              <div className="flex items-center gap-4">
-                {traits.map((trait, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <span className="text-xl">{trait.emoji}</span>
-                    <span className="text-rp-text text-xs font-medium">{trait.title}</span>
+              {/* Quick Settings - Interactive Links replaces Traits */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 w-full">
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex flex-col items-center gap-2 p-3 rounded-2xl bg-rp-overlay/10 border border-rp-highlight-low/10 hover:bg-rp-overlay/20 hover:border-rp-iris/30 transition-all group"
+                  title="Change Chat Background"
+                >
+                  <div className="size-8 rounded-full bg-rp-iris/10 flex items-center justify-center group-hover:bg-rp-iris/20 transition-colors">
+                    <IconPhoto size={18} className="text-rp-iris" />
                   </div>
-                ))}
+                  <span className="text-[10px] font-bold text-rp-text uppercase tracking-widest">Background</span>
+                </button>
+
+                <button
+                  onClick={() => onPersonalize?.('voice')}
+                  className="flex flex-col items-center gap-2 p-3 rounded-2xl bg-rp-overlay/10 border border-rp-highlight-low/10 hover:bg-rp-overlay/20 hover:border-rp-iris/30 transition-all group"
+                  title="Change Welcome Message"
+                >
+                  <div className="size-8 rounded-full bg-rp-pine/10 flex items-center justify-center group-hover:bg-rp-pine/20 transition-colors">
+                    <IconMicrophone size={18} className="text-rp-pine" />
+                  </div>
+                  <span className="text-[10px] font-bold text-rp-text uppercase tracking-widest">Welcome</span>
+                </button>
+
+                <button
+                  onClick={() => onPersonalize?.('music')}
+                  className="flex flex-col items-center gap-2 p-3 rounded-2xl bg-rp-overlay/10 border border-rp-highlight-low/10 hover:bg-rp-overlay/20 hover:border-rp-iris/30 transition-all group"
+                  title="Change Background Music"
+                >
+                  <div className="size-8 rounded-full bg-rp-gold/10 flex items-center justify-center group-hover:bg-rp-gold/20 transition-colors">
+                    <IconMusic size={18} className="text-rp-gold" />
+                  </div>
+                  <span className="text-[10px] font-bold text-rp-text uppercase tracking-widest">Music</span>
+                </button>
+
+                <button
+                  onClick={() => onChangeHeroImage?.()}
+                  className="flex flex-col items-center gap-2 p-3 rounded-2xl bg-rp-overlay/10 border border-rp-highlight-low/10 hover:bg-rp-overlay/20 hover:border-rp-iris/30 transition-all group"
+                  title="Change Hero Image"
+                >
+                  <div className="size-8 rounded-full bg-rp-foam/10 flex items-center justify-center group-hover:bg-rp-foam/20 transition-colors">
+                    <IconUser size={18} className="text-rp-foam" />
+                  </div>
+                  <span className="text-[10px] font-bold text-rp-text uppercase tracking-widest">Hero Image</span>
+                </button>
+
+                <button
+                  onClick={() => onPersonalize?.('preferences')}
+                  className="flex flex-col items-center gap-2 p-3 rounded-2xl bg-rp-overlay/10 border border-rp-highlight-low/10 hover:bg-rp-overlay/20 hover:border-rp-iris/30 transition-all group"
+                  title="Character Preferences"
+                >
+                  <div className="size-8 rounded-full bg-rp-love/10 flex items-center justify-center group-hover:bg-rp-love/20 transition-colors">
+                    <IconSettings size={18} className="text-rp-love" />
+                  </div>
+                  <span className="text-[10px] font-bold text-rp-text uppercase tracking-widest">Prefs</span>
+                </button>
               </div>
             </div>
 
             {/* Action Row */}
-            <div className="flex items-center gap-4 pt-2">
+            <div className="flex items-center gap-3 pt-2">
               <button
                 onClick={onViewProfile}
-                className="flex-1 flex items-center justify-center gap-2.5 py-3 rounded-2xl bg-rp-iris/20 backdrop-blur-md border border-rp-iris/30 text-white text-[11px] font-black uppercase tracking-[0.2em] hover:bg-rp-iris/30 hover:shadow-[0_0_20px_rgba(196,167,231,0.3)] transition-all active:scale-95 group"
+                className="flex-[1.5] flex items-center justify-center gap-2.5 py-3 rounded-2xl bg-rp-iris/20 backdrop-blur-md border border-rp-iris/30 text-white text-[10px] font-black uppercase tracking-[0.2em] hover:bg-rp-iris/30 hover:shadow-[0_0_20px_rgba(196,167,231,0.3)] transition-all active:scale-95 group"
               >
                 Launch Soul Bio
-                <IconArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+                <IconArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+              </button>
+
+              <button
+                onClick={onPersonalize}
+                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-rp-foam/20 backdrop-blur-md border border-rp-foam/30 text-white text-[10px] font-black uppercase tracking-widest hover:bg-rp-foam/30 transition-all active:scale-95 group"
+              >
+                <IconSparkles size={16} className="text-rp-foam animate-pulse" />
+                <span>Personalize</span>
               </button>
 
               {/* VN Mode Toggle in Expanded View - Matches stats styling */}
               <button
                 onClick={onToggleVisualNovel}
                 className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-rp-base/20 backdrop-blur-md border border-white/10 text-white hover:bg-rp-base/30 transition-all font-bold text-[10px] uppercase tracking-widest shadow-lg"
+                title={isVisualNovelMode ? "Classic" : "V.Novel"}
               >
                 {isVisualNovelMode ? <IconMessage size={16} /> : <IconBook size={16} />}
                 <span>{isVisualNovelMode ? "Classic" : "V.Novel"}</span>
