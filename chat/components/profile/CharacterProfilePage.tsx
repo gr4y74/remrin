@@ -433,7 +433,6 @@ export function CharacterProfilePage({
                         <MomentsGallery
                             initialMoments={moments}
                             personaId={persona.id}
-                            personaName={persona.name}
                         />
                     </div>
                 </div>
