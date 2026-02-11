@@ -91,9 +91,13 @@ export class DeepSeekProvider extends BaseChatProvider {
         const formattedMessages = this.formatMessages(messages, systemPrompt)
 
         const timeoutSignal = AbortSignal.timeout(60000) // 1 minute timeout
-        const finalSignal = options.abortSignal
-            ? AbortSignal.any([options.abortSignal, timeoutSignal])
-            : timeoutSignal
+        let finalSignal = timeoutSignal
+        if (options.abortSignal) {
+            const controller = new AbortController()
+            options.abortSignal.addEventListener('abort', () => controller.abort(options.abortSignal?.reason))
+            timeoutSignal.addEventListener('abort', () => controller.abort(timeoutSignal.reason))
+            finalSignal = controller.signal
+        }
 
         const model = options.model || this.config.defaultModel
         console.log(`📡 [DeepSeek] Sending request using model: ${model} to ${this.config.apiEndpoint} (Size: ${JSON.stringify(formattedMessages).length} chars)`)

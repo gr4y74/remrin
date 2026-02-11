@@ -512,7 +512,7 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
               </button>
 
               <button
-                onClick={onPersonalize}
+                onClick={() => onPersonalize?.()}
                 className="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-rp-foam/20 backdrop-blur-md border border-rp-foam/30 text-white text-[10px] font-black uppercase tracking-widest hover:bg-rp-foam/30 transition-all active:scale-95 group"
               >
                 <IconSparkles size={16} className="text-rp-foam animate-pulse" />

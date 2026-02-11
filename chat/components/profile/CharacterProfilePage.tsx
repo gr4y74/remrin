@@ -431,7 +431,7 @@ export function CharacterProfilePage({
                 <div className="relative z-10 px-4 pb-12 lg:px-8">
                     <div className="mx-auto max-w-6xl">
                         <MomentsGallery
-                            moments={moments}
+                            initialMoments={moments}
                             personaId={persona.id}
                             personaName={persona.name}
                         />
