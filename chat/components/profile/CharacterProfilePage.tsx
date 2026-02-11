@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { FollowButton } from "./FollowButton"
 import { MomentsGallery, MomentData } from "@/components/moments"
-import { MessageCircle, ArrowLeft, Loader2, ImageIcon, Users } from "lucide-react"
+import { MessageCircle, ArrowLeft, Loader2, ImageIcon, Users, ThumbsUp, ThumbsDown, Eye, Star, X, User, AlertTriangle } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { cn } from "@/lib/utils"
 import { WelcomeAudioPlayer } from "@/components/audio/WelcomeAudioPlayer"
@@ -78,6 +78,9 @@ export function CharacterProfilePage({
     const [isStartingChat, setIsStartingChat] = useState(false)
     const [isFollowing, setIsFollowing] = useState(initialIsFollowing)
     const [followerCount, setFollowerCount] = useState(initialStats.followersCount)
+    const [upvotes, setUpvotes] = useState(7) // Mock data - replace with real data
+    const [hasUpvoted, setHasUpvoted] = useState(false)
+    const [hasDownvoted, setHasDownvoted] = useState(false)
 
     const handleStartChat = async () => {
         setIsStartingChat(true)
@@ -113,234 +116,328 @@ export function CharacterProfilePage({
         }
     }
 
+    const handleUpvote = () => {
+        if (hasUpvoted) {
+            setUpvotes(prev => prev - 1)
+            setHasUpvoted(false)
+        } else {
+            if (hasDownvoted) {
+                setUpvotes(prev => prev + 2)
+                setHasDownvoted(false)
+            } else {
+                setUpvotes(prev => prev + 1)
+            }
+            setHasUpvoted(true)
+        }
+    }
+
+    const handleDownvote = () => {
+        if (hasDownvoted) {
+            setUpvotes(prev => prev + 1)
+            setHasDownvoted(false)
+        } else {
+            if (hasUpvoted) {
+                setUpvotes(prev => prev - 2)
+                setHasUpvoted(false)
+            } else {
+                setUpvotes(prev => prev - 1)
+            }
+            setHasDownvoted(true)
+        }
+    }
+
+    // Split tags into personality and character tags
+    const personalityTags = ["playful", "supportive", "flirty", "intimate", "teasing"]
+    const characterTags = persona.tags.filter(tag => !personalityTags.includes(tag.toLowerCase()))
+
     return (
-        <div className="bg-rp-base relative min-h-screen">
-            {/* Back Button - Compact on mobile */}
-            <div className="animate-fade-in absolute left-3 top-3 z-20 md:left-8 md:top-8">
-                <button
-                    onClick={() => router.back()}
-                    className="text-rp-subtle hover:text-rp-text inline-flex items-center gap-1.5 md:gap-2 rounded-full bg-black/50 px-3 py-1.5 md:px-4 md:py-2 backdrop-blur-md transition-all duration-300 hover:bg-black/60 active:scale-95"
-                >
-                    <ArrowLeft className="size-4 md:size-5" />
-                    <span className="text-sm md:text-base">Back</span>
-                </button>
-            </div>
-
-            {/* Hero Image Section - Full width, taller on mobile */}
-            <div className="relative h-[60vh] min-h-[350px] max-h-[500px] md:h-[50vh] md:min-h-[400px] md:max-h-[600px] w-full overflow-hidden">
+        <div className="relative min-h-screen overflow-hidden">
+            {/* Blurred Background */}
+            <div className="fixed inset-0 z-0">
                 {persona.videoUrl ? (
-                    <>
-                        <video
-                            src={persona.videoUrl}
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                            className="absolute inset-0 h-full w-full object-cover object-top md:object-center"
-                        />
-                        {/* Gradient Overlay - Stronger on mobile for text readability */}
-                        <div className="absolute inset-0 bg-gradient-to-b from-rp-base/40 via-rp-base/20 to-rp-base md:from-rp-base/60 md:via-rp-base/40" />
-                    </>
+                    <video
+                        src={persona.videoUrl}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="absolute inset-0 h-full w-full object-cover blur-3xl scale-110"
+                    />
                 ) : persona.imageUrl ? (
-                    <>
-                        <Image
-                            src={persona.imageUrl}
-                            alt={persona.name}
-                            fill
-                            className="object-cover object-top md:object-center"
-                            priority
-                            sizes="100vw"
-                        />
-                        {/* Gradient Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-b from-rp-base/40 via-rp-base/20 to-rp-base md:from-rp-base/60 md:via-rp-base/40" />
-                    </>
+                    <Image
+                        src={persona.imageUrl}
+                        alt={persona.name}
+                        fill
+                        className="object-cover blur-3xl scale-110"
+                        priority
+                        sizes="100vw"
+                    />
                 ) : (
-                    <div className="from-rp-iris/50 to-rp-foam/50 flex size-full items-center justify-center bg-gradient-to-br">
-                        <span className="text-rp-text/50 text-7xl md:text-9xl font-bold">
-                            {persona.name.slice(0, 2).toUpperCase()}
-                        </span>
-                    </div>
+                    <div className="from-rp-iris/50 to-rp-foam/50 flex size-full items-center justify-center bg-gradient-to-br blur-3xl" />
                 )}
 
-                {/* Welcome Audio Player */}
-                {persona.welcomeAudioUrl && (
-                    <WelcomeAudioPlayer
-                        audioUrl={persona.welcomeAudioUrl}
-                        autoPlay
-                        className="absolute bottom-3 right-3 md:bottom-4 md:right-4 z-20"
-                    />
-                )}
+                {/* Dark overlay */}
+                <div className="absolute inset-0 bg-black/60" />
             </div>
 
-            {/* Main Content - Centered Single Column */}
-            <main className="relative -mt-20 md:-mt-16 pb-24">
-                <div className="mx-auto max-w-3xl px-3 sm:px-4 md:px-8">
-                    {/* Info Card */}
-                    <div className="animate-fade-in-up rounded-2xl md:rounded-3xl border border-white/10 bg-rp-base/95 p-4 sm:p-6 shadow-2xl backdrop-blur-xl md:p-8">
-                        {/* Name and Category */}
-                        <div className="mb-3 md:mb-4 text-center">
-                            <h1 className="font-tiempos-headline text-rp-text mb-2 text-2xl sm:text-3xl font-bold tracking-tight md:text-4xl">
-                                {persona.name}
-                            </h1>
-                            {persona.category && (
-                                <Badge
-                                    variant="secondary"
-                                    className="bg-rp-overlay text-rp-text hover:bg-rp-overlay/80 rounded-full px-3 py-0.5 md:px-4 md:py-1 text-xs md:text-sm font-medium"
-                                >
-                                    {persona.category}
-                                </Badge>
+
+
+            {/* SINGLE MODAL CONTAINER with TWO-COLUMN LAYOUT */}
+            <div className="relative z-10 flex min-h-screen items-center justify-center gap-4 p-4 lg:p-8">
+
+
+                {/* Modal with exact specifications: 900px x 600px */}
+                <div
+                    className="bg-rp-base/95 flex overflow-hidden rounded-xl border border-white/10 shadow-2xl backdrop-blur-xl"
+                    style={{
+                        width: '900px',
+                        maxWidth: '90vw',
+                        height: '600px',
+                        maxHeight: '85vh'
+                    }}
+                >
+                    {/* LEFT COLUMN: Hero Image (40% width on desktop, hidden on mobile) */}
+                    <div className="relative hidden lg:block lg:w-[40%]">
+                        {/* Category Badge - Top Left of Image */}
+                        {persona.category && (
+                            <Badge className="bg-rp-iris/90 text-white border-0 absolute left-4 top-4 z-10 rounded-full px-4 py-1.5 text-sm font-medium backdrop-blur-sm">
+                                {persona.category}
+                            </Badge>
+                        )}
+
+                        {/* Back Button - Bottom Left of Image */}
+                        <button
+                            onClick={() => router.back()}
+                            className="bg-black/50 hover:bg-black/70 text-white absolute bottom-4 left-4 z-10 flex items-center gap-2 rounded-full px-4 py-2 backdrop-blur-md transition-all duration-300 active:scale-95"
+                            aria-label="Go back"
+                        >
+                            <ArrowLeft className="size-4" />
+                            <span className="text-sm font-medium">Back</span>
+                        </button>
+
+                        {persona.videoUrl ? (
+                            <video
+                                src={persona.videoUrl}
+                                autoPlay
+                                loop
+                                muted
+                                playsInline
+                                className="absolute inset-0 h-full w-full object-cover"
+                            />
+                        ) : persona.imageUrl ? (
+                            <Image
+                                src={persona.imageUrl}
+                                alt={persona.name}
+                                fill
+                                className="object-cover"
+                                priority
+                                sizes="600px"
+                            />
+                        ) : (
+                            <div className="from-rp-iris/50 to-rp-foam/50 flex size-full items-center justify-center bg-gradient-to-br">
+                                <span className="text-rp-text/50 text-9xl font-bold">
+                                    {persona.name.slice(0, 2).toUpperCase()}
+                                </span>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* RIGHT COLUMN: Character Information (60% width on desktop, 100% on mobile) */}
+                    <div className="relative flex w-full flex-col overflow-y-auto p-8 lg:w-[60%]">
+                        {/* Category Badge - Mobile Only */}
+                        {persona.category && (
+                            <Badge className="bg-rp-iris/20 text-rp-iris border-rp-iris/30 mb-6 rounded-full border px-4 py-1.5 text-sm font-medium lg:hidden">
+                                {persona.category}
+                            </Badge>
+                        )}
+
+                        {/* Close Button - Top Right */}
+                        <button
+                            onClick={() => router.back()}
+                            className="text-rp-subtle hover:text-rp-text absolute right-4 top-4 rounded-full p-2 transition-colors hover:bg-white/5"
+                            aria-label="Close profile"
+                        >
+                            <X className="size-5" />
+                        </button>
+
+                        {/* Character Name & Creator */}
+                        <div className="mb-6 space-y-3">
+                            <div className="flex items-center gap-4">
+                                <h1 className="font-tiempos-headline text-rp-text text-4xl font-bold tracking-tight lg:text-5xl">
+                                    {persona.name}
+                                </h1>
+                                {persona.welcomeAudioUrl && (
+                                    <WelcomeAudioPlayer
+                                        audioUrl={persona.welcomeAudioUrl}
+                                        autoPlay
+                                        className="mb-1"
+                                    />
+                                )}
+                            </div>
+                            {persona.creatorName && (
+                                <div className="text-rp-subtle flex items-center gap-2 text-sm">
+                                    <User className="size-4" />
+                                    <span>Created by {persona.creatorName}</span>
+                                </div>
                             )}
                         </div>
 
-                        {/* Description */}
+                        {/* Stats Grid */}
+                        <div className="mb-6">
+                            <h3 className="text-rp-text mb-3 text-xs font-semibold uppercase tracking-wide">Character Stats</h3>
+                            <div className="grid grid-cols-3 gap-3">
+                                <div className="bg-rp-surface/50 rounded-xl border border-white/5 p-4">
+                                    <div className="mb-2 flex items-center gap-2">
+                                        <ThumbsUp className="text-rp-foam size-4" />
+                                        <span className="text-rp-subtle text-xs font-medium uppercase tracking-wide">Upvotes</span>
+                                    </div>
+                                    <div className="text-rp-foam text-2xl font-bold">{upvotes}</div>
+                                </div>
+                                <div className="bg-rp-surface/50 rounded-xl border border-white/5 p-4">
+                                    <div className="mb-2 flex items-center gap-2">
+                                        <Eye className="text-rp-iris size-4" />
+                                        <span className="text-rp-subtle text-xs font-medium uppercase tracking-wide">Used</span>
+                                    </div>
+                                    <div className="text-rp-iris text-2xl font-bold">{formatCount(initialStats.totalChats)}</div>
+                                </div>
+                                <div className="bg-rp-surface/50 rounded-xl border border-white/5 p-4">
+                                    <div className="mb-2 flex items-center gap-2">
+                                        <Star className="text-rp-foam size-4" />
+                                        <span className="text-rp-subtle text-xs font-medium uppercase tracking-wide">Rating</span>
+                                    </div>
+                                    <div className="text-rp-foam text-2xl font-bold">100%</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* About Section */}
                         {persona.description && (
-                            <p className="text-rp-subtle mb-4 md:mb-6 text-center text-sm sm:text-base leading-relaxed md:text-lg">
-                                {persona.description}
-                            </p>
+                            <div className="mb-6">
+                                <h3 className="text-rp-text mb-2 text-xs font-semibold uppercase tracking-wide">About</h3>
+                                <p className="text-rp-subtle text-sm leading-relaxed">
+                                    {persona.description}
+                                </p>
+                            </div>
                         )}
 
-                        {/* Tags - Horizontal scroll on mobile */}
-                        {persona.tags.length > 0 && (
-                            <div className="mb-4 md:mb-6 -mx-4 px-4 md:mx-0 md:px-0">
-                                <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide md:flex-wrap md:justify-center md:overflow-visible snap-x snap-mandatory">
-                                    {persona.tags.slice(0, 8).map((tag, index) => (
+                        {/* Personality Tags */}
+                        {personalityTags.length > 0 && (
+                            <div className="mb-6">
+                                <h3 className="text-rp-text mb-3 text-xs font-semibold uppercase tracking-wide">Personality</h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {personalityTags.map((tag, index) => (
                                         <Badge
                                             key={tag}
                                             className={cn(
-                                                "rounded-full border px-3 py-1 text-xs font-medium whitespace-nowrap shrink-0 snap-start",
+                                                "rounded-full border px-3 py-1.5 text-sm font-medium capitalize",
                                                 getTagColor(index)
                                             )}
                                         >
                                             {tag}
                                         </Badge>
                                     ))}
-                                    {persona.tags.length > 8 && (
-                                        <Badge className="border-rp-muted bg-rp-surface/50 text-rp-subtle rounded-full border px-3 py-1 text-xs font-medium whitespace-nowrap shrink-0">
-                                            +{persona.tags.length - 8}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Character Tags */}
+                        {characterTags.length > 0 && (
+                            <div className="mb-6">
+                                <h3 className="text-rp-text mb-3 text-xs font-semibold uppercase tracking-wide">Tags</h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {characterTags.map((tag, index) => (
+                                        <Badge
+                                            key={tag}
+                                            className="bg-rp-iris/10 text-rp-iris border-rp-iris/20 rounded-full border px-3 py-1.5 text-sm font-medium"
+                                        >
+                                            #{tag}
                                         </Badge>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+
+
+                        {/* Action Buttons */}
+                        <div className="mt-auto space-y-3">
+                            {/* Upvote/Downvote Row */}
+                            <div className="grid grid-cols-2 gap-3">
+                                <Button
+                                    variant="outline"
+                                    size="lg"
+                                    onClick={handleUpvote}
+                                    className={cn(
+                                        "border-rp-muted hover:bg-rp-surface/50 rounded-xl py-5 text-sm font-semibold transition-all",
+                                        hasUpvoted && "bg-rp-foam/20 border-rp-foam text-rp-foam"
                                     )}
-                                </div>
+                                >
+                                    <ThumbsUp className="mr-2 size-4" />
+                                    Upvote ({upvotes})
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    size="lg"
+                                    onClick={handleDownvote}
+                                    className={cn(
+                                        "border-rp-muted hover:bg-rp-surface/50 rounded-xl py-5 text-sm font-semibold transition-all",
+                                        hasDownvoted && "bg-rp-rose/20 border-rp-rose text-rp-rose"
+                                    )}
+                                >
+                                    <ThumbsDown className="mr-2 size-4" />
+                                    Downvote (0)
+                                </Button>
                             </div>
-                        )}
 
-                        {/* Stats Row - Compact on mobile */}
-                        <div className="text-rp-subtle mb-4 md:mb-6 flex items-center justify-center gap-4 md:gap-6 border-y border-white/5 py-3 md:py-4">
-                            <div className="flex items-center gap-1.5 md:gap-2">
-                                <MessageCircle className="text-rp-iris size-4 md:size-5" />
-                                <span className="text-rp-text font-semibold text-sm md:text-base">{formatCount(initialStats.totalChats)}</span>
-                                <span className="text-xs md:text-sm">chats</span>
-                            </div>
-                            <div className="bg-rp-overlay h-4 w-px" />
-                            <div className="flex items-center gap-1.5 md:gap-2">
-                                <Users className="text-rp-foam size-4 md:size-5" />
-                                <span className="text-rp-text font-semibold text-sm md:text-base">{formatCount(followerCount)}</span>
-                                <span className="text-xs md:text-sm">followers</span>
+                            {/* Warning Icon + Primary Action Button */}
+                            <div className="flex items-center gap-3">
+                                <button
+                                    className="text-rp-rose hover:text-rp-rose/80 flex-shrink-0 rounded-xl border border-rp-rose/30 bg-rp-rose/10 p-3 transition-colors"
+                                    aria-label="Report content"
+                                >
+                                    <AlertTriangle className="size-5" />
+                                </button>
+                                <Button
+                                    size="lg"
+                                    onClick={handleStartChat}
+                                    disabled={isStartingChat}
+                                    className={cn(
+                                        "from-rp-iris to-rp-foam group w-full rounded-xl bg-gradient-to-r py-5 text-base font-bold text-white",
+                                        "shadow-rp-iris/25 shadow-xl transition-all duration-300",
+                                        "hover:from-rp-iris/80 hover:to-rp-foam/80 hover:shadow-rp-iris/40 hover:scale-[1.02]",
+                                        "active:scale-95 disabled:opacity-70"
+                                    )}
+                                >
+                                    {isStartingChat ? (
+                                        <>
+                                            <Loader2 className="mr-2 size-5 animate-spin" />
+                                            Starting...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <MessageCircle className="mr-2 size-5 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" />
+                                            Use Companion
+                                        </>
+                                    )}
+                                </Button>
                             </div>
                         </div>
-
-                        {/* CTA Buttons - Full width stacked on mobile, prominent */}
-                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-center">
-                            <Button
-                                size="lg"
-                                onClick={handleStartChat}
-                                disabled={isStartingChat}
-                                className={cn(
-                                    "from-rp-iris to-rp-foam text-rp-base group w-full sm:flex-1 rounded-xl md:rounded-2xl bg-gradient-to-r py-4 md:py-6 text-base md:text-lg font-bold",
-                                    "shadow-rp-iris/25 shadow-xl md:shadow-2xl transition-all duration-300",
-                                    "hover:from-rp-iris/80 hover:to-rp-foam/80 hover:shadow-rp-iris/40 hover:scale-[1.02]",
-                                    "active:scale-95 disabled:opacity-70",
-                                    "min-h-[52px] md:min-h-[60px]"
-                                )}
-                            >
-                                {isStartingChat ? (
-                                    <>
-                                        <Loader2 className="mr-2 md:mr-3 size-5 md:size-6 animate-spin" />
-                                        Starting Chat...
-                                    </>
-                                ) : (
-                                    <>
-                                        <MessageCircle className="mr-2 md:mr-3 size-5 md:size-6 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" />
-                                        Start Chat
-                                    </>
-                                )}
-                            </Button>
-
-                            <FollowButton
-                                personaId={persona.id}
-                                initialIsFollowing={isFollowing}
-                                initialFollowerCount={followerCount}
-                                onFollowChange={(newVal) => {
-                                    setIsFollowing(newVal)
-                                    setFollowerCount(prev => newVal ? prev + 1 : Math.max(0, prev - 1))
-                                }}
-                                className="w-full sm:w-auto sm:flex-initial rounded-xl md:rounded-2xl py-4 md:py-6 text-base md:text-lg sm:min-w-[140px] min-h-[52px] md:min-h-[60px]"
-                            />
-                        </div>
-
-                        {/* Creator Attribution */}
-                        {persona.creatorName && (
-                            <p className="text-rp-muted mt-4 text-center text-sm">
-                                Created by <span className="text-rp-subtle">{persona.creatorName}</span>
-                            </p>
-                        )}
                     </div>
-
-                    {/* Intro Message Preview */}
-                    {persona.introMessage && (
-                        <div
-                            className="animate-fade-in-up mt-8 rounded-2xl border border-white/5 bg-rp-base/60 p-6 backdrop-blur-xl transition-all duration-300 hover:border-white/10"
-                            style={{ animationDelay: '100ms', animationFillMode: 'both' }}
-                        >
-                            <h2 className="text-rp-muted mb-3 text-sm font-semibold uppercase tracking-wider">
-                                First Message
-                            </h2>
-                            <p className="text-rp-text text-base italic leading-relaxed">
-                                &ldquo;{persona.introMessage}&rdquo;
-                            </p>
-                        </div>
-                    )}
-
-                    {/* Moments Section */}
-                    {(hasMoments || moments.length > 0) && (
-                        <div
-                            className="animate-fade-in-up mt-8 space-y-4"
-                            style={{ animationDelay: '200ms', animationFillMode: 'both' }}
-                        >
-                            <div className="flex items-center justify-between">
-                                <h2 className="text-rp-text flex items-center gap-2 text-lg font-semibold">
-                                    <ImageIcon className="text-rp-iris size-5" />
-                                    Moments
-                                </h2>
-                                {moments.length > 0 && (
-                                    <Link
-                                        href={`/moments?persona=${persona.id}`}
-                                        className="text-rp-iris hover:text-rp-rose text-sm transition-colors"
-                                    >
-                                        View All →
-                                    </Link>
-                                )}
-                            </div>
-                            {moments.length > 0 ? (
-                                <MomentsGallery
-                                    initialMoments={moments}
-                                    personaId={persona.id}
-                                    initialHasMore={false}
-                                    showViewAllLink={true}
-                                    viewAllHref={`/moments?persona=${persona.id}`}
-                                />
-                            ) : (
-                                <div className="rounded-2xl border border-white/5 bg-rp-base/60 p-8 text-center backdrop-blur-xl">
-                                    <ImageIcon className="text-rp-muted mx-auto mb-3 size-12" />
-                                    <p className="text-rp-subtle">No moments yet</p>
-                                    <p className="text-rp-muted mt-1 text-sm">
-                                        Check back later for gallery content
-                                    </p>
-                                </div>
-                            )}
-                        </div>
-                    )}
                 </div>
-            </main>
+            </div>
+
+            {/* Moments Gallery - Below the modal (if applicable) */}
+            {hasMoments && moments.length > 0 && (
+                <div className="relative z-10 px-4 pb-12 lg:px-8">
+                    <div className="mx-auto max-w-6xl">
+                        <MomentsGallery
+                            moments={moments}
+                            personaId={persona.id}
+                            personaName={persona.name}
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
