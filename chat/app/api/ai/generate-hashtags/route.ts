@@ -1,13 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-})
-
 export async function POST(req: NextRequest) {
     try {
         const { name, description, system_prompt, category } = await req.json()
+
+        const apiKey = process.env.OPENAI_API_KEY || process.env.DEEPSEEK_API_KEY
+        const baseURL = process.env.OPENAI_API_KEY ? undefined : 'https://api.deepseek.com'
+        const model = process.env.OPENAI_API_KEY ? 'gpt-4o-mini' : 'deepseek-chat'
+
+        if (!apiKey) {
+            return NextResponse.json(
+                { error: 'AI provider not configured (missing keys)' },
+                { status: 503 }
+            )
+        }
+
+        const openai = new OpenAI({
+            apiKey,
+            baseURL
+        })
 
         if (!name || !description) {
             return NextResponse.json(
@@ -42,7 +54,7 @@ Rules:
 Hashtags:`.trim()
 
         const response = await openai.chat.completions.create({
-            model: 'gpt-4o-mini',
+            model: model as any,
             messages: [
                 {
                     role: 'system',
