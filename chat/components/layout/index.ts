@@ -14,4 +14,6 @@ export { SidebarUserSection } from "./SidebarUserSection"
 export { SidebarRecentChats } from "./SidebarRecentChats"
 export { SidebarCreateButton } from "./SidebarCreateButton"
 export { SidebarThemeToggle } from "./SidebarThemeToggle"
+export { FloatingPillNav } from "./FloatingPillNav"
+
 
