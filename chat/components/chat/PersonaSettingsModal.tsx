@@ -9,9 +9,23 @@ import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
-import { IconUser, IconHeart, IconWorld, IconSettings, IconMicrophone, IconPlus, IconTrash, IconLoader2, IconSparkles, IconMusic, IconUpload, IconX } from '@tabler/icons-react'
+import {
+    IconUser,
+    IconHeart,
+    IconWorld,
+    IconSettings,
+    IconMicrophone,
+    IconPlus,
+    IconTrash,
+    IconLoader2,
+    IconSparkles,
+    IconMusic,
+    IconUpload,
+    IconX,
+    IconPlayerPlay
+} from '@tabler/icons-react'
 import { toast } from 'sonner'
-import { BackgroundMusicPlayer } from '@/components/audio/BackgroundMusicPlayer'
+import { UnifiedMediaPlayer, AudioTrack } from '@/components/audio/UnifiedMediaPlayer'
 
 interface PersonaSettingsModalProps {
     isOpen: boolean
@@ -112,6 +126,7 @@ export function PersonaSettingsModal({
     const [saving, setSaving] = useState(false)
     const [hasCustomizations, setHasCustomizations] = useState(false)
     const [backgroundMusicUrl, setBackgroundMusicUrl] = useState<string | null>(null)
+    const [audioTracks, setAudioTracks] = useState<AudioTrack[]>([])
     const [uploading, setUploading] = useState(false)
     const [activeTab, setActiveTab] = useState(defaultTab)
 
@@ -141,6 +156,7 @@ export function PersonaSettingsModal({
                 }))
                 setHasCustomizations(data.has_customizations)
                 setBackgroundMusicUrl(data.background_music_url || null)
+                setAudioTracks(data.audio_tracks || [])
             }
         } catch (err) {
             console.error("Failed to fetch settings:", err)
@@ -568,88 +584,110 @@ export function PersonaSettingsModal({
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <h4 className="text-sm font-semibold text-rp-text">Background Music</h4>
-                                        <p className="text-xs text-rp-subtle mt-1">Looped music that plays during your conversation.</p>
+                                        <h4 className="text-sm font-semibold text-rp-text uppercase tracking-widest">Media Manager</h4>
+                                        <p className="text-[11px] text-rp-subtle mt-1.5 leading-relaxed">Manage background music and audio greetings for this character.</p>
                                     </div>
-                                    {backgroundMusicUrl && (
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={async () => {
-                                                if (confirm('Remove background music?')) {
-                                                    try {
-                                                        const res = await fetch(`/api/personas/${personaId}/music`, { method: 'DELETE' })
-                                                        if (res.ok) {
-                                                            setBackgroundMusicUrl(null)
-                                                            toast.success('Music removed')
-                                                        }
-                                                    } catch (err) {
-                                                        toast.error('Failed to remove music')
-                                                    }
-                                                }
-                                            }}
-                                            className="text-rp-love hover:bg-rp-love/10"
-                                        >
-                                            <IconTrash className="h-4 w-4 mr-1" /> Remove
-                                        </Button>
-                                    )}
-                                </div>
-
-                                {backgroundMusicUrl ? (
-                                    <div className="bg-rp-base/50 rounded-xl p-6 border border-rp-muted/20 flex flex-col items-center gap-4">
-                                        <BackgroundMusicPlayer
-                                            musicUrl={backgroundMusicUrl}
-                                            className="scale-110"
-                                        />
-                                        <p className="text-[10px] text-rp-muted font-mono uppercase tracking-widest">Active Track</p>
-                                    </div>
-                                ) : (
-                                    <div className="rounded-xl border-2 border-dashed border-rp-muted/20 bg-rp-base/30 p-10 text-center flex flex-col items-center">
-                                        <IconMusic className="h-10 w-10 text-rp-muted opacity-30 mb-4" />
-                                        <p className="text-sm text-rp-subtle mb-6">No background music set for this character.</p>
-
+                                    <div className="flex gap-2">
                                         <input
                                             type="file"
                                             accept="audio/*"
                                             onChange={async (e) => {
                                                 const file = e.target.files?.[0]
                                                 if (!file) return
-
                                                 setUploading(true)
-                                                const toastId = toast.loading("Uploading music...")
+                                                const toastId = toast.loading("Adding track...")
+                                                const formData = new FormData()
+                                                formData.append('file', file)
+                                                formData.append('personaId', personaId)
+                                                formData.append('type', 'music')
 
                                                 try {
-                                                    const formData = new FormData()
-                                                    formData.append('personaId', personaId)
-                                                    formData.append('file', file)
-                                                    formData.append('type', 'music')
-
                                                     const res = await fetch('/api/audio/upload', {
                                                         method: 'POST',
                                                         body: formData
                                                     })
-
-                                                    const result = await res.json()
-                                                    if (!res.ok) throw new Error(result.error || "Upload failed")
-
-                                                    setBackgroundMusicUrl(result.audioUrl)
-                                                    toast.success("Music uploaded successfully!", { id: toastId })
-                                                } catch (err: any) {
-                                                    toast.error(err.message || "Upload failed", { id: toastId })
+                                                    const data = await res.json()
+                                                    if (data.success) {
+                                                        setBackgroundMusicUrl(data.audioUrl)
+                                                        fetchSettings()
+                                                        toast.success('Track added to playlist', { id: toastId })
+                                                    } else {
+                                                        toast.error(data.error || 'Upload failed', { id: toastId })
+                                                    }
+                                                } catch (err) {
+                                                    toast.error('Upload error', { id: toastId })
                                                 } finally {
                                                     setUploading(false)
                                                 }
                                             }}
                                             className="hidden"
-                                            id="music-upload"
+                                            id="music-upload-manager"
                                             disabled={uploading}
                                         />
-                                        <label htmlFor="music-upload" className="cursor-pointer inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-rp-iris/20 border border-rp-iris/30 text-white hover:bg-rp-iris/30 transition-all font-bold text-xs uppercase tracking-widest">
-                                            {uploading ? <IconLoader2 className="h-4 w-4 animate-spin" /> : <IconUpload className="h-4 w-4" />}
-                                            Upload Audio Track
+                                        <label htmlFor="music-upload-manager" className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-rp-iris/20 border border-rp-iris/30 text-white hover:bg-rp-iris/30 transition-all font-bold text-[10px] uppercase tracking-widest">
+                                            {uploading ? <IconLoader2 className="h-3.5 w-3.5 animate-spin" /> : <IconPlus className="h-3.5 w-3.5" />}
+                                            Add Track
                                         </label>
                                     </div>
-                                )}
+                                </div>
+
+                                {/* Track List */}
+                                <div className="space-y-3 max-h-[320px] overflow-y-auto pr-2 custom-scrollbar">
+                                    {audioTracks.length === 0 && !uploading && (
+                                        <div className="rounded-2xl border-2 border-dashed border-rp-muted/20 bg-rp-base/30 p-12 text-center flex flex-col items-center">
+                                            <IconMusic className="h-12 w-12 text-rp-muted opacity-20 mb-4" />
+                                            <p className="text-sm text-rp-subtle font-medium">No audio tracks found.</p>
+                                        </div>
+                                    )}
+
+                                    {audioTracks.map((track, idx) => (
+                                        <div key={track.id || idx} className="flex items-center justify-between p-3.5 bg-rp-base/40 border border-rp-muted/10 rounded-2xl group hover:border-rp-iris/40 transition-all duration-300">
+                                            <div className="flex items-center gap-4 overflow-hidden">
+                                                <div className="size-11 rounded-full bg-rp-overlay/50 flex items-center justify-center shrink-0">
+                                                    {track.type === 'welcome' ? <IconMicrophone className="size-5 text-rp-pine" /> : <IconMusic className="size-5 text-rp-gold" />}
+                                                </div>
+                                                <div className="flex flex-col overflow-hidden">
+                                                    <p className="text-sm font-bold text-rp-text leading-tight truncate">{track.name}</p>
+                                                    <div className="flex items-center gap-2 mt-1">
+                                                        <span className="text-[9px] bg-rp-overlay/80 text-rp-subtle px-1.5 py-0.5 rounded uppercase font-bold tracking-tighter">{track.type}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-2.5">
+                                                <UnifiedMediaPlayer
+                                                    tracks={[track]}
+                                                    compact
+                                                    className="bg-rp-overlay/50 backdrop-blur-none border-white/5 p-1 group-hover:bg-rp-overlay/80"
+                                                />
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="size-9 rounded-xl text-rp-love hover:bg-rp-love/20 opacity-0 group-hover:opacity-100 transition-all"
+                                                    onClick={async () => {
+                                                        if (confirm('Delete this track?')) {
+                                                            const toastId = toast.loading("Removing track...")
+                                                            try {
+                                                                const res = await fetch(`/api/personas/${personaId}/audio`, {
+                                                                    method: 'DELETE',
+                                                                    headers: { 'Content-Type': 'application/json' },
+                                                                    body: JSON.stringify({ trackId: track.id })
+                                                                })
+                                                                if (res.ok) {
+                                                                    fetchSettings()
+                                                                    toast.success('Track removed', { id: toastId })
+                                                                }
+                                                            } catch (err) {
+                                                                toast.error('Network error', { id: toastId })
+                                                            }
+                                                        }
+                                                    }}
+                                                >
+                                                    <IconTrash className="size-4" />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
 
                                 <div className="bg-rp-overlay/20 rounded-lg p-4 border border-rp-muted/10">
                                     <h5 className="text-[10px] font-bold text-rp-iris uppercase tracking-widest mb-2">Music Guidelines</h5>

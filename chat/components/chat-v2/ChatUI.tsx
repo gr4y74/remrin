@@ -39,6 +39,7 @@ interface ChatUIV2Props {
     showSoulGallery?: boolean
     welcomeAudioUrl?: string | null
     backgroundMusicUrl?: string | null
+    audioTracks?: any[]
 }
 
 
@@ -52,6 +53,7 @@ function ChatUIInner({
     personaName,
     welcomeAudioUrl,
     backgroundMusicUrl,
+    audioTracks,
     showSoulGallery = false,
     onSoulSelect,
     onMemorySearchTrigger,
@@ -65,6 +67,7 @@ function ChatUIInner({
     personaName?: string
     welcomeAudioUrl?: string | null
     backgroundMusicUrl?: string | null
+    audioTracks?: any[]
     showSoulGallery?: boolean
     onSoulSelect?: (personaId: string, personaData: any) => void
     onMemorySearchTrigger?: (query: string) => void
@@ -350,6 +353,7 @@ function ChatUIInner({
                         setActiveBackgroundUrl={setActiveBackgroundUrl}
                         welcomeAudioUrl={welcomeAudioUrl}
                         backgroundMusicUrl={backgroundMusicUrl}
+                        audioTracks={audioTracks}
                         onPersonalize={(tab?: string) => {
                             if (tab) setPersonalizeTab(tab)
                             setShowPersonalizeModal(true)
@@ -476,6 +480,7 @@ export function ChatUIV2({
     personaIntroMessage: initialPersonaIntroMessage,
     welcomeAudioUrl: initialWelcomeAudioUrl,
     backgroundMusicUrl: initialBackgroundMusicUrl,
+    audioTracks: initialAudioTracks,
     userTier = 'free',
     showSoulGallery = false
 }: ChatUIV2Props) {
@@ -488,6 +493,7 @@ export function ChatUIV2({
         introMessage?: string
         welcomeAudioUrl?: string | null
         backgroundMusicUrl?: string | null
+        audioTracks?: any[]
     } | null>(
         initialPersonaId
             ? {
@@ -498,7 +504,8 @@ export function ChatUIV2({
                 systemPrompt: initialPersonaSystemPrompt,
                 introMessage: initialPersonaIntroMessage,
                 welcomeAudioUrl: initialWelcomeAudioUrl,
-                backgroundMusicUrl: initialBackgroundMusicUrl
+                backgroundMusicUrl: initialBackgroundMusicUrl,
+                audioTracks: initialAudioTracks
             }
             : null
     )
@@ -527,10 +534,11 @@ export function ChatUIV2({
                 systemPrompt: initialPersonaSystemPrompt,
                 introMessage: initialPersonaIntroMessage,
                 welcomeAudioUrl: initialWelcomeAudioUrl,
-                backgroundMusicUrl: initialBackgroundMusicUrl
+                backgroundMusicUrl: initialBackgroundMusicUrl,
+                audioTracks: initialAudioTracks
             })
         }
-    }, [initialPersonaId, initialPersonaImage, initialPersonaVideoUrl, initialPersonaName, initialPersonaSystemPrompt, initialPersonaIntroMessage, initialWelcomeAudioUrl, initialBackgroundMusicUrl])
+    }, [initialPersonaId, initialPersonaImage, initialPersonaVideoUrl, initialPersonaName, initialPersonaSystemPrompt, initialPersonaIntroMessage, initialWelcomeAudioUrl, initialBackgroundMusicUrl, initialAudioTracks])
 
     const handleSoulSelect = (personaId: string, personaData: any) => {
         setSelectedPersona({
@@ -541,7 +549,8 @@ export function ChatUIV2({
             systemPrompt: personaData.system_prompt || personaData.description,
             introMessage: personaData.intro_message,
             welcomeAudioUrl: personaData.welcome_audio_url,
-            backgroundMusicUrl: personaData.background_music_url
+            backgroundMusicUrl: personaData.background_music_url,
+            audioTracks: personaData.audio_tracks
         })
     }
 
@@ -572,6 +581,7 @@ export function ChatUIV2({
                     toggleVisualNovelMode={() => setIsVisualNovelMode(!isVisualNovelMode)}
                     welcomeAudioUrl={selectedPersona?.welcomeAudioUrl || initialWelcomeAudioUrl}
                     backgroundMusicUrl={selectedPersona?.backgroundMusicUrl || initialBackgroundMusicUrl}
+                    audioTracks={selectedPersona?.audioTracks || initialAudioTracks}
                     onStartCall={() => setIsCallActive(true)}
                 />
                 <MemorySearchModal

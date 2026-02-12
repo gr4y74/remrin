@@ -66,8 +66,7 @@ async function getUserTier(userId: string): Promise<UserTier> {
 async function getPersona(personaId: string | undefined): Promise<CarrotPersona | null> {
     if (!personaId) return null
 
-    const cookieStore = await cookies()
-    const supabase = createClient(cookieStore)
+    const supabase = (await import('@/lib/supabase/server')).createAdminClient()
 
     const { data: persona } = await supabase
         .from('personas')
@@ -346,6 +345,51 @@ export async function POST(request: NextRequest) {
                             timestamp: new Date()
                         }, providerInfo.id)
                         console.log(`💾 [Persistence] Saved assistant response`)
+
+                        // --- UNIVERSAL CONSOLE: Fact Saving & Memory Sync ---
+                        try {
+                            const adminSupabase = (await import('@/lib/supabase/server')).createAdminClient()
+
+                            // 1. Check for [SAVE_FACT: type | content]
+                            const saveFactRegex = /\[SAVE_FACT:\s*(\w+)\s*\|\s*(.+?)\]/g
+                            let match
+                            while ((match = saveFactRegex.exec(fullContent)) !== null) {
+                                const [fullMatch, factType, factContent] = match
+                                debugLog(`✨ [Universal Console] Saving Fact: ${factType} | ${factContent}`)
+                                await adminSupabase.from('shared_facts').insert({
+                                    user_id: user.id,
+                                    fact_type: factType.toUpperCase(),
+                                    content: factContent.trim(),
+                                    shared_with_all: true
+                                })
+                            }
+
+                            // 2. Save to memories table for vector sync (Role: Assistant)
+                            await adminSupabase.from('memories').insert({
+                                user_id: user.id,
+                                persona_id: personaId,
+                                role: 'assistant',
+                                content: fullContent.replace(/\[SAVE_FACT:.+?\]/g, '').trim(),
+                                importance: 3,
+                                domain: 'personal'
+                            })
+
+                            // 3. Save to memories table (Role: User) - if not already existing
+                            const lastUserMsg = messages[messages.length - 1]
+                            if (lastUserMsg.role === 'user') {
+                                await adminSupabase.from('memories').insert({
+                                    user_id: user.id,
+                                    persona_id: personaId,
+                                    role: 'user',
+                                    content: lastUserMsg.content,
+                                    importance: 5,
+                                    domain: 'personal'
+                                })
+                            }
+                            debugLog(`🧠 [Universal Console] Synced interaction to memories table`)
+                        } catch (e: any) {
+                            console.error('❌ [Universal Console] Failed to sync memories or facts:', e)
+                        }
                     }
 
                     // --- Carrot Follow-up Logic ---

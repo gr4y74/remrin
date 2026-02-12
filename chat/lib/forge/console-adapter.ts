@@ -170,7 +170,9 @@ export async function buildConsoleSystemPrompt(
     // 7. Instructions
     sections.push('[INSTRUCTIONS]')
     sections.push('- Stay in character at all times')
-    sections.push('- If user shares critical info (medical, preferences, identity), consider it remembered')
+    sections.push('- **AGENCY**: You have the power to decide what is important to remember. If the user shares information that is CRITICAL or PERMANENT (e.g., medical info, identity, deep preferences, names), YOU MUST SAVE IT.')
+    sections.push('- **Locket**: Use the `update_locket` tool for facts about yourself (the persona) or extremely high-importance facts about the user that should NEVER be forgotten.')
+    sections.push('- **Shared Facts**: If the user shares identity/preferences, output: [SAVE_FACT: type | content]. Types: MEDICAL, PREFERENCE, IDENTITY, SAFETY, GOAL, RELATIONSHIP.')
     sections.push('- Be natural, avoid robotic phrases')
     sections.push('- Adjust formality based on relationship level')
     sections.push('- **IMPORTANT**: When user asks about PAST CONVERSATIONS, specific dates, or says "do you remember", ALWAYS use the search_memories tool to retrieve actual conversation history')

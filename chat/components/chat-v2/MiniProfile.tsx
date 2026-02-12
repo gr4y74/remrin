@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useMemo } from 'react'
 import {
   IconChevronDown,
   IconChevronUp,
@@ -30,8 +30,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { uploadChatBackground, getChatBackgroundFromStorage } from "@/db/storage/chat-backgrounds"
 import { toast } from "sonner"
 import { WithTooltip } from "@/components/ui/with-tooltip"
-import { WelcomeAudioPlayer } from "@/components/audio/WelcomeAudioPlayer"
-import { BackgroundMusicPlayer } from "@/components/audio/BackgroundMusicPlayer"
+import { UnifiedMediaPlayer, AudioTrack } from "@/components/audio/UnifiedMediaPlayer"
 
 
 interface MiniProfileProps {
@@ -65,6 +64,7 @@ interface MiniProfileProps {
   setActiveBackgroundUrl?: (url: string) => void
   welcomeAudioUrl?: string | null
   backgroundMusicUrl?: string | null
+  audioTracks?: AudioTrack[]
   // New personalization props
   onPersonalize?: (tab?: string) => void
   isGlobalMuted?: boolean
@@ -98,6 +98,7 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
   setActiveBackgroundUrl,
   welcomeAudioUrl,
   backgroundMusicUrl,
+  audioTracks,
   onPersonalize,
   isGlobalMuted = false,
   onToggleMute,
@@ -109,6 +110,30 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Derived tracks if none provided (for backward compatibility)
+  const tracks = useMemo(() => {
+    if (audioTracks && audioTracks.length > 0) return audioTracks;
+
+    const derived: AudioTrack[] = [];
+    if (welcomeAudioUrl) {
+      derived.push({
+        id: 'welcome',
+        name: `${personaName}'s Greeting`,
+        url: welcomeAudioUrl,
+        type: 'welcome'
+      });
+    }
+    if (backgroundMusicUrl) {
+      derived.push({
+        id: 'ambient',
+        name: `${personaName}'s Atmosphere`,
+        url: backgroundMusicUrl,
+        type: 'music'
+      });
+    }
+    return derived;
+  }, [audioTracks, welcomeAudioUrl, backgroundMusicUrl, personaName]);
 
   const handleBackgroundUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.[0] || !profile || !setActiveBackgroundUrl || !setChatBackgroundEnabled) return
@@ -202,23 +227,11 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
 
         {/* Right Actions Wrapper */}
         <div className="flex items-center gap-2">
-          {/* Welcome Audio Player */}
-          {welcomeAudioUrl && !isExpanded && (
+          {/* Unified Media Player (Collapsed) */}
+          {tracks.length > 0 && !isExpanded && (
             <div className="mr-1">
-              <WelcomeAudioPlayer
-                audioUrl={welcomeAudioUrl}
-                autoPlay={true}
-                className="[&_button]:size-8 [&_button]:bg-transparent [&_button]:border-white/10 [&_button:hover]:bg-white/10 [&_svg]:size-3.5"
-              />
-            </div>
-          )}
-
-          {/* Background Music Player */}
-          {backgroundMusicUrl && !isExpanded && (
-            <div className="mr-1">
-              <BackgroundMusicPlayer
-                musicUrl={backgroundMusicUrl}
-                autoPlay={true}
+              <UnifiedMediaPlayer
+                tracks={tracks}
                 className="[&_button]:size-8 [&_button]:bg-transparent [&_button]:border-white/10 [&_button:hover]:bg-white/10 [&_svg]:size-3.5"
                 compact
               />
@@ -499,6 +512,48 @@ export const MiniProfile: React.FC<MiniProfileProps> = ({
                   <span className="text-[10px] font-bold text-rp-text uppercase tracking-widest">Prefs</span>
                 </button>
               </div>
+
+              {/* Audio Station (Expanded View) */}
+              {tracks.length > 0 && (
+                <div className="bg-rp-base/20 rounded-2xl p-4 border border-white/5 space-y-3">
+                  <div className="flex items-center justify-between mb-1">
+                    <h5 className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] flex items-center gap-2">
+                      <IconMusic size={14} className="text-rp-iris" />
+                      Audio Station
+                    </h5>
+                    <button
+                      onClick={() => onPersonalize?.('music')}
+                      className="text-[9px] font-bold text-rp-iris hover:text-rp-foam transition-colors uppercase tracking-widest"
+                    >
+                      Manage Tracks
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {tracks.map((track) => (
+                      <div
+                        key={track.id}
+                        className="flex items-center justify-between gap-3 p-2.5 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all group"
+                      >
+                        <div className="flex items-center gap-3 overflow-hidden">
+                          <div className="size-8 rounded-full bg-rp-base/40 flex items-center justify-center shrink-0">
+                            {track.type === 'welcome' ? <IconMicrophone size={14} className="text-rp-pine" /> : <IconMusic size={14} className="text-rp-gold" />}
+                          </div>
+                          <div className="flex flex-col overflow-hidden">
+                            <span className="text-[11px] font-bold text-rp-text truncate">{track.name}</span>
+                            <span className="text-[8px] text-rp-muted uppercase tracking-tighter">{track.type}</span>
+                          </div>
+                        </div>
+                        <UnifiedMediaPlayer
+                          tracks={[track]}
+                          compact
+                          className="bg-transparent backdrop-blur-none border-none p-0"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Action Row */}

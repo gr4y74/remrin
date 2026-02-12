@@ -174,11 +174,53 @@ export async function POST(request: NextRequest) {
         const audioUrl = urlData.publicUrl;
 
         // Update persona record with new audio URL
-        const updateData: Record<string, string> = {};
+        const updateData: Record<string, any> = {};
         if (type === 'music') {
             updateData.background_music_url = audioUrl;
+
+            // Also append to audio_tracks if it's a playlist item
+            const { data: currentPersona } = await supabase
+                .from('personas')
+                .select('audio_tracks')
+                .eq('id', personaId)
+                .single();
+
+            const tracks = Array.isArray(currentPersona?.audio_tracks) ? currentPersona.audio_tracks : [];
+            const newTrack = {
+                id: `track_${timestamp}`,
+                name: file.name.split('.')[0] || 'New Track',
+                url: audioUrl,
+                type: 'music'
+            };
+
+            updateData.audio_tracks = [...tracks, newTrack];
         } else {
             updateData.welcome_audio_url = audioUrl;
+
+            // Also update welcome track in audio_tracks
+            const { data: currentPersona } = await supabase
+                .from('personas')
+                .select('audio_tracks')
+                .eq('id', personaId)
+                .single();
+
+            let tracks = Array.isArray(currentPersona?.audio_tracks) ? currentPersona.audio_tracks : [];
+            const welcomeIndex = tracks.findIndex((t: any) => t.type === 'welcome');
+
+            const welcomeTrack = {
+                id: 'welcome',
+                name: 'Greeting',
+                url: audioUrl,
+                type: 'welcome'
+            };
+
+            if (welcomeIndex >= 0) {
+                tracks[welcomeIndex] = welcomeTrack;
+            } else {
+                tracks = [welcomeTrack, ...tracks];
+            }
+
+            updateData.audio_tracks = tracks;
         }
 
         const { error: updateError } = await supabase
