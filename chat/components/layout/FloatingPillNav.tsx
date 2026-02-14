@@ -165,12 +165,12 @@ export function FloatingPillNav({
     return (
         <div
             ref={pillRef}
-            className="fixed top-4 right-4 z-50 flex flex-col items-end"
+            className="fixed top-4 right-4 z-50 flex flex-col items-end pointer-events-none"
         >
             {/* Collapsed Pill */}
             <div
                 className={cn(
-                    "bg-rp-surface/95 backdrop-blur-xl border border-white/10 rounded-full shadow-2xl transition-all duration-300 w-fit max-w-[300px]",
+                    "bg-rp-surface/95 backdrop-blur-xl border border-white/10 rounded-full shadow-2xl transition-all duration-300 w-fit max-w-[300px] pointer-events-auto",
                     isExpanded ? "opacity-0 pointer-events-none" : "opacity-100"
                 )}
             >
@@ -217,7 +217,7 @@ export function FloatingPillNav({
             <div
                 className={cn(
                     "bg-rp-surface/95 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl transition-all duration-300 w-[90vw] max-w-[650px]",
-                    isExpanded ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4 pointer-events-none"
+                    isExpanded ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-4 pointer-events-none"
                 )}
             >
                 <div className="p-5 space-y-4">
