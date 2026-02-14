@@ -47,6 +47,17 @@ export const pronounsSchema = z.enum(['MALE', 'FEMALE'], {
     errorMap: () => ({ message: 'Please select valid pronouns' }),
 });
 
+// Email validation
+export const emailSchema = z
+    .string()
+    .min(1, 'Email is required')
+    .email('Please enter a valid email address');
+
+// Password validation: at least 6 characters
+export const passwordSchema = z
+    .string()
+    .min(6, 'Password must be at least 6 characters');
+
 // Complete profile update schema
 export const profileUpdateSchema = z.object({
     display_name: displayNameSchema.optional(),
@@ -54,6 +65,8 @@ export const profileUpdateSchema = z.object({
     username: usernameSchema.optional(),
     image_url: z.string().url().optional().nullable(),
     image_path: z.string().optional().nullable(),
+    email: emailSchema.optional(),
+    password: passwordSchema.optional(),
 });
 
 // Validation helper functions

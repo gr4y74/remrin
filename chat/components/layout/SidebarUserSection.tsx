@@ -224,6 +224,16 @@ export function SidebarUserSection({ isExpanded, onProfileClick, initialUser }: 
                                     <IconUserCircle size={18} />
                                     <span>View Profile</span>
                                 </Link>
+                                <button
+                                    onClick={() => {
+                                        setShowDropdown(false)
+                                        onProfileClick?.()
+                                    }}
+                                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-rp-text transition-colors hover:bg-rp-overlay"
+                                >
+                                    <IconSettings size={18} />
+                                    <span>Settings</span>
+                                </button>
                                 <div className="my-1 h-px bg-rp-highlight-med" />
                                 <button
                                     onClick={() => {

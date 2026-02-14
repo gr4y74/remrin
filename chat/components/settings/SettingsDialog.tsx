@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { IconUser, IconSettings, IconPalette, IconDeviceFloppy, IconVolume } from "@tabler/icons-react"
+import { IconUser, IconSettings, IconPalette, IconDeviceFloppy, IconVolume, IconMail, IconLock } from "@tabler/icons-react"
 import { RemrinContext } from "@/context/context"
 import { Slider } from "@/components/ui/slider"
 import { chatSounds } from "@/lib/chat/soundManager"
@@ -34,10 +34,22 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
         theme: "dark"
     })
     const [soundSettings, setSoundSettings] = useState({ enabled: true, volume: 0.5 })
+    const [userEmail, setUserEmail] = useState<string | null>(null)
+    const [accountData, setAccountData] = useState({
+        newEmail: "",
+        newPassword: "",
+        confirmPassword: ""
+    })
+    const [isUpdatingAccount, setIsUpdatingAccount] = useState(false)
 
     useEffect(() => {
         if (open) {
             setSoundSettings(chatSounds.getSettings())
+            // Fetch current email
+            const supabase = createClient()
+            supabase.auth.getUser().then(({ data: { user } }) => {
+                if (user?.email) setUserEmail(user.email)
+            })
         }
     }, [open])
 
@@ -75,7 +87,9 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
         setIsLoading(true)
         try {
             const supabase = createClient()
-            const { error } = await supabase
+
+            // 1. Update Profile (profiles table)
+            const { error: profileError } = await supabase
                 .from("profiles")
                 .update({
                     username: formData.username,
@@ -91,7 +105,21 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
                 })
                 .eq("id", profile?.id)
 
-            if (error) throw error
+            if (profileError) throw profileError
+
+            // 2. Also Update User Profile (user_profiles table)
+            const { error: userProfileError } = await supabase
+                .from("user_profiles")
+                .update({
+                    username: formData.username,
+                    display_name: formData.displayName,
+                    bio: formData.bio
+                })
+                .eq("user_id", profile?.user_id)
+
+            if (userProfileError) {
+                console.warn("Minor: Failed to update user_profiles table, but profiles table was updated:", userProfileError)
+            }
 
             toast.success("Profile updated successfully")
             onOpenChange(false)
@@ -100,6 +128,43 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
             toast.error("Failed to update profile")
         } finally {
             setIsLoading(false)
+        }
+    }
+
+    const handleUpdateEmail = async () => {
+        if (!accountData.newEmail) return toast.info("Please enter a new email address.")
+        if (accountData.newEmail === userEmail) return toast.info("New email is the same as the current one.")
+
+        setIsUpdatingAccount(true)
+        try {
+            const supabase = createClient()
+            const { error } = await supabase.auth.updateUser({ email: accountData.newEmail })
+            if (error) throw error
+            toast.success("Verification email sent to " + accountData.newEmail)
+            setAccountData(prev => ({ ...prev, newEmail: "" }))
+        } catch (error: any) {
+            toast.error(error.message || "Failed to update email")
+        } finally {
+            setIsUpdatingAccount(false)
+        }
+    }
+
+    const handleUpdatePassword = async () => {
+        if (!accountData.newPassword) return toast.info("Please enter a new password.")
+        if (accountData.newPassword !== accountData.confirmPassword) return toast.error("Passwords do not match.")
+        if (accountData.newPassword.length < 6) return toast.info("Password must be at least 6 characters.")
+
+        setIsUpdatingAccount(true)
+        try {
+            const supabase = createClient()
+            const { error } = await supabase.auth.updateUser({ password: accountData.newPassword })
+            if (error) throw error
+            toast.success("Password updated successfully")
+            setAccountData(prev => ({ ...prev, newPassword: "", confirmPassword: "" }))
+        } catch (error: any) {
+            toast.error(error.message || "Failed to update password")
+        } finally {
+            setIsUpdatingAccount(false)
         }
     }
 
@@ -196,10 +261,81 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
                                 </div>
                             </TabsContent>
 
-                            <TabsContent value="account" className="mt-0 space-y-6">
-                                <h3 className="text-lg font-medium">Account Settings</h3>
-                                <p className="text-sm text-rp-muted">Manage your account details and preferences.</p>
-                                {/* Placeholder for account settings */}
+                            <TabsContent value="account" className="mt-0 space-y-8 animate-in fade-in slide-in-from-right-2 duration-300">
+                                <div className="space-y-6">
+                                    <div className="space-y-4">
+                                        <div className="flex items-center gap-2 text-rp-text">
+                                            <IconMail size={20} className="text-rp-iris" />
+                                            <h3 className="text-lg font-medium">Email Address</h3>
+                                        </div>
+                                        <div className="rounded-lg border border-rp-highlight-low bg-rp-base/30 p-4 space-y-4">
+                                            <div className="grid gap-1.5">
+                                                <Label className="text-rp-subtle">Current Email</Label>
+                                                <div className="px-3 py-2 text-rp-text bg-rp-overlay/50 rounded-md border border-rp-highlight-med opacity-70">
+                                                    {userEmail || "Loading..."}
+                                                </div>
+                                            </div>
+                                            <div className="grid gap-2">
+                                                <Label htmlFor="newEmail">New Email</Label>
+                                                <div className="flex gap-2">
+                                                    <Input
+                                                        id="newEmail"
+                                                        value={accountData.newEmail}
+                                                        onChange={(e) => setAccountData({ ...accountData, newEmail: e.target.value })}
+                                                        placeholder="Enter new email..."
+                                                        className="h-10"
+                                                    />
+                                                    <Button
+                                                        variant="outline"
+                                                        onClick={handleUpdateEmail}
+                                                        disabled={isUpdatingAccount || !accountData.newEmail}
+                                                    >
+                                                        Update
+                                                    </Button>
+                                                </div>
+                                                <p className="text-[10px] text-rp-muted">Requires verification link sent to new email.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-4 pt-4 border-t border-rp-highlight-low">
+                                        <div className="flex items-center gap-2 text-rp-text">
+                                            <IconLock size={20} className="text-rp-love" />
+                                            <h3 className="text-lg font-medium">Change Password</h3>
+                                        </div>
+                                        <div className="rounded-lg border border-rp-highlight-low bg-rp-base/30 p-4 space-y-4">
+                                            <div className="grid gap-2">
+                                                <Label htmlFor="newPassword">New Password</Label>
+                                                <Input
+                                                    id="newPassword"
+                                                    type="password"
+                                                    value={accountData.newPassword}
+                                                    onChange={(e) => setAccountData({ ...accountData, newPassword: e.target.value })}
+                                                    placeholder="Enter new password..."
+                                                    className="h-10"
+                                                />
+                                            </div>
+                                            <div className="grid gap-2">
+                                                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                                                <Input
+                                                    id="confirmPassword"
+                                                    type="password"
+                                                    value={accountData.confirmPassword}
+                                                    onChange={(e) => setAccountData({ ...accountData, confirmPassword: e.target.value })}
+                                                    placeholder="Confirm new password..."
+                                                    className="h-10"
+                                                />
+                                            </div>
+                                            <Button
+                                                className="w-full bg-rp-love hover:bg-rp-love/80 text-white"
+                                                onClick={handleUpdatePassword}
+                                                disabled={isUpdatingAccount || !accountData.newPassword}
+                                            >
+                                                {isUpdatingAccount ? "Updating..." : "Update Password"}
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </div>
                             </TabsContent>
 
                             <TabsContent value="appearance" className="mt-0 space-y-6">
