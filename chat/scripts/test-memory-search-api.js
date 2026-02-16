@@ -24,7 +24,7 @@ async function testMemorySearch() {
                 credentials: 'include',
                 body: JSON.stringify({
                     query,
-                    personaId: 'rem',
+                    personaId: '5720a26f-a61b-4641-ac19-d3a7b01c8bc8',
                     limit: 5
                 })
             });

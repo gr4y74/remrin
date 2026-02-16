@@ -213,6 +213,7 @@ export interface ChatMessageContent {
         files?: FileAttachment[]
         toolCalls?: ToolCall[] // For assistant messages requesting tools
         toolResult?: any
+        reasoning?: string
     }
 }
 
@@ -278,6 +279,10 @@ export interface ChatRequest {
     preferredProvider?: ProviderId // Only used if tier allows
     enableSearch?: boolean
     files?: FileAttachment[]
+    customName?: string
+    workspaceId?: string
+    llm_model?: string
+    llm_provider?: string
 }
 
 export interface ChatResponse {
@@ -290,6 +295,7 @@ export interface ChatResponse {
 
 export interface ChatChunk {
     content?: string
+    reasoning?: string
     toolCalls?: ToolCall[]
     done?: boolean
 }

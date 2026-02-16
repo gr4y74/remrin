@@ -23,7 +23,8 @@ const DEEPSEEK_KEY = Deno.env.get('DEEPSEEK_API_KEY');
 const HF_TOKEN = Deno.env.get('HUGGINGFACE_TOKEN');
 
 const supabase = createClient(SUPA_URL, SUPA_KEY);
-const EMBEDDING_MODEL_URL = "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2";
+const GEMINI_API_KEY = Deno.env.get('GOOGLE_SEARCH_API_KEY') || Deno.env.get('DEEPSEEK_API_KEY'); // Fallback or dedicated key
+const GEMINI_EMBEDDING_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent";
 
 // ─────────────────────────────────────────────────────────────
 // MOOD STATE TYPES
@@ -244,6 +245,170 @@ ${sections.join('\n')}
 }
 
 // ─────────────────────────────────────────────────────────────
+// USER PROFILE GRAPH (V3 BRAIN LAYER)
+// ─────────────────────────────────────────────────────────────
+async function getUserProfileGraph(userId: string): Promise<string> {
+  const { data: graph } = await supabase
+    .from('user_profile_graph')
+    .select('entity_name, entity_type, data')
+    .eq('user_id', userId);
+
+  if (!graph || graph.length === 0) return "";
+
+  const people = graph.filter((g: any) => g.entity_type === 'person')
+    .map((g: any) => `  • ${g.entity_name}: ${g.data.description || 'Known person'}`)
+    .join('\n');
+
+  const places = graph.filter((g: any) => g.entity_type === 'place')
+    .map((g: any) => `  • ${g.entity_name}: ${g.data.description || 'Significant location'}`)
+    .join('\n');
+
+  const preferences = graph.filter((g: any) => g.entity_type === 'preference')
+    .map((g: any) => `  • ${g.entity_name}: ${g.data.value || g.data.description}`)
+    .join('\n');
+
+  const facts = graph.filter((g: any) => g.entity_type === 'fact')
+    .map((g: any) => `  • ${g.entity_name}: ${g.data.description}`)
+    .join('\n');
+
+  let output = "\n[🧠 STRUCTURED PROFILE GRAPH - ZERO LATENCY RECALL]";
+  if (people) output += `\nPEOPLE:\n${people}`;
+  if (places) output += `\nPLACES:\n${places}`;
+  if (preferences) output += `\nPREFERENCES:\n${preferences}`;
+  if (facts) output += `\nCORE FACTS:\n${facts}`;
+
+  return output.trim();
+}
+
+/**
+ * Lightweight entity extraction to maintain the profile graph.
+ * This runs at the end of the session to avoid latency.
+ */
+async function processBrainExtraction(userId: string, userText: string, aiResponse: string, provider: any, apiKey: string, episodeId?: string) {
+  try {
+    const extractionPrompt = `
+You are an AI Story Weaver. Analyze the conversation and:
+1. Extract persistent facts with a confidence score (0.0 to 1.0).
+2. Generate a 1-sentence narrative summary of this conversation "beat".
+
+Rules:
+- Entities: People, Places, Preferences, Core Facts.
+- Output ONLY a JSON object: 
+ {
+   "entities": [{"name": string, "type": string, "data": {"description": string, "confidence": number}}],
+   "story_beat": string
+ }
+
+Conversation:
+User: ${userText}
+AI: ${aiResponse}
+
+JSON OUTPUT:`;
+
+    const res = await fetch(provider.api_endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+      body: JSON.stringify({
+        model: provider.default_model,
+        messages: [{ role: "system", content: "You are a JSON extractor." }, { role: "user", content: extractionPrompt }],
+        max_tokens: 800,
+        temperature: 0.1
+      })
+    });
+
+    if (!res.ok) return;
+    const data = await res.json();
+    const content = data.choices?.[0]?.message?.content;
+    const jsonMatch = content.match(/\{.*\}/s);
+    if (!jsonMatch) return;
+
+    const result = JSON.parse(jsonMatch[0]);
+
+    // 1. Update Profile Graph with Confidence
+    if (result.entities) {
+      for (const entity of result.entities) {
+        await supabase.from('user_profile_graph').upsert({
+          user_id: userId,
+          entity_name: entity.name,
+          entity_type: entity.type,
+          data: entity.data,
+          last_updated: new Date().toISOString()
+        }, { onConflict: 'user_id, entity_name, entity_type' });
+      }
+    }
+
+    // 2. Update Episode Summary (Story Beat)
+    if (episodeId && result.story_beat) {
+      await supabase
+        .from('memories_episodes')
+        .update({ topic_summary: result.story_beat })
+        .eq('id', episodeId);
+    }
+
+    console.log(`🧠 Brain Layer: Updated ${result.entities?.length || 0} entities and Story Beat for user ${userId}`);
+  } catch (e) {
+    console.error("Brain Extraction Error:", e);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// EPISODIC MEMORY (V3 STORY LAYER)
+// ─────────────────────────────────────────────────────────────
+
+async function getOrCreateEpisode(userId: string, personaId: string, currentDomain: string): Promise<string | null> {
+  try {
+    const FOUR_HOURS_MS = 4 * 60 * 60 * 1000;
+
+    // 1. Check for active episode in last 4 hours
+    const { data: recentEpisode, error: fetchErr } = await supabase
+      .from('memories_episodes')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('persona_id', personaId)
+      .order('end_time', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (recentEpisode && !fetchErr) {
+      const lastActive = new Date(recentEpisode.end_time).getTime();
+      const isRecentlyActive = (Date.now() - lastActive) < FOUR_HOURS_MS;
+
+      // If recently active and domain matches, reuse
+      if (isRecentlyActive) {
+        // Update end time
+        await supabase
+          .from('memories_episodes')
+          .update({ end_time: new Date().toISOString() })
+          .eq('id', recentEpisode.id);
+        return recentEpisode.id;
+      }
+    }
+
+    // 2. Create new episode
+    const { data: newEpisode, error: insErr } = await supabase
+      .from('memories_episodes')
+      .insert({
+        user_id: userId,
+        persona_id: personaId,
+        topic_summary: `Conversation about ${currentDomain}`,
+        metadata: { initial_domain: currentDomain }
+      })
+      .select()
+      .single();
+
+    if (insErr || !newEpisode) {
+      console.error("❌ Episode Creation Failed:", insErr?.message || "No data returned");
+      return null;
+    }
+
+    return newEpisode.id;
+  } catch (e) {
+    console.error("getOrCreateEpisode Panic:", e);
+    return null;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
 // MOOD STATE MANAGEMENT
 // ─────────────────────────────────────────────────────────────
 
@@ -461,20 +626,27 @@ function generateBreakSuggestion(currentTopic: string): string {
 // ─────────────────────────────────────────────────────────────
 async function generateEmbedding(text: string): Promise<number[] | null> {
   try {
-    const response = await fetch(EMBEDDING_MODEL_URL, {
+    // We use the Gemini embedding model (768 dimensions)
+    const response = await fetch(`${GEMINI_EMBEDDING_URL}?key=${GEMINI_API_KEY}`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${HF_TOKEN}`,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ inputs: text, options: { wait_for_model: true } })
+      body: JSON.stringify({
+        content: { parts: [{ text }] },
+        outputDimensionality: 768
+      })
     });
 
-    if (!response.ok) return null;
+    if (!response.ok) {
+      console.error("Gemini Embedding Error:", await response.text());
+      return null;
+    }
 
-    let raw = await response.json();
-    if (Array.isArray(raw) && Array.isArray(raw[0])) raw = raw[0];
-    return (raw && raw.length === 384) ? raw : null;
+    const data = await response.json();
+    const values = data.embedding?.values;
+
+    return (values && values.length === 768) ? values : null;
   } catch (e) {
     console.warn("Embedding generation failed:", e);
     return null;
@@ -548,11 +720,34 @@ ${tierData.modifier}
 async function retrieveMemories(
   embedding: number[],
   personaId: string,
-  userId: string
+  userId: string,
+  queryText: string
 ): Promise<string> {
-  const { data: memories } = await supabase.rpc('match_memories_v2', {
+  // 1. STEP 1: LAZY LOADING - Search Episodes First
+  const { data: episodes } = await supabase
+    .from('memories_episodes')
+    .select('id, topic_summary, start_time')
+    .eq('user_id', userId)
+    .eq('persona_id', personaId)
+    // We use a simple vector search for episodes if embedding is available
+    // or fallback to recent ones
+    .order('end_time', { ascending: false })
+    .limit(5);
+
+  let episodeFilter: string[] = [];
+  if (episodes && episodes.length > 0) {
+    // In a full implementation, we'd use vector similarity on episodes here.
+    // For now, we take the most recent ones as "active context".
+    episodeFilter = episodes.map((e: any) => e.id);
+  }
+
+  // 2. STEP 2: GRANULAR RETRIEVAL - Hybrid Search
+  // match_memories_v3 implements Hybrid Search (Vector + BM25)
+  // We'll use the results but boost or filter by episodes if possible.
+  const { data: memories } = await supabase.rpc('match_memories_v3', {
     query_embedding: embedding,
-    match_threshold: 0.35,
+    query_text: queryText,
+    match_threshold: 0.3,
     match_count: 10,
     filter_persona: personaId,
     filter_user: userId
@@ -560,8 +755,17 @@ async function retrieveMemories(
 
   if (!memories || memories.length === 0) return "";
 
+  // 3. STEP 3: SOURCE TRACKING & FORMATTING
   return memories
-    .map((m: any) => `[MEMORY - ${m.created_at.split('T')[0]}]: ${m.content}`)
+    .map((m: any) => {
+      const date = new Date(m.created_at).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+      const timeContext = `[Conversation from ${date}]`;
+      return `${timeContext}\n${m.role === 'user' ? 'User' : 'AI'}: ${m.content}`;
+    })
     .join("\n\n");
 }
 
@@ -579,6 +783,8 @@ async function buildSystemPrompt(
   const relationshipContext = isMultiPersona ? "" : await getRelationshipContext(userId, personas[0].id);
   // NEW: Fetch user's personalization settings for this persona
   const userPersonalization = isMultiPersona ? "" : await getUserPersonaSettings(userId, personas[0].id);
+  // V3: Inject Profile Graph (Entity-based memory)
+  const profileGraph = await getUserProfileGraph(userId);
 
   // Load lockets for all personas
   const locketPromises = personas.map(async (p) => {
@@ -607,6 +813,9 @@ ${allLockets.map(l => `
 ${l.name}:
 ${l.lockets.map(lk => `  - ${lk.content}`).join("\n")}
 `).join("\n")}
+
+[V3 BRAIN CONTEXT]:
+${profileGraph || "No structured entities yet."}
 
 [SHARED FACTS ABOUT THE USER]:
 ${sharedFacts || "None yet."}
@@ -672,6 +881,9 @@ Consider suggesting: "${exhaustion.suggestion}"
 [🔒 IMMUTABLE TRUTHS - THE LOCKET]:
 ${locketText || "None yet."}
 
+[V3 BRAIN CONTEXT]:
+${profileGraph || "No structured entities yet."}
+
 [SHARED FACTS ABOUT THE USER]:
 ${sharedFacts || "None yet."}
 
@@ -687,6 +899,7 @@ ${memoryBlock || "No relevant memories."}
 [INSTRUCTIONS]:
 - Stay in character at all times
 - If user shares critical information (medical, preferences, identity), output: [SAVE_FACT: type | content]
+- If user explicitly asks you to "Save to Locket" or remember a deeply personal/immutable truth, output: [SAVE_LOCKET: content]
 - Be natural, avoid robotic phrases
 - Adjust formality based on relationship level
 - Let your mood subtly influence your tone and word choice
@@ -774,12 +987,12 @@ serve(async (req) => {
       // For multi-persona, combine memories from all personas
       if (isMultiPersona) {
         const memoryPromises = personas.map(p =>
-          retrieveMemories(embedding, p.id, currentUser)
+          retrieveMemories(embedding, p.id, currentUser, userText)
         );
         const allMemories = await Promise.all(memoryPromises);
         memoryBlock = allMemories.filter(m => m).join("\n\n");
       } else {
-        memoryBlock = await retrieveMemories(embedding, personas[0].id, currentUser);
+        memoryBlock = await retrieveMemories(embedding, personas[0].id, currentUser, userText);
       }
     }
 
@@ -887,66 +1100,88 @@ serve(async (req) => {
           // STEP 7: SAVE INTERACTION & HANDLE SPECIAL COMMANDS
           // ─────────────────────────────────────────────────────
 
-          // Check for [SAVE_FACT: type | content] commands
-          const saveFactRegex = /\[SAVE_FACT:\s*(\w+)\s*\|\s*(.+?)\]/g;
-          let match;
-          while ((match = saveFactRegex.exec(fullResponse)) !== null) {
-            const [fullMatch, factType, content] = match;
-            await supabase.from('shared_facts').insert({
-              user_id: currentUser,
-              fact_type: factType.toUpperCase(),
-              content: content.trim(),
-              shared_with_all: true
-            });
-            fullResponse = fullResponse.replace(fullMatch, '').trim();
-          }
-
-          // Save memories for each persona
-          const domain = detectDomain(userText);
-          const tags = extractTags(userText);
-          const importance = calculateImportance(userText, domain);
-          const responseTokenCount = Math.ceil(fullResponse.length / 4); // Rough estimate
-
-          for (const persona of personas) {
-            // Update mood state after interaction
-            await updateMoodState(
-              currentUser,
-              persona.id,
-              domain,
-              responseTokenCount,
-              persona.config || {}
-            );
-
-            // Save memories
-            await supabase.from('memories').insert([
-              {
+          try {
+            // Check for [SAVE_FACT: type | content] (Shared)
+            const saveFactRegex = /\[SAVE_FACT:\s*(\w+)\s*\|\s*(.+?)\]/g;
+            let factMatch;
+            while ((factMatch = saveFactRegex.exec(fullResponse)) !== null) {
+              const [fullMatch, factType, content] = factMatch;
+              await supabase.from('shared_facts').insert({
                 user_id: currentUser,
-                persona_id: persona.id,
-                role: 'user',
-                content: userText,
-                tags,
-                importance,
-                emotion: detectEmotion(userText),
-                embedding
-              },
-              {
-                user_id: currentUser,
-                persona_id: persona.id,
-                role: 'ai',
-                content: fullResponse,
-                importance: 3
+                fact_type: factType.toUpperCase(),
+                content: content.trim(),
+                shared_with_all: true
+              }).select();
+              fullResponse = fullResponse.replace(fullMatch, '').trim();
+            }
+
+            // Check for [SAVE_LOCKET: content] (Immutable Truths - Persona Specific)
+            const saveLocketRegex = /\[SAVE_LOCKET:\s*(.+?)\]/g;
+            let locketMatch;
+            while ((locketMatch = saveLocketRegex.exec(fullResponse)) !== null) {
+              const [fullMatch, content] = locketMatch;
+              // Save to the primary persona
+              if (personas.length > 0) {
+                await supabase.from('persona_lockets').insert({
+                  persona_id: personas[0].id,
+                  content: content.trim()
+                });
               }
-            ]);
+              fullResponse = fullResponse.replace(fullMatch, '').trim();
+            }
+
+            // Save memories for each persona
+            const domain = detectDomain(userText);
+            const tags = extractTags(userText);
+            const importance = calculateImportance(userText, domain);
+            const responseTokenCount = Math.ceil(fullResponse.length / 4);
+
+            for (const persona of personas) {
+              // Update mood state
+              await updateMoodState(currentUser, persona.id, domain, responseTokenCount, persona.config || {})
+                .catch(e => console.error("Mood Update Error:", e));
+
+              // Phase 3: Get or create story episode
+              const episodeId = await getOrCreateEpisode(currentUser, persona.id, domain);
+
+              // Save memories
+              await supabase.from('memories').insert([
+                {
+                  user_id: currentUser,
+                  persona_id: persona.id,
+                  role: 'user',
+                  content: userText,
+                  tags,
+                  importance,
+                  emotion: detectEmotion(userText),
+                  embedding,
+                  episode_id: episodeId
+                },
+                {
+                  user_id: currentUser,
+                  persona_id: persona.id,
+                  role: 'ai',
+                  content: fullResponse,
+                  importance: 3,
+                  episode_id: episodeId
+                }
+              ]).catch(e => console.error("Memory Insert Error:", e));
+
+              // PHASE 2 & 3: Background Extraction
+              processBrainExtraction(currentUser, userText, fullResponse, provider, apiKey, episodeId);
+            }
+          } catch (postError) {
+            console.error("❌ Post-Processing Crisis:", postError);
           }
 
           // Send final metadata
           controller.enqueue(encoder.encode(`data: ${JSON.stringify({
             done: true,
-            personas: personas.map(p => p.name),
+            personas: personas.map((p: any) => p.name),
             remaining_requests: rateLimit.remaining - 1
           })}\n\n`));
 
-        } catch (error) {
+        } catch (error: any) {
           console.error("Stream error:", error);
         } finally {
           controller.close();
@@ -963,7 +1198,7 @@ serve(async (req) => {
       }
     });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("🔥 SYSTEM FAILURE:", error.message);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,

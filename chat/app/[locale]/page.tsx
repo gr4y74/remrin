@@ -258,7 +258,7 @@ export default function HomePage() {
       showHeader={false}
       showFooter={false}
       fullBleed
-      className="!bg-transparent text-rp-text"
+      className="text-rp-text"
     >
       {/* Section 2: Header with Extension Banner, Search, Categories, Auth Buttons */}
 

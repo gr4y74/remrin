@@ -62,6 +62,57 @@
   font-display: swap;
 }
 
+/* Claude UI Compatible Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@font-face {
+  font-family: 'Tiempos Headline';
+  src: url('/fonts/TestTiemposHeadline-Medium-BF66457a509b4ec.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Tiempos Headline';
+  src: url('/fonts/TestTiemposHeadline-Semibold-BF66457a509040b.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Tiempos Headline';
+  src: url('/fonts/TestTiemposHeadline-Bold-BF66457a5113d17.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Tiempos Text';
+  src: url('/fonts/TestTiemposText-Regular-BF66457a50cd521.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Tiempos Text';
+  src: url('/fonts/TestTiemposText-Medium-BF66457a508489a.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Tiempos Fine';
+  src: url('/fonts/TestTiemposFine-Regular-BF66457a50e8bc9.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Refined scrollbar with dark palette */
 ::-webkit-scrollbar-track {
   background-color: hsl(240 20% 8%);
@@ -89,168 +140,96 @@
   height: 6px;
 }
 
-/* Ethereal Tech Theme (Default Dark) */
+/* Claude UI Clone - Remrin Brand Theme (OKLCH) */
 :root {
-  /* Base Variables (Shadcn Mapped) */
-  --background: 249 22% 12%;
-  /* #191724 (New background) */
-  --foreground: 35 100% 98%;
-  /* #faf4ed (New text/icons) */
+  --background: 249 22% 17%;
+  --foreground: 245 50% 91%;
 
-  --card: 250 18% 18%;
-  /* #2c2f40 (New surface) */
-  --card-foreground: 35 100% 98%;
+  --card: 247 23% 20%;
+  --card-foreground: 245 50% 91%;
 
-  --popover: 250 18% 18%;
-  --popover-foreground: 35 100% 98%;
+  --popover: 249 22% 17%;
+  --popover-foreground: 245 50% 91%;
 
   --primary: 267 57% 78%;
-  /* #c4a7e7 (Soul Primary) */
   --primary-foreground: 249 22% 12%;
 
-  --secondary: 197 49% 38%;
-  /* #31748f (Tech Accent) */
-  --secondary-foreground: 35 100% 98%;
+  --secondary: 197 49% 47%;
+  --secondary-foreground: 245 50% 91%;
 
-  --muted: 249 19% 15%;
-  /* #232136 (New sidebar) */
-  --muted-foreground: 248 15% 55%;
+  --muted: 249 22% 26%;
+  --muted-foreground: 246 12% 47%;
 
-  --accent: 35 88% 72%;
-  /* #f6c177 (Magic/Gold) */
-  --accent-foreground: 249 22% 12%;
+  --accent: 249 22% 26%;
+  --accent-foreground: 245 50% 91%;
 
-  --destructive: 3 82% 52%;
-  /* #eb6f92 */
-  --destructive-foreground: 249 22% 12%;
+  --destructive: 343 76% 68%;
+  --destructive-foreground: 245 50% 91%;
 
-  --border: 267 30% 18%;
-  /* Subtle purple border */
-  --input: 250 18% 18%;
+  --border: 249 22% 26%;
+  --input: 249 22% 26%;
   --ring: 267 57% 78%;
 
   --radius: 0.75rem;
 
-  /* Custom Ethereal Palette */
+  /* Font Families */
+  --font-sans: 'Outfit', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Merriweather', ui-serif, Georgia, serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Rosé Pine Palette */
   --rp-base: 249 22% 12%;
-  /* #191724 (New background) */
-  --rp-surface: 250 18% 18%;
-  /* #2c2f40 (New surface) */
-  --rp-overlay: 249 19% 15%;
-  /* #232136 (New sidebar) */
-  --rp-muted: 248 15% 50%;
-
+  --rp-surface: 249 22% 15%;
+  --rp-overlay: 249 22% 20%;
+  --rp-muted: 248 15% 61%;
+  --rp-subtle: 248 15% 61%;
+  --rp-text: 245 50% 91%;
   --rp-love: 343 76% 68%;
-  /* #eb6f92 */
   --rp-gold: 35 88% 72%;
-  /* #f6c177 */
   --rp-rose: 2 55% 83%;
-  /* #ebbcba */
-  --rp-pine: 197 49% 38%;
-  /* #31748f */
+  --rp-pine: 197 49% 47%;
   --rp-foam: 189 43% 73%;
-  /* #9ccfd8 */
   --rp-iris: 267 57% 78%;
-  /* #c4a7e7 */
-
-  --rp-text: 35 100% 98%;
-  /* #faf4ed (New text/icons) */
-
-  /* Sidebar specific */
-  --sidebar-bg: 249 19% 15%;
-  /* #232136 */
-  --sidebar-border: 267 20% 15%;
-  --sidebar-hover: 267 30% 15%;
-  --sidebar-text: 35 100% 98%;
-  /* #faf4ed */
+  --rp-highlight-low: 249 22% 15%;
+  --rp-highlight-med: 249 22% 20%;
+  --rp-highlight-high: 249 22% 25%;
 }
 
 .dark {
-  /* Inherits root, kept for compatibility */
   --background: 249 22% 12%;
-  --foreground: 35 100% 98%;
+  --foreground: 245 50% 91%;
+
+  /* Inherit shared variables from root but ensure dark specifics if needed */
+  --rp-base: 249 22% 12%;
 }
 
-/* Rose Pine Dawn Light Theme */
-.light {
-  /* Base Variables (Shadcn Mapped) - More muted tones */
-  --background: 35 30% 88%;
-  /* #e8dfd0 (Muted cream) */
-  --foreground: 248 19% 40%;
-  /* #575279 (Dawn text) */
+/* Standalone Romrin Theme (Claude Overhaul) - Isolated */
+.theme-romrin {
+  --background: #121113;
+  --foreground: #c1c1c1;
+  --card: #121212;
+  --card-foreground: #c1c1c1;
+  --popover: #121113;
+  --popover-foreground: #c1c1c1;
+  --primary: #e78a53;
+  --primary-foreground: #121113;
+  --secondary: #5f8787;
+  --secondary-foreground: #121113;
+  --muted: #222222;
+  --muted-foreground: #888888;
+  --accent: #333333;
+  --accent-foreground: #c1c1c1;
+  --destructive: #5f8787;
+  --destructive-foreground: #121113;
+  --border: #222222;
+  --input: #222222;
+  --ring: #e78a53;
 
-  --card: 35 25% 85%;
-  /* #ded5c4 */
-  --card-foreground: 248 19% 40%;
-
-  --popover: 35 25% 85%;
-  --popover-foreground: 248 19% 40%;
-
-  --primary: 249 22% 52%;
-  /* #907aa9 (Dawn iris) */
-  --primary-foreground: 35 30% 88%;
-
-  --secondary: 187 41% 41%;
-  /* #56949f (Dawn pine) */
-  --secondary-foreground: 35 30% 88%;
-
-  --muted: 35 20% 78%;
-  /* #d4c9b8 */
-  --muted-foreground: 248 15% 50%;
-
-  --accent: 35 81% 56%;
-  /* #ea9d34 (Dawn gold) */
-  --accent-foreground: 35 30% 88%;
-
-  --destructive: 343 72% 52%;
-  /* #b4637a (Dawn love) */
-  --destructive-foreground: 35 30% 88%;
-
-  --border: 249 15% 70%;
-  /* Muted purple border */
-  --input: 35 25% 85%;
-  --ring: 249 22% 52%;
-
-  --radius: 0.75rem;
-
-  /* Custom Rose Pine Dawn Palette - Muted */
-  --rp-base: 35 30% 88%;
-  /* #e8dfd0 (Muted cream) */
-  --rp-surface: 35 25% 85%;
-  /* #ded5c4 */
-  --rp-overlay: 35 20% 78%;
-  /* #d4c9b8 */
-  --rp-muted: 248 12% 68%;
-  /* #9893a5 */
-
-  --rp-love: 343 72% 52%;
-  /* #b4637a */
-  --rp-gold: 35 81% 56%;
-  /* #ea9d34 */
-  --rp-rose: 10 56% 72%;
-  /* #d7827e */
-  --rp-pine: 187 41% 41%;
-  /* #56949f */
-  --rp-foam: 189 30% 48%;
-  /* #286983 */
-  --rp-iris: 249 22% 52%;
-  /* #907aa9 */
-
-  --rp-text: 248 19% 35%;
-  /* #4a4560 (Darker text for better contrast) */
-  --rp-subtle: 248 15% 45%;
-  /* Slightly lighter */
-
-  /* Sidebar specific for light mode */
-  --sidebar-bg: 35 30% 88%;
-  --sidebar-border: 249 15% 70%;
-  --sidebar-hover: 35 20% 78%;
-  --sidebar-text: 249 22% 52%;
-
-  /* Highlight colors for light mode */
-  --rp-highlight-low: 35 20% 78%;
-  --rp-highlight-med: 249 15% 70%;
-  --rp-highlight-high: 249 22% 52%;
+  /* Force override Rosé Pine variables for standalone UI */
+  --rp-base: 240 7% 7%;
+  --rp-surface: 240 7% 10%;
+  --rp-iris: 24 78% 62%;
+  --rp-text: 0 0% 76%;
 }
 
 
@@ -267,6 +246,7 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-tiempos-text), 'Tiempos Text', Georgia, serif;
+    letter-spacing: 0em;
     overflow-x: hidden;
     /* Safe area insets for notched devices */
     padding-top: env(safe-area-inset-top);
@@ -681,16 +661,37 @@
 
   /* AI Studio Animations */
   @keyframes scan {
-    0% { top: 0; opacity: 0; }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { top: 100%; opacity: 0; }
+    0% {
+      top: 0;
+      opacity: 0;
+    }
+
+    10% {
+      opacity: 1;
+    }
+
+    90% {
+      opacity: 1;
+    }
+
+    100% {
+      top: 100%;
+      opacity: 0;
+    }
   }
 
   @keyframes progress-drift {
-    0% { transform: translateX(-100%); }
-    50% { transform: translateX(-10%); }
-    100% { transform: translateX(0%); }
+    0% {
+      transform: translateX(-100%);
+    }
+
+    50% {
+      transform: translateX(-10%);
+    }
+
+    100% {
+      transform: translateX(0%);
+    }
   }
 
   .animate-scan {

@@ -96,6 +96,7 @@ export default async function RootLayout({
     }
   )
   const session = (await supabase.auth.getSession()).data.session
+  console.log(`🏠 [RootLayout] SESSION: ${!!session}, USER: ${session?.user?.id}`)
 
   const { t, resources } = await initTranslations(locale, i18nNamespaces)
 

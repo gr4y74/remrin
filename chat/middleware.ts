@@ -4,13 +4,23 @@ import { NextResponse, type NextRequest } from "next/server"
 import i18nConfig from "./i18nConfig"
 
 export async function middleware(request: NextRequest) {
-  const i18nResult = i18nRouter(request, i18nConfig)
-  if (i18nResult) return i18nResult
+  // Skip i18n for api routes
+  if (request.nextUrl.pathname.startsWith('/api')) {
+    // Continue through auth logic below
+  } else {
+    const i18nResult = i18nRouter(request, i18nConfig)
+    if (i18nResult) return i18nResult
+  }
 
   try {
     const { supabase, response } = createClient(request)
 
     const { data: { session } } = await supabase.auth.getSession()
+
+    if (request.nextUrl.pathname.startsWith('/api/v2/chat')) {
+      const cookieCount = request.cookies.getAll().length
+      console.log(`🛡️ [Middleware] PATH: ${request.nextUrl.pathname}, SESSION: ${!!session}, COOKIES: ${cookieCount}`)
+    }
 
     const isRootPath = request.nextUrl.pathname === "/" || request.nextUrl.pathname === "/en" || request.nextUrl.pathname === "/zh"
 
@@ -41,5 +51,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: "/((?!api|static|.*\\..*|_next|auth).*)"
+  matcher: "/((?!static|.*\\..*|_next|auth).*)"
 }

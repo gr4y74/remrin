@@ -16,11 +16,11 @@ interface RootLayoutContainerProps {
 
 export function RootLayoutContainer({ children, user }: RootLayoutContainerProps) {
     const pathname = usePathname()
-    const isStandalone = pathname?.includes('/aol/messenger')
+    const isStandalone = pathname?.includes('/aol/messenger') || pathname?.includes('/rem')
 
     if (isStandalone) {
         return (
-            <div className="flex min-h-screen w-full">
+            <div className="flex min-h-screen w-full theme-romrin dark">
                 <GlobalState>
                     <main className="flex-1 w-full overflow-hidden">
                         {children}

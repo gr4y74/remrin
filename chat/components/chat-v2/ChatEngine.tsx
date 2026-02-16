@@ -36,6 +36,8 @@ interface ChatEngineState {
     moodState: MoodState
     toolState: { name: string; status: 'idle' | 'running' | 'complete' | 'error' } | null
     isLoadingHistory: boolean
+    llmProvider: string | null
+    llmModel: string | null
 }
 
 interface ChatEngineActions {
@@ -45,6 +47,7 @@ interface ChatEngineActions {
     setSystemPrompt: (prompt: string) => void
     addSystemMessage: (content: string) => void
     rewind: (index: number) => void
+    setLLMConfig: (provider: string | null, model: string | null) => void
 }
 
 interface ChatEngineContextValue extends ChatEngineState, ChatEngineActions { }
@@ -81,6 +84,8 @@ export function ChatEngineProvider({
     const [toolState, setToolState] = useState<{ name: string; status: 'idle' | 'running' | 'complete' | 'error' } | null>(null)
 
     const [isLoadingHistory, setIsLoadingHistory] = useState(false)
+    const [llmProvider, setLLMProvider] = useState<string | null>(null)
+    const [llmModel, setLLMModel] = useState<string | null>(null)
 
     const abortControllerRef = useRef<AbortController | null>(null)
     const messagesRef = useRef<ChatMessageContent[]>([])
@@ -199,7 +204,9 @@ export function ChatEngineProvider({
                 body: JSON.stringify({
                     messages: messagesToSend,
                     personaId,
-                    systemPrompt
+                    systemPrompt,
+                    llm_provider: llmProvider,
+                    llm_model: llmModel
                 }),
                 signal: abortControllerRef.current.signal
             })
@@ -485,6 +492,11 @@ export function ChatEngineProvider({
         })
     }, [])
 
+    const setLLMConfig = useCallback((provider: string | null, model: string | null) => {
+        setLLMProvider(provider)
+        setLLMModel(model)
+    }, [])
+
     const value: ChatEngineContextValue = useMemo(() => ({
         messages,
         isGenerating,
@@ -501,7 +513,10 @@ export function ChatEngineProvider({
         setSystemPrompt,
         addSystemMessage,
         rewind,
-        isLoadingHistory
+        isLoadingHistory,
+        llmProvider,
+        llmModel,
+        setLLMConfig
     }), [
         messages,
         isGenerating,
@@ -518,7 +533,10 @@ export function ChatEngineProvider({
         setSystemPrompt,
         addSystemMessage,
         rewind,
-        isLoadingHistory
+        isLoadingHistory,
+        llmProvider,
+        llmModel,
+        setLLMConfig
     ])
 
     return (

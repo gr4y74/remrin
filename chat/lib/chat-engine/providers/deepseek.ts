@@ -90,7 +90,7 @@ export class DeepSeekProvider extends BaseChatProvider {
 
         const formattedMessages = this.formatMessages(messages, systemPrompt)
 
-        const timeoutSignal = AbortSignal.timeout(60000) // 1 minute timeout
+        const timeoutSignal = AbortSignal.timeout(120000) // 120 second timeout for reasoning
         let finalSignal = timeoutSignal
         if (options.abortSignal) {
             const controller = new AbortController()
@@ -141,6 +141,7 @@ export class DeepSeekProvider extends BaseChatProvider {
 
                         return {
                             content: choice.delta?.content || undefined,
+                            reasoning: choice.delta?.reasoning_content || undefined,
                             toolCalls: choice.delta?.tool_calls || undefined
                         }
                     },

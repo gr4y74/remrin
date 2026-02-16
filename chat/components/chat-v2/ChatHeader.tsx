@@ -1,5 +1,6 @@
 import React, { FC, useContext, useRef } from "react"
-import { IconPhoto, IconDotsVertical, IconArrowLeft, IconUser } from "@tabler/icons-react"
+import { IconPhoto, IconDotsVertical, IconArrowLeft, IconUser, IconCpu, IconSparkles, IconBolt, IconChevronDown } from "@tabler/icons-react"
+import { useChatEngine } from "./ChatEngine"
 import { RemrinContext } from "@/context/context"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
@@ -25,6 +26,7 @@ export const ChatHeader: FC<ChatHeaderProps> = ({
         setIsCharacterPanelOpen,
         profile
     } = useContext(RemrinContext)
+    const { llmProvider, setLLMConfig } = useChatEngine()
 
     const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -57,7 +59,7 @@ export const ChatHeader: FC<ChatHeaderProps> = ({
                     <button
                         onClick={onBack}
                         className="mr-1 flex h-8 w-8 items-center justify-center rounded-full text-white hover:bg-rp-overlay hover:text-white/80 transition-colors"
-
+                        title="Back"
                     >
                         <IconArrowLeft size={20} />
                     </button>
@@ -106,7 +108,69 @@ export const ChatHeader: FC<ChatHeaderProps> = ({
             </div>
 
             {/* Right: Actions */}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1.5">
+                {/* Model Selector (New) */}
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <button className="flex h-9 items-center gap-2 rounded-xl bg-rp-overlay/30 px-3 text-rp-text hover:bg-rp-overlay/50 transition-all border border-white/5 backdrop-blur-sm group">
+                            <IconCpu size={16} className="text-rp-iris group-hover:scale-110 transition-transform" />
+                            <span className="text-xs font-bold uppercase tracking-wider">
+                                {llmProvider === 'claude' ? 'Claude 3.5' :
+                                    llmProvider === 'gemini' ? 'Gemini 1.5' :
+                                        llmProvider === 'gpt' ? 'GPT-4o' : 'DeepSeek V3'}
+                            </span>
+                            <IconChevronDown size={14} className="text-rp-muted" />
+                        </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56 bg-rp-surface/95 backdrop-blur-xl border-rp-overlay/50 shadow-2xl p-1.5 animate-in slide-in-from-top-2 duration-200">
+                        <div className="px-2 py-1.5 mb-1">
+                            <h4 className="text-[10px] font-black text-rp-muted uppercase tracking-[0.2em]">Cognitive Core</h4>
+                        </div>
+
+                        <DropdownMenuItem
+                            className={cn(
+                                "flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-colors",
+                                !llmProvider || llmProvider === 'deepseek' ? "bg-rp-iris/10 text-rp-iris" : "text-rp-text hover:bg-rp-overlay"
+                            )}
+                            onClick={() => setLLMConfig('deepseek', 'deepseek-chat')}
+                        >
+                            <IconBolt size={18} className="text-rp-iris" />
+                            <div className="flex flex-col">
+                                <span className="font-bold text-sm">DeepSeek V3</span>
+                                <span className="text-[10px] opacity-70">Balanced & Logical</span>
+                            </div>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem
+                            className={cn(
+                                "flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-colors",
+                                llmProvider === 'claude' ? "bg-rp-love/10 text-rp-love" : "text-rp-text hover:bg-rp-overlay"
+                            )}
+                            onClick={() => setLLMConfig('claude', 'claude-3-5-sonnet-20240620')}
+                        >
+                            <IconSparkles size={18} className="text-rp-love" />
+                            <div className="flex flex-col">
+                                <span className="font-bold text-sm">Claude 3.5</span>
+                                <span className="text-[10px] opacity-70">Empathetic & Creative</span>
+                            </div>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem
+                            className={cn(
+                                "flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-colors",
+                                llmProvider === 'gemini' ? "bg-rp-foam/10 text-rp-foam" : "text-rp-text hover:bg-rp-overlay"
+                            )}
+                            onClick={() => setLLMConfig('gemini', 'gemini-1.5-pro')}
+                        >
+                            <IconCpu size={18} className="text-rp-foam" />
+                            <div className="flex flex-col">
+                                <span className="font-bold text-sm">Gemini 1.5 Pro</span>
+                                <span className="text-[10px] opacity-70">Deep Context & Power</span>
+                            </div>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+
                 {/* Background Toggle */}
                 <button
                     onClick={() => setChatBackgroundEnabled(!chatBackgroundEnabled)}
@@ -129,12 +193,17 @@ export const ChatHeader: FC<ChatHeaderProps> = ({
                     className="hidden"
                     accept="image/*"
                     onChange={handleBackgroundUpload}
+                    title="Upload Chat Background"
+                    aria-label="Upload Chat Background"
                 />
 
                 {/* Settings / More */}
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <button className="flex h-9 w-9 items-center justify-center rounded-xl text-white hover:bg-rp-overlay hover:text-white/80 transition-colors">
+                        <button
+                            className="flex h-9 w-9 items-center justify-center rounded-xl text-white hover:bg-rp-overlay hover:text-white/80 transition-colors"
+                            title="More Options"
+                        >
                             <IconDotsVertical size={20} />
                         </button>
                     </DropdownMenuTrigger>

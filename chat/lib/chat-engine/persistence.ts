@@ -9,9 +9,13 @@ const CHAT_NAME_PREFIX = 'persona-chat-'
 export async function getOrCreateChatSession(
     supabase: SupabaseClient,
     userId: string,
-    personaId: string
+    personaId: string,
+    options: {
+        workspaceId?: string;
+        customName?: string;
+    } = {}
 ): Promise<string> {
-    const chatName = `${CHAT_NAME_PREFIX}${personaId}`
+    const chatName = options.customName || `${CHAT_NAME_PREFIX}${personaId}`
 
     // 1. Try to find existing chat
     const { data: existingChat } = await supabase
@@ -24,17 +28,21 @@ export async function getOrCreateChatSession(
     if (existingChat) return existingChat.id
 
     // 2. If not found, need a workspace
-    // Get default workspace (assuming first one found for user)
-    const { data: workspace } = await supabase
-        .from('workspaces')
-        .select('id')
-        .eq('user_id', userId)
-        .limit(1)
-        .maybeSingle()
+    let finalWorkspaceId = options.workspaceId
 
-    if (!workspace) {
-        // Fallback: This might fail if user has absolutely no workspace,
-        // but typically users have a default one.
+    if (!finalWorkspaceId) {
+        // Get default workspace (assuming first one found for user)
+        const { data: workspace } = await supabase
+            .from('workspaces')
+            .select('id')
+            .eq('user_id', userId)
+            .limit(1)
+            .maybeSingle()
+
+        finalWorkspaceId = workspace?.id
+    }
+
+    if (!finalWorkspaceId) {
         console.warn('[Persistence] User has no workspace, cannot create persistent chat.')
         throw new Error('No workspace found for user')
     }
@@ -44,7 +52,7 @@ export async function getOrCreateChatSession(
         .from('chats')
         .insert({
             user_id: userId,
-            workspace_id: workspace.id,
+            workspace_id: finalWorkspaceId,
             name: chatName,
             model: 'gpt-4o', // Default
             context_length: 4096,
@@ -110,10 +118,11 @@ export async function getChatHistory(
     supabase: SupabaseClient,
     userId: string,
     personaId: string,
-    limit: number = 50
+    limit: number = 50,
+    options: { workspaceId?: string; customName?: string } = {}
 ): Promise<ChatMessageContent[]> {
     try {
-        const chatId = await getOrCreateChatSession(supabase, userId, personaId)
+        const chatId = await getOrCreateChatSession(supabase, userId, personaId, options)
 
         const { data: messages, error } = await supabase
             .from('messages')

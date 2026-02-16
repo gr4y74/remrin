@@ -10,6 +10,8 @@ import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers'
 import { createProviderManager } from '@/lib/chat-engine/providers'
 import fs from 'fs'
+import { generateEmbedding } from '@/lib/chat-engine/embeddings'
+import { searchManager } from '@/lib/chat-engine/capabilities/search'
 
 function debugLog(msg: string) {
     const log = `[${new Date().toISOString()}] ${msg}\n`
@@ -43,21 +45,25 @@ async function getUserTier(userId: string): Promise<UserTier> {
     const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('subscription_tier')
-        .eq('id', userId)
-        .single()
+    // Tier is now stored in the wallets table
+    const { data: wallet } = await supabase
+        .from('wallets')
+        .select('tier')
+        .eq('user_id', userId)
+        .maybeSingle()
 
-    // Default to free tier
-    const tier = (profile?.subscription_tier || 'free') as UserTier
+    // Map database tiers (wanderer, soul_weaver, architect, titan) 
+    // to Chat Engine tiers (free, pro, premium, enterprise)
+    const dbTier = wallet?.tier || 'wanderer'
 
-    // Validate tier
-    if (!['free', 'pro', 'premium', 'enterprise'].includes(tier)) {
-        return 'free'
+    const tierMap: Record<string, UserTier> = {
+        'wanderer': 'free',
+        'soul_weaver': 'pro',
+        'architect': 'premium',
+        'titan': 'enterprise'
     }
 
-    return tier
+    return tierMap[dbTier] || 'free'
 }
 
 /**
@@ -70,7 +76,7 @@ async function getPersona(personaId: string | undefined): Promise<CarrotPersona 
 
     const { data: persona } = await supabase
         .from('personas')
-        .select('id, name, description, system_prompt, follow_up_likelihood')
+        .select('id, name, description, system_prompt')
         .eq('id', personaId)
         .single()
 
@@ -79,14 +85,51 @@ async function getPersona(personaId: string | undefined): Promise<CarrotPersona 
 
 export async function POST(request: NextRequest) {
     try {
-        // Get current user
         const cookieStore = await cookies()
+        const allCookies = cookieStore.getAll()
+        debugLog(`🍪 [ChatEngine] Cookies count: ${allCookies.length}`)
+
         const supabase = createClient(cookieStore)
 
-        const { data: { user } } = await supabase.auth.getUser()
+        // Use getSession first
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+        if (sessionError) debugLog(`❌ [ChatEngine] Session Error: ${sessionError.message}`)
+
+        let user: any = session?.user
+
+        // Fallback to get user from Authorization header if session/cookies failed
         if (!user) {
+            const authHeader = request.headers.get('Authorization')
+            debugLog(`🔑 [ChatEngine] Auth Header found: ${!!authHeader} (starts with Bearer: ${authHeader?.startsWith('Bearer ')})`)
+
+            if (authHeader?.startsWith('Bearer ')) {
+                const token = authHeader.split(' ')[1]
+                debugLog(`🛡️ [ChatEngine] Token Length: ${token?.length}, prefix: ${token?.substring(0, 10)}...`)
+
+                const { data: { user: verifiedUser }, error: verifyError } = await supabase.auth.getUser(token)
+                if (verifyError) {
+                    debugLog(`❌ [ChatEngine] Token Verify Error: ${verifyError.message}`)
+                } else {
+                    user = verifiedUser
+                    debugLog(`✅ [ChatEngine] Token Authorized: user=${user?.id}`)
+                }
+            }
+        }
+
+        // Final Fallback to getUser from cookies
+        if (!user) {
+            debugLog(`⚠️ [ChatEngine] No session/token, trying getUser from cookies...`)
+            const { data: { user: verifiedUser }, error: userError } = await supabase.auth.getUser()
+            if (userError) debugLog(`❌ [ChatEngine] User Error: ${userError.message}`)
+            user = verifiedUser
+        }
+
+        if (!user) {
+            debugLog(`🚫 [ChatEngine] Unauthorized: No user found after session, token & cookie checks.`)
             return new Response('Unauthorized', { status: 401 })
         }
+
+        debugLog(`✅ [ChatEngine] Authorized: user=${user.id}`)
 
         // Rate limiting
         const ip = request.headers.get('x-forwarded-for') || 'unknown'
@@ -102,7 +145,11 @@ export async function POST(request: NextRequest) {
             systemPrompt: customSystemPrompt,
             preferredProvider,
             enableSearch,
-            files
+            files,
+            customName,
+            workspaceId,
+            llm_model,
+            llm_provider
         } = body
 
         // Validate messages
@@ -254,141 +301,229 @@ export async function POST(request: NextRequest) {
         const stream = new ReadableStream({
             async start(controller) {
                 try {
+                    // --- HELPERS FOR TOOL EXECUTION ---
+                    const executeTool = async (toolName: string, params: any, personaId: string, userId: string) => {
+                        console.log(`🛠️ [ChatEngine] Executing Tool: ${toolName}`, params);
+
+                        try {
+                            const adminSupabase = (await import('@/lib/supabase/server')).createAdminClient();
+
+                            switch (toolName) {
+                                case 'search_memories': {
+                                    const { query, limit = 5 } = params;
+                                    debugLog(`🧠 [ChatEngine] Memory Search Tool: "${query}"`);
+                                    const embedding = await generateEmbedding(query);
+
+                                    // 1. Semantic Search
+                                    let memories: any[] = [];
+                                    if (embedding) {
+                                        const { data: matched } = await adminSupabase.rpc('match_memories_v2', {
+                                            query_embedding: embedding,
+                                            match_threshold: 0.35,
+                                            match_count: limit,
+                                            filter_persona: personaId,
+                                            filter_user: userId
+                                        });
+                                        if (matched) memories = matched;
+                                    }
+
+                                    // 2. Keyword Fallback (simplified)
+                                    if (memories.length < limit) {
+                                        const { data: keyword } = await adminSupabase
+                                            .from('memories')
+                                            .select('*')
+                                            .eq('user_id', userId)
+                                            .eq('persona_id', personaId)
+                                            .ilike('content', `%${query}%`)
+                                            .limit(limit - memories.length);
+                                        if (keyword) memories = [...memories, ...keyword];
+                                    }
+
+                                    // 3. Locket Search
+                                    const { data: lockets } = await adminSupabase
+                                        .from('persona_lockets')
+                                        .select('*')
+                                        .eq('persona_id', personaId)
+                                        .ilike('content', `%${query}%`);
+
+                                    const resultDescription = [...(lockets?.map(l => ({ ...l, type: 'locket' })) || []), ...memories];
+                                    if (resultDescription.length === 0) return "No relevant memories or locket truths found for this query.";
+                                    return JSON.stringify(resultDescription);
+                                }
+
+                                case 'update_locket': {
+                                    const { content, action = 'add' } = params;
+                                    if (action === 'add') {
+                                        await adminSupabase.from('persona_lockets').insert({ persona_id: personaId, content });
+                                        return "Truth locked.";
+                                    } else {
+                                        await adminSupabase.from('persona_lockets').delete().eq('persona_id', personaId).ilike('content', content);
+                                        return "Truth removed.";
+                                    }
+                                }
+
+                                case 'web_search': {
+                                    const { query, max_results = 5 } = params;
+                                    debugLog(`🔍 [ChatEngine] Web Search Tool: "${query}"`);
+                                    const response = await searchManager.search(query, max_results);
+                                    debugLog(`✅ [ChatEngine] Web Search Got ${response.results?.length || 0} results from ${response.provider}`);
+                                    if (!response.results || response.results.length === 0) {
+                                        return `No web search results found for "${query}". The user might be asking about something too recent or niche.`;
+                                    }
+                                    return JSON.stringify(response.results);
+                                }
+
+                                default:
+                                    return `Tool ${toolName} execution failed: Not implemented on server.`;
+                            }
+                        } catch (e: any) {
+                            console.error(`❌ [ChatEngine] Tool Execution Failed (${toolName}):`, e.message);
+                            return `Error: ${e.message}`;
+                        }
+                    };
+
+                    // --- RECURSIVE CHAT HANDLER ---
+                    const runChatRound = async (currentMessages: ChatMessageContent[], depth = 0): Promise<string> => {
+                        if (depth > 3) return ""; // Safety limit
+
+                        let roundContent = "";
+                        let roundToolCalls: any[] = [];
+
+                        for await (const chunk of providerManager.sendMessage(
+                            currentMessages,
+                            systemPrompt,
+                            {
+                                temperature: isMother ? 0.8 : 0.7,
+                                tools: tools as ToolDescriptor[],
+                                apiKey: providerKey,
+                                model: llm_model || 'deepseek-chat'
+                            }
+                        )) {
+                            if (chunk.content) roundContent += chunk.content;
+                            if (chunk.toolCalls) {
+                                // Consolidate tool call chunks
+                                chunk.toolCalls.forEach((tc: any) => {
+                                    const index = tc.index ?? 0;
+                                    if (!roundToolCalls[index]) roundToolCalls[index] = { id: tc.id, function: { name: '', arguments: '' } };
+                                    if (tc.id) roundToolCalls[index].id = tc.id;
+                                    if (tc.function?.name) roundToolCalls[index].function.name += tc.function.name;
+                                    if (tc.function?.arguments) roundToolCalls[index].function.arguments += tc.function.arguments;
+                                });
+                            }
+
+                            // Stream to client
+                            const data = JSON.stringify({
+                                content: chunk.content,
+                                reasoning: chunk.reasoning,
+                                toolCalls: chunk.toolCalls,
+                                provider: providerInfo.id,
+                                depth
+                            });
+                            controller.enqueue(encoder.encode(`data: ${data}\n\n`));
+                        }
+
+                        // Handle Tool Calls
+                        const activeToolCalls = roundToolCalls.filter(tc => tc && tc.function?.name);
+                        if (activeToolCalls.length > 0) {
+                            console.log(`🛠️ [ChatEngine] Round ${depth} generated ${activeToolCalls.length} tool calls.`);
+
+                            const nextMessages = [...currentMessages];
+                            nextMessages.push({
+                                role: 'assistant',
+                                content: roundContent,
+                                metadata: { toolCalls: activeToolCalls }
+                            } as any);
+
+                            // Execute all tools in parallel
+                            const results = await Promise.all(activeToolCalls.map(async (tc) => {
+                                let args = {};
+                                try { args = JSON.parse(tc.function.arguments); } catch (e) { }
+                                const result = await executeTool(tc.function.name, args, personaId!, user.id);
+                                return {
+                                    role: 'tool',
+                                    tool_call_id: tc.id,
+                                    content: result
+                                };
+                            }));
+
+                            // Append results and continue
+                            nextMessages.push(...results as any);
+                            return roundContent + await runChatRound(nextMessages, depth + 1);
+                        }
+
+                        return roundContent;
+                    };
+
                     // --- PERSISTENCE: Get/Create Chat Session & Save User Message ---
-                    let chatId: string | null = null
+                    let chatId: string | null = null;
                     if (personaId) {
                         try {
-                            const supabaseService = createClient(cookieStore) // Use existing client
-                            chatId = await getOrCreateChatSession(supabaseService, user.id, personaId)
-                            console.log(`💾 [Persistence] Chat Session ID: ${chatId}`)
-
-                            // Save User Message
-                            // Use the LAST user message (current one)
-                            const lastUserMsg = messages[messages.length - 1]
+                            const supabaseService = createClient(cookieStore);
+                            chatId = await getOrCreateChatSession(supabaseService, user.id, personaId, { customName, workspaceId });
+                            const lastUserMsg = messages[messages.length - 1];
                             if (lastUserMsg.role === 'user') {
-                                await saveMessage(supabaseService, chatId, user.id, lastUserMsg)
+                                await saveMessage(supabaseService, chatId, user.id, lastUserMsg);
                             }
                         } catch (e) {
-                            console.error('❌ [Persistence] Failed to init session or save user msg:', e)
+                            console.error('❌ [Persistence] Failed to init session or save user msg:', e);
                         }
                     }
 
-                    // Convert messages to the expected format - PRESERVE tool fields!
+                    // Start the recursive loop
                     const formattedMessages: ChatMessageContent[] = messages.map(msg => ({
                         role: msg.role,
                         content: msg.content,
                         tool_call_id: msg.tool_call_id,
                         timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date(),
                         metadata: (msg as any).tool_calls ? { toolCalls: (msg as any).tool_calls } : undefined
-                    }))
+                    }));
 
-                    const estimatedPromptTokens = providerManager.estimatePromptTokens(formattedMessages, systemPrompt)
-                    const totalChars = formattedMessages.reduce((sum, m) => sum + (m.content?.length || 0), 0) + (systemPrompt?.length || 0)
-                    debugLog(`📊 [CreditSafety] Estimated Prompt Tokens: ${estimatedPromptTokens} (Total Chars: ${totalChars})`)
-
-                    // Stream response from provider
-                    let tokenCount = 0
-                    let fullContent = '' // Accumulate full response for follow-up
-
-                    debugLog(`📡 [ChatEngine] Sending request to ${providerInfo.id} for persona ${persona?.name || 'unknown'}`)
-                    debugLog(`🛠️ [ChatEngine] Tools count: ${tools.length}`)
-                    if (tools.length > 0) debugLog(`🛠️ [ChatEngine] Tools: ${JSON.stringify(tools.map(t => t.function.name))}`)
-                    debugLog(`📝 [ChatEngine] System Prompt Length: ${systemPrompt.length}`)
-                    debugLog(`📊 [ChatEngine] Messages Count: ${formattedMessages.length}, Total Chars: ${totalChars}`)
-                    debugLog(`💬 [ChatEngine] Last Message: ${formattedMessages[formattedMessages.length - 1].content.substring(0, 100)}`)
-
-                    try {
-                        for await (const chunk of providerManager.sendMessage(
-                            formattedMessages,
-                            systemPrompt,
-                            {
-                                temperature: isMother ? 0.8 : 0.7,
-                                tools: tools as ToolDescriptor[],
-                                apiKey: providerKey,
-                                model: 'deepseek-chat' // STRICT: Always use deepseek-chat to prevent reasoner burn
-                            }
-                        )) {
-                            if (chunk.content) fullContent += chunk.content
-
-                            // Send chunk as SSE
-                            const data = JSON.stringify({
-                                content: chunk.content,
-                                toolCalls: chunk.toolCalls,
-                                provider: providerInfo.id
-                            })
-                            controller.enqueue(encoder.encode(`data: ${data}\n\n`))
-                            tokenCount += Math.ceil((chunk.content?.length || 0) / 4)
-                        }
-                    } catch (streamError: any) {
-                        debugLog(`❌ [ChatEngine] Streaming Error Details: ${streamError.message}`)
-                        if (streamError.stack) debugLog(`❌ [ChatEngine] Stack Trace: ${streamError.stack}`)
-
-                        const errorData = JSON.stringify({
-                            error: streamError.message || 'Stream failed',
-                            provider: providerInfo.id,
-                            stack: streamError.stack
-                        })
-                        controller.enqueue(encoder.encode(`data: ${errorData}\n\n`))
-                    }
+                    const finalContent = await runChatRound(formattedMessages);
 
                     // Send done signal
-                    controller.enqueue(encoder.encode(`data: [DONE]\n\n`))
+                    controller.enqueue(encoder.encode(`data: [DONE]\n\n`));
 
-                    console.log(`✅ [ChatEngine] Response complete, ~${tokenCount} tokens for provider ${providerInfo.id}`)
-
-                    // --- PERSISTENCE: Save Assistant Response ---
-                    if (chatId && fullContent) {
-                        const supabaseService = createClient(cookieStore)
+                    // --- PERSISTENCE: Save Final Assistant Response ---
+                    if (chatId && finalContent) {
+                        const supabaseService = createClient(cookieStore);
                         await saveMessage(supabaseService, chatId, user.id, {
                             role: 'assistant',
-                            content: fullContent,
+                            content: finalContent,
                             timestamp: new Date()
-                        }, providerInfo.id)
-                        console.log(`💾 [Persistence] Saved assistant response`)
+                        }, providerInfo.id);
+                        console.log(`💾 [Persistence] Saved final recursive response`);
 
                         // --- UNIVERSAL CONSOLE: Fact Saving & Memory Sync ---
                         try {
-                            const adminSupabase = (await import('@/lib/supabase/server')).createAdminClient()
+                            const adminSupabase = (await import('@/lib/supabase/server')).createAdminClient();
+                            const assistantContent = finalContent.replace(/\[SAVE_FACT:.+?\]/g, '').trim();
+                            const assistantEmbedding = await generateEmbedding(assistantContent);
 
-                            // 1. Check for [SAVE_FACT: type | content]
-                            const saveFactRegex = /\[SAVE_FACT:\s*(\w+)\s*\|\s*(.+?)\]/g
-                            let match
-                            while ((match = saveFactRegex.exec(fullContent)) !== null) {
-                                const [fullMatch, factType, factContent] = match
-                                debugLog(`✨ [Universal Console] Saving Fact: ${factType} | ${factContent}`)
-                                await adminSupabase.from('shared_facts').insert({
-                                    user_id: user.id,
-                                    fact_type: factType.toUpperCase(),
-                                    content: factContent.trim(),
-                                    shared_with_all: true
-                                })
-                            }
-
-                            // 2. Save to memories table for vector sync (Role: Assistant)
                             await adminSupabase.from('memories').insert({
                                 user_id: user.id,
                                 persona_id: personaId,
                                 role: 'assistant',
-                                content: fullContent.replace(/\[SAVE_FACT:.+?\]/g, '').trim(),
+                                content: assistantContent,
                                 importance: 3,
-                                domain: 'personal'
-                            })
+                                domain: 'personal',
+                                embedding: assistantEmbedding
+                            });
 
-                            // 3. Save to memories table (Role: User) - if not already existing
-                            const lastUserMsg = messages[messages.length - 1]
-                            if (lastUserMsg.role === 'user') {
+                            const lastUserMsg = messages[messages.length - 1];
+                            if (lastUserMsg && lastUserMsg.role === 'user') {
+                                const userEmbedding = await generateEmbedding(lastUserMsg.content);
                                 await adminSupabase.from('memories').insert({
                                     user_id: user.id,
                                     persona_id: personaId,
                                     role: 'user',
                                     content: lastUserMsg.content,
                                     importance: 5,
-                                    domain: 'personal'
-                                })
+                                    domain: 'personal',
+                                    embedding: userEmbedding
+                                });
                             }
-                            debugLog(`🧠 [Universal Console] Synced interaction to memories table`)
                         } catch (e: any) {
-                            console.error('❌ [Universal Console] Failed to sync memories or facts:', e)
+                            console.error('❌ [Universal Console] Failed to sync memories:', e);
                         }
                     }
 
@@ -402,11 +537,11 @@ export async function POST(request: NextRequest) {
                         // Add assistant response to context for follow-up generation
                         const messagesWithResponse = [
                             ...formattedMessages,
-                            { role: 'assistant', content: fullContent, timestamp: new Date() } as ChatMessageContent
+                            { role: 'assistant', content: finalContent, timestamp: new Date() } as ChatMessageContent
                         ]
 
                         const followUpPrompt = CarrotEngine.generateFollowFollowUpPrompt(
-                            fullContent,
+                            finalContent,
                             formattedMessages,
                             persona
                         )
@@ -473,7 +608,16 @@ export async function GET(request: NextRequest) {
         const cookieStore = cookies()
         const supabase = createClient(cookieStore)
 
-        const { data: { user } } = await supabase.auth.getUser()
+        // Use getSession first
+        const { data: { session } } = await supabase.auth.getSession()
+        let user: any = session?.user
+
+        // Fallback to getUser
+        if (!user) {
+            const { data: { user: verifiedUser } } = await supabase.auth.getUser()
+            user = verifiedUser
+        }
+
         if (!user) {
             return new Response('Unauthorized', { status: 401 })
         }

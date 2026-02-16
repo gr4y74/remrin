@@ -40,6 +40,7 @@ interface ChatUIV2Props {
     welcomeAudioUrl?: string | null
     backgroundMusicUrl?: string | null
     audioTracks?: any[]
+    soloMode?: boolean
 }
 
 
@@ -59,7 +60,8 @@ function ChatUIInner({
     onMemorySearchTrigger,
     isVisualNovelMode,
     toggleVisualNovelMode,
-    onStartCall
+    onStartCall,
+    soloMode
 }: {
     userId?: string
     personaImage?: string
@@ -74,6 +76,7 @@ function ChatUIInner({
     isVisualNovelMode: boolean
     toggleVisualNovelMode: () => void
     onStartCall?: () => void
+    soloMode?: boolean
 }) {
     const { messages, personaId, isLoadingHistory } = useChatEngine()
     const moodState = useMood()
@@ -392,7 +395,7 @@ function ChatUIInner({
                     </div>
                 ) : messages.length === 0 ? (
                     <div className="flex flex-1 flex-col items-center justify-center px-4 py-8">
-                        {showSoulGallery && userId ? (
+                        {showSoulGallery && userId && !soloMode ? (
                             // Show Soul Gallery for persona selection
                             <SoulGallery
                                 userId={userId}
@@ -403,12 +406,12 @@ function ChatUIInner({
                             // Show default welcome screen
                             <div className="flex max-w-sm flex-col items-center text-center animate-in fade-in zoom-in duration-500 rounded-3xl border border-white/10 bg-rp-surface/60 p-10 shadow-2xl backdrop-blur-md">
                                 <h2 className="mb-2 text-2xl font-bold text-rp-text drop-shadow-sm">
-                                    Speak with {personaName || 'the Soul'}
+                                    {soloMode ? `Speak with Rem Rin` : `Speak with ${personaName || 'the Soul'}`}
                                 </h2>
                                 <p className="text-rp-text/80 leading-relaxed font-medium">
                                     {personaId
                                         ? `Connecting with the frequency of ${personaName}...`
-                                        : "Choose a Soul from the library or gallery to begin your journey."
+                                        : soloMode ? "Rem Rin is initializing her cognitive core..." : "Choose a Soul from the library or gallery to begin your journey."
                                     }
                                 </p>
                             </div>
@@ -482,7 +485,8 @@ export function ChatUIV2({
     backgroundMusicUrl: initialBackgroundMusicUrl,
     audioTracks: initialAudioTracks,
     userTier = 'free',
-    showSoulGallery = false
+    showSoulGallery = false,
+    soloMode = false
 }: ChatUIV2Props) {
     const [selectedPersona, setSelectedPersona] = useState<{
         id: string
@@ -518,10 +522,10 @@ export function ChatUIV2({
     // Detect mobile and set visual novel mode as default
     React.useEffect(() => {
         const isMobile = window.innerWidth < 768
-        if (isMobile && !isVisualNovelMode) {
+        if ((isMobile || soloMode) && !isVisualNovelMode) {
             setIsVisualNovelMode(true)
         }
-    }, [])
+    }, [soloMode])
 
     // Sync state with props
     React.useEffect(() => {
@@ -583,6 +587,7 @@ export function ChatUIV2({
                     backgroundMusicUrl={selectedPersona?.backgroundMusicUrl || initialBackgroundMusicUrl}
                     audioTracks={selectedPersona?.audioTracks || initialAudioTracks}
                     onStartCall={() => setIsCallActive(true)}
+                    soloMode={soloMode}
                 />
                 <MemorySearchModal
                     isOpen={isMemorySearchOpen}

@@ -20,6 +20,13 @@ export interface UnifiedProfile {
     website_url: string | null;
     banner_url: string | null;
     messenger_settings: MessengerSettings;
+    preferred_interface: 'proper' | 'cockpit';
+    cockpit_language: string;
+    cockpit_theme: 'light' | 'dark';
+    enable_analytics: boolean;
+    enable_memory: boolean;
+    enable_thinking: boolean;
+    enable_voice: boolean;
     created_at: string;
     updated_at: string;
 }
@@ -46,7 +53,7 @@ export function useUnifiedProfile(userId?: string) {
                 .from('user_profiles')
                 .select('*')
                 .eq('user_id', userId)
-                .single();
+                .maybeSingle();
 
             if (fetchError) throw fetchError;
 

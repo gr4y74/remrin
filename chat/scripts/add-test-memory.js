@@ -20,8 +20,8 @@ async function addTestMemory() {
     console.log('--- Adding Test Memory to Database ---\n');
 
     const testMemory = {
-        user_id: 'sosu_main',  // Your user ID
-        persona_id: 'rem',      // Rem's persona ID
+        user_id: '5ee5ae79-01c9-4729-a99c-40dc68a51877',  // Real user ID: sosu
+        persona_id: '5720a26f-a61b-4641-ac19-d3a7b01c8bc8',      // Real persona ID: Rem Rin
         role: 'user',
         content: 'Test memory: The secret code for the quantum encryption project is "Aurora-7-Nova". This was discussed during our late-night debugging session.',
         domain: 'personal',

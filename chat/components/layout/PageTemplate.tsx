@@ -86,7 +86,7 @@ export function PageTemplate({
     }
 
     return (
-        <div className={cn("bg-rp-base min-h-screen flex flex-col w-full max-w-full overflow-x-hidden", className)}>
+        <div className={cn("bg-transparent min-h-screen flex flex-col w-full max-w-full overflow-x-hidden", className)}>
             {/* Header Section */}
             {renderHeader()}
 
