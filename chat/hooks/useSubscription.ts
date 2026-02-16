@@ -24,12 +24,14 @@ export function useSubscription() {
             return;
         }
 
+        const userId = user.id;
+
         async function fetchSubscription() {
             try {
                 const { data, error } = await supabase
-                    .from('subscriptions')
+                    .from('wallets')
                     .select('*')
-                    .eq('user_id', user.id)
+                    .eq('user_id', userId)
                     .maybeSingle();
 
                 if (error) {
@@ -38,7 +40,7 @@ export function useSubscription() {
                     // No subscription found, default to free/wanderer
                     setSubscription({
                         id: 'none',
-                        user_id: user.id,
+                        user_id: userId,
                         tier: 'wanderer',
                         status: 'active',
                         current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
@@ -47,7 +49,17 @@ export function useSubscription() {
                         monthly_message_limit: 100
                     });
                 } else {
-                    setSubscription(data as Subscription);
+                    // Map wallet data to subscription interface
+                    setSubscription({
+                        id: data.user_id,
+                        user_id: data.user_id,
+                        tier: data.tier as any,
+                        status: 'active',
+                        current_period_end: data.updated_at || data.created_at,
+                        cancel_at_period_end: false,
+                        messages_used_this_month: 0, // Not present in wallet
+                        monthly_message_limit: 100 // Not present in wallet
+                    });
                 }
             } catch (err) {
                 console.error('Failed to fetch subscription:', err);
