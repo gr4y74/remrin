@@ -254,7 +254,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                         <div className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5">
                                             <div className="space-y-0.5">
                                                 <h4 className="text-sm font-bold italic tracking-tight text-primary/80">Show Inner Heart</h4>
-                                                <p className="text-[11px] text-muted-foreground max-w-[280px]">Watch Rem's "subconscious" thinking process in real-time.</p>
+                                                <p className="text-[11px] text-muted-foreground max-w-[280px]">Watch Rem&apos;s &quot;subconscious&quot; thinking process in real-time.</p>
                                             </div>
                                             <Switch
                                                 checked={profile?.enable_thinking ?? false}

@@ -5,7 +5,7 @@ import { FeedLayout } from '@/components/moments/FeedLayout'
 import { FeedContainer } from '@/components/feed/FeedContainer'
 import { MomentWithPersona } from '@/types/moments'
 import { Button } from '@/components/ui/button'
-import { TrendingUp, Sparkles, Users, Bookmark, Image, FileText } from 'lucide-react'
+import { TrendingUp, Sparkles, Users, Bookmark, Image as ImageIcon, FileText } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Plus } from 'lucide-react'
@@ -210,7 +210,7 @@ export function FeedPageClient({
                                         : 'text-rp-muted hover:bg-rp-highlight-low hover:text-rp-text'
                                 )}
                             >
-                                <Image className="w-4 h-4" />
+                                <ImageIcon className="w-4 h-4" />
                                 Moments
                             </button>
                             <button
