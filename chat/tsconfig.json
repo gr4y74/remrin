@@ -42,6 +42,7 @@
     "lib/chat-engine/console",
     "supabase/functions",
     "scripts",
-    "telegram-bot"
+    "telegram-bot",
+    "public/test"
   ]
 }
