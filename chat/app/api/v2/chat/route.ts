@@ -179,52 +179,78 @@ export async function POST(request: NextRequest) {
                 systemPrompt = persona.system_prompt || ''
             }
 
-            // === AUTO-INJECT RELEVANT MEMORIES ===
+            // === AUTO-INJECT RELEVANT MEMORIES (ALWAYS-ON SEMANTIC SEARCH) ===
             const lastUserMessage = messages.filter(m => m.role === 'user').slice(-1)[0]
             const userText = lastUserMessage?.content || ''
             debugLog(`🧠 [Memory Auto-Inject] User message: "${userText.substring(0, 60)}..."`)
 
-            if (userText.length > 3) {
+            if (userText.length > 3 && personaId) {
                 try {
-                    // Extract keywords (remove stop words)
-                    const stopWords = new Set(['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'is', 'are', 'was', 'were', 'be', 'been', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'should', 'could', 'can', 'may', 'might', 'tell', 'me', 'about', 'what', 'who', 'when', 'where', 'why', 'how', 'you', 'your', 'remember', 'know'])
-                    const keywords = userText.toLowerCase()
-                        .replace(/[^a-z0-9\s-]/g, ' ')
-                        .split(/\s+/)
-                        .filter(w => w.length > 2 && !stopWords.has(w))
+                    // Generate embedding for the user's message
+                    const userEmbedding = await generateEmbedding(userText)
+                    debugLog(`🧠 [Memory Auto-Inject] Generated embedding for user message`)
 
-                    debugLog(`🧠 [Memory Auto-Inject] Keywords: ${JSON.stringify(keywords)}`)
+                    // Use service role client to search memories with semantic similarity
+                    const adminSupabase = (await import('@/lib/supabase/server')).createAdminClient()
 
-                    if (keywords.length > 0) {
-                        // Use service role client to search memories
-                        const adminSupabase = (await import('@/lib/supabase/server')).createAdminClient()
+                    // Use pgvector's <=> operator for cosine similarity
+                    // Note: This requires the pgvector extension and proper indexing
+                    const { data: memories, error: memError } = await adminSupabase
+                        .rpc('match_memories', {
+                            query_embedding: userEmbedding,
+                            match_user_id: user.id,
+                            match_persona_id: personaId,
+                            match_threshold: 0.7, // Similarity threshold (0-1, higher = more similar)
+                            match_count: 10 // Retrieve top 10 most relevant memories
+                        })
 
-                        const filters = keywords.map(k => `content.ilike.%${k}%`).join(',')
-                        debugLog(`🧠 [Memory Auto-Inject] Filters: ${filters}`)
+                    if (memError) {
+                        debugLog(`🧠 [Memory Auto-Inject] RPC error (falling back to keyword search): ${memError.message}`)
 
-                        const { data: memories, error: memError } = await adminSupabase
-                            .from('memories')
-                            .select('content, created_at, role, importance')
-                            .eq('user_id', user.id)
-                            .eq('persona_id', personaId)
-                            .or(filters)
-                            .order('importance', { ascending: false })
-                            .order('created_at', { ascending: false })
-                            .limit(5)
+                        // Fallback to keyword-based search if RPC fails
+                        const keywords = userText.toLowerCase()
+                            .replace(/[^a-z0-9\s-]/g, ' ')
+                            .split(/\s+/)
+                            .filter(w => w.length > 3)
+                            .slice(0, 5) // Top 5 keywords
 
-                        debugLog(`🧠 [Memory Auto-Inject] Query result: ${memories?.length || 0} memories, error: ${memError?.message || 'none'}`)
+                        if (keywords.length > 0) {
+                            const filters = keywords.map(k => `content.ilike.%${k}%`).join(',')
+                            const { data: fallbackMemories } = await adminSupabase
+                                .from('memories')
+                                .select('content, created_at, role, importance')
+                                .eq('user_id', user.id)
+                                .eq('persona_id', personaId)
+                                .or(filters)
+                                .order('importance', { ascending: false })
+                                .order('created_at', { ascending: false })
+                                .limit(10)
 
-                        if (memories && memories.length > 0) {
-                            const memoryLines = ['\n[📚 RELEVANT PAST MEMORIES]', 'The following are memories from your past conversations with this user:', '']
-                            memories.forEach((mem, idx) => {
-                                const date = new Date(mem.created_at).toLocaleDateString()
-                                const speaker = mem.role === 'user' ? 'User said' : 'You said'
-                                memoryLines.push(`${idx + 1}. [${date}] ${speaker}: "${mem.content.substring(0, 200)}${mem.content.length > 200 ? '...' : '"'}`)
-                            })
-                            memoryLines.push('')
-                            systemPrompt += memoryLines.join('\n')
-                            debugLog(`🧠 [Memory Auto-Inject] Injected ${memories.length} memories into system prompt`)
+                            if (fallbackMemories && fallbackMemories.length > 0) {
+                                const memoryLines = ['\n[📚 RELEVANT PAST MEMORIES]', 'The following are memories from your past conversations with this user:', '']
+                                fallbackMemories.forEach((mem, idx) => {
+                                    const date = new Date(mem.created_at).toLocaleDateString()
+                                    const speaker = mem.role === 'user' ? 'User said' : 'You said'
+                                    memoryLines.push(`${idx + 1}. [${date}] ${speaker}: "${mem.content.substring(0, 200)}${mem.content.length > 200 ? '...' : '"'}`)
+                                })
+                                memoryLines.push('')
+                                systemPrompt += memoryLines.join('\n')
+                                debugLog(`🧠 [Memory Auto-Inject] Injected ${fallbackMemories.length} memories (keyword fallback)`)
+                            }
                         }
+                    } else if (memories && memories.length > 0) {
+                        const memoryLines = ['\n[📚 RELEVANT PAST MEMORIES]', 'The following are memories from your past conversations with this user (sorted by relevance):', '']
+                        memories.forEach((mem: any, idx: number) => {
+                            const date = new Date(mem.created_at).toLocaleDateString()
+                            const speaker = mem.role === 'user' ? 'User said' : 'You said'
+                            const similarity = Math.round((1 - mem.similarity) * 100)
+                            memoryLines.push(`${idx + 1}. [${date}, ${similarity}% match] ${speaker}: "${mem.content.substring(0, 200)}${mem.content.length > 200 ? '...' : '"'}`)
+                        })
+                        memoryLines.push('')
+                        systemPrompt += memoryLines.join('\n')
+                        debugLog(`🧠 [Memory Auto-Inject] Injected ${memories.length} memories via semantic search`)
+                    } else {
+                        debugLog(`🧠 [Memory Auto-Inject] No relevant memories found`)
                     }
                 } catch (memErr: any) {
                     debugLog(`🧠 [Memory Auto-Inject] Error: ${memErr.message}`)
@@ -455,14 +481,14 @@ export async function POST(request: NextRequest) {
                     };
 
                     // --- PERSISTENCE: Get/Create Chat Session & Save User Message ---
-                    let chatId: string | null = null;
+                    let userMessageId: string | null = null;
                     if (personaId) {
                         try {
                             const supabaseService = createClient(cookieStore);
                             chatId = await getOrCreateChatSession(supabaseService, user.id, personaId, { customName, workspaceId });
                             const lastUserMsg = messages[messages.length - 1];
                             if (lastUserMsg.role === 'user') {
-                                await saveMessage(supabaseService, chatId, user.id, lastUserMsg);
+                                userMessageId = await saveMessage(supabaseService, chatId, user.id, lastUserMsg);
                             }
                         } catch (e) {
                             console.error('❌ [Persistence] Failed to init session or save user msg:', e);
@@ -480,18 +506,52 @@ export async function POST(request: NextRequest) {
 
                     const finalContent = await runChatRound(formattedMessages);
 
-                    // Send done signal
-                    controller.enqueue(encoder.encode(`data: [DONE]\n\n`));
-
                     // --- PERSISTENCE: Save Final Assistant Response ---
                     if (chatId && finalContent) {
                         const supabaseService = createClient(cookieStore);
-                        await saveMessage(supabaseService, chatId, user.id, {
+                        const assistantMessageId = await saveMessage(supabaseService, chatId, user.id, {
                             role: 'assistant',
                             content: finalContent,
                             timestamp: new Date()
                         }, providerInfo.id);
-                        console.log(`💾 [Persistence] Saved final recursive response`);
+
+                        // Send done signal with IDs
+                        controller.enqueue(encoder.encode(`data: ${JSON.stringify({
+                            done: true,
+                            userMessageId,
+                            assistantMessageId
+                        })}\n\n`));
+
+                        // Legacy done signal
+                        controller.enqueue(encoder.encode(`data: [DONE]\n\n`));
+
+                        console.log(`💾 [Persistence] Saved final recursive response: ${assistantMessageId}`);
+
+                        // --- AUTO-NAMING ---
+                        if (messages.length === 1 && finalContent) {
+                            try {
+                                console.log(`🏷️ [AutoNaming] Generating title for new chat...`);
+                                const titlePrompt = `Generate a very short, descriptive title (3-5 words) for a chat that starts with this user message: "${messages[0].content}". Respond ONLY with the title text, no quotes or punctuation.`;
+
+                                let generatedTitle = '';
+                                for await (const chunk of providerManager.sendMessage(
+                                    [{ role: 'user', content: titlePrompt, timestamp: new Date() }],
+                                    "You are a helpful assistant that names chat threads.",
+                                    { temperature: 0.3, model: 'deepseek-chat' }
+                                )) {
+                                    if (chunk.content) generatedTitle += chunk.content;
+                                }
+
+                                const finalTitle = generatedTitle.trim().replace(/^"|"$/g, '');
+                                if (finalTitle) {
+                                    const { updateChatMetadata } = await import('@/lib/chat-engine/persistence');
+                                    await updateChatMetadata(supabaseService, chatId, { title: finalTitle });
+                                    console.log(`✅ [AutoNaming] Title generated: ${finalTitle}`);
+                                }
+                            } catch (autoNameErr: any) {
+                                console.error(`⚠️ [AutoNaming] Failed: ${autoNameErr.message}`);
+                            }
+                        }
 
                         // --- UNIVERSAL CONSOLE: Fact Saving & Memory Sync ---
                         try {

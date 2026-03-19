@@ -35,7 +35,7 @@ export const ChatSoloInput: React.FC = () => {
 
     return (
         <div className="w-full max-w-3xl mx-auto px-6 pb-6">
-            <div className="relative group p-0 rounded-2xl transition-all duration-500 bg-transparent shadow-2xl ring-1 ring-white/5 focus-within:ring-white/10">
+            <div className="relative group p-0 rounded-2xl transition-all duration-500 bg-transparent shadow-2xl ring-1 ring-white/5 focus-within:ring-primary/20">
                 <div className="relative flex flex-col w-full bg-background/80 backdrop-blur-xl rounded-2xl overflow-hidden">
                     <textarea
                         ref={textareaRef}
@@ -48,7 +48,7 @@ export const ChatSoloInput: React.FC = () => {
                     />
 
                     <div className="absolute bottom-2.5 left-4 flex items-center gap-2">
-                        <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-xl" title="Attach context">
+                        <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-xl" title="Attach context">
                             <Plus className="w-5 h-5" />
                         </Button>
                         <div className="h-4 w-px bg-white/5 mx-1" />
@@ -76,11 +76,9 @@ export const ChatSoloInput: React.FC = () => {
                         </Button>
                     </div>
 
-                    {isGenerating && (
-                        <div className="absolute bottom-0 left-0 h-[2px] w-full bg-primary overflow-hidden">
-                            <div className="h-full w-full bg-white/20 animate-progress-shimmer" />
-                        </div>
-                    )}
+                    <div className="absolute bottom-0 left-0 h-[2px] w-full bg-primary overflow-hidden">
+                        <div className="h-full w-full bg-foreground/10 animate-progress-shimmer" />
+                    </div>
                 </div>
             </div>
             <p className="mt-4 text-[10px] text-center text-muted-foreground/40 font-medium tracking-wider uppercase">

@@ -39,7 +39,7 @@ export const ChatSoloHeader: React.FC<ChatSoloHeaderProps> = ({
     const { llmProvider, setLLMConfig, isGenerating } = useChatSolo()
 
     return (
-        <header className="flex h-16 items-center justify-between px-4 border-b border-border bg-background/95 backdrop-blur-md sticky top-0 z-50 transition-all">
+        <header className="flex h-16 items-center justify-between px-4 border-b border-transparent bg-background/95 backdrop-blur-md sticky top-0 z-50 transition-all">
             <div className="flex items-center gap-4">
                 <Button
                     variant="ghost"
@@ -65,10 +65,10 @@ export const ChatSoloHeader: React.FC<ChatSoloHeaderProps> = ({
                         )} />
                     </div>
                     <div className="flex flex-col">
-                        <h1 className="text-sm font-bold text-foreground tracking-tight leading-none">{personaName}</h1>
+                        <h1 className="text-sm font-bold text-foreground tracking-tight leading-none font-tiempos-headline">{personaName}</h1>
                         <div className="flex items-center gap-1.5 mt-1">
                             <Sparkles size={8} className="text-primary opacity-60" />
-                            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.1em]">
+                            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.1em] font-outfit">
                                 {isGenerating ? "Thinking..." : "Cockpit Direct"}
                             </p>
                         </div>
@@ -79,7 +79,7 @@ export const ChatSoloHeader: React.FC<ChatSoloHeaderProps> = ({
             <div className="flex items-center gap-3">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="h-8 gap-2 rounded-xl bg-muted/30 border-border hover:bg-muted font-bold text-[10px] uppercase tracking-wider group">
+                        <Button variant="outline" className="h-8 gap-2 rounded-xl bg-muted/30 border-white/10 hover:bg-muted font-bold text-[10px] uppercase tracking-wider group font-outfit">
                             <Cpu size={14} className="text-primary group-hover:rotate-12 transition-transform" />
                             <span>
                                 {llmProvider === 'claude' ? 'Claude 3.5' :
@@ -90,10 +90,10 @@ export const ChatSoloHeader: React.FC<ChatSoloHeaderProps> = ({
                             <ChevronDown size={12} className="text-muted-foreground opacity-50" />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56 bg-background/95 backdrop-blur-xl border-border shadow-2xl p-1.5 rounded-2xl animate-in fade-in slide-in-from-top-2">
+                    <DropdownMenuContent align="end" className="w-56 bg-background/95 backdrop-blur-xl border-transparent ring-1 ring-white/5 shadow-2xl p-1.5 rounded-2xl animate-in fade-in slide-in-from-top-2">
                         <DropdownMenuItem
                             className={cn(
-                                "flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-colors text-xs font-semibold",
+                                "flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-colors text-xs font-semibold font-outfit",
                                 (!llmProvider || llmProvider === 'deepseek') ? "bg-primary/10 text-primary" : "hover:bg-muted"
                             )}
                             onClick={() => setLLMConfig('deepseek', 'deepseek-chat')}
@@ -107,7 +107,7 @@ export const ChatSoloHeader: React.FC<ChatSoloHeaderProps> = ({
 
                         <DropdownMenuItem
                             className={cn(
-                                "flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-colors text-xs font-semibold mt-1",
+                                "flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-colors text-xs font-semibold mt-1 font-outfit",
                                 llmProvider === 'claude' ? "bg-blue-500/10 text-blue-500" : "hover:bg-muted"
                             )}
                             onClick={() => setLLMConfig('claude', 'claude-3-5-sonnet-20241022')}
@@ -121,7 +121,7 @@ export const ChatSoloHeader: React.FC<ChatSoloHeaderProps> = ({
 
                         <DropdownMenuItem
                             className={cn(
-                                "flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-colors text-xs font-semibold mt-1",
+                                "flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-colors text-xs font-semibold mt-1 font-outfit",
                                 llmProvider === 'openrouter' ? "bg-amber-500/10 text-amber-500" : "hover:bg-muted"
                             )}
                             onClick={() => setLLMConfig('openrouter', 'openrouter/auto')}
@@ -135,7 +135,7 @@ export const ChatSoloHeader: React.FC<ChatSoloHeaderProps> = ({
 
                         <DropdownMenuItem
                             className={cn(
-                                "flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-colors text-xs font-semibold mt-1",
+                                "flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-colors text-xs font-semibold mt-1 font-outfit",
                                 llmProvider === 'gemini' ? "bg-emerald-500/10 text-emerald-500" : "hover:bg-muted"
                             )}
                             onClick={() => setLLMConfig('gemini', 'gemini-1.5-pro')}
@@ -162,7 +162,7 @@ export const ChatSoloHeader: React.FC<ChatSoloHeaderProps> = ({
                     <PanelRight size={20} />
                 </Button>
 
-                <div className="h-4 w-px bg-border/50 mx-1" />
+                <div className="h-4 w-px bg-white/5 mx-1" />
 
                 <UserMenu openSettings={openSettings} />
             </div>

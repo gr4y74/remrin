@@ -16,6 +16,17 @@ import { useUnifiedProfile } from '@/hooks/useUnifiedProfile'
 import { supabase } from '@/lib/supabase/browser-client'
 import { getRecoveredToken } from '@/lib/supabase/token-recovery'
 
+export interface Bookmark {
+    id: string
+    user_id: string
+    chat_id: string
+    message_id: string
+    folder_id?: string
+    content_preview?: string
+    note?: string
+    created_at: string
+}
+
 interface ChatSoloEngineState {
     messages: ChatMessageContent[]
     isGenerating: boolean
@@ -29,7 +40,9 @@ interface ChatSoloEngineState {
     activeArtifact: string | null
     showThinking: boolean
     currentThreadName: string
+    currentChatId: string | null
     threads: any[]
+    bookmarks: Bookmark[]
 }
 
 interface ChatSoloEngineActions {
@@ -38,8 +51,14 @@ interface ChatSoloEngineActions {
     clearMessages: () => void
     setLLMConfig: (provider: string | null, model: string | null) => void
     toggleThinking: () => void
+    toggleStar: (chatId: string, isStarred: boolean) => Promise<void>
+    renameChat: (chatId: string, newTitle: string) => Promise<void>
     createNewChat: () => void
     setCurrentThreadName: (name: string) => void
+    switchThread: (name: string) => void
+    toggleBookmark: (message: ChatMessageContent) => Promise<void>
+    saveFeedback: (messageId: string, feedback: 'like' | 'dislike' | null) => Promise<void>
+    regenerateMessage: (messageId: string) => Promise<void>
 }
 
 interface ChatSoloEngineContextValue extends ChatSoloEngineState, ChatSoloEngineActions { }
@@ -70,6 +89,8 @@ export function ChatSoloEngineProvider({
     const [llmModel, setLLMModel] = useState<string | null>('deepseek-chat')
     const [activeArtifact, setActiveArtifact] = useState<string | null>(null)
     const [showThinking, setShowThinking] = useState(false)
+    const [bookmarks, setBookmarks] = useState<Bookmark[]>([])
+    const [currentChatId, setCurrentChatId] = useState<string | null>(null)
 
     const { user, session } = useAuth()
     const { profile, updateProfile } = useUnifiedProfile(user?.id)
@@ -92,6 +113,20 @@ export function ChatSoloEngineProvider({
     const abortControllerRef = useRef<AbortController | null>(null)
     const messagesRef = useRef<ChatMessageContent[]>([])
 
+    const stopGeneration = useCallback(() => {
+        abortControllerRef.current?.abort()
+    }, [])
+
+    // Log auth changes
+    useEffect(() => {
+        console.log(`👤 [ChatSoloEngine] Auth State changed: user=${user?.id ? 'PRESENT' : 'MISSING'}, session=${session ? 'ACTIVE' : 'NONE'}`)
+    }, [user, session])
+
+    useEffect(() => {
+        const hasLink = !!session?.access_token || !!getRecoveredToken()
+        console.log(`🔗 [ChatSoloEngine] hasActiveLink status: ${hasLink ? 'CONNECTED' : 'SEVERED'}`)
+    }, [session])
+
     useEffect(() => {
         messagesRef.current = messages
     }, [messages])
@@ -100,30 +135,49 @@ export function ChatSoloEngineProvider({
      * Load Solo History
      */
     useEffect(() => {
+        let isCurrent = true // Protection against race conditions
+
         const fetchSoloHistory = async () => {
-            if (!user) return
+            if (!isCurrent) return
+            if (!user) {
+                console.warn('🕵️ [ChatSoloEngine] No user for history fetch.')
+                return
+            }
 
             setIsLoadingHistory(true)
+            const targetName = currentThreadName // Capture target
+            console.log(`📡 [ChatSoloEngine] fetchSoloHistory triggered for: ${targetName}`)
+
             try {
                 const token = session?.access_token || getRecoveredToken()
                 if (!token) console.warn('🕵️ [ChatSoloEngine] No auth token available for history fetch.')
 
-                console.log(`📡 [ChatSoloEngine] Fetching history with token prefix: ${token?.substring(0, 10)}...`)
-
-                const response = await fetch(`/api/v2/chat/history?personaId=${personaId}&customName=${currentThreadName}`, {
+                const response = await fetch(`/api/v2/chat/history?personaId=${personaId}&customName=${targetName}`, {
                     headers: token ? { 'Authorization': `Bearer ${token}` } : {},
                     credentials: 'include'
                 })
 
+                if (!isCurrent) {
+                    console.log(`⏩ [ChatSoloEngine] fetchSoloHistory for ${targetName} discarded (stale)`)
+                    return
+                }
+
                 if (response.ok) {
                     const history = await response.json()
+                    console.log(`✅ [ChatSoloEngine] History fetched for ${targetName}: ${history?.length || 0} messages`)
+
+                    if (!isCurrent) return
+
                     if (history && history.length > 0) {
+                        console.log(`💾 [ChatSoloEngine] Setting messages for ${targetName} (count: ${history.length})`)
                         setMessages(history.map((msg: any) => ({
-                            ...msg,
+                            id: msg.id,
+                            role: msg.role,
+                            content: msg.content,
                             timestamp: new Date(msg.timestamp)
                         })))
                     } else {
-                        // If no history, show intro
+                        console.log(`ℹ️ [ChatSoloEngine] No history found for ${targetName}, resetting intro...`)
                         if (personaIntroMessage) {
                             setMessages([{
                                 role: 'assistant',
@@ -134,16 +188,25 @@ export function ChatSoloEngineProvider({
                             setMessages([])
                         }
                     }
+                } else {
+                    console.error(`❌ [ChatSoloEngine] History fetch failed for ${targetName}: ${response.status}`)
+                    if (isCurrent) {
+                        setError(`Failed to load history: ${response.status}`)
+                    }
                 }
             } catch (e) {
-                console.error('❌ [ChatSoloEngine] Failed to load history:', e)
+                console.error(`❌ [ChatSoloEngine] History fetch failed for ${targetName}:`, e)
             } finally {
-                setIsLoadingHistory(false)
+                if (isCurrent) setIsLoadingHistory(false)
             }
         }
 
         fetchSoloHistory()
-    }, [personaId, personaIntroMessage, user, currentThreadName])
+
+        return () => {
+            isCurrent = false // Cleanup on change
+        }
+    }, [personaId, personaIntroMessage, user, session, currentThreadName])
 
     /**
      * Fetch Threads List
@@ -152,26 +215,197 @@ export function ChatSoloEngineProvider({
         const fetchThreads = async () => {
             if (!user) return
             try {
-                const { data } = await supabase
+                // First, try to get threads with message counts
+                const { data, error } = await supabase
                     .from('chats')
-                    .select('id, name, created_at')
+                    .select('id, name, title, is_starred, created_at, updated_at')
                     .eq('user_id', user.id)
                     .or(`name.ilike.persona-chat-${personaId}%,name.ilike.solo-cockpit-%`)
-                    .order('created_at', { ascending: false })
+                    .order('updated_at', { ascending: false })
 
-                if (data) setThreads(data)
+                if (error) {
+                    // Fallback for missing columns
+                    console.warn('⚠️ [ChatSoloEngine] Advanced threads fetch failed, falling back to basic...', error.message)
+                    const { data: basicData } = await supabase
+                        .from('chats')
+                        .select('id, name, created_at, updated_at')
+                        .eq('user_id', user.id)
+                        .or(`name.ilike.persona-chat-${personaId}%,name.ilike.solo-cockpit-%`)
+                        .order('updated_at', { ascending: false })
+
+                    if (basicData) {
+                        // Get message counts for each chat
+                        const threadsWithCounts = await Promise.all(
+                            basicData.map(async (chat) => {
+                                const { count } = await supabase
+                                    .from('messages')
+                                    .select('*', { count: 'exact', head: true })
+                                    .eq('chat_id', chat.id)
+
+                                return { ...chat, title: null, is_starred: false, message_count: count || 0 }
+                            })
+                        )
+
+                        // Filter out empty chats and sort by message count
+                        const nonEmptyChats = threadsWithCounts
+                            .filter((t: any) => t.message_count > 0)
+                            .sort((a: any, b: any) => {
+                                const aTime = a.updated_at ? new Date(a.updated_at).getTime() : 0
+                                const bTime = b.updated_at ? new Date(b.updated_at).getTime() : 0
+                                return bTime - aTime
+                            })
+
+                        setThreads(nonEmptyChats)
+                    }
+                } else if (data) {
+                    // Get message counts for each chat
+                    const threadsWithCounts = await Promise.all(
+                        (data as any[]).map(async (chat) => {
+                            const { count } = await supabase
+                                .from('messages')
+                                .select('*', { count: 'exact', head: true })
+                                .eq('chat_id', chat.id)
+
+                            return { ...chat, message_count: count || 0 }
+                        })
+                    )
+
+                    // Filter out empty chats and sort by message count
+                    const nonEmptyChats = threadsWithCounts
+                        .filter((t: any) => t.message_count > 0)
+                        .sort((a: any, b: any) => {
+                            const aTime = a.updated_at ? new Date(a.updated_at).getTime() : 0
+                            const bTime = b.updated_at ? new Date(b.updated_at).getTime() : 0
+                            return bTime - aTime
+                        })
+
+                    setThreads(nonEmptyChats)
+                }
+
+                // Sync currentChatId
+                const allFetched = (data as any[]) || []
+                const active = allFetched.find(t => t.name === currentThreadName)
+                if (active) setCurrentChatId(active.id)
             } catch (e) {
                 console.error('❌ [ChatSoloEngine] Failed to fetch threads:', e)
             }
         }
         fetchThreads()
-    }, [user, currentThreadName])
+    }, [user, currentThreadName, personaId])
+
+    /**
+     * Fetch Bookmarks
+     */
+    useEffect(() => {
+        const fetchBookmarks = async () => {
+            if (!user) return
+            try {
+                const { data, error } = await supabase
+                    .from('bookmarks')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .order('created_at', { ascending: false })
+
+                if (error) throw error
+                setBookmarks(data || [])
+            } catch (e) {
+                console.error('❌ [ChatSoloEngine] Failed to fetch bookmarks:', e)
+            }
+        }
+        fetchBookmarks()
+    }, [user])
+
+    const toggleBookmark = useCallback(async (message: ChatMessageContent) => {
+        if (!user || !message.id) return
+
+        const isBookmarked = bookmarks.some(b => b.message_id === message.id)
+
+        try {
+            if (isBookmarked) {
+                const { error } = await supabase
+                    .from('bookmarks')
+                    .delete()
+                    .eq('user_id', user.id)
+                    .eq('message_id', message.id)
+
+                if (error) throw error
+                setBookmarks(prev => prev.filter(b => b.message_id !== message.id))
+                console.log(`✅ [ChatSoloEngine] Bookmark removed: ${message.id}`)
+            } else {
+                // Use currentChatId if available, fallback to searching threads
+                const targetChatId = currentChatId || threads.find(t => t.name === currentThreadName)?.id
+
+                if (!targetChatId) {
+                    console.error('❌ [ChatSoloEngine] Cannot bookmark: no active chatId found')
+                    return
+                }
+
+                const { data, error } = await supabase
+                    .from('bookmarks')
+                    .insert({
+                        user_id: user.id,
+                        chat_id: targetChatId,
+                        message_id: message.id,
+                        content_preview: message.content.substring(0, 200) + (message.content.length > 200 ? '...' : '')
+                    })
+                    .select()
+                    .single()
+
+                if (error) throw error
+                setBookmarks(prev => [data, ...prev])
+                console.log(`✅ [ChatSoloEngine] Bookmark added: ${message.id}`)
+            }
+        } catch (e) {
+            console.error('❌ [ChatSoloEngine] Toggle bookmark failed:', e)
+        }
+    }, [user, bookmarks, currentThreadName, threads])
+
+    const toggleStar = useCallback(async (chatId: string, isStarred: boolean) => {
+        try {
+            const { error } = await supabase
+                .from('chats')
+                .update({ is_starred: isStarred } as any)
+                .eq('id', chatId)
+
+            if (error) throw error
+
+            setThreads(prev => prev.map(t => t.id === chatId ? { ...t, is_starred: isStarred } : t))
+        } catch (e) {
+            console.error('❌ [ChatSoloEngine] Toggle star failed:', e)
+        }
+    }, [])
+
+    const renameChat = useCallback(async (chatId: string, newTitle: string) => {
+        try {
+            const { error } = await supabase
+                .from('chats')
+                .update({ title: newTitle } as any)
+                .eq('id', chatId)
+
+            if (error) throw error
+
+            setThreads(prev => prev.map(t => t.id === chatId ? { ...t, title: newTitle } : t))
+            console.log(`✅ [ChatSoloEngine] Chat renamed to: ${newTitle}`)
+        } catch (e) {
+            console.error('❌ [ChatSoloEngine] Rename failed:', e)
+        }
+    }, [])
 
     const createNewChat = useCallback(() => {
+        stopGeneration() // Stop any active response before switching
         const newName = `solo-cockpit-${Date.now()}`
+        console.log(`🆕 [ChatSoloEngine] Creating new chat: ${newName}`)
         setCurrentThreadName(newName)
         setMessages([])
-    }, [])
+    }, [stopGeneration])
+
+    const switchThread = useCallback((name: string) => {
+        if (name === currentThreadName) return // Already on this thread
+        console.log(`🔀 [ChatSoloEngine] Switching thread to: ${name}`)
+        stopGeneration() // Stop any active generation
+        setMessages([]) // Clear immediately to avoid stale content
+        setCurrentThreadName(name)
+    }, [currentThreadName, stopGeneration])
 
     const sendMessage = useCallback(async (content: string, skipUserMessage: boolean = false) => {
         if (!content.trim() && !skipUserMessage) return
@@ -179,6 +413,7 @@ export function ChatSoloEngineProvider({
 
         setError(null)
         setIsGenerating(true)
+        const startingThread = currentThreadName // Capture current thread
 
         let currentMessages = [...messagesRef.current]
 
@@ -274,9 +509,10 @@ export function ChatSoloEngineProvider({
 
                             if (json.reasoning || json.content) {
                                 setMessages(prev => {
+                                    if (currentThreadName !== startingThread) return prev // Don't update if thread changed
                                     const updated = [...prev]
                                     const last = updated[updated.length - 1]
-                                    if (last.role === 'assistant') {
+                                    if (last && last.role === 'assistant') {
                                         last.content = fullContent
                                         if (fullReasoning) {
                                             last.metadata = { ...last.metadata, reasoning: fullReasoning }
@@ -284,6 +520,33 @@ export function ChatSoloEngineProvider({
                                     }
                                     return updated
                                 })
+                            }
+
+                            if (json.done && (json.userMessageId || json.assistantMessageId)) {
+                                console.log(`🆔 [ChatSoloEngine] Received message IDs for ${startingThread}: user=${json.userMessageId}, assistant=${json.assistantMessageId}`);
+                                setMessages(prev => {
+                                    if (currentThreadName !== startingThread) {
+                                        console.warn(`⚠️ [ChatSoloEngine] Thread changed from ${startingThread} to ${currentThreadName}, discarding IDs.`);
+                                        return prev
+                                    }
+                                    const updated = [...prev];
+                                    if (updated.length >= 2) {
+                                        const userIdx = updated.length - 2;
+                                        const assistantIdx = updated.length - 1;
+
+                                        if (json.userMessageId && updated[userIdx].role === 'user') {
+                                            console.log(`✅ [ChatSoloEngine] Applying user ID: ${json.userMessageId}`);
+                                            updated[userIdx].id = json.userMessageId;
+                                        }
+                                        if (json.assistantMessageId && updated[assistantIdx].role === 'assistant') {
+                                            console.log(`✅ [ChatSoloEngine] Applying assistant ID: ${json.assistantMessageId}`);
+                                            updated[assistantIdx].id = json.assistantMessageId;
+                                        }
+                                    } else {
+                                        console.warn(`⚠️ [ChatSoloEngine] Not enough messages in state to apply IDs (${updated.length})`);
+                                    }
+                                    return updated;
+                                });
                             }
                         } catch (e) { }
                     }
@@ -297,11 +560,7 @@ export function ChatSoloEngineProvider({
             setIsGenerating(false)
             abortControllerRef.current = null
         }
-    }, [personaId, llmProvider, llmModel])
-
-    const stopGeneration = useCallback(() => {
-        abortControllerRef.current?.abort()
-    }, [])
+    }, [personaId, llmProvider, llmModel, session, currentThreadName])
 
     const clearMessages = useCallback(() => {
         setMessages([])
@@ -312,6 +571,54 @@ export function ChatSoloEngineProvider({
         setLLMProvider(provider)
         setLLMModel(model)
     }, [])
+
+    const saveFeedback = useCallback(async (messageId: string, feedback: 'like' | 'dislike' | null) => {
+        if (!user) return
+
+        try {
+            // Update local state
+            setMessages(prev => prev.map(msg =>
+                msg.id === messageId
+                    ? { ...msg, metadata: { ...msg.metadata, feedback } }
+                    : msg
+            ))
+
+            // Update database
+            const { updateMessageMetadata } = await import('@/lib/chat-engine/persistence')
+            // Get current message to preserve other metadata
+            const msg = messagesRef.current.find(m => m.id === messageId)
+            const metadata = { ...msg?.metadata, feedback }
+            await updateMessageMetadata(supabase, messageId, metadata)
+
+            console.log(`✅ [ChatSoloEngine] Feedback saved for ${messageId}: ${feedback}`)
+        } catch (e) {
+            console.error('❌ [ChatSoloEngine] Feedback save failed:', e)
+        }
+    }, [user])
+
+    const regenerateMessage = useCallback(async (messageId: string) => {
+        const msgIdx = messagesRef.current.findIndex(m => m.id === messageId)
+        if (msgIdx === -1) return
+
+        const msg = messagesRef.current[msgIdx]
+        if (msg.role !== 'assistant') return
+
+        console.log(`🔄 [ChatSoloEngine] Regenerating message: ${messageId}`)
+
+        // 1. Remove the assistant message and everything after it
+        const newMessages = messagesRef.current.slice(0, msgIdx)
+        setMessages(newMessages)
+
+        // 2. Trigger new generation
+        // We need to wait a tick for state to update or use the slice directly in sendMessage
+        // But sendMessage uses messagesRef.current internally.
+        // Let's modify sendMessage slightly or pass the history.
+        // Actually, sendMessage uses messagesRef.current which will be updated by the next tick if we don't await.
+        // Better to just call it and it will use the truncated history.
+        setTimeout(() => {
+            sendMessage("", true)
+        }, 0)
+    }, [sendMessage])
 
 
     const value = useMemo(() => ({
@@ -331,11 +638,19 @@ export function ChatSoloEngineProvider({
         clearMessages,
         setLLMConfig,
         toggleThinking,
+        toggleStar,
+        renameChat,
         createNewChat,
         currentThreadName,
+        currentChatId,
         threads,
-        setCurrentThreadName
-    }), [messages, isGenerating, currentProvider, userTier, error, personaId, isLoadingHistory, llmProvider, llmModel, activeArtifact, showThinking, sendMessage, stopGeneration, clearMessages, setLLMConfig, toggleThinking, createNewChat, currentThreadName, threads, setCurrentThreadName])
+        bookmarks,
+        setCurrentThreadName,
+        switchThread,
+        toggleBookmark,
+        saveFeedback,
+        regenerateMessage
+    }), [messages, isGenerating, currentProvider, userTier, error, personaId, isLoadingHistory, llmProvider, llmModel, activeArtifact, showThinking, sendMessage, stopGeneration, clearMessages, setLLMConfig, toggleThinking, toggleStar, renameChat, createNewChat, currentThreadName, currentChatId, threads, bookmarks, setCurrentThreadName, switchThread, toggleBookmark, saveFeedback, regenerateMessage])
 
     return (
         <ChatSoloEngineContext.Provider value={value}>

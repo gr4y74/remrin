@@ -20,7 +20,7 @@ export function RootLayoutContainer({ children, user }: RootLayoutContainerProps
 
     if (isStandalone) {
         return (
-            <div className="flex min-h-screen w-full theme-romrin dark">
+            <div className="flex min-h-screen w-full theme-romrin">
                 <GlobalState>
                     <main className="flex-1 w-full overflow-hidden">
                         {children}

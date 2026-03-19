@@ -56,7 +56,7 @@ export function UserMenu({ openSettings }: UserMenuProps) {
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-2 p-1.5 hover:bg-muted/50 rounded-xl transition-colors group">
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 overflow-hidden shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center border border-transparent overflow-hidden shrink-0">
                         {profile?.avatar_url || user.user_metadata?.avatar_url ? (
                             <img src={profile?.avatar_url || user.user_metadata?.avatar_url} alt="Profile" className="w-full h-full object-cover" />
                         ) : (
@@ -64,9 +64,9 @@ export function UserMenu({ openSettings }: UserMenuProps) {
                         )}
                     </div>
                     <div className="flex flex-col items-start pr-1 hidden md:flex">
-                        <span className="text-xs font-bold text-foreground leading-none">{profile?.display_name || user.user_metadata?.full_name || 'User'}</span>
+                        <span className="text-xs font-bold text-foreground leading-none font-outfit">{profile?.display_name || user.user_metadata?.full_name || 'User'}</span>
                         {subscription && (
-                            <span className="text-[9px] font-bold uppercase tracking-tighter text-primary/70 mt-0.5">
+                            <span className="text-[9px] font-bold uppercase tracking-tighter text-primary/70 mt-0.5 font-outfit">
                                 {getPlanDisplay(subscription.tier)}
                             </span>
                         )}
@@ -74,16 +74,16 @@ export function UserMenu({ openSettings }: UserMenuProps) {
                 </button>
             </DropdownMenuTrigger>
 
-            <DropdownMenuContent align="end" className="w-64 bg-background/95 backdrop-blur-xl border-border shadow-2xl p-1.5 rounded-2xl animate-in fade-in slide-in-from-top-2">
-                <div className="px-3 py-2 border-b border-border/50 mb-1">
-                    <div className="text-xs font-bold text-foreground truncate">{user.email}</div>
+            <DropdownMenuContent align="end" className="w-64 bg-background/95 backdrop-blur-xl border-transparent ring-1 ring-white/5 shadow-2xl p-1.5 rounded-2xl animate-in fade-in slide-in-from-top-2">
+                <div className="px-3 py-2 border-b border-transparent mb-1">
+                    <div className="text-xs font-bold text-foreground truncate font-outfit">{user.email}</div>
                     <div className="text-[10px] text-muted-foreground font-medium mt-0.5">
                         {subscription ? getPlanDisplay(subscription.tier) : 'Wanderer'}
                     </div>
                 </div>
 
                 <DropdownMenuItem
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-muted transition-colors text-xs font-semibold"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-muted transition-colors text-xs font-semibold font-outfit"
                     onClick={openSettings}
                 >
                     <Settings size={14} className="text-muted-foreground" />
@@ -91,25 +91,25 @@ export function UserMenu({ openSettings }: UserMenuProps) {
                     <span className="text-[10px] opacity-40 font-mono">⌘,</span>
                 </DropdownMenuItem>
 
-                <DropdownMenuItem className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-muted transition-colors text-xs font-semibold">
+                <DropdownMenuItem className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-muted transition-colors text-xs font-semibold font-outfit">
                     <Globe size={14} className="text-muted-foreground" />
                     <span className="flex-1">Language</span>
                     <ChevronRight size={12} className="opacity-30" />
                 </DropdownMenuItem>
 
                 <DropdownMenuItem
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-muted transition-colors text-xs font-semibold"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-muted transition-colors text-xs font-semibold font-outfit"
                     onClick={() => window.open('https://help.remrin.ai', '_blank')}
                 >
                     <HelpCircle size={14} className="text-muted-foreground" />
                     <span>Get help</span>
                 </DropdownMenuItem>
 
-                <DropdownMenuSeparator className="bg-border/50 my-1" />
+                <DropdownMenuSeparator className="bg-white/5 my-1" />
 
                 {(!subscription || subscription.tier === 'wanderer') && (
                     <DropdownMenuItem
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-xs font-bold mb-1"
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-xs font-bold mb-1 font-outfit"
                         onClick={() => window.location.href = '/upgrade'}
                     >
                         <Sparkles size={14} />
@@ -133,7 +133,7 @@ export function UserMenu({ openSettings }: UserMenuProps) {
                     <span>Learn more</span>
                 </DropdownMenuItem>
 
-                <DropdownMenuSeparator className="bg-border/50 my-1" />
+                <DropdownMenuSeparator className="bg-white/5 my-1" />
 
                 <DropdownMenuItem
                     className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-destructive/10 text-destructive transition-colors text-xs font-bold"

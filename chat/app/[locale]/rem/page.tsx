@@ -12,7 +12,6 @@ export default function RemSoloPage() {
                 <ChatSoloUI
                     personaId={REM_RIN_ID}
                     personaName="Rem Rin"
-                    personaIntroMessage="Cockpit Core Initialized. Standing by for high-precision objectives. How shall we allocate neural resources today?"
                     userTier="pro"
                 />
             </ErrorBoundary>

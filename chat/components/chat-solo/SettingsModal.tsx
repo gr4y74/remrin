@@ -20,6 +20,7 @@ import { supabase } from '@/lib/supabase/browser-client';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useUnifiedProfile } from '@/hooks/useUnifiedProfile';
+import { useTheme } from 'next-themes';
 import {
     Dialog,
     DialogContent,
@@ -43,6 +44,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     const { user } = useAuth();
     const { subscription } = useSubscription();
     const { profile, updateProfile } = useUnifiedProfile(user?.id);
+    const { setTheme } = useTheme();
 
     if (!user) {
         return (
@@ -67,15 +69,18 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     }
 
     const handleUpdatePreference = async (key: string, value: any) => {
+        if (key === 'cockpit_theme') {
+            setTheme(value);
+        }
         await updateProfile({ [key]: value });
     };
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-2xl p-0 overflow-hidden bg-background/80 backdrop-blur-2xl border-white/5 shadow-2xl rounded-3xl">
+            <DialogContent className="max-w-2xl p-0 overflow-hidden bg-background/80 backdrop-blur-2xl border-transparent shadow-2xl rounded-3xl">
                 <div className="flex h-[600px]">
                     {/* Sidebar */}
-                    <div className="w-56 border-r border-white/5 bg-white/5 p-4 flex flex-col gap-1">
+                    <div className="w-56 border-r border-transparent bg-white/5 p-4 flex flex-col gap-1">
                         <h2 className="px-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-4">Settings</h2>
 
                         <button
@@ -122,7 +127,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                             <span>Billing</span>
                         </button>
 
-                        <div className="mt-auto pt-4 border-t border-white/5">
+                        <div className="mt-auto pt-4 border-t border-transparent">
                             <div className="px-3 py-2 rounded-xl bg-destructive/5 text-[10px] text-destructive flex items-center gap-2 font-bold uppercase tracking-tight">
                                 <AlertCircle size={12} />
                                 Account Safety
@@ -142,15 +147,15 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
                                     <div className="space-y-6">
                                         <div className="space-y-2">
-                                            <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Email Address</label>
-                                            <div className="p-3 rounded-xl bg-muted/50 border border-border text-xs font-medium text-muted-foreground cursor-not-allowed">
+                                            <label className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground font-outfit">Email Address</label>
+                                            <div className="p-3 rounded-xl bg-muted/20 border border-transparent text-xs font-medium text-muted-foreground cursor-not-allowed shadow-inner">
                                                 {user.email}
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5">
+                                        <div className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-transparent">
                                             <div className="space-y-0.5">
-                                                <h4 className="text-sm font-bold">Default Interface</h4>
+                                                <h4 className="text-sm font-bold font-tiempos-headline">Default Interface</h4>
                                                 <p className="text-xs text-muted-foreground">Choose which interface to open by default.</p>
                                             </div>
                                             <div className="flex bg-muted p-1 rounded-xl">
@@ -190,13 +195,13 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                             onClick={() => handleUpdatePreference('cockpit_theme', 'light')}
                                             className={cn(
                                                 "flex flex-col gap-3 p-4 rounded-2xl border-2 transition-all text-left group",
-                                                profile?.cockpit_theme === 'light' ? "border-primary bg-primary/5 shadow-inner" : "border-border hover:border-muted-foreground/30"
+                                                profile?.cockpit_theme === 'light' ? "border-primary bg-primary/5 shadow-inner" : "border-transparent hover:border-primary/20"
                                             )}
                                         >
-                                            <div className="w-full aspect-video bg-white rounded-lg border border-border overflow-hidden shadow-sm flex items-center justify-center">
+                                            <div className="w-full aspect-video bg-white rounded-lg border border-transparent overflow-hidden shadow-sm flex items-center justify-center">
                                                 <Sun size={24} className="text-amber-500" />
                                             </div>
-                                            <div className="flex items-center justify-between w-full">
+                                            <div className="flex items-center justify-between w-full font-outfit">
                                                 <span className="text-[10px] font-bold uppercase tracking-widest">Light Mode</span>
                                                 <div className={cn("w-3 h-3 rounded-full border-2 border-background", profile?.cockpit_theme === 'light' ? "bg-primary" : "bg-white/10")} />
                                             </div>
@@ -206,13 +211,13 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                             onClick={() => handleUpdatePreference('cockpit_theme', 'dark')}
                                             className={cn(
                                                 "flex flex-col gap-3 p-4 rounded-2xl border-2 transition-all text-left group",
-                                                profile?.cockpit_theme === 'dark' ? "border-primary bg-primary/5 shadow-inner" : "border-border hover:border-muted-foreground/30"
+                                                profile?.cockpit_theme === 'dark' ? "border-primary bg-primary/5 shadow-inner" : "border-transparent hover:border-primary/20"
                                             )}
                                         >
-                                            <div className="w-full aspect-video bg-zinc-900 rounded-lg border border-border overflow-hidden shadow-sm flex items-center justify-center">
+                                            <div className="w-full aspect-video bg-[#1a1b26] rounded-lg border border-transparent overflow-hidden shadow-sm flex items-center justify-center">
                                                 <Moon size={24} className="text-blue-400" />
                                             </div>
-                                            <div className="flex items-center justify-between w-full">
+                                            <div className="flex items-center justify-between w-full font-outfit">
                                                 <span className="text-[10px] font-bold uppercase tracking-widest">Dark Mode</span>
                                                 <div className={cn("w-3 h-3 rounded-full border-2 border-background", profile?.cockpit_theme === 'dark' ? "bg-primary" : "bg-white/10")} />
                                             </div>
@@ -230,17 +235,17 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
                                     <div className="space-y-4">
                                         <div className="grid grid-cols-2 gap-4 mb-4">
-                                            <div className="p-4 rounded-2xl bg-white/5 border border-white/5 text-center">
+                                            <div className="p-4 rounded-2xl bg-white/5 border border-transparent text-center">
                                                 <div className="text-xl font-black text-primary mb-1">2.4k</div>
-                                                <div className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Vector Memories</div>
+                                                <label className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground font-outfit">Vector Memories</label>
                                             </div>
-                                            <div className="p-4 rounded-2xl bg-white/5 border border-white/5 text-center">
+                                            <div className="p-4 rounded-2xl bg-white/5 border border-transparent text-center">
                                                 <div className="text-xl font-black text-secondary mb-1">112</div>
-                                                <div className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Shared Facts</div>
+                                                <label className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground font-outfit">Shared Facts</label>
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5">
+                                        <div className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-transparent">
                                             <div className="space-y-0.5">
                                                 <h4 className="text-sm font-bold">Long-Term Memory</h4>
                                                 <p className="text-[11px] text-muted-foreground max-w-[280px]">Allow Rem to save and recall facts across sessions via R.E.M. Engine.</p>
@@ -251,9 +256,9 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                             />
                                         </div>
 
-                                        <div className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5">
+                                        <div className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-transparent">
                                             <div className="space-y-0.5">
-                                                <h4 className="text-sm font-bold italic tracking-tight text-primary/80">Show Inner Heart</h4>
+                                                <h4 className="text-sm font-bold italic tracking-tight text-primary/80 font-tiempos-headline">Show Inner Heart</h4>
                                                 <p className="text-[11px] text-muted-foreground max-w-[280px]">Watch Rem&apos;s &quot;subconscious&quot; thinking process in real-time.</p>
                                             </div>
                                             <Switch
@@ -288,7 +293,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                                 <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Current Plan</span>
                                                 <span className="px-2 py-0.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-wider">Active</span>
                                             </div>
-                                            <h4 className="text-3xl font-black italic tracking-tighter text-foreground">
+                                            <h4 className="text-3xl font-black italic tracking-tighter text-foreground font-tiempos-headline">
                                                 {subscription?.tier.replace('_', ' ').toUpperCase() || 'WANDERER'}
                                             </h4>
                                             <div className="space-y-2 mt-2">
@@ -317,7 +322,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                             )}
                         </div>
 
-                        <div className="p-4 border-t border-border/50 bg-muted/20 flex items-center justify-between">
+                        <div className="p-4 border-t border-transparent bg-muted/20 flex items-center justify-between">
                             <p className="text-[10px] text-muted-foreground font-medium">Remrin Engine v3.0.4-stable</p>
                             <Button variant="ghost" size="sm" onClick={onClose} className="rounded-xl font-bold text-xs">Done</Button>
                         </div>

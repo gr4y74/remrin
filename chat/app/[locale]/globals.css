@@ -142,94 +142,171 @@
 
 /* Claude UI Clone - Remrin Brand Theme (OKLCH) */
 :root {
-  --background: 249 22% 17%;
-  --foreground: 245 50% 91%;
+  /* Tokyo Night Palette Base */
+  --background: 235 18% 13%;
+  --foreground: 231 33% 75%;
 
-  --card: 247 23% 20%;
-  --card-foreground: 245 50% 91%;
+  --card: 235 24% 19%;
+  --card-foreground: 231 33% 75%;
 
-  --popover: 249 22% 17%;
-  --popover-foreground: 245 50% 91%;
+  --popover: 235 18% 16%;
+  --popover-foreground: 231 33% 75%;
 
-  --primary: 267 57% 78%;
-  --primary-foreground: 249 22% 12%;
+  --primary: 221 88% 72%;
+  --primary-foreground: 235 18% 10%;
 
-  --secondary: 197 49% 47%;
-  --secondary-foreground: 245 50% 91%;
+  --secondary: 262 85% 79%;
+  --secondary-foreground: 231 33% 75%;
 
-  --muted: 249 22% 26%;
-  --muted-foreground: 246 12% 47%;
+  --muted: 235 15% 25%;
+  --muted-foreground: 231 15% 55%;
 
-  --accent: 249 22% 26%;
-  --accent-foreground: 245 50% 91%;
+  --accent: 199 100% 75%;
+  --accent-foreground: 235 18% 10%;
 
-  --destructive: 343 76% 68%;
-  --destructive-foreground: 245 50% 91%;
+  --destructive: 349 89% 72%;
+  --destructive-foreground: 231 33% 90%;
 
-  --border: 249 22% 26%;
-  --input: 249 22% 26%;
-  --ring: 267 57% 78%;
+  --border: 0 0% 100% / 0;
+  /* Fully transparent */
+  --input: 0 0% 100% / 0;
+  /* Fully transparent */
+  --ring: 221 88% 72% / 0.5;
 
   --radius: 0.75rem;
 
   /* Font Families */
-  --font-sans: 'Outfit', ui-sans-serif, system-ui, sans-serif;
-  --font-serif: 'Merriweather', ui-serif, Georgia, serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-sans: 'Outfit',
+    ui-sans-serif,
+    system-ui,
+    sans-serif;
+  --font-serif: 'Merriweather',
+    ui-serif,
+    Georgia,
+    serif;
+  --font-mono: 'JetBrains Mono',
+    ui-monospace,
+    monospace;
+  --font-tiempos-headline: 'Tiempos Headline',
+    Georgia,
+    serif;
+  --font-tiempos-text: 'Tiempos Text',
+    Georgia,
+    serif;
 
-  /* Rosé Pine Palette */
-  --rp-base: 249 22% 12%;
-  --rp-surface: 249 22% 15%;
-  --rp-overlay: 249 22% 20%;
-  --rp-muted: 248 15% 61%;
-  --rp-subtle: 248 15% 61%;
-  --rp-text: 245 50% 91%;
-  --rp-love: 343 76% 68%;
-  --rp-gold: 35 88% 72%;
-  --rp-rose: 2 55% 83%;
-  --rp-pine: 197 49% 47%;
-  --rp-foam: 189 43% 73%;
-  --rp-iris: 267 57% 78%;
-  --rp-highlight-low: 249 22% 15%;
-  --rp-highlight-med: 249 22% 20%;
-  --rp-highlight-high: 249 22% 25%;
+  /* Tokyo Night Palette Variables */
+  --tn-bg: 235 18% 13%;
+  --tn-storm: 235 24% 19%;
+  --tn-fg: 231 33% 75%;
+  --tn-blue: 221 88% 72%;
+  --tn-magenta: 262 85% 79%;
+  --tn-cyan: 199 100% 75%;
+  --tn-red: 349 89% 72%;
+  --tn-green: 87 56% 62%;
+  --tn-yellow: 36 68% 64%;
+  --tn-orange: 22 100% 70%;
 }
 
 .dark {
-  --background: 249 22% 12%;
-  --foreground: 245 50% 91%;
+  --background: 235 18% 13%;
+  --foreground: 231 33% 75%;
+}
 
-  /* Inherit shared variables from root but ensure dark specifics if needed */
-  --rp-base: 249 22% 12%;
+.light {
+  --background: 230 11% 89%;
+  --foreground: 222 55% 48%;
+
+  --card: 230 11% 92%;
+  --card-foreground: 222 55% 48%;
+
+  --popover: 230 11% 89%;
+  --popover-foreground: 222 55% 48%;
+
+  --primary: 215 81% 55%;
+  --primary-foreground: 230 11% 98%;
+
+  --secondary: 225 60% 55%;
+  --secondary-foreground: 230 11% 98%;
+
+  --muted: 230 10% 85%;
+  --muted-foreground: 230 10% 45%;
+
+  --accent: 230 10% 82%;
+  --accent-foreground: 222 55% 48%;
+
+  --destructive: 349 80% 55%;
+  --destructive-foreground: 230 11% 98%;
+
+  --border: 0 0% 0% / 0;
+  /* Fully transparent */
+  --input: 0 0% 0% / 0;
+  /* Fully transparent */
+  --ring: 215 81% 55% / 0.5;
+
+  /* Light Rosé Pine Palette (Dawn) */
+  --rp-base: 35 35% 96%;
+  --rp-surface: 36 100% 97%;
+  --rp-overlay: 25 31% 92%;
+  --rp-muted: 248 8% 62%;
+  --rp-subtle: 248 11% 52%;
+  --rp-text: 248 19% 40%;
+  --rp-love: 343 35% 55%;
+  --rp-gold: 35 88% 30%;
+  --rp-rose: 2 55% 45%;
+  --rp-pine: 197 49% 30%;
+  --rp-foam: 189 43% 35%;
+  --rp-iris: 267 40% 50%;
 }
 
 /* Standalone Romrin Theme (Claude Overhaul) - Isolated */
 .theme-romrin {
-  --background: #121113;
-  --foreground: #c1c1c1;
-  --card: #121212;
-  --card-foreground: #c1c1c1;
-  --popover: #121113;
-  --popover-foreground: #c1c1c1;
-  --primary: #e78a53;
-  --primary-foreground: #121113;
-  --secondary: #5f8787;
-  --secondary-foreground: #121113;
-  --muted: #222222;
-  --muted-foreground: #888888;
-  --accent: #333333;
-  --accent-foreground: #c1c1c1;
-  --destructive: #5f8787;
-  --destructive-foreground: #121113;
-  --border: #222222;
-  --input: #222222;
-  --ring: #e78a53;
+  --background: 235 18% 13%;
+  --foreground: 231 33% 75%;
+  --card: 235 24% 19%;
+  --card-foreground: 231 33% 75%;
+  --popover: 235 18% 13%;
+  --popover-foreground: 231 33% 75%;
+  --primary: 199 100% 75%;
+  /* Tokyo Cyan for Romrin */
+  --primary-foreground: 235 18% 10%;
+  --secondary: 262 85% 79%;
+  --secondary-foreground: 235 18% 10%;
+  --muted: 235 18% 18%;
+  --muted-foreground: 231 15% 55%;
+  --accent: 235 18% 18%;
+  --accent-foreground: 231 33% 75%;
+  --destructive: 349 89% 72%;
+  --destructive-foreground: 231 33% 90%;
+  --border: 0 0% 100% / 0;
+  --input: 0 0% 100% / 0;
+  --ring: 199 100% 75%;
 
-  /* Force override Rosé Pine variables for standalone UI */
-  --rp-base: 240 7% 7%;
-  --rp-surface: 240 7% 10%;
-  --rp-iris: 24 78% 62%;
-  --rp-text: 0 0% 76%;
+  /* Force override system variables for standalone UI */
+  --tn-bg: 235 18% 13%;
+  --tn-fg: 231 33% 75%;
+}
+
+.light .theme-romrin {
+  --background: 230 11% 89%;
+  --foreground: 222 55% 48%;
+  --card: 230 11% 92%;
+  --card-foreground: 222 55% 48%;
+  --popover: 230 11% 89%;
+  --popover-foreground: 222 55% 48%;
+  --primary: 215 81% 55%;
+  --primary-foreground: 230 11% 98%;
+  --secondary: 225 60% 55%;
+  --secondary-foreground: 230 11% 98%;
+  --muted: 230 10% 85%;
+  --muted-foreground: 230 10% 45%;
+  --accent: 230 10% 82%;
+  --accent-foreground: 222 55% 48%;
+  --border: 0 0% 0% / 0;
+  --input: 0 0% 0% / 0;
+  --ring: 215 81% 55%;
+
+  --tn-bg: 230 11% 89%;
+  --tn-fg: 222 55% 48%;
 }
 
 
@@ -244,7 +321,8 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
     font-family: var(--font-tiempos-text), 'Tiempos Text', Georgia, serif;
     letter-spacing: 0em;
     overflow-x: hidden;

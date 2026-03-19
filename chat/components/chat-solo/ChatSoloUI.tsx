@@ -49,10 +49,7 @@ const ChatSoloUIInner: React.FC<{ personaName?: string }> = ({ personaName }) =>
     }, [profile?.cockpit_theme, setTheme])
 
     return (
-        <div className={cn(
-            "flex h-screen bg-background text-foreground overflow-hidden font-sans selection:bg-primary/20 selection:text-primary transition-colors duration-300",
-            resolvedTheme === 'light' ? 'light' : 'dark'
-        )}>
+        <div className="flex h-screen bg-background text-foreground overflow-hidden font-sans selection:bg-primary/20 selection:text-primary transition-colors duration-300">
             {/* Sidebar Overlay for mobile */}
             {isSidebarOpen && (
                 <div className="fixed inset-0 bg-black/50 z-30 md:hidden animate-in fade-in" onClick={() => setIsSidebarOpen(false)} />
@@ -66,7 +63,7 @@ const ChatSoloUIInner: React.FC<{ personaName?: string }> = ({ personaName }) =>
 
             <main className={cn(
                 "flex-1 flex flex-col h-full transition-all duration-300 ease-in-out relative",
-                isSidebarOpen ? "md:ml-64" : "ml-0",
+                isSidebarOpen ? "md:ml-72" : "ml-0",
                 isArtifactsOpen ? "md:mr-[600px]" : "mr-0"
             )}>
                 <ChatSoloHeader
@@ -120,7 +117,7 @@ const ChatSoloUIInner: React.FC<{ personaName?: string }> = ({ personaName }) =>
                 )}
 
                 {/* Input Area */}
-                <div className="sticky bottom-0 bg-background pt-4 pb-6 border-t border-border/50">
+                <div className="sticky bottom-0 bg-background pt-4 pb-6 border-t border-transparent">
                     <div className="absolute top-0 left-0 right-0 h-20 -translate-y-full bg-gradient-to-t from-background to-transparent pointer-events-none" />
                     <ChatSoloInput />
                 </div>

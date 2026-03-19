@@ -201,6 +201,7 @@ export interface CapabilityConfig {
 export type MessageRole = 'user' | 'assistant' | 'system' | 'tool'
 
 export interface ChatMessageContent {
+    id?: string
     role: MessageRole
     content: string
     timestamp: Date
@@ -214,6 +215,7 @@ export interface ChatMessageContent {
         toolCalls?: ToolCall[] // For assistant messages requesting tools
         toolResult?: any
         reasoning?: string
+        feedback?: 'like' | 'dislike' | null
     }
 }
 

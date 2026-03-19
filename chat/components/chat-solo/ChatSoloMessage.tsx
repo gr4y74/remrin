@@ -5,7 +5,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { oneDark } from 'react-syntax-highlighter/dist/cjs/styles/prism'
-import { Copy, ThumbsUp, ThumbsDown, RotateCcw } from 'lucide-react'
+import { Copy, ThumbsUp, ThumbsDown, RotateCcw, Bookmark } from 'lucide-react'
 import { ChatMessageContent } from '@/lib/chat-engine/types'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -22,23 +22,26 @@ export const ChatSoloMessage = memo(function ChatSoloMessage({
     isStreaming = false
 }: ChatSoloMessageProps) {
     const isUser = message.role === 'user'
-    const { showThinking } = useChatSolo()
+    const { showThinking, toggleBookmark, bookmarks, saveFeedback, regenerateMessage } = useChatSolo()
     const reasoning = message.metadata?.reasoning
+
+    const isBookmarked = bookmarks.some(b => b.message_id === message.id)
+    const feedback = message.metadata?.feedback as 'like' | 'dislike' | null
 
     return (
         <div className={cn(
-            "group w-full py-10 flex flex-col items-center animate-in fade-in duration-500 transition-colors border-b border-transparent hover:border-border/50",
+            "group w-full py-10 flex flex-col items-center animate-in fade-in duration-500 transition-colors border-b border-transparent",
             isUser ? "bg-transparent" : "bg-muted/10"
         )}>
             <div className="w-full max-w-2xl flex gap-8 px-4">
                 {/* Avatar Column */}
                 <div className="flex-shrink-0 pt-1">
                     {isUser ? (
-                        <div className="w-8 h-8 rounded-full bg-[#5f8787] flex items-center justify-center text-[#121113] text-[10px] font-bold shadow-sm ring-1 ring-white/10">
+                        <div className="w-8 h-8 rounded-full bg-[#5f8787] flex items-center justify-center text-white text-[10px] font-bold shadow-sm ring-1 ring-foreground/10">
                             U
                         </div>
                     ) : (
-                        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center border border-border/50 shadow-sm overflow-hidden">
+                        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center border border-transparent shadow-sm overflow-hidden">
                             <span className="text-[10px] font-bold text-muted-foreground">R</span>
                         </div>
                     )}
@@ -47,7 +50,7 @@ export const ChatSoloMessage = memo(function ChatSoloMessage({
                 {/* Content Column */}
                 <div className="flex-1 min-w-0 flex flex-col gap-1.5">
                     <div className="flex items-center gap-3">
-                        <span className="text-xs font-bold text-foreground/80 tracking-wide uppercase">
+                        <span className="text-xs font-bold text-foreground/80 tracking-wide uppercase font-outfit">
                             {isUser ? 'Pilot' : 'Rem'}
                         </span>
                         {message.timestamp && (
@@ -60,10 +63,10 @@ export const ChatSoloMessage = memo(function ChatSoloMessage({
                     <div className="text-base leading-[1.8] text-foreground font-serif selection:bg-primary/20">
                         {/* Inner Heart / Thinking Process */}
                         {showThinking && reasoning && (
-                            <div className="mb-6 p-4 rounded-2xl bg-primary/5 border border-primary/10 relative overflow-hidden animate-in fade-in slide-in-from-top-1 duration-500">
+                            <div className="mb-6 p-4 rounded-2xl bg-primary/5 border border-transparent relative overflow-hidden animate-in fade-in slide-in-from-top-1 duration-500">
                                 <div className="flex items-center gap-2 mb-2">
                                     <div className="w-1 h-1 rounded-full bg-primary/40 animate-pulse" />
-                                    <span className="text-[10px] font-bold uppercase tracking-widest text-primary/60 italic">Inner Heart</span>
+                                    <span className="text-[10px] font-bold uppercase tracking-widest text-primary/60 italic font-outfit">Inner Heart</span>
                                 </div>
                                 <div className="text-xs leading-relaxed text-muted-foreground/80 font-sans italic whitespace-pre-wrap">
                                     {reasoning}
@@ -80,19 +83,19 @@ export const ChatSoloMessage = memo(function ChatSoloMessage({
                                 code({ inline, className, children, ...props }: any) {
                                     const match = /language-(\w+)/.exec(className || '')
                                     return !inline ? (
-                                        <div className="relative group/code my-6 rounded-2xl overflow-hidden border border-border shadow-md">
+                                        <div className="relative group/code my-6 rounded-2xl overflow-hidden border border-transparent shadow-md">
                                             <div className="absolute right-3 top-3 opacity-0 group-hover/code:opacity-100 transition-opacity z-10">
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="h-8 w-8 bg-background/80 backdrop-blur-xl border border-border shadow-sm"
+                                                    className="h-8 w-8 bg-background/80 backdrop-blur-xl border border-transparent shadow-sm"
                                                     onClick={() => navigator.clipboard.writeText(String(children))}
                                                 >
                                                     <Copy className="h-3.5 w-3.5" />
                                                 </Button>
                                             </div>
                                             {match && (
-                                                <div className="bg-muted px-4 py-2 border-b border-border flex items-center">
+                                                <div className="bg-muted px-4 py-2 border-b border-transparent flex items-center">
                                                     <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{match[1]}</span>
                                                 </div>
                                             )}
@@ -101,7 +104,7 @@ export const ChatSoloMessage = memo(function ChatSoloMessage({
                                                 style={oneDark}
                                                 language={match ? match[1] : 'text'}
                                                 PreTag="div"
-                                                className="!bg-[#121113] !p-6 !m-0 !text-sm !leading-relaxed"
+                                                className="!bg-[#16161e] dark:!bg-background/40 !p-6 !m-0 !text-sm !leading-relaxed"
                                             >
                                                 {String(children).replace(/\n$/, '')}
                                             </SyntaxHighlighter>
@@ -133,18 +136,70 @@ export const ChatSoloMessage = memo(function ChatSoloMessage({
                     {/* Message Actions */}
                     {!isUser && !isStreaming && (
                         <div className="flex items-center gap-1 mt-6 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => navigator.clipboard.writeText(message.content)}
+                                title="Copy to clipboard"
+                                className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl"
+                            >
                                 <Copy className="h-4 w-4" />
                             </Button>
-                            <div className="w-[1px] h-4 bg-border mx-1" />
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl">
-                                <ThumbsUp className="h-4 w-4" />
+                            <div className="w-[1px] h-4 bg-white/10 mx-1" />
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                disabled={!message.id}
+                                onClick={() => message.id && saveFeedback(message.id, feedback === 'like' ? null : 'like')}
+                                title={message.id ? "Like" : "Syncing..."}
+                                className={cn(
+                                    "h-8 w-8 rounded-xl transition-all",
+                                    feedback === 'like' ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-muted",
+                                    !message.id && "opacity-50 cursor-not-allowed"
+                                )}
+                            >
+                                <ThumbsUp className={cn("h-4 w-4", feedback === 'like' && "fill-current")} />
                             </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl">
-                                <ThumbsDown className="h-4 w-4" />
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                disabled={!message.id}
+                                onClick={() => message.id && saveFeedback(message.id, feedback === 'dislike' ? null : 'dislike')}
+                                title={message.id ? "Dislike" : "Syncing..."}
+                                className={cn(
+                                    "h-8 w-8 rounded-xl transition-all",
+                                    feedback === 'dislike' ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-muted",
+                                    !message.id && "opacity-50 cursor-not-allowed"
+                                )}
+                            >
+                                <ThumbsDown className={cn("h-4 w-4", feedback === 'dislike' && "fill-current")} />
                             </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                disabled={!message.id}
+                                onClick={() => message.id && regenerateMessage(message.id)}
+                                title={message.id ? "Regenerate" : "Syncing..."}
+                                className={cn(
+                                    "h-8 w-8 rounded-xl transition-all text-muted-foreground hover:text-foreground hover:bg-muted",
+                                    !message.id && "opacity-50 cursor-not-allowed"
+                                )}
+                            >
                                 <RotateCcw className="h-4 w-4" />
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                disabled={!message.id}
+                                onClick={() => toggleBookmark(message)}
+                                title={message.id ? "Bookmark" : "Syncing..."}
+                                className={cn(
+                                    "h-8 w-8 rounded-xl transition-all",
+                                    isBookmarked ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-muted",
+                                    !message.id && "opacity-50 cursor-not-allowed"
+                                )}
+                            >
+                                <Bookmark className={cn("h-4 w-4", isBookmarked && "fill-current")} />
                             </Button>
                         </div>
                     )}

@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers'
-import { getChatHistory } from '@/lib/chat-engine/persistence'
+import { getChatHistoryByName, getChatHistory } from '@/lib/chat-engine/persistence'
 import { handleApiError } from '@/lib/errors'
 
 export const runtime = 'nodejs'
@@ -46,7 +46,18 @@ export async function GET(request: NextRequest) {
             return new Response('Unauthorized', { status: 401 })
         }
 
-        const history = await getChatHistory(supabase, user.id as string, personaId, 50, { workspaceId: workspaceId || undefined, customName: customName || undefined })
+        let history
+        if (customName) {
+            // Use lookup-only function when a specific thread name is provided.
+            // This avoids accidentally creating a new empty chat when the server-side
+            // Supabase client can't find the chat (e.g., due to auth context differences).
+            history = await getChatHistoryByName(supabase, user.id as string, personaId, customName, 50)
+        } else {
+            // Fall back to getOrCreate for the default persona chat
+            history = await getChatHistory(supabase, user.id as string, personaId, 50, { workspaceId })
+        }
+
+        console.log(`📡 [API/History] Persona: ${personaId}, Name: ${customName || 'default'}, Returned: ${history.length} messages`)
 
         return new Response(JSON.stringify(history), {
             status: 200,
