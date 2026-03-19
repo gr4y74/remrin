@@ -155,42 +155,41 @@ export async function getChatHistoryByName(
     limit: number = 50
 ): Promise<ChatMessageContent[]> {
     try {
-        // Only look up the chat by name, never create
-        const { data: existingChat, error: chatError } = await supabase
-            .from('chats')
-            .select('id')
-            .eq('user_id', userId)
-            .eq('name', customName)
-            .maybeSingle()
+        console.log(`🔍 [Persistence] Fetching history for "${customName}" via joined query...`)
 
-        if (chatError) {
-            console.error('[Persistence] Error looking up chat by name:', chatError)
-            return []
-        }
-
-        if (!existingChat) {
-            console.log(`[Persistence] No chat found with name: ${customName} for user: ${userId}`)
-            return []
-        }
-
-        console.log(`[Persistence] Found chat ${existingChat.id} for name: ${customName}`)
-
-        const { data: messages, error } = await supabase
+        // Optimize to a single joined query to reduce round trips (crucial for slow networks)
+        // Note: metadata and persona_id are missing from current schema, selecting what exists
+        const { data: messages, error: msgError } = await supabase
             .from('messages')
-            .select('*')
-            .eq('chat_id', existingChat.id)
+            .select(`
+                id,
+                role,
+                content,
+                created_at,
+                chats!inner(id, name, user_id)
+            `)
+            .eq('chats.name', customName)
+            .eq('chats.user_id', userId)
             .order('created_at', { ascending: true })
+            .limit(limit)
 
-        if (error) throw error
-        if (!messages) return []
+        if (msgError) {
+            console.error('[Persistence] Error fetching history with join:', msgError)
+            return []
+        }
 
-        const recentMessages = messages.slice(-limit)
+        if (!messages || messages.length === 0) {
+            console.log(`[Persistence] No messages found for chat: ${customName}`)
+            return []
+        }
 
-        return recentMessages.map(msg => ({
-            id: msg.id,
-            role: msg.role as 'user' | 'assistant' | 'system',
-            content: msg.content,
-            timestamp: new Date(msg.created_at),
+        console.log(`[Persistence] Retrieved ${messages.length} messages for chat: ${customName}`)
+        return messages.map((m: any) => ({
+            id: m.id,
+            role: m.role,
+            content: m.content,
+            timestamp: m.created_at ? new Date(m.created_at) : new Date(),
+            metadata: (m as any).metadata || {}
         }))
     } catch (error) {
         console.error('[Persistence] Failed to fetch history by name:', error)

@@ -21,25 +21,26 @@ export async function GET(request: NextRequest) {
         const cookieStore = cookies()
         const supabase = createClient(cookieStore)
 
-        // Use getSession first as it's faster and often enough for same-origin dev
-        const { data: { session } } = await supabase.auth.getSession()
-        let user: any = session?.user
+        // Single auth check - try to get user from session/cookies or header
+        let user: any = null
 
-        // Fallback to get user from Authorization header
+        // 1. Try session (fastest if cached)
+        const { data: { session } } = await supabase.auth.getSession()
+        user = session?.user
+
+        // 2. Fallback to getUser (more secure/reliable) or Auth header
         if (!user) {
             const authHeader = request.headers.get('Authorization')
             if (authHeader?.startsWith('Bearer ')) {
                 const token = authHeader.split(' ')[1]
                 const { data: { user: verifiedUser } } = await supabase.auth.getUser(token)
                 user = verifiedUser
+            } else {
+                const { data: { user: verifiedUser } } = await supabase.auth.getUser()
+                user = verifiedUser
             }
         }
 
-        // If no session or token, try getUser (more secure, server-side fetch)
-        if (!user) {
-            const { data: { user: verifiedUser } } = await supabase.auth.getUser()
-            user = verifiedUser
-        }
 
         if (!user || !user.id) {
             console.error('❌ [API/History] Unauthorized access attempt')
@@ -48,12 +49,10 @@ export async function GET(request: NextRequest) {
 
         let history
         if (customName) {
-            // Use lookup-only function when a specific thread name is provided.
-            // This avoids accidentally creating a new empty chat when the server-side
-            // Supabase client can't find the chat (e.g., due to auth context differences).
+            console.log(`🔍 [API/History] Fetching by name: "${customName}" for user: ${user.id}`)
             history = await getChatHistoryByName(supabase, user.id as string, personaId, customName, 50)
         } else {
-            // Fall back to getOrCreate for the default persona chat
+            console.log(`🔍 [API/History] Fetching default for persona: ${personaId}`)
             history = await getChatHistory(supabase, user.id as string, personaId, 50, { workspaceId })
         }
 
