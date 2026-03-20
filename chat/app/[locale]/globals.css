@@ -194,7 +194,24 @@
     Georgia,
     serif;
 
-  /* Tokyo Night Palette Variables */
+  /* Rosé Pine Moon (Dark Default) - Primary Theme */
+  --rp-base: 249 22% 12%;
+  --rp-surface: 249 23% 15%;
+  --rp-overlay: 249 25% 18%;
+  --rp-muted: 249 12% 47%;
+  --rp-subtle: 249 15% 61%;
+  --rp-text: 245 44% 91%;
+  --rp-love: 343 74% 68%;
+  --rp-gold: 35 88% 71%;
+  --rp-rose: 2 52% 83%;
+  --rp-pine: 197 49% 38%;
+  --rp-foam: 189 43% 73%;
+  --rp-iris: 267 57% 78%;
+  --rp-highlight-low: 249 22% 14%;
+  --rp-highlight-med: 249 12% 21%;
+  --rp-highlight-high: 249 11% 26%;
+
+  /* Tokyo Night Palette Base (Legacy/Alternative) */
   --tn-bg: 235 18% 13%;
   --tn-storm: 235 24% 19%;
   --tn-fg: 231 33% 75%;
@@ -243,7 +260,7 @@
   /* Fully transparent */
   --ring: 215 81% 55% / 0.5;
 
-  /* Light Rosé Pine Palette (Dawn) */
+  /* Light Rosé Pine Palette (Dawn) - Overrides for Light Mode */
   --rp-base: 35 35% 96%;
   --rp-surface: 36 100% 97%;
   --rp-overlay: 25 31% 92%;
@@ -256,6 +273,9 @@
   --rp-pine: 197 49% 30%;
   --rp-foam: 189 43% 35%;
   --rp-iris: 267 40% 50%;
+  --rp-highlight-low: 35 35% 92%;
+  --rp-highlight-med: 35 31% 88%;
+  --rp-highlight-high: 35 28% 82%;
 }
 
 /* Standalone Romrin Theme (Claude Overhaul) - Isolated */
