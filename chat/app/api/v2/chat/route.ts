@@ -12,6 +12,7 @@ import { createProviderManager } from '@/lib/chat-engine/providers'
 import fs from 'fs'
 import { generateEmbedding } from '@/lib/chat-engine/embeddings'
 import { searchManager } from '@/lib/chat-engine/capabilities/search'
+import { User } from '@supabase/supabase-js'
 
 function debugLog(msg: string) {
     if (process.env.NODE_ENV === 'development') {
@@ -32,7 +33,7 @@ import { SEARCH_TOOLS } from '@/lib/tools/search-tools'
 import { ToolDescriptor } from '@/lib/chat-engine/types'
 import { CarrotEngine, CarrotPersona } from '@/lib/chat-engine/carrot'
 import { buildConsoleSystemPrompt } from '@/lib/forge/console-adapter'
-import { LOCKET_TOOLS, handleUpdateLocket, UpdateLocketParams } from '@/lib/tools/locket-tools'
+import { LOCKET_TOOLS } from '@/lib/tools/locket-tools'
 import { getOrCreateChatSession, saveMessage } from '@/lib/chat-engine/persistence'
 import { MEMORY_TOOLS } from '@/lib/tools/memory-tools'
 
@@ -95,32 +96,22 @@ export async function POST(request: NextRequest) {
         const { data: { session }, error: sessionError } = await supabase.auth.getSession()
         if (sessionError) debugLog(`❌ [ChatEngine] Session Error: ${sessionError.message}`)
 
-        let user: any = session?.user
+        let user: User | null = session?.user || null
 
         // Fallback to get user from Authorization header if session/cookies failed
         if (!user) {
             const authHeader = request.headers.get('Authorization')
-            debugLog(`🔑 [ChatEngine] Auth Header found: ${!!authHeader} (starts with Bearer: ${authHeader?.startsWith('Bearer ')})`)
-
             if (authHeader?.startsWith('Bearer ')) {
                 const token = authHeader.split(' ')[1]
-                debugLog(`🛡️ [ChatEngine] Token Length: ${token?.length}, prefix: ${token?.substring(0, 10)}...`)
-
-                const { data: { user: verifiedUser }, error: verifyError } = await supabase.auth.getUser(token)
-                if (verifyError) {
-                    debugLog(`❌ [ChatEngine] Token Verify Error: ${verifyError.message}`)
-                } else {
-                    user = verifiedUser
-                    debugLog(`✅ [ChatEngine] Token Authorized: user=${user?.id}`)
-                }
+                const { data: { user: verifiedUser } } = await supabase.auth.getUser(token)
+                user = verifiedUser
             }
         }
 
         // Final Fallback to getUser from cookies
         if (!user) {
             debugLog(`⚠️ [ChatEngine] No session/token, trying getUser from cookies...`)
-            const { data: { user: verifiedUser }, error: userError } = await supabase.auth.getUser()
-            if (userError) debugLog(`❌ [ChatEngine] User Error: ${userError.message}`)
+            const { data: { user: verifiedUser } } = await supabase.auth.getUser()
             user = verifiedUser
         }
 
@@ -129,7 +120,8 @@ export async function POST(request: NextRequest) {
             return new Response('Unauthorized', { status: 401 })
         }
 
-        debugLog(`✅ [ChatEngine] Authorized: user=${user.id}`)
+        const userId = user.id
+        debugLog(`✅ [ChatEngine] Authorized: user=${userId}`)
 
         // Rate limiting
         const ip = request.headers.get('x-forwarded-for') || 'unknown'
@@ -144,12 +136,9 @@ export async function POST(request: NextRequest) {
             personaId,
             systemPrompt: customSystemPrompt,
             preferredProvider,
-            enableSearch,
-            files,
-            customName,
             workspaceId,
-            llm_model,
-            llm_provider
+            customName,
+            llm_model
         } = body
 
         // Validate messages
@@ -158,89 +147,40 @@ export async function POST(request: NextRequest) {
         }
 
         // Get user's tier
-        const userTier = await getUserTier(user.id)
+        const userTier = await getUserTier(userId)
 
-        debugLog(`🔍 [Memory] Request Body: personaId=${personaId}, messages=${messages?.length}`)
-
-        // Get persona and system prompt (persona prompt takes priority)
+        // Get persona and system prompt
         const persona = await getPersona(personaId)
-        debugLog(`🔍 [Memory] getPersona result: ${persona ? persona.name : 'NULL'}`)
-
-        //Use Console Adapter to build enhanced system prompt (Locket + Facts + Mood + Auto-injected Memories)
         let systemPrompt = customSystemPrompt || ''
 
         if (persona) {
-            debugLog(`🧠 [Memory] TRACE-1: persona found, id=${persona.id}, building prompt...`)
             try {
-                systemPrompt = await buildConsoleSystemPrompt(persona as any, user.id)
-                debugLog(`🧠 [Memory] TRACE-2: prompt built, length=${systemPrompt.length}`)
+                systemPrompt = await buildConsoleSystemPrompt(persona as any, userId)
             } catch (e: any) {
-                debugLog(`🧠 [Memory] TRACE-ERR: buildConsoleSystemPrompt failed: ${e.message}`)
                 systemPrompt = persona.system_prompt || ''
             }
 
-            // === AUTO-INJECT RELEVANT MEMORIES (ALWAYS-ON SEMANTIC SEARCH) ===
+            // === AUTO-INJECT RELEVANT MEMORIES ===
             const lastUserMessage = messages.filter(m => m.role === 'user').slice(-1)[0]
             const userText = lastUserMessage?.content || ''
-            debugLog(`🧠 [Memory Auto-Inject] User message: "${userText.substring(0, 60)}..."`)
 
             if (userText.length > 3 && personaId) {
                 try {
-                    // Generate embedding for the user's message
                     const userEmbedding = await generateEmbedding(userText)
-                    debugLog(`🧠 [Memory Auto-Inject] Generated embedding for user message`)
-
-                    // Use service role client to search memories with semantic similarity
                     const adminSupabase = (await import('@/lib/supabase/server')).createAdminClient()
 
-                    // Use pgvector's <=> operator for cosine similarity
-                    // Note: This requires the pgvector extension and proper indexing
-                    const { data: memories, error: memError } = await adminSupabase
+                    const { data: memories } = await adminSupabase
                         .rpc('match_memories', {
                             query_embedding: userEmbedding,
-                            match_user_id: user.id,
+                            match_user_id: userId,
                             match_persona_id: personaId,
-                            match_threshold: 0.7, // Similarity threshold (0-1, higher = more similar)
-                            match_count: 10 // Retrieve top 10 most relevant memories
+                            match_threshold: 0.5,
+                            match_count: 10
                         })
 
-                    if (memError) {
-                        debugLog(`🧠 [Memory Auto-Inject] RPC error (falling back to keyword search): ${memError.message}`)
-
-                        // Fallback to keyword-based search if RPC fails
-                        const keywords = userText.toLowerCase()
-                            .replace(/[^a-z0-9\s-]/g, ' ')
-                            .split(/\s+/)
-                            .filter(w => w.length > 3)
-                            .slice(0, 5) // Top 5 keywords
-
-                        if (keywords.length > 0) {
-                            const filters = keywords.map(k => `content.ilike.%${k}%`).join(',')
-                            const { data: fallbackMemories } = await adminSupabase
-                                .from('memories')
-                                .select('content, created_at, role, importance')
-                                .eq('user_id', user.id)
-                                .eq('persona_id', personaId)
-                                .or(filters)
-                                .order('importance', { ascending: false })
-                                .order('created_at', { ascending: false })
-                                .limit(10)
-
-                            if (fallbackMemories && fallbackMemories.length > 0) {
-                                const memoryLines = ['\n[📚 RELEVANT PAST MEMORIES]', 'The following are memories from your past conversations with this user:', '']
-                                fallbackMemories.forEach((mem, idx) => {
-                                    const date = new Date(mem.created_at).toLocaleDateString()
-                                    const speaker = mem.role === 'user' ? 'User said' : 'You said'
-                                    memoryLines.push(`${idx + 1}. [${date}] ${speaker}: "${mem.content.substring(0, 200)}${mem.content.length > 200 ? '...' : '"'}`)
-                                })
-                                memoryLines.push('')
-                                systemPrompt += memoryLines.join('\n')
-                                debugLog(`🧠 [Memory Auto-Inject] Injected ${fallbackMemories.length} memories (keyword fallback)`)
-                            }
-                        }
-                    } else if (memories && memories.length > 0) {
+                    if (memories && memories.length > 0) {
                         const memoryLines = ['\n[📚 RELEVANT PAST MEMORIES]', 'The following are memories from your past conversations with this user (sorted by relevance):', '']
-                        memories.forEach((mem: any, idx: number) => {
+                        memories.forEach((mem: { created_at: string; role: string; similarity: number; content: string }, idx: number) => {
                             const date = new Date(mem.created_at).toLocaleDateString()
                             const speaker = mem.role === 'user' ? 'User said' : 'You said'
                             const similarity = Math.round((1 - mem.similarity) * 100)
@@ -248,26 +188,20 @@ export async function POST(request: NextRequest) {
                         })
                         memoryLines.push('')
                         systemPrompt += memoryLines.join('\n')
-                        debugLog(`🧠 [Memory Auto-Inject] Injected ${memories.length} memories via semantic search`)
-                    } else {
-                        debugLog(`🧠 [Memory Auto-Inject] No relevant memories found`)
                     }
-                } catch (memErr: any) {
-                    debugLog(`🧠 [Memory Auto-Inject] Error: ${memErr.message}`)
-                }
+                } catch (memErr) { }
             }
-            // === END AUTO-INJECT ===
         } else if (!systemPrompt) {
             systemPrompt = 'You are a helpful AI assistant. Be concise but thorough in your responses.'
         }
 
-        // Fetch LLM configuration from database
+        // Fetch LLM configuration
         const { data: llmConfigs } = await supabase
             .from('llm_config')
             .select('*')
             .order('priority', { ascending: false })
 
-        // Create provider manager based on user's tier, passing dynamic config
+        // Create provider manager
         const providerManager = createProviderManager(
             userTier,
             preferredProvider as ProviderId | undefined,
@@ -275,145 +209,68 @@ export async function POST(request: NextRequest) {
         )
 
         let providerInfo = providerManager.getProviderInfo()
-        debugLog(`🚀 [ChatEngine] Selected Provider for ${user.id} (${userTier}): ${providerInfo.name} (${providerInfo.id})`)
-
-        // Check if this is the Mother of Souls
         const isMother = isMotherOfSouls(persona as any)
 
-        // Build tools array - all personas get search, Mother gets additional Soul Forge tools
         const tools: ToolDescriptor[] = [
-            ...SEARCH_TOOLS.map(t => ({
-                type: t.type,
-                function: t.function
-            })),
-            ...LOCKET_TOOLS.map(t => ({
-                type: t.type,
-                function: t.function
-            })),
-            ...MEMORY_TOOLS.map(t => ({
-                type: t.type,
-                function: t.function
-            }))
+            ...SEARCH_TOOLS.map(t => ({ type: t.type, function: t.function })),
+            ...LOCKET_TOOLS.map(t => ({ type: t.type, function: t.function })),
+            ...MEMORY_TOOLS.map(t => ({ type: t.type, function: t.function }))
         ]
 
         if (isMother) {
-            tools.push(...SOUL_FORGE_TOOLS.map(t => ({
-                type: t.type,
-                function: t.function
-            })))
+            tools.push(...SOUL_FORGE_TOOLS.map(t => ({ type: t.type, function: t.function })))
         }
 
-        // Get provider info for logging
-        providerInfo = providerManager.getProviderInfo()
-
-        // Fetch global API keys from the secure api_keys table
-        // Use service role client to bypass RLS for this internal check
-        const { data: globalKeys } = await supabase
-            .from('api_keys')
-            .select('provider, api_key')
-
-        const globalKeysMap: Record<string, string> = (globalKeys || []).reduce((acc: any, k: any) => {
+        const { data: globalKeys } = await supabase.from('api_keys').select('provider, api_key')
+        const globalKeysMap: Record<string, string> = (globalKeys || []).reduce((acc: Record<string, string>, k: { provider: string; api_key: string }) => {
             acc[k.provider] = k.api_key
             return acc
         }, {})
 
-        // Priority Provider Key: Database > Environment (handled in BaseChatProvider if not passed here)
         const providerKey = globalKeysMap[providerInfo.id]
-
-        console.log(`🚀 [ChatEngine] Request from ${userTier} tier user, using ${providerInfo.name}${isMother ? ' (Mother Mode)' : ''}`)
 
         // Create streaming response
         const encoder = new TextEncoder()
         const stream = new ReadableStream({
             async start(controller) {
                 try {
-                    // --- HELPERS FOR TOOL EXECUTION ---
-                    const executeTool = async (toolName: string, params: any, personaId: string, userId: string) => {
-                        console.log(`🛠️ [ChatEngine] Executing Tool: ${toolName}`, params);
-
+                    const executeTool = async (toolName: string, params: any, pId: string, uId: string) => {
                         try {
-                            const adminSupabase = (await import('@/lib/supabase/server')).createAdminClient();
-
+                            const adminSupabase = (await import('@/lib/supabase/server')).createAdminClient()
                             switch (toolName) {
                                 case 'search_memories': {
-                                    const { query, limit = 5 } = params;
-                                    debugLog(`🧠 [ChatEngine] Memory Search Tool: "${query}"`);
-                                    const embedding = await generateEmbedding(query);
-
-                                    // 1. Semantic Search
-                                    let memories: any[] = [];
+                                    const { query, limit = 5 } = params
+                                    const embedding = await generateEmbedding(query)
+                                    let memories: any[] = []
                                     if (embedding) {
                                         const { data: matched } = await adminSupabase.rpc('match_memories_v2', {
                                             query_embedding: embedding,
-                                            match_threshold: 0.35,
+                                            match_threshold: 0.5,
                                             match_count: limit,
-                                            filter_persona: personaId,
-                                            filter_user: userId
-                                        });
-                                        if (matched) memories = matched;
+                                            filter_persona: pId,
+                                            filter_user: uId
+                                        })
+                                        if (matched) memories = matched
                                     }
-
-                                    // 2. Keyword Fallback (simplified)
-                                    if (memories.length < limit) {
-                                        const { data: keyword } = await adminSupabase
-                                            .from('memories')
-                                            .select('*')
-                                            .eq('user_id', userId)
-                                            .eq('persona_id', personaId)
-                                            .ilike('content', `%${query}%`)
-                                            .limit(limit - memories.length);
-                                        if (keyword) memories = [...memories, ...keyword];
-                                    }
-
-                                    // 3. Locket Search
-                                    const { data: lockets } = await adminSupabase
-                                        .from('persona_lockets')
-                                        .select('*')
-                                        .eq('persona_id', personaId)
-                                        .ilike('content', `%${query}%`);
-
-                                    const resultDescription = [...(lockets?.map(l => ({ ...l, type: 'locket' })) || []), ...memories];
-                                    if (resultDescription.length === 0) return "No relevant memories or locket truths found for this query.";
-                                    return JSON.stringify(resultDescription);
+                                    return JSON.stringify(memories)
                                 }
-
-                                case 'update_locket': {
-                                    const { content, action = 'add' } = params;
-                                    if (action === 'add') {
-                                        await adminSupabase.from('persona_lockets').insert({ persona_id: personaId, content });
-                                        return "Truth locked.";
-                                    } else {
-                                        await adminSupabase.from('persona_lockets').delete().eq('persona_id', personaId).ilike('content', content);
-                                        return "Truth removed.";
-                                    }
-                                }
-
                                 case 'web_search': {
-                                    const { query, max_results = 5 } = params;
-                                    debugLog(`🔍 [ChatEngine] Web Search Tool: "${query}"`);
-                                    const response = await searchManager.search(query, max_results);
-                                    debugLog(`✅ [ChatEngine] Web Search Got ${response.results?.length || 0} results from ${response.provider}`);
-                                    if (!response.results || response.results.length === 0) {
-                                        return `No web search results found for "${query}". The user might be asking about something too recent or niche.`;
-                                    }
-                                    return JSON.stringify(response.results);
+                                    const { query, max_results = 5 } = params
+                                    const response = await searchManager.search(query, max_results)
+                                    return JSON.stringify(response.results || [])
                                 }
-
                                 default:
-                                    return `Tool ${toolName} execution failed: Not implemented on server.`;
+                                    return `Tool ${toolName} not implemented.`
                             }
                         } catch (e: any) {
-                            console.error(`❌ [ChatEngine] Tool Execution Failed (${toolName}):`, e.message);
-                            return `Error: ${e.message}`;
+                            return `Error: ${e.message}`
                         }
-                    };
+                    }
 
-                    // --- RECURSIVE CHAT HANDLER ---
                     const runChatRound = async (currentMessages: ChatMessageContent[], depth = 0): Promise<string> => {
-                        if (depth > 3) return ""; // Safety limit
-
-                        let roundContent = "";
-                        let roundToolCalls: any[] = [];
+                        if (depth > 3) return ""
+                        let roundContent = ""
+                        let roundToolCalls: any[] = []
 
                         for await (const chunk of providerManager.sendMessage(
                             currentMessages,
@@ -425,221 +282,118 @@ export async function POST(request: NextRequest) {
                                 model: llm_model || 'deepseek-chat'
                             }
                         )) {
-                            if (chunk.content) roundContent += chunk.content;
+                            if (chunk.content) roundContent += chunk.content
                             if (chunk.toolCalls) {
-                                // Consolidate tool call chunks
                                 chunk.toolCalls.forEach((tc: any) => {
-                                    const index = tc.index ?? 0;
-                                    if (!roundToolCalls[index]) roundToolCalls[index] = { id: tc.id, function: { name: '', arguments: '' } };
-                                    if (tc.id) roundToolCalls[index].id = tc.id;
-                                    if (tc.function?.name) roundToolCalls[index].function.name += tc.function.name;
-                                    if (tc.function?.arguments) roundToolCalls[index].function.arguments += tc.function.arguments;
+                                    const index = tc.index ?? 0
+                                    if (!roundToolCalls[index]) roundToolCalls[index] = { id: tc.id, function: { name: '', arguments: '' } }
+                                    if (tc.id) roundToolCalls[index].id = tc.id
+                                    if (tc.function?.name) roundToolCalls[index].function.name += tc.function.name
+                                    if (tc.function?.arguments) roundToolCalls[index].function.arguments += tc.function.arguments
                                 });
                             }
-
-                            // Stream to client
-                            const data = JSON.stringify({
+                            controller.enqueue(encoder.encode(`data: ${JSON.stringify({
                                 content: chunk.content,
                                 reasoning: chunk.reasoning,
                                 toolCalls: chunk.toolCalls,
                                 provider: providerInfo.id,
                                 depth
-                            });
-                            controller.enqueue(encoder.encode(`data: ${data}\n\n`));
+                            })}\n\n`))
                         }
 
-                        // Handle Tool Calls
-                        const activeToolCalls = roundToolCalls.filter(tc => tc && tc.function?.name);
+                        const activeToolCalls = roundToolCalls.filter(tc => tc && tc.function?.name)
                         if (activeToolCalls.length > 0) {
-                            console.log(`🛠️ [ChatEngine] Round ${depth} generated ${activeToolCalls.length} tool calls.`);
-
-                            const nextMessages = [...currentMessages];
-                            nextMessages.push({
-                                role: 'assistant',
-                                content: roundContent,
-                                metadata: { toolCalls: activeToolCalls }
-                            } as any);
-
-                            // Execute all tools in parallel
+                            const nextMessages = [...currentMessages]
+                            nextMessages.push({ role: 'assistant', content: roundContent, metadata: { toolCalls: activeToolCalls } } as any)
                             const results = await Promise.all(activeToolCalls.map(async (tc) => {
-                                let args = {};
-                                try { args = JSON.parse(tc.function.arguments); } catch (e) { }
-                                const result = await executeTool(tc.function.name, args, personaId!, user.id);
-                                return {
-                                    role: 'tool',
-                                    tool_call_id: tc.id,
-                                    content: result
-                                };
-                            }));
-
-                            // Append results and continue
-                            nextMessages.push(...results as any);
-                            return roundContent + await runChatRound(nextMessages, depth + 1);
+                                let args = {}
+                                try { args = JSON.parse(tc.function.arguments) } catch (e) { }
+                                const result = await executeTool(tc.function.name, args, personaId!, userId)
+                                return { role: 'tool', tool_call_id: tc.id, content: result }
+                            }))
+                            nextMessages.push(...results as any)
+                            return roundContent + await runChatRound(nextMessages, depth + 1)
                         }
+                        return roundContent
+                    }
 
-                        return roundContent;
-                    };
-
-                    // --- PERSISTENCE: Get/Create Chat Session & Save User Message ---
-                    let chatId: string | null = null;
-                    let userMessageId: string | null = null;
+                    let chatId: string | null = null
+                    let userMessageId: string | null = null
                     if (personaId) {
-                        try {
-                            const supabaseService = createClient(cookieStore);
-                            chatId = await getOrCreateChatSession(supabaseService, user.id, personaId, { customName, workspaceId });
-                            const lastUserMsg = messages[messages.length - 1];
-                            if (lastUserMsg.role === 'user') {
-                                userMessageId = await saveMessage(supabaseService, chatId, user.id, lastUserMsg);
-                            }
-                        } catch (e) {
-                            console.error('❌ [Persistence] Failed to init session or save user msg:', e);
+                        chatId = await getOrCreateChatSession(supabase, userId, personaId, { customName, workspaceId })
+                        const lastUserMsg = messages[messages.length - 1]
+                        if (lastUserMsg.role === 'user') {
+                            userMessageId = await saveMessage(supabase, chatId, userId, lastUserMsg)
                         }
                     }
 
-                    // Start the recursive loop
                     const formattedMessages: ChatMessageContent[] = messages.map(msg => ({
                         role: msg.role,
                         content: msg.content,
                         tool_call_id: msg.tool_call_id,
                         timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date(),
                         metadata: (msg as any).tool_calls ? { toolCalls: (msg as any).tool_calls } : undefined
-                    }));
+                    }))
 
-                    const finalContent = await runChatRound(formattedMessages);
+                    const finalContent = await runChatRound(formattedMessages)
 
-                    // --- PERSISTENCE: Save Final Assistant Response ---
                     if (chatId && finalContent) {
-                        const supabaseService = createClient(cookieStore);
-                        const assistantMessageId = await saveMessage(supabaseService, chatId, user.id, {
+                        const assistantMessageId = await saveMessage(supabase, chatId, userId, {
                             role: 'assistant',
                             content: finalContent,
                             timestamp: new Date()
-                        }, providerInfo.id);
+                        }, providerInfo.id)
 
-                        // Send done signal with IDs
-                        controller.enqueue(encoder.encode(`data: ${JSON.stringify({
-                            done: true,
-                            userMessageId,
-                            assistantMessageId
-                        })}\n\n`));
+                        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true, userMessageId, assistantMessageId })}\n\n`))
+                        controller.enqueue(encoder.encode(`data: [DONE]\n\n`))
 
-                        // Legacy done signal
-                        controller.enqueue(encoder.encode(`data: [DONE]\n\n`));
+                        // Async tasks (memories, etc.)
+                        const assistantContent = finalContent.replace(/\[SAVE_FACT:.+?\]/g, '').trim()
+                        const assistantEmbedding = await generateEmbedding(assistantContent)
+                        const adminSupabase = (await import('@/lib/supabase/server')).createAdminClient()
 
-                        console.log(`💾 [Persistence] Saved final recursive response: ${assistantMessageId}`);
+                        await adminSupabase.from('memories').insert({
+                            user_id: userId,
+                            persona_id: personaId,
+                            role: 'assistant',
+                            content: assistantContent,
+                            importance: 3,
+                            domain: 'personal',
+                            embedding: assistantEmbedding
+                        })
 
-                        // --- AUTO-NAMING ---
-                        if (messages.length === 1 && finalContent) {
-                            try {
-                                console.log(`🏷️ [AutoNaming] Generating title for new chat...`);
-                                const titlePrompt = `Generate a very short, descriptive title (3-5 words) for a chat that starts with this user message: "${messages[0].content}". Respond ONLY with the title text, no quotes or punctuation.`;
-
-                                let generatedTitle = '';
-                                for await (const chunk of providerManager.sendMessage(
-                                    [{ role: 'user', content: titlePrompt, timestamp: new Date() }],
-                                    "You are a helpful assistant that names chat threads.",
-                                    { temperature: 0.3, model: 'deepseek-chat' }
-                                )) {
-                                    if (chunk.content) generatedTitle += chunk.content;
-                                }
-
-                                const finalTitle = generatedTitle.trim().replace(/^"|"$/g, '');
-                                if (finalTitle) {
-                                    const { updateChatMetadata } = await import('@/lib/chat-engine/persistence');
-                                    await updateChatMetadata(supabaseService, chatId, { title: finalTitle });
-                                    console.log(`✅ [AutoNaming] Title generated: ${finalTitle}`);
-                                }
-                            } catch (autoNameErr: any) {
-                                console.error(`⚠️ [AutoNaming] Failed: ${autoNameErr.message}`);
-                            }
-                        }
-
-                        // --- UNIVERSAL CONSOLE: Fact Saving & Memory Sync ---
-                        try {
-                            const adminSupabase = (await import('@/lib/supabase/server')).createAdminClient();
-                            const assistantContent = finalContent.replace(/\[SAVE_FACT:.+?\]/g, '').trim();
-                            const assistantEmbedding = await generateEmbedding(assistantContent);
-
+                        const lastUserMsg = messages[messages.length - 1]
+                        if (lastUserMsg && lastUserMsg.role === 'user') {
+                            const userEmbedding = await generateEmbedding(lastUserMsg.content)
                             await adminSupabase.from('memories').insert({
-                                user_id: user.id,
+                                user_id: userId,
                                 persona_id: personaId,
-                                role: 'assistant',
-                                content: assistantContent,
-                                importance: 3,
+                                role: 'user',
+                                content: lastUserMsg.content,
+                                importance: 5,
                                 domain: 'personal',
-                                embedding: assistantEmbedding
-                            });
-
-                            const lastUserMsg = messages[messages.length - 1];
-                            if (lastUserMsg && lastUserMsg.role === 'user') {
-                                const userEmbedding = await generateEmbedding(lastUserMsg.content);
-                                await adminSupabase.from('memories').insert({
-                                    user_id: user.id,
-                                    persona_id: personaId,
-                                    role: 'user',
-                                    content: lastUserMsg.content,
-                                    importance: 5,
-                                    domain: 'personal',
-                                    embedding: userEmbedding
-                                });
-                            }
-                        } catch (e: any) {
-                            console.error('❌ [Universal Console] Failed to sync memories:', e);
+                                embedding: userEmbedding
+                            })
                         }
                     }
 
-                    // --- Carrot Follow-up Logic ---
+                    // Carrot Follow-up
                     if (persona && CarrotEngine.shouldGenerateFollowUp(formattedMessages, persona)) {
-                        console.log(`🥕 [Carrot] Generating follow-up for persona: ${persona.name}`)
-
-                        // Add 1-2 second delay
-                        await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000))
-
-                        // Add assistant response to context for follow-up generation
-                        const messagesWithResponse = [
-                            ...formattedMessages,
-                            { role: 'assistant', content: finalContent, timestamp: new Date() } as ChatMessageContent
-                        ]
-
-                        const followUpPrompt = CarrotEngine.generateFollowFollowUpPrompt(
-                            finalContent,
-                            formattedMessages,
-                            persona
-                        )
-
+                        await new Promise(resolve => setTimeout(resolve, 1500))
+                        const followUpPrompt = CarrotEngine.generateFollowFollowUpPrompt(finalContent, formattedMessages, persona)
                         let followUpContent = ''
                         for await (const chunk of providerManager.sendMessage(
-                            messagesWithResponse,
+                            [...formattedMessages, { role: 'assistant', content: finalContent, timestamp: new Date() } as ChatMessageContent],
                             followUpPrompt,
-                            {
-                                temperature: 0.8,
-                                maxTokens: 100,
-                                model: 'deepseek-chat' // STRICT: Always use deepseek-chat for follow-ups to save credits
-                            }
+                            { temperature: 0.8, maxTokens: 100, model: 'deepseek-chat' }
                         )) {
-                            const content = chunk.content || ''
-                            followUpContent += content
-                            const followUpData = JSON.stringify({
-                                type: 'followup',
-                                content: content,
-                                provider: providerInfo.id
-                            })
-                            controller.enqueue(encoder.encode(`data: ${followUpData}\n\n`))
+                            followUpContent += chunk.content || ''
+                            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'followup', content: chunk.content || '', provider: providerInfo.id })}\n\n`))
                         }
-
-                        console.log(`✅ [Carrot] Follow-up complete`)
                     }
 
                 } catch (error) {
-                    debugLog(`❌ [ChatEngine] Streaming Error: ${error instanceof Error ? error.message : String(error)}`)
-                    if (error instanceof Error && error.stack) debugLog(error.stack)
-
-                    const errorData = JSON.stringify({
-                        error: error instanceof Error ? error.message : 'Unknown error',
-                        provider: providerInfo.id,
-                        stack: error instanceof Error ? error.stack : undefined
-                    })
-                    controller.enqueue(encoder.encode(`data: ${errorData}\n\n`))
+                    controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' })}\n\n`))
                 } finally {
                     controller.close()
                 }
@@ -650,56 +404,38 @@ export async function POST(request: NextRequest) {
             headers: {
                 'Content-Type': 'text/event-stream',
                 'Cache-Control': 'no-cache',
-                'Connection': 'keep-alive',
-                'X-Provider': providerInfo.id
+                'Connection': 'keep-alive'
             }
         })
 
     } catch (error) {
-        console.error('❌ [ChatEngine] CRITICAL ERROR:', error)
         return handleApiError(error)
     }
 }
 
-/**
- * GET endpoint to check available providers for current user
- */
 export async function GET(request: NextRequest) {
     try {
-        const cookieStore = cookies()
+        const cookieStore = await cookies()
         const supabase = createClient(cookieStore)
-
-        // Use getSession first
         const { data: { session } } = await supabase.auth.getSession()
-        let user: any = session?.user
-
-        // Fallback to getUser
+        let user: User | null = session?.user || null
         if (!user) {
             const { data: { user: verifiedUser } } = await supabase.auth.getUser()
             user = verifiedUser
         }
-
-        if (!user) {
-            return new Response('Unauthorized', { status: 401 })
-        }
+        if (!user) return new Response('Unauthorized', { status: 401 })
 
         const userTier = await getUserTier(user.id)
         const providerManager = createProviderManager(userTier)
 
-        const availableProviders = providerManager.getAvailableProviders().map(p => ({
-            id: p.id,
-            name: p.name
-        }))
-
         return new Response(
             JSON.stringify({
                 tier: userTier,
-                providers: availableProviders,
+                providers: providerManager.getAvailableProviders().map(p => ({ id: p.id, name: p.name })),
                 defaultProvider: providerManager.getProviderInfo()
             }),
             { status: 200, headers: { 'Content-Type': 'application/json' } }
         )
-
     } catch (error) {
         return handleApiError(error)
     }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { authorizeAdmin, supabaseAdmin } from '@/lib/admin/chat-auth'
+import { logAdminAction } from '@/lib/admin/audit'
 
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
     try {
@@ -15,12 +16,8 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
 
         if (error) throw error
 
-        await supabaseAdmin.from('chat_admin_logs').insert({
-            admin_id: user.id,
-            action: 'unban_user',
-            target_type: 'user',
-            target_id: params.id
-        })
+        // Global Audit Logging (Layer 3)
+        await logAdminAction(user.id, 'unban_user', params.id, { reason: 'Admin Action' })
 
         return NextResponse.json(data)
     } catch (error: any) {

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
 import Stripe from 'stripe';
 import { processStripeEvent } from '@/lib/stripe/handlers';
+import { logWebhookEvent } from '@/lib/webhooks/logger';
 
 // Lazy initialization to avoid build-time errors
 let _stripe: Stripe | null = null;
@@ -48,6 +49,9 @@ export async function POST(req: NextRequest) {
 
     try {
         await processStripeEvent(event);
+
+        // Global Webhook Logging (Layer 3)
+        await logWebhookEvent('stripe', event.type, event.data.object, 'success')
 
         // Mark event as processed
         await supabase
