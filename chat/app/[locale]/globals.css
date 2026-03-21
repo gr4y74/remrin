@@ -800,3 +800,27 @@
     animation: progress-drift 15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
 }
+/* Claude-Quality Streaming Cursor */
+.streaming > div > p:last-child::after {
+  content: "▋";
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 4px;
+  color: hsl(var(--rp-iris));
+  animation: cursor-blink 1s step-end infinite;
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Thinking Pulse */
+.thinking-pulse {
+  animation: thinking-fade 1.5s ease-in-out infinite;
+}
+
+@keyframes thinking-fade {
+  0%, 100% { opacity: 0.4; transform: scale(0.98); }
+  50% { opacity: 0.8; transform: scale(1); }
+}

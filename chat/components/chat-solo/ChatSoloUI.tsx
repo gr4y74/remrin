@@ -47,6 +47,12 @@ const ChatSoloUIInner: React.FC<{ personaName?: string }> = ({ personaName }) =>
             setTheme(profile.cockpit_theme)
         }
     }, [profile?.cockpit_theme, setTheme])
+    // Auto-open artifacts panel when one is detected
+    useEffect(() => {
+        if (activeArtifact) {
+            setIsArtifactsOpen(true)
+        }
+    }, [activeArtifact])
 
     return (
         <div className="flex h-screen bg-background text-foreground overflow-hidden font-sans selection:bg-primary/20 selection:text-primary transition-colors duration-300">

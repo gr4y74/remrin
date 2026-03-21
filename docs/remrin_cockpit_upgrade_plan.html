@@ -1,0 +1,497 @@
+
+<style>
+  .wrap { padding: 1rem 0; font-family: var(--font-sans); }
+  .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem; margin-bottom: 1rem; }
+  .section-label { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-tertiary); margin: 0 0 10px; }
+  .tab-row { display: flex; gap: 6px; margin-bottom: 1rem; flex-wrap: wrap; }
+  .tab { font-size: 13px; padding: 5px 14px; cursor: pointer; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-secondary); white-space: nowrap; }
+  .tab.active { background: var(--color-background-info); color: var(--color-text-info); border-color: transparent; font-weight: 500; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .note { font-size: 13px; color: var(--color-text-secondary); line-height: 1.65; padding: 10px 14px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); margin-bottom: 10px; }
+  .note-red { border-left: 2px solid #E24B4A; }
+  .note-amber { border-left: 2px solid #EF9F27; }
+  .note-green { border-left: 2px solid #1D9E75; }
+  .note-blue { border-left: 2px solid #378ADD; }
+  .note-purple { border-left: 2px solid #7F77DD; }
+  strong.r { color: #A32D2D; }
+  strong.a { color: #854F0B; }
+  strong.g { color: #0F6E56; }
+  strong.b { color: #185FA5; }
+  strong.p { color: #534AB7; }
+  h2 { font-size: 16px; font-weight: 500; color: var(--color-text-primary); margin: 0 0 10px; }
+  h3 { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin: 14px 0 6px; }
+  .prompt-box { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 1rem 1.25rem; font-family: var(--font-mono); font-size: 12px; line-height: 1.8; color: var(--color-text-primary); white-space: pre-wrap; word-break: break-word; max-height: 520px; overflow-y: auto; }
+  .copy-btn { margin-top: 0.75rem; font-size: 13px; padding: 6px 14px; cursor: pointer; }
+  .feature-row { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); font-size: 13px; line-height: 1.6; }
+  .feature-row:last-child { border-bottom: none; }
+  .feat-icon { font-size: 15px; min-width: 22px; }
+  .feat-label { font-weight: 500; color: var(--color-text-primary); margin-bottom: 2px; }
+  .feat-desc { color: var(--color-text-secondary); font-size: 12px; }
+  .priority { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: var(--border-radius-md); margin-left: 6px; }
+  .p1 { background: var(--color-background-danger); color: var(--color-text-danger); }
+  .p2 { background: var(--color-background-warning); color: var(--color-text-warning); }
+  .p3 { background: var(--color-background-info); color: var(--color-text-info); }
+  .p4 { background: var(--color-background-secondary); color: var(--color-text-secondary); }
+  .mock { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; }
+  .mock-header { padding: 8px 14px; border-bottom: 0.5px solid var(--color-border-tertiary); font-size: 12px; color: var(--color-text-tertiary); }
+  .mock-body { padding: 14px; }
+  .msg-ai { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 12px 14px; margin-bottom: 10px; font-size: 13px; line-height: 1.7; }
+  .msg-user { background: var(--color-background-info); border-radius: var(--border-radius-lg); padding: 10px 14px; margin-bottom: 10px; font-size: 13px; line-height: 1.6; color: var(--color-text-info); text-align: right; max-width: 75%; margin-left: auto; }
+  .artifact-mock { border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); overflow: hidden; margin-top: 8px; }
+  .artifact-header { background: var(--color-background-secondary); padding: 6px 12px; font-size: 11px; font-weight: 500; color: var(--color-text-secondary); display: flex; justify-content: space-between; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .artifact-body { padding: 10px 12px; font-family: var(--font-mono); font-size: 12px; color: var(--color-text-primary); line-height: 1.6; background: var(--color-background-primary); }
+  .inline-code { font-family: var(--font-mono); font-size: 12px; background: var(--color-background-secondary); padding: 1px 5px; border-radius: 4px; color: var(--color-text-primary); }
+  .link-style { color: var(--color-text-info); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+</style>
+
+<div class="wrap">
+  <div class="card">
+    <div class="tab-row">
+      <div class="tab active" onclick="show('audit',this)">Audit</div>
+      <div class="tab" onclick="show('features',this)">Feature roadmap</div>
+      <div class="tab" onclick="show('mockup',this)">UI mockup</div>
+      <div class="tab" onclick="show('agent',this)">Agent prompt</div>
+    </div>
+
+    <!-- AUDIT TAB -->
+    <div id="audit" class="panel active">
+      <p class="section-label">Rem's cockpit audit — current state vs Claude</p>
+
+      <div class="note note-green">
+        <strong class="g">Working well:</strong> The sidebar with chat history, New Chat button, and Cockpit Settings is structurally correct — same fundamental layout as Claude. The "Neural Link" status indicator is a nice branded touch. The persistent memory positioning is excellent.
+      </div>
+      <div class="note note-red">
+        <strong class="r">Critical gap — No artifact/canvas system.</strong> This is the single biggest difference between the current cockpit and Claude. Claude renders code, tables, charts, and rich content in a separate right-side panel ("artifact") rather than inline. This is what makes Claude feel like a professional tool rather than a chat window. Without this, formatted output like pricing tables or code just dumps into the chat as raw text.
+      </div>
+      <div class="note note-red">
+        <strong class="r">Critical gap — No markdown rendering.</strong> If the AI outputs **bold**, headers, bullet lists, or code blocks, they need to render as formatted HTML, not raw asterisks and backticks. This is what makes Claude's responses feel rich and readable vs a plain text dump.
+      </div>
+      <div class="note note-amber">
+        <strong class="a">Missing — Inline code highlighting.</strong> Claude uses syntax-highlighted code blocks with a copy button and language label. This is a high-visibility feature for a tool positioning itself as a Claude alternative.
+      </div>
+      <div class="note note-amber">
+        <strong class="a">Missing — Streaming text rendering.</strong> Claude types out responses token by token with a cursor. If the cockpit shows nothing then dumps the full response, it feels slow and broken even if the latency is identical.
+      </div>
+      <div class="note note-amber">
+        <strong class="a">Missing — Message actions.</strong> Claude shows Copy, Thumbs up/down, Retry, and Edit on hover over each message. These small interactions signal quality and build trust.
+      </div>
+      <div class="note note-blue">
+        <strong class="b">Opportunity — Model switcher.</strong> The cockpit shows "DeepSeek V3" — this should be a visible, clickable model selector exactly like Claude's model dropdown. Let users choose between available models. This is a power-user feature that reinforces the "professional tool" positioning.
+      </div>
+      <div class="note note-blue">
+        <strong class="b">Opportunity — Typography.</strong> Claude uses a clean sans-serif for UI chrome and a slightly different weight for AI responses. The contrast between UI text and message text makes responses feel more distinct and readable. Worth matching deliberately.
+      </div>
+      <div class="note note-purple">
+        <strong class="p">Nice to have — Thinking indicator.</strong> The animated "Rem is thinking..." with a pulsing indicator between user message and AI response reduces perceived latency significantly.
+      </div>
+    </div>
+
+    <!-- FEATURES TAB -->
+    <div id="features" class="panel">
+      <p class="section-label">Feature implementation roadmap — priority order</p>
+
+      <div class="feature-row">
+        <div class="feat-icon">📄</div>
+        <div>
+          <div class="feat-label">Markdown rendering <span class="priority p1">P1 — Do first</span></div>
+          <div class="feat-desc">Install <span class="inline-code">react-markdown</span> + <span class="inline-code">remark-gfm</span>. Renders **bold**, # headers, bullet lists, tables, and blockquotes as styled HTML. Without this nothing else matters — raw asterisks break trust immediately.</div>
+        </div>
+      </div>
+
+      <div class="feature-row">
+        <div class="feat-icon">⚡</div>
+        <div>
+          <div class="feat-label">Streaming response (token by token) <span class="priority p1">P1 — Do first</span></div>
+          <div class="feat-desc">Use the AI SDK's streaming endpoint. Render each token as it arrives. Add a blinking cursor <span class="inline-code">▋</span> at the end of the in-progress message. Transforms perceived speed dramatically.</div>
+        </div>
+      </div>
+
+      <div class="feature-row">
+        <div class="feat-icon">💻</div>
+        <div>
+          <div class="feat-label">Syntax-highlighted code blocks <span class="priority p1">P1 — Do first</span></div>
+          <div class="feat-desc">Use <span class="inline-code">react-syntax-highlighter</span> or <span class="inline-code">shiki</span>. Every code block gets: language label top-left, copy button top-right, dark background, coloured syntax. One of the most visible quality signals.</div>
+        </div>
+      </div>
+
+      <div class="feature-row">
+        <div class="feat-icon">🖼️</div>
+        <div>
+          <div class="feat-label">Artifact / canvas panel <span class="priority p2">P2 — High value</span></div>
+          <div class="feat-desc">Side panel that opens when AI returns rich content (HTML, React components, long structured documents). Keeps chat clean. Exactly how Claude handles artifacts. Triggered automatically by content type or by user request. Has its own toolbar: copy, download, preview/code toggle.</div>
+        </div>
+      </div>
+
+      <div class="feature-row">
+        <div class="feat-icon">🖱️</div>
+        <div>
+          <div class="feat-label">Message hover actions <span class="priority p2">P2 — High value</span></div>
+          <div class="feat-desc">On hover over any AI message: Copy full message, Thumbs up, Thumbs down, Retry (regenerate), Edit (for user messages). Appears as a floating toolbar above the message. Signals quality, enables feedback loop.</div>
+        </div>
+      </div>
+
+      <div class="feature-row">
+        <div class="feat-icon">🤖</div>
+        <div>
+          <div class="feat-label">Model selector dropdown <span class="priority p2">P2 — High value</span></div>
+          <div class="feat-desc">Clickable model name in the header or input area. Dropdown shows available models with labels (Fast / Smart / Most Capable). Selected model persists per conversation. Pro-only models show a lock icon for free users.</div>
+        </div>
+      </div>
+
+      <div class="feature-row">
+        <div class="feat-icon">💬</div>
+        <div>
+          <div class="feat-label">Thinking / typing indicator <span class="priority p3">P3 — Polish</span></div>
+          <div class="feat-desc">Animated pulsing dots or "Rem is thinking..." text shown between user message and AI response while the stream hasn't started yet. Eliminates the dead zone where nothing is happening.</div>
+        </div>
+      </div>
+
+      <div class="feature-row">
+        <div class="feat-icon">📎</div>
+        <div>
+          <div class="feat-label">File / image upload in chat <span class="priority p3">P3 — Polish</span></div>
+          <div class="feat-desc">Drag-and-drop or paperclip button in the input area. Supports images (send to vision model), PDFs (extract text), and text files. Preview thumbnail shown above the input before sending. Tier-gated for large files.</div>
+        </div>
+      </div>
+
+      <div class="feature-row">
+        <div class="feat-icon">🔍</div>
+        <div>
+          <div class="feat-label">Chat search <span class="priority p4">P4 — Nice to have</span></div>
+          <div class="feat-desc">Search across all previous conversations. Highlights matching messages. Essential once a user has months of history.</div>
+        </div>
+      </div>
+
+      <div class="feature-row">
+        <div class="feat-icon">📤</div>
+        <div>
+          <div class="feat-label">Export conversation <span class="priority p4">P4 — Nice to have</span></div>
+          <div class="feat-desc">Export current chat as Markdown, PDF, or plain text. Tier-gated (Soul Weaver+). Adds perceived value to paid tiers.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOCKUP TAB -->
+    <div id="mockup" class="panel">
+      <p class="section-label">Target UI — what the cockpit should feel like</p>
+      <div class="mock">
+        <div class="mock-header">Rem Cockpit — /rem — after upgrades</div>
+        <div class="mock-body">
+
+          <div class="msg-user">Can you show me a pricing comparison table for Remrin tiers?</div>
+
+          <div class="msg-ai">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+              <div style="width:22px;height:22px;border-radius:50%;background:var(--color-background-info);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:var(--color-text-info);">R</div>
+              <span style="font-size:13px;font-weight:500;color:var(--color-text-primary);">Rem</span>
+            </div>
+            <p style="font-size:13px;margin:0 0 8px;line-height:1.7;">Here's a breakdown of the four Remrin tiers. I've put the full comparison in the artifact panel →</p>
+            <p style="font-size:13px;margin:0;line-height:1.7;">The key upgrade triggers are: <strong>Soul Weaver</strong> for voice and animated avatars, <strong>Architect</strong> for marketplace selling, and <strong>Titan</strong> for unlimited everything. See the <span class="link-style">feature matrix</span> for full details.</p>
+          </div>
+
+          <div class="artifact-mock">
+            <div class="artifact-header">
+              <span>Pricing comparison — HTML</span>
+              <span style="display:flex;gap:8px;">
+                <span style="cursor:pointer;color:var(--color-text-info);">Preview</span>
+                <span style="cursor:pointer;">Code</span>
+                <span style="cursor:pointer;">Copy</span>
+              </span>
+            </div>
+            <div class="artifact-body">
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Feature&lt;/th&gt;
+      &lt;th&gt;Wanderer&lt;/th&gt;
+      &lt;th&gt;Soul Weaver&lt;/th&gt;
+      ...
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  ...
+&lt;/table&gt;
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;margin-top:10px;opacity:0;transition:opacity 0.2s;" class="msg-actions" id="ma1">
+            <button style="font-size:11px;padding:3px 8px;cursor:pointer;">Copy</button>
+            <button style="font-size:11px;padding:3px 8px;cursor:pointer;">👍</button>
+            <button style="font-size:11px;padding:3px 8px;cursor:pointer;">👎</button>
+            <button style="font-size:11px;padding:3px 8px;cursor:pointer;">↺ Retry</button>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--color-text-tertiary);margin:8px 0 0;text-align:center;">Hover the AI message above to see the action toolbar appear</p>
+    </div>
+
+    <!-- AGENT TAB -->
+    <div id="agent" class="panel">
+      <p class="section-label">Agent prompt — upgrade cockpit to Claude-quality UI</p>
+      <div class="prompt-box" id="cockpitprompt">You are upgrading the /rem cockpit at remrin-chat.vercel.app/rem to match Claude.ai's UI quality and feature set. The goal is a near-identical professional chat experience.
+
+DO NOT touch any backend logic, auth, or RAG system. UI and rendering layer only.
+Audit each item first, report current state, then implement in the exact order below.
+
+═══════════════════════════════════════
+JOB 1 — MARKDOWN RENDERING (do this first, everything depends on it)
+═══════════════════════════════════════
+
+Install dependencies:
+  pnpm add react-markdown remark-gfm rehype-raw
+
+Create: src/components/rem/MarkdownRenderer.tsx
+
+This component takes a string of markdown and renders it as styled HTML.
+It must handle ALL of these correctly:
+
+  **bold text** → <strong>
+  *italic* → <em>
+  # Heading 1 through ### Heading 3 → styled h tags
+  - bullet lists → <ul><li>
+  1. numbered lists → <ol><li>
+  > blockquotes → styled blockquote with left border
+  `inline code` → <code> with background tint
+  [link text](url) → <a> styled in accent colour with underline
+  | table | headers | → full styled HTML table
+  ---  → <hr>
+  
+  Blank lines between paragraphs must produce visual spacing.
+
+STYLING RULES (match Claude's aesthetic exactly):
+  - Body text: 15-16px, line-height 1.7, color: var(--foreground) or equivalent
+  - Code inline: monospace font, slight background tint, 0.9em size
+  - Blockquotes: left border 3px accent colour, padding-left 1rem, italic, muted colour
+  - Links: accent colour (your brand purple/blue), underline on hover
+  - Tables: clean borders, alternating row background, header bold
+  - H1: 22px bold, H2: 18px bold, H3: 16px bold
+  - All headings have margin-top: 1.25em, margin-bottom: 0.5em
+
+Replace ALL current message body rendering with <MarkdownRenderer content={message.content} />
+
+Definition of Done:
+  [ ] **bold** renders as bold text
+  [ ] # Header renders as large heading
+  [ ] Bullet list renders with bullets
+  [ ] Code block renders with background
+  [ ] Table renders with visible borders
+  [ ] Link renders in accent colour
+  [ ] No raw asterisks or backticks visible anywhere in chat
+
+═══════════════════════════════════════
+JOB 2 — STREAMING TEXT RENDERING
+═══════════════════════════════════════
+
+The AI response must appear token by token, not all at once.
+
+If not already streaming:
+  - Switch the AI API call to use a streaming endpoint
+  - Use ReadableStream / EventSource to receive tokens
+  - Append each token to the message content in React state as it arrives
+  - Trigger a re-render on each token (use useRef to avoid full re-renders)
+
+Add a blinking cursor while streaming is in progress:
+  - CSS class "streaming" on the message container
+  - ::after pseudo-element: content: "▋", animation: blink 1s infinite
+  - Remove "streaming" class when stream is complete
+
+Add a "thinking" state shown BEFORE the stream starts:
+  - While awaiting first token: show animated pulsing dots "···" 
+  - Or text: "Rem is thinking..." with subtle pulse animation
+  - Replace with streaming content the moment first token arrives
+
+Definition of Done:
+  [ ] Sending a message shows thinking indicator immediately
+  [ ] Response text appears token by token
+  [ ] Blinking cursor visible at end of in-progress response
+  [ ] Cursor disappears when response is complete
+  [ ] Markdown renders correctly on streamed content (not just on completion)
+
+═══════════════════════════════════════
+JOB 3 — SYNTAX HIGHLIGHTED CODE BLOCKS
+═══════════════════════════════════════
+
+Install: pnpm add shiki
+(Shiki is preferred over react-syntax-highlighter — smaller, better output)
+
+Create: src/components/rem/CodeBlock.tsx
+
+This replaces the default code block renderer in MarkdownRenderer.
+
+VISUAL SPEC (match Claude exactly):
+  Container:
+    - Dark background (#1e1e2e or similar dark surface)
+    - border-radius: 8px
+    - Full width of the message
+    - Overflow: hidden
+
+  Header bar (inside container, top):
+    - Left: language label (e.g. "typescript", "bash", "python") — small, muted
+    - Right: "Copy" button — on click, copies code to clipboard, changes to "Copied!" for 2s
+    - Background slightly lighter than code area
+    - Border-bottom separating from code
+
+  Code area:
+    - Shiki syntax highlighting with "github-dark" theme
+    - Monospace font (JetBrains Mono or similar), 13px
+    - Padding: 1rem
+    - Horizontal scroll for long lines (overflow-x: auto)
+    - Line numbers optional but nice to have
+
+Pass the CodeBlock component as the code renderer to react-markdown:
+  components={{ code: CodeBlock }}
+
+Definition of Done:
+  [ ] Code blocks have dark background
+  [ ] Language label shows in header
+  [ ] Copy button works and shows "Copied!" feedback
+  [ ] Syntax is coloured correctly for at least: JS, TS, Python, Bash, JSON
+  [ ] Long lines scroll horizontally rather than wrapping
+
+═══════════════════════════════════════
+JOB 4 — MESSAGE HOVER ACTIONS
+═══════════════════════════════════════
+
+Create: src/components/rem/MessageActions.tsx
+
+On hover over ANY message:
+  Show a small floating action bar above the message (top-right corner)
+
+FOR AI MESSAGES show:
+  [Copy] — copies full message markdown to clipboard
+  [👍] — sends positive feedback (store in DB or log)
+  [👎] — sends negative feedback
+  [↺ Retry] — deletes last AI message, resends the last user message
+
+FOR USER MESSAGES show:
+  [✏️ Edit] — makes message text editable inline, re-sends on confirm
+  [Copy] — copies message text
+
+IMPLEMENTATION:
+  - Use CSS opacity: 0 → 1 on parent:hover
+  - Transition: opacity 0.15s ease
+  - Position: absolute, top: -16px, right: 0
+  - Background: var(--background) or card colour
+  - Border: 0.5px solid border colour
+  - Border-radius: 6px
+  - Padding: 3px 8px
+  - Buttons: 11-12px, no background, icon + short label
+
+Definition of Done:
+  [ ] Hovering an AI message shows the action bar
+  [ ] Copy copies the correct content
+  [ ] Retry regenerates the response correctly
+  [ ] Edit makes user message editable and re-sends
+  [ ] Actions bar disappears smoothly when mouse leaves
+
+═══════════════════════════════════════
+JOB 5 — ARTIFACT PANEL
+═══════════════════════════════════════
+
+This is the most complex job. Build it last.
+
+The artifact panel is a right-side drawer that opens when the AI returns
+certain content types. It keeps the chat area clean and provides a dedicated
+space for rich rendered content.
+
+TRIGGER CONDITIONS — open artifact panel when AI response contains:
+  - A complete HTML document or large HTML snippet (>20 lines)
+  - A React component
+  - A structured data table (markdown table with >4 columns or >8 rows)
+  - A code block the user explicitly asked to "put in an artifact"
+  - Any response where the AI says "I've put this in the artifact panel"
+
+LAYOUT:
+  When closed: chat takes full width
+  When open: chat takes left 45%, artifact panel takes right 55%
+  Transition: smooth slide-in from right, 250ms ease
+  On mobile: artifact opens as full-screen modal instead
+
+ARTIFACT PANEL STRUCTURE:
+  Header:
+    - Artifact title (extracted from content or AI-provided)
+    - Tab bar: "Preview" | "Code" | "Markdown" (show relevant tabs)
+    - Toolbar buttons: Copy, Download, Open in new tab, Close (×)
+  
+  Body:
+    - Preview tab: renders HTML in a sandboxed iframe, React in a live renderer
+    - Code tab: shows raw source in syntax-highlighted code block
+    - Markdown tab: shows raw markdown if applicable
+
+  Footer:
+    - Character/token count
+    - Last updated timestamp
+
+REFERENCE in chat:
+  When an artifact is generated, show a small reference card in the chat:
+  ┌─────────────────────────────────┐
+  │ 📄 Artifact: Pricing Table       │
+  │ HTML · 47 lines  [View] [Copy]  │
+  └─────────────────────────────────┘
+
+Definition of Done:
+  [ ] Sending a message that produces HTML opens the artifact panel
+  [ ] Preview tab renders HTML correctly
+  [ ] Code tab shows syntax-highlighted source
+  [ ] Copy button copies the source
+  [ ] Download saves as .html file
+  [ ] Close button closes the panel and chat returns to full width
+  [ ] Artifact reference card appears in chat with View/Copy buttons
+  [ ] Works on mobile (full-screen modal)
+
+═══════════════════════════════════════
+JOB 6 — MODEL SELECTOR
+═══════════════════════════════════════
+
+Add a clickable model selector to the cockpit header or input area.
+
+VISUAL: Small pill showing current model name + dropdown arrow
+  e.g. "DeepSeek V3 ▾" or "Claude Sonnet ▾"
+
+DROPDOWN (opens on click):
+  List of available models with:
+    - Model name
+    - Short descriptor (Fast / Balanced / Most Capable)
+    - Speed indicator (dots or bar)
+    - Lock icon for Pro-only models (shown to free users, links to /pricing)
+
+BEHAVIOUR:
+  - Selected model persists per conversation (store in conversation metadata)
+  - Changing model shows a subtle system message: "Switched to [Model Name]"
+  - Default model set in cockpit settings
+
+Definition of Done:
+  [ ] Current model name visible in UI at all times
+  [ ] Clicking opens dropdown with all available models
+  [ ] Selecting a model updates the active model for new messages
+  [ ] Model choice persists after page refresh
+  [ ] Pro-only models show lock icon for free users
+
+═══════════════════════════════════════
+IMPORTANT RULES FOR ALL JOBS
+═══════════════════════════════════════
+- Complete Job 1 100% before starting Job 2. Each job builds on the last.
+- Test after every job on both desktop and mobile.
+- Do not change any colours, branding, or Rem personality settings.
+- Do not touch the RAG, memory, or auth systems.
+- Do not change the sidebar, settings, or any non-chat-window UI.
+- Report Definition of Done checklist results before marking any job complete.</div>
+      <button class="copy-btn" onclick="copyTxt('cockpitprompt',this)">Copy agent prompt</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function show(id, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+function copyTxt(id, btn) {
+  navigator.clipboard.writeText(document.getElementById(id).innerText);
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = 'Copy agent prompt', 2000);
+}
+</script>

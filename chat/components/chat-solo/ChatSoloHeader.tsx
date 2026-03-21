@@ -10,12 +10,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useChatSolo } from './ChatSoloEngine'
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import { ModelSelector } from '../rem/ModelSelector'
 import { Button } from '@/components/ui/button'
 import { UserMenu } from './UserMenu'
 
@@ -77,77 +72,7 @@ export const ChatSoloHeader: React.FC<ChatSoloHeaderProps> = ({
             </div>
 
             <div className="flex items-center gap-3">
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="h-8 gap-2 rounded-xl bg-muted/30 border-white/10 hover:bg-muted font-bold text-[10px] uppercase tracking-wider group font-outfit">
-                            <Cpu size={14} className="text-primary group-hover:rotate-12 transition-transform" />
-                            <span>
-                                {llmProvider === 'claude' ? 'Claude 3.5' :
-                                    llmProvider === 'gemini' ? 'Gemini 1.5' :
-                                        llmProvider === 'openrouter' ? 'Free (OpenRouter)' :
-                                            llmProvider === 'gpt' ? 'GPT-4o' : 'DeepSeek V3'}
-                            </span>
-                            <ChevronDown size={12} className="text-muted-foreground opacity-50" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56 bg-background/95 backdrop-blur-xl border-transparent ring-1 ring-white/5 shadow-2xl p-1.5 rounded-2xl animate-in fade-in slide-in-from-top-2">
-                        <DropdownMenuItem
-                            className={cn(
-                                "flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-colors text-xs font-semibold font-outfit",
-                                (!llmProvider || llmProvider === 'deepseek') ? "bg-primary/10 text-primary" : "hover:bg-muted"
-                            )}
-                            onClick={() => setLLMConfig('deepseek', 'deepseek-chat')}
-                        >
-                            <div className="w-2 h-2 rounded-full bg-primary" />
-                            <div className="flex flex-col">
-                                <span>DeepSeek V3</span>
-                                <span className="text-[10px] opacity-60 font-medium">Precision Efficiency</span>
-                            </div>
-                        </DropdownMenuItem>
-
-                        <DropdownMenuItem
-                            className={cn(
-                                "flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-colors text-xs font-semibold mt-1 font-outfit",
-                                llmProvider === 'claude' ? "bg-blue-500/10 text-blue-500" : "hover:bg-muted"
-                            )}
-                            onClick={() => setLLMConfig('claude', 'claude-3-5-sonnet-20241022')}
-                        >
-                            <div className="w-2 h-2 rounded-full bg-blue-500" />
-                            <div className="flex flex-col">
-                                <span>Claude 3.5 Sonnet</span>
-                                <span className="text-[10px] opacity-60 font-medium">Artifacts Protocol</span>
-                            </div>
-                        </DropdownMenuItem>
-
-                        <DropdownMenuItem
-                            className={cn(
-                                "flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-colors text-xs font-semibold mt-1 font-outfit",
-                                llmProvider === 'openrouter' ? "bg-amber-500/10 text-amber-500" : "hover:bg-muted"
-                            )}
-                            onClick={() => setLLMConfig('openrouter', 'openrouter/auto')}
-                        >
-                            <div className="w-2 h-2 rounded-full bg-amber-500" />
-                            <div className="flex flex-col">
-                                <span>Free Models</span>
-                                <span className="text-[10px] opacity-60 font-medium">OpenRouter Provider</span>
-                            </div>
-                        </DropdownMenuItem>
-
-                        <DropdownMenuItem
-                            className={cn(
-                                "flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-colors text-xs font-semibold mt-1 font-outfit",
-                                llmProvider === 'gemini' ? "bg-emerald-500/10 text-emerald-500" : "hover:bg-muted"
-                            )}
-                            onClick={() => setLLMConfig('gemini', 'gemini-1.5-pro')}
-                        >
-                            <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                            <div className="flex flex-col">
-                                <span>Gemini 1.5 Pro</span>
-                                <span className="text-[10px] opacity-60 font-medium">Long Context Brain</span>
-                            </div>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <ModelSelector />
 
                 <Button
                     variant="ghost"

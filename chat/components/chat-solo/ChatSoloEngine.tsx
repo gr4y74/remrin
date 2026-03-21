@@ -39,6 +39,7 @@ interface ChatSoloEngineState {
     llmModel: string | null
     activeArtifact: string | null
     showThinking: boolean
+    isThinking: boolean
     currentThreadName: string
     currentChatId: string | null
     threads: any[]
@@ -59,6 +60,8 @@ interface ChatSoloEngineActions {
     toggleBookmark: (message: ChatMessageContent) => Promise<void>
     saveFeedback: (messageId: string, feedback: 'like' | 'dislike' | null) => Promise<void>
     regenerateMessage: (messageId: string) => Promise<void>
+    editMessage: (messageId: string, newContent: string) => Promise<void>
+    viewArtifact: (content: string) => void
 }
 
 interface ChatSoloEngineContextValue extends ChatSoloEngineState, ChatSoloEngineActions { }
@@ -89,6 +92,7 @@ export function ChatSoloEngineProvider({
     const [llmModel, setLLMModel] = useState<string | null>('deepseek-chat')
     const [activeArtifact, setActiveArtifact] = useState<string | null>(null)
     const [showThinking, setShowThinking] = useState(false)
+    const [isThinking, setIsThinking] = useState(false)
     const [bookmarks, setBookmarks] = useState<Bookmark[]>([])
     const [currentChatId, setCurrentChatId] = useState<string | null>(null)
 
@@ -401,6 +405,7 @@ export function ChatSoloEngineProvider({
 
         setError(null)
         setIsGenerating(true)
+        setIsThinking(true)
         const startingThread = currentThreadName // Capture current thread
 
         let currentMessages = [...messagesRef.current]
@@ -494,6 +499,7 @@ export function ChatSoloEngineProvider({
                             }
 
                             if (json.reasoning || json.content) {
+                                setIsThinking(false)
                                 setMessages(prev => {
                                     if (currentThreadName !== startingThread) return prev // Don't update if thread changed
                                     const updated = [...prev]
@@ -541,6 +547,7 @@ export function ChatSoloEngineProvider({
             }
         } finally {
             setIsGenerating(false)
+            setIsThinking(false)
             abortControllerRef.current = null
         }
     }, [personaId, llmProvider, llmModel, session, currentThreadName])
@@ -578,6 +585,10 @@ export function ChatSoloEngineProvider({
         }
     }, [user])
 
+    const viewArtifact = useCallback((content: string) => {
+        setActiveArtifact(content)
+    }, [])
+
     const regenerateMessage = useCallback(async (messageId: string) => {
         const msgIdx = messagesRef.current.findIndex(m => m.id === messageId)
         if (msgIdx === -1) return
@@ -600,6 +611,23 @@ export function ChatSoloEngineProvider({
             sendMessage("", true)
         }, 0)
     }, [sendMessage])
+    const editMessage = useCallback(async (messageId: string, newContent: string) => {
+        const msgIdx = messagesRef.current.findIndex(m => m.id === messageId)
+        if (msgIdx === -1) return
+
+        const msg = messagesRef.current[msgIdx]
+        if (msg.role !== 'user') return
+
+        // 1. Remove that message and everything after it
+        const truncatedHistory = messagesRef.current.slice(0, msgIdx)
+        setMessages(truncatedHistory)
+
+        // 2. Re-send with the new content
+        // We defer to ensure messages state is updated (or at least the ref is syncable)
+        setTimeout(() => {
+            sendMessage(newContent)
+        }, 0)
+    }, [sendMessage])
 
 
     const value = useMemo(() => ({
@@ -614,6 +642,7 @@ export function ChatSoloEngineProvider({
         llmModel,
         activeArtifact,
         showThinking,
+        isThinking,
         sendMessage,
         stopGeneration,
         clearMessages,
@@ -630,8 +659,10 @@ export function ChatSoloEngineProvider({
         switchThread,
         toggleBookmark,
         saveFeedback,
-        regenerateMessage
-    }), [messages, isGenerating, currentProvider, userTier, error, personaId, isLoadingHistory, llmProvider, llmModel, activeArtifact, showThinking, sendMessage, stopGeneration, clearMessages, setLLMConfig, toggleThinking, toggleStar, renameChat, createNewChat, currentThreadName, currentChatId, threads, bookmarks, setCurrentThreadName, switchThread, toggleBookmark, saveFeedback, regenerateMessage])
+        regenerateMessage,
+        editMessage,
+        viewArtifact
+    }), [messages, isGenerating, currentProvider, userTier, error, personaId, isLoadingHistory, llmProvider, llmModel, activeArtifact, showThinking, isThinking, sendMessage, stopGeneration, clearMessages, setLLMConfig, toggleThinking, toggleStar, renameChat, createNewChat, currentThreadName, currentChatId, threads, bookmarks, setCurrentThreadName, switchThread, toggleBookmark, saveFeedback, regenerateMessage, editMessage, viewArtifact])
 
     return (
         <ChatSoloEngineContext.Provider value={value}>
