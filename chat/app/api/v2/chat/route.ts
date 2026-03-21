@@ -149,15 +149,39 @@ export async function POST(request: NextRequest) {
         // Get user's tier
         const userTier = await getUserTier(userId)
 
-        // Get persona and system prompt
+        // Process persona and system prompt
         const persona = await getPersona(personaId)
         let systemPrompt = customSystemPrompt || ''
 
+        // === PROCESS FILE ATTACHMENTS (V2) ===
+        if (body.files && body.files.length > 0) {
+            console.log(`📂 [ChatAPI] Received ${body.files.length} file attachments.`)
+            try {
+                const { processFileAttachments } = await import('@/lib/chat-engine/capabilities/files')
+                const fileContext = await processFileAttachments(body.files as any)
+                if (fileContext) {
+                    console.log(`✅ [ChatAPI] Processed file context length: ${fileContext.length} chars.`)
+                    // Inject into the LAST user message for maximum model focus
+                    const userMessages = messages.filter(m => m.role === 'user')
+                    if (userMessages.length > 0) {
+                        const lastUserMsg = userMessages[userMessages.length - 1]
+                        lastUserMsg.content = `${lastUserMsg.content}\n\n---\n[📂 ATTACHED DOCUMENTS - VERIFIED_V2]\n${fileContext}\n[END ATTACHMENTS]`
+                    } else {
+                        // Fallback to system prompt if no user messages (rare)
+                        systemPrompt += `\n\n[📂 ATTACHED DOCUMENTS - VERIFIED_V2]\nThe following documents have been provided:\n${fileContext}\n`
+                    }
+                }
+            } catch (fileErr) {
+                console.error('❌ [ChatEngine] File processing error:', fileErr)
+            }
+        }
+
         if (persona) {
             try {
-                systemPrompt = await buildConsoleSystemPrompt(persona as any, userId)
+                const basePrompt = await buildConsoleSystemPrompt(persona as any, userId)
+                systemPrompt = basePrompt + (systemPrompt ? `\n\n${systemPrompt}` : '')
             } catch (e: any) {
-                systemPrompt = persona.system_prompt || ''
+                systemPrompt = (persona.system_prompt || '') + (systemPrompt ? `\n\n${systemPrompt}` : '')
             }
 
             // === AUTO-INJECT RELEVANT MEMORIES ===
@@ -335,6 +359,7 @@ export async function POST(request: NextRequest) {
                         metadata: (msg as any).tool_calls ? { toolCalls: (msg as any).tool_calls } : undefined
                     }))
 
+                    console.log(`🤖 [ChatAPI] Calling AI. Last message preview: ${formattedMessages[formattedMessages.length-1].content.substring(0, 500)}...`)
                     const finalContent = await runChatRound(formattedMessages)
 
                     if (chatId && finalContent) {

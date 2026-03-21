@@ -12,6 +12,7 @@ export default function RemSoloPage() {
                 <ChatSoloUI
                     personaId={REM_RIN_ID}
                     personaName="Rem Rin"
+                    personaIntroMessage="Hello Friend. I am Rem, what can I do for you today?"
                     userTier="pro"
                 />
             </ErrorBoundary>

@@ -39,6 +39,13 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ code, language }) => {
                 if (lang === 'react') lang = 'tsx'
                 if (!supportedLangs.includes(lang)) lang = 'text'
 
+                // Safety check: ensure code is a string
+                if (typeof code !== 'string') {
+                    console.warn('[CodeBlock] Received non-string code:', code)
+                    setHtml('')
+                    return
+                }
+
                 const highlighted = highlighter.codeToHtml(code, {
                     lang,
                     theme: 'github-dark'

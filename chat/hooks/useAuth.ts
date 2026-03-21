@@ -7,8 +7,6 @@ export function useAuth() {
     const [session, setSession] = useState<any>(null);
     const [loading, setLoading] = useState(true);
 
-    console.log(`🔐 [useAuth] hook init. session present: ${!!session}, user present: ${!!user}`)
-
     useEffect(() => {
         // Get initial session
         supabase.auth.getSession().then(({ data: { session: initialSession } }) => {

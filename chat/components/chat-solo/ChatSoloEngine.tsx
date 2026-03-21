@@ -44,6 +44,7 @@ interface ChatSoloEngineState {
     currentChatId: string | null
     threads: any[]
     bookmarks: Bookmark[]
+    uploadedFiles: Array<{ temp_id: string, name: string, content: string, type: string, storagePath?: string }>
 }
 
 interface ChatSoloEngineActions {
@@ -62,6 +63,11 @@ interface ChatSoloEngineActions {
     regenerateMessage: (messageId: string) => Promise<void>
     editMessage: (messageId: string, newContent: string) => Promise<void>
     viewArtifact: (content: string) => void
+    addUploadedFile: (file: { temp_id: string, name: string, content: string, type: string, storagePath?: string }) => void
+    updateUploadedFile: (temp_id: string, metadata: Partial<{ name: string, content: string, type: string, storagePath: string }>) => void
+    removeUploadedFile: (index: number) => void
+    clearUploadedFiles: () => void
+    engineId: string
 }
 
 interface ChatSoloEngineContextValue extends ChatSoloEngineState, ChatSoloEngineActions { }
@@ -81,6 +87,7 @@ export function ChatSoloEngineProvider({
     personaIntroMessage,
     userTier = 'pro' // Defaulting Solo to Pro-tier vibes
 }: ChatSoloEngineProviderProps) {
+    const [engineId] = useState(() => Math.random().toString(36).substring(7))
     const [messages, setMessages] = useState<ChatMessageContent[]>([])
     const [isGenerating, setIsGenerating] = useState(false)
     const [currentProvider, setCurrentProvider] = useState<ProviderId | null>(null)
@@ -95,6 +102,20 @@ export function ChatSoloEngineProvider({
     const [isThinking, setIsThinking] = useState(false)
     const [bookmarks, setBookmarks] = useState<Bookmark[]>([])
     const [currentChatId, setCurrentChatId] = useState<string | null>(null)
+    const [uploadedFiles, setUploadedFiles] = useState<Array<{ temp_id: string, name: string, content: string, type: string, storagePath?: string }>>([])
+    const uploadedFilesRef = useRef(uploadedFiles)
+
+    // Sync ref with state
+    useEffect(() => {
+        uploadedFilesRef.current = uploadedFiles
+        console.log(`🔄 [Engine:${engineId}] uploadedFiles state updated:`, uploadedFiles.length)
+    }, [uploadedFiles, engineId])
+
+    // Detect unmounts
+    useEffect(() => {
+        console.log(`✅ [Engine:${engineId}] Component MOUNTED`)
+        return () => console.log(`❌ [Engine:${engineId}] Component UNMOUNTED`)
+    }, [engineId])
 
     const { user, session } = useAuth()
     const { profile, updateProfile } = useUnifiedProfile(user?.id)
@@ -399,8 +420,33 @@ export function ChatSoloEngineProvider({
         setCurrentThreadName(name)
     }, [currentThreadName, stopGeneration])
 
+    const addUploadedFile = useCallback((file: { temp_id: string, name: string, content: string, type: string, storagePath?: string }) => {
+        console.log(`📥 [Engine:${engineId}] addUploadedFile called for:`, file.name)
+        setUploadedFiles(prev => [...prev, file])
+    }, [engineId])
+    
+    const updateUploadedFile = useCallback((temp_id: string, metadata: Partial<{ name: string, content: string, type: string, storagePath: string }>) => {
+        setUploadedFiles(prev => prev.map(f => f.temp_id === temp_id ? { ...f, ...metadata } : f))
+    }, [])
+
+    const removeUploadedFile = useCallback((index: number) => {
+        setUploadedFiles(prev => prev.filter((_, i) => i !== index))
+    }, [])
+
+    const clearUploadedFiles = useCallback(() => {
+        setUploadedFiles([])
+    }, [])
+
     const sendMessage = useCallback(async (content: string, skipUserMessage: boolean = false) => {
-        if (!content.trim() && !skipUserMessage) return
+        const currentUploadedFiles = uploadedFilesRef.current
+        console.log(`📝 [Engine:${engineId}] sendMessage triggered:`, { 
+            hasContent: !!content, 
+            skipUserMessage, 
+            fileCount: currentUploadedFiles.length,
+            fileNames: currentUploadedFiles.map(f => f.name)
+        })
+
+        if (!content.trim() && !skipUserMessage && currentUploadedFiles.length === 0) return
         if (isGenerating) return
 
         setError(null)
@@ -411,9 +457,11 @@ export function ChatSoloEngineProvider({
         let currentMessages = [...messagesRef.current]
 
         if (!skipUserMessage) {
+            let finalContent = content.trim()
+
             const userMessage: ChatMessageContent = {
                 role: 'user',
-                content: content.trim(),
+                content: finalContent,
                 timestamp: new Date()
             }
             currentMessages.push(userMessage)
@@ -444,17 +492,45 @@ export function ChatSoloEngineProvider({
                 body: JSON.stringify({
                     messages: currentMessages.map(m => ({ role: m.role, content: m.content })),
                     personaId,
-                    llm_provider: llmProvider,
+                    llm_provider: currentProvider || llmProvider,
                     llm_model: llmModel,
-                    customName: currentThreadName // Use the actual current thread name
+                    files: currentUploadedFiles.map(f => ({
+                        id: f.temp_id,
+                        name: f.name,
+                        type: f.type,
+                        content: f.content,
+                        storagePath: f.storagePath
+                    })),
+                    customName: currentThreadName 
                 }),
                 signal: abortControllerRef.current.signal
             })
 
+            const payloadStr = JSON.stringify({ messages: currentMessages.length, files: currentUploadedFiles.length })
+            console.log(`🚀 [Engine:${engineId}] Raw payload length (approx): ${payloadStr.length} chars.`)
+
+            console.log(`🚀 [Engine:${engineId}] Fetch initiated. Files in state:`, uploadedFiles.length)
+
+            console.log(`🚀 [Engine:${engineId}] Payload sent:`, {
+                messages: currentMessages.length,
+                files: currentUploadedFiles.map(f => ({ 
+                    name: f.name, 
+                    hasStorage: !!f.storagePath, 
+                    contentLen: f.content?.length,
+                    storagePath: f.storagePath
+                }))
+            })
+
             if (!response.ok) throw new Error(`HTTP ${response.status}`)
 
+            // SUCCESS: Clear the draft files from UI
+            setUploadedFiles([])
+            
             const providerId = response.headers.get('X-Provider') as ProviderId
             if (providerId) setCurrentProvider(providerId)
+
+            // Successfully sent, now clear the draft files
+            setUploadedFiles([])
 
             const reader = response.body?.getReader()
             if (!reader) throw new Error('No stream')
@@ -661,8 +737,14 @@ export function ChatSoloEngineProvider({
         saveFeedback,
         regenerateMessage,
         editMessage,
-        viewArtifact
-    }), [messages, isGenerating, currentProvider, userTier, error, personaId, isLoadingHistory, llmProvider, llmModel, activeArtifact, showThinking, isThinking, sendMessage, stopGeneration, clearMessages, setLLMConfig, toggleThinking, toggleStar, renameChat, createNewChat, currentThreadName, currentChatId, threads, bookmarks, setCurrentThreadName, switchThread, toggleBookmark, saveFeedback, regenerateMessage, editMessage, viewArtifact])
+        viewArtifact,
+        uploadedFiles,
+        addUploadedFile,
+        updateUploadedFile,
+        removeUploadedFile,
+        clearUploadedFiles,
+        engineId
+    }), [messages, isGenerating, currentProvider, userTier, error, personaId, isLoadingHistory, llmProvider, llmModel, activeArtifact, showThinking, isThinking, sendMessage, stopGeneration, clearMessages, setLLMConfig, toggleThinking, toggleStar, renameChat, createNewChat, currentThreadName, currentChatId, threads, bookmarks, setCurrentThreadName, switchThread, toggleBookmark, saveFeedback, regenerateMessage, editMessage, viewArtifact, uploadedFiles, addUploadedFile, updateUploadedFile, removeUploadedFile, clearUploadedFiles, engineId])
 
     return (
         <ChatSoloEngineContext.Provider value={value}>

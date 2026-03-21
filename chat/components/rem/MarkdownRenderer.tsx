@@ -18,6 +18,12 @@ interface MarkdownRendererProps {
  * Job 1 & 3 & 5 of Rem Cockpit Upgrade
  */
 export const MarkdownRenderer = ({ content, className }: MarkdownRendererProps) => {
+    // Pre-process thinking tags to avoid browser warnings and allow custom styling
+    // Using separate replacements to handle partial tags during streaming
+    const processedContent = content
+        .replace(/<thinking>/g, '<thinking_block>')
+        .replace(/<\/thinking>/g, '</thinking_block>')
+
     return (
         <ReactMarkdown
             remarkPlugins={[remarkGfm]}
@@ -47,8 +53,6 @@ export const MarkdownRenderer = ({ content, className }: MarkdownRendererProps) 
                     const lang = match ? match[1] : 'text'
                     const codeContent = String(children).replace(/\n$/, '')
                     
-                    // Artifact Detection Logic:
-                    // If it's HTML/SVG and sufficiently complex, render a reference card
                     const isArtifact = (lang === 'html' || lang === 'svg' || (inline === false && codeContent.includes('<svg'))) && codeContent.length > 100
 
                     if (!inline && isArtifact) {
@@ -62,16 +66,30 @@ export const MarkdownRenderer = ({ content, className }: MarkdownRendererProps) 
                     }
 
                     return !inline ? (
-                         <CodeBlock value={codeContent} language={lang} />
+                         <CodeBlock code={codeContent} language={lang} />
                     ) : (
                         <code className={cn("bg-muted/40 px-1.5 py-0.5 rounded text-[0.85em] font-mono text-rp-iris dark:text-rp-iris", className)} {...props}>
                             {children}
                         </code>
                     )
+                },
+                // Use a standard tag name but stylized for thinking
+                // Since rehype-raw is used, we can map this custom element
+                // @ts-ignore - custom elements are not in the standard list
+                thinking_block({ children }: any) {
+                    return (
+                        <div className="my-5 p-5 rounded-2xl bg-rp-iris/5 border-l-4 border-rp-iris/30 italic text-muted-foreground/80 text-[14px] leading-relaxed animate-in fade-in slide-in-from-left-2 duration-1000 font-serif">
+                             <div className="flex items-center gap-2 mb-3 not-italic font-bold text-[10px] uppercase tracking-[0.2em] opacity-40">
+                                 <span className="w-2 h-2 rounded-full bg-rp-iris animate-pulse" />
+                                 Cognitive Process
+                             </div>
+                             {children}
+                        </div>
+                    )
                 }
             }}
         >
-            {content}
+            {processedContent}
         </ReactMarkdown>
     )
 }
