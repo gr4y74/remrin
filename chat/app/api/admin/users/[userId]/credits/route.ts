@@ -115,7 +115,20 @@ export async function POST(
             )
         }
 
-        // TODO: Log this action in an audit table
+        // Log this action in an audit table
+        await supabaseAdmin.from('admin_audit_logs').insert({
+            admin_id: user.id,
+            target_user_id: userId,
+            action_type: 'credit_adjustment',
+            metadata: {
+                type,
+                amount,
+                reason,
+                previous_balance: currentBalance,
+                new_balance: newBalance
+            }
+        })
+
         console.log(`[ADMIN CREDIT ADJUSTMENT] Admin ${user.id} adjusted ${type} for user ${userId} by ${amount}. Reason: ${reason}`)
 
         return NextResponse.json({

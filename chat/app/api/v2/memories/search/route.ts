@@ -30,14 +30,12 @@ export async function POST(request: NextRequest) {
         let usedSemantic = false
 
         try {
-            console.log(`[Memory Search] Generating embedding for: "${query}"`)
             const embedding = await generateEmbedding(query)
 
             if (embedding) {
-                console.log(`[Memory Search] Semantic search triggered for user: ${user.id}`)
                 const { data: matchedMemories, error: matchError } = await supabase.rpc('match_memories_v2', {
                     query_embedding: embedding,
-                    match_threshold: 0.35,
+                    match_threshold: 0.5, // Standardized balanced threshold
                     match_count: limit,
                     filter_persona: personaId,
                     filter_user: user.id
@@ -46,7 +44,6 @@ export async function POST(request: NextRequest) {
                 if (!matchError && matchedMemories && matchedMemories.length > 0) {
                     memories = matchedMemories
                     usedSemantic = true
-                    console.log(`[Memory Search] Semantic search found ${memories.length} results`)
                 } else if (matchError) {
                     console.error('[Memory Search] match_memories_v2 error:', matchError.message)
                 }
@@ -59,7 +56,6 @@ export async function POST(request: NextRequest) {
         const keywords = query.split(/\s+/).filter((k: string) => k.length > 2)
 
         if (!usedSemantic || memories.length < (limit / 2)) {
-            console.log(`[Memory Search] Running keyword fallback search...`)
 
             let memoryQuery = supabase
                 .from('memories')
@@ -89,7 +85,6 @@ export async function POST(request: NextRequest) {
             const { data: keywordMemories, error: kwError } = await memoryQuery
             if (!kwError && keywordMemories) {
                 memories = [...memories, ...keywordMemories].slice(0, limit)
-                console.log(`[Memory Search] Combined search total: ${memories.length} results`)
             }
         }
 

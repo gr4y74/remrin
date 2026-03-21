@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { cookies } from "next/headers";
+import { processStripeEvent } from '@/lib/stripe/handlers';
 
 // GET /api/admin/webhooks - Get webhook event log
 export async function GET(req: NextRequest) {
@@ -90,8 +91,14 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Event not found' }, { status: 404 });
         }
 
-        // TODO: Implement retry logic based on event type
-        // For now, just mark as processed
+        // Implement retry logic based on event payload
+        await processStripeEvent({
+            id: event.event_id,
+            type: event.event_type,
+            data: { object: event.payload }
+        } as any);
+
+        // Mark as processed
         await supabase
             .from('stripe_webhook_events')
             .update({

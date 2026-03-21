@@ -14,9 +14,9 @@ import { generateEmbedding } from '@/lib/chat-engine/embeddings'
 import { searchManager } from '@/lib/chat-engine/capabilities/search'
 
 function debugLog(msg: string) {
-    const log = `[${new Date().toISOString()}] ${msg}\n`
-    fs.appendFileSync('/tmp/chat-debug.log', log)
-    console.log(msg)
+    if (process.env.NODE_ENV === 'development') {
+        console.log(`[ChatEngine] ${msg}`)
+    }
 }
 import {
     ChatRequest,
@@ -481,6 +481,7 @@ export async function POST(request: NextRequest) {
                     };
 
                     // --- PERSISTENCE: Get/Create Chat Session & Save User Message ---
+                    let chatId: string | null = null;
                     let userMessageId: string | null = null;
                     if (personaId) {
                         try {

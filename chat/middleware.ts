@@ -15,15 +15,15 @@ export async function middleware(request: NextRequest) {
   try {
     const { supabase, response } = createClient(request)
 
-    const { data: { session } } = await supabase.auth.getSession()
+    const { data: { user } } = await supabase.auth.getUser()
 
     const isRootPath = request.nextUrl.pathname === "/" || request.nextUrl.pathname === "/en" || request.nextUrl.pathname === "/zh"
 
-    if (session && isRootPath) {
+    if (user && isRootPath) {
       const { data: homeWorkspace, error } = await supabase
         .from("workspaces")
         .select("*")
-        .eq("user_id", session.user.id)
+        .eq("user_id", user.id)
         .eq("is_home", true)
         .single()
 

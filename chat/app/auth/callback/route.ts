@@ -58,6 +58,36 @@ export async function GET(request: Request) {
           is_creator: false
         })
       }
+
+      // 3. Check/Create Home Workspace
+      const { data: homeWorkspace } = await supabase
+        .from("workspaces")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("is_home", true)
+        .single()
+
+      if (!homeWorkspace) {
+        // Fetch highest priority model from config
+        const { data: defaultConfig } = await supabase
+          .from("llm_config")
+          .select("model_id")
+          .order("priority", { ascending: false })
+          .limit(1)
+          .maybeSingle()
+
+        const defaultModel = defaultConfig?.model_id || "gpt-4o-mini"
+
+        // Create default home workspace
+        await supabase.from("workspaces").insert({
+          user_id: user.id,
+          name: "Home",
+          is_home: true,
+          default_context_length: 4096,
+          default_model: defaultModel,
+          embeddings_provider: "openai"
+        })
+      }
     }
   }
 

@@ -3,22 +3,7 @@ import { TextEncoder, TextDecoder } from 'util';
 Object.assign(global, { TextDecoder, TextEncoder });
 
 export function setupGlobalRequest() {
-    if (typeof global.Request === 'undefined') {
-        // @ts-ignore
-        global.Request = class Request {
-            url: string;
-            method: string;
-            headers: Headers;
-            body: any;
-            constructor(input: string | Request, init?: RequestInit) {
-                this.url = typeof input === 'string' ? input : input.url;
-                this.method = init?.method || 'GET';
-                this.headers = new Headers(init?.headers);
-                this.body = init?.body;
-            }
-        } as any;
-    }
-
+    // Basic polyfills for Request, Headers, Response if missing
     if (typeof global.Headers === 'undefined') {
         // @ts-ignore
         global.Headers = class Headers {
@@ -43,6 +28,22 @@ export function setupGlobalRequest() {
         } as any;
     }
 
+    if (typeof global.Request === 'undefined') {
+        // @ts-ignore
+        global.Request = class Request {
+            url: string;
+            method: string;
+            headers: Headers;
+            body: any;
+            constructor(input: string, init?: any) {
+                this.url = input;
+                this.method = init?.method || 'GET';
+                this.headers = new Headers(init?.headers);
+                this.body = init?.body;
+            }
+        } as any;
+    }
+
     if (typeof global.Response === 'undefined') {
         // @ts-ignore
         global.Response = class Response {
@@ -50,21 +51,29 @@ export function setupGlobalRequest() {
             ok: boolean;
             headers: Headers;
             body: any;
-            constructor(body?: BodyInit | null, init?: ResponseInit) {
+            constructor(body?: any, init?: any) {
                 this.status = init?.status || 200;
                 this.ok = this.status >= 200 && this.status < 300;
                 this.headers = new Headers(init?.headers);
                 this.body = body;
             }
-            static json(data: any, init?: ResponseInit) {
-                const body = JSON.stringify(data);
-                const headers = new Headers(init?.headers);
-                headers.set('content-type', 'application/json');
-                return new Response(body, { ...init, headers });
-            }
             async json() {
                 return typeof this.body === 'string' ? JSON.parse(this.body) : this.body;
             }
+            static json(data: any, init?: any) {
+                return new Response(JSON.stringify(data), { ...init, headers: { 'content-type': 'application/json' } });
+            }
         } as any;
+    }
+
+    // Crucial: fetch polyfill
+    if (typeof global.fetch === 'undefined') {
+        // In Node 18+, fetch is available on globalThis
+        if (typeof globalThis.fetch !== 'undefined') {
+            // @ts-ignore
+            global.fetch = globalThis.fetch;
+        } else {
+            console.warn('⚠️ global fetch and globalThis.fetch are BOTH undefined. Supabase calls might fail.');
+        }
     }
 }

@@ -119,12 +119,10 @@ export function ChatSoloEngineProvider({
 
     // Log auth changes
     useEffect(() => {
-        console.log(`👤 [ChatSoloEngine] Auth State changed: user=${user?.id ? 'PRESENT' : 'MISSING'}, session=${session ? 'ACTIVE' : 'NONE'}`)
     }, [user, session])
 
     useEffect(() => {
         const hasLink = !!session?.access_token || !!getRecoveredToken()
-        console.log(`🔗 [ChatSoloEngine] hasActiveLink status: ${hasLink ? 'CONNECTED' : 'SEVERED'}`)
     }, [session])
 
     useEffect(() => {
@@ -146,7 +144,6 @@ export function ChatSoloEngineProvider({
 
             setIsLoadingHistory(true)
             const targetName = currentThreadName // Capture target
-            console.log(`📡 [ChatSoloEngine] fetchSoloHistory triggered for: ${targetName}`)
 
             try {
                 const token = session?.access_token || getRecoveredToken()
@@ -158,18 +155,15 @@ export function ChatSoloEngineProvider({
                 })
 
                 if (!isCurrent) {
-                    console.log(`⏩ [ChatSoloEngine] fetchSoloHistory for ${targetName} discarded (stale)`)
                     return
                 }
 
                 if (response.ok) {
                     const history = await response.json()
-                    console.log(`✅ [ChatSoloEngine] History fetched for ${targetName}: ${history?.length || 0} messages`)
 
                     if (!isCurrent) return
 
                     if (history && history.length > 0) {
-                        console.log(`💾 [ChatSoloEngine] Setting messages for ${targetName} (count: ${history.length})`)
                         setMessages(history.map((msg: any) => ({
                             id: msg.id,
                             role: msg.role,
@@ -177,7 +171,6 @@ export function ChatSoloEngineProvider({
                             timestamp: new Date(msg.timestamp)
                         })))
                     } else {
-                        console.log(`ℹ️ [ChatSoloEngine] No history found for ${targetName}, resetting intro...`)
                         if (personaIntroMessage) {
                             setMessages([{
                                 role: 'assistant',
@@ -330,7 +323,6 @@ export function ChatSoloEngineProvider({
 
                 if (error) throw error
                 setBookmarks(prev => prev.filter(b => b.message_id !== message.id))
-                console.log(`✅ [ChatSoloEngine] Bookmark removed: ${message.id}`)
             } else {
                 // Use currentChatId if available, fallback to searching threads
                 const targetChatId = currentChatId || threads.find(t => t.name === currentThreadName)?.id
@@ -353,7 +345,6 @@ export function ChatSoloEngineProvider({
 
                 if (error) throw error
                 setBookmarks(prev => [data, ...prev])
-                console.log(`✅ [ChatSoloEngine] Bookmark added: ${message.id}`)
             }
         } catch (e) {
             console.error('❌ [ChatSoloEngine] Toggle bookmark failed:', e)
@@ -385,7 +376,6 @@ export function ChatSoloEngineProvider({
             if (error) throw error
 
             setThreads(prev => prev.map(t => t.id === chatId ? { ...t, title: newTitle } : t))
-            console.log(`✅ [ChatSoloEngine] Chat renamed to: ${newTitle}`)
         } catch (e) {
             console.error('❌ [ChatSoloEngine] Rename failed:', e)
         }
@@ -394,14 +384,12 @@ export function ChatSoloEngineProvider({
     const createNewChat = useCallback(() => {
         stopGeneration() // Stop any active response before switching
         const newName = `solo-cockpit-${Date.now()}`
-        console.log(`🆕 [ChatSoloEngine] Creating new chat: ${newName}`)
         setCurrentThreadName(newName)
         setMessages([])
     }, [stopGeneration])
 
     const switchThread = useCallback((name: string) => {
         if (name === currentThreadName) return // Already on this thread
-        console.log(`🔀 [ChatSoloEngine] Switching thread to: ${name}`)
         stopGeneration() // Stop any active generation
         setMessages([]) // Clear immediately to avoid stale content
         setCurrentThreadName(name)
@@ -440,7 +428,6 @@ export function ChatSoloEngineProvider({
             const token = session?.access_token || getRecoveredToken()
             if (!token) console.error('🚫 [ChatSoloEngine] FATAL: No auth token available for chat request.')
 
-            console.log(`📡 [ChatSoloEngine] Sending chat with token prefix: ${token?.substring(0, 10)}...`)
 
             const response = await fetch('/api/v2/chat', {
                 method: 'POST',
@@ -486,7 +473,6 @@ export function ChatSoloEngineProvider({
                         try {
                             const json = JSON.parse(data)
                             if (json.toolCalls) {
-                                console.log(`🛠️ [ChatSoloEngine] Tool Call Part (Round ${json.depth || 0}):`, json.toolCalls);
                             }
 
                             if (json.reasoning) {
@@ -523,7 +509,6 @@ export function ChatSoloEngineProvider({
                             }
 
                             if (json.done && (json.userMessageId || json.assistantMessageId)) {
-                                console.log(`🆔 [ChatSoloEngine] Received message IDs for ${startingThread}: user=${json.userMessageId}, assistant=${json.assistantMessageId}`);
                                 setMessages(prev => {
                                     if (currentThreadName !== startingThread) {
                                         console.warn(`⚠️ [ChatSoloEngine] Thread changed from ${startingThread} to ${currentThreadName}, discarding IDs.`);
@@ -535,11 +520,9 @@ export function ChatSoloEngineProvider({
                                         const assistantIdx = updated.length - 1;
 
                                         if (json.userMessageId && updated[userIdx].role === 'user') {
-                                            console.log(`✅ [ChatSoloEngine] Applying user ID: ${json.userMessageId}`);
                                             updated[userIdx].id = json.userMessageId;
                                         }
                                         if (json.assistantMessageId && updated[assistantIdx].role === 'assistant') {
-                                            console.log(`✅ [ChatSoloEngine] Applying assistant ID: ${json.assistantMessageId}`);
                                             updated[assistantIdx].id = json.assistantMessageId;
                                         }
                                     } else {
@@ -590,7 +573,6 @@ export function ChatSoloEngineProvider({
             const metadata = { ...msg?.metadata, feedback }
             await updateMessageMetadata(supabase, messageId, metadata)
 
-            console.log(`✅ [ChatSoloEngine] Feedback saved for ${messageId}: ${feedback}`)
         } catch (e) {
             console.error('❌ [ChatSoloEngine] Feedback save failed:', e)
         }
@@ -603,7 +585,6 @@ export function ChatSoloEngineProvider({
         const msg = messagesRef.current[msgIdx]
         if (msg.role !== 'assistant') return
 
-        console.log(`🔄 [ChatSoloEngine] Regenerating message: ${messageId}`)
 
         // 1. Remove the assistant message and everything after it
         const newMessages = messagesRef.current.slice(0, msgIdx)

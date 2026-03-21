@@ -49,14 +49,11 @@ export async function GET(request: NextRequest) {
 
         let history
         if (customName) {
-            console.log(`🔍 [API/History] Fetching by name: "${customName}" for user: ${user.id}`)
             history = await getChatHistoryByName(supabase, user.id as string, personaId, customName, 50)
         } else {
-            console.log(`🔍 [API/History] Fetching default for persona: ${personaId}`)
             history = await getChatHistory(supabase, user.id as string, personaId, 50, { workspaceId })
         }
 
-        console.log(`📡 [API/History] Persona: ${personaId}, Name: ${customName || 'default'}, Returned: ${history.length} messages`)
 
         return new Response(JSON.stringify(history), {
             status: 200,

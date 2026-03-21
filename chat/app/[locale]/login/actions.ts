@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { cookies, headers } from "next/headers"
 import { redirect } from "next/navigation"
+import { ensureHomeWorkspace } from "@/lib/auth/workspace"
 
 export const login = async (formData: FormData, redirectTo?: string, locale: string = 'en') => {
     const email = formData.get("email") as string
@@ -19,15 +20,11 @@ export const login = async (formData: FormData, redirectTo?: string, locale: str
         return { error: error.message }
     }
 
-    const { data: homeWorkspace, error: homeWorkspaceError } = await supabase
-        .from("workspaces")
-        .select("*")
-        .eq("user_id", data.user.id)
-        .eq("is_home", true)
-        .single()
-
-    if (!homeWorkspace) {
-        return { error: homeWorkspaceError?.message || "No home workspace found" }
+    let homeWorkspace;
+    try {
+        homeWorkspace = await ensureHomeWorkspace(supabase, data.user.id)
+    } catch (e: any) {
+        return { error: e.message }
     }
 
     // Default redirect to discover/homepage
