@@ -22,8 +22,9 @@ export interface Bookmark {
     chat_id: string
     message_id: string
     folder_id?: string
-    content_preview?: string
+    content_preview: string | null
     note?: string
+    metadata: any
     created_at: string
 }
 
