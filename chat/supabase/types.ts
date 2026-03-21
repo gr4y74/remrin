@@ -1885,6 +1885,63 @@ export type Database = {
         }
         Relationships: []
       }
+      bookmarks: {
+        Row: {
+          id: string
+          user_id: string
+          thread_id: string
+          created_at: string
+          metadata: Json | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          thread_id: string
+          created_at?: string
+          metadata?: Json | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          thread_id?: string
+          created_at?: string
+          metadata?: Json | null
+        }
+        Relationships: []
+      }
+      user_knowledge: {
+        Row: {
+          id: string
+          user_id: string
+          file_name: string
+          file_type: string
+          content: string
+          shared_with_all: boolean
+          persona_ids: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          file_name: string
+          file_type: string
+          content: string
+          shared_with_all?: boolean
+          persona_ids?: Json
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          file_name?: string
+          file_type?: string
+          content?: string
+          shared_with_all?: boolean
+          persona_ids?: Json
+          created_at?: string
+        }
+        Relationships: []
+      }
       workspaces: {
         Row: {
           created_at: string
