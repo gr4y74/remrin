@@ -1,23 +1,10 @@
 import { createAdminClient } from "@/lib/supabase/server";
 
 /**
- * Extract text content from a file stored in Supabase Storage.
+ * Extract text content from a Buffer (useful for direct uploads or already downloaded files).
  */
-export async function extractTextFromFile(storagePath: string, fileName: string, mimeType: string): Promise<string> {
+export async function extractTextFromBuffer(buffer: Buffer, fileName: string, mimeType: string): Promise<string> {
     try {
-        const supabase = createAdminClient();
-        
-        const { data, error } = await supabase.storage
-            .from('chat-attachments')
-            .download(storagePath);
-
-        if (error || !data) {
-            console.error(`[FileExtractor] Download failed for ${storagePath}:`, error);
-            return `[Error downloading file ${fileName}]`;
-        }
-
-        const buffer = Buffer.from(await data.arrayBuffer());
-
         // Process based on type
         if (mimeType.includes('pdf')) {
             const pdf = (await import("pdf-parse")).default;
@@ -36,6 +23,30 @@ export async function extractTextFromFile(storagePath: string, fileName: string,
     } catch (err) {
         console.error(`[FileExtractor] Extraction failed for ${fileName}:`, err);
         return `[Error extracting text from ${fileName}]`;
+    }
+}
+
+/**
+ * Extract text content from a file stored in Supabase Storage.
+ */
+export async function extractTextFromFile(storagePath: string, fileName: string, mimeType: string): Promise<string> {
+    try {
+        const supabase = createAdminClient();
+        
+        const { data, error } = await supabase.storage
+            .from('chat-attachments')
+            .download(storagePath);
+
+        if (error || !data) {
+            console.error(`[FileExtractor] Download failed for ${storagePath}:`, error);
+            return `[Error downloading file ${fileName}]`;
+        }
+
+        const buffer = Buffer.from(await data.arrayBuffer());
+        return extractTextFromBuffer(buffer, fileName, mimeType);
+    } catch (err) {
+        console.error(`[FileExtractor] Storage fetch failed for ${fileName}:`, err);
+        return `[Error fetching file ${fileName}]`;
     }
 }
 

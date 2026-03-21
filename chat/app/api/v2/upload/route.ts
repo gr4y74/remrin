@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { FileManager } from '@/lib/chat-engine/capabilities/files';
+import { extractTextFromBuffer } from '@/lib/chat-engine/capabilities/files';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
@@ -19,17 +19,23 @@ export async function POST(req: Request) {
             );
         }
 
-        const fileManager = new FileManager();
-        const processedFile = await fileManager.processFile(file);
+        const buffer = Buffer.from(await file.arrayBuffer());
+        const extractedText = await extractTextFromBuffer(buffer, file.name, file.type);
 
-        if (processedFile.error) {
+        if (extractedText.startsWith('[Error')) {
             return NextResponse.json(
-                { error: processedFile.error },
+                { error: 'Failed to extract text from file' },
                 { status: 500 }
             );
         }
 
-        return NextResponse.json(processedFile);
+        return NextResponse.json({
+            id: Math.random().toString(36).substring(7),
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            extractedText
+        });
     } catch (error) {
         console.error('Upload error:', error);
         return NextResponse.json(
