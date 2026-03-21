@@ -1889,21 +1889,27 @@ export type Database = {
         Row: {
           id: string
           user_id: string
-          thread_id: string
+          chat_id: string
+          message_id: string
+          content_preview: string | null
           created_at: string
           metadata: Json | null
         }
         Insert: {
           id?: string
           user_id: string
-          thread_id: string
+          chat_id: string
+          message_id: string
+          content_preview?: string | null
           created_at?: string
           metadata?: Json | null
         }
         Update: {
           id?: string
           user_id?: string
-          thread_id?: string
+          chat_id?: string
+          message_id?: string
+          content_preview?: string | null
           created_at?: string
           metadata?: Json | null
         }
