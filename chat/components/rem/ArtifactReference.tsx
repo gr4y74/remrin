@@ -1,4 +1,5 @@
 import { useChatSolo } from '../chat-solo/ChatSoloEngine'
+import { Layout, FileCode, Maximize2 } from 'lucide-react'
 
 interface ArtifactReferenceProps {
     title?: string

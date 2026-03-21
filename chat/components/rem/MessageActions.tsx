@@ -38,10 +38,11 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
     onEdit,
     onBookmark
 }) => {
+    const [justCopied, setJustCopied] = useState(false)
+
     if (isStreaming) return null
 
     const isAssistant = role === 'assistant'
-    const [justCopied, setJustCopied] = useState(false)
 
     const handleCopy = () => {
         onCopy()
