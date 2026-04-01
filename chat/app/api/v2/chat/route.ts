@@ -179,7 +179,7 @@ export async function POST(request: NextRequest) {
         if (persona) {
             try {
                 const basePrompt = await buildConsoleSystemPrompt(persona as any, userId)
-                systemPrompt = basePrompt + (systemPrompt ? `\n\n${systemPrompt}` : '')
+                systemPrompt = (customSystemPrompt ? `${customSystemPrompt}\n\n` : '') + basePrompt
             } catch (e: any) {
                 systemPrompt = (persona.system_prompt || '') + (systemPrompt ? `\n\n${systemPrompt}` : '')
             }
