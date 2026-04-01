@@ -52,6 +52,7 @@ interface ChatSoloEngineState {
     feedbackStep: number
     feedbackAnswers: Array<{ key: string, answer: string }>
     feedbackSessionId: number | null
+    feedbackMailto: string | null
 }
 
 interface ChatSoloEngineActions {
@@ -76,6 +77,8 @@ interface ChatSoloEngineActions {
     clearUploadedFiles: () => void
     activateFeedbackMode: () => void
     resetFeedbackMode: () => void
+    deleteChat: (chatId: string) => Promise<void>
+    feedbackMailto: string | null
     engineId: string
 }
 
@@ -119,6 +122,7 @@ export function ChatSoloEngineProvider({
     const [feedbackStep, setFeedbackStep] = useState(0)
     const [feedbackAnswers, setFeedbackAnswers] = useState<Array<{ key: string, answer: string }>>([])
     const [feedbackSessionId, setFeedbackSessionId] = useState<number | null>(null)
+    const [feedbackMailto, setFeedbackMailto] = useState<string | null>(null)
 
     // Sync ref with state
     useEffect(() => {
@@ -253,7 +257,7 @@ export function ChatSoloEngineProvider({
                     .from('chats')
                     .select('id, name, title, is_starred, created_at, updated_at')
                     .eq('user_id', user.id)
-                    .or(`name.ilike.persona-chat-${personaId}%,name.ilike.solo-cockpit-%`)
+                    .or(`name.ilike.persona-chat-${personaId}%,name.ilike.solo-cockpit-%,is_starred.eq.true`)
                     .order('updated_at', { ascending: false })
                     .limit(20)
 
@@ -263,7 +267,7 @@ export function ChatSoloEngineProvider({
                         .from('chats')
                         .select('id, name, created_at, updated_at')
                         .eq('user_id', user.id)
-                        .or(`name.ilike.persona-chat-${personaId}%,name.ilike.solo-cockpit-%`)
+                        .or(`name.ilike.persona-chat-${personaId}%,name.ilike.solo-cockpit-%,is_starred.eq.true`)
                         .order('updated_at', { ascending: false })
                         .limit(20)
 
@@ -406,6 +410,30 @@ export function ChatSoloEngineProvider({
         setCurrentThreadName(name)
     }, [currentThreadName, stopGeneration])
 
+    const deleteChat = useCallback(async (chatId: string) => {
+        if (!user || !chatId) return
+        
+        try {
+            const { error } = await supabase
+                .from('chats')
+                .delete()
+                .eq('id', chatId)
+
+            if (error) throw error
+
+            // Update local state
+            setThreads(prev => prev.filter(t => t.id !== chatId))
+            
+            // If the deleted chat was the current one, restart
+            if (chatId === currentChatId) {
+                createNewChat()
+            }
+        } catch (e) {
+            console.error('❌ [ChatSoloEngine] Failed to delete chat:', e)
+            setError('Failed to delete chat.')
+        }
+    }, [user, currentChatId, createNewChat])
+
     const addUploadedFile = useCallback((file: { temp_id: string, name: string, content: string, type: string, storagePath?: string }) => {
         console.log(`📥 [Engine:${engineId}] addUploadedFile called for:`, file.name)
         setUploadedFiles(prev => [...prev, file])
@@ -427,6 +455,22 @@ export function ChatSoloEngineProvider({
      * FEEDBACK MODE LOGIC
      */
     const activateFeedbackMode = useCallback(() => {
+        // Attempt to find an existing alpha-feedback thread to keep history consolidated
+        const existingFeedback = threads.find(t => t.name === 'alpha-feedback')
+        
+        if (existingFeedback && currentThreadName !== 'alpha-feedback') {
+            stopGeneration()
+            switchThread('alpha-feedback')
+            // Re-activate mode after switch
+            setTimeout(() => {
+                setFeedbackMode(true)
+                setFeedbackStep(0)
+                setFeedbackAnswers([])
+                setFeedbackSessionId(Date.now())
+            }, 500)
+            return
+        }
+
         setFeedbackMode(true)
         setFeedbackStep(0)
         setFeedbackAnswers([])
@@ -441,13 +485,14 @@ export function ChatSoloEngineProvider({
             }
             setMessages(prev => [...prev, introMsg])
         }, 100)
-    }, [])
+    }, [threads, currentThreadName, stopGeneration, switchThread])
 
     const resetFeedbackMode = useCallback(() => {
         setFeedbackMode(false)
         setFeedbackStep(0)
         setFeedbackAnswers([])
         setFeedbackSessionId(null)
+        setFeedbackMailto(null)
     }, [])
 
     const compileFeedbackReport = useCallback(async (answers: Array<{ key: string, answer: string }>) => {
@@ -462,8 +507,8 @@ export function ChatSoloEngineProvider({
 
         // mailto fallback
         const mailtoLink = `mailto:sosu.remrin@gmail.com?subject=${encodeURIComponent('Remrin Alpha Feedback')}&body=${encodeURIComponent(reportText)}`
-        window.open(mailtoLink, '_blank')
-
+        setFeedbackMailto(mailtoLink)
+        
         // API POST template
         try {
             await fetch('/api/feedback', {
@@ -472,8 +517,10 @@ export function ChatSoloEngineProvider({
                 body: JSON.stringify({ report: reportText, sessionId: feedbackSessionId }),
             })
         } catch (e) {
-            console.warn('[FeedbackMode] API POST failed, but mailto was triggered:', e)
+            console.warn('[FeedbackMode] API POST failed:', e)
         }
+        
+        return { reportText, mailtoLink }
     }, [feedbackSessionId])
 
     const handleFeedbackMessage = useCallback(async (userMessage: string) => {
@@ -494,7 +541,8 @@ export function ChatSoloEngineProvider({
 
         // 2. Add user message to state manually
         const userMsg: ChatMessageContent = { role: 'user', content: userMessage, timestamp: new Date() }
-        setMessages(prev => [...prev, userMsg])
+        const currentMessages = [...messagesRef.current, userMsg]
+        setMessages(currentMessages)
         
         // Assistant thinking state
         setIsGenerating(true)
@@ -515,10 +563,10 @@ export function ChatSoloEngineProvider({
                 },
                 credentials: 'include',
                 body: JSON.stringify({
-                    messages: [...messagesRef.current, userMsg].map(m => ({ role: m.role, content: m.content })),
+                    messages: currentMessages.map(m => ({ role: m.role, content: m.content })),
                     personaId,
-                    systemPrompt: injectedSystem, // Hijack system prompt for interview logic
-                    customName: currentThreadName
+                    systemPrompt: injectedSystem,
+                    customName: 'alpha-feedback' // Force consolidation
                 }),
             })
 
@@ -530,7 +578,6 @@ export function ChatSoloEngineProvider({
             const decoder = new TextDecoder()
             let fullContent = ''
 
-            // Simple assistant message placeholder
             setMessages(prev => [...prev, { role: 'assistant', content: '', timestamp: new Date() }])
 
             while (true) {
@@ -564,18 +611,27 @@ export function ChatSoloEngineProvider({
                 }
             }
 
-            // check for completion
+            // --- SEMANTIC TITLE GENERATION (Feedback Mode) ---
+            if (currentMessages.length === 1 && fullContent) {
+                const targetChatId = currentChatId || threads.find(t => t.name === 'alpha-feedback')?.id
+                if (targetChatId) {
+                    renameChat(targetChatId, "Alpha Feedback")
+                }
+            }
+
             if (fullContent.includes('[FEEDBACK_COMPLETE]')) {
                 const cleanResponse = fullContent.replace('[FEEDBACK_COMPLETE]', '').trim()
+                const { mailtoLink } = await compileFeedbackReport(updatedAnswers)
+                
+                // Append the link to the last message for the user to click safely
                 setMessages(prev => {
                     const updated = [...prev]
                     const last = updated[updated.length - 1]
                     if (last && last.role === 'assistant') {
-                        last.content = cleanResponse
+                        last.content = cleanResponse + `\n\n### 📄 Feedback Report Ready\n[Click here to send your report via Email](${mailtoLink})`
                     }
                     return updated
                 })
-                await compileFeedbackReport(updatedAnswers)
                 resetFeedbackMode()
             }
         } catch (err: any) {
@@ -584,16 +640,10 @@ export function ChatSoloEngineProvider({
             setIsGenerating(false)
             setIsThinking(false)
         }
-    }, [feedbackStep, feedbackAnswers, personaId, session, currentThreadName, compileFeedbackReport, resetFeedbackMode])
+    }, [feedbackStep, feedbackAnswers, personaId, session, currentChatId, threads, renameChat, compileFeedbackReport, resetFeedbackMode])
 
     const sendMessage = useCallback(async (content: string, skipUserMessage: boolean = false) => {
         const currentUploadedFiles = uploadedFilesRef.current
-        console.log(`📝 [Engine:${engineId}] sendMessage triggered:`, { 
-            hasContent: !!content, 
-            skipUserMessage, 
-            fileCount: currentUploadedFiles.length,
-            fileNames: currentUploadedFiles.map(f => f.name)
-        })
 
         if (!content.trim() && !skipUserMessage && currentUploadedFiles.length === 0) return
         if (isGenerating) return
@@ -615,16 +665,14 @@ export function ChatSoloEngineProvider({
         setError(null)
         setIsGenerating(true)
         setIsThinking(true)
-        const startingThread = currentThreadName // Capture current thread
+        const startingThread = currentThreadName 
 
         let currentMessages = [...messagesRef.current]
 
         if (!skipUserMessage) {
-            let finalContent = content.trim()
-
             const userMessage: ChatMessageContent = {
                 role: 'user',
-                content: finalContent,
+                content: content.trim(),
                 timestamp: new Date()
             }
             currentMessages.push(userMessage)
@@ -642,9 +690,6 @@ export function ChatSoloEngineProvider({
 
         try {
             const token = session?.access_token || getRecoveredToken()
-            if (!token) console.error('🚫 [ChatSoloEngine] FATAL: No auth token available for chat request.')
-
-
             const response = await fetch('/api/v2/chat', {
                 method: 'POST',
                 headers: {
@@ -655,7 +700,7 @@ export function ChatSoloEngineProvider({
                 body: JSON.stringify({
                     messages: currentMessages.map(m => ({ role: m.role, content: m.content })),
                     personaId,
-                    llm_provider: currentProvider || llmProvider,
+                    llm_provider: llmProvider,
                     llm_model: llmModel,
                     files: currentUploadedFiles.map(f => ({
                         id: f.temp_id,
@@ -669,31 +714,12 @@ export function ChatSoloEngineProvider({
                 signal: abortControllerRef.current.signal
             })
 
-            const payloadStr = JSON.stringify({ messages: currentMessages.length, files: currentUploadedFiles.length })
-            console.log(`🚀 [Engine:${engineId}] Raw payload length (approx): ${payloadStr.length} chars.`)
-
-            console.log(`🚀 [Engine:${engineId}] Fetch initiated. Files in state:`, uploadedFiles.length)
-
-            console.log(`🚀 [Engine:${engineId}] Payload sent:`, {
-                messages: currentMessages.length,
-                files: currentUploadedFiles.map(f => ({ 
-                    name: f.name, 
-                    hasStorage: !!f.storagePath, 
-                    contentLen: f.content?.length,
-                    storagePath: f.storagePath
-                }))
-            })
-
             if (!response.ok) throw new Error(`HTTP ${response.status}`)
 
-            // SUCCESS: Clear the draft files from UI
             setUploadedFiles([])
             
             const providerId = response.headers.get('X-Provider') as ProviderId
             if (providerId) setCurrentProvider(providerId)
-
-            // Successfully sent, now clear the draft files
-            setUploadedFiles([])
 
             const reader = response.body?.getReader()
             if (!reader) throw new Error('No stream')
@@ -716,21 +742,12 @@ export function ChatSoloEngineProvider({
 
                         try {
                             const json = JSON.parse(data)
-                            if (json.toolCalls) {
-                            }
-
-                            if (json.reasoning) {
-                                fullReasoning += json.reasoning
-                            }
-
+                            if (json.reasoning) fullReasoning += json.reasoning
                             if (json.content) {
                                 fullContent += json.content
-
-                                // Basic Artifact Detection (e.g. Code Blocks)
                                 if (fullContent.includes('```')) {
                                     const parts = fullContent.split('```')
                                     if (parts.length >= 2) {
-                                        // Extract content between first set of backticks
                                         const code = parts[1].split('```')[0]
                                         setActiveArtifact(code || null)
                                     }
@@ -740,7 +757,7 @@ export function ChatSoloEngineProvider({
                             if (json.reasoning || json.content) {
                                 setIsThinking(false)
                                 setMessages(prev => {
-                                    if (currentThreadName !== startingThread) return prev // Don't update if thread changed
+                                    if (currentThreadName !== startingThread) return prev
                                     const updated = [...prev]
                                     const last = updated[updated.length - 1]
                                     if (last && last.role === 'assistant') {
@@ -755,23 +772,13 @@ export function ChatSoloEngineProvider({
 
                             if (json.done && (json.userMessageId || json.assistantMessageId)) {
                                 setMessages(prev => {
-                                    if (currentThreadName !== startingThread) {
-                                        console.warn(`⚠️ [ChatSoloEngine] Thread changed from ${startingThread} to ${currentThreadName}, discarding IDs.`);
-                                        return prev
-                                    }
+                                    if (currentThreadName !== startingThread) return prev
                                     const updated = [...prev];
                                     if (updated.length >= 2) {
                                         const userIdx = updated.length - 2;
                                         const assistantIdx = updated.length - 1;
-
-                                        if (json.userMessageId && updated[userIdx].role === 'user') {
-                                            updated[userIdx].id = json.userMessageId;
-                                        }
-                                        if (json.assistantMessageId && updated[assistantIdx].role === 'assistant') {
-                                            updated[assistantIdx].id = json.assistantMessageId;
-                                        }
-                                    } else {
-                                        console.warn(`⚠️ [ChatSoloEngine] Not enough messages in state to apply IDs (${updated.length})`);
+                                        if (json.userMessageId && updated[userIdx].role === 'user') updated[userIdx].id = json.userMessageId;
+                                        if (json.assistantMessageId && updated[assistantIdx].role === 'assistant') updated[assistantIdx].id = json.assistantMessageId;
                                     }
                                     return updated;
                                 });
@@ -780,16 +787,27 @@ export function ChatSoloEngineProvider({
                     }
                 }
             }
-        } catch (err) {
-            if (err instanceof Error && err.name !== 'AbortError') {
-                setError(err.message)
+
+            // --- SEMANTIC TITLE GENERATION ---
+            if (currentMessages.length === 1 && fullContent) {
+                const firstUserMsg = currentMessages[0].content
+                const cleanTitle = firstUserMsg.length > 40 
+                    ? firstUserMsg.substring(0, 37) + '...'
+                    : firstUserMsg
+                
+                const targetChatId = currentChatId || threads.find(t => t.name === currentThreadName)?.id
+                if (targetChatId) {
+                    renameChat(targetChatId, cleanTitle)
+                }
             }
+        } catch (err: any) {
+            if (err.name !== 'AbortError') setError(err.message)
         } finally {
             setIsGenerating(false)
             setIsThinking(false)
             abortControllerRef.current = null
         }
-    }, [personaId, llmProvider, llmModel, session, currentThreadName])
+    }, [personaId, llmProvider, llmModel, session, currentThreadName, feedbackMode, currentChatId, threads, renameChat, activateFeedbackMode, handleFeedbackMessage, currentProvider])
 
     const clearMessages = useCallback(() => {
         setMessages([])
@@ -908,12 +926,14 @@ export function ChatSoloEngineProvider({
         clearUploadedFiles,
         activateFeedbackMode,
         resetFeedbackMode,
+        deleteChat,
         feedbackMode,
         feedbackStep,
         feedbackAnswers,
         feedbackSessionId,
+        feedbackMailto,
         engineId
-    }), [messages, isGenerating, currentProvider, userTier, error, personaId, isLoadingHistory, llmProvider, llmModel, activeArtifact, showThinking, isThinking, sendMessage, stopGeneration, clearMessages, setLLMConfig, toggleThinking, toggleStar, renameChat, createNewChat, currentThreadName, currentChatId, threads, bookmarks, setCurrentThreadName, switchThread, toggleBookmark, saveFeedback, regenerateMessage, editMessage, viewArtifact, uploadedFiles, addUploadedFile, updateUploadedFile, removeUploadedFile, clearUploadedFiles, activateFeedbackMode, resetFeedbackMode, feedbackMode, feedbackStep, feedbackAnswers, feedbackSessionId, engineId])
+    }), [messages, isGenerating, currentProvider, userTier, error, personaId, isLoadingHistory, llmProvider, llmModel, activeArtifact, showThinking, isThinking, sendMessage, stopGeneration, clearMessages, setLLMConfig, toggleThinking, toggleStar, renameChat, createNewChat, currentThreadName, currentChatId, threads, bookmarks, setCurrentThreadName, switchThread, toggleBookmark, saveFeedback, regenerateMessage, editMessage, viewArtifact, uploadedFiles, addUploadedFile, updateUploadedFile, removeUploadedFile, clearUploadedFiles, activateFeedbackMode, resetFeedbackMode, feedbackMode, feedbackStep, feedbackAnswers, feedbackSessionId, feedbackMailto, engineId])
 
     return (
         <ChatSoloEngineContext.Provider value={value}>

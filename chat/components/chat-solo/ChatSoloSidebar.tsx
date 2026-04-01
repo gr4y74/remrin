@@ -9,6 +9,7 @@ import {
     MessageSquare,
     PanelLeftClose,
     Star,
+    Trash2,
     MoreVertical,
     Clock,
     Pencil,
@@ -39,6 +40,7 @@ export const ChatSoloSidebar: React.FC<ChatSoloSidebarProps> = ({ isOpen, toggle
         switchThread,
         toggleStar,
         renameChat,
+        deleteChat,
         bookmarks // Destructured bookmarks from useChatSolo
     } = useChatSolo()
     const { session } = useAuth()
@@ -161,6 +163,18 @@ export const ChatSoloSidebar: React.FC<ChatSoloSidebarProps> = ({ isOpen, toggle
                                 title="Rename chat"
                             >
                                 <Pencil size={12} />
+                            </button>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    if (window.confirm("Are you sure you want to delete this conversation? This cannot be undone.")) {
+                                        deleteChat(thread.id)
+                                    }
+                                }}
+                                className="p-1.5 rounded-lg hover:bg-red-500/10 text-muted-foreground hover:text-red-500 transition-colors"
+                                title="Delete chat"
+                            >
+                                <Trash2 size={12} />
                             </button>
                             <button
                                 onClick={(e) => {
