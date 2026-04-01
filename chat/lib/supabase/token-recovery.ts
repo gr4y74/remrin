@@ -14,7 +14,6 @@ export function getRecoveredToken(): string | null {
         const tokenKey = keys.find(k => k.endsWith('-auth-token'));
 
         if (!tokenKey) {
-            console.warn('🕵️ [TokenRecovery] No auth-token key found in localStorage');
             return null;
         }
 

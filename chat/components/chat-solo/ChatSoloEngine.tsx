@@ -15,6 +15,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useUnifiedProfile } from '@/hooks/useUnifiedProfile'
 import { supabase } from '@/lib/supabase/browser-client'
 import { getRecoveredToken } from '@/lib/supabase/token-recovery'
+import { isFeedbackTrigger, FEEDBACK_QUESTIONS, FEEDBACK_SYSTEM_INJECTION } from '@/lib/feedback-system'
 
 export interface Bookmark {
     id: string
@@ -46,6 +47,11 @@ interface ChatSoloEngineState {
     threads: any[]
     bookmarks: Bookmark[]
     uploadedFiles: Array<{ temp_id: string, name: string, content: string, type: string, storagePath?: string }>
+    // Feedback Mode State
+    feedbackMode: boolean
+    feedbackStep: number
+    feedbackAnswers: Array<{ key: string, answer: string }>
+    feedbackSessionId: number | null
 }
 
 interface ChatSoloEngineActions {
@@ -68,6 +74,8 @@ interface ChatSoloEngineActions {
     updateUploadedFile: (temp_id: string, metadata: Partial<{ name: string, content: string, type: string, storagePath: string }>) => void
     removeUploadedFile: (index: number) => void
     clearUploadedFiles: () => void
+    activateFeedbackMode: () => void
+    resetFeedbackMode: () => void
     engineId: string
 }
 
@@ -105,6 +113,12 @@ export function ChatSoloEngineProvider({
     const [currentChatId, setCurrentChatId] = useState<string | null>(null)
     const [uploadedFiles, setUploadedFiles] = useState<Array<{ temp_id: string, name: string, content: string, type: string, storagePath?: string }>>([])
     const uploadedFilesRef = useRef(uploadedFiles)
+
+    // Feedback Mode State
+    const [feedbackMode, setFeedbackMode] = useState(false)
+    const [feedbackStep, setFeedbackStep] = useState(0)
+    const [feedbackAnswers, setFeedbackAnswers] = useState<Array<{ key: string, answer: string }>>([])
+    const [feedbackSessionId, setFeedbackSessionId] = useState<number | null>(null)
 
     // Sync ref with state
     useEffect(() => {
@@ -164,7 +178,7 @@ export function ChatSoloEngineProvider({
         const fetchSoloHistory = async () => {
             if (!isCurrent) return
             if (!user) {
-                console.warn('🕵️ [ChatSoloEngine] No user for history fetch.')
+                // Silenced warning during auth initialization
                 return
             }
 
@@ -241,64 +255,35 @@ export function ChatSoloEngineProvider({
                     .eq('user_id', user.id)
                     .or(`name.ilike.persona-chat-${personaId}%,name.ilike.solo-cockpit-%`)
                     .order('updated_at', { ascending: false })
+                    .limit(20)
 
                 if (error) {
-                    // Fallback for missing columns
-                    console.warn('⚠️ [ChatSoloEngine] Advanced threads fetch failed, falling back to basic...', error.message)
+                    console.warn('⚠️ [ChatSoloEngine] Threads fetch failed, falling back to basic...', error.message)
                     const { data: basicData } = await supabase
                         .from('chats')
                         .select('id, name, created_at, updated_at')
                         .eq('user_id', user.id)
                         .or(`name.ilike.persona-chat-${personaId}%,name.ilike.solo-cockpit-%`)
                         .order('updated_at', { ascending: false })
+                        .limit(20)
 
                     if (basicData) {
-                        // Get message counts for each chat
-                        const threadsWithCounts = await Promise.all(
-                            basicData.map(async (chat) => {
-                                const { count } = await supabase
-                                    .from('messages')
-                                    .select('*', { count: 'exact', head: true })
-                                    .eq('chat_id', chat.id)
-
-                                return { ...chat, title: null, is_starred: false, message_count: count || 0 }
-                            })
-                        )
-
-                        // Filter out empty chats and sort by message count
-                        const nonEmptyChats = threadsWithCounts
-                            .filter((t: any) => t.message_count > 0)
-                            .sort((a: any, b: any) => {
-                                const aTime = a.updated_at ? new Date(a.updated_at).getTime() : 0
-                                const bTime = b.updated_at ? new Date(b.updated_at).getTime() : 0
-                                return bTime - aTime
-                            })
-
-                        setThreads(nonEmptyChats)
+                        // REMOVED: N+1 count per-thread queries to prevent 503 errors
+                        const legacyThreads = basicData.map(chat => ({ 
+                            ...chat, 
+                            title: null, 
+                            is_starred: false, 
+                            message_count: 0 
+                        }))
+                        setThreads(legacyThreads)
                     }
                 } else if (data) {
-                    // Get message counts for each chat
-                    const threadsWithCounts = await Promise.all(
-                        (data as any[]).map(async (chat) => {
-                            const { count } = await supabase
-                                .from('messages')
-                                .select('*', { count: 'exact', head: true })
-                                .eq('chat_id', chat.id)
-
-                            return { ...chat, message_count: count || 0 }
-                        })
-                    )
-
-                    // Filter out empty chats and sort by message count
-                    const nonEmptyChats = threadsWithCounts
-                        .filter((t: any) => t.message_count > 0)
-                        .sort((a: any, b: any) => {
-                            const aTime = a.updated_at ? new Date(a.updated_at).getTime() : 0
-                            const bTime = b.updated_at ? new Date(b.updated_at).getTime() : 0
-                            return bTime - aTime
-                        })
-
-                    setThreads(nonEmptyChats)
+                    // REMOVED: N+1 count per-thread queries to prevent 503 errors
+                    const cleanThreads = (data as any[]).map(chat => ({
+                        ...chat,
+                        message_count: 0
+                    }))
+                    setThreads(cleanThreads)
                 }
 
                 // Sync currentChatId
@@ -438,6 +423,169 @@ export function ChatSoloEngineProvider({
         setUploadedFiles([])
     }, [])
 
+    /**
+     * FEEDBACK MODE LOGIC
+     */
+    const activateFeedbackMode = useCallback(() => {
+        setFeedbackMode(true)
+        setFeedbackStep(0)
+        setFeedbackAnswers([])
+        setFeedbackSessionId(Date.now())
+
+        // Force a small delay to simulate processing, then Rem introduces the mode
+        setTimeout(() => {
+            const introMsg: ChatMessageContent = {
+                role: 'assistant',
+                content: `Of course... Rem is glad you'd like to share your thoughts. 💙 Your feedback will go directly to Sosu, who reads every word personally.\n\nBefore we begin — may I ask your name? Rem would like to remember who she's speaking with.`,
+                timestamp: new Date()
+            }
+            setMessages(prev => [...prev, introMsg])
+        }, 100)
+    }, [])
+
+    const resetFeedbackMode = useCallback(() => {
+        setFeedbackMode(false)
+        setFeedbackStep(0)
+        setFeedbackAnswers([])
+        setFeedbackSessionId(null)
+    }, [])
+
+    const compileFeedbackReport = useCallback(async (answers: Array<{ key: string, answer: string }>) => {
+        const reportLines = [
+            `REMRIN ALPHA FEEDBACK REPORT`,
+            `Date: ${new Date().toLocaleDateString()}`,
+            `Session ID: ${feedbackSessionId}`,
+            ``,
+            ...answers.map(a => `${a.key.toUpperCase().replace(/_/g, ' ')}: ${a.answer}`),
+        ]
+        const reportText = reportLines.join('\n')
+
+        // mailto fallback
+        const mailtoLink = `mailto:sosu.remrin@gmail.com?subject=${encodeURIComponent('Remrin Alpha Feedback')}&body=${encodeURIComponent(reportText)}`
+        window.open(mailtoLink, '_blank')
+
+        // API POST template
+        try {
+            await fetch('/api/feedback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ report: reportText, sessionId: feedbackSessionId }),
+            })
+        } catch (e) {
+            console.warn('[FeedbackMode] API POST failed, but mailto was triggered:', e)
+        }
+    }, [feedbackSessionId])
+
+    const handleFeedbackMessage = useCallback(async (userMessage: string) => {
+        const step = feedbackStep
+        const question = FEEDBACK_QUESTIONS[step]
+
+        // 1. Save the answer
+        const updatedAnswers = [
+            ...feedbackAnswers,
+            { key: question.key, answer: userMessage }
+        ]
+
+        const nextStep = step + 1
+        const isComplete = nextStep >= FEEDBACK_QUESTIONS.length
+
+        setFeedbackStep(nextStep)
+        setFeedbackAnswers(updatedAnswers)
+
+        // 2. Add user message to state manually
+        const userMsg: ChatMessageContent = { role: 'user', content: userMessage, timestamp: new Date() }
+        setMessages(prev => [...prev, userMsg])
+        
+        // Assistant thinking state
+        setIsGenerating(true)
+        setIsThinking(true)
+
+        // 3. Build injected system prompt
+        const injectedSystem = FEEDBACK_SYSTEM_INJECTION
+            .replace('{STEP}', String(nextStep))
+            .replace('{FOCUS}', isComplete ? 'closing' : FEEDBACK_QUESTIONS[nextStep]?.key || 'closing')
+
+        try {
+            const token = session?.access_token || getRecoveredToken()
+            const response = await fetch('/api/v2/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    messages: [...messagesRef.current, userMsg].map(m => ({ role: m.role, content: m.content })),
+                    personaId,
+                    systemPrompt: injectedSystem, // Hijack system prompt for interview logic
+                    customName: currentThreadName
+                }),
+            })
+
+            if (!response.ok) throw new Error(`HTTP ${response.status}`)
+
+            const reader = response.body?.getReader()
+            if (!reader) throw new Error('No stream')
+
+            const decoder = new TextDecoder()
+            let fullContent = ''
+
+            // Simple assistant message placeholder
+            setMessages(prev => [...prev, { role: 'assistant', content: '', timestamp: new Date() }])
+
+            while (true) {
+                const { done, value } = await reader.read()
+                if (done) break
+
+                const chunk = decoder.decode(value, { stream: true })
+                const lines = chunk.split('\n')
+
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        const data = line.slice(6).trim()
+                        if (data === '[DONE]') continue
+
+                        try {
+                            const json = JSON.parse(data)
+                            if (json.content) {
+                                fullContent += json.content
+                                setIsThinking(false)
+                                setMessages(prev => {
+                                    const updated = [...prev]
+                                    const last = updated[updated.length - 1]
+                                    if (last && last.role === 'assistant') {
+                                        last.content = fullContent
+                                    }
+                                    return updated
+                                })
+                            }
+                        } catch (e) { }
+                    }
+                }
+            }
+
+            // check for completion
+            if (fullContent.includes('[FEEDBACK_COMPLETE]')) {
+                const cleanResponse = fullContent.replace('[FEEDBACK_COMPLETE]', '').trim()
+                setMessages(prev => {
+                    const updated = [...prev]
+                    const last = updated[updated.length - 1]
+                    if (last && last.role === 'assistant') {
+                        last.content = cleanResponse
+                    }
+                    return updated
+                })
+                await compileFeedbackReport(updatedAnswers)
+                resetFeedbackMode()
+            }
+        } catch (err: any) {
+            setError(err.message)
+        } finally {
+            setIsGenerating(false)
+            setIsThinking(false)
+        }
+    }, [feedbackStep, feedbackAnswers, personaId, session, currentThreadName, compileFeedbackReport, resetFeedbackMode])
+
     const sendMessage = useCallback(async (content: string, skipUserMessage: boolean = false) => {
         const currentUploadedFiles = uploadedFilesRef.current
         console.log(`📝 [Engine:${engineId}] sendMessage triggered:`, { 
@@ -449,6 +597,20 @@ export function ChatSoloEngineProvider({
 
         if (!content.trim() && !skipUserMessage && currentUploadedFiles.length === 0) return
         if (isGenerating) return
+
+        // ── FEEDBACK MODE INTERCEPTION ──────────────────────────────
+        const userContent = content.trim();
+        
+        if (!feedbackMode && isFeedbackTrigger(userContent)) {
+            activateFeedbackMode();
+            return;
+        }
+
+        if (feedbackMode) {
+            await handleFeedbackMessage(userContent);
+            return;
+        }
+        // ────────────────────────────────────────────────────────────
 
         setError(null)
         setIsGenerating(true)
@@ -744,8 +906,14 @@ export function ChatSoloEngineProvider({
         updateUploadedFile,
         removeUploadedFile,
         clearUploadedFiles,
+        activateFeedbackMode,
+        resetFeedbackMode,
+        feedbackMode,
+        feedbackStep,
+        feedbackAnswers,
+        feedbackSessionId,
         engineId
-    }), [messages, isGenerating, currentProvider, userTier, error, personaId, isLoadingHistory, llmProvider, llmModel, activeArtifact, showThinking, isThinking, sendMessage, stopGeneration, clearMessages, setLLMConfig, toggleThinking, toggleStar, renameChat, createNewChat, currentThreadName, currentChatId, threads, bookmarks, setCurrentThreadName, switchThread, toggleBookmark, saveFeedback, regenerateMessage, editMessage, viewArtifact, uploadedFiles, addUploadedFile, updateUploadedFile, removeUploadedFile, clearUploadedFiles, engineId])
+    }), [messages, isGenerating, currentProvider, userTier, error, personaId, isLoadingHistory, llmProvider, llmModel, activeArtifact, showThinking, isThinking, sendMessage, stopGeneration, clearMessages, setLLMConfig, toggleThinking, toggleStar, renameChat, createNewChat, currentThreadName, currentChatId, threads, bookmarks, setCurrentThreadName, switchThread, toggleBookmark, saveFeedback, regenerateMessage, editMessage, viewArtifact, uploadedFiles, addUploadedFile, updateUploadedFile, removeUploadedFile, clearUploadedFiles, activateFeedbackMode, resetFeedbackMode, feedbackMode, feedbackStep, feedbackAnswers, feedbackSessionId, engineId])
 
     return (
         <ChatSoloEngineContext.Provider value={value}>
