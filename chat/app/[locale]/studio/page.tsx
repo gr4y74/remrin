@@ -35,6 +35,7 @@ import {
     IconPencil
 } from "@tabler/icons-react"
 import { toast } from "sonner"
+import { TierGate } from "@/src/components/TierGate"
 
 export default function StudioPage() {
     const searchParams = useSearchParams()
@@ -250,15 +251,17 @@ export default function StudioPage() {
 
                     {/* Direct Publish - only for admins or approved personas */}
                     {(isApproved || persona.status === 'draft') && (
-                        <Button
-                            type="button"
-                            onClick={handlePublish}
-                            disabled={saving || !persona.name || !persona.system_prompt}
-                            className="bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400"
-                        >
-                            <IconRocket size={18} className="mr-2" />
-                            {persona.visibility === 'PUBLIC' ? 'Published ✓' : 'Publish to Store'}
-                        </Button>
+                        <TierGate requiredTier="architect" feature="Store Publishing" mode="lock">
+                            <Button
+                                type="button"
+                                onClick={handlePublish}
+                                disabled={saving || !persona.name || !persona.system_prompt}
+                                className="bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400"
+                            >
+                                <IconRocket size={18} className="mr-2" />
+                                {persona.visibility === 'PUBLIC' ? 'Published ✓' : 'Publish to Store'}
+                            </Button>
+                        </TierGate>
                     )}
                 </div>
             </header>
@@ -336,14 +339,18 @@ export default function StudioPage() {
                                         <IconMicrophone size={16} />
                                         <span className="hidden sm:inline">Voice</span>
                                     </TabsTrigger>
-                                    <TabsTrigger value="store" className="flex items-center gap-2">
-                                        <IconShoppingBag size={16} />
-                                        <span className="hidden sm:inline">Store</span>
-                                    </TabsTrigger>
-                                    <TabsTrigger value="analytics" className="flex items-center gap-2">
-                                        <IconChartBar size={16} />
-                                        <span className="hidden sm:inline">Analytics</span>
-                                    </TabsTrigger>
+                                    <TierGate requiredTier="architect" feature="Store" mode="hide">
+                                        <TabsTrigger value="store" className="flex items-center gap-2">
+                                            <IconShoppingBag size={16} />
+                                            <span className="hidden sm:inline">Store</span>
+                                        </TabsTrigger>
+                                    </TierGate>
+                                    <TierGate requiredTier="architect" feature="Analytics" mode="hide">
+                                        <TabsTrigger value="analytics" className="flex items-center gap-2">
+                                            <IconChartBar size={16} />
+                                            <span className="hidden sm:inline">Analytics</span>
+                                        </TabsTrigger>
+                                    </TierGate>
                                 </TabsList>
 
                                 <div className="mt-6">

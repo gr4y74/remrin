@@ -2,6 +2,8 @@ import { createClient } from "@/lib/supabase/server"
 import { createListing } from "@/lib/marketplace"
 import { cookies } from "next/headers"
 import { NextRequest, NextResponse } from "next/server"
+import { hasPermission } from "@/src/lib/permissions"
+import { SubscriptionTier } from "@/lib/server/feature-gates"
 
 interface CreateListingBody {
     persona_id: string
@@ -28,6 +30,21 @@ export async function POST(request: NextRequest) {
 
         if (authError || !user) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+        }
+
+        // Check tier permission
+        const { data: wallet } = await supabase
+            .from('wallets')
+            .select('tier')
+            .eq('user_id', user.id)
+            .single()
+
+        const userTier = (wallet?.tier || 'wanderer') as SubscriptionTier
+        if (!hasPermission(userTier, 'marketplace_sell')) {
+            return NextResponse.json(
+                { error: "Marketplace listing requires Architect tier or higher. Please upgrade to sell your souls." },
+                { status: 403 }
+            )
         }
 
         // Parse request body

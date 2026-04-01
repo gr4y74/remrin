@@ -17,6 +17,8 @@ import { getQwen3TTSProvider } from '@/lib/audio/providers/Qwen3TTSProvider';
 import { getElevenLabsProvider } from '@/lib/audio/providers/ElevenLabsProvider';
 import { cookies } from 'next/headers';
 import { VoiceProvider } from '@/types/audio';
+import { hasPermission } from '@/src/lib/permissions';
+import { SubscriptionTier } from '@/lib/server/feature-gates';
 
 // Supported cloning providers
 const CLONING_PROVIDERS = ['qwen3', 'elevenlabs', 'kokoro'] as const;
@@ -31,6 +33,21 @@ export async function POST(request: Request) {
         const { data: { user }, error: authError } = await supabase.auth.getUser();
         if (authError || !user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // 1.1 Check Tier Permission
+        const { data: wallet } = await supabase
+            .from('wallets')
+            .select('tier')
+            .eq('user_id', user.id)
+            .single();
+
+        const userTier = (wallet?.tier || 'wanderer') as SubscriptionTier;
+        if (!hasPermission(userTier, 'custom_voice')) {
+            return NextResponse.json(
+                { error: 'Voice cloning requires Soul Weaver tier or higher.' },
+                { status: 403 }
+            );
         }
 
         // 2. Parse Form Data

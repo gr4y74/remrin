@@ -2,10 +2,8 @@ import { createClient } from "@/lib/supabase/server"
 import { compileNBBPrompt, type SoulData } from "@/lib/forge/nbb-compiler"
 import { cookies } from "next/headers"
 import { NextRequest, NextResponse } from "next/server"
-
-export const runtime = "nodejs"
-
-import { TIER_CONFIGS } from "@/lib/chat-engine/types"
+import { hasPermission, getFeatureLimit } from "@/src/lib/permissions"
+import { SubscriptionTier } from "@/lib/server/feature-gates"
 
 /**
  * POST /api/forge/finalize-soul
@@ -28,47 +26,33 @@ export async function POST(request: NextRequest) {
         }
 
         // Get user's tier
-        const { data: profile } = await supabase
-            .from('profiles')
-            .select('subscription_tier')
-            .eq('id', user.id)
+        const { data: wallet } = await supabase
+            .from('wallets')
+            .select('tier')
+            .eq('user_id', user.id)
             .single()
 
-        const rawTier = profile?.subscription_tier || 'free'
-        // Map database tier values to our UserTier type
-        const tierMap: Record<string, 'free' | 'pro' | 'premium' | 'enterprise'> = {
-            'free': 'free',
-            'pro': 'pro',
-            'premium': 'premium',
-            'enterprise': 'enterprise',
-            'architect': 'premium',
-            'titan': 'enterprise'
-        }
-        const userTier = tierMap[rawTier] || 'free'
-        const tierConfig = TIER_CONFIGS[userTier]
+        const userTier = (wallet?.tier || 'wanderer') as SubscriptionTier
 
-        // Check monthly limit
-        const startOfMonth = new Date()
-        startOfMonth.setUTCDate(1)
-        startOfMonth.setUTCHours(0, 0, 0, 0)
-
+        // Check soul count limit
         const { count, error: countError } = await supabase
             .from('personas')
             .select('*', { count: 'exact', head: true })
-            .eq('creator_id', user.id)
-            .gte('created_at', startOfMonth.toISOString())
+            .eq('owner_id', user.id)
+
+        const limit = getFeatureLimit(userTier, 'soul_count')
 
         if (countError) {
             console.error("Count error:", countError)
-        } else if (tierConfig.maxSoulsPerMonth !== -1 && (count || 0) >= tierConfig.maxSoulsPerMonth) {
+        } else if (count !== null && count >= limit) {
             return NextResponse.json(
                 {
-                    error: `Monthly limit reached. Your current tier (${userTier}) allows creating up to ${tierConfig.maxSoulsPerMonth} souls per month.`,
+                    error: `Soul limit reached. Your current tier (${userTier}) allows owning up to ${limit} souls.`,
                     limitReached: true,
-                    max: tierConfig.maxSoulsPerMonth,
+                    max: limit,
                     current: count
                 },
-                { status: 429 }
+                { status: 403 }
             )
         }
 

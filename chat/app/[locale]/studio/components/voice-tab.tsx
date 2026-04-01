@@ -9,6 +9,7 @@ import { IconMicrophone, IconUpload, IconLoader2, IconWand, IconMusic } from "@t
 import { VoiceCloner } from "@/components/studio/VoiceCloner"
 import { VoiceDesigner } from "@/components/studio/VoiceDesigner"
 import { ProviderSelector, ProviderId } from "@/components/studio/ProviderSelector"
+import { TierGate } from "@/src/components/TierGate"
 
 interface VoiceTabProps {
     persona: StudioPersona
@@ -151,58 +152,65 @@ export function VoiceTab({ persona, metadata, updateField, updateMetadata, uploa
 
                 {/* Clone Voice Tab */}
                 <TabsContent value="clone" className="mt-4">
-                    <VoiceCloner
-                        onSuccess={(voiceId) => handleVoiceSelect(voiceId)}
-                    />
+                    <TierGate requiredTier="soul_weaver" feature="Voice Cloning" mode="lock">
+                        <VoiceCloner
+                            onSuccess={(voiceId) => handleVoiceSelect(voiceId)}
+                        />
+                    </TierGate>
                 </TabsContent>
 
                 {/* Design Voice Tab (Qwen3 unique feature!) */}
                 <TabsContent value="design" className="mt-4">
-                    <VoiceDesigner
-                        onSuccess={(voiceId, voiceName) => handleVoiceSelect(voiceId, voiceName)}
-                    />
+                    <TierGate requiredTier="soul_weaver" feature="Voice Designing" mode="lock">
+                        <VoiceDesigner
+                            onSuccess={(voiceId, voiceName) => handleVoiceSelect(voiceId, voiceName)}
+                        />
+                    </TierGate>
                 </TabsContent>
             </Tabs>
 
             {/* Voice Sample Upload (for preview) */}
-            <div className="space-y-2">
-                <Label>Voice Sample (for preview)</Label>
-                <div
-                    className={`relative flex h-24 w-full items-center justify-center rounded-xl border-2 border-dashed border-rp-highlight-med bg-rp-surface/50 transition-colors ${uploading ? 'cursor-wait opacity-60' : 'cursor-pointer hover:border-rp-love'
-                        }`}
-                    onClick={() => !uploading && audioInputRef.current?.click()}
-                >
-                    {uploading ? (
-                        <div className="flex flex-col items-center gap-2 text-rp-iris">
-                            <IconLoader2 size={32} className="animate-spin" />
-                            <span className="text-sm">Uploading audio...</span>
-                        </div>
-                    ) : metadata.voice_sample_url ? (
-                        <div className="flex items-center gap-4 px-4">
-                            <IconMicrophone size={24} className="text-orange-400" />
-                            <audio controls className="h-10">
-                                <source src={metadata.voice_sample_url} />
-                            </audio>
-                        </div>
-                    ) : (
-                        <div className="flex flex-col items-center gap-2 text-rp-muted">
-                            <IconUpload size={24} />
-                            <span className="text-sm">Upload audio sample (mp3/wav)</span>
-                        </div>
-                    )}
-                    <input
-                        ref={audioInputRef}
-                        type="file"
-                        accept="audio/mp3,audio/wav,audio/mpeg"
-                        className="hidden"
-                        onChange={handleAudioUpload}
-                        disabled={uploading}
-                    />
+            <TierGate requiredTier="soul_weaver" feature="Audio Uploads" mode="lock">
+                <div className="space-y-2">
+                    <Label>Voice Sample (for preview)</Label>
+                    <div
+                        className={`relative flex h-24 w-full items-center justify-center rounded-xl border-2 border-dashed border-rp-highlight-med bg-rp-surface/50 transition-colors ${uploading ? 'cursor-wait opacity-60' : 'cursor-pointer hover:border-rp-love'
+                            }`}
+                        onClick={() => !uploading && audioInputRef.current?.click()}
+                    >
+                        {uploading ? (
+                            <div className="flex flex-col items-center gap-2 text-rp-iris">
+                                <IconLoader2 size={32} className="animate-spin" />
+                                <span className="text-sm">Uploading audio...</span>
+                            </div>
+                        ) : metadata.voice_sample_url ? (
+                            <div className="flex items-center gap-4 px-4">
+                                <IconMicrophone size={24} className="text-orange-400" />
+                                <audio controls className="h-10">
+                                    <source src={metadata.voice_sample_url} />
+                                </audio>
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center gap-2 text-rp-muted">
+                                <IconUpload size={24} />
+                                <span className="text-sm">Upload audio sample (mp3/wav)</span>
+                            </div>
+                        )}
+                        <input
+                            ref={audioInputRef}
+                            type="file"
+                            accept="audio/mp3,audio/wav,audio/mpeg"
+                            className="hidden"
+                            onChange={handleAudioUpload}
+                            disabled={uploading}
+                            aria-label="Upload voice sample"
+                        />
+                    </div>
+                    <p className="text-xs text-rp-muted">
+                        Optional: Upload a sample to preview how your character sounds before publishing.
+                    </p>
                 </div>
-                <p className="text-xs text-rp-muted">
-                    Optional: Upload a sample to preview how your character sounds before publishing.
-                </p>
-            </div>
+            </TierGate>
 
             {/* Current Voice Status */}
             {persona.voice_id && (

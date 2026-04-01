@@ -26,6 +26,7 @@ import {
     IconWallet,
     IconDatabase,
     IconBell,
+    IconBolt,
 } from "@tabler/icons-react"
 import { RemrinContext } from "@/context/context"
 
@@ -185,6 +186,10 @@ export function MinimalSidebar({ user }: MinimalSidebarProps) {
                     })}
                 </div>
 
+                {/* Cockpit Separator + Link */}
+                <div className="border-rp-muted/20 -mx-2 my-2 border-t" />
+                <CockpitNavItem isExpanded={isExpanded} pathname={pathname} />
+
                 {/* Notification Bell */}
                 <div className="mt-1">
                     <NotificationBellItem isExpanded={isExpanded} />
@@ -224,6 +229,49 @@ export function MinimalSidebar({ user }: MinimalSidebarProps) {
                 onOpenChange={setShowProfileSettings}
             />
         </motion.nav>
+    )
+}
+
+function CockpitNavItem({ isExpanded, pathname }: { isExpanded: boolean; pathname: string }) {
+    const href = "/rem"
+    const isActive = pathname === href || pathname.startsWith(href + "/")
+
+    return (
+        <Link
+            href={href}
+            title="Rem's Cockpit"
+            className={cn(
+                "group relative flex min-h-[44px] items-center rounded-lg py-3 transition-all",
+                isActive
+                    ? "text-[#e78a53] bg-[#e78a53]/15"
+                    : "text-rp-subtle hover:bg-[#e78a53]/10 hover:text-[#e78a53]",
+                isExpanded ? "justify-start gap-3 px-4" : "justify-center px-0"
+            )}
+        >
+            <div className={cn(
+                "flex shrink-0 items-center justify-center",
+                !isExpanded && "w-full"
+            )}>
+                <IconBolt size={22} className={isActive ? "text-[#e78a53]" : ""} />
+            </div>
+            <motion.span
+                className="font-tiempos-text whitespace-nowrap text-sm font-medium overflow-hidden"
+                initial={false}
+                animate={{
+                    opacity: isExpanded ? 1 : 0,
+                    width: isExpanded ? "auto" : 0
+                }}
+                transition={{ duration: 0.2 }}
+            >
+                Rem&apos;s Cockpit
+            </motion.span>
+            {isActive && (
+                <motion.div
+                    className="absolute left-0 h-full w-1 rounded-r bg-[#e78a53]"
+                    layoutId="activeIndicator"
+                />
+            )}
+        </Link>
     )
 }
 

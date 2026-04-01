@@ -15,6 +15,8 @@ import { EmojiButton } from '@/components/ui/EmojiButton'
 import { PickerItem } from '@/components/ui/UniversalPicker'
 import { useEmojiInsertion } from '@/hooks/useEmojiInsertion'
 
+import { TierGate } from '@/src/components/TierGate'
+
 interface ChatInputProps {
     placeholder?: string
     disabled?: boolean
@@ -158,29 +160,36 @@ export function ChatInput({
                 className="hidden"
                 accept={filesToAccept}
                 onChange={handleFileSelect}
+                aria-label="Upload file"
             />
 
             {/* Left Actions: File Upload, Voice, & Emoji */}
             <div className="flex items-center gap-1">
                 <button
+                    type="button"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={disabled || isGenerating}
                     className="flex h-10 w-10 items-center justify-center rounded-xl text-rp-subtle hover:bg-rp-overlay hover:text-rp-text disabled:opacity-50 transition-colors"
                     title="Upload file"
+                    aria-label="Upload file"
                 >
                     <IconPaperclip size={20} />
                 </button>
-                <button
-                    onClick={toggleVoiceInput}
-                    disabled={disabled || isGenerating}
-                    className={`flex h-10 w-10 items-center justify-center rounded-xl transition-colors disabled:opacity-50 ${isListening
-                        ? 'bg-rp-love/20 text-rp-love animate-pulse'
-                        : 'text-rp-subtle hover:bg-rp-overlay hover:text-rp-text'
-                        }`}
-                    title="Voice input"
-                >
-                    <IconMicrophone size={20} />
-                </button>
+                <TierGate requiredTier="soul_weaver" feature="voice_mode_limit" mode="lock">
+                    <button
+                        type="button"
+                        onClick={toggleVoiceInput}
+                        disabled={disabled || isGenerating}
+                        className={`flex h-10 w-10 items-center justify-center rounded-xl transition-colors disabled:opacity-50 ${isListening
+                            ? 'bg-rp-love/20 text-rp-love animate-pulse'
+                            : 'text-rp-subtle hover:bg-rp-overlay hover:text-rp-text'
+                            }`}
+                        title="Voice input"
+                        aria-label="Voice input"
+                    >
+                        <IconMicrophone size={20} />
+                    </button>
+                </TierGate>
                 <EmojiButton
                     onSelect={handleEmojiSelect}
                     position="top"
@@ -200,20 +209,24 @@ export function ChatInput({
                     rows={1}
                     className="max-h-[120px] min-h-[48px] w-full resize-none bg-transparent px-4 py-3.5 text-base text-rp-text placeholder-rp-subtle/70 outline-none scrollbar-thin scrollbar-track-transparent scrollbar-thumb-rp-muted/20 disabled:opacity-50 md:min-h-[52px] md:px-5"
                     style={{ fontSize: '16px' }} // Prevents iOS zoom on focus
+                    aria-label="Chat message input"
                 />
             </div>
 
             {/* Call Button */}
             {onStartCall && (
-                <button
-                    onClick={onStartCall}
-                    disabled={disabled || isGenerating}
-                    className="flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-xl text-rp-subtle hover:bg-rp-overlay hover:text-rp-text transition-all duration-200 disabled:opacity-50"
-                    aria-label="Start voice call"
-                    title="Start voice call"
-                >
-                    <IconPhone size={20} />
-                </button>
+                <TierGate requiredTier="soul_weaver" feature="voice_mode_limit" mode="hide">
+                    <button
+                        type="button"
+                        onClick={onStartCall}
+                        disabled={disabled || isGenerating}
+                        className="flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-xl text-rp-subtle hover:bg-rp-overlay hover:text-rp-text transition-all duration-200 disabled:opacity-50"
+                        aria-label="Start voice call"
+                        title="Start voice call"
+                    >
+                        <IconPhone size={20} />
+                    </button>
+                </TierGate>
             )}
 
             {/* Send/Stop Button */}

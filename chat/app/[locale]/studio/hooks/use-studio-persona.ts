@@ -3,6 +3,8 @@
 import { useState, useCallback } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { StudioPersona, DEFAULT_PERSONA, PersonaMetadata, Category, ModerationAction, ModerationStatus } from "../types"
+import { useSubscription } from "@/hooks/useSubscription"
+import { getFeatureLimit } from "@/src/lib/permissions"
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || ""
 
@@ -16,6 +18,7 @@ export function useStudioPersona(initialPersonaId?: string) {
     const [error, setError] = useState<string | null>(null)
 
     const supabase = createClient()
+    const { subscription } = useSubscription()
 
     // Load categories from database
     const loadCategories = useCallback(async () => {
@@ -209,6 +212,19 @@ export function useStudioPersona(initialPersonaId?: string) {
                 if (updateError) throw updateError
                 return persona.id
             } else {
+                // Insert new - check limit
+                const { count, error: countError } = await supabase
+                    .from('personas')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('owner_id', userId)
+
+                if (countError) throw countError
+
+                const limit = getFeatureLimit(subscription?.tier || 'wanderer', 'soul_count')
+                if (count !== null && count >= limit) {
+                    throw new Error(`You have reached the limit of ${limit} souls for your current tier. Please upgrade to create more!`)
+                }
+
                 // Insert new
                 const { data: newData, error: insertError } = await supabase
                     .from('personas')

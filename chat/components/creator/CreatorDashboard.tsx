@@ -7,6 +7,7 @@ import { ListingManager } from "./ListingManager"
 import { CreateListingModal } from "./CreateListingModal"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
+import { TierGate } from "@/src/components/TierGate"
 import {
     Wallet,
     TrendingUp,
@@ -51,16 +52,19 @@ export function CreatorDashboard({ userId }: CreatorDashboardProps) {
                             size="icon"
                             onClick={refresh}
                             className="border-rp-muted/20 text-rp-text hover:bg-rp-surface bg-transparent"
+                            aria-label="Refresh dashboard stats"
                         >
                             <RefreshCw className="size-4" />
                         </Button>
-                        <Button
-                            onClick={() => setCreateModalOpen(true)}
-                            className="from-rp-iris to-rp-rose text-rp-base hover:from-rp-iris/80 hover:to-rp-rose/80 bg-gradient-to-r"
-                        >
-                            <Plus className="mr-2 size-4" />
-                            Create Listing
-                        </Button>
+                        <TierGate requiredTier="architect" feature="marketplace_sell" mode="lock">
+                            <Button
+                                onClick={() => setCreateModalOpen(true)}
+                                className="from-rp-iris to-rp-rose text-rp-base hover:from-rp-iris/80 hover:to-rp-rose/80 bg-gradient-to-r"
+                            >
+                                <Plus className="mr-2 size-4" />
+                                Create Listing
+                            </Button>
+                        </TierGate>
                     </div>
                 </div>
 

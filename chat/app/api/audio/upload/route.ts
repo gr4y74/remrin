@@ -15,6 +15,8 @@
 import { createClient } from '@/lib/supabase/server';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
+import { hasPermission } from '@/src/lib/permissions';
+import { SubscriptionTier } from '@/lib/server/feature-gates';
 import {
     ALLOWED_AUDIO_TYPES,
     MAX_AUDIO_SIZE,
@@ -50,6 +52,21 @@ export async function POST(request: NextRequest) {
             return NextResponse.json(
                 { success: false, error: 'Unauthorized' } as AudioUploadResponse,
                 { status: 401 }
+            );
+        }
+
+        // 0. Check Tier Permission
+        const { data: wallet } = await supabase
+            .from('wallets')
+            .select('tier')
+            .eq('user_id', user.id)
+            .single();
+
+        const userTier = (wallet?.tier || 'wanderer') as SubscriptionTier;
+        if (!hasPermission(userTier, 'audio_upload')) {
+            return NextResponse.json(
+                { success: false, error: 'Audio upload requires Soul Weaver tier or higher.' } as AudioUploadResponse,
+                { status: 403 }
             );
         }
 

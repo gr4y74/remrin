@@ -9,6 +9,8 @@ import { IconPhoto, IconSparkles, IconLoader2, IconRocket } from "@tabler/icons-
 import Image from "next/image"
 import Link from "next/link"
 
+import { TierGate } from "@/src/components/TierGate"
+
 interface VisualsTabProps {
     metadata: PersonaMetadata
     updateMetadata: <K extends keyof PersonaMetadata>(field: K, value: PersonaMetadata[K]) => void
@@ -103,59 +105,63 @@ export function VisualsTab({ metadata, updateMetadata, uploadFile, uploading, pe
                         className="hidden"
                         onChange={handleHeroUpload}
                         disabled={uploading}
+                        aria-label="Upload hero image"
                     />
                 </div>
             </div>
 
             {/* Hero Video */}
-            <div className="space-y-2">
-                <Label>Hero Video (Store Background - Alternative to Image)</Label>
-                <p className="text-xs text-rp-muted">
-                    Upload a video clip (max 100MB). Recommended: 720p or 1080p MP4.
-                </p>
-                <div
-                    className={`relative flex h-40 w-full items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-rp-highlight-med bg-rp-surface/50 transition-colors ${uploading ? 'cursor-wait opacity-60' : 'cursor-pointer hover:border-rp-foam'
-                        }`}
-                    onClick={() => !uploading && videoInputRef.current?.click()}
-                >
-                    {uploading ? (
-                        <div className="flex flex-col items-center gap-2 text-rp-iris">
-                            <IconLoader2 size={40} className="animate-spin" />
-                            <span className="text-sm">Uploading video...</span>
-                        </div>
-                    ) : metadata.hero_video_url ? (
-                        <video
-                            src={metadata.hero_video_url}
-                            className="h-full w-full object-cover"
-                            autoPlay
-                            loop
-                            muted
-                        />
-                    ) : (
-                        <div className="flex flex-col items-center gap-2 text-rp-muted">
-                            <IconPhoto size={40} />
-                            <span className="text-sm">Upload hero video (10-15 sec)</span>
-                        </div>
-                    )}
-                    <input
-                        ref={videoInputRef}
-                        type="file"
-                        accept="video/mp4,video/webm,video/ogg,video/quicktime"
-                        className="hidden"
-                        onChange={handleVideoUpload}
-                        disabled={uploading}
-                    />
-                </div>
-                {metadata.hero_video_url && (
-                    <button
-                        type="button"
-                        onClick={() => updateMetadata('hero_video_url', undefined)}
-                        className="text-xs text-red-400 hover:text-red-300 transition-colors"
+            <TierGate requiredTier="soul_weaver" feature="Living Portraits (Video)" mode="blur">
+                <div className="space-y-2">
+                    <Label>Hero Video (Store Background - Alternative to Image)</Label>
+                    <p className="text-xs text-rp-muted">
+                        Upload a video clip (max 100MB). Recommended: 720p or 1080p MP4.
+                    </p>
+                    <div
+                        className={`relative flex h-40 w-full items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-rp-highlight-med bg-rp-surface/50 transition-colors ${uploading ? 'cursor-wait opacity-60' : 'cursor-pointer hover:border-rp-foam'
+                            }`}
+                        onClick={() => !uploading && videoInputRef.current?.click()}
                     >
-                        Remove video
-                    </button>
-                )}
-            </div>
+                        {uploading ? (
+                            <div className="flex flex-col items-center gap-2 text-rp-iris">
+                                <IconLoader2 size={40} className="animate-spin" />
+                                <span className="text-sm">Uploading video...</span>
+                            </div>
+                        ) : metadata.hero_video_url ? (
+                            <video
+                                src={metadata.hero_video_url}
+                                className="h-full w-full object-cover"
+                                autoPlay
+                                loop
+                                muted
+                            />
+                        ) : (
+                            <div className="flex flex-col items-center gap-2 text-rp-muted">
+                                <IconPhoto size={40} />
+                                <span className="text-sm">Upload hero video (10-15 sec)</span>
+                            </div>
+                        )}
+                        <input
+                            ref={videoInputRef}
+                            type="file"
+                            accept="video/mp4,video/webm,video/ogg,video/quicktime"
+                            className="hidden"
+                            onChange={handleVideoUpload}
+                            disabled={uploading}
+                            aria-label="Upload hero video"
+                        />
+                    </div>
+                    {metadata.hero_video_url && (
+                        <button
+                            type="button"
+                            onClick={() => updateMetadata('hero_video_url', undefined)}
+                            className="text-xs text-red-400 hover:text-red-300 transition-colors"
+                        >
+                            Remove video
+                        </button>
+                    )}
+                </div>
+            </TierGate>
 
             {/* Appearance Prompt */}
             <div className="space-y-2">

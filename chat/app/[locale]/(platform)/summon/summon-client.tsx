@@ -9,6 +9,9 @@ import { IconStars, IconHistory } from "@tabler/icons-react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import dynamic from "next/dynamic"
+import { useSubscription } from "@/hooks/useSubscription"
+import { getFeatureLimit } from "@/src/lib/permissions"
+import { toast } from "sonner"
 
 const ParticleField = dynamic(() => import("@/components/ui/ParticleField").then(mod => mod.ParticleField), {
     ssr: false,
@@ -35,6 +38,7 @@ export default function SummonClient() {
     // In a real app, we'd fetch this from the wallet table via Supabase or a context
     const [userBalance, setUserBalance] = useState(0)
     const router = useRouter()
+    const { subscription } = useSubscription()
 
     useEffect(() => {
         const initUser = async () => {
@@ -88,6 +92,19 @@ export default function SummonClient() {
             return
         }
 
+        // Check persona count limit
+        const supabase = createClient()
+        const { count } = await supabase
+            .from('personas')
+            .select('*', { count: 'exact', head: true })
+            .eq('owner_id', userId)
+
+        const limit = getFeatureLimit(subscription?.tier || 'wanderer', 'soul_count')
+        if (count !== null && count >= limit) {
+            toast.error(`Soul limit reached! You can only own ${limit} souls at your current tier. Please upgrade to call forth more!`)
+            return
+        }
+
         const results = await performPull(poolId, 1)
         if (results) {
             setPullResults(results)
@@ -99,6 +116,19 @@ export default function SummonClient() {
     const handleTenPull = async (poolId: string) => {
         if (!userId) {
             router.push("/login")
+            return
+        }
+
+        // Check persona count limit
+        const supabase = createClient()
+        const { count } = await supabase
+            .from('personas')
+            .select('*', { count: 'exact', head: true })
+            .eq('owner_id', userId)
+
+        const limit = getFeatureLimit(subscription?.tier || 'wanderer', 'soul_count')
+        if (count !== null && count >= limit) {
+            toast.error(`Soul limit reached! You can only own ${limit} souls at your current tier. Please upgrade to call forth more!`)
             return
         }
 
