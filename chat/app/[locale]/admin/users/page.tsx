@@ -47,6 +47,12 @@ export default function UserManagementPage() {
     const [tierFilter, setTierFilter] = useState("all")
     const [page, setPage] = useState(1)
     const [total, setTotal] = useState(0)
+    const [stats, setStats] = useState({
+        total: 0,
+        active: 0,
+        suspended: 0,
+        banned: 0
+    })
     const [limit] = useState(50)
     const [showCreateModal, setShowCreateModal] = useState(false)
     const [selectedUser, setSelectedUser] = useState<string | null>(null)
@@ -83,6 +89,9 @@ export default function UserManagementPage() {
             const data = await response.json()
             setUsers(data.users)
             setTotal(data.total)
+            if (data.stats) {
+                setStats(data.stats)
+            }
         } catch (error) {
             console.error("Error fetching users:", error)
         } finally {
@@ -174,9 +183,10 @@ export default function UserManagementPage() {
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">All Tiers</SelectItem>
-                                    <SelectItem value="free">Free</SelectItem>
-                                    <SelectItem value="pro">Pro</SelectItem>
-                                    <SelectItem value="premium">Premium</SelectItem>
+                                    <SelectItem value="wanderer">Wanderer</SelectItem>
+                                    <SelectItem value="soul_weaver">Soul Weaver</SelectItem>
+                                    <SelectItem value="architect">Architect</SelectItem>
+                                    <SelectItem value="titan">Titan</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -200,24 +210,24 @@ export default function UserManagementPage() {
                     <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
                         <div className="rounded-lg bg-rp-surface p-4">
                             <div className="text-sm text-rp-subtle">Total Users</div>
-                            <div className="text-2xl font-bold text-rp-text">{total}</div>
+                            <div className="text-2xl font-bold text-rp-text">{stats.total}</div>
                         </div>
                         <div className="rounded-lg bg-rp-surface p-4">
                             <div className="text-sm text-rp-subtle">Active</div>
                             <div className="text-2xl font-bold text-green-400">
-                                {users.filter(u => u.status === 'active').length}
+                                {stats.active}
                             </div>
                         </div>
                         <div className="rounded-lg bg-rp-surface p-4">
                             <div className="text-sm text-rp-subtle">Suspended</div>
                             <div className="text-2xl font-bold text-yellow-400">
-                                {users.filter(u => u.status === 'suspended').length}
+                                {stats.suspended}
                             </div>
                         </div>
                         <div className="rounded-lg bg-rp-surface p-4">
                             <div className="text-sm text-rp-subtle">Banned</div>
                             <div className="text-2xl font-bold text-red-400">
-                                {users.filter(u => u.status === 'banned').length}
+                                {stats.banned}
                             </div>
                         </div>
                     </div>

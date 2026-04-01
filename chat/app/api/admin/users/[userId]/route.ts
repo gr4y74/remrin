@@ -76,7 +76,7 @@ export async function GET(
             balance_brain: wallet.data?.balance_brain || 0,
             total_earned: wallet.data?.total_earned || 0,
             total_spent: wallet.data?.total_spent || 0,
-            tier: internalProfile.data?.tier || 'free',
+            tier: internalProfile.data?.tier || 'wanderer',
             status: internalProfile.data?.status || 'active',
             is_admin: internalProfile.data?.is_admin || false,
             persona_count: personaCount || 0

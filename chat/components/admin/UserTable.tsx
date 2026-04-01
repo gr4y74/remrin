@@ -37,16 +37,31 @@ interface UserTableProps {
 
 const getTierColor = (tier: string) => {
     switch (tier.toLowerCase()) {
-        case 'premium':
-            return 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
-        case 'pro':
-            return 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white'
+        case 'titan':
+            return 'bg-gradient-to-r from-rp-iris to-purple-500 text-white'
+        case 'architect':
+            return 'bg-gradient-to-r from-rp-love to-pink-500 text-white'
+        case 'soul_weaver':
+            return 'bg-gradient-to-r from-rp-foam to-rp-iris text-white'
+        case 'wanderer':
+            return 'bg-rp-overlay text-rp-subtle border border-rp-highlight-med'
         default:
             return 'bg-rp-overlay text-rp-subtle'
     }
 }
 
+const getTierLabel = (tier: string) => {
+    switch (tier.toLowerCase()) {
+        case 'soul_weaver': return 'Soul Weaver';
+        case 'architect': return 'Architect';
+        case 'titan': return 'Titan';
+        case 'wanderer': return 'Wanderer';
+        default: return tier.charAt(0).toUpperCase() + tier.slice(1);
+    }
+}
+
 const getStatusColor = (status: string) => {
+// ... (rest of getStatusColor)
     switch (status.toLowerCase()) {
         case 'active':
             return 'bg-green-500/20 text-green-400 border-green-500/30'
@@ -176,7 +191,7 @@ export function UserTable({ users, loading, onViewUser, onRefresh }: UserTablePr
                                 {/* Tier */}
                                 <td className="px-4 py-3">
                                     <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${getTierColor(user.tier)}`}>
-                                        {user.tier.toUpperCase()}
+                                        {getTierLabel(user.tier)}
                                     </span>
                                 </td>
 
@@ -203,6 +218,13 @@ export function UserTable({ users, loading, onViewUser, onRefresh }: UserTablePr
                                 {/* Actions */}
                                 <td className="px-4 py-3">
                                     <div className="flex justify-end gap-2">
+                                        <a
+                                            href={`mailto:${user.email}`}
+                                            className="inline-flex h-9 items-center justify-center rounded-md border border-rp-highlight-med bg-transparent px-3 text-sm font-medium text-rp-text transition-colors hover:bg-rp-overlay"
+                                        >
+                                            <IconMail size={16} className="mr-1" />
+                                            Contact
+                                        </a>
                                         <Button
                                             size="sm"
                                             variant="outline"

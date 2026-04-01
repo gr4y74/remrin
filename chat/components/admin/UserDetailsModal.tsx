@@ -204,6 +204,7 @@ export function UserDetailsModal({ userId, onClose, onUpdate, onDelete }: UserDe
                         <button
                             onClick={onClose}
                             className="text-rp-muted transition-colors hover:text-rp-text"
+                            aria-label="Close"
                         >
                             <IconX size={20} />
                         </button>
@@ -230,6 +231,12 @@ export function UserDetailsModal({ userId, onClose, onUpdate, onDelete }: UserDe
                             <div className="flex items-center gap-2 text-sm text-rp-subtle">
                                 <IconMail size={14} />
                                 {user.email}
+                                <a
+                                    href={`mailto:${user.email}`}
+                                    className="ml-2 text-rp-iris hover:underline text-xs"
+                                >
+                                    Contact
+                                </a>
                             </div>
                             <div className="mt-2 flex gap-2">
                                 <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${user.status === 'active' ? 'bg-green-500/20 text-green-400' :
@@ -239,7 +246,7 @@ export function UserDetailsModal({ userId, onClose, onUpdate, onDelete }: UserDe
                                     {user.status.toUpperCase()}
                                 </span>
                                 <span className="inline-flex rounded-full bg-rp-iris/20 px-2 py-0.5 text-xs font-medium text-rp-iris">
-                                    {user.tier.toUpperCase()}
+                                    {user.tier.replace('_', ' ').toUpperCase()}
                                 </span>
                                 {user.is_admin && (
                                     <span className="inline-flex rounded-full bg-purple-500/20 px-2 py-0.5 text-xs font-medium text-purple-400">
@@ -342,9 +349,10 @@ export function UserDetailsModal({ userId, onClose, onUpdate, onDelete }: UserDe
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="free">Free</SelectItem>
-                                        <SelectItem value="pro">Pro</SelectItem>
-                                        <SelectItem value="premium">Premium</SelectItem>
+                                        <SelectItem value="wanderer">Wanderer</SelectItem>
+                                        <SelectItem value="soul_weaver">Soul Weaver</SelectItem>
+                                        <SelectItem value="architect">Architect</SelectItem>
+                                        <SelectItem value="titan">Titan</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -571,7 +579,7 @@ function CreditModal({ userId, currentAether, currentBrain, onClose, onSuccess }
             <div className="w-full max-w-md rounded-xl bg-rp-surface p-6">
                 <div className="mb-6 flex items-center justify-between">
                     <h3 className="text-lg font-semibold text-rp-text">Manage Credits</h3>
-                    <button onClick={onClose} className="text-rp-muted hover:text-rp-text">
+                    <button onClick={onClose} className="text-rp-muted hover:text-rp-text" aria-label="Close">
                         <IconX size={20} />
                     </button>
                 </div>
