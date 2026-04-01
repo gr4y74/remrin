@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { Upload } from 'lucide-react';
 import Image from 'next/image';
+import { createClient } from '@/lib/supabase/client';
+import { toast } from 'sonner';
 
 interface ProfileBannerProps {
     bannerUrl?: string;
@@ -12,15 +14,50 @@ interface ProfileBannerProps {
 
 export function ProfileBanner({ bannerUrl, isOwnProfile, onBannerUpdate }: ProfileBannerProps) {
     const [isHovering, setIsHovering] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
+    const [localUrl, setLocalUrl] = useState<string | undefined>(bannerUrl);
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        // TODO: Upload to Supabase storage
-        // For now, create object URL
-        const url = URL.createObjectURL(file);
-        onBannerUpdate?.(url);
+        setIsUploading(true);
+        try {
+            const supabase = createClient();
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) throw new Error('Not authenticated');
+
+            const ext = file.name.split('.').pop() || 'jpg';
+            const path = `banners/${user.id}.${ext}`;
+
+            const { error: uploadError } = await supabase.storage
+                .from('profiles')
+                .upload(path, file, { upsert: true, contentType: file.type });
+
+            if (uploadError) throw uploadError;
+
+            const { data: { publicUrl } } = supabase.storage
+                .from('profiles')
+                .getPublicUrl(path);
+
+            // Bust cache by appending timestamp
+            const busstedUrl = `${publicUrl}?t=${Date.now()}`;
+            setLocalUrl(busstedUrl);
+            onBannerUpdate?.(busstedUrl);
+
+            // Save to user profile
+            await supabase
+                .from('user_profiles')
+                .update({ banner_url: publicUrl })
+                .eq('user_id', user.id);
+
+            toast.success('Banner updated!');
+        } catch (err) {
+            console.error('Banner upload failed:', err);
+            toast.error('Failed to upload banner. Please try again.');
+        } finally {
+            setIsUploading(false);
+        }
     };
 
     return (
@@ -29,9 +66,9 @@ export function ProfileBanner({ bannerUrl, isOwnProfile, onBannerUpdate }: Profi
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
         >
-            {bannerUrl && (
+            {localUrl && (
                 <Image
-                    src={bannerUrl}
+                    src={localUrl}
                     alt="Profile banner"
                     fill
                     className="object-cover"
@@ -39,10 +76,10 @@ export function ProfileBanner({ bannerUrl, isOwnProfile, onBannerUpdate }: Profi
                 />
             )}
 
-            {isOwnProfile && isHovering && (
-                <label className="absolute inset-0 flex items-center justify-center bg-black/50 cursor-pointer transition-opacity">
+            {isOwnProfile && isHovering && !isUploading && (
+                <label className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black/50 transition-opacity">
                     <div className="flex flex-col items-center gap-2 text-white">
-                        <Upload className="w-8 h-8" />
+                        <Upload className="h-8 w-8" />
                         <span className="text-sm font-medium">Upload Banner</span>
                     </div>
                     <input
@@ -52,6 +89,15 @@ export function ProfileBanner({ bannerUrl, isOwnProfile, onBannerUpdate }: Profi
                         onChange={handleFileUpload}
                     />
                 </label>
+            )}
+
+            {isUploading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/60">
+                    <div className="flex flex-col items-center gap-2 text-white">
+                        <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-white" />
+                        <span className="text-sm font-medium">Uploading…</span>
+                    </div>
+                </div>
             )}
         </div>
     );

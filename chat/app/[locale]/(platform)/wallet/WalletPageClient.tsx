@@ -29,52 +29,50 @@ interface WalletPageClientProps {
     }>
 }
 
-// Subscription tiers
+// Subscription tiers — must match /pricing page
 const SUBSCRIPTION_TIERS = [
     {
-        id: "basic",
-        name: "Basic",
+        id: "soul-weaver",
+        name: "Soul Weaver",
         price: "$9.99",
         period: "/month",
         icon: IconRocket,
-        color: "from-blue-500 to-cyan-500",
+        color: "from-cyan-500 to-teal-500",
         features: [
-            "500 Aether/month",
-            "Basic model access",
-            "5 Soul slots",
-            "Standard support"
+            "1,000 Aether / month",
+            "5 Custom Soul slots",
+            "Voice Mode & Cloning",
+            "Audio upload support",
         ]
     },
     {
-        id: "pro",
-        name: "Pro",
+        id: "architect",
+        name: "Architect",
         price: "$19.99",
         period: "/month",
         icon: IconCrown,
         color: "from-rp-iris to-rp-rose",
         popular: true,
         features: [
-            "2,000 Aether/month",
-            "All models access",
+            "2,500 Aether / month",
             "Unlimited Soul slots",
+            "Sell in Marketplace",
+            "Creator analytics",
             "Priority support",
-            "Custom API keys"
         ]
     },
     {
-        id: "unlimited",
-        name: "Unlimited",
+        id: "titan",
+        name: "Titan",
         price: "$49.99",
         period: "/month",
         icon: IconDiamond,
         color: "from-amber-500 to-orange-500",
         features: [
-            "Unlimited Aether",
-            "All models + premium",
-            "Unlimited everything",
-            "Dedicated support",
+            "10,000 Aether / month",
+            "Everything in Architect",
             "Early access features",
-            "Creator tools"
+            "Dedicated support",
         ]
     }
 ]
@@ -184,8 +182,8 @@ export function WalletPageClient({
                                                     </li>
                                                 ))}
                                             </ul>
-                                            <Link
-                                                href="/pricing"
+                                <Link
+                                                href={`/pricing?tier=${tier.id}`}
                                                 className={cn(
                                                     "block w-full text-center py-2.5 rounded-xl font-medium transition-all",
                                                     tier.popular
@@ -210,15 +208,19 @@ export function WalletPageClient({
                                 </div>
                             </div>
                             <div className="bg-rp-surface border-rp-muted/20 rounded-2xl border p-2">
-                                <TransactionHistory
-                                    transactions={transactions?.map(t => ({
-                                        id: t.id,
-                                        type: t.type as any,
-                                        amount: t.amount,
-                                        description: t.description,
-                                        created_at: t.created_at
-                                    })) || []}
-                                />
+                                <div className="flex flex-col items-center gap-3 py-12 text-center">
+                                    <IconHistory className="text-rp-muted/40" size={40} />
+                                    <p className="font-medium text-rp-subtle">No transactions yet</p>
+                                    <p className="max-w-xs text-sm text-rp-muted">
+                                        Aether purchases and credit usage will appear here once transaction logging is live.
+                                    </p>
+                                    <Link
+                                        href="/pricing"
+                                        className="mt-2 rounded-lg bg-rp-iris/10 px-4 py-2 text-sm font-medium text-rp-iris transition-colors hover:bg-rp-iris/20"
+                                    >
+                                        Get Aether Credits
+                                    </Link>
+                                </div>
                             </div>
                         </section>
 

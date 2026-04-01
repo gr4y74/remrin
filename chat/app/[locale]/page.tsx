@@ -118,15 +118,14 @@ export default function HomePage() {
           .limit(50)
 
         if (allPersonas && allPersonas.length > 0) {
-          // Assign random rarities for demo
           const withRarity = allPersonas.map((p, i) => ({
             ...p,
             rarity: i === 0 ? "legendary" as const :
               i < 3 ? "epic" as const :
                 i < 8 ? "rare" as const :
                   "common" as const,
-            message_count: Math.floor(Math.random() * 50000),
-            follower_count: Math.floor(Math.random() * 10000)
+            message_count: undefined,
+            follower_count: undefined
           }))
 
           setPersonas(withRarity)
@@ -338,7 +337,7 @@ export default function HomePage() {
             <IconSparkles size={24} className="text-purple-400 hidden md:inline" />
           </h2>
           <Link
-            href="#explore-souls"
+            href="/summon"
             className="flex items-center gap-1 text-sm text-purple-400 transition-colors hover:text-purple-300"
           >
             View all

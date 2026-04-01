@@ -1,5 +1,6 @@
 "use client"
 
+import { notFound } from "next/navigation"
 import { FlipCard } from "@/components/discovery/FlipCard"
 import { FlipCardV2 } from "@/components/discovery/FlipCardV2"
 
@@ -56,6 +57,7 @@ const samplePersonas = [
 ]
 
 export default function CardBackTestPage() {
+    if (process.env.NODE_ENV === "production") notFound()
     return (
         <div className="min-h-screen bg-rp-base py-12">
             <div className="container mx-auto px-4">

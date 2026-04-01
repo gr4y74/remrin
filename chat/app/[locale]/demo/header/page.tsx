@@ -1,5 +1,6 @@
 "use client"
 
+import { notFound } from "next/navigation"
 import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
 import Link from "next/link"
@@ -34,6 +35,8 @@ const CATEGORIES = [
 ]
 
 export default function HeaderDemoPage() {
+    if (process.env.NODE_ENV === "production") notFound()
+
     const [isCollapsed, setIsCollapsed] = useState(false)
     const [isHovered, setIsHovered] = useState(false)
     const lastScrollY = useRef(0)

@@ -74,10 +74,20 @@ export function SidebarUserSection({ isExpanded, onProfileClick, initialUser }: 
     // Check if user is logged in (use Supabase user as source of truth)
     const isLoggedIn = !!user
 
-    // For now, we'll assume all users can see the subscribe CTA
-    // This can be connected to a subscription status later
-    const isSubscribed = false // TODO: Connect to actual subscription status
-    const discountPercent = 50 // Promotional discount
+    // A user is considered subscribed if they are on any paid tier
+    const isSubscribed = !!(
+        profile &&
+        (profile as any).subscription_tier &&
+        (profile as any).subscription_tier !== "wanderer"
+    )
+
+    const subscriptionTierName = (() => {
+        const tier = (profile as any)?.subscription_tier
+        if (tier === "soul_weaver") return "Soul Weaver"
+        if (tier === "architect") return "Architect"
+        if (tier === "titan") return "Titan"
+        return "Pro Member"
+    })()
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -272,18 +282,11 @@ export function SidebarUserSection({ isExpanded, onProfileClick, initialUser }: 
                         <IconCrown size={18} className="text-amber-100" />
                     </div>
 
-                    {/* Subscribe Text + Discount Badge - only when expanded */}
+                    {/* Subscribe Text - only when expanded */}
                     {isExpanded && (
-                        <div className="flex flex-1 items-center justify-between gap-2">
-                            <span className="font-tiempos-text text-sm font-semibold text-white whitespace-nowrap">
-                                Subscribe
-                            </span>
-                            {discountPercent > 0 && (
-                                <span className="rounded-full bg-rp-love px-1.5 py-0.5 text-[10px] font-bold text-white">
-                                    -{discountPercent}%
-                                </span>
-                            )}
-                        </div>
+                        <span className="font-tiempos-text text-sm font-semibold text-white whitespace-nowrap">
+                            Upgrade Now
+                        </span>
                     )}
                 </Link>
             )}
@@ -308,7 +311,7 @@ export function SidebarUserSection({ isExpanded, onProfileClick, initialUser }: 
                         }}
                         transition={{ duration: 0.2 }}
                     >
-                        Pro Member
+                        {subscriptionTierName}
                     </motion.span>
                 </div>
             )}
