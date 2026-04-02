@@ -159,19 +159,6 @@ export async function PATCH(
             }
         }
 
-        // Update status in profiles
-        if (status !== undefined) {
-            const { error: statusError } = await supabaseAdmin
-                .from('profiles')
-                .update({ status })
-                .eq('user_id', userId)
-
-            if (statusError) {
-                console.error('Status update error:', statusError)
-                return NextResponse.json({ error: 'Failed to update status' }, { status: 500 })
-            }
-        }
-
         // Update tier in wallets
         if (tier !== undefined) {
             const { error: tierError } = await supabaseAdmin
