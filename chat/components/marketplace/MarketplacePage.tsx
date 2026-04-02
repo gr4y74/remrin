@@ -237,27 +237,46 @@ export function MarketplacePage({
                         </div>
                     ) : (
                         /* Empty State */
-                        <div className="flex flex-col items-center justify-center py-20">
-                            <div className="bg-rp-surface rounded-full p-6">
-                                <IconMoodEmpty className="text-rp-text/30 size-16" />
+                        <div className="flex flex-col items-center justify-center py-20 px-6">
+                            <div className="bg-rp-surface rounded-3xl p-8 mb-6 border border-rp-muted/20 relative">
+                                <div className="absolute inset-0 bg-rp-gold/10 rounded-full blur-2xl animate-pulse" />
+                                <IconMoodEmpty className="text-rp-gold/40 relative size-20" />
                             </div>
-                            <h3 className={`${TYPOGRAPHY.heading.h3} text-rp-text`}>
-                                No souls found
+                            <h3 className={`${TYPOGRAPHY.heading.h2} text-rp-text mb-2`}>
+                                {searchQuery ? "No souls found" : "The bazaar is quiet"}
                             </h3>
-                            <p className="text-rp-subtle mt-2 text-center">
+                            <p className="text-rp-subtle text-lg max-w-md text-center mb-8">
                                 {searchQuery
-                                    ? `No results for "${searchQuery}". Try a different search term.`
-                                    : "The marketplace is empty right now. Check back later!"}
+                                    ? `We couldn't find any souls matching "${searchQuery}". Try broading your search or browsing categories.`
+                                    : "No souls are currently listed for sale. Be the first to bring a new companion into the realm!"}
                             </p>
-                            {searchQuery && (
-                                <Button
-                                    variant="outline"
-                                    onClick={() => setSearchQuery("")}
-                                    className="border-rp-muted/20 text-rp-text hover:bg-rp-surface mt-4"
-                                >
-                                    Clear search
-                                </Button>
-                            )}
+                            <div className="flex flex-col sm:flex-row gap-4">
+                                {searchQuery ? (
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => setSearchQuery("")}
+                                        className="border-rp-muted/20 text-rp-text hover:bg-rp-surface px-8 h-12 rounded-2xl"
+                                    >
+                                        Clear Search
+                                    </Button>
+                                ) : (
+                                    <>
+                                        <Button
+                                            onClick={() => window.location.href = '/studio'}
+                                            className="bg-rp-gold hover:bg-rp-gold/80 text-rp-base px-8 h-12 rounded-2xl font-bold shadow-lg shadow-rp-gold/20"
+                                        >
+                                            List a Soul
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => window.location.href = '/summon'}
+                                            className="border-rp-muted/20 text-rp-text hover:bg-rp-surface px-8 h-12 rounded-2xl"
+                                        >
+                                            Summon Souls
+                                        </Button>
+                                    </>
+                                )}
+                            </div>
                         </div>
                     )}
                 </div>

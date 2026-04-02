@@ -26,7 +26,7 @@ export const useNotifications = (userId: string | undefined, type: string) => {
                 // Using a filter if possible, though Realtime filters are limited
                 // filter: tableName === 'system_notifications' ? `user_id=eq.${userId}` : undefined
             }, (payload) => {
-                console.log('Realtime update received:', payload)
+                // Realtime notification update
                 fetchNotifications()
             })
             .subscribe()
@@ -63,9 +63,9 @@ export const useNotifications = (userId: string | undefined, type: string) => {
         const { data, error } = await query
 
         if (error) {
-            console.error(`Error fetching ${type} notifications:`, error)
+            
         } else {
-            console.log(`Fetched ${data?.length || 0} ${type} notifications`)
+            // Notifications fetched successfully
             setNotifications(data || [])
         }
         setLoading(false)

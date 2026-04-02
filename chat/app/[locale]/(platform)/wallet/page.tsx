@@ -30,8 +30,13 @@ export default async function WalletPage() {
         .eq("user_id", user.id)
         .single()
 
-    // Fetch transactions (TODO: Implement transaction logging)
-    const transactions: any[] = []
+    // Fetch transactions
+    const { data: transactions } = await supabase
+        .from("wallet_transactions")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(20)
 
     // Fetch knowledge items (formerly in Vault)
     const { data: knowledgeItems } = await supabase
@@ -44,7 +49,7 @@ export default async function WalletPage() {
         <WalletPageClient
             balanceAether={wallet?.balance_aether ?? 0}
             balanceBrain={wallet?.balance_brain ?? 0}
-            transactions={transactions}
+            transactions={transactions ?? []}
             knowledgeItems={knowledgeItems ?? []}
         />
     )

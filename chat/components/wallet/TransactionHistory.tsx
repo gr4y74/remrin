@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button"
 
 export interface Transaction {
     id: string
-    type: "purchase" | "sale" | "topup" | "gift" | "refund"
+    type: "purchase" | "sale" | "topup" | "gift" | "refund" | "usage" | "grant"
     amount: number
     description: string
     created_at: string
@@ -32,7 +32,9 @@ const TRANSACTION_ICONS = {
     sale: { icon: IconArrowDown, color: "text-rp-foam", bgColor: "bg-rp-foam/10" },
     topup: { icon: IconWallet, color: "text-rp-gold", bgColor: "bg-rp-gold/10" },
     gift: { icon: IconGift, color: "text-rp-iris", bgColor: "bg-rp-iris/10" },
-    refund: { icon: IconArrowUp, color: "text-rp-pine", bgColor: "bg-rp-pine/10" }
+    refund: { icon: IconArrowUp, color: "text-rp-pine", bgColor: "bg-rp-pine/10" },
+    usage: { icon: IconArrowUp, color: "text-rp-rose", bgColor: "bg-rp-rose/10" },
+    grant: { icon: IconGift, color: "text-rp-iris", bgColor: "bg-rp-iris/10" }
 }
 
 function formatDate(dateString: string): string {

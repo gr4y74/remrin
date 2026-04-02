@@ -1,5 +1,6 @@
 'use client';
 
+import { notFound } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { ChatRoomWindow } from '@/components/aol-chat/ChatRoomWindow';
@@ -13,6 +14,7 @@ import { useBuddyList } from '@/hooks/useBuddyList';
 import { IconBrandWindows, IconMenu2, IconUser } from '@tabler/icons-react';
 
 export default function AolChatPage() {
+    if (process.env.NODE_ENV === 'production') notFound();
     const [isRoomOpen, setIsRoomOpen] = useState(false);
     const [currentRoomName, setCurrentRoomName] = useState("The Lounge");
     const [isBuddyListOpen, setIsBuddyListOpen] = useState(true);

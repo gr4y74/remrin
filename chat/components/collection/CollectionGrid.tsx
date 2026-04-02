@@ -198,13 +198,37 @@ export function CollectionGrid({
                     ))}
                 </div>
             ) : filteredSouls.length === 0 ? (
-                <div className="border-rp-muted/20 bg-rp-surface flex min-h-[300px] flex-col items-center justify-center rounded-xl border border-dashed p-8 text-center">
-                    <p className="text-rp-text/60 text-lg font-medium">No souls found</p>
-                    <p className="text-rp-muted mt-1 text-sm">
+                <div className="flex min-h-[400px] flex-col items-center justify-center rounded-3xl border border-dashed border-white/10 bg-white/[0.02] p-12 text-center backdrop-blur-sm">
+                    <div className="relative mb-6">
+                        <div className="absolute inset-0 animate-pulse rounded-full bg-rp-iris/20 blur-2xl" />
+                        <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl border border-white/10 bg-rp-surface shadow-2xl">
+                            <span className="text-4xl text-rp-muted">🎴</span>
+                        </div>
+                    </div>
+                    <h3 className="mb-2 text-2xl font-bold text-white">Your Grimoire is empty</h3>
+                    <p className="mb-8 max-w-sm text-white/50">
                         {searchTerm
-                            ? "Try a different search term"
-                            : "Pull from the gacha to add souls to your collection!"}
+                            ? `No souls matching "${searchTerm}" found in your collection.`
+                            : "You haven't summoned any souls yet. Begin your journey by summoning your first companion from the portal."}
                     </p>
+                    <div className="flex gap-4">
+                        {searchTerm ? (
+                            <Button
+                                variant="outline"
+                                onClick={() => setSearchTerm("")}
+                                className="border-white/10 bg-white/5 text-white hover:bg-white/10"
+                            >
+                                Clear search
+                            </Button>
+                        ) : (
+                            <Button
+                                onClick={() => window.location.href = '/summon'}
+                                className="bg-rp-iris px-8 py-6 text-lg font-bold text-white shadow-lg shadow-rp-iris/20 transition-all hover:scale-105 hover:bg-rp-love active:scale-95"
+                            >
+                                Summon Souls
+                            </Button>
+                        )}
+                    </div>
                 </div>
             ) : (
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">

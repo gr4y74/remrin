@@ -207,21 +207,7 @@ export function WalletPageClient({
                                     <h2 className="text-xl font-bold text-rp-text">Transaction History</h2>
                                 </div>
                             </div>
-                            <div className="bg-rp-surface border-rp-muted/20 rounded-2xl border p-2">
-                                <div className="flex flex-col items-center gap-3 py-12 text-center">
-                                    <IconHistory className="text-rp-muted/40" size={40} />
-                                    <p className="font-medium text-rp-subtle">No transactions yet</p>
-                                    <p className="max-w-xs text-sm text-rp-muted">
-                                        Aether purchases and credit usage will appear here once transaction logging is live.
-                                    </p>
-                                    <Link
-                                        href="/pricing"
-                                        className="mt-2 rounded-lg bg-rp-iris/10 px-4 py-2 text-sm font-medium text-rp-iris transition-colors hover:bg-rp-iris/20"
-                                    >
-                                        Get Aether Credits
-                                    </Link>
-                                </div>
-                            </div>
+                            <TransactionHistory transactions={transactions} />
                         </section>
 
                         {/* Knowledge Section */}

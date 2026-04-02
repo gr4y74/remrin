@@ -78,7 +78,21 @@ export async function POST(req: Request) {
                                 : { balance_aether: currentBalance + amount }
 
                             await supabase.from('wallets').update(updateData).eq('user_id', userId)
-                            console.log(`Added ${amount} ${currency} to user ${userId}`)
+
+                            // 3. Log the transaction
+                            await supabase.from('wallet_transactions').insert({
+                                user_id: userId,
+                                amount: amount,
+                                currency: currency,
+                                type: 'purchase',
+                                description: `Purchase of ${amount} ${currency.charAt(0).toUpperCase() + currency.slice(1)} credits`,
+                                metadata: {
+                                    stripe_checkout_id: session.id,
+                                    stripe_payment_intent: session.payment_intent as string
+                                }
+                            })
+
+                            console.log(`Added ${amount} ${currency} to user ${userId} and logged transaction`)
                         }
                     }
                 }

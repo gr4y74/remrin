@@ -1,5 +1,6 @@
 'use client';
 
+import { notFound } from 'next/navigation';
 import React, { useState, useEffect, useMemo } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { BuddyListWindow } from '@/components/aol-chat/BuddyListWindow';
@@ -23,6 +24,7 @@ import '@/components/aol-chat/styles/yahoo-theme.css';
 type MobileView = 'buddies' | 'chat' | 'discover' | 'profile';
 
 export default function MessengerStandalonePage() {
+    if (process.env.NODE_ENV === 'production') notFound();
     const [currentUser, setCurrentUser] = useState<any>(null);
     const [openIMs, setOpenIMs] = useState<{ userId: string; username: string }[]>([]);
     const [mobileView, setMobileView] = useState<MobileView>('buddies');

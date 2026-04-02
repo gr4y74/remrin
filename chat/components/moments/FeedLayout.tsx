@@ -152,10 +152,31 @@ export function FeedLayout({
 
     if (!currentMoment) {
         return (
-            <div className="flex flex-col items-center justify-center h-[80vh] text-center">
-                <div className="text-6xl mb-4">🎬</div>
-                <p className="text-rp-subtle text-xl font-medium">No moments to display</p>
-                <p className="text-rp-muted mt-2">Check back later for new content</p>
+            <div className="flex flex-col items-center justify-center min-h-[70vh] text-center px-4">
+                <div className="relative mb-8">
+                    <div className="absolute inset-0 bg-rp-iris/20 rounded-full blur-3xl animate-pulse" />
+                    <div className="relative bg-rp-surface rounded-3xl p-8 border border-rp-muted/20 shadow-2xl">
+                        <span className="text-7xl">🎬</span>
+                    </div>
+                </div>
+                <h3 className="text-rp-text text-3xl font-bold mb-3">The realm is silent...</h3>
+                <p className="text-rp-subtle text-lg max-w-md mb-8">
+                    No soul moments have been shared yet. Be the first to breathe life into this space!
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                    <button
+                        onClick={() => window.location.href = '/studio'}
+                        className="bg-rp-iris hover:bg-rp-love text-white px-8 py-3 rounded-2xl font-bold transition-all shadow-lg hover:shadow-rp-iris/30 hover:-translate-y-0.5"
+                    >
+                        Create a Moment
+                    </button>
+                    <button
+                        onClick={() => window.location.href = '/summon'}
+                        className="bg-rp-overlay hover:bg-rp-highlight-low text-rp-text px-8 py-3 rounded-2xl font-bold transition-all"
+                    >
+                        Summon Souls
+                    </button>
+                </div>
             </div>
         )
     }
@@ -172,37 +193,39 @@ export function FeedLayout({
                     "flex flex-col items-center gap-4 shrink-0 transition-opacity duration-300",
                     isUIVisible ? "opacity-100" : "opacity-0 pointer-events-none"
                 )}>
-                    {/* Up Arrow (Previous) */}
-                    {currentIndex > 0 && (
-                        <button
-                            onClick={goToPrevious}
-                            className={cn(
-                                "rounded-full bg-rp-surface/80 p-3 backdrop-blur-md",
-                                "hover:bg-rp-overlay transition-all duration-200 hover:scale-110",
-                                "border border-rp-muted/20 shadow-lg"
-                            )}
-                            aria-label="Previous moment"
-                        >
-                            <ChevronUp className="h-6 w-6 text-rp-text" />
-                        </button>
-                    )}
-
-                    {/* Down Arrow (Next) */}
-                    {(currentIndex < moments.length - 1 || hasMore) && (
-                        <button
-                            onClick={goToNext}
-                            disabled={isLoading}
-                            className={cn(
-                                "rounded-full bg-rp-surface/80 p-3 backdrop-blur-md",
-                                "hover:bg-rp-overlay transition-all duration-200 hover:scale-110",
-                                "border border-rp-muted/20 shadow-lg",
-                                isLoading && "opacity-50 cursor-not-allowed"
-                            )}
-                            aria-label="Next moment"
-                        >
-                            <ChevronDown className="h-6 w-6 text-rp-text" />
-                        </button>
-                    )}
+                        {/* Up Arrow (Previous) */}
+                        {currentIndex > 0 && (
+                            <button
+                                onClick={goToPrevious}
+                                className={cn(
+                                    "rounded-full bg-rp-surface/80 p-3 backdrop-blur-md",
+                                    "hover:bg-rp-overlay transition-all duration-200 hover:scale-110",
+                                    "border border-rp-muted/20 shadow-lg"
+                                )}
+                                aria-label="Previous moment"
+                                title="Previous Moment"
+                            >
+                                <ChevronUp className="h-6 w-6 text-rp-text" />
+                            </button>
+                        )}
+    
+                        {/* Down Arrow (Next) */}
+                        {(currentIndex < moments.length - 1 || hasMore) && (
+                            <button
+                                onClick={goToNext}
+                                disabled={isLoading}
+                                className={cn(
+                                    "rounded-full bg-rp-surface/80 p-3 backdrop-blur-md",
+                                    "hover:bg-rp-overlay transition-all duration-200 hover:scale-110",
+                                    "border border-rp-muted/20 shadow-lg",
+                                    isLoading && "opacity-50 cursor-not-allowed"
+                                )}
+                                aria-label="Next moment"
+                                title="Next Moment"
+                            >
+                                <ChevronDown className="h-6 w-6 text-rp-text" />
+                            </button>
+                        )}
                 </div>
 
                 {/* Video Card - Centered */}

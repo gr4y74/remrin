@@ -141,7 +141,7 @@ export function useAudioVideoSync(): UseAudioVideoSyncReturn {
         }
         syncManager.handleVideoLoop(loopCallback)
 
-        console.log('[useAudioVideoSync] Sync initiated')
+        // Sync initiated
     }, [])
 
     /**
@@ -162,7 +162,7 @@ export function useAudioVideoSync(): UseAudioVideoSyncReturn {
             )
         }
 
-        console.log('[useAudioVideoSync] Sync reset')
+        // Sync reset
     }, [])
 
     /**

@@ -44,12 +44,35 @@ export async function POST(req: NextRequest) {
         )
 
         if (!response.ok) {
-            const errorText = await response.text()
-            console.error("ElevenLabs API Error:", errorText)
+            const errorData = await response.json().catch(() => ({}));
+            const errorMessage = errorData?.detail?.message || "Failed to generate speech";
+            const errorCode = errorData?.detail?.status || "unknown";
+
+            console.error("ElevenLabs API Error:", {
+                status: response.status,
+                message: errorMessage,
+                code: errorCode
+            });
+
+            // Provide more specific feedback for common errors
+            if (response.status === 401) {
+                return NextResponse.json(
+                    { error: "Invalid ElevenLabs API key. Please check your server configuration." },
+                    { status: 401 }
+                );
+            }
+
+            if (response.status === 429) {
+                return NextResponse.json(
+                    { error: "ElevenLabs quota exceeded or rate limited. Please try again later." },
+                    { status: 429 }
+                );
+            }
+
             return NextResponse.json(
-                { error: "Failed to generate speech" },
+                { error: errorMessage },
                 { status: response.status }
-            )
+            );
         }
 
         const audioBuffer = await response.arrayBuffer()

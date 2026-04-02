@@ -24,7 +24,10 @@ export async function POST() {
             if (cookie.name.includes('sb-') ||
                 cookie.name.includes('supabase') ||
                 cookie.name.includes('auth-token')) {
-                // Set cookie to expire immediately
+                // Delete from current request context
+                cookieStore.delete(cookie.name)
+
+                // Set cookie to expire immediately in the response
                 response.cookies.set(cookie.name, '', {
                     path: '/',
                     expires: new Date(0),
