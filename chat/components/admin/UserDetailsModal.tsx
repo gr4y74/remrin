@@ -115,14 +115,21 @@ export function UserDetailsModal({ userId, onClose, onUpdate, onDelete }: UserDe
 
         try {
             const { data: { session } } = await supabase.auth.getSession()
-            if (!session) return
+            const adminPassword = sessionStorage.getItem("admin_password")
+            
+            const headers: Record<string, string> = {
+                "Content-Type": "application/json"
+            }
+            if (session?.access_token) {
+                headers["Authorization"] = `Bearer ${session.access_token}`
+            }
+            if (adminPassword) {
+                headers["x-admin-password"] = adminPassword
+            }
 
             const response = await fetch(`/api/admin/users/${userId}`, {
                 method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${session.access_token}`
-                },
+                headers,
                 body: JSON.stringify({
                     username,
                     display_name: displayName,
@@ -156,13 +163,19 @@ export function UserDetailsModal({ userId, onClose, onUpdate, onDelete }: UserDe
 
         try {
             const { data: { session } } = await supabase.auth.getSession()
-            if (!session) return
+            const adminPassword = sessionStorage.getItem("admin_password")
+
+            const headers: Record<string, string> = {}
+            if (session?.access_token) {
+                headers["Authorization"] = `Bearer ${session.access_token}`
+            }
+            if (adminPassword) {
+                headers["x-admin-password"] = adminPassword
+            }
 
             const response = await fetch(`/api/admin/users/${userId}`, {
                 method: "DELETE",
-                headers: {
-                    Authorization: `Bearer ${session.access_token}`
-                }
+                headers
             })
 
             if (!response.ok) {
@@ -546,14 +559,21 @@ function CreditModal({ userId, currentAether, currentBrain, onClose, onSuccess }
             }
 
             const { data: { session } } = await supabase.auth.getSession()
-            if (!session) return
+            const adminPassword = sessionStorage.getItem("admin_password")
+
+            const headers: Record<string, string> = {
+                "Content-Type": "application/json"
+            }
+            if (session?.access_token) {
+                headers["Authorization"] = `Bearer ${session.access_token}`
+            }
+            if (adminPassword) {
+                headers["x-admin-password"] = adminPassword
+            }
 
             const response = await fetch(`/api/admin/users/${userId}/credits`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${session.access_token}`
-                },
+                headers,
                 body: JSON.stringify({
                     type,
                     amount: parseInt(amount) || 0,

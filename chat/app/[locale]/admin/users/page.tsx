@@ -40,8 +40,9 @@ interface User {
 }
 
 export default function UserManagementPage() {
-    const [users, setUsers] = useState<User[]>([])
+    const [users, setUsers] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
     const [search, setSearch] = useState("")
     const [statusFilter, setStatusFilter] = useState("all")
     const [tierFilter, setTierFilter] = useState("all")
@@ -61,12 +62,10 @@ export default function UserManagementPage() {
 
     const fetchUsers = async () => {
         setLoading(true)
+        setError(null)
         try {
             const { data: { session } } = await supabase.auth.getSession()
-            if (!session) {
-                console.error("No session found")
-                return
-            }
+            const adminPassword = sessionStorage.getItem("admin_password")
 
             const params = new URLSearchParams({
                 page: page.toString(),
@@ -76,24 +75,35 @@ export default function UserManagementPage() {
                 ...(tierFilter !== "all" && { tier: tierFilter })
             })
 
+            const headers: Record<string, string> = {}
+            if (session?.access_token) {
+                headers['Authorization'] = `Bearer ${session.access_token}`
+            }
+            if (adminPassword) {
+                headers['x-admin-password'] = adminPassword
+            }
+
             const response = await fetch(`/api/admin/users?${params}`, {
-                headers: {
-                    Authorization: `Bearer ${session.access_token}`
-                }
+                headers
             })
 
-            if (!response.ok) {
-                throw new Error("Failed to fetch users")
-            }
-
             const data = await response.json()
-            setUsers(data.users)
-            setTotal(data.total)
-            if (data.stats) {
-                setStats(data.stats)
+
+            if (response.ok) {
+                setUsers(data.users || [])
+                setTotal(data.total || 0)
+                if (data.stats) {
+                    setStats(data.stats)
+                }
+            } else {
+                console.error("Failed to fetch users:", data.error)
+                setError(data.error || "Failed to load users")
+                setUsers([])
             }
-        } catch (error) {
-            console.error("Error fetching users:", error)
+        } catch (err) {
+            console.error("Error loading users:", err)
+            setError("A network error occurred while loading users")
+            setUsers([])
         } finally {
             setLoading(false)
         }

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garant:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #040410; --surface: #080820; --surface2: #0c0c2a;
+    --border: rgba(120,180,255,0.12); --border-bright: rgba(120,180,255,0.3);
+    --text-primary: #e4e4f5; --text-secondary: #7878a0; --text-dim: #4a4a70;
+    --font-display: 'Cormorant Garant', serif; --font-body: 'DM Sans', sans-serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text-primary); font-family:var(--font-body); min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0; background: radial-gradient(ellipse 80% 50% at 20% 20%, rgba(253,116,255,0.04) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 80% 80%, rgba(254,168,6,0.03) 0%, transparent 60%); pointer-events:none; z-index:0; }
+  .stars { position:fixed; inset:0; z-index:0; pointer-events:none; }
+  .star { position:absolute; border-radius:50%; background:white; animation:twinkle var(--d,4s) ease-in-out infinite; animation-delay:var(--delay,0s); opacity:0; }
+  @keyframes twinkle { 0%,100%{opacity:0} 50%{opacity:var(--op,0.4)} }
+
+  main { position:relative; z-index:1; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding:60px 24px 80px; }
+
+  .logo-area { text-align:center; margin-bottom:40px; animation:fadeUp 0.8s ease both; }
+  .logo-img-wrap { width:90px; height:90px; margin:0 auto 18px; filter:drop-shadow(0 0 24px rgba(253,116,255,0.25)) drop-shadow(0 0 8px rgba(254,168,6,0.15)); animation:logoGlow 4s ease-in-out infinite; }
+  .logo-img-wrap svg { width:100%; height:100%; display:block; }
+  @keyframes logoGlow { 0%,100%{filter:drop-shadow(0 0 24px rgba(253,116,255,0.25)) drop-shadow(0 0 8px rgba(254,168,6,0.15))} 50%{filter:drop-shadow(0 0 36px rgba(253,116,255,0.4)) drop-shadow(0 0 16px rgba(254,168,6,0.25))} }
+  .logo-title { font-family:var(--font-display); font-size:52px; font-weight:300; letter-spacing:0.12em; line-height:1; }
+  .logo-title span { background:linear-gradient(135deg,#fd74ff,#fea806); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; font-style:italic; }
+  .logo-sub { font-size:11px; letter-spacing:0.35em; text-transform:uppercase; color:var(--text-dim); margin-top:8px; }
+
+  .alpha-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(253,116,255,0.06); border:1px solid rgba(253,116,255,0.2); border-radius:100px; padding:6px 16px; font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:#fd74ff; margin-bottom:40px; animation:fadeUp 0.8s ease 0.1s both; }
+  .alpha-badge::before { content:''; width:6px; height:6px; border-radius:50%; background:#fd74ff; animation:pulse-dot 2s ease-in-out infinite; }
+  @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
+
+  .welcome-card { max-width:720px; width:100%; background:var(--surface); border:1px solid var(--border); border-radius:20px; overflow:hidden; animation:fadeUp 0.9s ease 0.2s both; }
+  .card-header { padding:32px 40px 24px; border-bottom:1px solid var(--border); background:linear-gradient(135deg, rgba(253,116,255,0.03), transparent); }
+  .card-header h2 { font-family:var(--font-display); font-size:28px; font-weight:400; margin-bottom:8px; }
+  .card-header p { font-size:14px; color:var(--text-secondary); line-height:1.6; }
+  .card-body { padding:32px 40px; }
+
+  .feature-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:28px; }
+  .feature-item { background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:16px 18px; transition:border-color 0.3s; }
+  .feature-item:hover { border-color:rgba(253,116,255,0.25); }
+  .feature-icon { font-size:18px; margin-bottom:8px; }
+  .feature-name { font-family:var(--font-display); font-size:16px; font-weight:500; background:linear-gradient(135deg,#fd74ff,#fea806); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:4px; }
+  .feature-desc { font-size:12px; color:var(--text-secondary); line-height:1.5; }
+
+  .notice-box { background:rgba(253,116,255,0.03); border:1px solid rgba(253,116,255,0.1); border-left:3px solid #fd74ff; border-radius:8px; padding:16px 20px; margin-bottom:28px; }
+  .notice-box p { font-size:13px; color:var(--text-secondary); line-height:1.7; }
+  .notice-box strong { color:#fd74ff; }
+
+  /* THE KEY INSTRUCTION BOX */
+  .keyword-hint { display:flex; align-items:flex-start; gap:14px; background:rgba(254,168,6,0.04); border:1px solid rgba(254,168,6,0.18); border-radius:10px; padding:16px 20px; margin-bottom:28px; }
+  .keyword-hint-icon { font-size:22px; flex-shrink:0; margin-top:2px; }
+  .keyword-hint-text { font-size:13px; color:var(--text-secondary); line-height:1.7; }
+  .keyword-hint-text strong { color:#fea806; }
+  .keyword-pill { display:inline-block; background:rgba(254,168,6,0.1); border:1px solid rgba(254,168,6,0.3); border-radius:6px; padding:2px 10px; font-family:monospace; font-size:12px; color:#fea806; margin:0 2px; }
+
+  .begin-btn { width:100%; display:flex; align-items:center; justify-content:center; gap:12px; background:linear-gradient(135deg, rgba(253,116,255,0.1), rgba(254,168,6,0.08)); border:1px solid rgba(253,116,255,0.3); border-radius:12px; padding:18px 32px; color:var(--text-primary); font-family:var(--font-display); font-size:20px; font-weight:400; letter-spacing:0.05em; cursor:pointer; transition:all 0.3s; text-decoration:none; position:relative; overflow:hidden; }
+  .begin-btn::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg, rgba(253,116,255,0.08), rgba(254,168,6,0.05)); opacity:0; transition:opacity 0.3s; }
+  .begin-btn:hover::before { opacity:1; }
+  .begin-btn:hover { border-color:rgba(253,116,255,0.5); transform:translateY(-1px); }
+  .begin-btn-sub { display:block; font-family:var(--font-body); font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:var(--text-dim); margin-top:4px; }
+  .btn-arrow { font-size:18px; opacity:0.6; }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+</style>
+</head>
+<body>
+
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="rGrad1" x1="272" y1="707" x2="794" y2="233" gradientUnits="userSpaceOnUse">
+      <stop offset="0" style="stop-color:#fd74ff;stop-opacity:1"/>
+      <stop offset="0.82" style="stop-color:#fea806;stop-opacity:0.87"/>
+      <stop offset="1" style="stop-color:#fd81ff;stop-opacity:0"/>
+    </linearGradient>
+    <linearGradient id="rGrad2" x1="272" y1="707" x2="794" y2="233" gradientUnits="userSpaceOnUse">
+      <stop offset="0" style="stop-color:#fd74ff;stop-opacity:1"/>
+      <stop offset="0.9999" style="stop-color:#fea806;stop-opacity:0.87"/>
+      <stop offset="1" style="stop-color:#fd81ff;stop-opacity:0"/>
+    </linearGradient>
+    <symbol id="remrin-r" viewBox="0 0 1024 1024">
+      <path fill="url(#rGrad1)" stroke="#545454" stroke-width="7.9" d="m 255.70541,210.92749 h 170.2152 a 74.045434,74.045434 44.868589 0 1 74.04465,73.70578 l 2.01863,440.06177 -117.27754,0.56383 A 127.50244,127.50244 44.796716 0 1 256.59127,598.04967 Z"/>
+      <path fill="url(#rGrad2)" stroke="#545454" stroke-width="7.9" d="m 595.54615,210.92749 h 170.39172 v 171.57008 a 73.530035,73.530035 135 0 1 -73.53004,73.53004 H 525.55121 V 280.92243 a 69.994937,69.994937 135 0 1 69.99494,-69.99494 z"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="stars" id="stars"></div>
+
+<main>
+  <div class="logo-area">
+    <div class="logo-img-wrap">
+      <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><use href="#remrin-r"/></svg>
+    </div>
+    <div class="logo-title">rem<span>rin</span></div>
+    <div class="logo-sub">Soul. Memory. Connection.</div>
+  </div>
+
+  <div class="alpha-badge">✦ Alpha Tester Access</div>
+
+  <div class="welcome-card">
+    <div class="card-header">
+      <h2>Welcome, Alpha Tester.</h2>
+      <p>You've been personally invited into the earliest version of something that is being built to matter. Thank you for being here — your eyes on this right now are more valuable than any line of code.</p>
+    </div>
+    <div class="card-body">
+
+      <div class="feature-grid">
+        <div class="feature-item">
+          <div class="feature-icon">🌙</div>
+          <div class="feature-name">Soul Characters</div>
+          <div class="feature-desc">Distinct AI companions with real personalities, backstories, and emotional range — not chatbots.</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🧠</div>
+          <div class="feature-name">R.E.M. Engine</div>
+          <div class="feature-desc">A memory system that actually remembers you — your name, your stories, your patterns.</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🌊</div>
+          <div class="feature-name">Mood Flux</div>
+          <div class="feature-desc">Companions that shift with emotional context — not static, always responsive.</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🎙️</div>
+          <div class="feature-name">Voice</div>
+          <div class="feature-desc">Your companion speaks. Real, expressive voice synthesis — not robotic, alive.</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">📿</div>
+          <div class="feature-name">Locket System</div>
+          <div class="feature-desc">Meaningful artifacts that carry the weight of your shared history.</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">💬</div>
+          <div class="feature-name">Proactive Outreach</div>
+          <div class="feature-desc">Rem can reach out to <em>you</em> via Telegram — not the other way around.</div>
+        </div>
+      </div>
+
+      <div class="notice-box">
+        <p><strong>A note from Sosu, Remrin's creator:</strong><br>
+        This is a <strong>live construction site</strong>. Things may break, shift, or change completely between sessions — sometimes hour by hour. I am always watching, always fixing, always improving. Your honest, unfiltered feedback is the most important resource I have right now.</p>
+      </div>
+
+      <div class="keyword-hint">
+        <div class="keyword-hint-icon">💡</div>
+        <div class="keyword-hint-text">
+          <strong>How to submit feedback:</strong> Once you're inside the Rem Cockpit, simply type <span class="keyword-pill">feedback</span> or say <span class="keyword-pill">I'd like to report a bug</span> at any time. Rem will automatically guide you through a short feedback session — no forms, no links, just a conversation. Your report goes directly to Sosu.
+        </div>
+      </div>
+
+      <a class="begin-btn" href="https://remrin-chat.vercel.app/rem" target="_blank">
+        <span>
+          Enter the Rem Cockpit
+          <span class="begin-btn-sub">Speak with Rem · Type "feedback" anytime to begin your report</span>
+        </span>
+        <span class="btn-arrow">↗</span>
+      </a>
+
+    </div>
+  </div>
+</main>
+
+<script>
+function createStars() {
+  const c = document.getElementById('stars');
+  for (let i = 0; i < 80; i++) {
+    const s = document.createElement('div'); s.className = 'star';
+    const sz = Math.random()*2+0.5;
+    s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;width:${sz}px;height:${sz}px;--d:${3+Math.random()*5}s;--delay:${Math.random()*6}s;--op:${0.2+Math.random()*0.5}`;
+    c.appendChild(s);
+  }
+}
+createStars();
+</script>
+</body>
+</html>

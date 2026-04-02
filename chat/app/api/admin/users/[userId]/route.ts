@@ -27,15 +27,24 @@ export async function GET(
     { params }: { params: { userId: string } }
 ) {
     try {
+        // Authorization check: Either Supabase session OR Admin Password header
         const authHeader = request.headers.get('authorization')
-        if (!authHeader) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        const adminPasswordHeader = request.headers.get('x-admin-password')
+        const serverAdminPassword = process.env.ADMIN_PASSWORD
+
+        let isAuthorized = false
+
+        if (adminPasswordHeader && serverAdminPassword && adminPasswordHeader === serverAdminPassword) {
+            isAuthorized = true
+        } else if (authHeader) {
+            const token = authHeader.replace('Bearer ', '')
+            const { data: { user } } = await supabaseAdmin.auth.getUser(token)
+            if (user && (await isAdmin(user.id))) {
+                isAuthorized = true
+            }
         }
 
-        const token = authHeader.replace('Bearer ', '')
-        const { data: { user } } = await supabaseAdmin.auth.getUser(token)
-
-        if (!user || !(await isAdmin(user.id))) {
+        if (!isAuthorized) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
         }
 
@@ -76,8 +85,8 @@ export async function GET(
             balance_brain: wallet.data?.balance_brain || 0,
             total_earned: wallet.data?.total_earned || 0,
             total_spent: wallet.data?.total_spent || 0,
-            tier: internalProfile.data?.tier || 'wanderer',
-            status: internalProfile.data?.status || 'active',
+            tier: wallet.data?.tier || 'wanderer',
+            status: 'active', // Fallback
             is_admin: internalProfile.data?.is_admin || false,
             persona_count: personaCount || 0
         })
@@ -93,15 +102,23 @@ export async function PATCH(
     { params }: { params: { userId: string } }
 ) {
     try {
+        // Authorization check
         const authHeader = request.headers.get('authorization')
-        if (!authHeader) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        const adminPasswordHeader = request.headers.get('x-admin-password')
+        const serverAdminPassword = process.env.ADMIN_PASSWORD
+
+        let isAuthorized = false
+        if (adminPasswordHeader && serverAdminPassword && adminPasswordHeader === serverAdminPassword) {
+            isAuthorized = true
+        } else if (authHeader) {
+            const token = authHeader.replace('Bearer ', '')
+            const { data: { user } } = await supabaseAdmin.auth.getUser(token)
+            if (user && (await isAdmin(user.id))) {
+                isAuthorized = true
+            }
         }
 
-        const token = authHeader.replace('Bearer ', '')
-        const { data: { user } } = await supabaseAdmin.auth.getUser(token)
-
-        if (!user || !(await isAdmin(user.id))) {
+        if (!isAuthorized) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
         }
 
@@ -142,20 +159,29 @@ export async function PATCH(
             }
         }
 
-        // Update profiles (internal) if status or tier changed
-        if (status !== undefined || tier !== undefined) {
-            const internalUpdates: any = {}
-            if (status !== undefined) internalUpdates.status = status
-            if (tier !== undefined) internalUpdates.tier = tier
-
-            const { error: internalError } = await supabaseAdmin
+        // Update status in profiles
+        if (status !== undefined) {
+            const { error: statusError } = await supabaseAdmin
                 .from('profiles')
-                .update(internalUpdates)
+                .update({ status })
                 .eq('user_id', userId)
 
-            if (internalError) {
-                console.error('Internal profile update error:', internalError)
-                return NextResponse.json({ error: 'Failed to update status/tier' }, { status: 500 })
+            if (statusError) {
+                console.error('Status update error:', statusError)
+                return NextResponse.json({ error: 'Failed to update status' }, { status: 500 })
+            }
+        }
+
+        // Update tier in wallets
+        if (tier !== undefined) {
+            const { error: tierError } = await supabaseAdmin
+                .from('wallets')
+                .update({ tier })
+                .eq('user_id', userId)
+
+            if (tierError) {
+                console.error('Tier update error:', tierError)
+                return NextResponse.json({ error: 'Failed to update tier' }, { status: 500 })
             }
         }
 
@@ -185,15 +211,23 @@ export async function DELETE(
     { params }: { params: { userId: string } }
 ) {
     try {
+        // Authorization check
         const authHeader = request.headers.get('authorization')
-        if (!authHeader) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        const adminPasswordHeader = request.headers.get('x-admin-password')
+        const serverAdminPassword = process.env.ADMIN_PASSWORD
+
+        let isAuthorized = false
+        if (adminPasswordHeader && serverAdminPassword && adminPasswordHeader === serverAdminPassword) {
+            isAuthorized = true
+        } else if (authHeader) {
+            const token = authHeader.replace('Bearer ', '')
+            const { data: { user } } = await supabaseAdmin.auth.getUser(token)
+            if (user && (await isAdmin(user.id))) {
+                isAuthorized = true
+            }
         }
 
-        const token = authHeader.replace('Bearer ', '')
-        const { data: { user } } = await supabaseAdmin.auth.getUser(token)
-
-        if (!user || !(await isAdmin(user.id))) {
+        if (!isAuthorized) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
         }
 
