@@ -106,24 +106,31 @@ export async function PATCH(
         const authHeader = request.headers.get('authorization')
         const adminPasswordHeader = request.headers.get('x-admin-password')
         const serverAdminPassword = process.env.ADMIN_PASSWORD
+        
+        console.log('[PATCH User] Authorization check started for:', params.userId)
 
         let isAuthorized = false
         if (adminPasswordHeader && serverAdminPassword && adminPasswordHeader === serverAdminPassword) {
+            console.log('[PATCH User] Authorized via X-Admin-Password')
             isAuthorized = true
         } else if (authHeader) {
             const token = authHeader.replace('Bearer ', '')
             const { data: { user } } = await supabaseAdmin.auth.getUser(token)
-            if (user && (await isAdmin(user.id))) {
-                isAuthorized = true
+            if (user) {
+                const adminStatus = await isAdmin(user.id)
+                console.log('[PATCH User] User:', user.email, 'Admin Status:', adminStatus)
+                if (adminStatus) isAuthorized = true
             }
         }
 
         if (!isAuthorized) {
+            console.error('[PATCH User] Unauthorized attempt')
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
         }
 
         const { userId } = params
         const body = await request.json()
+        console.log('[PATCH User] Payload:', JSON.stringify(body))
 
         const {
             username,
@@ -148,43 +155,47 @@ export async function PATCH(
             if (location !== undefined) profileUpdates.location = location
             if (website_url !== undefined) profileUpdates.website_url = website_url
 
+            console.log('[PATCH User] Updating user_profiles:', profileUpdates)
             const { error: profileError } = await supabaseAdmin
                 .from('user_profiles')
                 .update(profileUpdates)
                 .eq('user_id', userId)
 
             if (profileError) {
-                console.error('Profile update error:', profileError)
+                console.error('[PATCH User] Profile update error:', profileError)
                 return NextResponse.json({ error: 'Failed to update profile' }, { status: 500 })
             }
         }
 
         // Update tier in wallets
         if (tier !== undefined) {
+            console.log('[PATCH User] Updating wallet tier:', tier)
             const { error: tierError } = await supabaseAdmin
                 .from('wallets')
                 .update({ tier })
                 .eq('user_id', userId)
 
             if (tierError) {
-                console.error('Tier update error:', tierError)
+                console.error('[PATCH User] Tier update error:', tierError)
                 return NextResponse.json({ error: 'Failed to update tier' }, { status: 500 })
             }
         }
 
         // Update email if changed
         if (email !== undefined) {
+            console.log('[PATCH User] Updating auth email:', email)
             const { error: emailError } = await supabaseAdmin.auth.admin.updateUserById(
                 userId,
                 { email }
             )
 
             if (emailError) {
-                console.error('Email update error:', emailError)
+                console.error('[PATCH User] Email update error:', emailError)
                 return NextResponse.json({ error: 'Failed to update email' }, { status: 500 })
             }
         }
 
+        console.log('[PATCH User] User updated successfully')
         return NextResponse.json({ success: true, message: 'User updated successfully' })
 
     } catch (error: any) {

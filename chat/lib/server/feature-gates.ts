@@ -60,6 +60,18 @@ async function loadFeatureDefinitions(supabase?: SupabaseClient): Promise<Map<st
  * Get user's subscription tier
  */
 export async function getUserTier(userId: string, supabase?: SupabaseClient): Promise<TierInfo> {
+    // ALPHA BYPASS: Grant everyone Titan tier access for testing
+    // To disable, set ADMIN_BYPASS_PAYWALL=false in .env.local
+    const bypass = process.env.ADMIN_BYPASS_PAYWALL !== 'false';
+    
+    if (bypass) {
+        return {
+            tier: 'titan',
+            tierIndex: TIER_HIERARCHY['titan'],
+            tierName: TIER_NAMES['titan']
+        };
+    }
+
     const client = supabase || createClient(cookies());
     const { data: wallet } = await client
         .from('wallets')
