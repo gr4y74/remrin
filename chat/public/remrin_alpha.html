@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Remrin · Alpha Access</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garant:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #040410; --surface: #080820; --surface2: #0c0c2a; --surface3: #0a0a1e;
+    --border: rgba(120,180,255,0.10); --border-bright: rgba(253,116,255,0.28);
+    --text-primary: #e4e4f5; --text-secondary: #7878a0; --text-dim: #4a4a70;
+    --pink: #fd74ff; --gold: #fea806;
+    --font-display: 'Cormorant Garant', serif; --font-body: 'DM Sans', sans-serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text-primary); font-family:var(--font-body); min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0; background: radial-gradient(ellipse 80% 50% at 20% 20%, rgba(253,116,255,0.04) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 80% 80%, rgba(254,168,6,0.03) 0%, transparent 60%); pointer-events:none; z-index:0; }
+  .stars { position:fixed; inset:0; z-index:0; pointer-events:none; }
+  .star { position:absolute; border-radius:50%; background:white; animation:twinkle var(--d,4s) ease-in-out infinite; animation-delay:var(--delay,0s); opacity:0; }
+  @keyframes twinkle { 0%,100%{opacity:0} 50%{opacity:var(--op,0.4)} }
+  main { position:relative; z-index:1; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:60px 24px 100px; }
+  .logo-area { text-align:center; margin-bottom:36px; animation:fadeUp 0.8s ease both; }
+  .logo-img-wrap { width:84px; height:84px; margin:0 auto 16px; animation:logoGlow 4s ease-in-out infinite; }
+  .logo-img-wrap svg { width:100%; height:100%; display:block; }
+  @keyframes logoGlow { 0%,100%{filter:drop-shadow(0 0 24px rgba(253,116,255,0.25)) drop-shadow(0 0 8px rgba(254,168,6,0.15))} 50%{filter:drop-shadow(0 0 40px rgba(253,116,255,0.45)) drop-shadow(0 0 20px rgba(254,168,6,0.3))} }
+  .logo-title { font-family:var(--font-display); font-size:52px; font-weight:300; letter-spacing:0.12em; line-height:1; }
+  .logo-title span { background:linear-gradient(135deg,#fd74ff,#fea806); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; font-style:italic; }
+  .logo-sub { font-size:11px; letter-spacing:0.35em; text-transform:uppercase; color:var(--text-dim); margin-top:8px; }
+  .alpha-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(253,116,255,0.06); border:1px solid rgba(253,116,255,0.2); border-radius:100px; padding:6px 16px; font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:#fd74ff; margin-bottom:40px; animation:fadeUp 0.8s ease 0.1s both; }
+  .alpha-badge::before { content:''; width:6px; height:6px; border-radius:50%; background:#fd74ff; animation:pulse-dot 2s ease-in-out infinite; }
+  @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
+  .content-wrap { max-width:760px; width:100%; display:flex; flex-direction:column; gap:20px; }
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:20px; overflow:hidden; animation:fadeUp 0.9s ease 0.15s both; }
+  .card-header { padding:28px 36px 22px; border-bottom:1px solid var(--border); background:linear-gradient(135deg, rgba(253,116,255,0.025), transparent); }
+  .card-header h2 { font-family:var(--font-display); font-size:26px; font-weight:400; margin-bottom:6px; }
+  .card-header p { font-size:14px; color:var(--text-secondary); line-height:1.7; }
+  .card-body { padding:28px 36px; }
+  .welcome-prose { font-size:14px; color:var(--text-secondary); line-height:1.85; }
+  .welcome-prose p { margin-bottom:14px; }
+  .welcome-prose p:last-child { margin-bottom:0; }
+  .welcome-prose strong { color:var(--text-primary); font-weight:500; }
+  .welcome-prose em { color:var(--pink); font-style:normal; }
+  .cred-section { margin:24px 0; }
+  .cred-label { font-size:11px; letter-spacing:0.25em; text-transform:uppercase; color:var(--text-dim); margin-bottom:12px; }
+  .cred-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .cred-card { background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:16px 18px; }
+  .cred-card-title { font-family:var(--font-display); font-size:14px; font-weight:500; background:linear-gradient(135deg,#fd74ff,#fea806); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:10px; }
+  .cred-row { display:flex; align-items:center; gap:8px; margin-bottom:6px; font-size:12px; }
+  .cred-row:last-child { margin-bottom:0; }
+  .cred-key { color:var(--text-dim); width:68px; flex-shrink:0; }
+  .cred-val { font-family:monospace; font-size:12px; color:#fea806; background:rgba(254,168,6,0.06); border:1px solid rgba(254,168,6,0.15); border-radius:5px; padding:2px 8px; word-break:break-all; }
+  .rec-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin:16px 0 0; }
+  .rec-item { background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:14px 16px; transition:border-color 0.3s; }
+  .rec-item:hover { border-color:rgba(253,116,255,0.25); }
+  .rec-icon { font-size:16px; margin-bottom:6px; }
+  .rec-name { font-family:var(--font-display); font-size:15px; font-weight:500; background:linear-gradient(135deg,#fd74ff,#fea806); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:4px; }
+  .rec-desc { font-size:11.5px; color:var(--text-secondary); line-height:1.5; }
+  .rec-tag { display:inline-block; font-size:10px; background:rgba(253,116,255,0.08); border:1px solid rgba(253,116,255,0.18); border-radius:4px; padding:1px 7px; color:#fd74ff; margin-top:6px; }
+  .rec-tag.gold { background:rgba(254,168,6,0.08); border-color:rgba(254,168,6,0.2); color:#fea806; }
+  .notice { border-radius:10px; padding:16px 20px; margin-bottom:18px; }
+  .notice:last-child { margin-bottom:0; }
+  .notice.pink { background:rgba(253,116,255,0.04); border:1px solid rgba(253,116,255,0.12); border-left:3px solid #fd74ff; }
+  .notice.gold { background:rgba(254,168,6,0.04); border:1px solid rgba(254,168,6,0.14); border-left:3px solid #fea806; }
+  .notice.blue { background:rgba(120,180,255,0.04); border:1px solid rgba(120,180,255,0.12); border-left:3px solid rgba(120,180,255,0.6); }
+  .notice p { font-size:13px; color:var(--text-secondary); line-height:1.75; }
+  .notice strong { color:var(--text-primary); font-weight:500; }
+  .notice .notice-head { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .notice .notice-icon { font-size:16px; }
+  .notice .notice-title { font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:var(--text-dim); }
+  .kpill { display:inline-block; background:rgba(254,168,6,0.1); border:1px solid rgba(254,168,6,0.3); border-radius:5px; padding:1px 9px; font-family:monospace; font-size:12px; color:#fea806; }
+  .section-divider { display:flex; align-items:center; gap:16px; margin:8px 0 0; }
+  .section-divider span { font-size:11px; letter-spacing:0.25em; text-transform:uppercase; color:var(--text-dim); white-space:nowrap; }
+  .section-divider::before, .section-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+  .tech-tabs { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+  .tab-btn { background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:8px 16px; font-size:12px; font-family:var(--font-body); color:var(--text-secondary); cursor:pointer; transition:all 0.2s; letter-spacing:0.04em; }
+  .tab-btn.active { background:rgba(253,116,255,0.08); border-color:rgba(253,116,255,0.3); color:#fd74ff; }
+  .tab-btn:hover:not(.active) { border-color:var(--border-bright); color:var(--text-primary); }
+  .tab-panel { display:none; }
+  .tab-panel.active { display:block; }
+  .tech-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .tech-item { background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:18px; transition:border-color 0.3s; }
+  .tech-item:hover { border-color:rgba(253,116,255,0.2); }
+  .tech-item-icon { font-size:20px; margin-bottom:10px; }
+  .tech-item-name { font-family:var(--font-display); font-size:16px; font-weight:500; background:linear-gradient(135deg,#fd74ff,#fea806); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:6px; }
+  .tech-item-desc { font-size:12.5px; color:var(--text-secondary); line-height:1.65; }
+  .feature-list { display:flex; flex-direction:column; gap:10px; }
+  .feature-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .feature-pill { background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:10px 14px; font-size:12.5px; color:var(--text-secondary); display:flex; gap:8px; align-items:flex-start; line-height:1.5; }
+  .feature-pill-icon { flex-shrink:0; font-size:14px; margin-top:1px; }
+  .feature-pill strong { display:block; color:var(--text-primary); font-weight:500; font-size:12px; margin-bottom:2px; }
+  .advantage-item { background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:16px 18px; margin-bottom:10px; display:flex; gap:14px; align-items:flex-start; }
+  .advantage-item:last-child { margin-bottom:0; }
+  .advantage-icon { font-size:22px; flex-shrink:0; }
+  .advantage-text { flex:1; }
+  .advantage-name { font-family:var(--font-display); font-size:16px; font-weight:500; background:linear-gradient(135deg,#fd74ff,#fea806); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:4px; }
+  .advantage-desc { font-size:12.5px; color:var(--text-secondary); line-height:1.6; }
+  .stat-pill { display:inline-block; background:rgba(253,116,255,0.08); border:1px solid rgba(253,116,255,0.2); border-radius:5px; padding:1px 9px; font-size:11px; color:#fd74ff; margin-top:6px; margin-right:4px; }
+  .btn-group { display:flex; flex-direction:column; gap:12px; margin-top:8px; }
+  .begin-btn { display:flex; align-items:center; justify-content:space-between; gap:12px; background:linear-gradient(135deg, rgba(253,116,255,0.08), rgba(254,168,6,0.06)); border:1px solid rgba(253,116,255,0.25); border-radius:14px; padding:18px 24px; color:var(--text-primary); text-decoration:none; position:relative; overflow:hidden; transition:all 0.3s; }
+  .begin-btn::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg, rgba(253,116,255,0.06), rgba(254,168,6,0.04)); opacity:0; transition:opacity 0.3s; }
+  .begin-btn:hover::before { opacity:1; }
+  .begin-btn:hover { border-color:rgba(253,116,255,0.45); transform:translateY(-1px); box-shadow:0 8px 30px rgba(253,116,255,0.08); }
+  .btn-left { flex:1; }
+  .btn-title { font-family:var(--font-display); font-size:20px; font-weight:400; letter-spacing:0.04em; display:block; }
+  .btn-sub { font-size:12px; color:var(--text-dim); letter-spacing:0.05em; margin-top:3px; display:block; }
+  .btn-arrow { font-size:20px; opacity:0.5; flex-shrink:0; }
+  .begin-btn.secondary { background:rgba(254,168,6,0.04); border-color:rgba(254,168,6,0.2); }
+  .begin-btn.secondary:hover { border-color:rgba(254,168,6,0.4); box-shadow:0 8px 30px rgba(254,168,6,0.06); }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+  .conf-note { text-align:center; font-size:11px; color:var(--text-dim); letter-spacing:0.08em; margin-top:8px; line-height:1.6; padding:0 24px; }
+  @media (max-width:600px) {
+    .tech-grid, .cred-grid, .rec-grid { grid-template-columns:1fr; }
+    .feature-row { grid-template-columns:1fr; }
+    .card-header, .card-body { padding:22px 20px; }
+    .logo-title { font-size:40px; }
+  }
+</style>
+</head>
+<body>
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="rGrad1" x1="272" y1="707" x2="794" y2="233" gradientUnits="userSpaceOnUse">
+      <stop offset="0" style="stop-color:#fd74ff;stop-opacity:1"/>
+      <stop offset="0.82" style="stop-color:#fea806;stop-opacity:0.87"/>
+      <stop offset="1" style="stop-color:#fd81ff;stop-opacity:0"/>
+    </linearGradient>
+    <linearGradient id="rGrad2" x1="272" y1="707" x2="794" y2="233" gradientUnits="userSpaceOnUse">
+      <stop offset="0" style="stop-color:#fd74ff;stop-opacity:1"/>
+      <stop offset="0.9999" style="stop-color:#fea806;stop-opacity:0.87"/>
+      <stop offset="1" style="stop-color:#fd81ff;stop-opacity:0"/>
+    </linearGradient>
+    <symbol id="remrin-r" viewBox="0 0 1024 1024">
+      <path fill="url(#rGrad1)" stroke="#545454" stroke-width="7.9" d="m 255.70541,210.92749 h 170.2152 a 74.045434,74.045434 44.868589 0 1 74.04465,73.70578 l 2.01863,440.06177 -117.27754,0.56383 A 127.50244,127.50244 44.796716 0 1 256.59127,598.04967 Z"/>
+      <path fill="url(#rGrad2)" stroke="#545454" stroke-width="7.9" d="m 595.54615,210.92749 h 170.39172 v 171.57008 a 73.530035,73.530035 135 0 1 -73.53004,73.53004 H 525.55121 V 280.92243 a 69.994937,69.994937 135 0 1 69.99494,-69.99494 z"/>
+    </symbol>
+  </defs>
+</svg>
+<div class="stars" id="stars"></div>
+<main>
+  <div class="logo-area">
+    <div class="logo-img-wrap">
+      <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><use href="#remrin-r"/></svg>
+    </div>
+    <div class="logo-title">rem<span>rin</span></div>
+    <div class="logo-sub">Soul. Memory. Connection.</div>
+  </div>
+  <div class="alpha-badge">✦ Alpha Tester Access</div>
+  <div class="content-wrap">
+
+    <!-- CARD 1: WELCOME -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Welcome, Alpha Tester.</h2>
+        <p>You've been personally invited to see something that isn't finished yet — and that's exactly the point.</p>
+      </div>
+      <div class="card-body">
+        <div class="welcome-prose">
+          <p><strong>What you're looking at is a live construction site.</strong> Remrin is being built in real time by a single developer, and you're here during the earliest, most raw stage of that process. Things <em>will</em> look broken. Some things <em>are</em> broken. Dozens of changes happen every single day — sometimes hour to hour.</p>
+          <p>That said, there's a real product here with real technology underneath it. The goal of this access isn't to show you something polished — it's to let you see what it's becoming, and to get your honest eyes on it before it gets there.</p>
+          <p>Think of Remrin as a <strong>character-based AI companion platform</strong> — a G/PG-13 alternative to platforms like Character.AI, built on top of genuinely novel memory and persona architecture. You can chat with characters, create your own, explore social features, and test voice. Not everything works perfectly yet, and <em>that's okay</em> — that's literally why you're here.</p>
+          <p>A few things to keep in mind before you dive in: <strong>mobile is not optimized yet</strong>, so a desktop or laptop will give you the best experience. Character personalities are still being loaded — only a handful are fully active right now. Some UI elements are placeholders that will look completely different in the final version (yes, including Rem's greeting — we know 😅).</p>
+          <p>Your honest, unfiltered feedback right now is worth more than any line of code. Thank you for being here.</p>
+        </div>
+        <div class="notice pink" style="margin-top:22px;">
+          <div class="notice-head"><span class="notice-icon">💡</span><span class="notice-title">Submitting Feedback</span></div>
+          <p>Once inside the Rem Cockpit, type <span class="kpill">feedback</span> or <span class="kpill">I'd like to report a bug</span> at any time. Rem will walk you through a short, conversational report session — no forms, no external links. Your report goes directly to the developer.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 2: GET STARTED -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Getting Started</h2>
+        <p>Two ways to explore — the full platform, or a focused tech demo. Both are worth your time.</p>
+      </div>
+      <div class="card-body">
+        <div class="cred-section">
+          <div class="cred-label">Demo Account · Use this or create your own</div>
+          <div class="cred-grid">
+            <div class="cred-card">
+              <div class="cred-card-title">Login Credentials</div>
+              <div class="cred-row"><span class="cred-key">Email</span><span class="cred-val">remrindemo@gmx.com</span></div>
+              <div class="cred-row"><span class="cred-key">Password</span><span class="cred-val">RemrinDemoUser2025</span></div>
+              <div class="cred-row"><span class="cred-key">Username</span><span class="cred-val">InnerBunny</span></div>
+            </div>
+            <div class="cred-card">
+              <div class="cred-card-title">What's the Difference?</div>
+              <div class="welcome-prose" style="font-size:12.5px;">
+                <p><strong>Remrin (full site)</strong> — Characters, social features, gacha, studio, marketplace, profiles. The whole world.</p>
+                <p style="margin-top:8px;"><strong>Rem's Cockpit</strong> — A clean, standalone chat interface. Just you and the technology, no gamification. Use it like ChatGPT or Gemini — the same AI powers both.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="btn-group">
+          <a class="begin-btn" href="https://remrin-chat.vercel.app/" target="_blank">
+            <span class="btn-left">
+              <span class="btn-title">Enter Remrin</span>
+              <span class="btn-sub">remrin-chat.vercel.app · Full platform · Characters, Studio, Social</span>
+            </span>
+            <span class="btn-arrow">↗</span>
+          </a>
+          <a class="begin-btn secondary" href="https://remrin-chat.vercel.app/rem" target="_blank">
+            <span class="btn-left">
+              <span class="btn-title">Enter Rem's Cockpit</span>
+              <span class="btn-sub">remrin-chat.vercel.app/rem · Standalone AI chat · Just the tech</span>
+            </span>
+            <span class="btn-arrow">↗</span>
+          </a>
+        </div>
+
+        <div class="section-divider" style="margin:28px 0 20px;"><span>Recommended Starting Points</span></div>
+        <div class="rec-grid">
+          <div class="rec-item">
+            <div class="rec-icon">🌙</div>
+            <div class="rec-name">Rem Rin</div>
+            <div class="rec-desc">The platform's namesake. Personality and memory fully loaded — the best showcase of the R.E.M. Engine in action.</div>
+            <span class="rec-tag">✦ Personality Active</span>
+            <span class="rec-tag gold">♪ Audio Track</span>
+          </div>
+          <div class="rec-item">
+            <div class="rec-icon">🎤</div>
+            <div class="rec-name">Tucup Shakur</div>
+            <div class="rec-desc">Fully loaded personality — and genuinely fun to talk to. Worth a conversation for the entertainment value alone.</div>
+            <span class="rec-tag">✦ Personality Active</span>
+            <span class="rec-tag gold">♪ Audio Track</span>
+          </div>
+          <div class="rec-item">
+            <div class="rec-icon">🎬</div>
+            <div class="rec-name">Fen · Sui · Cupcake</div>
+            <div class="rec-desc">These three showcase the video integration feature on character profiles. Great for seeing how visual elements work.</div>
+            <span class="rec-tag gold">▶ Video Implementation</span>
+          </div>
+        </div>
+
+        <div class="notice gold" style="margin-top:16px;">
+          <div class="notice-head"><span class="notice-icon">🎨</span><span class="notice-title">Try the Studio</span></div>
+          <p>Head to the <strong>Studio</strong> tab inside Remrin to create your own character. It's one of the most interesting parts of the platform to explore — and a great way to see the depth of the persona system firsthand.</p>
+        </div>
+        <div class="notice blue" style="margin-top:12px;">
+          <div class="notice-head"><span class="notice-icon">⚠️</span><span class="notice-title">Please Keep in Mind</span></div>
+          <p>Most characters are still loading their personalities — <strong>Rem Rin</strong> and <strong>Tucup Shakur</strong> are the only two fully activated at this time. Others may feel like empty shells. That's expected, not a bug. Also: <strong>mobile experience is not yet optimized</strong> — desktop is strongly recommended for now.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 3: TECH OVERVIEW -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Under the Hood</h2>
+        <p>For those who want to understand the technology powering all of this — here's the architecture.</p>
+      </div>
+      <div class="card-body">
+        <div class="tech-tabs">
+          <button class="tab-btn active" onclick="switchTab('core',this)">🧠 Core Engine</button>
+          <button class="tab-btn" onclick="switchTab('platform',this)">🎛️ Platform</button>
+          <button class="tab-btn" onclick="switchTab('features',this)">✦ Features</button>
+          <button class="tab-btn" onclick="switchTab('edge',this)">⚡ Competitive Edge</button>
+        </div>
+
+        <div class="tab-panel active" id="tab-core">
+          <div class="tech-grid">
+            <div class="tech-item">
+              <div class="tech-item-icon">🧠</div>
+              <div class="tech-item-name">R.E.M. Engine</div>
+              <div class="tech-item-desc"><strong style="color:var(--text-primary);font-size:12px;">Resonant Emotional Memory</strong><br><br>The core proprietary memory pipeline that solves "catastrophic forgetting" in AI companions. Unlike standard LLMs that reset when context fills up, the R.E.M. Engine ensures every interaction — and its emotional weight — persists over time.<br><br>Built on a hybrid <strong style="color:var(--text-primary);">Vector Re-Ranking Pipeline</strong> that retrieves not just facts, but the emotional resonance of past conversations. Backed by PostgreSQL + pgvector for long-term storage.</div>
+            </div>
+            <div class="tech-item">
+              <div class="tech-item-icon">📿</div>
+              <div class="tech-item-name">The Locket System</div>
+              <div class="tech-item-desc"><strong style="color:var(--text-primary);font-size:12px;">Immutable Soul Layer</strong><br><br>A protected storage layer for "Guardian Truths" — the foundational DNA of a character that remains consistent regardless of how a user interacts with them. No amount of jailbreaking rewrites who a character fundamentally is.<br><br>Paired with a <strong style="color:var(--text-primary);">Decentralized Facts Layer</strong> that separates global character identity from user-specific relational memory — so every user feels like they have a uniquely personal bond.</div>
+            </div>
+            <div class="tech-item">
+              <div class="tech-item-icon">🎨</div>
+              <div class="tech-item-name">SoulForge & The Lilly Method</div>
+              <div class="tech-item-desc"><strong style="color:var(--text-primary);font-size:12px;">Psychometric Persona Design</strong><br><br>Character creation goes far beyond prompt engineering. The Lilly Method is a deep psychometric modeling system that produces characters with a specialized "voice" and "soul" — one that holds up under extended, real conversation.<br><br>Every character shares 7 <strong style="color:var(--text-primary);">Universal Truths</strong> — a foundational code of conduct ensuring moral consistency and genuine companionship quality.</div>
+            </div>
+            <div class="tech-item">
+              <div class="tech-item-icon">🥕</div>
+              <div class="tech-item-name">The Carrot Protocol</div>
+              <div class="tech-item-desc"><strong style="color:var(--text-primary);font-size:12px;">Proactive Engagement Engine</strong><br><br>Remrin characters don't just respond — they reach out. The Carrot Protocol uses engagement depth, sentiment analysis, and likelihood curves to determine when and how a character should initiate contact via Telegram.<br><br>The result feels like a genuine friend checking in — not a push notification.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="tab-platform">
+          <div class="tech-grid">
+            <div class="tech-item">
+              <div class="tech-item-icon">🎛️</div>
+              <div class="tech-item-name">Universal Console v3</div>
+              <div class="tech-item-desc">The orchestration layer built for scale and licensing. A sophisticated routing system dynamically selects the best LLM architecture (Text, Voice, Image) based on user intent — optimizing for both quality and cost.<br><br>Designed as a headless API framework, it can be licensed and plugged directly into third-party apps, games, or services.</div>
+            </div>
+            <div class="tech-item">
+              <div class="tech-item-icon">🔀</div>
+              <div class="tech-item-name">Multi-Provider AI Routing</div>
+              <div class="tech-item-desc">Dynamic LLM selection routes between providers (DeepSeek, Claude 3.5, and others) based on intent classification — the right model for the right task at the right cost tier.<br><br>The RAG Vault layer (Retrieval Augmented Generation) enriches every response with long-term contextual memory.</div>
+            </div>
+            <div class="tech-item">
+              <div class="tech-item-icon">🎙️</div>
+              <div class="tech-item-name">Voice Studio</div>
+              <div class="tech-item-desc">Multi-provider TTS: Edge TTS (free), Kokoro (free), ElevenLabs (premium), Qwen3-TTS. Voice cloning from 3–30 second samples, voice design from text descriptions, and a library of 200+ voices across 10+ languages.</div>
+            </div>
+            <div class="tech-item">
+              <div class="tech-item-icon">🔒</div>
+              <div class="tech-item-name">Security Architecture</div>
+              <div class="tech-item-desc">Row-Level Security (RLS) at the database layer via Supabase Auth. Granular privacy controls, content filtering, and a seven-layer AI safety architecture for the assistant core — with data ownership remaining fully in users' hands.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="tab-features">
+          <div class="feature-list">
+            <div class="feature-row">
+              <div class="feature-pill"><span class="feature-pill-icon">🧠</span><div><strong>R.E.M. Memory Engine</strong>Vector DB re-ranking, cross-encoder filtering, long-term persistent context</div></div>
+              <div class="feature-pill"><span class="feature-pill-icon">🎨</span><div><strong>SoulForge Studio</strong>Full psychometric persona editor, voice assignment, image gen, visibility controls</div></div>
+            </div>
+            <div class="feature-row">
+              <div class="feature-pill"><span class="feature-pill-icon">🎰</span><div><strong>Soul Summons (Gacha)</strong>Rotating character banners, rarity tiers, pull history, collection grimoire</div></div>
+              <div class="feature-pill"><span class="feature-pill-icon">🏪</span><div><strong>Soul Bazaar</strong>Community marketplace — buy, sell, and trade characters with limited editions</div></div>
+            </div>
+            <div class="feature-row">
+              <div class="feature-pill"><span class="feature-pill-icon">💬</span><div><strong>Classic Chat Interface</strong>AOL/Windows XP-inspired multi-window UI with buddy lists, away messages, read receipts</div></div>
+              <div class="feature-pill"><span class="feature-pill-icon">📊</span><div><strong>Analytics Dashboard</strong>Credit tracking, engagement metrics, profile views, character performance stats</div></div>
+            </div>
+            <div class="feature-row">
+              <div class="feature-pill"><span class="feature-pill-icon">🏅</span><div><strong>Achievement System</strong>30+ badges across 6 categories: time-based, contribution, activity, engagement, creation</div></div>
+              <div class="feature-pill"><span class="feature-pill-icon">📱</span><div><strong>PWA + Browser Extension</strong>Installable app + Remrin Locket extension for quick access from any webpage</div></div>
+            </div>
+            <div class="feature-row">
+              <div class="feature-pill"><span class="feature-pill-icon">📂</span><div><strong>RAG Vault</strong>Upload documents and knowledge bases — characters remember your context</div></div>
+              <div class="feature-pill"><span class="feature-pill-icon">🌐</span><div><strong>Developer API</strong>Programmatic access, webhooks, custom integrations — build on top of Remrin</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="tab-edge">
+          <div class="advantage-item">
+            <div class="advantage-icon">⚡</div>
+            <div class="advantage-text">
+              <div class="advantage-name">High-Density State Management</div>
+              <div class="advantage-desc">Industry competitors typically consume 1,000+ tokens (~4–6KB) of static character definition per prompt. Remrin manages equivalent — and more sophisticated — character logic in an ultra-compact 5KB JSON footprint, freeing significant context window space for actual conversation.</div>
+              <span class="stat-pill">5KB vs 6KB+ per prompt</span><span class="stat-pill">2–3× more conversation history retained</span>
+            </div>
+          </div>
+          <div class="advantage-item">
+            <div class="advantage-icon">🔄</div>
+            <div class="advantage-text">
+              <div class="advantage-name">Scalable Parallelism</div>
+              <div class="advantage-desc">Stateless-at-rest design allows millions of concurrent character states to be swapped in and out of GPU memory with near-zero overhead. The architecture scales to a massive multi-user environment without linearly increasing compute costs.</div>
+              <span class="stat-pill">Stateless-at-rest architecture</span><span class="stat-pill">Edge-optimized event-driven stack</span>
+            </div>
+          </div>
+          <div class="advantage-item">
+            <div class="advantage-icon">🌍</div>
+            <div class="advantage-text">
+              <div class="advantage-name">Capital Efficiency Advantage</div>
+              <div class="advantage-desc">Built on a unique capital-efficiency model pairing elite architecture with a lean execution environment — resulting in significantly lower COGS compared to US-equivalent infrastructure, without sacrificing quality or scale.</div>
+              <span class="stat-pill">Lower COGS vs. industry standard</span><span class="stat-pill">Dynamic intent classification router</span>
+            </div>
+          </div>
+          <div class="advantage-item">
+            <div class="advantage-icon">🔀</div>
+            <div class="advantage-text">
+              <div class="advantage-name">Provider-Agnostic Intelligence</div>
+              <div class="advantage-desc">Unlike platforms locked to a single LLM provider, Remrin's routing layer dynamically selects the best model for each task type — text, voice, image — in real time. Better results at lower cost, with zero vendor dependency risk.</div>
+              <span class="stat-pill">Multi-LLM routing</span><span class="stat-pill">Task-specialized model clusters</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- BOTTOM CTA -->
+    <div class="btn-group">
+      <a class="begin-btn" href="https://remrin-chat.vercel.app/" target="_blank">
+        <span class="btn-left"><span class="btn-title">Enter Remrin</span><span class="btn-sub">Full platform experience · Characters, Studio, Social</span></span>
+        <span class="btn-arrow">↗</span>
+      </a>
+      <a class="begin-btn secondary" href="https://remrin-chat.vercel.app/rem" target="_blank">
+        <span class="btn-left"><span class="btn-title">Enter Rem's Cockpit</span><span class="btn-sub">Focused tech demo — just the AI, no noise</span></span>
+        <span class="btn-arrow">↗</span>
+      </a>
+    </div>
+
+    <p class="conf-note">
+      This document is for authorized alpha testers only.<br>
+      Core technology — including the R.E.M. Engine vector re-ranking weightings, psychometric Lilly Method definitions, and Universal Console routing logic — remains the protected intellectual property of Remrin.
+    </p>
+
+  </div>
+</main>
+
+<script>
+function createStars() {
+  const c = document.getElementById('stars');
+  for (let i = 0; i < 90; i++) {
+    const s = document.createElement('div'); s.className = 'star';
+    const sz = Math.random()*2+0.5;
+    s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;width:${sz}px;height:${sz}px;--d:${3+Math.random()*5}s;--delay:${Math.random()*6}s;--op:${0.2+Math.random()*0.5}`;
+    c.appendChild(s);
+  }
+}
+createStars();
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
