@@ -210,7 +210,13 @@ export default function LeftAtAlbuquerque() {
 
       setHistory(data.history);
       const newGs = {
-        ...gs, ...parsed.game_state_update,
+        ...gs, 
+        ...parsed.game_state_update,
+        cash: Number(parsed.game_state_update?.cash ?? gs.cash) || gs.cash,
+        heat: Number(parsed.game_state_update?.heat ?? gs.heat) || gs.heat,
+        miles_to_nyc: Number(parsed.game_state_update?.miles_to_nyc ?? gs.miles_to_nyc) || gs.miles_to_nyc,
+        distraction_score: Number(parsed.game_state_update?.distraction_score ?? gs.distraction_score) || gs.distraction_score,
+        times_deceived: Number(parsed.game_state_update?.times_deceived ?? gs.times_deceived) || gs.times_deceived,
         turn: gs.turn + 1,
         choices_history: choice ? [...gs.choices_history, choice.id] : gs.choices_history,
       };
@@ -421,11 +427,11 @@ export default function LeftAtAlbuquerque() {
       </div>
 
       {/* ── MAP ── */}
-      <div style={{ border: `1px solid ${Adim}`, padding: "1rem 1.5rem", marginBottom: "1rem", background: "rgba(255,150,0,0.015)" }}>
-        <div style={{ fontSize: "1rem", color: Adim, marginBottom: "0.5rem" }}>
+      <div style={{ border: `1px solid ${Adim}`, padding: "1rem 1.5rem", marginBottom: "1rem", background: "rgba(255,150,0,0.015)", overflowX: "auto" }}>
+        <div style={{ fontSize: "1rem", color: Adim, marginBottom: "0.5rem", whiteSpace: "nowrap" }}>
           ► ROUTE — {gs.miles_to_nyc} MI TO NYC
         </div>
-        <div style={{ width: "100%", height: "60px", position: "relative" }}>
+        <div style={{ width: "100%", minWidth: "600px", height: "60px", position: "relative" }}>
           <svg style={{ width: "100%", height: "100%", display: "block", overflow: "visible" }}>
             {/* Background track */}
             <line x1="5%" y1="40" x2="95%" y2="40" stroke={Afade} strokeWidth="2" />
@@ -506,12 +512,12 @@ export default function LeftAtAlbuquerque() {
               <span className="pulse" style={{ color: Abright }}>● LIVE</span>
             </div>
             
-            <div style={{ flex: 1, overflowY: "auto", paddingRight: "4px" }}>
+            <div style={{ flex: 1, overflowY: "auto", paddingRight: "4px", display: "flex", flexDirection: "column-reverse" }}>
               {feed.length === 0 ? (
-                <div style={{ color: Afade, fontSize: "0.9rem", fontStyle: "italic", textAlign: "center", marginTop: "1rem" }}>No signals picked up...</div>
+                <div style={{ color: Afade, fontSize: "0.9rem", fontStyle: "italic", textAlign: "center", margin: "auto" }}>No signals picked up...</div>
               ) : (
                 feed.map((p, i) => (
-                  <div key={i} style={{ marginBottom: "0.7rem", fontSize: "0.9rem", lineHeight: 1.35 }}>
+                  <div key={i} style={{ marginTop: "0.7rem", fontSize: "0.9rem", lineHeight: 1.35 }}>
                     <div style={{ color: Abright }}>{p.user}</div>
                     <div style={{ color: Adim, fontSize: "0.85rem" }}>"{p.message}"</div>
                   </div>
