@@ -363,14 +363,14 @@ export default function LeftAtAlbuquerque() {
             <div>CASH REMAINING:           <strong style={{ color: Abright }}>${victoryData?.gs.cash}</strong></div>
             <div>FINAL HEAT LEVEL:         <strong style={{ color: (victoryData?.gs.heat || 0) > 50 ? "#CC4400" : Abright }}>{victoryData?.gs.heat}%</strong></div>
             <div style={{ marginTop: "0.5rem", paddingTop: "0.5rem", borderTop: `1px solid ${Adim}` }}>
-              MICKEY'S BILLION DOLLARS:   <strong style={{ color: "#CC4400" }}>NEVER EXISTED</strong>
+              MICKEY&apos;S BILLION DOLLARS:   <strong style={{ color: "#CC4400" }}>NEVER EXISTED</strong>
             </div>
           </div>
           <div style={{ border: `2px solid ${A}`, padding: "1.5rem", marginBottom: "1.5rem" }}>
             <div className="glow" style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>
               RANK: {badge.title}
             </div>
-            <div style={{ color: Adim, fontSize: "1.1rem", fontStyle: "italic" }}>"{badge.desc}"</div>
+            <div style={{ color: Adim, fontSize: "1.1rem", fontStyle: "italic" }}>&quot;{badge.desc}&quot;</div>
           </div>
           <div style={{ color: Adim, fontSize: "0.95rem", marginBottom: "2rem" }}>
             — The Narrator
@@ -519,7 +519,7 @@ export default function LeftAtAlbuquerque() {
                 feed.map((p, i) => (
                   <div key={i} style={{ marginTop: "0.7rem", fontSize: "0.9rem", lineHeight: 1.35 }}>
                     <div style={{ color: Abright }}>{p.user}</div>
-                    <div style={{ color: Adim, fontSize: "0.85rem" }}>"{p.message}"</div>
+                    <div style={{ color: Adim, fontSize: "0.85rem" }}>&quot;{p.message}&quot;</div>
                   </div>
                 ))
               )}
