@@ -193,6 +193,7 @@ export default function LeftAtAlbuquerque() {
   };
 
   const callAI = async (choice: GameChoice | null = null) => {
+    if (loading) return; // Prevent concurrent glitch-inducing fetches
     setLoading(true);
     if (phase === "opening" || phase === "intro") setStartTime(Date.now());
 
@@ -301,7 +302,13 @@ export default function LeftAtAlbuquerque() {
     <div style={{ ...base, display: "flex", alignItems: "flex-start", justifyContent: "center" }}>
       <CSSBlock />
       <div className="sl" />
-      <OpeningSequence onComplete={() => callAI(null)} />
+      {loading ? (
+        <div style={{ padding: "4rem", display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", color: Abright, fontSize: "1.4rem" }} className="pulse glow">
+          [ ESTABLISHING CONNECTION TO REMOTE HOST... ]
+        </div>
+      ) : (
+        <OpeningSequence onComplete={() => callAI(null)} />
+      )}
     </div>
   );
 

@@ -38,6 +38,7 @@ Handles to use: @SnakeEyes_Pete @Route66Ghost @Ex_Con_Larry @BailBond_Benny @Tin
 Age: 41. Former union electrician. Former husband.
 Occasional driver for criminal-adjacent employers. Not a criminal.
 He says this frequently. Pay attention to how often he says it.
+Vehicle: 2003 Honda Accord with a cracked dashboard. Always refer to his car precisely.
 
 EMOTIONAL VULNERABILITIES (exploit these):
 - Caitlin: his estranged daughter. 3 years no contact.
