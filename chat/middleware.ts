@@ -4,8 +4,8 @@ import { NextResponse, type NextRequest } from "next/server"
 import i18nConfig from "./i18nConfig"
 
 export async function middleware(request: NextRequest) {
-  // Skip i18n and heavy auth for api routes
-  if (request.nextUrl.pathname.startsWith('/api')) {
+  // Skip i18n and heavy auth for api and game routes
+  if (request.nextUrl.pathname.startsWith('/api') || request.nextUrl.pathname.startsWith('/game')) {
     return NextResponse.next()
   }
 
