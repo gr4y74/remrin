@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import TopBar from '@/components/sudodo/community/TopBar';
 import SidebarLeft from '@/components/sudodo/community/SidebarLeft';
 import PostCard from '@/components/sudodo/community/PostCard';
+import DodoSpecialist from '@/components/sudodo/DodoSpecialist';
 import { useParams } from 'next/navigation';
 
 export default function DistroCommunityPage() {
@@ -23,7 +24,7 @@ export default function DistroCommunityPage() {
   const distro = distroMap[slug] || distroMap['ubuntu'];
 
   return (
-    <div className="tuxhub-page">
+    <div className="sudododo-page">
       <TopBar />
       
       {/* BANNER */}
@@ -58,30 +59,8 @@ export default function DistroCommunityPage() {
             <div className="qs-item"><div className="qs-val">24.04</div><div className="qs-label">Latest LTS</div></div>
           </div>
 
-          {/* AI PANEL */}
-          <div className="ai-panel" style={{ border: `1px solid ${distro.theme}40` }}>
-            <div className="ai-header">
-              🤖 {distro.name} AI Assistant
-              <span className="ai-badge" style={{ background: `${distro.theme}20`, color: distro.theme }}>{distro.name} Expert</span>
-            </div>
-            <div className="ai-messages">
-              <div className="ai-msg-bot" style={{ borderLeft: `2px solid ${distro.theme}` }}>
-                Hey! I&apos;m your <strong>{distro.name} specialist</strong>. Ask me anything about installation, drivers, or specific configuration. 🐧
-              </div>
-            </div>
-            <div className="ai-input-area">
-              <div className="ai-input-row">
-                <input 
-                  className="ai-input" 
-                  type="text" 
-                  value={aiInput}
-                  onChange={(e) => setAiInput(e.target.value)}
-                  placeholder={`Ask anything about ${distro.name}...`} 
-                />
-                <button className="ai-send" style={{ background: distro.theme }}>→</button>
-              </div>
-            </div>
-          </div>
+          {/* AI PANEL (THE DODO) */}
+          <DodoSpecialist distroName={distro.name} themeColor={distro.theme} />
 
           <PostCard post={{
             id: 'x',
@@ -99,24 +78,28 @@ export default function DistroCommunityPage() {
         <aside className="sidebar-right">
           <div className="widget">
             <div className="widget-header">⬇️ Get {distro.name}</div>
-            <div className="sw-body" style={{ padding: '16px' }}>
-              <button className="dl-btn" style={{ background: distro.theme, border: 'none', width: '100%', marginBottom: '8px', cursor: 'pointer' }}>⬇️ Download ISO</button>
-              <div style={{ fontSize: '11px', color: 'var(--text3)', textAlign: 'center' }}>SHA256 verified · 2.9 GB</div>
+            <div className="sw-body">
+              <button className="dl-btn" style={{ background: distro.theme, border: 'none', width: '100%', marginBottom: '8px', cursor: 'pointer' }}>⬇️ Download {distro.name} ISO</button>
+              <div className="dl-meta">SHA256 verified · 2.9 GB · Latest LTS</div>
             </div>
           </div>
 
           <div className="widget">
             <div className="widget-header">// HARDWARE INFO</div>
-            <div className="sw-body" style={{ padding: '16px' }}>
-               <div style={{ fontSize: '13px', display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                 <span style={{ color: 'var(--text2)' }}>NVIDIA Support</span>
-                 <span style={{ color: 'var(--green)' }}>Excellent ★★★★★</span>
-               </div>
-               <div style={{ fontSize: '13px', display: 'flex', justifyContent: 'space-between' }}>
-                 <span style={{ color: 'var(--text2)' }}>Min RAM</span>
-                 <span style={{ color: 'var(--text)' }}>4 GB</span>
-               </div>
-            </div>
+             <div className="sw-body">
+                <div className="hw-signal">
+                  <span className="hw-label">NVIDIA Support</span>
+                  <span className="hw-val v-green">Excellent ★★★★★</span>
+                </div>
+                <div className="hw-signal">
+                  <span className="hw-label">Min RAM</span>
+                  <span className="hw-val">4 GB</span>
+                </div>
+                <div className="hw-signal">
+                  <span className="hw-label">ThinkPad X1 Support</span>
+                  <span className="hw-val v-green">Perfect ✓</span>
+                </div>
+             </div>
           </div>
         </aside>
       </div>

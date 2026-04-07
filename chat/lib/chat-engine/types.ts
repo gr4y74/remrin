@@ -186,6 +186,7 @@ export type CapabilityId =
     | 'file-upload'
     | 'reasoning'
     | 'custom-api'
+    | 'rag'
 
 export interface CapabilityConfig {
     id: CapabilityId
@@ -373,4 +374,29 @@ export interface CapabilityContext {
     userTier: UserTier
     searchEnabled: boolean
     files: FileAttachment[]
+}
+
+// ============================================================================
+// RAG Types
+// ============================================================================
+
+export interface RagResult {
+    sourceId: string
+    sourceName: string
+    title: string
+    url: string
+    snippet: string
+    relevance: number
+}
+
+export interface IRagSource {
+    id: string
+    name: string
+    search(query: string, limit: number): Promise<RagResult[]>
+}
+
+export interface IChatRagCapability extends IChatCapability {
+    id: 'rag'
+    sources: IRagSource[]
+    retrieve(query: string): Promise<RagResult[]>
 }

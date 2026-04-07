@@ -51,6 +51,22 @@ export default function SidebarLeft() {
 
       {/* Simplified Desktop Environments & Topics sections for mock */}
       <div className="nav-section">
+        <div className="nav-label">Knowledge Base</div>
+        <Link href="#" className="distro-nav-item">
+          <div className="d-badge" style={{ background: 'rgba(59,130,246,0.1)' }}>🌱</div>
+          Beginner Paths <span className="d-members">Journey</span>
+        </Link>
+        <Link href="#" className="distro-nav-item">
+          <div className="d-badge" style={{ background: 'rgba(139,92,246,0.1)' }}>📚</div>
+          Expert Wikis <span className="d-members">Arch/Wiki</span>
+        </Link>
+        <Link href="#" className="distro-nav-item">
+          <div className="d-badge" style={{ background: 'rgba(16,185,129,0.1)' }}>🛡️</div>
+          Admin/Security <span className="d-members">nixCraft</span>
+        </Link>
+      </div>
+
+      <div className="nav-section">
         <div className="nav-label">Desktop Environments</div>
         <Link href="#" className="distro-nav-item">
           <div className="d-badge" style={{ background: 'rgba(14,165,233,0.12)' }}>🌀</div>

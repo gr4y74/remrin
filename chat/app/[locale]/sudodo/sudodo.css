@@ -926,10 +926,10 @@
 
 
 /* ==========================================================================
-   TUXHUB PLATFORM STYLES (Reddit-style)
+   SUDODODO PLATFORM STYLES (Reddit-style)
    ========================================================================== */
 
-.tuxhub-page {
+.sudododo-page {
   --upvote: #f97316;
   min-height: 100vh;
   cursor: auto; /* Reset custom cursor for app interaction */
@@ -1174,6 +1174,80 @@
 .ai-messages { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
 .ai-msg-bot { background: var(--bg2); padding: 12px 16px; border-radius: 12px; font-size: 14px; line-height: 1.6; color: var(--text2); }
 .ai-input-area { padding: 16px; border-top: 1px solid var(--border); }
+
+/* DODO SPECIALIST AI */
+.ai-status { display: flex; align-items: center; gap: 8px; font-weight: 700; }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+.status-dot.pulse { animation: status-pulse 2s infinite; }
+
+@keyframes status-pulse {
+  0% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  70% { transform: scale(1.1); opacity: 0.8; box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.ai-msg-bot, .ai-msg-user { 
+  max-width: 90%; 
+  padding: 14px 18px; 
+  border-radius: 14px; 
+  font-size: 14px; 
+  line-height: 1.6; 
+  margin-bottom: 16px;
+}
+.ai-msg-bot { 
+  background: var(--bg2); 
+  border: 1px solid var(--border);
+  color: var(--text2); 
+  align-self: flex-start;
+}
+.ai-msg-user { 
+  background: var(--surface2); 
+  color: var(--text); 
+  align-self: flex-end;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.msg-sources { 
+  margin-top: 12px; 
+  padding-top: 10px; 
+  border-top: 1px dashed var(--border); 
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: 8px; 
+  font-size: 11px;
+}
+.sources-label { color: var(--text3); font-weight: 700; text-transform: uppercase; }
+.source-link { color: var(--accent); text-decoration: none; font-weight: 600; }
+.source-link:hover { text-decoration: underline; }
+
+.loading-dots { color: var(--text3); font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+
+/* WIDGET UTILITIES */
+.sw-body { padding: 16px; }
+.dl-btn { 
+  display: block; 
+  padding: 12px; 
+  border-radius: 8px; 
+  color: white; 
+  font-weight: 700; 
+  font-size: 14px; 
+  text-align: center; 
+  transition: transform 0.2s;
+}
+.dl-btn:hover { transform: translateY(-2px); }
+.dl-meta { font-size: 11px; color: var(--text3); text-align: center; margin-top: 8px; }
+
+.hw-signal { 
+  display: flex; 
+  justify-content: space-between; 
+  margin-bottom: 10px; 
+  font-size: 13px; 
+}
+.hw-label { color: var(--text2); }
+.hw-val { color: var(--text); font-weight: 600; }
+.v-green { color: var(--green) !important; }
+.v-orange { color: var(--orange) !important; }
+.v-red { color: var(--red) !important; }
 
 @media (max-width: 1000px) {
   .layout { grid-template-columns: 1fr; padding: 72px 16px; }

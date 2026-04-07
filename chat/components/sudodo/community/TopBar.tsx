@@ -11,12 +11,12 @@ export default function TopBar() {
     <div className="topbar">
       <Link href="/en/sudodo/feed" className="logo">
         <div className="logo-mark">🐧</div>
-        Tux<span>Hub</span>
+        Sudo<span>Dodo</span>
       </Link>
 
       <div className="search-bar">
         <span className="search-icon">🔍</span>
-        <input type="text" placeholder="Search distros, posts, tutorials, packages..." />
+        <input type="text" placeholder="Search wikis, manuals, distros, and posts..." />
       </div>
 
       <div className="topbar-right">

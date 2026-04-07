@@ -34,10 +34,10 @@ export default function HeroSection() {
               <div className="dot dot-red"></div>
               <div className="dot dot-yellow"></div>
               <div className="dot dot-green"></div>
-              <span className="terminal-title">sudodo — distro-wizard</span>
+              <span className="terminal-title">sudododo — distro-wizard</span>
             </div>
             <div className="terminal-body">
-              <div><span className="t-prompt">penguin@os</span><span className="t-cmd"> ~$ </span><span className="t-accent">sudo do find-my-distro</span></div>
+              <div><span className="t-prompt">penguin@os</span><span className="t-cmd"> ~$ </span><span className="t-accent">sudododo find-my-distro</span></div>
               <div className="t-output">Analyzing your profile... ████████████ 100%</div>
               <div>&nbsp;</div>
               <div><span className="t-success">✓ </span><span className="t-output">Primary Use: Gaming + Development</span></div>

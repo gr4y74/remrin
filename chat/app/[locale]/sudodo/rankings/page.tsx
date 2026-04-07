@@ -15,7 +15,7 @@ export default function RankingsPage() {
   ];
 
   return (
-    <div className="tuxhub-page">
+    <div className="sudododo-page">
       <TopBar />
       
       <div className="page-header">
@@ -26,10 +26,22 @@ export default function RankingsPage() {
         </div>
         <div className="header-inner">
           <div className="method-bar">
-            <div className="method-item">📦 <strong>Installs</strong> tracked via opt-in telemetry</div>
+            <div className="method-item">📦 <strong>Installs</strong> tracked via SudoDodo telemetry</div>
             <div className="method-item">💬 <strong>Community</strong> forum activity + growth</div>
             <div className="method-item">⭐ <strong>Reviews</strong> from 140k+ verified users</div>
           </div>
+        </div>
+      </div>
+
+      <div className="ticker">
+        <div className="ticker-inner">
+          <div className="ticker-item"><span className="ticker-dot">●</span> <strong>NEW:</strong> Pop!_OS 24.04 LTS available now</div>
+          <div className="ticker-item"><span className="ticker-dot">●</span> <strong>HOT:</strong> Steam Deck OLED support improved on Arch</div>
+          <div className="ticker-item"><span className="ticker-dot">●</span> <strong>TRENDING:</strong> Fedora migration from Ubuntu rising 12%</div>
+          <div className="ticker-item"><span className="ticker-dot">●</span> <strong>LEGACY:</strong> DistroWatch hit counters integrated</div>
+          {/* Duplicate for infinite loop */}
+          <div className="ticker-item"><span className="ticker-dot">●</span> <strong>NEW:</strong> Pop!_OS 24.04 LTS available now</div>
+          <div className="ticker-item"><span className="ticker-dot">●</span> <strong>HOT:</strong> Steam Deck OLED support improved on Arch</div>
         </div>
       </div>
 
@@ -48,7 +60,7 @@ export default function RankingsPage() {
             ))}
           </div>
           <select className="sort-select">
-            <option>Sort: TuxHub Score</option>
+            <option>Sort: SudoDodo Score</option>
             <option>Sort: Installs/Month</option>
           </select>
         </div>
