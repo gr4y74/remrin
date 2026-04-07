@@ -6,22 +6,30 @@ import { usePathname } from 'next/navigation';
 
 export default function SidebarLeft() {
   const pathname = usePathname();
+  const [communities, setCommunities] = React.useState<any[]>([]);
+  const [deCommunities, setDeCommunities] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    // Fetch regular distros
+    fetch('/api/sudodo/communities?type=distro')
+      .then(res => res.json())
+      .then(data => {
+        if (data.data) setCommunities(data.data);
+      });
+
+    // Fetch Desktop Environments
+    fetch('/api/sudodo/communities?type=de')
+      .then(res => res.json())
+      .then(data => {
+        if (data.data) setDeCommunities(data.data);
+      });
+  }, []);
 
   const primaryNav = [
     { label: 'Home', icon: '🏠', href: '/en/sudodo/feed' },
     { label: 'Popular', icon: '🔥', href: '#' },
     { label: 'New', icon: '✨', href: '#' },
-    { label: 'Tutorials', icon: '📺', href: '#' },
     { label: 'Rankings', icon: '📊', href: '/en/sudodo/rankings' },
-    { label: 'AI Assistant', icon: '🤖', href: '#' },
-  ];
-
-  const communities = [
-    { label: 'r/PopOS', icon: '🚀', color: 'rgba(14,165,233,0.15)', members: '84k', slug: 'popos' },
-    { label: 'r/Fedora', icon: '🔴', color: 'rgba(249,115,22,0.15)', members: '127k', slug: 'fedora' },
-    { label: 'r/LinuxMint', icon: '🌿', color: 'rgba(34,197,94,0.15)', members: '96k', slug: 'mint' },
-    { label: 'r/archlinux', icon: '🏔️', color: 'rgba(167,139,250,0.15)', members: '211k', slug: 'arch' },
-    { label: 'r/debian', icon: '🖤', color: 'rgba(239,68,68,0.15)', members: '73k', slug: 'debian' },
   ];
 
   return (
@@ -39,17 +47,16 @@ export default function SidebarLeft() {
       </div>
 
       <div className="nav-section">
-        <div className="nav-label">Your Communities</div>
+        <div className="nav-label">Trending Communities</div>
         {communities.map((c) => (
-          <Link key={c.label} href={`/en/sudodo/distro/${c.slug}`} className="distro-nav-item">
-            <div className="d-badge" style={{ background: c.color }}>{c.icon}</div>
-            {c.label}
-            <span className="d-members">{c.members}</span>
+          <Link key={c.id} href={`/en/sudodo/distro/${c.slug}`} className="distro-nav-item">
+            <div className="d-badge" style={{ background: `${c.theme_color}25` }}>{c.icon}</div>
+            {c.name}
+            <span className="d-members">{(c.members_count / 1000).toFixed(0)}k</span>
           </Link>
         ))}
       </div>
 
-      {/* Simplified Desktop Environments & Topics sections for mock */}
       <div className="nav-section">
         <div className="nav-label">Knowledge Base</div>
         <Link href="#" className="distro-nav-item">
@@ -68,14 +75,13 @@ export default function SidebarLeft() {
 
       <div className="nav-section">
         <div className="nav-label">Desktop Environments</div>
-        <Link href="#" className="distro-nav-item">
-          <div className="d-badge" style={{ background: 'rgba(14,165,233,0.12)' }}>🌀</div>
-          r/GNOME <span className="d-members">55k</span>
-        </Link>
-        <Link href="#" className="distro-nav-item">
-          <div className="d-badge" style={{ background: 'rgba(14,165,233,0.12)' }}>🖼️</div>
-          r/KDE <span className="d-members">89k</span>
-        </Link>
+        {deCommunities.map((c) => (
+          <Link key={c.id} href={`/en/sudodo/distro/${c.slug}`} className="distro-nav-item">
+            <div className="d-badge" style={{ background: `${c.theme_color}25` }}>{c.icon}</div>
+            {c.name}
+            <span className="d-members">{(c.members_count / 1000).toFixed(0)}k</span>
+          </Link>
+        ))}
       </div>
     </aside>
   );

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { HardwareParser, HardwareProfile } from '@/lib/sudodo/hardware-parser';
 
 type Step = 'welcome' | 'experience' | 'hardware' | 'summary';
 
@@ -10,8 +11,10 @@ export default function OnboardingWizard({ onClose }: { onClose: () => void }) {
     experience: 'newcomer',
     distro: '',
     hardware: '',
-    gpu: 'none'
+    gpu: 'none',
+    recommendations: [] as string[]
   });
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const nextStep = () => {
     if (step === 'welcome') setStep('experience');
@@ -73,16 +76,22 @@ export default function OnboardingWizard({ onClose }: { onClose: () => void }) {
                 value={data.hardware}
                 onChange={(e) => setData({...data, hardware: e.target.value})}
               />
-              <div className="w-minor-options">
-                <label>Manual GPU Selection:</label>
-                <select onChange={(e) => setData({...data, gpu: e.target.value})}>
-                  <option value="none">Auto-detect</option>
-                  <option value="nvidia">NVIDIA (Proprietary needed)</option>
-                  <option value="amd">AMD (Mesa/Open Source)</option>
-                  <option value="intel">Intel (Integrated)</option>
-                </select>
-              </div>
-              <button className="w-btn-primary" onClick={nextStep}>Next: Complete →</button>
+              <button 
+                className="w-btn-primary" 
+                disabled={isAnalyzing}
+                onClick={() => {
+                  setIsAnalyzing(true);
+                  setTimeout(() => {
+                    const profile = HardwareParser.parse(data.hardware);
+                    const recs = HardwareParser.getRecommendations(profile);
+                    setData({ ...data, recommendations: recs });
+                    setIsAnalyzing(false);
+                    nextStep();
+                  }, 1500);
+                }}
+              >
+                {isAnalyzing ? 'Analyzing System...' : 'Analyze Hardware →'}
+              </button>
             </div>
           )}
 
@@ -93,8 +102,8 @@ export default function OnboardingWizard({ onClose }: { onClose: () => void }) {
                 <div className="wp-header">SUDODODO OFFICIAL RESIDENT</div>
                 <div className="wp-body">
                   <div className="wp-field">LVL: <span>{data.experience.toUpperCase()}</span></div>
-                  <div className="wp-field">ROLE: <span>LINUX ENTHUSIAST</span></div>
-                  <div className="wp-field">INTEL: <span>HARDWARE MAPPED</span></div>
+                  <div className="wp-field">REPORT: <span>{data.recommendations.length > 0 ? "SCAN COMPLETE" : "MANUAL PROFILE"}</span></div>
+                  <div className="wp-field">MATCHES: <span>{data.recommendations.slice(0, 2).join(', ')}</span></div>
                 </div>
               </div>
               <p>Your feed will now prioritize content matching your hardware profile.</p>
