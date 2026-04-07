@@ -35,21 +35,30 @@ export default function DodoSpecialist({ distroName, themeColor }: { distroName:
     setInput('');
     setIsLoading(true);
 
-    // Mocking the RAG + Remrin API response for now
-    // In production, this would call /api/sudodo/chat
-    setTimeout(() => {
+    try {
+      const res = await fetch('/api/sudodo/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [...messages, userMsg],
+          context: { distroName }
+        })
+      });
+      
+      const data = await res.json();
+      
       const response: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: `Based on the latest data for ${distroName}, your hardware is perfectly compatible. If you are using a ThinkPad X1 Carbon, make sure to enable the 'psmouse.synaptics_intertouch=1' kernel parameter for optimal trackpoint performance.`,
-        sources: [
-          { name: `${distroName} Wiki`, url: '#' },
-          { name: 'SudoDodo Matrix', url: '#' }
-        ]
+        content: data.content,
+        sources: data.sources
       };
       setMessages(prev => [...prev, response]);
+    } catch (err) {
+      console.error("Dodo Chat Error:", err);
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   return (

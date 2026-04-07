@@ -48,15 +48,15 @@ export default function PostCard({ post }: PostCardProps) {
         {post.preview && <div className="post-preview">{post.preview}</div>}
         
         {post.image && (
-          <div style={{ background: 'linear-gradient(135deg,#1a0a2e,#0a1a2e,#0a2e1a)', borderRadius: '8px', height: '180px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px', fontSize: '48px', cursor: 'pointer' }}>
+          <div className="post-media-placeholder">
             🖥️
           </div>
         )}
 
         {post.video && (
           <div className="post-video-thumb">
-            <div style={{ width: '100%', height: '200px', background: 'linear-gradient(135deg,#1a2135,#0f1a2e)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-              <span style={{ fontSize: '60px', opacity: 0.3 }}>🐧</span>
+            <div className="video-thumb-inner">
+              <span className="video-logo">🐧</span>
               <div className="play-btn">▶</div>
               <div className="video-source">{post.video.source} · {post.video.duration}</div>
             </div>

@@ -49,8 +49,25 @@ const mockPosts: any[] = [
 ];
 
 export default function HomeFeedPage() {
+  const [posts, setPosts] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    fetch('/api/sudodo/feed?sortBy=hot')
+      .then(res => res.json())
+      .then(data => {
+        if (data.data && data.data.length > 0) {
+          setPosts(data.data);
+        } else {
+          setPosts(mockPosts); // Fallback to mocks if DB is empty
+        }
+      })
+      .catch(err => {
+        console.error("Feed Fetch Error:", err);
+        setPosts(mockPosts);
+      });
+  }, []);
   return (
-    <div className="tuxhub-page">
+    <div className="sudododo-page">
       <TopBar />
       <div className="layout">
         <SidebarLeft />
@@ -77,9 +94,16 @@ export default function HomeFeedPage() {
           </div>
 
           <div className="posts-list">
-            {mockPosts.map(post => (
-              <PostCard key={post.id} post={post} />
-            ))}
+            {posts.length > 0 ? (
+              posts.map(post => (
+                <PostCard key={post.id} post={post} />
+              ))
+            ) : (
+              <div className="no-posts">
+                <div className="loading-spinner"></div>
+                Initializing SudoDodo Intelligence Feed...
+              </div>
+            )}
           </div>
         </main>
 
