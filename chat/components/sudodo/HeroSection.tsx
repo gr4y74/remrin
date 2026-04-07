@@ -1,8 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import OnboardingWizard from './onboarding/OnboardingWizard';
 
 export default function HeroSection() {
+  const [showWizard, setShowWizard] = useState(false);
   return (
     <div className="hero">
       <div className="hero-glow"></div>
@@ -22,10 +24,12 @@ export default function HeroSection() {
           <button className="btn-primary" onClick={() => window.location.href = '/en/sudodo/feed'}>
             🚀 Launch Community Feed
           </button>
-          <button className="btn-secondary" onClick={() => window.location.href = '/en/sudodo/rankings'}>
-            📊 View Rankings
+          <button className="btn-secondary" onClick={() => setShowWizard(true)}>
+            📝 Join Free (SudoDodo Passport)
           </button>
         </div>
+
+        {showWizard && <OnboardingWizard onClose={() => setShowWizard(false)} />}
 
         {/* TERMINAL */}
         <div className="terminal-wrapper">
