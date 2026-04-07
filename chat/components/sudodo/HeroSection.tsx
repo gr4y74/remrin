@@ -19,11 +19,11 @@ export default function HeroSection() {
           AI-powered distro matching, curated tutorials, live community support, and the most comprehensive Linux knowledge base ever built. Stop Googling. Start Linux-ing.
         </p>
         <div className="hero-actions">
-          <button className="btn-primary" onClick={() => document.getElementById('wizard')?.scrollIntoView({ behavior: 'smooth' })}>
-            🤖 Find My Distro
+          <button className="btn-primary" onClick={() => window.location.href = '/en/sudodo/feed'}>
+            🚀 Launch Community Feed
           </button>
-          <button className="btn-secondary" onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}>
-            Explore Platform →
+          <button className="btn-secondary" onClick={() => window.location.href = '/en/sudodo/rankings'}>
+            📊 View Rankings
           </button>
         </div>
 

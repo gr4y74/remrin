@@ -8,7 +8,7 @@ export default function FeaturesGrid() {
       <p className="section-sub">We're replacing 12 scattered resources with one beautifully designed platform built for the modern Linux user.</p>
 
       <div className="features-grid">
-        <div className="feature-card" style={{ opacity: 1, transform: 'translateY(0)' }}>
+        <div className="feature-card visible">
           <div className="feature-icon fi-blue">🤖</div>
           <h3 className="feature-title">AI Distro Wizard</h3>
           <p className="feature-desc">Trained on verified Linux data only. No hallucinations. Matches you to your perfect distro + desktop environment + install guide in under 60 seconds.</p>

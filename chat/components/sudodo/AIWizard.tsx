@@ -12,10 +12,10 @@ export default function AIWizard() {
       <p className="section-sub">Answer a few questions. Our AI analyzes 600+ distros and your exact hardware to give you a personalized recommendation — not just &quot;try Ubuntu.&quot;</p>
 
       <div className="wizard-container">
-        <div className="wizard-card" style={{ opacity: 1, transform: 'translateY(0)' }}>
+        <div className="wizard-card visible">
           <div className="wizard-header">
             <div>
-              <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>Distro Wizard</div>
+              <div className="wizard-header-title">Distro Wizard</div>
               <div className="wizard-step">Question 4 of 10</div>
               <div className="progress-bar"><div className="progress-fill"></div></div>
             </div>
@@ -42,7 +42,7 @@ export default function AIWizard() {
         </div>
 
         <div>
-          <div style={{ marginBottom: '16px', fontSize: '12px', fontFamily: "'JetBrains Mono', monospace", color: 'var(--text3)', letterSpacing: '1px' }}>LIVE PREVIEW — YOUR RESULT SO FAR</div>
+          <div className="result-preview-label">LIVE PREVIEW — YOUR RESULT SO FAR</div>
           <div className="result-card">
             <div className="result-header">
               <span>🏆 #1 Match</span>
