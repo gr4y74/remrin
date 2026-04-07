@@ -1447,3 +1447,25 @@
   font-family: 'JetBrains Mono', monospace;
   margin-top: 2px;
 }
+
+/* SMART ICON SYSTEM */
+.sd-icon-wrapper {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.sd-font-glyph {
+  color: var(--accent);
+  line-height: 1;
+}
+
+.sd-img-glyph {
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.emoji-fallback {
+  background: var(--surface2);
+  border-radius: 50%;
+}

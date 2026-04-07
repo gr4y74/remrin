@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import TopBar from '@/components/sudodo/community/TopBar';
 import Link from 'next/link';
+import SubDodoIcon from '@/components/sudodo/community/SubDodoIcon';
 
 export default function RankingsPage() {
   const [filter, setFilter] = useState('All Distros');
@@ -90,11 +91,7 @@ export default function RankingsPage() {
               <div className="rr-change ch-same">—</div>
               <div className="rr-distro">
                 <div className="rr-icon">
-                  {row.icon.startsWith('http') ? (
-                    <img src={row.icon} alt={row.name} className="rr-logo-img" />
-                  ) : (
-                    <span>{row.icon}</span>
-                  )}
+                  <SubDodoIcon icon={row.icon} name={row.name} size={32} />
                 </div>
                 <div>
                   <div className="rr-dname">{row.name.replace('r/', '')}</div>

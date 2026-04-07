@@ -102,6 +102,9 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link href="//cdn.jsdelivr.net/gh/Lukas-W/font-logos@v0.18/assets/font-logos.css" rel="stylesheet" />
+      </head>
       <body suppressHydrationWarning className="bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary">
         {/* Clean background - no effects */}
         <Providers attribute="class" defaultTheme="dark">

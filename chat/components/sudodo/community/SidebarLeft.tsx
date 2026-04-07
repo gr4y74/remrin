@@ -1,35 +1,45 @@
-'use client';
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import SubDodoIcon from '@/components/sudodo/community/SubDodoIcon';
 
 export default function SidebarLeft() {
   const pathname = usePathname();
-  const [communities, setCommunities] = React.useState<any[]>([]);
-  const [deCommunities, setDeCommunities] = React.useState<any[]>([]);
+  const [communities, setCommunities] = useState<any[]>([]);
+  const [deCommunities, setDeCommunities] = useState<any[]>([]);
+  const [myCommunities, setMyCommunities] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  React.useEffect(() => {
-    // Fetch regular distros
-    fetch('/api/sudodo/communities?type=distro')
+  useEffect(() => {
+    // 1. Fetch Trending Distros
+    fetch('/api/sudodo/communities?type=distro&limit=5')
       .then(res => res.json())
       .then(data => {
         if (data.data) setCommunities(data.data);
       });
 
-    // Fetch Desktop Environments
-    fetch('/api/sudodo/communities?type=de')
+    // 2. Fetch Desktop Environments
+    fetch('/api/sudodo/communities?type=de&limit=5')
       .then(res => res.json())
       .then(data => {
         if (data.data) setDeCommunities(data.data);
+      });
+
+    // 3. Fetch User's Joined Communities (My Distros)
+    // In production, would use actual session UID
+    fetch('/api/sudodo/communities?type=distro&limit=3') 
+      .then(res => res.json())
+      .then(data => {
+        setMyCommunities(data.data || []);
+        setIsLoading(false);
       });
   }, []);
 
   const primaryNav = [
     { label: 'Home', icon: '🏠', href: '/en/sudodo/feed' },
-    { label: 'Popular', icon: '🔥', href: '#' },
-    { label: 'New', icon: '✨', href: '#' },
     { label: 'Rankings', icon: '📊', href: '/en/sudodo/rankings' },
+    { label: 'Distro Battle', icon: '⚔️', href: '/en/sudodo/compare' },
+    { label: 'Popular', icon: '🔥', href: '#' },
   ];
 
   return (
@@ -47,12 +57,14 @@ export default function SidebarLeft() {
       </div>
 
       <div className="nav-section">
-        <div className="nav-label">Trending Communities</div>
-        {communities.map((c) => (
+        <div className="nav-label">{myCommunities.length > 0 ? 'My Distros' : 'Trending Communities'}</div>
+        {(myCommunities.length > 0 ? myCommunities : communities).map((c) => (
           <Link key={c.id} href={`/en/sudodo/distro/${c.slug}`} className="distro-nav-item">
-            <div className="d-badge" style={{ background: `${c.theme_color}25` }}>{c.icon}</div>
-            {c.name}
-            <span className="d-members">{(c.members_count / 1000).toFixed(0)}k</span>
+            <div className="d-badge">
+               <SubDodoIcon icon={c.icon} name={c.name} size={20} />
+            </div>
+            <span className="d-name">{c.name.replace('r/', '')}</span>
+            <span className="d-members">{(c.members_count / 1000).toFixed(1)}k</span>
           </Link>
         ))}
       </div>
@@ -77,8 +89,10 @@ export default function SidebarLeft() {
         <div className="nav-label">Desktop Environments</div>
         {deCommunities.map((c) => (
           <Link key={c.id} href={`/en/sudodo/distro/${c.slug}`} className="distro-nav-item">
-            <div className="d-badge" style={{ background: `${c.theme_color}25` }}>{c.icon}</div>
-            {c.name}
+            <div className="d-badge">
+               <SubDodoIcon icon={c.icon} name={c.name} size={18} />
+            </div>
+            <span className="d-name">{c.name.replace('r/', '')}</span>
             <span className="d-members">{(c.members_count / 1000).toFixed(0)}k</span>
           </Link>
         ))}
