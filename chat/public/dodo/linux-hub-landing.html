@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PenguinOS — The Everything Linux Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg2: #0d1220;
+    --bg3: #111827;
+    --surface: #161d2e;
+    --surface2: #1e2a3d;
+    --border: #1f2d47;
+    --accent: #3b82f6;
+    --accent2: #06b6d4;
+    --accent3: #8b5cf6;
+    --green: #10b981;
+    --orange: #f59e0b;
+    --red: #ef4444;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #475569;
+    --glow: rgba(59, 130, 246, 0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Instrument Sans', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.1s ease;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(59,130,246,0.4);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.15s ease, width 0.2s ease, height 0.2s ease;
+  }
+
+  /* SCANLINE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 9000;
+  }
+
+  /* ANIMATED GRID BACKGROUND */
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    padding: 20px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(10,14,26,0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-icon {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--accent), var(--accent3));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .logo span { color: var(--accent); }
+
+  nav ul {
+    display: flex;
+    list-style: none;
+    gap: 36px;
+    align-items: center;
+  }
+
+  nav ul a {
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    transition: color 0.2s;
+  }
+
+  nav ul a:hover { color: var(--text); }
+
+  .nav-cta {
+    background: var(--accent) !important;
+    color: white !important;
+    padding: 9px 20px;
+    border-radius: 8px;
+    font-weight: 600 !important;
+    transition: background 0.2s, transform 0.15s !important;
+  }
+
+  .nav-cta:hover {
+    background: #2563eb !important;
+    transform: translateY(-1px);
+  }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 120px 48px 80px;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 800px; height: 800px;
+    background: radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    animation: pulse-glow 4s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  }
+
+  .hero-content {
+    text-align: center;
+    max-width: 900px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(59,130,246,0.1);
+    border: 1px solid rgba(59,130,246,0.2);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    margin-bottom: 32px;
+    animation: fade-up 0.6s ease both;
+  }
+
+  .badge-dot {
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: blink 1.5s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(52px, 8vw, 88px);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -3px;
+    margin-bottom: 24px;
+    animation: fade-up 0.6s ease 0.1s both;
+  }
+
+  h1 .line1 { display: block; color: var(--text); }
+  h1 .line2 {
+    display: block;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 18px;
+    color: var(--text2);
+    line-height: 1.7;
+    max-width: 600px;
+    margin: 0 auto 48px;
+    animation: fade-up 0.6s ease 0.2s both;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    animation: fade-up 0.6s ease 0.3s both;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #2563eb);
+    color: white;
+    border: none;
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: 'Instrument Sans', sans-serif;
+    cursor: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 40px rgba(59,130,246,0.3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 60px rgba(59,130,246,0.5);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    font-family: 'Instrument Sans', sans-serif;
+    cursor: none;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(59,130,246,0.05);
+  }
+
+  /* TERMINAL MOCKUP */
+  .terminal-wrapper {
+    margin-top: 72px;
+    position: relative;
+    z-index: 2;
+    animation: fade-up 0.6s ease 0.4s both;
+  }
+
+  .terminal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.03);
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  .terminal-bar {
+    background: var(--surface2);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot-red { background: #ef4444; }
+  .dot-yellow { background: #f59e0b; }
+  .dot-green { background: #10b981; }
+
+  .terminal-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text3);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .terminal-body {
+    padding: 28px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.9;
+  }
+
+  .t-prompt { color: var(--green); }
+  .t-cmd { color: var(--text); }
+  .t-output { color: var(--text2); }
+  .t-accent { color: var(--accent); }
+  .t-highlight { color: var(--accent2); }
+  .t-success { color: var(--green); }
+  .t-warn { color: var(--orange); }
+  .t-cursor {
+    display: inline-block;
+    width: 8px; height: 14px;
+    background: var(--accent);
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+    margin-left: 2px;
+  }
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* STATS BAR */
+  .stats-bar {
+    position: relative;
+    z-index: 2;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: rgba(13,18,32,0.8);
+    backdrop-filter: blur(10px);
+  }
+
+  .stats-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 48px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .stat {
+    padding: 32px 0;
+    text-align: center;
+    border-right: 1px solid var(--border);
+  }
+
+  .stat:last-child { border-right: none; }
+
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 36px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--text), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: block;
+  }
+
+  .stat-label {
+    font-size: 13px;
+    color: var(--text3);
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  /* SECTIONS */
+  section {
+    position: relative;
+    z-index: 2;
+    padding: 120px 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 4vw, 48px);
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    margin-bottom: 16px;
+    line-height: 1.1;
+  }
+
+  .section-sub {
+    color: var(--text2);
+    font-size: 17px;
+    line-height: 1.7;
+    max-width: 560px;
+    margin-bottom: 64px;
+  }
+
+  /* AI WIZARD SECTION */
+  .wizard-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+
+  .wizard-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+
+  .wizard-header {
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .wizard-step {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+  }
+
+  .progress-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 12px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 40%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+
+  .wizard-body { padding: 32px 28px; }
+
+  .wizard-question {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    line-height: 1.4;
+  }
+
+  .wizard-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .w-option {
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: none;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text2);
+  }
+
+  .w-option:hover, .w-option.selected {
+    border-color: var(--accent);
+    background: rgba(59,130,246,0.08);
+    color: var(--text);
+  }
+
+  .w-option.selected .w-check {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .w-check {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .wizard-footer {
+    padding: 20px 28px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .w-next {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Instrument Sans', sans-serif;
+    cursor: none;
+    transition: all 0.2s;
+  }
+
+  .w-next:hover { background: #2563eb; }
+
+  /* FEATURES GRID */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .feature-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .feature-card:hover { border-color: rgba(59,130,246,0.3); transform: translateY(-4px); }
+  .feature-card:hover::before { opacity: 1; }
+
+  .feature-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  .fi-blue { background: rgba(59,130,246,0.15); }
+  .fi-cyan { background: rgba(6,182,212,0.15); }
+  .fi-purple { background: rgba(139,92,246,0.15); }
+  .fi-green { background: rgba(16,185,129,0.15); }
+  .fi-orange { background: rgba(245,158,11,0.15); }
+  .fi-red { background: rgba(239,68,68,0.15); }
+
+  .feature-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .feature-desc {
+    color: var(--text2);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  /* DISTRO SHOWCASE */
+  .distro-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+    margin-bottom: 64px;
+  }
+
+  .distro-pill {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 12px;
+    text-align: center;
+    transition: all 0.2s;
+    cursor: none;
+  }
+
+  .distro-pill:hover {
+    border-color: rgba(59,130,246,0.4);
+    transform: translateY(-2px);
+    background: var(--surface2);
+  }
+
+  .distro-pill .d-icon { font-size: 28px; display: block; margin-bottom: 8px; }
+  .distro-pill .d-name { font-size: 12px; font-weight: 600; color: var(--text2); }
+  .distro-pill .d-rank {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    margin-top: 4px;
+  }
+
+  /* COMMUNITY */
+  .community-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .comm-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+  }
+
+  .forum-post {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+
+  .forum-post:last-child { border-bottom: none; }
+
+  .fp-avatar {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .fp-content { flex: 1; }
+  .fp-title { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+  .fp-meta { font-size: 11px; color: var(--text3); font-family: 'JetBrains Mono', monospace; }
+
+  .fp-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    margin-right: 6px;
+  }
+
+  .tag-solved { background: rgba(16,185,129,0.15); color: var(--green); }
+  .tag-hot { background: rgba(239,68,68,0.15); color: var(--red); }
+  .tag-new { background: rgba(59,130,246,0.15); color: var(--accent); }
+
+  /* FOOTER */
+  footer {
+    position: relative;
+    z-index: 2;
+    border-top: 1px solid var(--border);
+    padding: 64px 48px;
+    background: var(--bg2);
+  }
+
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 48px;
+  }
+
+  .footer-brand .logo { margin-bottom: 16px; }
+  .footer-brand p { color: var(--text2); font-size: 14px; line-height: 1.7; }
+
+  .footer-col h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 10px; }
+  .footer-col ul a { color: var(--text3); font-size: 14px; text-decoration: none; transition: color 0.2s; }
+  .footer-col ul a:hover { color: var(--accent); }
+
+  .footer-bottom {
+    max-width: 1200px;
+    margin: 48px auto 0;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-bottom p { color: var(--text3); font-size: 13px; }
+
+  /* SCROLLING TICKER */
+  .ticker {
+    width: 100%;
+    overflow: hidden;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+    padding: 12px 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  .ticker-inner {
+    display: flex;
+    gap: 0;
+    animation: ticker-scroll 30s linear infinite;
+    white-space: nowrap;
+  }
+
+  .ticker-item {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text3);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ticker-dot { color: var(--accent); }
+
+  @keyframes ticker-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* AI RESULT CARD */
+  .result-card {
+    background: linear-gradient(135deg, rgba(59,130,246,0.08), rgba(139,92,246,0.08));
+    border: 1px solid rgba(59,130,246,0.25);
+    border-radius: 20px;
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .result-card::before {
+    content: '';
+    position: absolute;
+    top: -50%; right: -20%;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(59,130,246,0.1), transparent 70%);
+    pointer-events: none;
+  }
+
+  .result-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .result-match {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    background: rgba(16,185,129,0.15);
+    color: var(--green);
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+
+  .result-distro {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+
+  .result-de {
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 20px;
+  }
+
+  .result-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .rtag {
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid;
+  }
+
+  .rtag-blue { background: rgba(59,130,246,0.1); border-color: rgba(59,130,246,0.3); color: var(--accent); }
+  .rtag-green { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); color: var(--green); }
+  .rtag-purple { background: rgba(139,92,246,0.1); border-color: rgba(139,92,246,0.3); color: var(--accent3); }
+
+  .result-reason {
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 1.7;
+    border-top: 1px solid rgba(59,130,246,0.15);
+    padding-top: 20px;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    nav ul { display: none; }
+    .hero { padding: 100px 24px 60px; }
+    h1 { font-size: 42px; letter-spacing: -1.5px; }
+    section { padding: 80px 24px; }
+    .stats-inner { grid-template-columns: repeat(2, 1fr); }
+    .features-grid { grid-template-columns: 1fr; }
+    .distro-grid { grid-template-columns: repeat(3, 1fr); }
+    .wizard-container, .community-grid { grid-template-columns: 1fr; }
+    .footer-inner { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="grid-bg"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <div class="logo-icon">🐧</div>
+    Penguin<span>OS</span>
+  </div>
+  <ul>
+    <li><a href="#">Distro Finder</a></li>
+    <li><a href="#">Distros</a></li>
+    <li><a href="#">Tutorials</a></li>
+    <li><a href="#">Community</a></li>
+    <li><a href="#">Tools</a></li>
+    <li><a href="#" class="nav-cta">Join Free</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      The only Linux resource you'll ever need
+    </div>
+    <h1>
+      <span class="line1">Everything Linux.</span>
+      <span class="line2">One Place.</span>
+    </h1>
+    <p class="hero-sub">
+      AI-powered distro matching, curated tutorials, live community support, and the most comprehensive Linux knowledge base ever built. Stop Googling. Start Linux-ing.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="scrollToWizard()">
+        🤖 Find My Distro
+      </button>
+      <button class="btn-secondary" onclick="scrollToFeatures()">
+        Explore Platform →
+      </button>
+    </div>
+
+    <!-- TERMINAL -->
+    <div class="terminal-wrapper">
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot dot-red"></div>
+          <div class="dot dot-yellow"></div>
+          <div class="dot dot-green"></div>
+          <span class="terminal-title">penguinos — distro-wizard</span>
+        </div>
+        <div class="terminal-body">
+          <div><span class="t-prompt">penguin@os</span><span class="t-cmd"> ~$ </span><span class="t-accent">penguinos find-my-distro</span></div>
+          <div class="t-output">Analyzing your profile... ████████████ 100%</div>
+          <div>&nbsp;</div>
+          <div><span class="t-success">✓ </span><span class="t-output">Primary Use: Gaming + Development</span></div>
+          <div><span class="t-success">✓ </span><span class="t-output">Hardware: NVIDIA RTX 4070 detected</span></div>
+          <div><span class="t-success">✓ </span><span class="t-output">Experience Level: Intermediate</span></div>
+          <div><span class="t-success">✓ </span><span class="t-output">Preference: Stable with gaming support</span></div>
+          <div>&nbsp;</div>
+          <div><span class="t-highlight">🎯 Best Match: </span><span class="t-accent">Pop!_OS 24.04 LTS</span></div>
+          <div><span class="t-output">   Desktop: GNOME 46 · Driver: NVIDIA 550 (auto-install)</span></div>
+          <div><span class="t-output">   Score: </span><span class="t-success">97% compatibility</span></div>
+          <div>&nbsp;</div>
+          <div><span class="t-warn">⚡ </span><span class="t-output">Generating your personalized install guide...</span><span class="t-cursor"></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner" id="ticker">
+    <span class="ticker-item"><span class="ticker-dot">▸</span> Ubuntu 24.04.2 released</span>
+    <span class="ticker-item"><span class="ticker-dot">▸</span> Arch Linux 2025.02.01 ISO available</span>
+    <span class="ticker-item"><span class="ticker-dot">▸</span> Fedora 42 Beta testing begins</span>
+    <span class="ticker-item"><span class="ticker-dot">▸</span> Linux kernel 6.13 stable</span>
+    <span class="ticker-item"><span class="ticker-dot">▸</span> KDE Plasma 6.3 ships new features</span>
+    <span class="ticker-item"><span class="ticker-dot">▸</span> Valve improves Proton compatibility</span>
+    <span class="ticker-item"><span class="ticker-dot">▸</span> Debian 13 Trixie entering freeze</span>
+    <span class="ticker-item"><span class="ticker-dot">▸</span> GNOME 48 alpha released</span>
+    <span class="ticker-item"><span class="ticker-dot">▸</span> Ubuntu 24.04.2 released</span>
+    <span class="ticker-item"><span class="ticker-dot">▸</span> Arch Linux 2025.02.01 ISO available</span>
+    <span class="ticker-item"><span class="ticker-dot">▸</span> Fedora 42 Beta testing begins</span>
+    <span class="ticker-item"><span class="ticker-dot">▸</span> Linux kernel 6.13 stable</span>
+    <span class="ticker-item"><span class="ticker-dot">▸</span> KDE Plasma 6.3 ships new features</span>
+    <span class="ticker-item"><span class="ticker-dot">▸</span> Valve improves Proton compatibility</span>
+    <span class="ticker-item"><span class="ticker-dot">▸</span> Debian 13 Trixie entering freeze</span>
+    <span class="ticker-item"><span class="ticker-dot">▸</span> GNOME 48 alpha released</span>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat">
+      <span class="stat-num">600+</span>
+      <span class="stat-label">Linux Distros Tracked</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">12K+</span>
+      <span class="stat-label">Curated Tutorials</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">340K</span>
+      <span class="stat-label">Community Members</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">99.2%</span>
+      <span class="stat-label">AI Match Accuracy</span>
+    </div>
+  </div>
+</div>
+
+<!-- AI WIZARD SECTION -->
+<section id="wizard">
+  <span class="section-tag">// ai-powered</span>
+  <h2 class="section-title">Find Your Perfect Distro<br>in 60 Seconds</h2>
+  <p class="section-sub">Answer a few questions. Our AI analyzes 600+ distros and your exact hardware to give you a personalized recommendation — not just "try Ubuntu."</p>
+
+  <div class="wizard-container">
+    <div class="wizard-card">
+      <div class="wizard-header">
+        <div>
+          <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">Distro Wizard</div>
+          <div class="wizard-step">Question 4 of 10</div>
+          <div class="progress-bar"><div class="progress-fill"></div></div>
+        </div>
+      </div>
+      <div class="wizard-body">
+        <div class="wizard-question">What's your primary use case for this Linux install?</div>
+        <div class="wizard-options">
+          <div class="w-option selected" onclick="selectOption(this)">
+            <div class="w-check"></div>
+            🎮 Gaming
+          </div>
+          <div class="w-option" onclick="selectOption(this)">
+            <div class="w-check"></div>
+            💻 Development
+          </div>
+          <div class="w-option" onclick="selectOption(this)">
+            <div class="w-check"></div>
+            🎨 Creative Work
+          </div>
+          <div class="w-option" onclick="selectOption(this)">
+            <div class="w-check"></div>
+            🔒 Privacy / Security
+          </div>
+          <div class="w-option" onclick="selectOption(this)">
+            <div class="w-check"></div>
+            📊 Office / Productivity
+          </div>
+          <div class="w-option" onclick="selectOption(this)">
+            <div class="w-check"></div>
+            🖥️ Home Server
+          </div>
+        </div>
+      </div>
+      <div class="wizard-footer">
+        <button class="w-next">Next →</button>
+      </div>
+    </div>
+
+    <div>
+      <div style="margin-bottom: 16px; font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--text3); letter-spacing: 1px;">LIVE PREVIEW — YOUR RESULT SO FAR</div>
+      <div class="result-card">
+        <div class="result-header">
+          <span>🏆 #1 Match</span>
+          <span class="result-match">97% compatible</span>
+        </div>
+        <div class="result-distro">Pop!_OS 24.04</div>
+        <div class="result-de">Recommended DE: GNOME 46</div>
+        <div class="result-tags">
+          <span class="rtag rtag-green">✓ NVIDIA Ready</span>
+          <span class="rtag rtag-blue">Gaming Optimized</span>
+          <span class="rtag rtag-purple">Dev Tools Pre-installed</span>
+        </div>
+        <div class="result-reason">
+          Based on your NVIDIA GPU and gaming focus, Pop!_OS is ideal — it ships with proprietary GPU drivers pre-configured and includes a custom scheduler for better game performance. System76 maintains it with frequent updates.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <span class="section-tag">// platform-overview</span>
+  <h2 class="section-title">Everything Linux Needs<br>Lives Here Now</h2>
+  <p class="section-sub">We're replacing 12 scattered resources with one beautifully designed platform built for the modern Linux user.</p>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon fi-blue">🤖</div>
+      <h3 class="feature-title">AI Distro Wizard</h3>
+      <p class="feature-desc">Trained on verified Linux data only. No hallucinations. Matches you to your perfect distro + desktop environment + install guide in under 60 seconds.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon fi-cyan">📊</div>
+      <h3 class="feature-title">Live Distro Database</h3>
+      <p class="feature-desc">600+ distros with real-time release tracking, hardware compatibility matrices, package databases, and beautiful modern UI. DistroWatch done right.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon fi-purple">🎥</div>
+      <h3 class="feature-title">Tutorial Aggregator</h3>
+      <p class="feature-desc">Every Linux YouTube tutorial indexed, tagged by distro, topic, and skill level. Community-ranked so you always find the best solution first.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon fi-green">💬</div>
+      <h3 class="feature-title">Community Hub</h3>
+      <p class="feature-desc">Per-distro forums, real-time chat, and a verified solutions database. AI triages your help request first — humans step in when needed.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon fi-orange">🔧</div>
+      <h3 class="feature-title">Linux Toolbox</h3>
+      <p class="feature-desc">Command generators, config file templates, dotfiles sharing, hardware compatibility checker, and package version comparison across distros.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon fi-red">📰</div>
+      <h3 class="feature-title">Linux News</h3>
+      <p class="feature-desc">Kernel releases, distro updates, hardware announcements, and FOSS news aggregated from across the web with real-time ticker updates.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DISTRO SHOWCASE -->
+<section>
+  <span class="section-tag">// distro-database</span>
+  <h2 class="section-title">All Your Favourite Distros,<br>In One Place</h2>
+  <p class="section-sub">Live tracking with real release data, not cached from 2009.</p>
+
+  <div class="distro-grid">
+    <div class="distro-pill">
+      <span class="d-icon">🎯</span>
+      <div class="d-name">Ubuntu</div>
+      <div class="d-rank">#1 Popular</div>
+    </div>
+    <div class="distro-pill">
+      <span class="d-icon">🏔️</span>
+      <div class="d-name">Arch</div>
+      <div class="d-rank">#2 Popular</div>
+    </div>
+    <div class="distro-pill">
+      <span class="d-icon">🎩</span>
+      <div class="d-name">Fedora</div>
+      <div class="d-rank">#3 Popular</div>
+    </div>
+    <div class="distro-pill">
+      <span class="d-icon">🖤</span>
+      <div class="d-name">Debian</div>
+      <div class="d-rank">#4 Popular</div>
+    </div>
+    <div class="distro-pill">
+      <span class="d-icon">🌿</span>
+      <div class="d-name">Mint</div>
+      <div class="d-rank">#5 Popular</div>
+    </div>
+    <div class="distro-pill">
+      <span class="d-icon">🚀</span>
+      <div class="d-name">Pop!_OS</div>
+      <div class="d-rank">#6 Popular</div>
+    </div>
+    <div class="distro-pill">
+      <span class="d-icon">🔴</span>
+      <div class="d-name">RHEL</div>
+      <div class="d-rank">Enterprise</div>
+    </div>
+    <div class="distro-pill">
+      <span class="d-icon">🦎</span>
+      <div class="d-name">openSUSE</div>
+      <div class="d-rank">#8 Popular</div>
+    </div>
+    <div class="distro-pill">
+      <span class="d-icon">🐉</span>
+      <div class="d-name">Garuda</div>
+      <div class="d-rank">Gaming</div>
+    </div>
+    <div class="distro-pill">
+      <span class="d-icon">👁️</span>
+      <div class="d-name">Kali</div>
+      <div class="d-rank">Security</div>
+    </div>
+    <div class="distro-pill">
+      <span class="d-icon">🌊</span>
+      <div class="d-name">NixOS</div>
+      <div class="d-rank">Advanced</div>
+    </div>
+    <div class="distro-pill">
+      <span class="d-icon">✨</span>
+      <div class="d-name">+590 More</div>
+      <div class="d-rank">View All →</div>
+    </div>
+  </div>
+</section>
+
+<!-- COMMUNITY -->
+<section>
+  <span class="section-tag">// community</span>
+  <h2 class="section-title">The Linux Community,<br>Centralized at Last</h2>
+  <p class="section-sub">Every distro's community in one place. Find answers faster, share solutions, and never feel alone on your Linux journey.</p>
+
+  <div class="community-grid">
+    <div class="comm-card">
+      <div style="font-size: 14px; font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
+        <span>🔥 Hot Threads</span>
+        <span style="font-size: 11px; color: var(--text3); font-family: 'JetBrains Mono', monospace;">Live</span>
+      </div>
+      <div class="forum-post">
+        <div class="fp-avatar" style="background: rgba(59,130,246,0.15);">🎮</div>
+        <div class="fp-content">
+          <div class="fp-title"><span class="fp-tag tag-solved">SOLVED</span> NVIDIA 4090 on Arch — fix for black screen after install</div>
+          <div class="fp-meta">arch · 2h ago · 847 views · 23 replies</div>
+        </div>
+      </div>
+      <div class="forum-post">
+        <div class="fp-avatar" style="background: rgba(239,68,68,0.15);">🔥</div>
+        <div class="fp-content">
+          <div class="fp-title"><span class="fp-tag tag-hot">HOT</span> Wayland vs X11 in 2025 — the definitive guide</div>
+          <div class="fp-meta">general · 4h ago · 2.1k views · 89 replies</div>
+        </div>
+      </div>
+      <div class="forum-post">
+        <div class="fp-avatar" style="background: rgba(16,185,129,0.15);">🐧</div>
+        <div class="fp-content">
+          <div class="fp-title"><span class="fp-tag tag-new">NEW</span> I switched from Windows after 20 years — here's my week 1 report</div>
+          <div class="fp-meta">beginners · 1h ago · 341 views · 12 replies</div>
+        </div>
+      </div>
+      <div class="forum-post">
+        <div class="fp-avatar" style="background: rgba(245,158,11,0.15);">⚙️</div>
+        <div class="fp-content">
+          <div class="fp-title"><span class="fp-tag tag-solved">SOLVED</span> systemd service not starting on boot — the real fix</div>
+          <div class="fp-meta">ubuntu · 6h ago · 1.2k views · 34 replies</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="comm-card" style="margin-bottom: 16px;">
+        <div style="font-size: 14px; font-weight: 600; margin-bottom: 16px;">📈 Community Stats</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div style="text-align: center;">
+            <div style="font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--accent);">340K</div>
+            <div style="font-size: 12px; color: var(--text3);">Members</div>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--green);">94%</div>
+            <div style="font-size: 12px; color: var(--text3);">Questions Answered</div>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--accent3);">8min</div>
+            <div style="font-size: 12px; color: var(--text3);">Avg Response Time</div>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--orange);">52</div>
+            <div style="font-size: 12px; color: var(--text3);">Distro Channels</div>
+          </div>
+        </div>
+      </div>
+      <div class="comm-card">
+        <div style="font-size: 14px; font-weight: 600; margin-bottom: 16px;">🚀 Get Early Access</div>
+        <p style="font-size: 13px; color: var(--text2); line-height: 1.7; margin-bottom: 16px;">Be first on the platform when we launch. No spam, just a launch notification.</p>
+        <div style="display: flex; gap: 8px;">
+          <input type="email" placeholder="your@email.com" style="flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; color: var(--text); font-family: 'Instrument Sans', sans-serif; font-size: 14px; outline: none;">
+          <button class="w-next" style="white-space: nowrap;">Notify Me</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="logo">
+        <div class="logo-icon">🐧</div>
+        Penguin<span>OS</span>
+      </div>
+      <p>The everything Linux platform. One place for distro discovery, tutorials, community, and tools. Built by Linux users, for Linux users.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Platform</h4>
+      <ul>
+        <li><a href="#">Distro Wizard</a></li>
+        <li><a href="#">Distro Database</a></li>
+        <li><a href="#">Tutorials</a></li>
+        <li><a href="#">News</a></li>
+        <li><a href="#">Tools</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Community</h4>
+      <ul>
+        <li><a href="#">Forums</a></li>
+        <li><a href="#">Discord</a></li>
+        <li><a href="#">Matrix</a></li>
+        <li><a href="#">Newsletter</a></li>
+        <li><a href="#">Contributing</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">API</a></li>
+        <li><a href="#">Privacy</a></li>
+        <li><a href="#">Terms</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 PenguinOS. Open source. Built with ❤️ for the Linux community.</p>
+    <p style="font-family: 'JetBrains Mono', monospace; font-size: 11px;">kernel: 6.13.0-stable</p>
+  </div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    cursor.style.transform = `translate(${mouseX - 6}px, ${mouseY - 6}px)`;
+  });
+
+  function animateRing() {
+    ringX += (mouseX - ringX) * 0.12;
+    ringY += (mouseY - ringY) * 0.12;
+    ring.style.transform = `translate(${ringX - 18}px, ${ringY - 18}px)`;
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  // Option selection
+  function selectOption(el) {
+    document.querySelectorAll('.w-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  // Scroll functions
+  function scrollToWizard() {
+    document.getElementById('wizard').scrollIntoView({ behavior: 'smooth' });
+  }
+  function scrollToFeatures() {
+    document.getElementById('features').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Hover effects on interactive elements
+  document.querySelectorAll('button, a, .w-option, .distro-pill, .feature-card').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform += ' scale(1.5)';
+      ring.style.width = '52px';
+      ring.style.height = '52px';
+    });
+    el.addEventListener('mouseleave', () => {
+      ring.style.width = '36px';
+      ring.style.height = '36px';
+    });
+  });
+
+  // Animate stats on scroll
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.feature-card, .distro-pill, .comm-card').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
