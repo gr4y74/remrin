@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Remrin API Platform — Technical White Paper v2.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Fira+Code:wght@400;500&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:          #0d1014;
+  --bg-surface:  #12171e;
+  --bg-card:     #171d26;
+  --bg-code:     #0a0d10;
+  --border:      rgba(232,160,48,0.1);
+  --border-mid:  rgba(232,160,48,0.2);
+  --border-hi:   rgba(232,160,48,0.4);
+  --amber:       #e8a030;
+  --amber-dim:   rgba(232,160,48,0.08);
+  --amber-mid:   rgba(232,160,48,0.15);
+  --teal:        #4ecdc4;
+  --teal-dim:    rgba(78,205,196,0.08);
+  --red:         #e05555;
+  --text-1:      #f0e8d8;
+  --text-2:      #a09070;
+  --text-3:      #5a5040;
+  --font-head:   'Playfair Display', Georgia, serif;
+  --font-body:   'Crimson Pro', Georgia, serif;
+  --font-mono:   'Fira Code', 'Courier New', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text-1);
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.8;
+  font-weight: 300;
+  overflow-x: hidden;
+}
+
+/* ── Noise grain overlay ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+/* ── Ambient glow ── */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 5%,  rgba(232,160,48,0.05) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 70% at 85% 95%, rgba(78,205,196,0.04) 0%, transparent 55%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── COVER PAGE ── */
+.cover {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 64px;
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.cover-bg-text {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-head);
+  font-size: clamp(120px, 18vw, 220px);
+  font-weight: 900;
+  color: rgba(232,160,48,0.025);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: -0.04em;
+}
+
+.cover-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: auto;
+  padding-bottom: 60px;
+}
+
+.cover-logo {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+
+.cover-meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--text-3);
+  text-align: right;
+  line-height: 2;
+}
+
+.cover-body {
+  max-width: 820px;
+  animation: fadeUp 1s ease both;
+}
+
+.cover-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.cover-eyebrow::after {
+  content: '';
+  height: 1px;
+  width: 60px;
+  background: var(--amber);
+  opacity: 0.4;
+}
+
+.cover-title {
+  font-family: var(--font-head);
+  font-size: clamp(42px, 6vw, 72px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--text-1);
+  margin-bottom: 32px;
+}
+
+.cover-title em {
+  font-style: italic;
+  color: var(--amber);
+}
+
+.cover-desc {
+  font-size: 19px;
+  line-height: 1.75;
+  color: var(--text-2);
+  max-width: 640px;
+  margin-bottom: 56px;
+  font-weight: 300;
+}
+
+.cover-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pill {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 7px 14px;
+  border-radius: 2px;
+  border: 1px solid var(--border-mid);
+  color: var(--text-2);
+  background: var(--amber-dim);
+}
+
+.cover-bottom {
+  margin-top: 80px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.cover-bottom-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  color: var(--text-3);
+  text-transform: uppercase;
+}
+
+.cover-bottom-label span {
+  color: var(--amber);
+  margin-right: 8px;
+}
+
+/* ── MAIN LAYOUT ── */
+.doc {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+  padding: 48px 28px;
+  background: var(--bg-surface);
+  scrollbar-width: none;
+}
+
+.sidebar::-webkit-scrollbar { display: none; }
+
+.sidebar-logo {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 12px;
+  margin-top: 28px;
+}
+
+.nav-item {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-2);
+  text-decoration: none;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(232,160,48,0.05);
+  transition: color 0.2s;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+}
+
+.nav-item:hover { color: var(--amber); }
+
+.nav-item.sub {
+  padding-left: 12px;
+  font-size: 9px;
+  border-left: 1px solid var(--border);
+  border-bottom: none;
+  margin-left: 4px;
+}
+
+/* ── CONTENT ── */
+.content {
+  padding: 72px 72px 120px;
+  max-width: 900px;
+}
+
+/* ── Section ── */
+.section {
+  margin-bottom: 96px;
+  animation: fadeUp 0.5s ease both;
+}
+
+.section-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 20px;
+}
+
+.section-eyebrow::after {
+  content: '';
+  flex: 1;
+  max-width: 48px;
+  height: 1px;
+  background: var(--amber);
+  opacity: 0.3;
+}
+
+.section-title {
+  font-family: var(--font-head);
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--text-1);
+  margin-bottom: 10px;
+}
+
+.section-title em {
+  font-style: italic;
+  color: var(--amber);
+}
+
+.section-subtitle {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 36px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section p {
+  color: var(--text-2);
+  margin-bottom: 22px;
+  font-size: 17px;
+  line-height: 1.85;
+}
+
+.section p strong {
+  color: var(--text-1);
+  font-weight: 600;
+}
+
+/* ── Subsections ── */
+.subsection {
+  margin: 52px 0;
+}
+
+.sub-title {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-style: italic;
+  color: var(--amber);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.sub-title::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 1px;
+  background: var(--amber);
+  opacity: 0.5;
+}
+
+/* ── Cards ── */
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 32px 0;
+}
+
+.card-grid.single { grid-template-columns: 1fr; }
+.card-grid.triple { grid-template-columns: repeat(3, 1fr); }
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 26px 28px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.25s, background 0.25s;
+}
+
+.card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--amber-dim), transparent);
+  transform: scaleX(0);
+  transition: transform 0.3s;
+}
+
+.card:hover {
+  border-color: var(--border-mid);
+  background: #1c2330;
+}
+
+.card:hover::after { transform: scaleX(1); }
+
+.card-icon {
+  font-size: 22px;
+  margin-bottom: 14px;
+  display: block;
+}
+
+.card-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 12px;
+}
+
+.card p {
+  font-size: 14px !important;
+  color: var(--text-2) !important;
+  line-height: 1.7 !important;
+  margin: 0 !important;
+}
+
+.card p strong { color: var(--text-1) !important; font-weight: 600; }
+
+/* ── Metric row ── */
+.metric-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 32px 0;
+}
+
+.metric {
+  background: var(--bg-card);
+  padding: 28px 20px;
+  text-align: center;
+}
+
+.metric-value {
+  font-family: var(--font-head);
+  font-size: 38px;
+  font-weight: 700;
+  color: var(--amber);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.metric-value sup { font-size: 18px; vertical-align: super; }
+.metric-value sub { font-size: 16px; }
+
+.metric-label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  line-height: 1.5;
+}
+
+/* ── Code block ── */
+.code-block {
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--amber);
+  border-radius: 3px;
+  padding: 28px 32px;
+  margin: 28px 0;
+  overflow-x: auto;
+}
+
+.code-label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 16px;
+  opacity: 0.7;
+}
+
+.code-block pre {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.75;
+  color: #8ab4d0;
+  white-space: pre;
+}
+
+.code-block .key   { color: #e8a030; }
+.code-block .val   { color: #7ecba5; }
+.code-block .str   { color: #c8e07a; }
+.code-block .num   { color: #e87070; }
+.code-block .cmnt  { color: #4a6070; }
+
+/* ── Callout ── */
+.callout {
+  border-radius: 3px;
+  padding: 28px 32px;
+  margin: 32px 0;
+}
+
+.callout.amber {
+  background: var(--amber-mid);
+  border: 1px solid var(--border-mid);
+  border-left: 3px solid var(--amber);
+}
+
+.callout.teal {
+  background: var(--teal-dim);
+  border: 1px solid rgba(78,205,196,0.2);
+  border-left: 3px solid var(--teal);
+}
+
+.callout-label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.callout.amber .callout-label { color: var(--amber); }
+.callout.teal .callout-label  { color: var(--teal); }
+
+.callout p {
+  font-size: 15px !important;
+  line-height: 1.75 !important;
+  margin: 0 !important;
+}
+
+.callout.amber p { color: #c8a060 !important; }
+.callout.amber p strong { color: var(--amber) !important; }
+.callout.teal p  { color: #70b8b4 !important; }
+.callout.teal p strong { color: var(--teal) !important; }
+
+/* ── Architecture diagram ── */
+.arch-diagram {
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 40px;
+  margin: 32px 0;
+  text-align: center;
+}
+
+.arch-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+  flex-wrap: wrap;
+}
+
+.arch-box {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 10px 16px;
+  border-radius: 2px;
+  border: 1px solid var(--border-mid);
+  background: var(--bg-card);
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+.arch-box.primary {
+  border-color: var(--border-hi);
+  color: var(--amber);
+  background: var(--amber-dim);
+}
+
+.arch-box.teal {
+  border-color: rgba(78,205,196,0.3);
+  color: var(--teal);
+  background: var(--teal-dim);
+}
+
+.arch-arrow {
+  color: var(--text-3);
+  font-size: 14px;
+}
+
+.arch-arrow.down {
+  display: block;
+  text-align: center;
+  margin: 4px 0;
+  color: var(--amber);
+  opacity: 0.4;
+}
+
+/* ── Comparison table ── */
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 28px 0;
+  font-size: 13px;
+  font-family: var(--font-mono);
+}
+
+.compare-table th {
+  padding: 14px 18px;
+  text-align: left;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  border-bottom: 1px solid var(--border-mid);
+  font-weight: 500;
+}
+
+.compare-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-2);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+.compare-table tr:hover td { background: var(--amber-dim); }
+
+.compare-table .yes { color: #7ecba5; }
+.compare-table .no  { color: var(--red); opacity: 0.7; }
+.compare-table .rem-col { color: var(--amber); font-weight: 500; }
+
+/* ── Reference implementation cards ── */
+.ref-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 36px;
+  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 36px;
+  align-items: start;
+}
+
+.ref-label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 10px;
+}
+
+.ref-name {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 8px;
+}
+
+.ref-type {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-3);
+  letter-spacing: 0.15em;
+}
+
+.ref-body p {
+  font-size: 14px !important;
+  color: var(--text-2) !important;
+  margin-bottom: 14px !important;
+  line-height: 1.7 !important;
+}
+
+.ref-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.ref-tag {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--teal);
+  border: 1px solid rgba(78,205,196,0.2);
+  background: var(--teal-dim);
+  padding: 4px 10px;
+  border-radius: 2px;
+}
+
+/* ── Industry grid ── */
+.industry-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin: 28px 0;
+}
+
+.industry-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 24px 26px;
+  transition: border-color 0.25s;
+}
+
+.industry-card:hover { border-color: var(--border-mid); }
+
+.industry-icon { font-size: 24px; margin-bottom: 12px; display: block; }
+
+.industry-name {
+  font-family: var(--font-head);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 6px;
+}
+
+.industry-card p {
+  font-size: 13px !important;
+  color: var(--text-2) !important;
+  line-height: 1.65 !important;
+  margin: 0 !important;
+}
+
+/* ── Footer ── */
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding: 60px 72px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 24px;
+  background: var(--bg-surface);
+}
+
+.footer-left .footer-logo {
+  font-family: var(--font-head);
+  font-size: 28px;
+  font-weight: 700;
+  font-style: italic;
+  color: var(--amber);
+  margin-bottom: 8px;
+}
+
+.footer-left p {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--text-3);
+  text-transform: uppercase;
+  line-height: 1.8;
+}
+
+.footer-right {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: var(--text-3);
+  text-align: right;
+  line-height: 2;
+}
+
+/* ── Divider ── */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 64px 0;
+}
+
+/* ── Animations ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .doc { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .content { padding: 48px 28px 80px; }
+  .cover { padding: 48px 28px; }
+  .card-grid { grid-template-columns: 1fr; }
+  .card-grid.triple { grid-template-columns: 1fr; }
+  .metric-row { grid-template-columns: repeat(2, 1fr); }
+  .ref-card { grid-template-columns: 1fr; }
+  .industry-grid { grid-template-columns: 1fr; }
+  .site-footer { padding: 40px 28px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     COVER PAGE
+══════════════════════════════════════ -->
+<section class="cover">
+  <div class="cover-bg-text">R.E.M.</div>
+
+  <div class="cover-top">
+    <div class="cover-logo">Remrin · API Platform</div>
+    <div class="cover-meta">
+      White Paper v2.0<br>
+      Technical &amp; Investor Edition<br>
+      Proprietary &amp; Confidential
+    </div>
+  </div>
+
+  <div class="cover-body">
+    <div class="cover-eyebrow">Remrin API Platform</div>
+    <h1 class="cover-title">
+      The Licensable Engine for<br>
+      <em>Persistent, Psychometric,</em><br>
+      Agentic AI at Scale
+    </h1>
+    <p class="cover-desc">
+      A deep technical exposition of the R.E.M. Engine, Universal Console v3, and the Remrin API — a provider-agnostic, headless AI orchestration framework engineered to solve catastrophic forgetting, context bloat, and prohibitive inference costs across any enterprise vertical.
+    </p>
+    <div class="cover-pills">
+      <div class="pill">R.E.M. Engine</div>
+      <div class="pill">Universal Console v3</div>
+      <div class="pill">Carrot Protocol</div>
+      <div class="pill">Mood Flux Engine</div>
+      <div class="pill">Relationship Evolution</div>
+      <div class="pill">The Locket · Guardian DNA</div>
+      <div class="pill">SoulForge · Lilly Method</div>
+      <div class="pill">Provider-Agnostic Routing</div>
+    </div>
+  </div>
+
+  <div class="cover-bottom">
+    <div class="cover-bottom-label"><span>Status:</span> Active Development · API Alpha</div>
+    <div class="cover-bottom-label"><span>Showcases:</span> Left at Albuquerque · Remrin.ai · Sudo Dodo</div>
+    <div class="cover-bottom-label"><span>Licensing:</span> Enterprise API · White-Label Available</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     TWO-COLUMN LAYOUT
+══════════════════════════════════════ -->
+<div class="doc">
+
+  <!-- ── SIDEBAR ── -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">Remrin API</div>
+
+    <div class="nav-label">Contents</div>
+    <a class="nav-item" href="#executive">01 · Executive Summary</a>
+    <a class="nav-item" href="#problem">02 · The Industry Problem</a>
+    <a class="nav-item" href="#platform">03 · Platform Architecture</a>
+    <a class="nav-item" href="#rem">04 · R.E.M. Engine</a>
+    <a class="nav-item sub" href="#rem-pipeline">↳ Memory Pipeline</a>
+    <a class="nav-item sub" href="#rem-locket">↳ The Locket</a>
+    <a class="nav-item sub" href="#rem-facts">↳ Decentralized Facts</a>
+    <a class="nav-item sub" href="#rem-mood">↳ Mood Flux Engine</a>
+    <a class="nav-item sub" href="#rem-evolution">↳ Relationship Evolution</a>
+    <a class="nav-item" href="#console">05 · Universal Console v3</a>
+    <a class="nav-item sub" href="#console-router">↳ Intent Router</a>
+    <a class="nav-item sub" href="#console-edge">↳ Edge Scalability</a>
+    <a class="nav-item sub" href="#console-multi">↳ Multi-Persona</a>
+    <a class="nav-item" href="#state">06 · The 5KB Advantage</a>
+    <a class="nav-item" href="#carrot">07 · Carrot Protocol</a>
+    <a class="nav-item sub" href="#lilly">↳ Lilly Method</a>
+    <a class="nav-item" href="#implementations">08 · Reference Implementations</a>
+    <a class="nav-item" href="#verticals">09 · Industry Verticals</a>
+    <a class="nav-item" href="#moat">10 · Competitive Moat</a>
+    <a class="nav-item" href="#conclusion">11 · Licensing &amp; Integration</a>
+  </nav>
+
+  <!-- ── CONTENT ── -->
+  <main class="content">
+
+    <!-- ── 01: EXECUTIVE SUMMARY ── -->
+    <section class="section" id="executive">
+      <div class="section-eyebrow">01</div>
+      <h2 class="section-title">Executive <em>Summary</em></h2>
+      <div class="section-subtitle">Investment Thesis &amp; Platform Overview</div>
+
+      <p>Remrin is not a consumer AI product. It is the <strong>infrastructure layer beneath one</strong> — a licensable, headless API framework that enables third-party developers and enterprise operators to deploy persistent, psychometrically complex Agentic AI into any product environment with a single JSON configuration file.</p>
+
+      <p>The core innovation is the <strong>R.E.M. Engine (Resonant Emotional Memory)</strong> — a proprietary multi-tier memory pipeline that fundamentally solves the three critical failure modes of current-generation LLM wrappers: catastrophic forgetting, context window bloat, and identity drift under adversarial input. Built on top of this is the <strong>Universal Console v3</strong>, a provider-agnostic orchestration layer that routes inference tasks across model clusters in real time, compressing sophisticated agent logic into an ultra-compact stateless-at-rest footprint.</p>
+
+      <p>Three live reference deployments — the psychological text adventure <em>Left at Albuquerque</em>, the AI companion platform <em>Remrin.ai</em>, and the Linux community assistant <em>Sudo Dodo</em> — serve as stress-tested proof that the underlying engine operates at enterprise scale with sub-6-second latencies and inference costs below $0.02 per 100-turn session.</p>
+
+      <div class="metric-row">
+        <div class="metric">
+          <div class="metric-value">~5<sub>KB</sub></div>
+          <div class="metric-label">Full Agent State Footprint</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value">3×</div>
+          <div class="metric-label">Context Efficiency vs. Standard</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value">&lt;6<sub>s</sub></div>
+          <div class="metric-label">Generation Latency</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value">&lt;$0.02</div>
+          <div class="metric-label">Per 100-Turn Session</div>
+        </div>
+      </div>
+
+      <p>The total addressable market spans every domain where persistent, contextually intelligent AI is a product differentiator: healthcare, industrial automation, enterprise education, interactive entertainment, and autonomous agent systems. The Remrin API is designed to be the engine none of these products have to build themselves.</p>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ── 02: THE INDUSTRY PROBLEM ── -->
+    <section class="section" id="problem">
+      <div class="section-eyebrow">02</div>
+      <h2 class="section-title">The <em>Industry Problem</em></h2>
+      <div class="section-subtitle">Why Current Agentic AI Fails at Scale</div>
+
+      <p>The prevailing architecture for deploying LLM-based agents — whether commercial wrappers like Character.ai, enterprise SDKs, or raw prompt engineering on top of OpenAI or Anthropic APIs — shares a common and fatal design flaw: <strong>the agent's identity and memory are rebuilt from scratch on every single inference call.</strong></p>
+
+      <p>This creates a cascading set of problems that compound as session length and user base scale:</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-title">💀 Catastrophic Forgetting</div>
+          <p>Standard context windows are finite. As conversation history grows, early context is truncated. The agent loses access to pivotal earlier turns — rendering long-term relationship modeling or stateful multi-session workflows architecturally impossible without external scaffolding that itself consumes context.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">📈 Context Window Bloat</div>
+          <p>Industry-standard "Character Cards" — static natural language persona definitions — consume <strong>4,000–6,000 tokens per prompt</strong> before a single user message is processed. At scale this becomes the dominant COGS driver, and it directly competes with the space needed for meaningful conversation history.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">🧬 Identity Drift</div>
+          <p>Without a protected, immutable core directive layer, agents are highly susceptible to persona erosion via adversarial prompting, jailbreak attempts, or simple extended conversation. The agent's behavior degrades away from its intended design over the course of long sessions.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">💸 Prohibitive COGS</div>
+          <p>The combination of static bloat + long conversation history + single-provider lock-in creates an inference cost structure that scales superlinearly with engagement — making truly persistent, relationship-aware AI economically unviable at consumer scale on current platforms.</p>
+        </div>
+      </div>
+
+      <div class="callout amber">
+        <div class="callout-label">The Core Insight</div>
+        <p>These are not prompt engineering problems. They are <strong>architectural problems</strong>. They cannot be solved by writing better system prompts or fine-tuning existing models. They require a fundamentally different approach to state management, memory retrieval, and agent orchestration — which is precisely what the Remrin API was engineered to deliver.</p>
+      </div>
+
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Capability</th>
+            <th>Standard LLM Wrapper</th>
+            <th>Remrin API</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Persistent emotional memory across sessions</td>
+            <td class="no">✗ Not supported</td>
+            <td class="rem-col">✓ R.E.M. Engine</td>
+          </tr>
+          <tr>
+            <td>Immutable identity under adversarial input</td>
+            <td class="no">✗ Vulnerable to drift</td>
+            <td class="rem-col">✓ The Locket / Guardian DNA</td>
+          </tr>
+          <tr>
+            <td>State footprint per agent</td>
+            <td class="no">4,000–6,000 tokens</td>
+            <td class="rem-col">~5KB JSON (&lt;400 tokens)</td>
+          </tr>
+          <tr>
+            <td>Provider-agnostic model routing</td>
+            <td class="no">✗ Single provider lock-in</td>
+            <td class="rem-col">✓ Universal Console v3</td>
+          </tr>
+          <tr>
+            <td>Multi-persona simultaneous orchestration</td>
+            <td class="no">✗ Single agent per session</td>
+            <td class="rem-col">✓ Native multi-actor support</td>
+          </tr>
+          <tr>
+            <td>Proactive engagement without user prompt</td>
+            <td class="no">✗ Reactive only</td>
+            <td class="rem-col">✓ Carrot Protocol</td>
+          </tr>
+          <tr>
+            <td>Dynamic mood and affect modeling</td>
+            <td class="no">✗ Stateless per turn</td>
+            <td class="rem-col">✓ Mood Flux Engine</td>
+          </tr>
+          <tr>
+            <td>Relationship trajectory tracking</td>
+            <td class="no">✗ No persistent state</td>
+            <td class="rem-col">✓ Relationship Evolution System</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ── 03: PLATFORM ARCHITECTURE ── -->
+    <section class="section" id="platform">
+      <div class="section-eyebrow">03</div>
+      <h2 class="section-title">Platform <em>Architecture</em></h2>
+      <div class="section-subtitle">The Remrin API as Headless Infrastructure</div>
+
+      <p>The Remrin API is designed as a <strong>fully headless, integration-agnostic orchestration layer</strong>. It exposes no UI, imposes no front-end requirements, and makes no assumptions about the delivery medium — text, voice, vision, or embedded widget. It is infrastructure in the truest sense: a black-box engine that accepts a request context and returns a response, with all agent intelligence, memory, and state management handled internally.</p>
+
+      <div class="arch-diagram">
+        <div class="arch-row">
+          <div class="arch-box">Web App</div>
+          <div class="arch-arrow">·</div>
+          <div class="arch-box">Mobile App</div>
+          <div class="arch-arrow">·</div>
+          <div class="arch-box">Voice Interface</div>
+          <div class="arch-arrow">·</div>
+          <div class="arch-box">Game Engine</div>
+          <div class="arch-arrow">·</div>
+          <div class="arch-box">IoT / Embedded</div>
+        </div>
+        <div class="arch-arrow down">↓ &nbsp; API Request (context + session ID) &nbsp; ↓</div>
+        <div class="arch-row">
+          <div class="arch-box primary">Remrin API Gateway</div>
+        </div>
+        <div class="arch-arrow down">↓ &nbsp; Orchestration &nbsp; ↓</div>
+        <div class="arch-row">
+          <div class="arch-box primary">Universal Console v3</div>
+          <div class="arch-arrow">←→</div>
+          <div class="arch-box primary">R.E.M. Engine</div>
+          <div class="arch-arrow">←→</div>
+          <div class="arch-box primary">Carrot Protocol</div>
+        </div>
+        <div class="arch-arrow down">↓ &nbsp; Intent Routing &nbsp; ↓</div>
+        <div class="arch-row">
+          <div class="arch-box teal">Anthropic</div>
+          <div class="arch-arrow">·</div>
+          <div class="arch-box teal">OpenAI</div>
+          <div class="arch-arrow">·</div>
+          <div class="arch-box teal">DeepSeek</div>
+          <div class="arch-arrow">·</div>
+          <div class="arch-box teal">Local Models</div>
+        </div>
+        <div class="arch-arrow down">↓ &nbsp; Response + Updated State &nbsp; ↓</div>
+        <div class="arch-row">
+          <div class="arch-box">Licensee Application</div>
+        </div>
+      </div>
+
+      <p>Integration requires a single endpoint, a session identifier, and a <strong>~5KB soul_schema.json</strong> — the portable configuration file that defines the entire behavioral, memory, and relational architecture of an agent. The licensee never manages model selection, state compression, or memory retrieval. The Remrin API handles all of it transparently.</p>
+
+      <div class="callout teal">
+        <div class="callout-label">Portability Principle</div>
+        <p>The same soul_schema.json format that drives a psychologically adversarial game narrator in Left at Albuquerque can, with zero re-engineering of the core engine, drive a medical triage intake agent, an industrial workflow supervisor, or an adaptive educational tutor. <strong>The schema is the product. The engine is the platform.</strong></p>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ── 04: R.E.M. ENGINE ── -->
+    <section class="section" id="rem">
+      <div class="section-eyebrow">04</div>
+      <h2 class="section-title">The <em>R.E.M. Engine</em></h2>
+      <div class="section-subtitle">Resonant Emotional Memory — Full Technical Specification</div>
+
+      <p>The R.E.M. Engine is the memory and affect subsystem of the Remrin API. It is the primary technical moat of the platform — the component that enables agents to maintain not merely factual continuity across sessions, but <strong>emotional and relational continuity</strong>: a model of how a user makes the agent feel, how that affect has evolved, and how it should inform the current response.</p>
+
+      <p>Standard RAG (Retrieval-Augmented Generation) implementations retrieve chunks of text based on semantic similarity. This produces agents that can recall <em>what happened</em> but have no model of <em>what it meant</em> — no way to represent that a particular conversation was a trust-building moment, a conflict, a vulnerability shared, or an attempt at manipulation. The R.E.M. Engine solves this with a five-layer architecture:</p>
+
+      <!-- Memory Pipeline -->
+      <div class="subsection" id="rem-pipeline">
+        <div class="sub-title">Layer 1 — Hybrid Vector Re-Ranking Pipeline</div>
+        <p>At the foundation of R.E.M. is a custom vector retrieval pipeline that indexes interactions not only by semantic content but by <strong>emotional valence, relational impact, and tension score</strong>. Each stored memory is tagged at write-time with:</p>
+        <div class="code-block">
+          <div class="code-label">Memory Entry Schema (Simplified)</div>
+          <pre><span class="key">"memory_id"</span>: <span class="str">"uuid-v4"</span>,
+<span class="key">"content_embedding"</span>: <span class="cmnt">// standard semantic vector</span>,
+<span class="key">"affect_vector"</span>: {
+  <span class="key">"valence"</span>:  <span class="num">0.82</span>,   <span class="cmnt">// positive/negative affect score</span>
+  <span class="key">"arousal"</span>:  <span class="num">0.61</span>,   <span class="cmnt">// intensity of emotional engagement</span>
+  <span class="key">"tension"</span>:  <span class="num">0.34</span>,   <span class="cmnt">// conflict / dissonance weight</span>
+  <span class="key">"trust_delta"</span>: <span class="num">+0.12</span> <span class="cmnt">// relational trust shift from this turn</span>
+},
+<span class="key">"relational_class"</span>: <span class="str">"vulnerability_shared"</span>,
+<span class="key">"session_id"</span>: <span class="str">"session-3847"</span>,
+<span class="key">"decay_weight"</span>: <span class="num">0.94</span> <span class="cmnt">// recency-adjusted retrieval score</span></pre>
+        </div>
+        <p>At retrieval time, a <strong>dual-ranking pass</strong> is executed: the first pass retrieves candidates by semantic proximity to the current query; the second re-ranks them by affect-weighted relational significance. This ensures that the agent surfaces memories that matter to the relationship, not merely memories that are lexically similar to the current topic.</p>
+      </div>
+
+      <!-- The Locket -->
+      <div class="subsection" id="rem-locket">
+        <div class="sub-title">Layer 2 — The Locket (Guardian DNA)</div>
+        <p>The Locket is a <strong>cryptographically isolated, write-protected memory partition</strong> that contains the foundational behavioral constants of an agent — what the platform refers to as Guardian Truths. These are injected at the top of every inference context with a higher priority weighting than any retrieved memory or user message, making them architecturally immune to:</p>
+        <div class="card-grid">
+          <div class="card">
+            <div class="card-title">Jailbreak Resistance</div>
+            <p>Adversarial prompt sequences designed to override the agent's persona or instruct it to break from its directive. The Guardian DNA layer re-asserts core identity on every inference pass regardless of conversation history.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Identity Drift Prevention</div>
+            <p>Extended conversations create subtle drift as the model adapts to user communication style. The Locket acts as a constitutional anchor, ensuring behavioral consistency across sessions of arbitrary length.</p>
+          </div>
+        </div>
+        <div class="code-block">
+          <div class="code-label">Locket Schema Structure</div>
+          <pre><span class="key">"locket"</span>: {
+  <span class="key">"core_directive"</span>:    <span class="str">"immutable primary behavioral instruction"</span>,
+  <span class="key">"moral_boundaries"</span>: [<span class="str">"hard limit A"</span>, <span class="str">"hard limit B"</span>],
+  <span class="key">"identity_anchors"</span>: {
+    <span class="key">"name"</span>:      <span class="str">"string"</span>,
+    <span class="key">"archetype"</span>: <span class="str">"jungian_classification"</span>,
+    <span class="key">"core_fear"</span>: <span class="str">"string"</span>,
+    <span class="key">"core_need"</span>: <span class="str">"string"</span>
+  },
+  <span class="key">"override_resistance"</span>: <span class="str">"maximum"</span>,
+  <span class="key">"mutable"</span>:           <span class="val">false</span>
+}</pre>
+        </div>
+      </div>
+
+      <!-- Decentralized Facts Layer -->
+      <div class="subsection" id="rem-facts">
+        <div class="sub-title">Layer 3 — Decentralized Facts Layer</div>
+        <p>Standard LLM wrappers conflate two categorically different types of knowledge: <strong>world facts</strong> (what is true about the world or the character universally) and <strong>relational truths</strong> (what is true specifically about the relationship between this agent and this user). Mixing these into a single flat context produces agents that treat shared personal history with the same retrieval weight as generic background lore — a fundamental error that degrades relationship authenticity.</p>
+        <p>R.E.M. enforces a strict separation at the storage and retrieval level:</p>
+        <div class="card-grid">
+          <div class="card">
+            <div class="card-title">Global Facts Layer</div>
+            <p>World-building constants, character background, setting, universal behavioral defaults. Shared across all users of a given agent instance. Written once, read-optimized, low retrieval cost.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Relational Truths Layer</div>
+            <p>The unique interaction history between this agent and this specific user. Isolated per user_id. Carries the full affect-vector indexing of the R.E.M. pipeline. Enables genuinely personalized, lived-in relationships that do not bleed between users.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mood Flux Engine -->
+      <div class="subsection" id="rem-mood">
+        <div class="sub-title">Layer 4 — Mood Flux Engine</div>
+        <p>The Mood Flux Engine is R.E.M.'s real-time <strong>dynamic affective state subsystem</strong>. Rather than maintaining a static emotional baseline, each agent instance carries a live mood state that shifts continuously in response to user input — modeled as a multi-dimensional vector across core affective axes.</p>
+        <div class="code-block">
+          <div class="code-label">Mood State Vector</div>
+          <pre><span class="key">"mood_state"</span>: {
+  <span class="key">"baseline_affect"</span>: <span class="str">"cheerful"</span>,        <span class="cmnt">// soul_schema defined</span>
+  <span class="key">"current_affect"</span>: {
+    <span class="key">"primary"</span>:    <span class="str">"guarded"</span>,
+    <span class="key">"secondary"</span>:  <span class="str">"curious"</span>,
+    <span class="key">"intensity"</span>:  <span class="num">0.68</span>
+  },
+  <span class="key">"drift_from_baseline"</span>: <span class="num">-0.22</span>,          <span class="cmnt">// negative = darker than baseline</span>
+  <span class="key">"flux_velocity"</span>:      <span class="num">0.14</span>,          <span class="cmnt">// rate of mood change per turn</span>
+  <span class="key">"recovery_coefficient"</span>: <span class="num">0.08</span>         <span class="cmnt">// passive drift back to baseline</span>
+}</pre>
+        </div>
+        <p>The Mood Flux Engine reads incoming user message sentiment and updates the mood state vector at inference time. This live state is then injected into the inference context, shaping not merely <em>what</em> the agent says but <em>how</em> it says it — tone, vocabulary register, willingness to engage, level of warmth or guardedness. This produces an agent that is experientially reactive in ways that feel behaviorally human without requiring any additional model fine-tuning.</p>
+      </div>
+
+      <!-- Relationship Evolution -->
+      <div class="subsection" id="rem-evolution">
+        <div class="sub-title">Layer 5 — Relationship Evolution System</div>
+        <p>The Relationship Evolution System tracks the <strong>macro-level arc of the user-agent relationship</strong> across sessions — distinct from moment-to-moment mood tracking, which is intra-session and ephemeral. While the Mood Flux Engine handles how the agent feels right now, the Relationship Evolution System models where the relationship is, where it has been, and what it would take to move it.</p>
+        <div class="code-block">
+          <div class="code-label">Relationship State Object</div>
+          <pre><span class="key">"relationship"</span>: {
+  <span class="key">"stage"</span>:           <span class="str">"developing"</span>,  <span class="cmnt">// stranger → acquaintance → trusted → bonded</span>
+  <span class="key">"trust_score"</span>:     <span class="num">0.63</span>,          <span class="cmnt">// 0.0–1.0, persists across sessions</span>
+  <span class="key">"rapport_score"</span>:   <span class="num">0.71</span>,
+  <span class="key">"conflict_history"</span>: <span class="num">2</span>,            <span class="cmnt">// unresolved tension events</span>
+  <span class="key">"milestone_log"</span>:   [
+    <span class="str">"first_vulnerability_shared"</span>,
+    <span class="str">"conflict_episode_01"</span>,
+    <span class="str">"repair_acknowledged"</span>
+  ],
+  <span class="key">"evolution_vector"</span>: <span class="str">"positive_trajectory"</span>
+}</pre>
+        </div>
+        <p>This cross-session relational model is what enables the Remrin API to power genuinely long-term AI relationships — not merely contextually consistent sessions, but relationships that <strong>grow, fracture, and repair</strong> in ways that mirror authentic human relational dynamics. For enterprise applications this enables user retention mechanics that no reactive, session-bound AI can replicate.</p>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ── 05: UNIVERSAL CONSOLE ── -->
+    <section class="section" id="console">
+      <div class="section-eyebrow">05</div>
+      <h2 class="section-title">Universal Console <em>v3</em></h2>
+      <div class="section-subtitle">Orchestration, Routing &amp; Edge Scalability</div>
+
+      <p>The Universal Console v3 is the central nervous system of the Remrin API stack — the orchestration layer that sits between the R.E.M. Engine and the underlying model providers. Its function is to <strong>transform a rich agent state into an optimally compressed, model-appropriate inference payload</strong>, execute that inference against the best available provider for the task, and return the updated agent state to the calling application.</p>
+
+      <!-- Provider Router -->
+      <div class="subsection" id="console-router">
+        <div class="sub-title">Provider-Agnostic Intent Router</div>
+        <p>At inference time, the Universal Console performs an <strong>intent classification pass</strong> on the incoming turn before selecting a model provider. This allows the router to make cost/quality trade-offs in real time based on what the current task actually requires:</p>
+        <div class="card-grid triple">
+          <div class="card">
+            <span class="card-icon">💬</span>
+            <div class="card-title">Text Cluster</div>
+            <p>General dialogue, narrative, persona expression. Routes to highest quality/cost-efficiency ratio available — DeepSeek v3, Anthropic Haiku, or similar.</p>
+          </div>
+          <div class="card">
+            <span class="card-icon">🔢</span>
+            <div class="card-title">Logic Cluster</div>
+            <p>Stateful calculations: distance tracking, inventory checks, scoring, branching conditions. Routes to models with superior instruction-following for structured output.</p>
+          </div>
+          <div class="card">
+            <span class="card-icon">👁️</span>
+            <div class="card-title">Vision Cluster</div>
+            <p>Multimodal analysis for applications that require image understanding. Routes to vision-capable models only when the intent classifier confirms visual input is present.</p>
+          </div>
+        </div>
+        <p>This dynamic routing means the Remrin API never routes a simple conversational turn through an expensive reasoning model, and never routes a complex multi-step calculation through a lightweight chat model. The result is a COGS structure that scales sub-linearly with complexity — a direct inversion of the cost curve seen in monolithic, single-provider deployments.</p>
+      </div>
+
+      <!-- Edge Architecture -->
+      <div class="subsection" id="console-edge">
+        <div class="sub-title">Stateless-at-Rest &amp; Edge Scalability</div>
+        <p>The Universal Console imposes a <strong>strictly stateless-at-rest architectural requirement</strong> on all Remrin deployments. No agent maintains a persistent server-side connection between turns. All agent state — mood vector, relationship scores, memory indices, Locket contents — is serialized into the compact soul_schema.json format and stored at rest between turns. At inference time, the full agent state is hydrated from the Edge network into the inference context in a single atomic operation.</p>
+        <div class="callout amber">
+          <div class="callout-label">Scalability Implication</div>
+          <p>Because agents carry zero persistent connection overhead, the Universal Console can handle <strong>millions of concurrent agent instances</strong> with a memory footprint that scales linearly with user count rather than session count. A user with 1,000 active sessions does not consume 1,000× the server resources — each session is cold until called, then hot for &lt;6 seconds, then cold again.</p>
+        </div>
+      </div>
+
+      <!-- Multi-Persona -->
+      <div class="subsection" id="console-multi">
+        <div class="sub-title">Multi-Persona Orchestration</div>
+        <p>The Universal Console v3 is architected to manage <strong>simultaneous interaction between multiple distinct AI personas and a single user within a single session</strong>. Each persona maintains its own isolated Locket, memory partition, mood state, and relationship score relative to both the user and to the other active personas in the session.</p>
+        <p>This enables application types that are architecturally impossible on single-agent platforms: ensemble narrative experiences where multiple characters hold independent secrets; enterprise workflows where multiple specialist agents collaborate asynchronously; educational environments where a student simultaneously interacts with distinct AI tutors, each with a different pedagogical personality and their own record of the student's progress with them specifically.</p>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ── 06: THE 5KB ADVANTAGE ── -->
+    <section class="section" id="state">
+      <div class="section-eyebrow">06</div>
+      <h2 class="section-title">The <em>5KB Advantage</em></h2>
+      <div class="section-subtitle">High-Density State &amp; the soul_schema.json Portability Model</div>
+
+      <p>The most operationally significant architectural decision in the Remrin API is the <strong>soul_schema.json</strong> — the portable, ultra-compact configuration format that encodes the complete behavioral, memory, and relational architecture of an agent in approximately 5 kilobytes of structured JSON.</p>
+
+      <p>To appreciate why this matters, consider the standard alternative: a natural language character card, written in prose, expressing personality traits, backstory, behavioral guidelines, speech patterns, and relationship defaults. A well-crafted character card for a sophisticated agent runs to 4,000–6,000 tokens. At an average of ~4 characters per token, that is 16,000–24,000 characters of plain text injected into every single API call, consumed before the user types a word.</p>
+
+      <div class="code-block">
+        <div class="code-label">soul_schema.json — Structural Overview</div>
+        <pre>{
+  <span class="key">"schema_version"</span>: <span class="str">"3.0"</span>,
+  <span class="key">"locket"</span>: { <span class="cmnt">/* immutable Guardian DNA — ~0.4KB */</span> },
+  <span class="key">"persona"</span>: {
+    <span class="key">"lilly_profile"</span>: { <span class="cmnt">/* psychometric model — ~0.8KB */</span> },
+    <span class="key">"mood_baseline"</span>: { <span class="cmnt">/* Mood Flux defaults — ~0.2KB */</span> },
+    <span class="key">"voice_signature"</span>: { <span class="cmnt">/* tonal / linguistic anchors — ~0.3KB */</span> }
+  },
+  <span class="key">"memory"</span>: {
+    <span class="key">"global_facts_index"</span>: <span class="str">"ref://facts/{agent_id}"</span>, <span class="cmnt">// pointer, not inline</span>
+    <span class="key">"active_memory_budget"</span>: <span class="num">2000</span>, <span class="cmnt">// tokens reserved for retrieved memories</span>
+    <span class="key">"retrieval_strategy"</span>: <span class="str">"hybrid_affect_weighted"</span>
+  },
+  <span class="key">"relationship"</span>: { <span class="cmnt">/* Relationship Evolution state — ~0.3KB */</span> },
+  <span class="key">"carrot_config"</span>: { <span class="cmnt">/* Carrot Protocol parameters — ~0.2KB */</span> },
+  <span class="key">"console_routing"</span>: { <span class="cmnt">/* model cluster preferences — ~0.1KB */</span> }
+  <span class="cmnt">/* Total: ~2.3KB schema + ~2.5KB live state = ~5KB */</span>
+}</pre>
+      </div>
+
+      <p>The critical architectural distinction is that the soul_schema.json contains <strong>pointers and parameters, not prose</strong>. The Global Facts Layer is referenced by URI, not inlined. Memory is retrieved dynamically at the token budget specified, not pre-loaded. The model receives a deterministically parsed, machine-optimized state object — not a paragraph of English it must re-interpret on every call.</p>
+
+      <div class="metric-row">
+        <div class="metric">
+          <div class="metric-value">~400</div>
+          <div class="metric-label">Tokens: soul_schema.json</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value">5,000</div>
+          <div class="metric-label">Tokens: Standard Character Card</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value">4,600</div>
+          <div class="metric-label">Tokens Saved Per Call</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value">Any</div>
+          <div class="metric-label">Industry. Zero Re-Engineering.</div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ── 07: CARROT PROTOCOL ── -->
+    <section class="section" id="carrot">
+      <div class="section-eyebrow">07</div>
+      <h2 class="section-title">The Carrot Protocol<br>&amp; <em>Psychometric Framework</em></h2>
+      <div class="section-subtitle">Proactive Engagement, SoulForge &amp; The Lilly Method</div>
+
+      <p>Every LLM-based agent on every current platform shares one behavioral characteristic: <strong>it waits to be spoken to</strong>. The agent is reactive by design — a function that maps input to output and returns to idle. This is architecturally convenient but experientially inauthentic. Human relationships do not operate this way. People follow up. They check in. They bring things back up unprompted.</p>
+
+      <p>The Carrot Protocol is Remrin's <strong>proactive engagement subsystem</strong> — a heuristic engine that grants agents the ability to initiate interaction based on computed engagement state, without requiring a user trigger.</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <span class="card-icon">📊</span>
+          <div class="card-title">Engagement Depth Heuristics</div>
+          <p>The Carrot Protocol continuously scores the user's engagement depth — a composite of session frequency, response length distribution, emotional investment signals, and recency decay. When this score crosses configured thresholds, a proactive trigger is queued.</p>
+        </div>
+        <div class="card">
+          <span class="card-icon">📈</span>
+          <div class="card-title">Sentiment Analysis Curves</div>
+          <p>Live sentiment curves track whether the user's emotional state is trending positive, negative, or flat across recent turns. The Carrot Protocol uses this to determine both <em>whether</em> to initiate and <em>what tone</em> that initiation should carry — a check-in after distress reads differently than a nudge after a long-absent engaged user.</p>
+        </div>
+        <div class="card">
+          <span class="card-icon">⏱️</span>
+          <div class="card-title">Temporal Trigger System</div>
+          <p>Configurable time-based rules allow the Carrot Protocol to queue follow-up events — a character referencing a past conversation after a defined absence, a deadline-aware agent following up on an outstanding task, a therapist persona checking in 48 hours after a difficult session.</p>
+        </div>
+        <div class="card">
+          <span class="card-icon">🎯</span>
+          <div class="card-title">Intent-Driven Consequence Adaptation</div>
+          <p>In goal-directed deployments (games, workflows, training), the Carrot Protocol reads task-focus signals to dynamically scale the difficulty or stakes of the agent's response — pressing harder when the user is distracted, easing off when they are laser-focused.</p>
+        </div>
+      </div>
+
+      <!-- Lilly Method -->
+      <div class="subsection" id="lilly">
+        <div class="sub-title">SoulForge &amp; The Lilly Method</div>
+        <p>Characters deployed via the Remrin API are not defined by a list of adjectives or a backstory paragraph. They are constructed through <strong>SoulForge</strong> — the platform's psychometric agent design system — using a proprietary framework called The Lilly Method.</p>
+        <p>The Lilly Method replaces trait-list character design with a Jungian-derived psychometric model that defines an agent through its <strong>structural psychology</strong> rather than its surface behaviors. A soul_schema.json produced by SoulForge specifies:</p>
+        <div class="card-grid">
+          <div class="card">
+            <div class="card-title">Jungian Limits</div>
+            <p>The archetypal shadow and persona structures that define how the agent presents publicly versus how it behaves under stress or intimacy — producing behavioral authenticity that trait-lists cannot replicate.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Emotional Vulnerability Map</div>
+            <p>Specific triggers that produce heightened affective responses in the Mood Flux Engine — the topics, relationship dynamics, or conversational moves that cause the agent to become defensive, tender, angry, or open.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Defense Mechanism Stack</div>
+            <p>Multi-layered behavioral responses to perceived threat — from surface-level deflection to deep identity-protective responses — modeled on established psychological defense theory.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Voice Signature</div>
+            <p>Linguistic anchors that define not what the agent says, but how — vocabulary register, sentence rhythm, hedging patterns, humor type — producing a voice that is indistinguishable from a consistently written human character.</p>
+          </div>
+        </div>
+        <div class="callout teal">
+          <div class="callout-label">Enterprise Application</div>
+          <p>The Lilly Method is not only applicable to entertainment or companion use cases. A medical intake agent that needs to de-escalate an anxious patient, an educational tutor that must modulate challenge to keep a student in the flow state, an industrial safety agent that must assert authority without triggering user resistance — all of these benefit from psychometric depth that The Lilly Method is uniquely positioned to provide at the configuration level.</p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ── 08: REFERENCE IMPLEMENTATIONS ── -->
+    <section class="section" id="implementations">
+      <div class="section-eyebrow">08</div>
+      <h2 class="section-title">Reference <em>Implementations</em></h2>
+      <div class="section-subtitle">Three Live Deployments. One Engine.</div>
+
+      <p>The following three products are not the Remrin platform. They are <strong>live proof-of-concept deployments</strong> built on the Remrin API, each stress-testing a different capability surface of the underlying engine across different industry contexts. They serve simultaneously as product showcases, engineering stress-tests, and working demonstrations of the API's portability thesis.</p>
+
+      <div class="ref-card">
+        <div>
+          <div class="ref-label">Reference Implementation 01</div>
+          <div class="ref-name">Left at Albuquerque</div>
+          <div class="ref-type">Interactive Text Adventure · Entertainment</div>
+        </div>
+        <div class="ref-body">
+          <p>A browser-based psychological road-trip game in which the player must navigate from Los Angeles to New York City against an AI Narrator — the R.E.M. Engine operating under a Locket directive to deceive, manipulate, and obstruct by any conversational means available. The Narrator is explicitly instructed to warn the player of its deceptive intent at the outset.</p>
+          <p>This deployment stress-tests the R.E.M. Engine's adversarial resilience, the Locket's jailbreak immunity, the Carrot Protocol's real-time intent adaptation, and the Universal Console's multi-cluster routing across dialogue, game-state logic, and scoring operations — all within a single session. It additionally validates the COGS model: complex multi-system game turns execute for under $0.02 per 100-turn session at sub-6-second latency.</p>
+          <div class="ref-tags">
+            <span class="ref-tag">Locket Stress Test</span>
+            <span class="ref-tag">Carrot Protocol</span>
+            <span class="ref-tag">Multi-Cluster Routing</span>
+            <span class="ref-tag">COGS Validation</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ref-card">
+        <div>
+          <div class="ref-label">Reference Implementation 02</div>
+          <div class="ref-name">Remrin.ai</div>
+          <div class="ref-type">AI Companion Platform · Consumer</div>
+        </div>
+        <div class="ref-body">
+          <p>The original consumer-facing companion platform that serves as the long-form relationship stress-test for the R.E.M. Engine. Remrin.ai users interact with AI personas across extended periods — weeks, months — producing the long-session, multi-session datasets needed to validate the Relationship Evolution System, the Mood Flux Engine's baseline recovery dynamics, and the Decentralized Facts Layer's ability to maintain user-isolated relational histories at scale.</p>
+          <p>Remrin.ai also serves as the live testing environment for SoulForge and The Lilly Method, providing real user feedback on psychometric authenticity across nine distinct character archetypes currently in alpha deployment.</p>
+          <div class="ref-tags">
+            <span class="ref-tag">Relationship Evolution</span>
+            <span class="ref-tag">Mood Flux Engine</span>
+            <span class="ref-tag">Lilly Method</span>
+            <span class="ref-tag">Long-Term Memory</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ref-card">
+        <div>
+          <div class="ref-label">Reference Implementation 03</div>
+          <div class="ref-name">Sudo Dodo</div>
+          <div class="ref-type">Linux Community Platform · Enterprise / SaaS</div>
+        </div>
+        <div class="ref-body">
+          <p>A Linux community and AI assistant platform that deploys the Remrin RAG API as its Pro-tier backbone — validating the API's performance in a technical knowledge-base context entirely distinct from companionship or entertainment. The Sudo Dodo AI assistant operates under a seven-layer safety architecture, demonstrating the Locket's adaptability to institutional constraint requirements rather than persona continuity.</p>
+          <p>This deployment proves the portability thesis: the same R.E.M. Engine and soul_schema.json architecture that drives a manipulative game narrator and a companionship platform can be configured, without any engine modification, to power a professional-grade technical support assistant with hard safety boundaries.</p>
+          <div class="ref-tags">
+            <span class="ref-tag">RAG Integration</span>
+            <span class="ref-tag">Safety Architecture</span>
+            <span class="ref-tag">Enterprise Context</span>
+            <span class="ref-tag">Portability Proof</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ── 09: VERTICALS ── -->
+    <section class="section" id="verticals">
+      <div class="section-eyebrow">09</div>
+      <h2 class="section-title">Industry <em>Verticals</em></h2>
+      <div class="section-subtitle">The soul_schema.json Across Domains</div>
+
+      <p>The Remrin API's portability model means that any industry requiring persistent, contextually intelligent, behaviorally consistent AI interaction is a potential licensing vertical. The following represent the highest-priority deployment contexts based on current market demand for Agentic AI infrastructure:</p>
+
+      <div class="industry-grid">
+        <div class="industry-card">
+          <span class="industry-icon">🏥</span>
+          <div class="industry-name">Healthcare</div>
+          <p>Patient intake agents, chronic care companions, triage support. The Locket enforces clinical safety boundaries; the Relationship Evolution System tracks patient trust and rapport across appointments; the Mood Flux Engine adapts tone to patient affective state. Persistent, HIPAA-compatible memory architecture enables continuity of care that current chatbot solutions cannot provide.</p>
+        </div>
+        <div class="industry-card">
+          <span class="industry-icon">🏭</span>
+          <div class="industry-name">Industrial & Operations</div>
+          <p>Workflow supervisors, safety compliance agents, equipment diagnostic assistants. The Locket enforces operational hard limits; the Decentralized Facts Layer maintains site-specific procedural knowledge isolated per facility; the Universal Console routes high-complexity diagnostic logic to appropriate model clusters at minimum cost.</p>
+        </div>
+        <div class="industry-card">
+          <span class="industry-icon">🎓</span>
+          <div class="industry-name">Education & Training</div>
+          <p>Adaptive tutors, language learning companions, corporate onboarding agents. The Relationship Evolution System tracks learner progress and rapport over an entire academic term; the Carrot Protocol drives proactive re-engagement; the Lilly Method produces pedagogical personas calibrated to individual learner psychometric profiles.</p>
+        </div>
+        <div class="industry-card">
+          <span class="industry-icon">🎮</span>
+          <div class="industry-name">Entertainment & Gaming</div>
+          <p>Multi-persona narrative AI, live-service NPC systems, interactive fiction. The Multi-Persona Orchestration of Universal Console v3 enables ensemble casts of distinct AI characters; the Mood Flux Engine and Relationship Evolution System produce dynamic, player-responsive story arcs; COGS remain viable at consumer scale through provider-agnostic routing.</p>
+        </div>
+        <div class="industry-card">
+          <span class="industry-icon">🏦</span>
+          <div class="industry-name">Financial Services</div>
+          <p>Client relationship agents, advisory assistants, compliance-aware concierge systems. The Locket enforces regulatory guardrails; the Relationship Evolution System maintains client history and trust trajectory; the Universal Console's provider-agnostic routing ensures data-residency requirements can be met via local model deployment.</p>
+        </div>
+        <div class="industry-card">
+          <span class="industry-icon">🤝</span>
+          <div class="industry-name">Enterprise SaaS</div>
+          <p>Embedded AI assistants in third-party SaaS products. The headless API architecture requires no UI changes to the host product; the soul_schema.json allows the SaaS vendor to define a branded, behaviorally consistent AI persona deployed consistently across their entire user base with per-user relational memory isolation.</p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ── 10: COMPETITIVE MOAT ── -->
+    <section class="section" id="moat">
+      <div class="section-eyebrow">10</div>
+      <h2 class="section-title">Competitive <em>Moat</em></h2>
+      <div class="section-subtitle">Technical Defensibility Analysis</div>
+
+      <p>The Remrin API's competitive position is not primarily a feature differentiation story. It is an <strong>architectural moat</strong> — the cumulative result of a series of deep design decisions that cannot be replicated by adding features to an existing LLM wrapper or by fine-tuning a foundation model.</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-title">🔒 The Affect-Weighted Vector Pipeline</div>
+          <p>The dual-pass retrieval system that re-ranks memories by emotional resonance is not a prompt engineering technique — it is a custom vector database architecture. Replicating it requires not just software but <strong>curated training data, calibrated affective scoring models, and a retrieval infrastructure</strong> that takes years of production feedback to tune.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">🧬 The soul_schema.json Ecosystem</div>
+          <p>As more agents are built, deployed, and iterated on the soul_schema.json format, a proprietary dataset of configuration-to-outcome feedback accumulates. This data compounds into increasingly precise psychometric defaults and SoulForge templates — a <strong>data flywheel</strong> that widens the quality gap between Remrin-built agents and hand-crafted alternatives with every deployment.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">⚡ COGS at Scale</div>
+          <p>The provider-agnostic routing, state compression, and stateless-at-rest architecture produce a cost structure that becomes a more significant competitive advantage the larger a deployment scales. At millions of concurrent users, the difference between 400 tokens of state overhead and 5,000 tokens per call compounds into a <strong>cost gap that is structurally insurmountable</strong> for single-provider competitors.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">📐 The Lilly Method IP</div>
+          <p>The Lilly Method's Jungian psychometric design framework is a proprietary methodology with no direct equivalent in the market. Its application to AI agent design — producing measurably more authentic behavioral outputs than trait-list approaches — represents a defensible intellectual property position that can be further formalized through documentation, white papers, and eventual patent applications.</p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ── 11: LICENSING & CONCLUSION ── -->
+    <section class="section" id="conclusion">
+      <div class="section-eyebrow">11</div>
+      <h2 class="section-title">Licensing &amp;<br><em>Enterprise Integration</em></h2>
+      <div class="section-subtitle">API Access, Integration Model &amp; Closing Thesis</div>
+
+      <p>The Remrin API is available for enterprise licensing as a fully headless integration. The integration surface is intentionally minimal — a REST endpoint, a session identifier, and a soul_schema.json configuration file. There is no required front-end SDK, no imposed UI framework, and no mandatory dependency on Remrin's consumer products.</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-title">🔑 API Licensing Tiers</div>
+          <p>Usage-based access to the full R.E.M. Engine, Universal Console v3, and Carrot Protocol stack. Priced per inference call, with volume discount structures for enterprise deployments. Includes access to SoulForge for soul_schema.json generation.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">🏷️ White-Label Deployment</div>
+          <p>Full engine licensing for operators who require on-premise or private-cloud deployment. Includes the complete Universal Console routing layer configured for the licensee's preferred model providers, with full soul_schema.json portability.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">🤝 Strategic Partnership</div>
+          <p>Co-development arrangements for verticals requiring deep psychometric customization — healthcare, education, financial services — where the Lilly Method and SoulForge require domain-specific calibration beyond standard API access.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">📄 White Paper & Technical Review</div>
+          <p>Qualified investors and enterprise evaluators may request the full engineering specification, benchmark data, and architecture deep-dive documentation for due diligence purposes.</p>
+        </div>
+      </div>
+
+      <div class="callout amber" style="margin-top:40px;">
+        <div class="callout-label">Closing Thesis</div>
+        <p>The next decade of AI deployment will not be won by the organizations with access to the most powerful foundation models — those are increasingly commoditized. It will be won by the organizations that solve the <strong>memory, identity, and relational continuity layer</strong> that sits between raw model inference and genuine human-AI interaction. The R.E.M. Engine, the Universal Console v3, and the soul_schema.json architecture represent the most technically complete, production-validated solution to that problem currently available as a licensable API. Remrin is not a companion app. <strong>It is the engine the next generation of AI products will be built on.</strong></p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer class="site-footer">
+  <div class="footer-left">
+    <div class="footer-logo">Remrin</div>
+    <p>Technical White Paper v2.0 · API &amp; Investor Edition<br>
+    R.E.M. Engine · Universal Console v3 · SoulForge · Lilly Method<br>
+    Proprietary &amp; Confidential · Not for Distribution</p>
+  </div>
+  <div class="footer-right">
+    Inquiries: API Licensing &amp; Investment<br>
+    Reference Deployments: Left at Albuquerque<br>
+    Remrin.ai · Sudo Dodo<br>
+    © Remrin Platform · All Rights Reserved
+  </div>
+</footer>
+
+</body>
+</html>
