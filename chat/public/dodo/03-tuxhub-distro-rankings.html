@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Distro Rankings — TuxHub</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0c0f18;--bg2:#0f1420;--surface:#141924;--surface2:#1a2135;--surface3:#1f2840;
+  --border:#1e2d47;--border2:#263652;
+  --accent:#0ea5e9;--green:#22c55e;--orange:#f97316;--red:#ef4444;--purple:#a78bfa;--yellow:#eab308;
+  --text:#e2e8f0;--text2:#94a3b8;--text3:#4b6280;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;}
+
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:200;height:56px;
+  background:rgba(12,15,24,0.92);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 20px;gap:16px;
+}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);}
+.logo-mark{width:30px;height:30px;background:linear-gradient(135deg,var(--accent),#0369a1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.logo span{color:var(--accent);}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.tb-btn{padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;font-family:'Manrope',sans-serif;cursor:pointer;transition:all 0.2s;text-decoration:none;border:1px solid var(--border2);color:var(--text2);}
+.tb-btn:hover{border-color:var(--accent);color:var(--accent);}
+.tb-home{background:var(--accent);color:white;border-color:var(--accent);}
+.tb-home:hover{background:#0284c7;color:white;}
+
+/* PAGE HEADER */
+.page-header{
+  margin-top:56px;
+  background:linear-gradient(135deg,#0a0f1e,#0c1428,#080e1c);
+  border-bottom:1px solid var(--border);
+  padding:40px 0 0;
+}
+.header-inner{max-width:1200px;margin:0 auto;padding:0 24px;}
+.page-tag{
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;
+  color:var(--accent);text-transform:uppercase;margin-bottom:12px;display:block;
+}
+.page-title{
+  font-family:'Syne',sans-serif;font-size:clamp(32px,5vw,52px);font-weight:800;
+  letter-spacing:-2px;margin-bottom:8px;
+}
+.page-sub{color:var(--text2);font-size:15px;max-width:600px;line-height:1.6;margin-bottom:24px;}
+
+/* METHODOLOGY BAR */
+.method-bar{
+  display:flex;gap:0;border-top:1px solid var(--border);
+}
+.method-item{
+  padding:16px 20px;font-size:12px;color:var(--text2);display:flex;align-items:center;gap:8px;
+  border-right:1px solid var(--border);
+}
+.method-item:last-child{border-right:none;}
+.method-item strong{color:var(--accent);font-family:'JetBrains Mono',monospace;}
+
+/* FILTER TOOLBAR */
+.filter-bar{
+  background:var(--surface);border-bottom:1px solid var(--border);
+  padding:12px 0;position:sticky;top:56px;z-index:100;
+}
+.filter-inner{
+  max-width:1200px;margin:0 auto;padding:0 24px;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+}
+.filter-label{font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace;}
+.filter-chips{display:flex;gap:6px;flex-wrap:wrap;}
+.chip{
+  padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;
+  cursor:pointer;transition:all 0.15s;border:1px solid var(--border);
+  color:var(--text2);white-space:nowrap;
+}
+.chip.active{background:var(--accent);border-color:var(--accent);color:white;}
+.chip:hover:not(.active){border-color:var(--border2);color:var(--text);}
+
+.filter-sep{width:1px;height:24px;background:var(--border);flex-shrink:0;}
+
+.sort-select{
+  background:var(--surface2);border:1px solid var(--border);border-radius:8px;
+  padding:6px 12px;color:var(--text);font-family:'Manrope',sans-serif;
+  font-size:12px;outline:none;cursor:pointer;margin-left:auto;
+}
+
+/* MAIN LAYOUT */
+.main-layout{
+  max-width:1200px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 300px;
+  padding:24px;gap:24px;
+}
+
+/* SECTION LABEL */
+.section-label{
+  display:flex;align-items:center;gap:12px;margin-bottom:16px;
+}
+.sl-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;}
+.sl-sub{font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace;}
+
+/* PODIUM (TOP 3) */
+.podium{
+  display:grid;grid-template-columns:1fr 1.1fr 1fr;
+  gap:12px;margin-bottom:24px;align-items:end;
+}
+.podium-card{
+  border-radius:14px;overflow:hidden;border:1px solid var(--border);
+  transition:all 0.2s;cursor:pointer;text-decoration:none;display:block;
+}
+.podium-card:hover{transform:translateY(-4px);}
+.podium-1{border-color:rgba(234,179,8,0.4);box-shadow:0 8px 40px rgba(234,179,8,0.1);}
+.podium-2{border-color:rgba(148,163,184,0.3);}
+.podium-3{border-color:rgba(249,115,22,0.3);}
+
+.podium-header{
+  padding:20px 16px 14px;text-align:center;
+  position:relative;
+}
+.p1-header{background:linear-gradient(135deg,#1a1600,#201c00,#1a1600);}
+.p2-header{background:linear-gradient(135deg,#0f1520,#141c2a);}
+.p3-header{background:linear-gradient(135deg,#1a0e00,#201400);}
+
+.podium-crown{
+  position:absolute;top:-8px;left:50%;transform:translateX(-50%);
+  font-size:20px;
+}
+.podium-rank{
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;
+  margin-bottom:8px;
+}
+.p1-rank{color:var(--yellow);}
+.p2-rank{color:var(--text3);}
+.p3-rank{color:var(--orange);}
+.podium-icon{font-size:36px;display:block;margin-bottom:8px;}
+.podium-name{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:4px;}
+.podium-tagline{font-size:12px;color:var(--text3);}
+.podium-body{
+  background:var(--surface);padding:14px 16px;
+}
+.podium-score{
+  display:flex;align-items:baseline;gap:4px;margin-bottom:12px;
+}
+.ps-num{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;}
+.p1-score .ps-num{color:var(--yellow);}
+.p2-score .ps-num{color:var(--text2);}
+.p3-score .ps-num{color:var(--orange);}
+.ps-label{font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace;}
+.podium-bars{display:flex;flex-direction:column;gap:5px;}
+.pb-row{display:flex;align-items:center;gap:8px;}
+.pb-label{font-size:10px;color:var(--text3);width:60px;flex-shrink:0;font-family:'JetBrains Mono',monospace;}
+.pb-bar{flex:1;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;}
+.pb-fill{height:100%;border-radius:2px;}
+.p1-fill{background:var(--yellow);}
+.p2-fill{background:var(--text3);}
+.p3-fill{background:var(--orange);}
+.pb-val{font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;width:20px;}
+
+/* RANKING TABLE */
+.rank-table{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;overflow:hidden;
+}
+.rank-table-header{
+  display:grid;
+  grid-template-columns:48px 32px 200px 1fr 80px 80px 80px 80px 90px;
+  padding:10px 16px;background:var(--bg2);
+  border-bottom:1px solid var(--border);gap:8px;
+}
+.rth{font-size:10px;font-weight:700;color:var(--text3);font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase;}
+.rth.sortable{cursor:pointer;}
+.rth.sortable:hover{color:var(--accent);}
+
+.rank-row{
+  display:grid;
+  grid-template-columns:48px 32px 200px 1fr 80px 80px 80px 80px 90px;
+  padding:12px 16px;border-bottom:1px solid var(--border);
+  align-items:center;gap:8px;cursor:pointer;transition:background 0.15s;
+  text-decoration:none;
+}
+.rank-row:last-child{border-bottom:none;}
+.rank-row:hover{background:var(--surface2);}
+
+.rr-rank{
+  font-family:'Syne',sans-serif;font-size:18px;font-weight:800;
+  text-align:center;color:var(--text3);
+}
+.rr-rank.r1{color:var(--yellow);}
+.rr-rank.r2{color:var(--text2);}
+.rr-rank.r3{color:var(--orange);}
+
+.rr-change{
+  font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;
+  text-align:center;
+}
+.ch-up{color:var(--green);}
+.ch-down{color:var(--red);}
+.ch-same{color:var(--text3);}
+.ch-new{color:var(--purple);}
+
+.rr-distro{display:flex;align-items:center;gap:10px;}
+.rr-icon{font-size:24px;flex-shrink:0;}
+.rr-dname{font-size:14px;font-weight:700;}
+.rr-dbased{font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-top:1px;}
+
+.rr-desc{font-size:12px;color:var(--text2);line-height:1.4;}
+
+.rr-score{
+  text-align:center;
+}
+.score-num{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;}
+.score-bar{height:3px;background:var(--surface3);border-radius:2px;margin-top:4px;overflow:hidden;}
+.score-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--accent),#22c55e);}
+
+.rr-installs{
+  text-align:center;font-family:'JetBrains Mono',monospace;
+  font-size:12px;color:var(--text2);
+}
+.inst-num{font-size:14px;font-weight:600;color:var(--text);}
+
+.rr-rating{text-align:center;}
+.star-row{color:#f59e0b;font-size:10px;letter-spacing:1px;}
+.rat-num{font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--text2);}
+
+.rr-beginner{text-align:center;}
+.beg-badge{
+  font-size:10px;font-weight:700;padding:3px 7px;border-radius:5px;
+  font-family:'JetBrains Mono',monospace;
+}
+.beg-yes{background:rgba(34,197,94,0.15);color:var(--green);}
+.beg-mid{background:rgba(249,115,22,0.15);color:var(--orange);}
+.beg-no{background:rgba(239,68,68,0.12);color:var(--red);}
+
+.rr-tags{display:flex;gap:4px;flex-wrap:wrap;}
+.r-tag{
+  font-size:10px;padding:2px 6px;border-radius:4px;
+  background:var(--surface3);color:var(--text3);font-family:'JetBrains Mono',monospace;
+}
+
+/* SIDEBAR */
+.side-widget{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;margin-bottom:16px;overflow:hidden;
+}
+.sw-header{
+  padding:14px 16px;border-bottom:1px solid var(--border);
+  font-family:'Syne',sans-serif;font-size:14px;font-weight:700;
+  display:flex;align-items:center;gap:8px;
+}
+.sw-body{padding:16px;}
+
+/* METHODOLOGY DETAIL */
+.method-factor{
+  display:flex;gap:12px;align-items:flex-start;
+  padding:10px 0;border-bottom:1px solid var(--border);
+}
+.method-factor:last-child{border-bottom:none;}
+.mf-weight{
+  font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--accent);
+  flex-shrink:0;width:40px;
+}
+.mf-info{}
+.mf-name{font-size:13px;font-weight:600;margin-bottom:2px;}
+.mf-desc{font-size:11px;color:var(--text3);line-height:1.5;}
+
+/* TRENDING */
+.trend-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 0;border-bottom:1px solid var(--border);
+}
+.trend-item:last-child{border-bottom:none;}
+.ti-spark{
+  flex:1;height:28px;display:flex;align-items:flex-end;gap:1px;
+}
+.ti-bar{
+  flex:1;background:var(--accent);border-radius:2px 2px 0 0;opacity:0.4;
+  transition:opacity 0.2s;
+}
+.ti-bar:last-child{opacity:1;}
+.ti-name{font-size:13px;font-weight:600;flex-shrink:0;}
+.ti-delta{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--green);flex-shrink:0;}
+
+@media(max-width:1000px){
+  .main-layout{grid-template-columns:1fr;}
+  .rank-table-header,.rank-row{grid-template-columns:40px 28px 160px 1fr 60px 60px 60px;}
+  .rr-beginner,.rr-tags{display:none;}
+  .podium{grid-template-columns:1fr;}
+}
+@media(max-width:700px){
+  .podium{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="index.html" class="logo"><div class="logo-mark">🐧</div>Tux<span>Hub</span></a>
+  <div class="topbar-right">
+    <a href="index.html" class="tb-btn tb-home">← Home Feed</a>
+    <a href="#" class="tb-btn">Log In</a>
+  </div>
+</div>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="header-inner">
+    <span class="page-tag">// distro-rankings · live data</span>
+    <div class="page-title">The Real Linux<br>Distro Rankings</div>
+    <div class="page-sub">Ranked by actual user installs, community activity, forum posts, tutorial views, and satisfaction scores. Not a popularity poll. Not cached from 2009.</div>
+  </div>
+  <div class="header-inner">
+    <div class="method-bar">
+      <div class="method-item">📦 <strong>Installs</strong> tracked via opt-in telemetry</div>
+      <div class="method-item">💬 <strong>Community</strong> forum activity + growth</div>
+      <div class="method-item">⭐ <strong>Reviews</strong> from 140k+ verified users</div>
+      <div class="method-item">📺 <strong>Tutorial</strong> views & searches</div>
+      <div class="method-item">🔄 Updated <strong>every 24 hours</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="filter-inner">
+    <span class="filter-label">FILTER:</span>
+    <div class="filter-chips">
+      <span class="chip active" onclick="setChip(this)">All Distros</span>
+      <span class="chip" onclick="setChip(this)">🆕 Beginner</span>
+      <span class="chip" onclick="setChip(this)">🎮 Gaming</span>
+      <span class="chip" onclick="setChip(this)">💻 Dev</span>
+      <span class="chip" onclick="setChip(this)">🔒 Privacy</span>
+      <span class="chip" onclick="setChip(this)">🖥️ Server</span>
+      <span class="chip" onclick="setChip(this)">🔄 Rolling</span>
+      <span class="chip" onclick="setChip(this)">📦 Minimal</span>
+    </div>
+    <div class="filter-sep"></div>
+    <div class="filter-chips">
+      <span class="chip" onclick="setChip(this)">Debian-based</span>
+      <span class="chip" onclick="setChip(this)">Arch-based</span>
+      <span class="chip" onclick="setChip(this)">RPM-based</span>
+      <span class="chip" onclick="setChip(this)">Independent</span>
+    </div>
+    <select class="sort-select">
+      <option>Sort: TuxHub Score</option>
+      <option>Sort: Installs/Month</option>
+      <option>Sort: User Rating</option>
+      <option>Sort: Community Size</option>
+      <option>Sort: Beginner-Friendly</option>
+    </select>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main-layout">
+<div>
+
+  <!-- PODIUM -->
+  <div class="section-label">
+    <div class="sl-title">🏆 Top 3 This Month</div>
+    <div class="sl-sub">// ranked by composite TuxHub Score</div>
+  </div>
+
+  <div class="podium">
+    <!-- #2 -->
+    <a href="#" class="podium-card podium-2">
+      <div class="podium-header p2-header">
+        <div class="podium-rank p2-rank">// RANK 02</div>
+        <div class="podium-icon">🔴</div>
+        <div class="podium-name">Fedora</div>
+        <div class="podium-tagline">Cutting-edge. Pure. GNOME.</div>
+      </div>
+      <div class="podium-body">
+        <div class="podium-score p2-score">
+          <div class="ps-num">91</div>
+          <div class="ps-label">/100 TuxScore</div>
+        </div>
+        <div class="podium-bars">
+          <div class="pb-row"><div class="pb-label">Installs</div><div class="pb-bar"><div class="pb-fill p2-fill" style="width:85%"></div></div><div class="pb-val">85</div></div>
+          <div class="pb-row"><div class="pb-label">Rating</div><div class="pb-bar"><div class="pb-fill p2-fill" style="width:90%"></div></div><div class="pb-val">90</div></div>
+          <div class="pb-row"><div class="pb-label">Community</div><div class="pb-bar"><div class="pb-fill p2-fill" style="width:88%"></div></div><div class="pb-val">88</div></div>
+        </div>
+      </div>
+    </a>
+
+    <!-- #1 -->
+    <a href="distro-page.html" class="podium-card podium-1" style="z-index:2;">
+      <div class="podium-header p1-header" style="padding-top:28px">
+        <div class="podium-crown">👑</div>
+        <div class="podium-rank p1-rank">// RANK 01</div>
+        <div class="podium-icon" style="font-size:44px">🎯</div>
+        <div class="podium-name" style="font-size:24px">Ubuntu</div>
+        <div class="podium-tagline">The universal Linux gateway</div>
+      </div>
+      <div class="podium-body">
+        <div class="podium-score p1-score">
+          <div class="ps-num">97</div>
+          <div class="ps-label">/100 TuxScore</div>
+        </div>
+        <div class="podium-bars">
+          <div class="pb-row"><div class="pb-label">Installs</div><div class="pb-bar"><div class="pb-fill p1-fill" style="width:99%"></div></div><div class="pb-val">99</div></div>
+          <div class="pb-row"><div class="pb-label">Rating</div><div class="pb-bar"><div class="pb-fill p1-fill" style="width:94%"></div></div><div class="pb-val">94</div></div>
+          <div class="pb-row"><div class="pb-label">Community</div><div class="pb-bar"><div class="pb-fill p1-fill" style="width:97%"></div></div><div class="pb-val">97</div></div>
+        </div>
+      </div>
+    </a>
+
+    <!-- #3 -->
+    <a href="distro-page.html" class="podium-card podium-3">
+      <div class="podium-header p3-header">
+        <div class="podium-rank p3-rank">// RANK 03</div>
+        <div class="podium-icon">🚀</div>
+        <div class="podium-name">Pop!_OS</div>
+        <div class="podium-tagline">Developer & gamer favourite</div>
+      </div>
+      <div class="podium-body">
+        <div class="podium-score p3-score">
+          <div class="ps-num">89</div>
+          <div class="ps-label">/100 TuxScore</div>
+        </div>
+        <div class="podium-bars">
+          <div class="pb-row"><div class="pb-label">Installs</div><div class="pb-bar"><div class="pb-fill p3-fill" style="width:82%"></div></div><div class="pb-val">82</div></div>
+          <div class="pb-row"><div class="pb-label">Rating</div><div class="pb-bar"><div class="pb-fill p3-fill" style="width:94%"></div></div><div class="pb-val">94</div></div>
+          <div class="pb-row"><div class="pb-label">Community</div><div class="pb-bar"><div class="pb-fill p3-fill" style="width:84%"></div></div><div class="pb-val">84</div></div>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <!-- FULL RANKING TABLE -->
+  <div class="section-label">
+    <div class="sl-title">📊 Full Rankings</div>
+    <div class="sl-sub">// top 600+ distros · updated daily</div>
+  </div>
+
+  <div class="rank-table">
+    <div class="rank-table-header">
+      <div class="rth">Rank</div>
+      <div class="rth">±</div>
+      <div class="rth">Distro</div>
+      <div class="rth">Description</div>
+      <div class="rth sortable">Score ↓</div>
+      <div class="rth sortable">Installs</div>
+      <div class="rth sortable">Rating</div>
+      <div class="rth">Beginner</div>
+      <div class="rth">Tags</div>
+    </div>
+
+    <!-- ROW 1 -->
+    <a href="distro-page.html" class="rank-row">
+      <div class="rr-rank r1">1</div>
+      <div class="rr-change ch-same">—</div>
+      <div class="rr-distro"><div class="rr-icon">🎯</div><div><div class="rr-dname">Ubuntu</div><div class="rr-dbased">Debian · apt</div></div></div>
+      <div class="rr-desc">The most-used Linux distro. Massive community, LTS support, and the best hardware compatibility of any distro.</div>
+      <div class="rr-score"><div class="score-num" style="color:var(--yellow)">97</div><div class="score-bar"><div class="score-fill" style="width:97%"></div></div></div>
+      <div class="rr-installs"><div class="inst-num">2.1M</div><span>/mo</span></div>
+      <div class="rr-rating"><div class="star-row">★★★★★</div><div class="rat-num">4.6/5</div></div>
+      <div class="rr-beginner"><span class="beg-badge beg-yes">✓ Yes</span></div>
+      <div class="rr-tags"><span class="r-tag">stable</span><span class="r-tag">lts</span><span class="r-tag">gnome</span></div>
+    </a>
+
+    <!-- ROW 2 -->
+    <a href="#" class="rank-row">
+      <div class="rr-rank r2">2</div>
+      <div class="rr-change ch-up">▲2</div>
+      <div class="rr-distro"><div class="rr-icon">🔴</div><div><div class="rr-dname">Fedora</div><div class="rr-dbased">RPM · dnf</div></div></div>
+      <div class="rr-desc">Red Hat's community distro. Ships the latest GNOME and kernel first. Perfect for developers who want current software.</div>
+      <div class="rr-score"><div class="score-num" style="color:var(--text2)">91</div><div class="score-bar"><div class="score-fill" style="width:91%"></div></div></div>
+      <div class="rr-installs"><div class="inst-num">987k</div><span>/mo</span></div>
+      <div class="rr-rating"><div class="star-row">★★★★★</div><div class="rat-num">4.5/5</div></div>
+      <div class="rr-beginner"><span class="beg-badge beg-mid">~ Mostly</span></div>
+      <div class="rr-tags"><span class="r-tag">cutting-edge</span><span class="r-tag">rpm</span></div>
+    </a>
+
+    <!-- ROW 3 -->
+    <a href="distro-page.html" class="rank-row">
+      <div class="rr-rank r3">3</div>
+      <div class="rr-change ch-up">▲1</div>
+      <div class="rr-distro"><div class="rr-icon">🚀</div><div><div class="rr-dname">Pop!_OS</div><div class="rr-dbased">Ubuntu · apt</div></div></div>
+      <div class="rr-desc">System76's developer-focused Ubuntu derivative. Best NVIDIA out-of-box experience. Tiling WM built in. COSMIC coming.</div>
+      <div class="rr-score"><div class="score-num" style="color:var(--orange)">89</div><div class="score-bar"><div class="score-fill" style="width:89%"></div></div></div>
+      <div class="rr-installs"><div class="inst-num">743k</div><span>/mo</span></div>
+      <div class="rr-rating"><div class="star-row">★★★★★</div><div class="rat-num">4.7/5</div></div>
+      <div class="rr-beginner"><span class="beg-badge beg-yes">✓ Yes</span></div>
+      <div class="rr-tags"><span class="r-tag">gaming</span><span class="r-tag">nvidia</span></div>
+    </a>
+
+    <!-- ROW 4 -->
+    <a href="#" class="rank-row">
+      <div class="rr-rank">4</div>
+      <div class="rr-change ch-down">▼1</div>
+      <div class="rr-distro"><div class="rr-icon">🏔️</div><div><div class="rr-dname">Arch Linux</div><div class="rr-dbased">Independent · pacman</div></div></div>
+      <div class="rr-desc">Rolling release. You build it yourself. Unparalleled control, massive AUR, and the best documentation in Linux (Arch Wiki).</div>
+      <div class="rr-score"><div class="score-num">87</div><div class="score-bar"><div class="score-fill" style="width:87%"></div></div></div>
+      <div class="rr-installs"><div class="inst-num">621k</div><span>/mo</span></div>
+      <div class="rr-rating"><div class="star-row">★★★★★</div><div class="rat-num">4.8/5</div></div>
+      <div class="rr-beginner"><span class="beg-badge beg-no">✗ Advanced</span></div>
+      <div class="rr-tags"><span class="r-tag">rolling</span><span class="r-tag">aur</span></div>
+    </a>
+
+    <!-- ROW 5 -->
+    <a href="#" class="rank-row">
+      <div class="rr-rank">5</div>
+      <div class="rr-change ch-same">—</div>
+      <div class="rr-distro"><div class="rr-icon">🌿</div><div><div class="rr-dname">Linux Mint</div><div class="rr-dbased">Ubuntu · apt</div></div></div>
+      <div class="rr-desc">The ultimate Windows replacement. Familiar interface, zero bloat, excellent hardware support. #1 for Windows migrants.</div>
+      <div class="rr-score"><div class="score-num">86</div><div class="score-bar"><div class="score-fill" style="width:86%"></div></div></div>
+      <div class="rr-installs"><div class="inst-num">589k</div><span>/mo</span></div>
+      <div class="rr-rating"><div class="star-row">★★★★★</div><div class="rat-num">4.7/5</div></div>
+      <div class="rr-beginner"><span class="beg-badge beg-yes">✓ Best</span></div>
+      <div class="rr-tags"><span class="r-tag">windows-like</span><span class="r-tag">cinnamon</span></div>
+    </a>
+
+    <!-- ROW 6 -->
+    <a href="#" class="rank-row">
+      <div class="rr-rank">6</div>
+      <div class="rr-change ch-same">—</div>
+      <div class="rr-distro"><div class="rr-icon">🖤</div><div><div class="rr-dname">Debian</div><div class="rr-dbased">Independent · apt</div></div></div>
+      <div class="rr-desc">The grandparent of Linux distros. Rock-solid stable. The foundation Ubuntu, Pop!_OS, and Linux Mint are all built on.</div>
+      <div class="rr-score"><div class="score-num">84</div><div class="score-bar"><div class="score-fill" style="width:84%"></div></div></div>
+      <div class="rr-installs"><div class="inst-num">441k</div><span>/mo</span></div>
+      <div class="rr-rating"><div class="star-row">★★★★☆</div><div class="rat-num">4.4/5</div></div>
+      <div class="rr-beginner"><span class="beg-badge beg-mid">~ Moderate</span></div>
+      <div class="rr-tags"><span class="r-tag">stable</span><span class="r-tag">server</span></div>
+    </a>
+
+    <!-- ROW 7 -->
+    <a href="#" class="rank-row">
+      <div class="rr-rank">7</div>
+      <div class="rr-change ch-up">▲3</div>
+      <div class="rr-distro"><div class="rr-icon">🦎</div><div><div class="rr-dname">openSUSE Tumbleweed</div><div class="rr-dbased">RPM · zypper</div></div></div>
+      <div class="rr-desc">Rolling release with industrial-strength tooling. YaST is the best system config tool in Linux. Loved by sysadmins.</div>
+      <div class="rr-score"><div class="score-num">81</div><div class="score-bar"><div class="score-fill" style="width:81%"></div></div></div>
+      <div class="rr-installs"><div class="inst-num">287k</div><span>/mo</span></div>
+      <div class="rr-rating"><div class="star-row">★★★★☆</div><div class="rat-num">4.3/5</div></div>
+      <div class="rr-beginner"><span class="beg-badge beg-mid">~ Moderate</span></div>
+      <div class="rr-tags"><span class="r-tag">rolling</span><span class="r-tag">rpm</span></div>
+    </a>
+
+    <!-- ROW 8 - NEW ENTRY -->
+    <a href="#" class="rank-row">
+      <div class="rr-rank">8</div>
+      <div class="rr-change ch-new">NEW</div>
+      <div class="rr-distro"><div class="rr-icon">🌊</div><div><div class="rr-dname">NixOS</div><div class="rr-dbased">Independent · nix</div></div></div>
+      <div class="rr-desc">Declarative, reproducible config. Every system state described in a file. Incredibly powerful. Steep learning curve. Growing fast.</div>
+      <div class="rr-score"><div class="score-num" style="color:var(--purple)">79</div><div class="score-bar"><div class="score-fill" style="width:79%;background:var(--purple)"></div></div></div>
+      <div class="rr-installs"><div class="inst-num">241k</div><span>/mo</span></div>
+      <div class="rr-rating"><div class="star-row">★★★★★</div><div class="rat-num">4.8/5</div></div>
+      <div class="rr-beginner"><span class="beg-badge beg-no">✗ Expert</span></div>
+      <div class="rr-tags"><span class="r-tag">declarative</span><span class="r-tag">unique</span></div>
+    </a>
+
+    <!-- ROW 9 -->
+    <a href="#" class="rank-row">
+      <div class="rr-rank">9</div>
+      <div class="rr-change ch-up">▲2</div>
+      <div class="rr-distro"><div class="rr-icon">🐉</div><div><div class="rr-dname">Garuda Linux</div><div class="rr-dbased">Arch · pacman</div></div></div>
+      <div class="rr-desc">Arch-based gaming distro with performance tuning out of the box. BTRFS snapshots, auto-rollback, beautiful KDE Dragonized.</div>
+      <div class="rr-score"><div class="score-num">77</div><div class="score-bar"><div class="score-fill" style="width:77%"></div></div></div>
+      <div class="rr-installs"><div class="inst-num">198k</div><span>/mo</span></div>
+      <div class="rr-rating"><div class="star-row">★★★★☆</div><div class="rat-num">4.4/5</div></div>
+      <div class="rr-beginner"><span class="beg-badge beg-mid">~ Moderate</span></div>
+      <div class="rr-tags"><span class="r-tag">gaming</span><span class="r-tag">kde</span><span class="r-tag">arch</span></div>
+    </a>
+
+    <!-- ROW 10 -->
+    <a href="#" class="rank-row">
+      <div class="rr-rank">10</div>
+      <div class="rr-change ch-down">▼2</div>
+      <div class="rr-distro"><div class="rr-icon">🔵</div><div><div class="rr-dname">Manjaro</div><div class="rr-dbased">Arch · pacman</div></div></div>
+      <div class="rr-desc">Arch made accessible. Curated rolling releases, hardware detection, and multiple DE options. Gateway to the Arch ecosystem.</div>
+      <div class="rr-score"><div class="score-num">75</div><div class="score-bar"><div class="score-fill" style="width:75%"></div></div></div>
+      <div class="rr-installs"><div class="inst-num">176k</div><span>/mo</span></div>
+      <div class="rr-rating"><div class="star-row">★★★★☆</div><div class="rat-num">4.2/5</div></div>
+      <div class="rr-beginner"><span class="beg-badge beg-yes">✓ Yes</span></div>
+      <div class="rr-tags"><span class="r-tag">rolling</span><span class="r-tag">aur</span></div>
+    </a>
+
+    <!-- SHOW MORE -->
+    <div style="padding:16px;text-align:center;border-top:1px solid var(--border);">
+      <button onclick="this.textContent='Loading...'" style="background:var(--surface2);border:1px solid var(--border2);color:var(--text2);padding:10px 24px;border-radius:8px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border2)'">
+        Load More (590 distros remaining) →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<aside>
+
+  <!-- RANKING METHODOLOGY -->
+  <div class="side-widget">
+    <div class="sw-header">⚖️ How We Rank</div>
+    <div class="sw-body">
+      <div class="method-factor">
+        <div class="mf-weight">35%</div>
+        <div class="mf-info">
+          <div class="mf-name">Real Install Data</div>
+          <div class="mf-desc">Opt-in telemetry from installers + mirror download stats + distro-reported numbers</div>
+        </div>
+      </div>
+      <div class="method-factor">
+        <div class="mf-weight">25%</div>
+        <div class="mf-info">
+          <div class="mf-name">Community Health</div>
+          <div class="mf-desc">Forum posts, growth rate, response time, solved rate, member activity</div>
+        </div>
+      </div>
+      <div class="method-factor">
+        <div class="mf-weight">20%</div>
+        <div class="mf-info">
+          <div class="mf-name">User Reviews</div>
+          <div class="mf-desc">Verified reviews from TuxHub users who have actually installed and used the distro</div>
+        </div>
+      </div>
+      <div class="method-factor">
+        <div class="mf-weight">12%</div>
+        <div class="mf-info">
+          <div class="mf-name">Tutorial Engagement</div>
+          <div class="mf-desc">YouTube views, search queries, wiki reads for this distro on TuxHub</div>
+        </div>
+      </div>
+      <div class="method-factor">
+        <div class="mf-weight">8%</div>
+        <div class="mf-info">
+          <div class="mf-name">Release Activity</div>
+          <div class="mf-desc">How recently updated, release frequency, changelog quality</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BIGGEST MOVERS -->
+  <div class="side-widget">
+    <div class="sw-header">📈 Biggest Movers (30 days)</div>
+    <div class="sw-body">
+      <div class="trend-item">
+        <div class="ti-name" style="width:80px;font-size:12px;">NixOS</div>
+        <div class="ti-spark">
+          <div class="ti-bar" style="height:40%"></div><div class="ti-bar" style="height:50%"></div>
+          <div class="ti-bar" style="height:45%"></div><div class="ti-bar" style="height:60%"></div>
+          <div class="ti-bar" style="height:70%"></div><div class="ti-bar" style="height:80%"></div>
+          <div class="ti-bar" style="height:100%"></div>
+        </div>
+        <div class="ti-delta">+14 ▲</div>
+      </div>
+      <div class="trend-item">
+        <div class="ti-name" style="width:80px;font-size:12px;">Hyprland</div>
+        <div class="ti-spark">
+          <div class="ti-bar" style="height:30%"></div><div class="ti-bar" style="height:40%"></div>
+          <div class="ti-bar" style="height:55%"></div><div class="ti-bar" style="height:65%"></div>
+          <div class="ti-bar" style="height:80%"></div><div class="ti-bar" style="height:90%"></div>
+          <div class="ti-bar" style="height:100%"></div>
+        </div>
+        <div class="ti-delta">+11 ▲</div>
+      </div>
+      <div class="trend-item">
+        <div class="ti-name" style="width:80px;font-size:12px;">Garuda</div>
+        <div class="ti-spark">
+          <div class="ti-bar" style="height:50%"></div><div class="ti-bar" style="height:55%"></div>
+          <div class="ti-bar" style="height:60%"></div><div class="ti-bar" style="height:70%"></div>
+          <div class="ti-bar" style="height:75%"></div><div class="ti-bar" style="height:85%"></div>
+          <div class="ti-bar" style="height:100%"></div>
+        </div>
+        <div class="ti-delta">+8 ▲</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUBMIT YOUR DISTRO -->
+  <div class="side-widget" style="background:linear-gradient(135deg,rgba(14,165,233,0.06),rgba(167,139,250,0.06));border-color:rgba(14,165,233,0.2);">
+    <div class="sw-header">➕ List Your Distro</div>
+    <div class="sw-body">
+      <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:14px;">Is your distro missing? Submit it for inclusion in the rankings. We verify all submissions before listing.</p>
+      <a href="#" style="display:block;text-align:center;padding:10px;background:var(--accent);color:white;border-radius:8px;font-weight:600;font-size:13px;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='#0284c7'" onmouseout="this.style.background='var(--accent)'">Submit a Distro →</a>
+    </div>
+  </div>
+
+</aside>
+</div>
+
+<script>
+function setChip(el) {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>

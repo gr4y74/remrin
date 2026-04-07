@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TuxHub — The Linux Community</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0c0f18;
+  --bg2: #0f1420;
+  --surface: #141924;
+  --surface2: #1a2135;
+  --surface3: #1f2840;
+  --border: #1e2d47;
+  --border2: #263652;
+  --accent: #0ea5e9;
+  --accent2: #38bdf8;
+  --green: #22c55e;
+  --orange: #f97316;
+  --red: #ef4444;
+  --purple: #a78bfa;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --text3: #4b6280;
+  --upvote: #f97316;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Manrope',sans-serif; min-height:100vh; }
+
+/* TOPBAR */
+.topbar {
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  height:56px;
+  background:rgba(12,15,24,0.92);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; padding:0 20px; gap:16px;
+}
+.logo {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:20px;
+  display:flex; align-items:center; gap:8px; text-decoration:none; color:var(--text);
+  flex-shrink:0;
+}
+.logo-mark {
+  width:30px; height:30px; background:linear-gradient(135deg,var(--accent),#0369a1);
+  border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:15px;
+}
+.logo span { color:var(--accent); }
+
+.search-bar {
+  flex:1; max-width:600px; position:relative;
+}
+.search-bar input {
+  width:100%; background:var(--surface2); border:1px solid var(--border);
+  border-radius:10px; padding:9px 16px 9px 40px; color:var(--text);
+  font-family:'Manrope',sans-serif; font-size:14px; outline:none;
+  transition:border-color 0.2s;
+}
+.search-bar input:focus { border-color:var(--accent); }
+.search-bar input::placeholder { color:var(--text3); }
+.search-icon { position:absolute; left:13px; top:50%; transform:translateY(-50%); color:var(--text3); font-size:15px; }
+
+.topbar-right { margin-left:auto; display:flex; align-items:center; gap:10px; }
+.tb-btn {
+  padding:7px 16px; border-radius:8px; font-size:13px; font-weight:600;
+  font-family:'Manrope',sans-serif; cursor:pointer; transition:all 0.2s;
+  text-decoration:none;
+}
+.tb-login { background:transparent; border:1px solid var(--border2); color:var(--text2); }
+.tb-login:hover { border-color:var(--accent); color:var(--accent); }
+.tb-signup { background:var(--accent); border:1px solid var(--accent); color:white; }
+.tb-signup:hover { background:#0284c7; }
+
+/* LAYOUT */
+.layout {
+  display:grid;
+  grid-template-columns:220px 1fr 300px;
+  max-width:1320px;
+  margin:0 auto;
+  padding:72px 16px 40px;
+  gap:0;
+  min-height:100vh;
+}
+
+/* LEFT SIDEBAR */
+.sidebar-left {
+  padding:20px 12px 20px 0;
+  position:sticky; top:56px; height:calc(100vh - 56px);
+  overflow-y:auto; scrollbar-width:none;
+}
+.sidebar-left::-webkit-scrollbar { display:none; }
+
+.nav-section { margin-bottom:8px; }
+.nav-label {
+  font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:2px;
+  color:var(--text3); padding:12px 12px 6px; text-transform:uppercase;
+}
+.nav-item {
+  display:flex; align-items:center; gap:10px;
+  padding:9px 12px; border-radius:8px; cursor:pointer;
+  color:var(--text2); font-size:14px; font-weight:500;
+  transition:all 0.15s; text-decoration:none;
+}
+.nav-item:hover, .nav-item.active { background:var(--surface2); color:var(--text); }
+.nav-item.active { color:var(--accent); }
+.nav-icon { font-size:16px; flex-shrink:0; }
+
+.distro-nav-item {
+  display:flex; align-items:center; gap:9px;
+  padding:7px 12px; border-radius:8px; cursor:pointer;
+  color:var(--text2); font-size:13px; font-weight:500;
+  transition:all 0.15s; text-decoration:none;
+}
+.distro-nav-item:hover { background:var(--surface2); color:var(--text); }
+.d-badge {
+  width:22px; height:22px; border-radius:6px;
+  display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0;
+}
+.d-members { margin-left:auto; font-size:11px; color:var(--text3); font-family:'JetBrains Mono',monospace; }
+
+/* MAIN FEED */
+.feed { padding:20px 16px; }
+
+.feed-header {
+  display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;
+}
+.feed-title { font-family:'Syne',sans-serif; font-size:22px; font-weight:800; }
+
+.sort-tabs {
+  display:flex; gap:4px; background:var(--surface); border:1px solid var(--border);
+  border-radius:10px; padding:4px;
+}
+.sort-tab {
+  padding:6px 14px; border-radius:7px; font-size:13px; font-weight:600;
+  cursor:pointer; transition:all 0.15s; color:var(--text2);
+}
+.sort-tab.active { background:var(--surface3); color:var(--text); }
+.sort-tab:hover:not(.active) { color:var(--text); }
+
+/* CREATE POST BAR */
+.create-post {
+  display:flex; gap:10px; align-items:center;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:12px; padding:10px 14px; margin-bottom:16px;
+  cursor:pointer; transition:border-color 0.2s;
+}
+.create-post:hover { border-color:var(--border2); }
+.cp-avatar {
+  width:36px; height:36px; border-radius:9px;
+  background:var(--surface3); display:flex; align-items:center; justify-content:center;
+  font-size:16px; flex-shrink:0;
+}
+.cp-input {
+  flex:1; background:var(--surface2); border:1px solid var(--border);
+  border-radius:8px; padding:9px 14px; color:var(--text3);
+  font-family:'Manrope',sans-serif; font-size:14px; cursor:pointer;
+}
+.cp-btns { display:flex; gap:6px; }
+.cp-btn {
+  width:36px; height:36px; border-radius:8px; background:var(--surface2);
+  border:1px solid var(--border); display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:16px; transition:all 0.15s;
+}
+.cp-btn:hover { background:var(--surface3); border-color:var(--border2); }
+
+/* POST CARD */
+.post-card {
+  display:flex; gap:0;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:12px; margin-bottom:10px;
+  overflow:hidden; transition:border-color 0.2s;
+}
+.post-card:hover { border-color:var(--border2); }
+
+.vote-col {
+  width:48px; background:var(--bg2); display:flex; flex-direction:column;
+  align-items:center; padding:12px 0; gap:4px; flex-shrink:0;
+}
+.vote-btn {
+  width:28px; height:28px; border-radius:6px; display:flex; align-items:center;
+  justify-content:center; cursor:pointer; font-size:16px; transition:all 0.15s;
+  color:var(--text3); user-select:none;
+}
+.vote-btn:hover { background:var(--surface3); }
+.vote-btn.up:hover, .vote-btn.up.voted { color:var(--upvote); }
+.vote-btn.down:hover, .vote-btn.down.voted { color:var(--accent); }
+.vote-count {
+  font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:500;
+  color:var(--text2); line-height:1;
+}
+
+.post-content { flex:1; padding:14px 16px; min-width:0; }
+
+.post-meta {
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:8px;
+}
+.post-community {
+  display:flex; align-items:center; gap:6px;
+  background:var(--surface2); border-radius:6px; padding:3px 8px;
+  font-size:12px; font-weight:600; color:var(--accent);
+  text-decoration:none; transition:background 0.15s;
+}
+.post-community:hover { background:var(--surface3); }
+.post-community .pc-icon { font-size:13px; }
+.post-author { font-size:12px; color:var(--text3); }
+.post-author span { color:var(--text2); font-weight:500; }
+.post-time { font-size:11px; color:var(--text3); font-family:'JetBrains Mono',monospace; }
+
+.post-flair {
+  font-size:11px; font-weight:700; padding:2px 8px; border-radius:4px;
+}
+.flair-guide { background:rgba(34,197,94,0.15); color:var(--green); }
+.flair-help { background:rgba(239,68,68,0.15); color:var(--red); }
+.flair-news { background:rgba(14,165,233,0.15); color:var(--accent); }
+.flair-showcase { background:rgba(167,139,250,0.15); color:var(--purple); }
+.flair-discussion { background:rgba(249,115,22,0.15); color:var(--orange); }
+
+.post-title {
+  font-size:16px; font-weight:600; line-height:1.4; margin-bottom:8px;
+  cursor:pointer; transition:color 0.15s;
+}
+.post-title:hover { color:var(--accent); }
+
+.post-preview {
+  font-size:13px; color:var(--text2); line-height:1.6; margin-bottom:10px;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+}
+
+.post-image {
+  width:100%; max-height:300px; object-fit:cover;
+  border-radius:8px; margin-bottom:10px; cursor:pointer;
+}
+
+.post-tags { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+.post-tag {
+  font-size:11px; padding:3px 8px; border-radius:5px;
+  background:var(--surface3); color:var(--text3); font-family:'JetBrains Mono',monospace;
+  cursor:pointer; transition:all 0.15s;
+}
+.post-tag:hover { color:var(--accent); background:rgba(14,165,233,0.1); }
+
+.post-actions {
+  display:flex; gap:4px;
+}
+.post-action {
+  display:flex; align-items:center; gap:5px;
+  padding:6px 10px; border-radius:7px; cursor:pointer;
+  font-size:12px; font-weight:600; color:var(--text3);
+  transition:all 0.15s;
+}
+.post-action:hover { background:var(--surface2); color:var(--text2); }
+.post-action .pa-icon { font-size:14px; }
+
+/* VIDEO EMBED STYLE */
+.post-video-thumb {
+  position:relative; border-radius:8px; overflow:hidden;
+  margin-bottom:10px; cursor:pointer;
+}
+.post-video-thumb img { width:100%; max-height:220px; object-fit:cover; display:block; }
+.play-btn {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:52px; height:52px; background:rgba(0,0,0,0.7);
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-size:20px; backdrop-filter:blur(4px);
+}
+.video-source {
+  position:absolute; bottom:8px; right:8px;
+  background:rgba(0,0,0,0.8); color:white; font-size:10px;
+  padding:3px 7px; border-radius:4px; font-family:'JetBrains Mono',monospace;
+}
+
+/* RIGHT SIDEBAR */
+.sidebar-right { padding:20px 0 20px 12px; }
+
+.widget {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:12px; margin-bottom:12px; overflow:hidden;
+}
+.widget-header {
+  padding:14px 16px; border-bottom:1px solid var(--border);
+  font-family:'Syne',sans-serif; font-size:14px; font-weight:700;
+  display:flex; align-items:center; gap:8px;
+}
+
+/* TRENDING DISTROS WIDGET */
+.trending-item {
+  display:flex; align-items:center; gap:12px;
+  padding:10px 16px; border-bottom:1px solid var(--border);
+  cursor:pointer; transition:background 0.15s; text-decoration:none;
+}
+.trending-item:last-child { border-bottom:none; }
+.trending-item:hover { background:var(--surface2); }
+.tr-rank {
+  font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700;
+  color:var(--text3); width:20px; flex-shrink:0; text-align:center;
+}
+.tr-rank.top { color:var(--accent); }
+.tr-icon { font-size:20px; flex-shrink:0; }
+.tr-info { flex:1; min-width:0; }
+.tr-name { font-size:13px; font-weight:600; }
+.tr-meta { font-size:11px; color:var(--text3); font-family:'JetBrains Mono',monospace; margin-top:1px; }
+.tr-change {
+  font-size:11px; font-weight:700; font-family:'JetBrains Mono',monospace;
+  padding:2px 6px; border-radius:4px;
+}
+.tr-up { color:var(--green); background:rgba(34,197,94,0.1); }
+.tr-down { color:var(--red); background:rgba(239,68,68,0.1); }
+.tr-same { color:var(--text3); background:var(--surface3); }
+
+/* AI WIDGET */
+.ai-widget {
+  background:linear-gradient(135deg,rgba(14,165,233,0.08),rgba(167,139,250,0.08));
+  border-color:rgba(14,165,233,0.2);
+}
+.ai-chat-preview { padding:16px; }
+.ai-msg {
+  background:var(--surface2); border-radius:10px; padding:12px 14px;
+  font-size:13px; line-height:1.6; color:var(--text2); margin-bottom:12px;
+  border-left:2px solid var(--accent);
+}
+.ai-input-row {
+  display:flex; gap:8px;
+}
+.ai-input {
+  flex:1; background:var(--surface); border:1px solid var(--border);
+  border-radius:8px; padding:9px 12px; color:var(--text);
+  font-family:'Manrope',sans-serif; font-size:13px; outline:none;
+}
+.ai-input:focus { border-color:var(--accent); }
+.ai-send {
+  width:36px; height:36px; background:var(--accent); border:none;
+  border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  font-size:14px; transition:background 0.15s;
+}
+.ai-send:hover { background:#0284c7; }
+
+/* COMMUNITY SPOTLIGHT */
+.spotlight-item {
+  display:flex; align-items:center; gap:10px;
+  padding:10px 16px; border-bottom:1px solid var(--border);
+  cursor:pointer; transition:background 0.15s; text-decoration:none;
+}
+.spotlight-item:last-child { border-bottom:none; }
+.spotlight-item:hover { background:var(--surface2); }
+.sp-icon {
+  width:32px; height:32px; border-radius:8px;
+  display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;
+}
+.sp-info { flex:1; }
+.sp-name { font-size:13px; font-weight:600; }
+.sp-members { font-size:11px; color:var(--text3); font-family:'JetBrains Mono',monospace; }
+.sp-join {
+  padding:4px 10px; border-radius:6px; border:1px solid var(--border2);
+  font-size:11px; font-weight:600; color:var(--text2); cursor:pointer; transition:all 0.15s;
+}
+.sp-join:hover { border-color:var(--accent); color:var(--accent); }
+
+/* STATS WIDGET */
+.stats-grid { display:grid; grid-template-columns:1fr 1fr; padding:12px; gap:8px; }
+.stat-box {
+  background:var(--surface2); border-radius:8px; padding:12px;
+  text-align:center;
+}
+.stat-num { font-family:'Syne',sans-serif; font-size:20px; font-weight:800; color:var(--accent); }
+.stat-label { font-size:11px; color:var(--text3); margin-top:2px; }
+
+/* ONLINE INDICATOR */
+.online-dot {
+  width:8px; height:8px; background:var(--green); border-radius:50%;
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { box-shadow:0 0 0 0 rgba(34,197,94,0.4); }
+  50% { box-shadow:0 0 0 5px rgba(34,197,94,0); }
+}
+
+/* PINNED POST */
+.pinned-indicator {
+  display:flex; align-items:center; gap:6px;
+  font-size:11px; color:var(--green); font-weight:600; margin-bottom:6px;
+}
+
+/* AWARD BADGES */
+.award { font-size:14px; cursor:pointer; }
+.awards { display:flex; gap:4px; align-items:center; }
+
+@media (max-width:1100px) {
+  .layout { grid-template-columns:200px 1fr 280px; }
+}
+@media (max-width:900px) {
+  .layout { grid-template-columns:1fr; }
+  .sidebar-left,.sidebar-right { display:none; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="index.html" class="logo">
+    <div class="logo-mark">🐧</div>
+    Tux<span>Hub</span>
+  </a>
+
+  <div class="search-bar">
+    <span class="search-icon">🔍</span>
+    <input type="text" placeholder="Search distros, posts, tutorials, packages...">
+  </div>
+
+  <div class="topbar-right">
+    <a href="distros.html" class="tb-btn tb-login" style="text-decoration:none">📊 Distro Rankings</a>
+    <a href="#" class="tb-btn tb-login">Log In</a>
+    <a href="#" class="tb-btn tb-signup">Join Free</a>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar-left">
+    <div class="nav-section">
+      <a href="#" class="nav-item active"><span class="nav-icon">🏠</span> Home</a>
+      <a href="#" class="nav-item"><span class="nav-icon">🔥</span> Popular</a>
+      <a href="#" class="nav-item"><span class="nav-icon">✨</span> New</a>
+      <a href="#" class="nav-item"><span class="nav-icon">📺</span> Tutorials</a>
+      <a href="distros.html" class="nav-item"><span class="nav-icon">📊</span> Distro Rankings</a>
+      <a href="#" class="nav-item"><span class="nav-icon">🤖</span> AI Assistant</a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Your Communities</div>
+      <a href="distro-page.html" class="distro-nav-item">
+        <div class="d-badge" style="background:rgba(14,165,233,0.15)">🚀</div>
+        r/PopOS
+        <span class="d-members">84k</span>
+      </a>
+      <a href="#" class="distro-nav-item">
+        <div class="d-badge" style="background:rgba(249,115,22,0.15)">🔴</div>
+        r/Fedora
+        <span class="d-members">127k</span>
+      </a>
+      <a href="#" class="distro-nav-item">
+        <div class="d-badge" style="background:rgba(34,197,94,0.15)">🌿</div>
+        r/LinuxMint
+        <span class="d-members">96k</span>
+      </a>
+      <a href="#" class="distro-nav-item">
+        <div class="d-badge" style="background:rgba(167,139,250,0.15)">🏔️</div>
+        r/archlinux
+        <span class="d-members">211k</span>
+      </a>
+      <a href="#" class="distro-nav-item">
+        <div class="d-badge" style="background:rgba(239,68,68,0.15)">🖤</div>
+        r/debian
+        <span class="d-members">73k</span>
+      </a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Desktop Environments</div>
+      <a href="#" class="distro-nav-item">
+        <div class="d-badge" style="background:rgba(14,165,233,0.12)">🌀</div>
+        r/GNOME
+        <span class="d-members">55k</span>
+      </a>
+      <a href="#" class="distro-nav-item">
+        <div class="d-badge" style="background:rgba(14,165,233,0.12)">🖼️</div>
+        r/KDE
+        <span class="d-members">89k</span>
+      </a>
+      <a href="#" class="distro-nav-item">
+        <div class="d-badge" style="background:rgba(14,165,233,0.12)">🪟</div>
+        r/Hyprland
+        <span class="d-members">41k</span>
+      </a>
+      <a href="#" class="distro-nav-item">
+        <div class="d-badge" style="background:rgba(14,165,233,0.12)">📦</div>
+        r/i3wm
+        <span class="d-members">38k</span>
+      </a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Topics</div>
+      <a href="#" class="distro-nav-item">
+        <div class="d-badge" style="background:rgba(34,197,94,0.1)">🎮</div>
+        r/LinuxGaming
+        <span class="d-members">183k</span>
+      </a>
+      <a href="#" class="distro-nav-item">
+        <div class="d-badge" style="background:rgba(167,139,250,0.1)">🔒</div>
+        r/LinuxPrivacy
+        <span class="d-members">44k</span>
+      </a>
+      <a href="#" class="distro-nav-item">
+        <div class="d-badge" style="background:rgba(249,115,22,0.1)">🖥️</div>
+        r/unixporn
+        <span class="d-members">267k</span>
+      </a>
+      <a href="#" class="distro-nav-item">
+        <div class="d-badge" style="background:rgba(239,68,68,0.1)">🆕</div>
+        r/linux4noobs
+        <span class="d-members">112k</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN FEED -->
+  <main class="feed">
+    <div class="feed-header">
+      <div class="feed-title">Home Feed</div>
+      <div class="sort-tabs">
+        <div class="sort-tab active">🔥 Hot</div>
+        <div class="sort-tab">✨ New</div>
+        <div class="sort-tab">📈 Rising</div>
+        <div class="sort-tab">🏆 Top</div>
+      </div>
+    </div>
+
+    <!-- CREATE POST -->
+    <div class="create-post">
+      <div class="cp-avatar">🐧</div>
+      <div class="cp-input">Share something with the Linux community...</div>
+      <div class="cp-btns">
+        <div class="cp-btn" title="Image">🖼️</div>
+        <div class="cp-btn" title="Video">📺</div>
+        <div class="cp-btn" title="Link">🔗</div>
+      </div>
+    </div>
+
+    <!-- POST 1 — Pinned Guide -->
+    <div class="post-card">
+      <div class="vote-col">
+        <div class="vote-btn up voted">▲</div>
+        <div class="vote-count" style="color:var(--upvote)">4.2k</div>
+        <div class="vote-btn down">▼</div>
+      </div>
+      <div class="post-content">
+        <div class="pinned-indicator">📌 Pinned · Community Guide</div>
+        <div class="post-meta">
+          <a href="distro-page.html" class="post-community"><span class="pc-icon">🚀</span>r/PopOS</a>
+          <span class="post-author">by <span>u/system76_official</span></span>
+          <span class="post-time">3h ago</span>
+          <span class="post-flair flair-guide">📖 Guide</span>
+        </div>
+        <div class="post-title">The Complete Pop!_OS 24.04 Setup Guide for NVIDIA Users (2025 Edition) — Everything from install to gaming-ready in 30 minutes</div>
+        <div class="post-preview">Covers driver installation, Steam + Proton setup, Wayland vs X11 for NVIDIA, performance tweaks, and the new COSMIC desktop migration path. Updated for the latest 555 driver series.</div>
+        <div class="post-tags">
+          <span class="post-tag">nvidia</span>
+          <span class="post-tag">gaming</span>
+          <span class="post-tag">wayland</span>
+          <span class="post-tag">proton</span>
+          <span class="post-tag">guide</span>
+        </div>
+        <div class="post-actions">
+          <div class="post-action"><span class="pa-icon">💬</span> 342 Comments</div>
+          <div class="post-action"><span class="pa-icon">🔗</span> Share</div>
+          <div class="post-action"><span class="pa-icon">🔖</span> Save</div>
+          <div class="post-action"><span class="pa-icon">🏆</span> Award</div>
+          <div class="awards"><span class="award" title="Helpful">🥇</span><span class="award" title="Gold">✨</span><span class="award" title="Community Favourite">💙</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST 2 — Discussion -->
+    <div class="post-card">
+      <div class="vote-col">
+        <div class="vote-btn up">▲</div>
+        <div class="vote-count">2.8k</div>
+        <div class="vote-btn down">▼</div>
+      </div>
+      <div class="post-content">
+        <div class="post-meta">
+          <a href="#" class="post-community"><span class="pc-icon">🎮</span>r/LinuxGaming</a>
+          <span class="post-author">by <span>u/proton_enjoyer</span></span>
+          <span class="post-time">5h ago</span>
+          <span class="post-flair flair-news">📰 News</span>
+        </div>
+        <div class="post-title">Valve just pushed Proton 9.0-4 — 47 newly playable games including previously broken anti-cheat titles. The Linux gaming situation is genuinely better than it's ever been.</div>
+        <div class="post-preview">Full compatibility report inside. Notable additions: several major titles with Easy Anti-Cheat now working out of the box. Performance improvements across the board on AMD GPUs.</div>
+        <div class="post-tags">
+          <span class="post-tag">proton</span>
+          <span class="post-tag">steam</span>
+          <span class="post-tag">valve</span>
+          <span class="post-tag">anti-cheat</span>
+        </div>
+        <div class="post-actions">
+          <div class="post-action"><span class="pa-icon">💬</span> 891 Comments</div>
+          <div class="post-action"><span class="pa-icon">🔗</span> Share</div>
+          <div class="post-action"><span class="pa-icon">🔖</span> Save</div>
+          <div class="post-action"><span class="pa-icon">🏆</span> Award</div>
+          <div class="awards"><span class="award">🎮</span><span class="award">✨</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST 3 — Video Tutorial -->
+    <div class="post-card">
+      <div class="vote-col">
+        <div class="vote-btn up">▲</div>
+        <div class="vote-count">1.9k</div>
+        <div class="vote-btn down">▼</div>
+      </div>
+      <div class="post-content">
+        <div class="post-meta">
+          <a href="#" class="post-community"><span class="pc-icon">🐧</span>r/linux4noobs</a>
+          <span class="post-author">by <span>u/TheLinuxExperiment</span></span>
+          <span class="post-time">8h ago</span>
+          <span class="post-flair flair-guide">📺 Tutorial</span>
+        </div>
+        <div class="post-title">I switched 10 Windows power users to Linux for 30 days. Here's what actually broke and what surprised us all.</div>
+        <div class="post-video-thumb">
+          <div style="width:100%;height:200px;background:linear-gradient(135deg,#1a2135,#0f1a2e);border-radius:8px;display:flex;align-items:center;justify-content:center;position:relative;">
+            <span style="font-size:60px;opacity:0.3">🐧</span>
+            <div class="play-btn">▶</div>
+            <div class="video-source">YouTube · 18:42</div>
+          </div>
+        </div>
+        <div class="post-tags">
+          <span class="post-tag">beginners</span>
+          <span class="post-tag">windows-migration</span>
+          <span class="post-tag">experiment</span>
+        </div>
+        <div class="post-actions">
+          <div class="post-action"><span class="pa-icon">💬</span> 447 Comments</div>
+          <div class="post-action"><span class="pa-icon">🔗</span> Share</div>
+          <div class="post-action"><span class="pa-icon">🔖</span> Save</div>
+          <div class="post-action"><span class="pa-icon">🏆</span> Award</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST 4 — Help Request -->
+    <div class="post-card">
+      <div class="vote-col">
+        <div class="vote-btn up">▲</div>
+        <div class="vote-count">847</div>
+        <div class="vote-btn down">▼</div>
+      </div>
+      <div class="post-content">
+        <div class="post-meta">
+          <a href="#" class="post-community"><span class="pc-icon">🏔️</span>r/archlinux</a>
+          <span class="post-author">by <span>u/newbie_archer</span></span>
+          <span class="post-time">2h ago</span>
+          <span class="post-flair flair-help">🆘 Help</span>
+        </div>
+        <div class="post-title">[SOLVED] pacman -Syu broke my system after kernel update — here's the fix that actually worked (not the ones on the wiki)</div>
+        <div class="post-preview">After the 6.13 kernel update my AMD GPU was throwing DRM errors on boot. After 4 hours I found the fix. Sharing so nobody else loses their afternoon.</div>
+        <div class="post-tags">
+          <span class="post-tag">arch</span>
+          <span class="post-tag">pacman</span>
+          <span class="post-tag">kernel</span>
+          <span class="post-tag">amd</span>
+          <span class="post-tag">drm</span>
+        </div>
+        <div class="post-actions">
+          <div class="post-action"><span class="pa-icon">💬</span> 203 Comments</div>
+          <div class="post-action"><span class="pa-icon">🔗</span> Share</div>
+          <div class="post-action"><span class="pa-icon">🔖</span> Save</div>
+          <div class="post-action"><span class="pa-icon">🏆</span> Award</div>
+          <div class="awards"><span class="award">🛟</span><span class="award">🥇</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST 5 — Showcase -->
+    <div class="post-card">
+      <div class="vote-col">
+        <div class="vote-btn up">▲</div>
+        <div class="vote-count">3.4k</div>
+        <div class="vote-btn down">▼</div>
+      </div>
+      <div class="post-content">
+        <div class="post-meta">
+          <a href="#" class="post-community"><span class="pc-icon">🖥️</span>r/unixporn</a>
+          <span class="post-author">by <span>u/rice_master_9000</span></span>
+          <span class="post-time">14h ago</span>
+          <span class="post-flair flair-showcase">🎨 Showcase</span>
+        </div>
+        <div class="post-title">[Hyprland] After 3 months of ricing — my final NixOS setup. Waybar + Rofi + Catppuccin Mocha everywhere</div>
+        <div style="background:linear-gradient(135deg,#1a0a2e,#0a1a2e,#0a2e1a);border-radius:8px;height:180px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;font-size:48px;cursor:pointer;">🖥️</div>
+        <div class="post-tags">
+          <span class="post-tag">hyprland</span>
+          <span class="post-tag">nixos</span>
+          <span class="post-tag">waybar</span>
+          <span class="post-tag">catppuccin</span>
+          <span class="post-tag">dotfiles</span>
+        </div>
+        <div class="post-actions">
+          <div class="post-action"><span class="pa-icon">💬</span> 567 Comments</div>
+          <div class="post-action"><span class="pa-icon">🔗</span> Share</div>
+          <div class="post-action"><span class="pa-icon">🔖</span> Save</div>
+          <div class="post-action">📥 Dotfiles</div>
+          <div class="awards"><span class="award">🎨</span><span class="award">✨</span><span class="award">💙</span></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- RIGHT SIDEBAR -->
+  <aside class="sidebar-right">
+
+    <!-- AI ASSISTANT -->
+    <div class="widget ai-widget">
+      <div class="widget-header">🤖 AI Linux Assistant</div>
+      <div class="ai-chat-preview">
+        <div class="ai-msg">Ask me anything — distro recommendations, package issues, config help, or "why is my WiFi broken." I'm trained specifically on Linux. No hallucinations. 🐧</div>
+        <div class="ai-input-row">
+          <input class="ai-input" type="text" placeholder="Ask a Linux question...">
+          <button class="ai-send">→</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIVE DISTRO RANKINGS -->
+    <div class="widget">
+      <div class="widget-header">
+        📊 Live Rankings
+        <a href="distros.html" style="margin-left:auto;font-size:11px;color:var(--accent);text-decoration:none;font-family:'JetBrains Mono',monospace">View All →</a>
+      </div>
+      <a href="distro-page.html" class="trending-item">
+        <div class="tr-rank top">1</div>
+        <div class="tr-icon">🎯</div>
+        <div class="tr-info"><div class="tr-name">Ubuntu</div><div class="tr-meta">2.1M installs/mo</div></div>
+        <div class="tr-change tr-same">—</div>
+      </a>
+      <a href="#" class="trending-item">
+        <div class="tr-rank top">2</div>
+        <div class="tr-icon">🔴</div>
+        <div class="tr-info"><div class="tr-name">Fedora</div><div class="tr-meta">987k installs/mo</div></div>
+        <div class="tr-change tr-up">▲2</div>
+      </a>
+      <a href="distro-page.html" class="trending-item">
+        <div class="tr-rank top">3</div>
+        <div class="tr-icon">🚀</div>
+        <div class="tr-info"><div class="tr-name">Pop!_OS</div><div class="tr-meta">743k installs/mo</div></div>
+        <div class="tr-change tr-up">▲1</div>
+      </a>
+      <a href="#" class="trending-item">
+        <div class="tr-rank">4</div>
+        <div class="tr-icon">🏔️</div>
+        <div class="tr-info"><div class="tr-name">Arch Linux</div><div class="tr-meta">621k installs/mo</div></div>
+        <div class="tr-change tr-down">▼1</div>
+      </a>
+      <a href="#" class="trending-item">
+        <div class="tr-rank">5</div>
+        <div class="tr-icon">🌿</div>
+        <div class="tr-info"><div class="tr-name">Linux Mint</div><div class="tr-meta">589k installs/mo</div></div>
+        <div class="tr-change tr-same">—</div>
+      </a>
+      <a href="#" class="trending-item">
+        <div class="tr-rank">6</div>
+        <div class="tr-icon">🖤</div>
+        <div class="tr-info"><div class="tr-name">Debian</div><div class="tr-meta">441k installs/mo</div></div>
+        <div class="tr-change tr-same">—</div>
+      </a>
+    </div>
+
+    <!-- COMMUNITY SPOTLIGHT -->
+    <div class="widget">
+      <div class="widget-header">⚡ Fastest Growing</div>
+      <a href="#" class="spotlight-item">
+        <div class="sp-icon" style="background:rgba(167,139,250,0.15)">🌊</div>
+        <div class="sp-info"><div class="sp-name">r/NixOS</div><div class="sp-members">+3.2k members this week</div></div>
+        <div class="sp-join">Join</div>
+      </a>
+      <a href="#" class="spotlight-item">
+        <div class="sp-icon" style="background:rgba(14,165,233,0.15)">🪟</div>
+        <div class="sp-info"><div class="sp-name">r/Hyprland</div><div class="sp-members">+2.8k members this week</div></div>
+        <div class="sp-join">Join</div>
+      </a>
+      <a href="distro-page.html" class="spotlight-item">
+        <div class="sp-icon" style="background:rgba(14,165,233,0.15)">🚀</div>
+        <div class="sp-info"><div class="sp-name">r/PopOS</div><div class="sp-members">+2.1k members this week</div></div>
+        <div class="sp-join">Join</div>
+      </a>
+    </div>
+
+    <!-- PLATFORM STATS -->
+    <div class="widget">
+      <div class="widget-header"><div class="online-dot"></div> Live Stats</div>
+      <div class="stats-grid">
+        <div class="stat-box"><div class="stat-num">4.2k</div><div class="stat-label">Online Now</div></div>
+        <div class="stat-box"><div class="stat-num">1.8M</div><div class="stat-label">Members</div></div>
+        <div class="stat-box"><div class="stat-num">612</div><div class="stat-label">Communities</div></div>
+        <div class="stat-box"><div class="stat-num">94%</div><div class="stat-label">Solved Rate</div></div>
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+<script>
+document.querySelectorAll('.sort-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.sort-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+  });
+});
+document.querySelectorAll('.vote-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const col = btn.closest('.vote-col');
+    const count = col.querySelector('.vote-count');
+    const isUp = btn.classList.contains('up');
+    const wasVoted = btn.classList.contains('voted');
+    col.querySelectorAll('.vote-btn').forEach(b => b.classList.remove('voted'));
+    if (!wasVoted) {
+      btn.classList.add('voted');
+      count.style.color = isUp ? 'var(--upvote)' : 'var(--accent)';
+    } else {
+      count.style.color = 'var(--text2)';
+    }
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>r/PopOS — TuxHub</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0c0f18; --bg2:#0f1420; --surface:#141924; --surface2:#1a2135; --surface3:#1f2840;
+  --border:#1e2d47; --border2:#263652;
+  --pop:#48a999; --pop2:#5bc4ba; --pop-dim:rgba(72,169,153,0.15);
+  --accent:#0ea5e9; --green:#22c55e; --orange:#f97316; --red:#ef4444; --purple:#a78bfa;
+  --text:#e2e8f0; --text2:#94a3b8; --text3:#4b6280; --upvote:#f97316;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;}
+
+/* TOPBAR */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:200;height:56px;
+  background:rgba(12,15,24,0.92);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 20px;gap:16px;
+}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);}
+.logo-mark{width:30px;height:30px;background:linear-gradient(135deg,var(--accent),#0369a1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.logo span{color:var(--accent);}
+.breadcrumb{font-size:14px;color:var(--text3);display:flex;align-items:center;gap:8px;}
+.breadcrumb a{color:var(--text2);text-decoration:none;}
+.breadcrumb a:hover{color:var(--accent);}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.tb-btn{padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;font-family:'Manrope',sans-serif;cursor:pointer;transition:all 0.2s;text-decoration:none;}
+.tb-login{background:transparent;border:1px solid var(--border2);color:var(--text2);}
+.tb-login:hover{border-color:var(--accent);color:var(--accent);}
+.tb-join{background:var(--pop);border:1px solid var(--pop);color:white;}
+.tb-join:hover{background:var(--pop2);}
+
+/* BANNER */
+.distro-banner{
+  margin-top:56px;
+  background:linear-gradient(135deg,#0a1a1a,#0a2020,#0f2a28);
+  height:180px;position:relative;overflow:hidden;
+  display:flex;align-items:flex-end;
+}
+.banner-bg{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at 30% 50%,rgba(72,169,153,0.25) 0%,transparent 60%),
+             radial-gradient(ellipse at 70% 50%,rgba(14,165,233,0.1) 0%,transparent 60%);
+}
+.banner-pattern{
+  position:absolute;inset:0;
+  background-image:radial-gradient(rgba(72,169,153,0.08) 1px,transparent 1px);
+  background-size:30px 30px;
+}
+.banner-logo{
+  position:absolute;right:60px;top:50%;transform:translateY(-50%);
+  font-size:100px;opacity:0.15;
+}
+.banner-content{
+  position:relative;z-index:2;padding:0 24px 24px;
+  display:flex;align-items:flex-end;gap:20px;
+}
+.distro-avatar{
+  width:72px;height:72px;border-radius:16px;
+  background:linear-gradient(135deg,var(--pop),#2a8a80);
+  display:flex;align-items:center;justify-content:center;
+  font-size:38px;border:3px solid rgba(255,255,255,0.1);
+  flex-shrink:0;
+}
+.distro-meta{flex:1;}
+.distro-name{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;margin-bottom:4px;}
+.distro-tagline{color:rgba(255,255,255,0.6);font-size:14px;}
+.distro-badges{display:flex;gap:8px;margin-top:8px;}
+.d-badge{
+  font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;
+  font-family:'JetBrains Mono',monospace;
+}
+.badge-stable{background:rgba(34,197,94,0.2);color:var(--green);border:1px solid rgba(34,197,94,0.3);}
+.badge-ubuntu{background:rgba(249,115,22,0.2);color:var(--orange);border:1px solid rgba(249,115,22,0.3);}
+.badge-gnome{background:rgba(14,165,233,0.2);color:var(--accent);border:1px solid rgba(14,165,233,0.3);}
+.badge-pop{background:var(--pop-dim);color:var(--pop);border:1px solid rgba(72,169,153,0.3);}
+
+/* NAV TABS */
+.distro-nav{
+  background:var(--surface);border-bottom:1px solid var(--border);
+  padding:0 24px;position:sticky;top:56px;z-index:100;
+}
+.nav-tabs{display:flex;gap:0;}
+.nav-tab{
+  padding:14px 18px;font-size:14px;font-weight:600;cursor:pointer;
+  color:var(--text3);transition:all 0.15s;border-bottom:2px solid transparent;
+  white-space:nowrap;text-decoration:none;display:block;
+}
+.nav-tab:hover{color:var(--text2);}
+.nav-tab.active{color:var(--pop);border-bottom-color:var(--pop);}
+
+/* LAYOUT */
+.layout{
+  display:grid;grid-template-columns:1fr 320px;
+  max-width:1200px;margin:0 auto;padding:24px 16px;gap:24px;
+}
+
+/* QUICK STATS BAR */
+.quick-stats{
+  display:grid;grid-template-columns:repeat(5,1fr);
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:0;margin-bottom:20px;overflow:hidden;
+}
+.qs-item{
+  padding:16px 12px;text-align:center;border-right:1px solid var(--border);
+}
+.qs-item:last-child{border-right:none;}
+.qs-val{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--pop);}
+.qs-label{font-size:11px;color:var(--text3);margin-top:2px;font-family:'JetBrains Mono',monospace;}
+
+/* SECTION TABS */
+.content-section{margin-bottom:24px;}
+.section-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:14px;
+}
+.section-title{
+  font-family:'Syne',sans-serif;font-size:16px;font-weight:700;
+  display:flex;align-items:center;gap:8px;
+}
+.section-more{font-size:12px;color:var(--accent);text-decoration:none;font-family:'JetBrains Mono',monospace;}
+.section-more:hover{color:var(--pop);}
+
+/* VIDEO GRID */
+.video-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.video-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;overflow:hidden;cursor:pointer;transition:all 0.2s;
+}
+.video-card:hover{border-color:var(--pop);transform:translateY(-2px);}
+.video-thumb{
+  height:110px;background:linear-gradient(135deg,#0a1a1a,#0f2a28);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;font-size:30px;
+}
+.video-play{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:36px;height:36px;background:rgba(0,0,0,0.7);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:14px;
+}
+.video-dur{
+  position:absolute;bottom:6px;right:6px;
+  background:rgba(0,0,0,0.8);color:white;font-size:10px;
+  padding:2px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;
+}
+.video-info{padding:10px;}
+.video-title{font-size:12px;font-weight:600;line-height:1.4;margin-bottom:4px;}
+.video-channel{font-size:11px;color:var(--text3);}
+.video-views{font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;}
+
+/* INFO CARDS */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.info-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:16px;
+}
+.info-card-title{font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-bottom:10px;letter-spacing:1px;}
+.info-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;
+}
+.info-row:last-child{border-bottom:none;}
+.info-key{color:var(--text2);}
+.info-val{color:var(--text);font-weight:500;font-family:'JetBrains Mono',monospace;font-size:12px;}
+.info-val.good{color:var(--green);}
+.info-val.warn{color:var(--orange);}
+
+/* POSTS */
+.post-card{
+  display:flex;background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;margin-bottom:10px;overflow:hidden;transition:border-color 0.2s;
+}
+.post-card:hover{border-color:var(--border2);}
+.vote-col{
+  width:44px;background:var(--bg2);display:flex;flex-direction:column;
+  align-items:center;padding:10px 0;gap:3px;flex-shrink:0;
+}
+.vote-btn{
+  width:26px;height:26px;border-radius:5px;display:flex;align-items:center;
+  justify-content:center;cursor:pointer;font-size:14px;transition:all 0.15s;color:var(--text3);
+}
+.vote-btn:hover{background:var(--surface3);}
+.vote-btn.up:hover{color:var(--upvote);}
+.vote-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2);}
+.post-content{flex:1;padding:12px 14px;min-width:0;}
+.post-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;}
+.post-author{font-size:12px;color:var(--text3);}
+.post-author span{color:var(--text2);font-weight:500;}
+.post-time{font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace;}
+.post-flair{font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;}
+.flair-guide{background:rgba(34,197,94,0.15);color:var(--green);}
+.flair-help{background:rgba(239,68,68,0.15);color:var(--red);}
+.flair-news{background:rgba(14,165,233,0.15);color:var(--accent);}
+.flair-showcase{background:rgba(167,139,250,0.15);color:var(--purple);}
+.post-title{font-size:15px;font-weight:600;line-height:1.4;margin-bottom:8px;cursor:pointer;}
+.post-title:hover{color:var(--pop);}
+.post-actions{display:flex;gap:4px;}
+.post-action{
+  display:flex;align-items:center;gap:5px;padding:5px 8px;border-radius:6px;
+  cursor:pointer;font-size:12px;font-weight:600;color:var(--text3);transition:all 0.15s;
+}
+.post-action:hover{background:var(--surface2);color:var(--text2);}
+
+/* AI PANEL */
+.ai-panel{
+  background:linear-gradient(135deg,rgba(72,169,153,0.08),rgba(14,165,233,0.06));
+  border:1px solid rgba(72,169,153,0.2);border-radius:12px;overflow:hidden;
+  margin-bottom:20px;
+}
+.ai-header{
+  padding:14px 16px;border-bottom:1px solid rgba(72,169,153,0.15);
+  display:flex;align-items:center;gap:8px;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:14px;
+}
+.ai-badge{
+  background:var(--pop-dim);color:var(--pop);
+  font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;
+  font-family:'JetBrains Mono',monospace;margin-left:auto;
+}
+.ai-messages{padding:14px;max-height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;}
+.ai-msg-bot{
+  background:var(--surface2);border-radius:10px;padding:10px 12px;
+  font-size:13px;line-height:1.6;color:var(--text2);
+  border-left:2px solid var(--pop);align-self:flex-start;max-width:90%;
+}
+.ai-msg-user{
+  background:rgba(72,169,153,0.1);border-radius:10px;padding:10px 12px;
+  font-size:13px;line-height:1.6;color:var(--text);
+  border-right:2px solid var(--pop);align-self:flex-end;max-width:90%;
+}
+.ai-msg-bot strong{color:var(--pop);}
+.ai-input-area{padding:10px 14px;border-top:1px solid rgba(72,169,153,0.15);}
+.ai-quick{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+.ai-quick-btn{
+  font-size:11px;padding:4px 10px;border-radius:6px;
+  background:var(--surface2);border:1px solid var(--border);
+  color:var(--text2);cursor:pointer;transition:all 0.15s;
+  font-family:'Manrope',sans-serif;
+}
+.ai-quick-btn:hover{border-color:var(--pop);color:var(--pop);}
+.ai-input-row{display:flex;gap:8px;}
+.ai-input{
+  flex:1;background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:9px 12px;color:var(--text);
+  font-family:'Manrope',sans-serif;font-size:13px;outline:none;
+}
+.ai-input:focus{border-color:var(--pop);}
+.ai-send{
+  width:36px;height:36px;background:var(--pop);border:none;
+  border-radius:8px;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;font-size:14px;transition:background 0.15s;
+}
+.ai-send:hover{background:var(--pop2);}
+
+/* SIDEBAR WIDGETS */
+.widget{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden;}
+.widget-header{
+  padding:14px 16px;border-bottom:1px solid var(--border);
+  font-family:'Syne',sans-serif;font-size:14px;font-weight:700;
+  display:flex;align-items:center;gap:8px;
+}
+.widget-body{padding:16px;}
+
+/* RATING STARS */
+.stars{color:#f59e0b;letter-spacing:2px;font-size:16px;}
+.rating-row{
+  display:flex;align-items:center;gap:10px;margin-bottom:8px;
+}
+.rating-label{font-size:12px;color:var(--text2);width:100px;flex-shrink:0;}
+.rating-bar{flex:1;height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;}
+.rating-fill{height:100%;border-radius:3px;background:var(--pop);}
+.rating-num{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text3);width:24px;}
+
+/* DOWNLOAD BTN */
+.dl-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:12px;border-radius:10px;
+  background:var(--pop);color:white;font-weight:700;font-size:14px;
+  cursor:pointer;transition:all 0.2s;border:none;font-family:'Manrope',sans-serif;
+  text-decoration:none;margin-bottom:8px;
+}
+.dl-btn:hover{background:var(--pop2);transform:translateY(-1px);}
+.dl-btn-sec{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:10px;border-radius:10px;
+  background:transparent;color:var(--pop);font-weight:600;font-size:13px;
+  cursor:pointer;transition:all 0.2s;border:1px solid rgba(72,169,153,0.3);
+  font-family:'Manrope',sans-serif;text-decoration:none;
+}
+.dl-btn-sec:hover{background:var(--pop-dim);}
+
+/* TAGS */
+.tag-cloud{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{
+  font-size:11px;padding:4px 10px;border-radius:6px;
+  background:var(--surface2);border:1px solid var(--border);
+  color:var(--text2);cursor:pointer;transition:all 0.15s;font-family:'JetBrains Mono',monospace;
+}
+.tag:hover{border-color:var(--pop);color:var(--pop);}
+
+/* RELATED */
+.related-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 0;border-bottom:1px solid var(--border);
+  cursor:pointer;transition:all 0.15s;text-decoration:none;
+}
+.related-item:last-child{border-bottom:none;}
+.related-item:hover .ri-name{color:var(--pop);}
+.ri-icon{font-size:20px;flex-shrink:0;}
+.ri-name{font-size:13px;font-weight:600;color:var(--text);}
+.ri-why{font-size:11px;color:var(--text3);margin-top:1px;}
+
+@media(max-width:900px){.layout{grid-template-columns:1fr;}.video-grid{grid-template-columns:1fr 1fr;}.info-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="index.html" class="logo"><div class="logo-mark">🐧</div>Tux<span>Hub</span></a>
+  <div class="breadcrumb">
+    <span>›</span><a href="index.html">Home</a>
+    <span>›</span><a href="distros.html">Distros</a>
+    <span>›</span><span style="color:var(--pop)">r/PopOS</span>
+  </div>
+  <div class="topbar-right">
+    <a href="#" class="tb-btn tb-login">Log In</a>
+    <a href="#" class="tb-btn tb-join">🚀 Join Community</a>
+  </div>
+</div>
+
+<!-- BANNER -->
+<div class="distro-banner">
+  <div class="banner-bg"></div>
+  <div class="banner-pattern"></div>
+  <div class="banner-logo">🚀</div>
+  <div class="banner-content">
+    <div class="distro-avatar">🚀</div>
+    <div class="distro-meta">
+      <div class="distro-name">Pop!_OS</div>
+      <div class="distro-tagline">The Linux distro that gets out of your way — built by System76 for developers and gamers</div>
+      <div class="distro-badges">
+        <span class="d-badge badge-stable">LTS 24.04</span>
+        <span class="d-badge badge-ubuntu">Ubuntu-based</span>
+        <span class="d-badge badge-gnome">GNOME 46</span>
+        <span class="d-badge badge-pop">COSMIC (Beta)</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DISTRO NAV -->
+<div class="distro-nav">
+  <div class="nav-tabs">
+    <a href="#" class="nav-tab active" onclick="switchTab(event,'overview')">🏠 Overview</a>
+    <a href="#" class="nav-tab" onclick="switchTab(event,'posts')">💬 Community</a>
+    <a href="#" class="nav-tab" onclick="switchTab(event,'videos')">📺 Tutorials</a>
+    <a href="#" class="nav-tab" onclick="switchTab(event,'wiki')">📖 Wiki</a>
+    <a href="#" class="nav-tab" onclick="switchTab(event,'packages')">📦 Packages</a>
+    <a href="#" class="nav-tab" onclick="switchTab(event,'hardware')">🖥️ Hardware</a>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+<main>
+
+  <!-- QUICK STATS -->
+  <div class="quick-stats">
+    <div class="qs-item"><div class="qs-val">84k</div><div class="qs-label">Members</div></div>
+    <div class="qs-item"><div class="qs-val">#3</div><div class="qs-label">Global Rank</div></div>
+    <div class="qs-item"><div class="qs-val">4.7★</div><div class="qs-label">User Rating</div></div>
+    <div class="qs-item"><div class="qs-val">24.04</div><div class="qs-label">Latest LTS</div></div>
+    <div class="qs-item"><div class="qs-val">743k</div><div class="qs-label">Installs/mo</div></div>
+  </div>
+
+  <!-- AI ASSISTANT -->
+  <div class="ai-panel">
+    <div class="ai-header">
+      🤖 Pop!_OS AI Assistant
+      <span class="ai-badge">Pop!_OS Expert</span>
+    </div>
+    <div class="ai-messages" id="aiMessages">
+      <div class="ai-msg-bot">Hey! I'm your <strong>Pop!_OS specialist</strong>. I know everything about Pop!_OS — install issues, NVIDIA drivers, the COSMIC desktop, gaming setup, and anything else. What can I help you with? 🚀</div>
+    </div>
+    <div class="ai-input-area">
+      <div class="ai-quick">
+        <span class="ai-quick-btn" onclick="quickAsk('How do I install NVIDIA drivers?')">NVIDIA drivers</span>
+        <span class="ai-quick-btn" onclick="quickAsk('How do I set up gaming on Pop!_OS?')">Gaming setup</span>
+        <span class="ai-quick-btn" onclick="quickAsk('What is the COSMIC desktop?')">COSMIC desktop</span>
+        <span class="ai-quick-btn" onclick="quickAsk('How do I update Pop!_OS?')">System updates</span>
+        <span class="ai-quick-btn" onclick="quickAsk('Is Pop!_OS good for beginners?')">Beginner friendly?</span>
+      </div>
+      <div class="ai-input-row">
+        <input class="ai-input" type="text" id="aiInput" placeholder="Ask anything about Pop!_OS..." onkeydown="if(event.key==='Enter')sendAI()">
+        <button class="ai-send" onclick="sendAI()">→</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TUTORIALS -->
+  <div class="content-section">
+    <div class="section-header">
+      <div class="section-title">📺 Top Pop!_OS Tutorials</div>
+      <a href="#" class="section-more">View all 847 videos →</a>
+    </div>
+    <div class="video-grid">
+      <div class="video-card">
+        <div class="video-thumb" style="background:linear-gradient(135deg,#0a2020,#0f3028)">
+          🚀<div class="video-play">▶</div><div class="video-dur">18:24</div>
+        </div>
+        <div class="video-info">
+          <div class="video-title">Pop!_OS 24.04 Complete Setup Guide — First 15 Things To Do</div>
+          <div class="video-channel">The Linux Experiment</div>
+          <div class="video-views">284k views · 3 weeks ago</div>
+        </div>
+      </div>
+      <div class="video-card">
+        <div class="video-thumb" style="background:linear-gradient(135deg,#1a1020,#0a2028)">
+          🎮<div class="video-play">▶</div><div class="video-dur">22:11</div>
+        </div>
+        <div class="video-info">
+          <div class="video-title">NVIDIA Gaming on Pop!_OS 2025 — Complete Setup with Proton</div>
+          <div class="video-channel">TechHut</div>
+          <div class="video-views">197k views · 1 month ago</div>
+        </div>
+      </div>
+      <div class="video-card">
+        <div class="video-thumb" style="background:linear-gradient(135deg,#0a1520,#0f2838)">
+          🌀<div class="video-play">▶</div><div class="video-dur">31:07</div>
+        </div>
+        <div class="video-info">
+          <div class="video-title">COSMIC Desktop Beta — Is It Worth Switching From GNOME?</div>
+          <div class="video-channel">Chris Titus Tech</div>
+          <div class="video-views">156k views · 2 weeks ago</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DISTRO INFO -->
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-card-title">// DISTRO INFO</div>
+      <div class="info-row"><span class="info-key">Developer</span><span class="info-val">System76</span></div>
+      <div class="info-row"><span class="info-key">Based On</span><span class="info-val">Ubuntu 24.04</span></div>
+      <div class="info-row"><span class="info-key">Release Model</span><span class="info-val">Point Release</span></div>
+      <div class="info-row"><span class="info-key">Package Mgr</span><span class="info-val">apt + flatpak</span></div>
+      <div class="info-row"><span class="info-key">Default Shell</span><span class="info-val">bash</span></div>
+      <div class="info-row"><span class="info-key">Init System</span><span class="info-val">systemd</span></div>
+      <div class="info-row"><span class="info-key">Latest</span><span class="info-val good">24.04 LTS</span></div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">// HARDWARE REQUIREMENTS</div>
+      <div class="info-row"><span class="info-key">Min RAM</span><span class="info-val">4 GB</span></div>
+      <div class="info-row"><span class="info-key">Rec RAM</span><span class="info-val good">8 GB+</span></div>
+      <div class="info-row"><span class="info-key">Storage</span><span class="info-val">20 GB min</span></div>
+      <div class="info-row"><span class="info-key">NVIDIA Support</span><span class="info-val good">Excellent ★★★★★</span></div>
+      <div class="info-row"><span class="info-key">AMD Support</span><span class="info-val good">Excellent ★★★★★</span></div>
+      <div class="info-row"><span class="info-key">Intel Arc</span><span class="info-val warn">Good ★★★★</span></div>
+      <div class="info-row"><span class="info-key">Secure Boot</span><span class="info-val good">Supported</span></div>
+    </div>
+  </div>
+
+  <!-- COMMUNITY POSTS -->
+  <div class="content-section">
+    <div class="section-header">
+      <div class="section-title">💬 Community Posts</div>
+      <div style="display:flex;gap:8px;">
+        <span style="font-size:12px;color:var(--text3);padding:4px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;cursor:pointer;">🔥 Hot</span>
+        <span style="font-size:12px;color:var(--text3);padding:4px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;cursor:pointer;">✨ New</span>
+      </div>
+    </div>
+
+    <div class="post-card">
+      <div class="vote-col">
+        <div class="vote-btn up">▲</div>
+        <div class="vote-count">2.1k</div>
+        <div class="vote-btn down">▼</div>
+      </div>
+      <div class="post-content">
+        <div class="post-meta">
+          <span class="post-author">by <span>u/cosmic_dev</span></span>
+          <span class="post-time">4h ago</span>
+          <span class="post-flair flair-news">📰 News</span>
+        </div>
+        <div class="post-title">COSMIC Alpha 5 just dropped — tiling is now stable and the app store is genuinely usable. Pop!_OS just got a lot more interesting.</div>
+        <div class="post-actions">
+          <div class="post-action">💬 287 Comments</div>
+          <div class="post-action">🔗 Share</div>
+          <div class="post-action">🔖 Save</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="post-card">
+      <div class="vote-col">
+        <div class="vote-btn up">▲</div>
+        <div class="vote-count">847</div>
+        <div class="vote-btn down">▼</div>
+      </div>
+      <div class="post-content">
+        <div class="post-meta">
+          <span class="post-author">by <span>u/nvidia_refugee</span></span>
+          <span class="post-time">8h ago</span>
+          <span class="post-flair flair-guide">📖 Guide</span>
+        </div>
+        <div class="post-title">[Guide] Fixed my RTX 4090 black screen after suspend — the solution is 3 lines in a config file. Pinning this so nobody else loses 6 hours.</div>
+        <div class="post-actions">
+          <div class="post-action">💬 143 Comments</div>
+          <div class="post-action">🔗 Share</div>
+          <div class="post-action">🔖 Save</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="post-card">
+      <div class="vote-col">
+        <div class="vote-btn up">▲</div>
+        <div class="vote-count">612</div>
+        <div class="vote-btn down">▼</div>
+      </div>
+      <div class="post-content">
+        <div class="post-meta">
+          <span class="post-author">by <span>u/windows_escapee_2025</span></span>
+          <span class="post-time">1d ago</span>
+          <span class="post-flair" style="background:rgba(34,197,94,0.15);color:var(--green);font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;">💬 Discussion</span>
+        </div>
+        <div class="post-title">Just switched from Windows 11 after 20 years of Microsoft. Pop!_OS is genuinely the first Linux distro that didn't make me miss Windows. Here's my 30-day review.</div>
+        <div class="post-actions">
+          <div class="post-action">💬 521 Comments</div>
+          <div class="post-action">🔗 Share</div>
+          <div class="post-action">🔖 Save</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- RIGHT SIDEBAR -->
+<aside>
+
+  <!-- DOWNLOAD -->
+  <div class="widget">
+    <div class="widget-header">⬇️ Get Pop!_OS</div>
+    <div class="widget-body">
+      <a href="#" class="dl-btn">⬇️ Download 24.04 LTS</a>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+        <a href="#" class="dl-btn-sec">NVIDIA ISO</a>
+        <a href="#" class="dl-btn-sec">AMD/Intel ISO</a>
+      </div>
+      <div style="font-size:11px;color:var(--text3);text-align:center;font-family:'JetBrains Mono',monospace;">SHA256 verified · 2.9 GB</div>
+    </div>
+  </div>
+
+  <!-- USER RATINGS -->
+  <div class="widget">
+    <div class="widget-header">⭐ Community Ratings</div>
+    <div class="widget-body">
+      <div style="text-align:center;margin-bottom:16px;">
+        <div style="font-family:'Syne',sans-serif;font-size:42px;font-weight:800;color:var(--pop);">4.7</div>
+        <div class="stars">★★★★★</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:4px;font-family:'JetBrains Mono',monospace;">from 12,847 user reviews</div>
+      </div>
+      <div class="rating-row">
+        <div class="rating-label">Ease of Use</div>
+        <div class="rating-bar"><div class="rating-fill" style="width:92%"></div></div>
+        <div class="rating-num">4.6</div>
+      </div>
+      <div class="rating-row">
+        <div class="rating-label">Gaming</div>
+        <div class="rating-bar"><div class="rating-fill" style="width:96%"></div></div>
+        <div class="rating-num">4.8</div>
+      </div>
+      <div class="rating-row">
+        <div class="rating-label">Stability</div>
+        <div class="rating-bar"><div class="rating-fill" style="width:88%"></div></div>
+        <div class="rating-num">4.4</div>
+      </div>
+      <div class="rating-row">
+        <div class="rating-label">Hardware</div>
+        <div class="rating-bar"><div class="rating-fill" style="width:98%"></div></div>
+        <div class="rating-num">4.9</div>
+      </div>
+      <div class="rating-row">
+        <div class="rating-label">Community</div>
+        <div class="rating-bar"><div class="rating-fill" style="width:90%"></div></div>
+        <div class="rating-num">4.5</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIMILAR DISTROS -->
+  <div class="widget">
+    <div class="widget-header">🔀 Similar Distros</div>
+    <div class="widget-body">
+      <a href="#" class="related-item">
+        <div class="ri-icon">🎯</div>
+        <div><div class="ri-name">Ubuntu 24.04</div><div class="ri-why">Same base, more packages</div></div>
+      </a>
+      <a href="#" class="related-item">
+        <div class="ri-icon">🐉</div>
+        <div><div class="ri-name">Garuda Linux</div><div class="ri-why">If you want more gaming focus</div></div>
+      </a>
+      <a href="#" class="related-item">
+        <div class="ri-icon">🔴</div>
+        <div><div class="ri-name">Fedora 41</div><div class="ri-why">If you want cutting-edge software</div></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- TAGS -->
+  <div class="widget">
+    <div class="widget-header">🏷️ Tags</div>
+    <div class="widget-body">
+      <div class="tag-cloud">
+        <span class="tag">nvidia</span><span class="tag">gaming</span><span class="tag">gnome</span>
+        <span class="tag">cosmic</span><span class="tag">system76</span><span class="tag">wayland</span>
+        <span class="tag">flatpak</span><span class="tag">beginners</span><span class="tag">laptop</span>
+        <span class="tag">development</span><span class="tag">steam</span><span class="tag">proton</span>
+      </div>
+    </div>
+  </div>
+
+</aside>
+</div>
+
+<script>
+function switchTab(e, tab) {
+  e.preventDefault();
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  e.target.classList.add('active');
+}
+
+const aiResponses = {
+  'nvidia': 'Pop!_OS is one of the best distros for NVIDIA! It ships with an NVIDIA-specific ISO that includes proprietary drivers pre-installed. Just download the NVIDIA ISO and drivers are handled automatically. For manual install: <code>sudo apt install nvidia-driver-550</code>. Need more specific help?',
+  'gaming': 'Gaming on Pop!_OS is excellent! 🎮 Here\'s the quick setup: 1) Install Steam from the Pop Shop 2) Enable Steam Play (Proton) in Steam Settings → Compatibility 3) Install GameMode: <code>sudo apt install gamemode</code>. Pop!_OS\'s kernel is tuned for performance and NVIDIA support is best-in-class.',
+  'cosmic': 'COSMIC is System76\'s custom desktop environment built from scratch in Rust! It\'s currently in Alpha but very promising. Key features: native Wayland, tiling window management built-in, and much faster than GNOME. You can try the COSMIC alpha alongside your GNOME install without breaking anything.',
+  'update': 'To update Pop!_OS: via terminal run <code>sudo apt update && sudo apt upgrade</code>, or use the Pop Shop (Software app) → Updates tab. For major version upgrades (e.g. 22.04 → 24.04), use the upgrade notification or <code>pop-upgrade release upgrade</code>.',
+  'beginner': 'Absolutely yes! Pop!_OS is one of the best distros for beginners, especially those coming from Windows. Auto-installing drivers, a clean GNOME interface, the Pop Shop for apps, and excellent hardware support out of the box make it very approachable.',
+  'default': 'Great question about Pop!_OS! I\'m specialized in Pop!_OS support. Could you be a bit more specific about what you\'re trying to do? I can help with: installation, drivers, gaming, COSMIC desktop, package management, or anything else. 🚀'
+};
+
+function sendAI() {
+  const input = document.getElementById('aiInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  addMessage(msg, 'user');
+  input.value = '';
+  setTimeout(() => {
+    const lower = msg.toLowerCase();
+    let response = aiResponses.default;
+    if (lower.includes('nvidia') || lower.includes('driver')) response = aiResponses.nvidia;
+    else if (lower.includes('gam') || lower.includes('steam') || lower.includes('proton')) response = aiResponses.gaming;
+    else if (lower.includes('cosmic')) response = aiResponses.cosmic;
+    else if (lower.includes('updat') || lower.includes('upgra')) response = aiResponses.update;
+    else if (lower.includes('beginner') || lower.includes('new') || lower.includes('switch')) response = aiResponses.beginner;
+    addMessage(response, 'bot');
+  }, 600);
+}
+
+function quickAsk(q) {
+  document.getElementById('aiInput').value = q;
+  sendAI();
+}
+
+function addMessage(text, type) {
+  const msgs = document.getElementById('aiMessages');
+  const div = document.createElement('div');
+  div.className = type === 'user' ? 'ai-msg-user' : 'ai-msg-bot';
+  div.innerHTML = text;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+</script>
+</body>
+</html>

@@ -16,7 +16,7 @@ interface RootLayoutContainerProps {
 
 export function RootLayoutContainer({ children, user }: RootLayoutContainerProps) {
     const pathname = usePathname()
-    const isStandalone = pathname?.includes('/aol/messenger') || pathname?.includes('/rem')
+    const isStandalone = pathname?.includes('/aol/messenger') || pathname?.includes('/rem') || pathname?.toLowerCase().includes('/sudo')
 
     if (isStandalone) {
         return (
