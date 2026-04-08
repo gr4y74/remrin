@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sudo Dodo — Master Build System v2</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Courier New', 'Lucida Console', monospace; background: #0d0d0d; color: #e0e0e0; line-height: 1.6; font-size: 14px; }
+  #header { background: #ff6600; color: #000; padding: 6px 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  #header .logo { font-weight: bold; font-size: 16px; letter-spacing: 1px; }
+  #header .version { font-size: 12px; opacity: 0.7; }
+  #header .tagline { margin-left: auto; font-size: 12px; font-style: italic; }
+  .blink { animation: blink 1s step-end infinite; } @keyframes blink { 0%,100%{opacity:1}50%{opacity:0} }
+  #tabbar { background: #111; border-bottom: 1px solid #333; padding: 4px 16px; display: flex; gap: 4px; flex-wrap: wrap; }
+  .tab { font-family: inherit; font-size: 12px; padding: 4px 12px; cursor: pointer; background: none; border: 1px solid #333; color: #888; }
+  .tab:hover { border-color: #ff6600; color: #ff6600; }
+  .tab.active { background: #ff6600; color: #000; border-color: #ff6600; font-weight: bold; }
+  #main { max-width: 960px; margin: 0 auto; padding: 16px; }
+  .panel { display: none; } .panel.active { display: block; }
+  .section-label { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: #555; margin-bottom: 12px; border-bottom: 1px solid #222; padding-bottom: 4px; }
+  .rule { border-left: 3px solid #ff6600; padding: 10px 14px; background: #111; margin-bottom: 10px; font-size: 13px; line-height: 1.7; }
+  .rule.red { border-color: #ff3333; } .rule.green { border-color: #00ff41; } .rule.amber { border-color: #ffaa00; } .rule.blue { border-color: #4488ff; }
+  .rule strong { display: block; margin-bottom: 4px; }
+  .rule.red strong { color: #ff8888; } .rule.green strong { color: #88ff88; } .rule.amber strong { color: #ffcc66; } .rule.blue strong { color: #88aaff; }
+  strong.orange { color: #ff9944; display: block; margin-bottom: 4px; }
+  .prompt-box { background: #050505; border: 1px solid #222; padding: 1rem 1.25rem; font-family: inherit; font-size: 12px; line-height: 1.9; color: #ccc; white-space: pre-wrap; word-break: break-word; max-height: 560px; overflow-y: auto; }
+  .copy-btn { margin-top: 8px; font-family: inherit; font-size: 12px; padding: 5px 16px; cursor: pointer; background: none; border: 1px solid #444; color: #888; }
+  .copy-btn:hover { border-color: #ff6600; color: #ff6600; }
+  .step { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px; font-size: 13px; line-height: 1.65; }
+  .sn { min-width: 22px; height: 22px; border-radius: 50%; background: #1a1a3a; color: #88aaff; font-size: 11px; font-weight: bold; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .sn.red { background: #2d0a0a; color: #ff8888; } .sn.green { background: #0a2d0a; color: #88ff88; }
+  .ic { font-family: inherit; font-size: 11px; background: #111; padding: 1px 5px; border: 1px solid #333; color: #88aaff; }
+  .chain { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 12px; background: #0a0a0a; border: 1px solid #222; margin-bottom: 12px; font-size: 12px; }
+  .cn { padding: 4px 10px; border: 1px solid #444; color: #666; font-size: 12px; }
+  .ca { color: #444; font-size: 16px; }
+  .job-hdr { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #222; }
+  .job-badge { font-size: 11px; font-weight: bold; padding: 3px 10px; background: #1a1a00; color: #ff6600; border: 1px solid #ff6600; }
+  .dp { background: #0a0a0a; border: 1px solid #333; padding: 12px; margin-bottom: 12px; }
+  .dp-row { display: flex; gap: 6px; align-items: baseline; padding: 2px 0; font-size: 13px; }
+  .dp-lbl { color: #555; min-width: 150px; font-size: 12px; } .dp-val { color: #ccc; }
+  .dp-val.or { color: #ff6600; } .dp-val.gr { color: #00ff41; } .dp-val.re { color: #ff4444; }
+  h2 { font-size: 15px; color: #e0e0e0; margin: 16px 0 8px; font-weight: bold; }
+  h3 { font-size: 13px; color: #aaa; margin: 12px 0 6px; }
+  p { font-size: 13px; color: #888; line-height: 1.7; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<div id="header">
+  <div class="logo">🦤 SUDO DODO — MASTER BUILD SYSTEM v2.0</div>
+  <div class="version">Retro Vision Edition</div>
+  <div class="tagline">don't go extinct. learn linux.<span class="blink">_</span></div>
+</div>
+<div id="tabbar">
+  <button class="tab active" onclick="show('vision',this)">The Vision</button>
+  <button class="tab" onclick="show('discard',this)">Discard</button>
+  <button class="tab" onclick="show('keep',this)">Keep</button>
+  <button class="tab" onclick="show('design',this)">Design Rules</button>
+  <button class="tab" onclick="show('antipatterns',this)">Anti-Patterns</button>
+  <button class="tab" onclick="show('rules',this)">Build Rules</button>
+  <button class="tab" onclick="show('job1',this)">Job 1 — Auth</button>
+  <button class="tab" onclick="show('job2',this)">Job 2 — Votes DB</button>
+  <button class="tab" onclick="show('job3',this)">Job 3 — Vote UI</button>
+  <button class="tab" onclick="show('template',this)">Template</button>
+</div>
+<div id="main">
+
+<!-- VISION -->
+<div id="vision" class="panel active">
+  <p class="section-label">The Sudo Dodo Vision — read before every agent session</p>
+  <div class="rule green"><strong>What Sudo Dodo IS.</strong>The one-stop Linux shop. The DistroWatch killer. The place on the internet where anyone — Windows refugee or 20-year Arch veteran — goes for any and everything Linux. Community, rankings, tutorials, AI help, distro discovery. All in one place. Simple. Fast. Fun. Deliberately retro.</div>
+  <div class="rule"><strong class="orange">The aesthetic in one sentence.</strong>Hacker News meets cyberspace.online meets a Linux terminal. Text-first. Monospace. Intentionally retro — not ugly by accident, but lovingly, deliberately old-school. Like a website built by someone who actually uses Linux and is proud of it.</div>
+  <div class="rule blue"><strong>The three reference sites.</strong>1. news.ycombinator.com — text-first community platform. Study the density, simplicity, lack of decoration.<br>2. cyberspace.online — proof that deliberately retro is its own form of cool.<br>3. old.reddit.com compact mode — the information density target.</div>
+  <div class="rule amber"><strong>Why retro wins for this audience.</strong>The Linux community respects this aesthetic MORE than fancy UI. Nothing screams "corporate AI slop" like a gradient hero section. Nothing screams "built by us, for us" like clean monospace and an orange header bar. The aesthetic IS the message.</div>
+  <div class="rule green"><strong>The AI advantage in a retro design.</strong>With no fancy UI to hide behind, the AI features become the magic. The distro wizard, the Rem AI assistant, the verified solutions — these stand out MORE against a plain text background. Text is the canvas. AI is the colour.</div>
+  <h2>Feature Set — The One-Stop Linux Shop</h2>
+  <div class="dp">
+    <div class="dp-row"><div class="dp-lbl">Community</div><div class="dp-val">Reddit-style posts, voting, comments, per-distro communities. Text-first, dense, fast.</div></div>
+    <div class="dp-row"><div class="dp-lbl">Distro Pages</div><div class="dp-val">Full hub per distro — info, posts, tutorials, AI assistant, downloads.</div></div>
+    <div class="dp-row"><div class="dp-lbl">Rankings</div><div class="dp-val">TuxScore — the DistroWatch replacement. Algorithm-driven, transparent, community-trusted.</div></div>
+    <div class="dp-row"><div class="dp-lbl">AI Wizard</div><div class="dp-val gr">The killer feature. 10 questions → perfect distro. Goes viral every time.</div></div>
+    <div class="dp-row"><div class="dp-lbl">Rem AI</div><div class="dp-val">Linux AI that remembers your setup. Powered by Remrin RAG for Pro users.</div></div>
+    <div class="dp-row"><div class="dp-lbl">Tutorials</div><div class="dp-val">YouTube index tagged by distro, difficulty, topic. Community-ranked.</div></div>
+    <div class="dp-row"><div class="dp-lbl">Themes</div><div class="dp-val or">6 retro colour themes. Default, Matrix, Amber, Phosphor, C64, Paper.</div></div>
+  </div>
+</div>
+
+<!-- DISCARD -->
+<div id="discard" class="panel">
+  <p class="section-label">What to discard — say this at the start of every frontend session</p>
+  <div class="rule red"><strong>AGENT INSTRUCTION — paste at the start of every session:</strong>"We are rebuilding the Sudo Dodo frontend with a new design direction. Disregard ALL previous frontend code, component designs, and UI decisions. Keep all backend logic, database schema, API routes, and authentication. The new design is text-first, monospace, retro — modelled on Hacker News and cyberspace.online. Do not reference, reuse, or be influenced by the old frontend under any circumstances."</div>
+  <h2>Throw away all of these</h2>
+  <div class="step"><div class="sn red">✗</div><div>Any CSS containing <span class="ic">gradient</span>, <span class="ic">linear-gradient</span>, <span class="ic">radial-gradient</span></div></div>
+  <div class="step"><div class="sn red">✗</div><div>Any CSS containing <span class="ic">box-shadow</span>, <span class="ic">drop-shadow</span>, <span class="ic">filter: blur</span></div></div>
+  <div class="step"><div class="sn red">✗</div><div>Any CSS containing <span class="ic">backdrop-filter</span> (glassmorphism)</div></div>
+  <div class="step"><div class="sn red">✗</div><div>Any <span class="ic">font-family</span> that is not monospace — no Google Fonts, no system-ui, no sans-serif</div></div>
+  <div class="step"><div class="sn red">✗</div><div>Icon libraries — lucide-react, FontAwesome, heroicons. Use Unicode: ▲ ▼ → ✓ ✗ 🦤 🐧</div></div>
+  <div class="step"><div class="sn red">✗</div><div>Animation libraries — Framer Motion, GSAP. Only allowed animation: blinking cursor.</div></div>
+  <div class="step"><div class="sn red">✗</div><div>Infinite scroll — use pagination: "More → (page 2 of 47)"</div></div>
+  <div class="step"><div class="sn red">✗</div><div>Skeleton loaders / shimmer effects — show "loading..." plain text or nothing</div></div>
+  <div class="step"><div class="sn red">✗</div><div>Shadcn cards, Radix styled components, any pre-built UI kit components</div></div>
+  <div class="step"><div class="sn red">✗</div><div>Rounded pill buttons with gradients — buttons are <span class="ic">[ text ]</span> style only</div></div>
+  <div class="step"><div class="sn red">✗</div><div>Hero sections with large imagery — no full-width banners, no particle effects</div></div>
+  <div class="step"><div class="sn red">✗</div><div>AI-generated or stock photography as decoration — official distro logos only</div></div>
+  <div class="step"><div class="sn red">✗</div><div>className with more than 6 Tailwind utilities — this is component-soup</div></div>
+  <div class="step"><div class="sn red">✗</div><div>Hardcoded hex colours anywhere outside <span class="ic">:root</span> theme definitions</div></div>
+</div>
+
+<!-- KEEP -->
+<div id="keep" class="panel">
+  <p class="section-label">What to keep — backend is sacred</p>
+  <div class="rule green"><strong>The backend is NOT being rebuilt. It stays exactly as-is.</strong>The new design is purely a frontend replacement. Data layer, APIs, auth, Remrin integration — all of it stays. We are only changing what the user sees, not how the data works.</div>
+  <h2>Keep everything in these categories</h2>
+  <div class="step"><div class="sn green">✓</div><div><strong>Supabase schema</strong> — all tables, RLS policies, functions. Do not touch.</div></div>
+  <div class="step"><div class="sn green">✓</div><div><strong>All API routes</strong> — every endpoint in /api/. Keep them all.</div></div>
+  <div class="step"><div class="sn green">✓</div><div><strong>Authentication system</strong> — Supabase Auth, session handling, middleware.</div></div>
+  <div class="step"><div class="sn green">✓</div><div><strong>Remrin RAG integration</strong> — src/lib/remrin/client.ts and all RAG logic. Sacred.</div></div>
+  <div class="step"><div class="sn green">✓</div><div><strong>Voting logic</strong> — src/lib/votes/actions.ts. castVote, getVotesBatch. Keep.</div></div>
+  <div class="step"><div class="sn green">✓</div><div><strong>Permissions system</strong> — src/lib/permissions.ts. All tier gating. Keep.</div></div>
+  <div class="step"><div class="sn green">✓</div><div><strong>Database seed data</strong> — all 30 distros, communities, tutorials.</div></div>
+  <div class="step"><div class="sn green">✓</div><div><strong>Stripe billing integration</strong> — subscription logic, webhooks, tier checks.</div></div>
+  <div class="step"><div class="sn green">✓</div><div><strong>TuxScore algorithm</strong> — ranking calculation and database functions.</div></div>
+  <div class="step"><div class="sn green">✓</div><div><strong>YouTube tutorial integration</strong> — indexing, tagging, retrieval logic.</div></div>
+  <div class="step"><div class="sn green">✓</div><div><strong>AI Wizard logic</strong> — recommendation engine, Claude API integration.</div></div>
+  <div class="step"><div class="sn green">✓</div><div><strong>TypeScript types</strong> — src/types/. All interface definitions.</div></div>
+  <div class="rule amber" style="margin-top:16px;"><strong>How to say it in a prompt:</strong>"The backend logic for [feature] already exists in [filepath]. Do not rebuild it. Import from it and wire it to the new retro UI template. The only new code is the visual layer."</div>
+</div>
+
+<!-- DESIGN RULES -->
+<div id="design" class="panel">
+  <p class="section-label">Design rules — all agents follow all of these, always</p>
+  <div class="rule"><strong class="orange">Rule 1 — Monospace everything.</strong>Font: 'Courier New', 'Lucida Console', monospace. Body text, navigation, meta, post titles — everything. No web font imports. No sans-serif anywhere in the UI.</div>
+  <div class="rule"><strong class="orange">Rule 2 — The orange header bar is sacred.</strong>Every page: background #ff6600, text #000000, bold monospace. Logo left, nav middle, user actions right. Exactly like Hacker News. Never taller, fancier, or animated.</div>
+  <div class="rule"><strong class="orange">Rule 3 — Text is the UI.</strong>Buttons: <span class="ic">[ action ]</span> style. Links underlined on hover. No rounded buttons. No filled buttons. No icon-only buttons. The label IS the button.</div>
+  <div class="rule"><strong class="orange">Rule 4 — Borders not shadows.</strong>Every container uses 1px solid border only. No box-shadow ever. Nothing floats. Nothing has depth. Colour from active theme variable.</div>
+  <div class="rule"><strong class="orange">Rule 5 — Information density over whitespace.</strong>Model: old.reddit.com compact mode + Hacker News. Rows are tight. Padding minimal. Maximum content visible without scrolling. No 48px padding, no centered content with 40% margins.</div>
+  <div class="rule"><strong class="orange">Rule 6 — Theme system is CSS variables only.</strong>All colours defined as CSS variables on :root. Each theme class overrides those variables only. Change body class → everything updates. Required variables: --bg, --bg2, --fg, --fg2, --fg3, --accent, --link, --border, --score-pos, --score-neg.</div>
+  <div class="rule"><strong class="orange">Rule 7 — Three columns desktop, one column mobile.</strong>Left sidebar ~180px, centre feed flexible, right sidebar ~200px. Below 640px: both sidebars hidden, single column. Plain CSS flexbox or grid. No framework.</div>
+  <div class="rule"><strong class="orange">Rule 8 — Official logos only, never decorative.</strong>Distro logos on distro pages and rankings. Official images only. No AI art, no stock photos. Where no logo exists, use text abbreviation in a box.</div>
+  <div class="rule"><strong class="orange">Rule 9 — Six themes are required.</strong>Default (dark, orange), Matrix (black, green), Amber (dark, amber), Phosphor (dark, bright green), C64 (blue, white), Paper (light, sepia). Every page works in all six. Test in all six before marking any job done.</div>
+  <div class="rule"><strong class="orange">Rule 10 — 🦤 is the only mascot.</strong>Used as text emoji. In the logo. On 404. On the wizard. In the footer. Never as a large image. Never animated. Never in a fancy frame. Just 🦤 in context.</div>
+</div>
+
+<!-- ANTI-PATTERNS -->
+<div id="antipatterns" class="panel">
+  <p class="section-label">Anti-patterns — any of these in agent output = reject and restart</p>
+  <div class="rule red"><strong>If you see any of the following, reject the output entirely. Do not ask the agent to fix it. Restart with the design rules.</strong>Fixing a gradient card produces a slightly less gradient card. Rebuilding it produces a correctly retro component. Restart costs less than iterating on the wrong foundation.</div>
+  <h2>Visual anti-patterns</h2>
+  <div class="step"><div class="sn red">✗</div><div>Any CSS containing <span class="ic">gradient</span></div></div>
+  <div class="step"><div class="sn red">✗</div><div>Any CSS containing <span class="ic">box-shadow</span> or <span class="ic">drop-shadow</span></div></div>
+  <div class="step"><div class="sn red">✗</div><div>Any CSS containing <span class="ic">backdrop-filter</span></div></div>
+  <div class="step"><div class="sn red">✗</div><div>Any <span class="ic">border-radius</span> greater than 4px</div></div>
+  <div class="step"><div class="sn red">✗</div><div>Any non-monospace font-family</div></div>
+  <div class="step"><div class="sn red">✗</div><div>Any <span class="ic">@import</span> from fonts.googleapis.com</div></div>
+  <div class="step"><div class="sn red">✗</div><div>Hardcoded hex colours outside :root theme definitions</div></div>
+  <div class="step"><div class="sn red">✗</div><div>Any <span class="ic">animation</span> other than the blinking cursor</div></div>
+  <div class="step"><div class="sn red">✗</div><div>Any import from lucide-react, @heroicons, react-icons</div></div>
+  <h2>Functionality anti-patterns</h2>
+  <div class="step"><div class="sn red">✗</div><div><span class="ic">onClick={() => console.log(...)}</span> — fake interactivity</div></div>
+  <div class="step"><div class="sn red">✗</div><div><span class="ic">useState(42)</span> — hardcoded data</div></div>
+  <div class="step"><div class="sn red">✗</div><div><span class="ic">href="#"</span> — every link goes somewhere real</div></div>
+  <div class="step"><div class="sn red">✗</div><div><span class="ic">// TODO: connect to real data</span></div></div>
+  <div class="step"><div class="sn red">✗</div><div>Voting logic outside VoteButton component — one component, everywhere</div></div>
+  <div class="step"><div class="sn red">✗</div><div>Different behaviour for the same feature on different pages</div></div>
+  <h2>How to reject properly</h2>
+  <div class="rule amber"><strong>Say exactly this:</strong>"This output violates the Sudo Dodo design rules. I found [specific violation]. Discard this output entirely. Rebuild it from scratch following the design rules. The correct approach for [element] is [what the rules say]."</div>
+</div>
+
+<!-- BUILD RULES -->
+<div id="rules" class="panel">
+  <p class="section-label">Build rules — the law that governs every job</p>
+  <div class="rule blue"><strong>Rule 1 — One job. One file set. One test.</strong>Every prompt does exactly one thing. Names specific files. Ends with a test. If the test fails, the job is not done. Never give an agent two jobs in one prompt.</div>
+  <div class="rule blue"><strong>Rule 2 — No UI without a working backend.</strong>No button, link, or interactive element not connected to a real working system. No placeholder handlers. No hardcoded data. If the data doesn't exist, the UI doesn't exist yet.</div>
+  <div class="rule blue"><strong>Rule 3 — Prove it with a database row, not a screenshot.</strong>Auth done? Show the Supabase user row. Vote done? Show the votes table row. UI done? Vote, reload, show the count changed in the DB.</div>
+  <div class="rule blue"><strong>Rule 4 — Design rules apply to every frontend job.</strong>Every frontend job must pass the anti-patterns checklist. Any frontend job that fails is rejected and restarted.</div>
+  <div class="rule blue"><strong>Rule 5 — Test in all six themes before marking a UI job done.</strong>Switch through all six themes. If anything looks broken in any theme, the job is not done.</div>
+  <h2>The dependency chain</h2>
+  <div class="chain">
+    <div class="cn">Supabase</div><div class="ca">→</div><div class="cn">Schema</div><div class="ca">→</div><div class="cn">Auth</div><div class="ca">→</div><div class="cn">Votes DB</div><div class="ca">→</div><div class="cn">Retro template</div><div class="ca">→</div><div class="cn">Feed</div><div class="ca">→</div><div class="cn">Vote UI</div><div class="ca">→</div><div class="cn">Posts</div><div class="ca">→</div><div class="cn">Distro pages</div><div class="ca">→</div><div class="cn">Rankings</div><div class="ca">→</div><div class="cn">AI Wizard</div><div class="ca">→</div><div class="cn">Rem AI</div><div class="ca">→</div><div class="cn">Launch</div>
+  </div>
+  <h2>Session opener — paste at the start of EVERY agent session</h2>
+  <div class="prompt-box" id="opener">We are building Sudo Dodo — a text-first, monospace, retro Linux community platform. Think Hacker News meets cyberspace.online meets a Linux terminal.
+
+DESIGN DIRECTION (non-negotiable):
+- Font: 'Courier New', monospace ONLY. No Google Fonts. No sans-serif anywhere.
+- Header: #ff6600 background, #000 text. Never changes.
+- Layout: text-dense, information-rich, minimal padding. Model: Hacker News.
+- Colours: CSS variables only. No hardcoded hex outside :root theme definitions.
+- No gradients, no shadows, no glassmorphism, no animations except blinking cursor.
+- Buttons: [ text ] style — square brackets, plain monospace. Never rounded or filled.
+- Images: official distro logos only. No decorative imagery. No AI-generated art.
+- Six themes via CSS variable overrides: Default, Matrix, Amber, Phosphor, C64, Paper.
+- Test every frontend job in all six themes before marking done.
+
+BACKEND STATUS:
+- Supabase schema, auth, voting logic, Remrin RAG integration, and permissions
+  system are ALREADY BUILT. Do not rebuild them.
+- All new frontend work imports from existing backend files.
+- If you find yourself rebuilding something that already exists, stop and ask.
+
+ANTI-PATTERNS THAT GET OUTPUT REJECTED IMMEDIATELY:
+- Any gradient or shadow CSS
+- Any non-monospace font
+- Any hardcoded colours outside theme definitions
+- Placeholder data, fake handlers, or TODO comments
+- href="#" on any link
+- Any voting implementation other than the one VoteButton component
+
+Today's job: [DESCRIBE THE SPECIFIC JOB HERE]</div>
+  <button class="copy-btn" onclick="copyText('opener',this)">Copy session opener</button>
+</div>
+
+<!-- JOB 1 -->
+<div id="job1" class="panel">
+  <div class="job-hdr"><div class="job-badge">JOB 1 OF 3</div><h2 style="margin:0;">User Authentication</h2></div>
+  <p class="section-label">Nothing else until all 5 tests pass</p>
+  <div class="prompt-box" id="j1text">═══════════════════════════════════════
+SUDODO — JOB 1 OF 3: USER AUTHENTICATION
+═══════════════════════════════════════
+
+READ THIS ENTIRE PROMPT BEFORE WRITING A SINGLE LINE OF CODE.
+
+Job 2 (votes DB) cannot start until Job 1 is tested and complete.
+Job 3 (vote UI) cannot start until Job 2 is tested and complete.
+
+DESIGN DIRECTION FOR AUTH PAGES:
+  Font: 'Courier New', monospace only.
+  Login/signup: plain centred form. No card. No shadow. No decoration.
+  Labels above inputs. Inputs full-width, 1px solid border. No border-radius.
+  Submit button: [ sign in ] and [ create account ] style.
+  Error messages: plain text in var(--score-neg) colour. No toast. No animation.
+  Header: same orange header bar as every other page.
+  All colours via CSS variables — test in all 6 themes.
+
+YOUR ONLY JOB: Sign up, log in, log out. Nothing else.
+
+FORBIDDEN:
+  - No vote buttons anywhere
+  - No feed page changes  
+  - No placeholder data
+  - No hardcoded user IDs
+  - No non-monospace fonts
+  - No gradients or shadows
+  - No "we'll connect this later" comments
+
+═══════════════════════════════════════
+PREREQUISITES — CONFIRM BEFORE STARTING
+═══════════════════════════════════════
+
+[ ] Supabase project created
+[ ] NEXT_PUBLIC_SUPABASE_URL in .env.local
+[ ] NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local
+[ ] pnpm dev running on localhost:3000
+
+═══════════════════════════════════════
+EXACT FILES TO CREATE — NOTHING ELSE
+═══════════════════════════════════════
+
+1. src/lib/supabase/client.ts        — browser Supabase client (@supabase/ssr)
+2. src/lib/supabase/server.ts        — server Supabase client
+3. src/middleware.ts                 — session refresh on every request
+4. src/app/auth/signup/page.tsx      — email + password + username form
+5. src/app/auth/login/page.tsx       — email + password form
+6. src/app/auth/callback/route.ts    — OAuth callback handler
+7. src/components/layout/AuthButton.tsx
+   Logged out: login | create account (plain text links)
+   Logged in:  logged in as: [username] | logout
+   No dropdown. No avatar. Monospace. CSS variables.
+8. src/styles/retro-base.css
+   Define :root with all theme variables.
+   Define .theme-matrix, .theme-amber, .theme-phosphor, .theme-c64, .theme-paper.
+   Import this file in layout.tsx root layout.
+
+═══════════════════════════════════════
+MANDATORY TESTS — ALL 5 MUST PASS
+═══════════════════════════════════════
+
+TEST 1 — Sign up:
+  Action: /auth/signup — create test@sudodo.do / TestPass123
+  Expected: Redirects to /, header shows "logged in as: test"
+  Proof: Supabase Auth dashboard screenshot showing the new user row
+
+TEST 2 — Log out:
+  Action: Click logout
+  Expected: Header shows login / create account
+  Proof: No active session in browser devtools Application tab
+
+TEST 3 — Log in:
+  Action: /auth/login — test@sudodo.do / TestPass123
+  Expected: Redirects to /, username shows
+  Proof: console.log(session.user.id) — paste the UUID
+
+TEST 4 — Session persistence:
+  Action: Hard refresh while logged in (Ctrl+Shift+R)
+  Expected: Still logged in
+  Proof: user.id still present — paste UUID
+
+TEST 5 — Theme test:
+  Action: Switch all 6 themes on the login page
+  Expected: Readable and correctly styled in all 6 themes
+  Proof: Confirm no hardcoded colours break in any theme
+
+Report: TEST 1: PASS/FAIL — TEST 2: PASS/FAIL — etc.
+ALL 5 MUST PASS. Do not proceed to Job 2 until they do.</div>
+  <button class="copy-btn" onclick="copyText('j1text',this)">Copy Job 1 prompt</button>
+</div>
+
+<!-- JOB 2 -->
+<div id="job2" class="panel">
+  <div class="job-hdr"><div class="job-badge">JOB 2 OF 3</div><h2 style="margin:0;">Votes Database & Logic</h2></div>
+  <p class="section-label">Zero UI. Backend only. No visual changes whatsoever.</p>
+  <div class="prompt-box" id="j2text">═══════════════════════════════════════
+SUDODO — JOB 2 OF 3: VOTES DATABASE & LOGIC
+═══════════════════════════════════════
+
+CONFIRM JOB 1 IS DONE:
+[ ] Real user exists in Supabase Auth
+[ ] getUser() returns UUID, not null
+[ ] Session persists after hard refresh
+[ ] All 5 Job 1 tests passed
+
+YOUR ONLY JOB: Build the vote data layer.
+ZERO visual changes. ZERO new React components. ZERO new pages.
+This job produces only: SQL tables, RLS policies, TypeScript functions.
+
+If you create a single new React component: job failed. Restart.
+
+═══════════════════════════════════════
+STEP 1 — SQL (run in Supabase SQL editor)
+═══════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS votes (
+  id          uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id     uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  post_id     integer REFERENCES posts(id) ON DELETE CASCADE,
+  comment_id  integer REFERENCES comments(id) ON DELETE CASCADE,
+  value       smallint NOT NULL CHECK (value IN (-1, 1)),
+  created_at  timestamptz DEFAULT now(),
+  CONSTRAINT one_vote_per_post    UNIQUE (user_id, post_id),
+  CONSTRAINT one_vote_per_comment UNIQUE (user_id, comment_id),
+  CONSTRAINT vote_target CHECK (
+    (post_id IS NOT NULL AND comment_id IS NULL) OR
+    (post_id IS NULL AND comment_id IS NOT NULL)
+  )
+);
+ALTER TABLE votes ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "read_all"   ON votes FOR SELECT USING (true);
+CREATE POLICY "insert_own" ON votes FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "update_own" ON votes FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "delete_own" ON votes FOR DELETE USING (auth.uid() = user_id);
+
+CREATE OR REPLACE FUNCTION get_vote_score(p_post_id integer)
+RETURNS integer AS $$
+  SELECT COALESCE(SUM(value), 0)::integer FROM votes WHERE post_id = p_post_id;
+$$ LANGUAGE sql STABLE;
+
+CREATE OR REPLACE FUNCTION get_user_vote(p_post_id integer, p_user_id uuid)
+RETURNS smallint AS $$
+  SELECT value FROM votes
+  WHERE post_id = p_post_id AND user_id = p_user_id LIMIT 1;
+$$ LANGUAGE sql STABLE;
+
+═══════════════════════════════════════
+STEP 2 — src/lib/votes/actions.ts
+═══════════════════════════════════════
+
+Four functions. Server-side Supabase client. Auth check first. Typed returns.
+
+castVote(postId: number, value: 1|-1): Promise<VoteResult>
+  No vote → INSERT | Same value → DELETE (toggle) | Opposite → UPDATE
+  Returns: { score: number, userVote: 1|-1|null }
+
+removeVote(postId: number): Promise<VoteResult>
+  Returns: { score: number, userVote: null }
+
+getVoteState(postId: number): Promise<VoteResult>
+  Single post page use only.
+
+getVotesBatch(postIds: number[]): Promise<Record<number, VoteResult>>
+  One query for multiple posts. Feed page. Never loop getVoteState.
+
+═══════════════════════════════════════
+MANDATORY TESTS — ALL 5 MUST PASS
+═══════════════════════════════════════
+
+TEST 1 — Schema: SELECT column_name FROM information_schema.columns WHERE table_name='votes';
+  Expected: id, user_id, post_id, comment_id, value, created_at. Proof: paste result.
+
+TEST 2 — RLS blocks anon: attempt INSERT unauthenticated.
+  Expected: RLS policy error. Proof: paste error.
+
+TEST 3 — castVote inserts: castVote(1, 1) as test user.
+  Expected: { score:1, userVote:1 }. Proof: SELECT * FROM votes WHERE user_id='[uuid]'
+
+TEST 4 — Toggle off: castVote(1,1) twice.
+  Expected: { score:0, userVote:null }, row deleted.
+  Proof: SELECT * FROM votes WHERE post_id=1 — must be 0 rows.
+
+TEST 5 — Switch direction: castVote(1,1) then castVote(1,-1).
+  Expected: { score:-1, userVote:-1 }, 1 row, value=-1. Proof: paste SELECT.
+
+ALL 5 PASS. Zero UI added. Ready for Job 3.</div>
+  <button class="copy-btn" onclick="copyText('j2text',this)">Copy Job 2 prompt</button>
+</div>
+
+<!-- JOB 3 -->
+<div id="job3" class="panel">
+  <div class="job-hdr"><div class="job-badge">JOB 3 OF 3</div><h2 style="margin:0;">Vote UI — One Component, Used Everywhere</h2></div>
+  <p class="section-label">Built once. Never duplicated. Works in all six themes.</p>
+  <div class="prompt-box" id="j3text">═══════════════════════════════════════
+SUDODO — JOB 3 OF 3: VOTE UI COMPONENT
+═══════════════════════════════════════
+
+CONFIRM JOB 2 IS DONE:
+[ ] votes table exists with correct schema and RLS
+[ ] castVote / getVoteState / getVotesBatch all tested and working
+[ ] All 5 Job 2 tests passed
+
+YOUR ONLY JOB: One VoteButton component. Wired to real data.
+Voting logic in ONE place only. Never copy it. Always import VoteButton.
+
+═══════════════════════════════════════
+THE COMPONENT: src/components/voting/VoteButton.tsx
+═══════════════════════════════════════
+
+Props:
+  postId: number
+  initialScore: number        — from server fetch, never guessed
+  initialUserVote: 1|-1|null  — from server fetch, null if logged out
+
+VISUAL SPEC (retro style — no icons, no libraries):
+  Vertical stack: ▲ | score | ▼
+  All Unicode characters — no icon imports.
+  Total column width: 28-32px max.
+
+  ▲ default:  color: var(--fg3)
+  ▲ active:   color: var(--score-pos)
+  ▼ default:  color: var(--fg3)
+  ▼ active:   color: var(--score-neg)
+  loading:    opacity: 0.4, pointer-events: none
+  score +ve:  color: var(--score-pos)
+  score 0:    color: var(--fg3)
+  score -ve:  color: var(--score-neg)
+
+  NO border-radius. NO background. NO shadow.
+  ALL colours via CSS variables — never hardcoded.
+
+CLICK BEHAVIOUR:
+  1. Not logged in → redirect to /auth/login. No silent fail. No error thrown.
+  2. isLoading → ignore click (prevent double-submit)
+  3. Optimistic update immediately:
+       same value  → toggle: score-1(up)/score+1(down), userVote=null
+       opposite    → switch: score+2(up)/score-2(down), userVote=new
+       no vote     → new:    score+1(up)/score-1(down), userVote=new
+  4. castVote(postId, value)
+  5. Success: update from server response
+  6. Error: revert state + plain text error (var(--score-neg) colour)
+
+NEVER fetch inside this component. No useEffect. No fetch on mount.
+Data comes from server-side props only.
+
+═══════════════════════════════════════
+USAGE
+═══════════════════════════════════════
+
+Feed page: getVotesBatch() server-side → pass as props to each PostCard
+Detail page: getVoteState() server-side → pass as props to VoteButton
+Both import the SAME VoteButton. Same component. Same DB. No exceptions.
+
+═══════════════════════════════════════
+MANDATORY TESTS — ALL 7 MUST PASS
+═══════════════════════════════════════
+
+TEST 1 — Real score on feed:
+  SELECT get_vote_score([post_id]). Number on screen must match exactly.
+  Proof: paste both values.
+
+TEST 2 — Upvote persists:
+  Upvote. Reload. Score still incremented.
+  Proof: SELECT * FROM votes WHERE post_id=[id] — paste row.
+
+TEST 3 — Toggle off:
+  Upvote same post again.
+  Proof: SELECT * FROM votes WHERE post_id=[id] — 0 rows.
+
+TEST 4 — Switch direction:
+  Upvote then downvote same post.
+  Proof: 1 row, value=-1.
+
+TEST 5 — Logged out redirect:
+  Log out. Click vote. Must redirect to /auth/login. No error.
+
+TEST 6 — Theme test:
+  Switch all 6 themes while voting.
+  All states readable and correctly coloured in all 6 themes.
+  No hardcoded colours. Proof: confirm.
+
+TEST 7 — Same component on detail page:
+  Vote on post detail page.
+  Proof: same votes table row updates. Paste the DB row.
+  This proves it is the same system — not a local copy.
+
+ALL 7 MUST PASS. Voting complete only when all 7 pass.</div>
+  <button class="copy-btn" onclick="copyText('j3text',this)">Copy Job 3 prompt</button>
+</div>
+
+<!-- TEMPLATE -->
+<div id="template" class="panel">
+  <p class="section-label">Reusable template — every future job uses this structure</p>
+  <div class="prompt-box" id="jttext">═══════════════════════════════════════
+SUDODO — JOB [N] OF [TOTAL]: [JOB NAME]
+═══════════════════════════════════════
+
+DESIGN REMINDER (frontend jobs only):
+  Monospace font. CSS variables. No gradients or shadows. [ text ] buttons.
+  Dense layout modelled on Hacker News. Test in all 6 themes before done.
+
+CONFIRM PREVIOUS JOB IS DONE:
+[ ] [Specific thing that must exist — how to verify]
+[ ] [Specific thing that must exist — how to verify]
+
+If any above are false — STOP. Tell me what is missing.
+
+YOUR ONLY JOB: [One sentence. One thing. No "and"s.]
+
+FORBIDDEN:
+  - [Specific scope-creep the agent would otherwise add]
+  - No placeholder data or hardcoded values
+  - No non-monospace fonts
+  - No gradients, shadows, or decorative effects
+  - No buttons or links not connected to real working systems
+  - No TODO comments
+
+═══════════════════════════════════════
+PREREQUISITES
+═══════════════════════════════════════
+
+[ ] [Specific thing — how to verify it exists]
+
+═══════════════════════════════════════
+EXACT FILES — DO NOT TOUCH ANYTHING ELSE
+═══════════════════════════════════════
+
+1. [filepath] — [what it does in one sentence]
+2. [filepath] — [what it does in one sentence]
+
+═══════════════════════════════════════
+MANDATORY TESTS
+═══════════════════════════════════════
+
+TEST 1 — [What to test]:
+  Action: [Exact steps]
+  Expected: [Exact outcome]
+  Proof: [DB row / console log / specific observable fact — not a screenshot]
+
+TEST 2 — [What to test]:
+  Action: [Exact steps]  
+  Expected: [Exact outcome]
+  Proof: [What agent must show]
+
+TEST [N] — Theme test (required on ALL frontend jobs):
+  Action: Switch through all 6 themes
+  Expected: Everything readable and correct in all 6 themes
+  Proof: Confirm no hardcoded colours, no broken layout
+
+ALL [N] TESTS MUST PASS. Do not move to Job [N+1].</div>
+  <button class="copy-btn" onclick="copyText('jttext',this)">Copy template</button>
+</div>
+
+</div>
+
+<script>
+function show(id, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+function copyText(id, btn) {
+  const label = btn.textContent;
+  navigator.clipboard.writeText(document.getElementById(id).innerText).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = label, 2000);
+  });
+}
+</script>
+</body>
+</html>

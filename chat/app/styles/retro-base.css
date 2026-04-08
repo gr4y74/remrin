@@ -1,0 +1,123 @@
+/* ── SUDODODO RETRO DESIGN SYSTEM v2.0 ── */
+
+:root {
+  /* THEME: DEFAULT (Sudo Orange) */
+  --bg: #1a1a1a;
+  --bg2: #222222;
+  --fg: #e8e8e8;
+  --fg2: #999999;
+  --fg3: #666666;
+  --accent: #ff6600;
+  --accent2: #cc5200;
+  --link: #ff9955;
+  --green: #00ff41;
+  --border: #333333;
+  --font: 'Courier New', 'Lucida Console', monospace;
+  --score-pos: #ff6600;
+  --score-neg: #cc3333;
+}
+
+body.theme-matrix {
+  --bg: #0d0d0d; --bg2: #111111; --fg: #00ff41; --fg2: #00cc33;
+  --fg3: #007722; --accent: #00ff41; --accent2: #00cc33;
+  --link: #00ff99; --green: #00ff41; --border: #003311;
+  --score-pos: #00ff41; --score-neg: #ff3333;
+}
+
+body.theme-amber {
+  --bg: #0f0900; --bg2: #1a1000; --fg: #ffb000; --fg2: #cc8800;
+  --fg3: #886600; --accent: #ffcc00; --accent2: #cc9900;
+  --link: #ffdd44; --green: #ffcc00; --border: #332200;
+  --score-pos: #ffcc00; --score-neg: #ff4444;
+}
+
+body.theme-phosphor {
+  --bg: #000800; --bg2: #001000; --fg: #33ff33; --fg2: #22cc22;
+  --fg3: #116611; --accent: #55ff55; --accent2: #33dd33;
+  --link: #88ff88; --green: #33ff33; --border: #003300;
+  --score-pos: #55ff55; --score-neg: #ff5555;
+}
+
+body.theme-c64 {
+  --bg: #4040e8; --bg2: #3333cc; --fg: #7777ff; --fg2: #5555ee;
+  --fg3: #4444cc; --accent: #ffffff; --accent2: #cccccc;
+  --link: #ffffff; --green: #ffffff; --border: #5555ff;
+  --score-pos: #ffffff; --score-neg: #ff5555;
+}
+
+body.theme-paper {
+  --bg: #f5f0e8; --bg2: #ede8d8; --fg: #222222; --fg2: #555555;
+  --fg3: #888888; --accent: #cc3300; --accent2: #991100;
+  --link: #0000cc; --green: #006600; --border: #ccccaa;
+  --score-pos: #cc3300; --score-neg: #cc3300;
+}
+
+/* BASE RESET */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* RETRO ELEMENTS */
+a { color: var(--link); text-decoration: none; cursor: pointer; }
+a:hover { text-decoration: underline; color: var(--accent); }
+
+button {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--fg2);
+  font-family: var(--font);
+  padding: 4px 12px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+button:hover { border-color: var(--accent); color: var(--accent); }
+button.btn-primary { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: bold; }
+
+input, textarea, select {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  font-family: var(--font);
+  padding: 8px;
+  width: 100%;
+}
+input:focus { border-color: var(--accent); outline: none; }
+
+/* LAYOUT BLOCKS */
+.retro-header {
+  background: var(--accent);
+  color: var(--bg);
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-weight: bold;
+}
+
+.retro-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.retro-box {
+  border: 1px solid var(--border);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.retro-badge {
+  font-size: 11px;
+  border: 1px solid var(--border);
+  padding: 1px 4px;
+  color: var(--fg2);
+}
+
+.blink { animation: blink 1s step-end infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
