@@ -86,7 +86,7 @@ export default function RankingsPage() {
           </div>
 
           {communities.map((row, index) => (
-            <Link key={row.id} href={`/en/sudodo/distro/${row.slug}`} className="rank-row">
+            <Link key={row.id} href={`/sudodo/distro/${row.slug}`} className="rank-row">
               <div className={`rr-rank r${index + 1 <= 3 ? index + 1 : ''}`}>{index + 1}</div>
               <div className="rr-change ch-same">—</div>
               <div className="rr-distro">

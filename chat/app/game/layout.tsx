@@ -1,5 +1,16 @@
+/**
+ * ╔══════════════════════════════════════════════════════╗
+ * ║  GAME LAYOUT — FULLY ISOLATED ROOT LAYOUT          ║
+ * ║                                                    ║
+ * ║  /game has its own <html> and <body> tags.         ║
+ * ║  It does NOT inherit from app/[locale]/layout.tsx. ║
+ * ║                                                    ║
+ * ║  ⚠️  DO NOT import globals.css or any platform CSS. ║
+ * ║  ⚠️  DO NOT add Providers/RootLayoutContainer.      ║
+ * ║  ⚠️  All game styles must be self-contained.        ║
+ * ╚══════════════════════════════════════════════════════╝
+ */
 import { Metadata } from 'next';
-import "@/app/[locale]/globals.css"; // Ensure standard globals are loaded, but we might override body
 
 export const metadata: Metadata = {
   title: 'Left At Albuquerque | Interactive AI Noir',
@@ -9,7 +20,7 @@ export const metadata: Metadata = {
     description: '2800 miles. $1,200 cash. And an AI narrator trying to kill you.',
     type: 'website',
     images: [{
-      url: '/game_social_card.jpg', // Placeholder for OG image
+      url: '/game_social_card.jpg',
       width: 1200,
       height: 630,
     }],
@@ -28,7 +39,7 @@ export default function GameLayout({
 }) {
   return (
     <html lang="en">
-      <body suppressHydrationWarning className="game-layout-root min-h-screen bg-black overflow-hidden flex flex-col">
+      <body suppressHydrationWarning className="game-layout-root min-h-screen bg-black overflow-hidden flex flex-col" style={{ margin: 0, padding: 0 }}>
         {children}
       </body>
     </html>

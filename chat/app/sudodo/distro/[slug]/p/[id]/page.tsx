@@ -36,7 +36,7 @@ export default function PostDetailPage() {
         <main className="feed thread-view">
           <div className="thread-wrapper glass">
             <div className="thread-meta">
-              <Link href={`/en/sudodo/distro/${slug}`} className="post-community">
+              <Link href={`/sudodo/distro/${slug}`} className="post-community">
                 <span className="pc-icon">{post.community?.icon || '🐧'}</span>
                 {post.community?.name || `r/${slug}`}
               </Link>

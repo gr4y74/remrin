@@ -1,3 +1,23 @@
+/**
+ * ╔══════════════════════════════════════════════════════════════════╗
+ * ║  ROOT LAYOUT CONTAINER — PROJECT ISOLATION ARCHITECTURE        ║
+ * ║                                                                ║
+ * ║  This component controls which UI shell wraps each sub-project.║
+ * ║  It is the SINGLE source of truth for route isolation.         ║
+ * ║                                                                ║
+ * ║  ⚠️  DO NOT apply theme-romrin to non-Rem routes.              ║
+ * ║  ⚠️  DO NOT add global CSS imports here.                       ║
+ * ║  ⚠️  DO NOT use broad pattern matching (e.g. '/sudo' catches  ║
+ * ║      '/sudodo'). Always use exact route segments.              ║
+ * ║                                                                ║
+ * ║  ISOLATION MAP:                                                ║
+ * ║    /aol/messenger → Standalone, theme-romrin dark              ║
+ * ║    /rem           → Separate root layout (app/rem/layout.tsx)   ║
+ * ║    /sudodo        → Separate root layout (app/sudodo/layout.tsx)║
+ * ║    /game          → Separate root layout (app/game/layout.tsx)  ║
+ * ║    Everything else → Standard platform (sidebar + nav)         ║
+ * ╚══════════════════════════════════════════════════════════════════╝
+ */
 "use client"
 
 import { usePathname } from "next/navigation"
@@ -16,11 +36,14 @@ interface RootLayoutContainerProps {
 
 export function RootLayoutContainer({ children, user }: RootLayoutContainerProps) {
     const pathname = usePathname()
-    const isStandalone = pathname?.includes('/aol/messenger') || pathname?.includes('/rem') || pathname?.toLowerCase().includes('/sudo')
 
-    if (isStandalone) {
+    // ── ISOLATION PATH: AOL Messenger ──
+    // This remains in the platform tree but needs standalone UI.
+    const isAolMessenger = pathname?.includes('/aol/messenger')
+
+    if (isAolMessenger) {
         return (
-            <div className="flex min-h-screen w-full theme-romrin">
+            <div className="flex min-h-screen w-full theme-romrin dark">
                 <GlobalState>
                     <main className="flex-1 w-full overflow-hidden">
                         {children}
@@ -30,6 +53,8 @@ export function RootLayoutContainer({ children, user }: RootLayoutContainerProps
         )
     }
 
+    // ── STANDARD PLATFORM PATH ──
+    // Full Remrin platform UI: sidebar, mobile nav, background effects.
     // Detect chat pages to hide bottom padding
     const isChatPage =
         pathname?.includes('/character/') ||

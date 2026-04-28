@@ -4,8 +4,9 @@ import { NextResponse, type NextRequest } from "next/server"
 import i18nConfig from "./i18nConfig"
 
 export async function middleware(request: NextRequest) {
-  // Skip i18n and heavy auth for api and game routes
-  if (request.nextUrl.pathname.startsWith('/api') || request.nextUrl.pathname.startsWith('/game')) {
+  // Skip i18n and heavy auth for isolated projects and api
+  const isolatedPaths = ['/api', '/game', '/rem', '/sudodo'];
+  if (isolatedPaths.some(path => request.nextUrl.pathname.startsWith(path))) {
     return NextResponse.next()
   }
 
@@ -46,5 +47,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: "/((?!static|.*\\..*|_next|auth).*)"
+  matcher: "/((?!static|.*\\..*|_next|auth|rem|sudodo|game).*)"
 }
