@@ -10,7 +10,7 @@ import { Metadata, Viewport } from "next"
 // import { Inter } from "next/font/google"
 import { cookies } from "next/headers"
 import { ReactNode } from "react"
-import "../styles/retro-base.css"
+import "./globals.css"
 
 // Force Node.js runtime to avoid Edge Runtime __dirname issues
 export const runtime = "nodejs"
@@ -103,43 +103,23 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link href="https://cdn.jsdelivr.net/gh/Lukas-W/font-logos@v0.18/assets/font-logos.css" rel="stylesheet" />
+        <link href="//cdn.jsdelivr.net/gh/Lukas-W/font-logos@v0.18/assets/font-logos.css" rel="stylesheet" />
       </head>
-      <body suppressHydrationWarning className="theme-default">
-        {/* SACRED ORANGE HEADER */}
-        <div id="header" style={{ background: 'var(--accent)', color: 'var(--bg)', padding: '6px 16px', display: 'flex', alignItems: 'center', gap: '16px', fontWeight: 'bold' }}>
-           <a href="/" style={{ color: 'var(--bg)', textDecoration: 'none', fontSize: '16px', letterSpacing: '1px' }}>🦤 sudo dodo <span style={{ opacity: 0.7, fontSize: '13px' }}>/ sudodo.do</span></a>
-           <nav style={{ display: 'flex', gap: '12px', fontSize: '13px' }}>
-              <a href="/en/sudodo/feed" style={{ color: 'var(--bg)' }}>feed</a>
-              <a href="/en/sudodo/rankings" style={{ color: 'var(--bg)' }}>rankings</a>
-              <a href="/en/sudodo/compare" style={{ color: 'var(--bg)' }}>battle</a>
-              <a href="/en/sudodo/wizard" style={{ color: 'var(--bg)' }}>wizard</a>
-           </nav>
-           <div style={{ marginLeft: 'auto', fontSize: '12px' }}>
-              {session?.user ? (
-                <>logged in as: {session.user.user_metadata?.username || session.user.email} | <a href="/auth/logout" style={{ color: 'var(--bg)' }}>logout</a></>
-              ) : (
-                <><a href="/auth/login" style={{ color: 'var(--bg)' }}>login</a> | <a href="/auth/signup" style={{ color: 'var(--bg)' }}>create account</a></>
-              )}
-           </div>
-        </div>
+      <body suppressHydrationWarning className="bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary">
+        {/* Clean background - no effects */}
+        <Providers attribute="class" defaultTheme="dark">
+          <TranslationsProvider
+            namespaces={i18nNamespaces}
+            locale={locale}
+            resources={resources}
+          >
+            <Toaster richColors position="top-center" duration={3000} />
+            <RootLayoutContainer user={session?.user}>
+              {children}
+            </RootLayoutContainer>
 
-        {/* THEME CONFIG BAR */}
-        <div style={{ background: 'var(--bg2)', borderBottom: '1px solid var(--border)', padding: '4px 16px', fontSize: '11px', display: 'flex', gap: '8px', alignItems: 'center' }}>
-           <span style={{ color: 'var(--fg3)' }}>theme:</span>
-           <button onClick={() => document.body.className = ''} style={{ fontSize: '10px', padding: '1px 6px' }}>default</button>
-           <button onClick={() => document.body.className = 'theme-matrix'} style={{ fontSize: '10px', padding: '1px 6px' }}>matrix</button>
-           <button onClick={() => document.body.className = 'theme-amber'} style={{ fontSize: '10px', padding: '1px 6px' }}>amber</button>
-           <button onClick={() => document.body.className = 'theme-phosphor'} style={{ fontSize: '10px', padding: '1px 6px' }}>phosphor</button>
-           <button onClick={() => document.body.className = 'theme-c64'} style={{ fontSize: '10px', padding: '1px 6px' }}>c64</button>
-           <button onClick={() => document.body.className = 'theme-paper'} style={{ fontSize: '10px', padding: '1px 6px' }}>paper</button>
-        </div>
-
-        <main className="retro-container">
-           {children}
-        </main>
-        
-        <Toaster richColors position="top-center" duration={3000} />
+          </TranslationsProvider>
+        </Providers>
       </body>
     </html>
   )
