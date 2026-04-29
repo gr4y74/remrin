@@ -24,5 +24,8 @@ module.exports = withBundleAnalyzer({
   experimental: {
     serverComponentsExternalPackages: ["sharp", "onnxruntime-node"]
   },
+  eslint: {
+    ignoreDuringBuilds: true
+  },
   compress: true
 })

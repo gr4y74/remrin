@@ -16,9 +16,10 @@ import { User } from '@supabase/supabase-js'
 
 function debugLog(msg: string) {
     if (process.env.NODE_ENV === 'development') {
-        console.log(`[ChatEngine] ${msg}`)
+        console.log(`[ChatEngine v1] ${msg}`)
     }
 }
+import { authenticateRequest } from '@/lib/api/auth-middleware'
 import {
     ChatRequest,
     ChatMessageContent,
@@ -70,58 +71,38 @@ async function getUserTier(userId: string): Promise<UserTier> {
 /**
  * Get the persona if persona is selected
  */
-async function getPersona(personaId: string | undefined): Promise<CarrotPersona | null> {
+async function getPersona(personaId: string | undefined, tenantId: string | null, isSandbox: boolean): Promise<CarrotPersona | null> {
     if (!personaId) return null
 
     const supabase = (await import('@/lib/supabase/server')).createAdminClient()
 
-    const { data: persona } = await supabase
+    let query = supabase
         .from('personas')
         .select('*')
         .eq('id', personaId)
-        .single()
+
+    if (tenantId && !isSandbox) {
+        query = query.eq('tenant_id', tenantId)
+    } else if (!isSandbox) {
+        query = query.is('tenant_id', null)
+    }
+
+    const { data: persona } = await query.single()
 
     return persona as CarrotPersona | null
 }
 
 export async function POST(request: NextRequest) {
     try {
-        const cookieStore = await cookies()
-        const allCookies = cookieStore.getAll()
-        debugLog(`🍪 [ChatEngine] Cookies count: ${allCookies.length}`)
+        const auth = await authenticateRequest(request)
 
-        const supabase = createClient(cookieStore)
-
-        // Use getSession first
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-        if (sessionError) debugLog(`❌ [ChatEngine] Session Error: ${sessionError.message}`)
-
-        let user: User | null = session?.user || null
-
-        // Fallback to get user from Authorization header if session/cookies failed
-        if (!user) {
-            const authHeader = request.headers.get('Authorization')
-            if (authHeader?.startsWith('Bearer ')) {
-                const token = authHeader.split(' ')[1]
-                const { data: { user: verifiedUser } } = await supabase.auth.getUser(token)
-                user = verifiedUser
-            }
-        }
-
-        // Final Fallback to getUser from cookies
-        if (!user) {
-            debugLog(`⚠️ [ChatEngine] No session/token, trying getUser from cookies...`)
-            const { data: { user: verifiedUser } } = await supabase.auth.getUser()
-            user = verifiedUser
-        }
-
-        if (!user) {
-            debugLog(`🚫 [ChatEngine] Unauthorized: No user found after session, token & cookie checks.`)
+        if (!auth) {
+            debugLog(`🚫 [ChatEngine v1] Unauthorized: Invalid API key or cookie.`)
             return new Response('Unauthorized', { status: 401 })
         }
 
-        const userId = user.id
-        debugLog(`✅ [ChatEngine] Authorized: user=${userId}`)
+        const userId = auth.userId
+        debugLog(`✅ [ChatEngine v1] Authorized: user=${userId}, tenant=${auth.tenantId}`)
 
         // Rate limiting
         const ip = request.headers.get('x-forwarded-for') || 'unknown'
@@ -147,10 +128,10 @@ export async function POST(request: NextRequest) {
         }
 
         // Get user's tier
-        const userTier = await getUserTier(userId)
+        const userTier = auth.tenantId ? 'enterprise' : await getUserTier(userId)
 
         // Process persona and system prompt
-        const persona = await getPersona(personaId)
+        const persona = await getPersona(personaId, auth.tenantId, auth.isSandbox)
         let systemPrompt = customSystemPrompt || ''
 
         // === PROCESS FILE ATTACHMENTS (V2) ===
@@ -195,7 +176,7 @@ export async function POST(request: NextRequest) {
 
             try {
                 const adminSupabase = (await import('@/lib/supabase/server')).createAdminClient()
-                const basePrompt = await buildSystemPrompt(adminSupabase, [persona], userId, memoryBlock, false)
+                const basePrompt = await buildSystemPrompt(adminSupabase, [persona], userId, memoryBlock, false, auth.tenantId)
                 systemPrompt = (customSystemPrompt ? `${customSystemPrompt}\n\n` : '') + basePrompt
             } catch (e: any) {
                 console.error('❌ [ChatEngine] Prompt building error:', e)
@@ -329,6 +310,7 @@ export async function POST(request: NextRequest) {
 
                     let chatId: string | null = null
                     let userMessageId: string | null = null
+                    const supabase = (await import('@/lib/supabase/server')).createAdminClient() // Use admin for V1 saving to bypass user RLS
                     if (personaId) {
                         chatId = await getOrCreateChatSession(supabase, userId, personaId, { customName, workspaceId })
                         const lastUserMsg = messages[messages.length - 1]
@@ -488,17 +470,10 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
     try {
-        const cookieStore = await cookies()
-        const supabase = createClient(cookieStore)
-        const { data: { session } } = await supabase.auth.getSession()
-        let user: User | null = session?.user || null
-        if (!user) {
-            const { data: { user: verifiedUser } } = await supabase.auth.getUser()
-            user = verifiedUser
-        }
-        if (!user) return new Response('Unauthorized', { status: 401 })
+        const auth = await authenticateRequest(request)
+        if (!auth) return new Response('Unauthorized', { status: 401 })
 
-        const userTier = await getUserTier(user.id)
+        const userTier = auth.tenantId ? 'enterprise' : await getUserTier(auth.userId)
         const providerManager = createProviderManager(userTier)
 
         return new Response(

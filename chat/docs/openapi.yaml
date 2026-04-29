@@ -1,0 +1,452 @@
+openapi: 3.1.0
+info:
+  title: Remrin API
+  description: |
+    The Remrin API is a portable, LLM-agnostic identity and relationship infrastructure layer for AI deployments.
+    It provides persistent personality (Universal Console), long-term memory (Locket System), and dynamic emotional modeling (Mood Flux).
+  version: 1.0.0
+  contact:
+    name: Sosu (James Gray)
+    url: https://remrin.ai
+
+servers:
+  - url: https://remrin.ai/api/v1
+    description: Production server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
+      description: |
+        Production keys start with `rmrn_pk_`.
+        Sandbox keys start with `rmrn_sk_`.
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Invalid API key"
+
+    MessageRole:
+      type: string
+      enum: [user, assistant, system, tool]
+
+    ChatMessage:
+      type: object
+      required: [role, content]
+      properties:
+        role:
+          $ref: '#/components/schemas/MessageRole'
+        content:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        tool_call_id:
+          type: string
+
+    ChatRequest:
+      type: object
+      required: [messages, personaId]
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChatMessage'
+        personaId:
+          type: string
+          format: uuid
+        systemPrompt:
+          type: string
+        preferredProvider:
+          type: string
+          example: "openai"
+        llm_model:
+          type: string
+          example: "gpt-4o"
+        llm_provider:
+          type: string
+          example: "openai"
+
+    Persona:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        system_prompt:
+          type: string
+        config:
+          type: object
+        safety_level:
+          type: string
+        guardian_truths:
+          type: object
+
+    Locket:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        persona_id:
+          type: string
+          format: uuid
+        content:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    MemoryResult:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        content:
+          type: string
+        similarity:
+          type: number
+        source:
+          type: string
+          enum: [memory, locket]
+
+    Relationship:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        tenant_id:
+          type: string
+          format: uuid
+        user_a:
+          type: string
+          format: uuid
+        user_b:
+          type: string
+          format: uuid
+        relationship_type:
+          type: string
+          enum: [sibling, guardian_child, teacher_student, peer, care_team, custom]
+        direction:
+          type: string
+          enum: [symmetric, a_to_b, b_to_a]
+        permission_matrix:
+          type: object
+          description: Controls which locket classifications are readable across this relationship boundary. 'private' is always 'none'.
+          properties:
+            private:
+              type: string
+              enum: [none]
+            academic:
+              type: string
+              enum: [none, a_to_b, b_to_a, symmetric]
+            safety_critical:
+              type: string
+              enum: [none, broadcast_all, symmetric]
+            emotional_state:
+              type: string
+              enum: [none, symmetric]
+            institutional:
+              type: string
+              enum: [none, aggregate_only]
+        created_at:
+          type: string
+          format: date-time
+
+  responses:
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Not Found
+    RateLimit:
+      description: Too Many Requests
+      headers:
+        X-RateLimit-Limit:
+          schema:
+            type: integer
+        X-RateLimit-Remaining:
+          schema:
+            type: integer
+        X-RateLimit-Reset:
+          schema:
+            type: integer
+
+security:
+  - bearerAuth: []
+
+paths:
+  /chat/completions:
+    post:
+      summary: Chat Completions
+      description: Wraps the canonical R.E.M. Engine. Returns a Server-Sent Events (SSE) stream.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+      responses:
+        '200':
+          description: Successful stream
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                example: "data: {\"content\": \"Hello!\"}\n\ndata: [DONE]\n\n"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+
+  /sandbox/provision:
+    post:
+      summary: Provision Sandbox
+      description: |
+        Creates a temporary sandbox tenant with seeded test data (persona, lockets, history).
+        Returns a sandbox API key (`rmrn_sk_`) with a 30-day TTL.
+      security:
+        - [] # Public or session-based access depending on deployment
+      responses:
+        '200':
+          description: Sandbox provisioned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  apiKey:
+                    type: string
+                    example: "rmrn_sk_..."
+                  tenant:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      slug:
+                        type: string
+                  persona:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      name:
+                        type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+
+  /persona/{id}:
+    get:
+      summary: Get Persona Config
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Persona configuration
+          content:
+            application/json:
+              schema:
+                properties:
+                  persona:
+                    $ref: '#/components/schemas/Persona'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /locket/store:
+    post:
+      summary: Save Locket Truth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [personaId, content]
+              properties:
+                personaId:
+                  type: string
+                  format: uuid
+                content:
+                  type: string
+      responses:
+        '200':
+          description: Saved successfully
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                  locket:
+                    $ref: '#/components/schemas/Locket'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /locket/retrieve:
+    get:
+      summary: Get Locket Truths
+      parameters:
+        - name: personaId
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of truths
+          content:
+            application/json:
+              schema:
+                properties:
+                  lockets:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Locket'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /memories/search:
+    post:
+      summary: Semantic Memory Search
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [query, personaId]
+              properties:
+                query:
+                  type: string
+                personaId:
+                  type: string
+                  format: uuid
+                limit:
+                  type: integer
+                  default: 5
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MemoryResult'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /relationships/create:
+    post:
+      summary: Create User Relationship
+      description: |
+        Links two users within the same tenant with a typed relationship and permission matrix.
+        The permission matrix controls which Locket classifications are visible across the
+        relationship boundary. The `private` classification is always `none` (never shared).
+        Sandbox keys are not permitted to create relationships.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userA, userB, relationshipType]
+              properties:
+                userA:
+                  type: string
+                  format: uuid
+                userB:
+                  type: string
+                  format: uuid
+                relationshipType:
+                  type: string
+                  enum: [sibling, guardian_child, teacher_student, peer, care_team, custom]
+                direction:
+                  type: string
+                  enum: [symmetric, a_to_b, b_to_a]
+                  default: symmetric
+                permissionMatrix:
+                  $ref: '#/components/schemas/Relationship/properties/permission_matrix'
+      responses:
+        '200':
+          description: Relationship created
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                  relationship:
+                    $ref: '#/components/schemas/Relationship'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          description: Relationship already exists
+
+  /relationships/list:
+    get:
+      summary: List User Relationships
+      description: Returns all relationships for a given user within the authenticated tenant.
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of relationships
+          content:
+            application/json:
+              schema:
+                properties:
+                  relationships:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Relationship'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
