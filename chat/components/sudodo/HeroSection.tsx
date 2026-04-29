@@ -11,7 +11,7 @@ export default function HeroSection() {
       <div className="hero-content">
         <div className="hero-badge">
           <span className="badge-dot"></span>
-          The only Linux resource you'll ever need
+          The only Linux resource you&apos;ll ever need
         </div>
         <h1>
           <span className="line1">Everything Linux.</span>

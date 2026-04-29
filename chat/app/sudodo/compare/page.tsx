@@ -50,7 +50,7 @@ export default function DistroComparePage() {
       
       <div className="compare-header">
         <div className="ch-inner">
-          <div className="page-tag">// Distro-Battle · Side-by-Side Arena</div>
+          <div className="page-tag">{'// Distro-Battle · Side-by-Side Arena'}</div>
           <h1 className="page-title">Compare<br />Distributions</h1>
           <p className="page-sub">Match any two distros against your Digital Passport and hardware profile.</p>
         </div>
@@ -96,7 +96,7 @@ export default function DistroComparePage() {
           {renderMetric('Freshness', 'Cutting Edge', 'Stable')}
           {renderMetric('Package Manager', 'dnf', 'apt')}
           
-          <div className="c-section-header">// Hardware Compatibility (From Passport)</div>
+          <div className="c-section-header">{'// Hardware Compatibility (From Passport)'}</div>
           {renderMetric('NVIDIA Drivers', 'Experimental', 'Native Support', 'equal')}
           {renderMetric('Power Management', 'Good', 'Excellent', 'equal')}
           {renderMetric('Kernel Version', '6.8+', '6.5 (LTS)', 'higher')}
@@ -110,7 +110,7 @@ export default function DistroComparePage() {
         <div className="dodo-verdict-box glass">
            <div className="dv-header">
               <span className="dv-icon">🐧</span>
-              <h3>The Dodo's AI Verdict</h3>
+              <h3>The Dodo&apos;s AI Verdict</h3>
            </div>
            <p>Based on your <strong>Digital Passport</strong> and <strong>NVIDIA GPU</strong>, {distroB?.name.replace('r/', '')} is the calculated winner due to its superior proprietary driver handles. However, {distroA?.name.replace('r/', '')} wins for development work requiring kernel 6.8+.</p>
            <button className="btn-primary">Generate Nuanced Report</button>

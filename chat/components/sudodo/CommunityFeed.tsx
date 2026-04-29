@@ -3,9 +3,9 @@ import React from 'react';
 export default function CommunityFeed() {
   return (
     <section id="community">
-      <span className="section-tag">// community</span>
+      <span className="section-tag">{'// community'}</span>
       <h2 className="section-title">The Linux Community,<br />Centralized at Last</h2>
-      <p className="section-sub">Every distro's community in one place. Find answers faster, share solutions, and never feel alone on your Linux journey.</p>
+      <p className="section-sub">Every distro&apos;s community in one place. Find answers faster, share solutions, and never feel alone on your Linux journey.</p>
 
       <div className="community-grid">
         <div className="comm-card">
@@ -30,7 +30,7 @@ export default function CommunityFeed() {
           <div className="forum-post">
             <div className="fp-avatar i-green">🐧</div>
             <div className="fp-content">
-              <div className="fp-title"><span className="fp-tag tag-new">NEW</span> I switched from Windows after 20 years — here's my week 1 report</div>
+              <div className="fp-title"><span className="fp-tag tag-new">NEW</span> I switched from Windows after 20 years — here&apos;s my week 1 report</div>
               <div className="fp-meta">beginners · 1h ago · 341 views · 12 replies</div>
             </div>
           </div>

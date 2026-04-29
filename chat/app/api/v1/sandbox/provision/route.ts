@@ -108,14 +108,6 @@ export async function POST(request: NextRequest) {
                 }
             ])
 
-        // 5. Seed Initial Memories (History)
-        // Note: In a real system, we'd generate embeddings for these. 
-        // For a simple seed, we might just skip the embeddings or generate them if possible.
-        // I'll skip embeddings for now as it's complex for a seed script without an LLM call here.
-        // Actually, retrieveMemories uses match_memories_v3 which requires embeddings.
-        // I'll leave a note or just omit history for now unless specifically required to be functional.
-        // Functional history requires embeddings.
-
         return NextResponse.json({
             success: true,
             apiKey: rawKey,

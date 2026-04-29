@@ -7,7 +7,7 @@ export default function AIWizard() {
 
   return (
     <section id="wizard">
-      <span className="section-tag">// ai-powered</span>
+      <span className="section-tag">{'// ai-powered'}</span>
       <h2 className="section-title">Find Your Perfect Distro<br />in 60 Seconds</h2>
       <p className="section-sub">Answer a few questions. Our AI analyzes 600+ distros and your exact hardware to give you a personalized recommendation — not just &quot;try Ubuntu.&quot;</p>
 
@@ -21,7 +21,7 @@ export default function AIWizard() {
             </div>
           </div>
           <div className="wizard-body">
-            <div className="wizard-question">What's your primary use case for this Linux install?</div>
+            <div className="wizard-question">What&apos;s your primary use case for this Linux install?</div>
             <div className="wizard-options">
               {['Gaming', 'Development', 'Creative Work', 'Privacy / Security', 'Office / Productivity', 'Home Server'].map((opt) => (
                 <div 

@@ -107,7 +107,7 @@ export default function DistroCommunityPage() {
           </div>
 
           <div className="widget">
-            <div className="widget-header">// HARDWARE INFO</div>
+            <div className="widget-header">{'// HARDWARE INFO'}</div>
              <div className="sw-body">
                 <div className="hw-signal">
                   <span className="hw-label">NVIDIA Support</span>

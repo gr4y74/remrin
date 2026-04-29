@@ -18,7 +18,7 @@ export default function DistroShowcase() {
 
   return (
     <section id="distros">
-      <span className="section-tag">// distro-database</span>
+      <span className="section-tag">{'// distro-database'}</span>
       <h2 className="section-title">All Your Favourite Distros,<br />In One Place</h2>
       <p className="section-sub">Live tracking with real release data, not cached from 2009.</p>
 

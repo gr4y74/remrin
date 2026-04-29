@@ -26,7 +26,7 @@ export default function RankingsPage() {
       
       <div className="page-header">
         <div className="header-inner">
-          <span className="page-tag">// distro-rankings · live data</span>
+          <span className="page-tag">{'// distro-rankings · live data'}</span>
           <div className="page-title">The Real Linux<br />Distro Rankings</div>
           <p className="page-sub">Ranked by actual user installs, community activity, forum posts, tutorial views, and satisfaction scores.</p>
         </div>

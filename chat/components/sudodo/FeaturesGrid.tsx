@@ -3,9 +3,9 @@ import React from 'react';
 export default function FeaturesGrid() {
   return (
     <section id="features">
-      <span className="section-tag">// platform-overview</span>
+      <span className="section-tag">{'// platform-overview'}</span>
       <h2 className="section-title">Everything Linux Needs<br />Lives Here Now</h2>
-      <p className="section-sub">We're replacing 12 scattered resources with one beautifully designed platform built for the modern Linux user.</p>
+      <p className="section-sub">We&apos;re replacing 12 scattered resources with one beautifully designed platform built for the modern Linux user.</p>
 
       <div className="features-grid">
         <div className="feature-card visible">
