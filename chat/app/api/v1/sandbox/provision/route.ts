@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
         // We allow session-based users to provision sandboxes, 
         // but we can fall back to a valid System Admin ID for anonymous developers.
         const auth = await authenticateRequest(request)
-        const ownerId = auth?.userId || '2fbd5597-0c2a-4cd6-8dc4-db8cbf19d73d' // Valid System Admin ID
+        const ownerId = auth?.userId || '2059bfbd-a3aa-4300-ac04-8ee379573da9' // Valid System Owner ID
 
         const supabase = createAdminClient()
 
