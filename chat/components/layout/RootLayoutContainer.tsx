@@ -40,10 +40,14 @@ export function RootLayoutContainer({ children, user }: RootLayoutContainerProps
     // ── ISOLATION PATH: AOL Messenger ──
     // This remains in the platform tree but needs standalone UI.
     const isAolMessenger = pathname?.includes('/aol/messenger')
+    const isDeveloperPortal = pathname?.includes('/developers')
 
-    if (isAolMessenger) {
+    if (isAolMessenger || isDeveloperPortal) {
         return (
-            <div className="flex min-h-screen w-full theme-romrin dark">
+            <div className={cn(
+                "flex min-h-screen w-full overflow-x-hidden",
+                isAolMessenger ? "theme-romrin dark" : "bg-[#191724]"
+            )}>
                 <GlobalState>
                     <main className="flex-1 w-full overflow-hidden">
                         {children}

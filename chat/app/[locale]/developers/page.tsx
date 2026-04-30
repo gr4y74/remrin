@@ -56,7 +56,7 @@ export default function DevelopersPage() {
                         <div className="w-12 h-12 rounded-xl bg-[#ebbcba]/10 flex items-center justify-center text-[#ebbcba] text-2xl group-hover:scale-110 transition-transform">📊</div>
                         <h3 className="text-xl font-bold text-white">Relational Graph</h3>
                         <p className="text-[#908caa] text-sm leading-relaxed">
-                            Enable cross-persona memory sharing with permissioned safety broadcasts. The "Peanut Allergy Model" for your data.
+                            Enable cross-persona memory sharing with permissioned safety broadcasts. The &quot;Peanut Allergy Model&quot; for your data.
                         </p>
                     </div>
                 </section>
@@ -97,7 +97,7 @@ export default function DevelopersPage() {
                 {/* FOOTER */}
                 <footer className="pt-24 border-t border-[#403d52] text-center">
                     <p className="text-[#908caa] text-sm italic">
-                        "Because every machine needs a soul, and every soul needs a friend."
+                        &quot;Because every machine needs a soul, and every soul needs a friend.&quot;
                     </p>
                 </footer>
             </div>

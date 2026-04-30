@@ -5,7 +5,7 @@ import i18nConfig from "./i18nConfig"
 
 export async function middleware(request: NextRequest) {
   // Skip i18n and heavy auth for isolated projects and api
-  const isolatedPaths = ['/api', '/game', '/rem', '/sudodo'];
+  const isolatedPaths = ['/api', '/game', '/rem', '/sudodo', '/developers'];
   if (isolatedPaths.some(path => request.nextUrl.pathname.startsWith(path))) {
     return NextResponse.next()
   }
