@@ -19,7 +19,6 @@
     line-height: 1.7;
   }
 
-  /* ---- Background grid ---- */
   body::before {
     content: '';
     position: fixed;
@@ -40,7 +39,7 @@
     padding: 3rem 2rem 5rem;
   }
 
-  /* ---- Header ---- */
+  /* HEADER */
   .header {
     display: flex;
     flex-direction: column;
@@ -65,11 +64,7 @@
     overflow: hidden;
   }
 
-  .logo-wrap img {
-    width: 80px;
-    height: 80px;
-    object-fit: contain;
-  }
+  .logo-wrap img { width: 80px; height: 80px; object-fit: contain; }
 
   .brand-badge {
     font-size: 11px;
@@ -80,25 +75,11 @@
     margin-bottom: 0.6rem;
   }
 
-  h1 {
-    font-size: 36px;
-    font-weight: 900;
-    color: #fff;
-    margin-bottom: 0.4rem;
-    letter-spacing: -0.01em;
-  }
+  h1 { font-size: 36px; font-weight: 900; color: #fff; margin-bottom: 0.4rem; }
+  h1 span { color: #e90074; }
+  .header-sub { font-size: 15px; color: #888; margin-top: 0.25rem; }
 
-  h1 span {
-    color: #e90074;
-  }
-
-  .header-sub {
-    font-size: 15px;
-    color: #888;
-    margin-top: 0.25rem;
-  }
-
-  /* ---- Greeting card ---- */
+  /* GREETING */
   .greeting {
     background: rgba(233,0,116,0.06);
     border: 1px solid rgba(233,0,116,0.2);
@@ -109,10 +90,9 @@
     line-height: 2;
     color: #d0d0e0;
   }
-
   .greeting strong { color: #fff; }
 
-  /* ---- Section ---- */
+  /* SECTION */
   .section { margin-bottom: 3rem; }
 
   .section-label {
@@ -122,82 +102,203 @@
     flex-direction: row-reverse;
     margin-bottom: 1.5rem;
   }
-
   .section-label .icon { font-size: 22px; }
+  h2 { font-size: 22px; font-weight: 700; color: #fff; }
+  .divider { flex: 1; height: 1px; background: linear-gradient(to left, rgba(233,0,116,0.3), transparent); }
 
-  h2 {
-    font-size: 22px;
-    font-weight: 700;
-    color: #fff;
-  }
-
-  .divider {
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(to left, rgba(233,0,116,0.3), transparent);
-  }
-
-  /* ---- Site cards ---- */
+  /* SITE CARDS */
   .site-card {
     background: rgba(255,255,255,0.03);
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: 16px;
-    padding: 1.25rem 1.5rem;
+    padding: 1.5rem 1.75rem;
     margin-bottom: 1rem;
-    display: flex;
-    flex-direction: row-reverse;
-    gap: 16px;
-    align-items: flex-start;
     transition: border-color 0.2s;
   }
-
   .site-card:hover { border-color: rgba(233,0,116,0.35); }
 
-  .site-icon { font-size: 32px; flex-shrink: 0; padding-top: 2px; }
-
-  .site-title {
-    font-size: 17px;
-    font-weight: 700;
-    color: #fff;
-    margin-bottom: 4px;
+  .card-header {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 1rem;
   }
+  .site-icon { font-size: 32px; flex-shrink: 0; padding-top: 2px; }
+  .site-title { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .site-desc { font-size: 14px; line-height: 1.85; color: #aaa; }
 
-  .site-url {
-    display: block;
+  /* BIG LINK BUTTON */
+  .link-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+    background: rgba(233,0,116,0.12);
+    border: 1.5px solid rgba(233,0,116,0.45);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-top: 14px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .link-btn:hover {
+    background: rgba(233,0,116,0.22);
+    border-color: rgba(233,0,116,0.75);
+  }
+  .link-btn-text {
+    font-size: 15px;
+    font-weight: 700;
+    color: #ff70b8;
+  }
+  .link-btn-url {
     font-family: 'Courier New', monospace;
     font-size: 12px;
     color: #e90074;
     direction: ltr;
-    text-align: left;
-    margin-bottom: 10px;
-    opacity: 0.8;
+    opacity: 0.75;
+  }
+  .link-arrow {
+    font-size: 22px;
+    color: #e90074;
+    flex-shrink: 0;
+    margin-right: 4px;
   }
 
-  .site-desc {
-    font-size: 14px;
-    line-height: 1.85;
-    color: #aaa;
-  }
-
-  .char-chips {
+  /* CHARACTER LINKS */
+  .char-links {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 8px;
-    margin-top: 12px;
+    margin-top: 14px;
+  }
+
+  .char-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 11px 16px;
+    text-decoration: none;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .char-link:hover {
+    background: rgba(233,0,116,0.1);
+    border-color: rgba(233,0,116,0.35);
+  }
+  .char-link-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #e0d0e8;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     flex-direction: row-reverse;
   }
-
-  .chip {
-    background: rgba(233,0,116,0.1);
-    border: 1px solid rgba(233,0,116,0.25);
+  .char-emoji { font-size: 20px; }
+  .char-link-arrow { font-size: 18px; color: #e90074; opacity: 0.7; }
+  .char-favorite {
+    font-size: 11px;
+    background: rgba(233,0,116,0.2);
+    border: 1px solid rgba(233,0,116,0.4);
     border-radius: 20px;
-    padding: 4px 14px;
-    font-size: 13px;
+    padding: 2px 10px;
+    color: #ff80c0;
     font-weight: 600;
-    color: #e0a0c0;
   }
 
-  /* ---- Note box ---- */
+  /* CREDENTIALS BOX */
+  .creds-box {
+    background: rgba(20,60,40,0.3);
+    border: 1.5px solid rgba(30,180,100,0.3);
+    border-radius: 14px;
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 1.25rem;
+  }
+  .creds-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #70c898;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-direction: row-reverse;
+  }
+  .cred-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .cred-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .cred-label {
+    font-size: 13px;
+    color: #80a890;
+    font-weight: 600;
+  }
+  .cred-value {
+    font-family: 'Courier New', monospace;
+    font-size: 15px;
+    color: #a0f0c0;
+    direction: ltr;
+    background: rgba(0,0,0,0.3);
+    padding: 5px 12px;
+    border-radius: 8px;
+    letter-spacing: 0.02em;
+    font-weight: 700;
+  }
+
+  /* PILLAR GRID */
+  .pillar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+  .pillar {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    padding: 1.25rem;
+    text-align: right;
+  }
+  .pillar-icon { font-size: 28px; margin-bottom: 10px; display: block; }
+  .pillar-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .pillar-desc { font-size: 13px; color: #888; line-height: 1.7; }
+
+  /* EXPLAINER */
+  .explainer {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 1.25rem;
+  }
+  .explainer p { font-size: 15px; color: #bbb; line-height: 1.9; margin-bottom: 0.8rem; }
+  .explainer p:last-child { margin-bottom: 0; }
+  .explainer strong { color: #e0e0f0; }
+  .explainer em { color: #e90074; font-style: normal; }
+
+  /* GREEN CARD */
+  .card-green {
+    background: rgba(15,110,86,0.08);
+    border: 1px solid rgba(15,110,86,0.25);
+    border-radius: 16px;
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 1.25rem;
+  }
+  .card-green p { font-size: 15px; color: #90c8b0; line-height: 1.9; margin-bottom: 0.7rem; }
+  .card-green p:last-child { margin-bottom: 0; }
+  .card-green strong { color: #e0f0e8; }
+
+  /* NOTE */
   .note {
     background: rgba(255,200,0,0.05);
     border: 1px solid rgba(255,200,0,0.18);
@@ -209,54 +310,7 @@
     margin-top: 1rem;
   }
 
-  /* ---- Pillar grid ---- */
-  .pillar-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 12px;
-    margin-bottom: 1.5rem;
-  }
-
-  .pillar {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 14px;
-    padding: 1.25rem;
-    text-align: right;
-  }
-
-  .pillar-icon { font-size: 28px; margin-bottom: 10px; display: block; }
-  .pillar-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 6px; }
-  .pillar-desc { font-size: 13px; color: #888; line-height: 1.7; }
-
-  /* ---- Explainer card ---- */
-  .explainer {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 16px;
-    padding: 1.5rem 1.75rem;
-    margin-bottom: 1.25rem;
-  }
-
-  .explainer p { font-size: 15px; color: #bbb; line-height: 1.9; margin-bottom: 0.8rem; }
-  .explainer p:last-child { margin-bottom: 0; }
-  .explainer strong { color: #e0e0f0; }
-  .explainer em { color: #e90074; font-style: normal; }
-
-  /* ---- Green accent card ---- */
-  .card-green {
-    background: rgba(15,110,86,0.08);
-    border: 1px solid rgba(15,110,86,0.25);
-    border-radius: 16px;
-    padding: 1.5rem 1.75rem;
-    margin-bottom: 1.25rem;
-  }
-
-  .card-green p { font-size: 15px; color: #90c8b0; line-height: 1.9; margin-bottom: 0.7rem; }
-  .card-green p:last-child { margin-bottom: 0; }
-  .card-green strong { color: #e0f0e8; }
-
-  /* ---- Signature ---- */
+  /* SIGNATURE */
   .sig {
     margin-top: 3rem;
     padding-top: 2rem;
@@ -266,7 +320,6 @@
     line-height: 2;
     text-align: center;
   }
-
   .sig strong { color: #e90074; font-size: 17px; font-weight: 700; }
 </style>
 </head>
@@ -289,46 +342,122 @@
     كنت عايز أشاركك وأشارك والدك بعض الروابط والمعلومات عن مشروعي في الذكاء الاصطناعي. الكلام ده فيه شرح بسيط لكل حاجة من غير تعقيد، علشان الفكرة توصل صح.
   </div>
 
+  <!-- DEMO CREDENTIALS -->
+  <div class="section">
+    <div class="section-label">
+      <span class="icon">🔑</span>
+      <h2>بيانات الدخول التجريبي</h2>
+      <div class="divider"></div>
+    </div>
+
+    <div class="creds-box">
+      <div class="creds-title">
+        <span>🟢</span>
+        <span>ادخل بالبيانات دي علشان تجرب كل حاجة مجاناً</span>
+      </div>
+      <div class="cred-row">
+        <div class="cred-label">📧 البريد الإلكتروني</div>
+        <div class="cred-value">jwgr4y@gmail.com</div>
+      </div>
+      <div class="cred-row">
+        <div class="cred-label">🔒 كلمة السر</div>
+        <div class="cred-value">Cheyenne2439!</div>
+      </div>
+    </div>
+  </div>
+
   <!-- SITES SECTION -->
   <div class="section">
     <div class="section-label">
       <span class="icon">🌐</span>
-      <h2>المواقع — اتفرج بنفسك</h2>
+      <h2>المواقع — اضغط وادخل مباشرة</h2>
       <div class="divider"></div>
     </div>
 
+    <!-- Characters site -->
     <div class="site-card">
-      <div class="site-icon">🎭</div>
-      <div class="site-content">
-        <div class="site-title">موقع الشخصيات</div>
-        <span class="site-url">remrin-chat.vercel.app</span>
-        <div class="site-desc">ده بيوضّح إزاي الذكاء الاصطناعي بتاعي قادر يتحول بين شخصيات مختلفة خالص — زي ما الممثل بيلعب أدوار متنوعة. كل شخصية عندها شخصيتها وأسلوبها وإحساسها الخاص. ممكن تكلمهم بالعربي أو الإنجليزي براحتك.</div>
-        <div class="char-chips">
-          <span class="chip">Cupcake 🧁</span>
-          <span class="chip">Tucup Shakur 🍵</span>
-          <span class="chip">Fen 🌿</span>
-          <span class="chip">Sui 💧</span>
-          <span class="chip">Mother of Souls 🌑</span>
+      <div class="card-header">
+        <div class="site-icon">🎭</div>
+        <div>
+          <div class="site-title">موقع الشخصيات</div>
+          <div class="site-desc">ده بيوضّح إزاي الذكاء الاصطناعي بتاعي قادر يتحول بين شخصيات مختلفة خالص — كل شخصية عندها شخصيتها وأسلوبها الخاص. ممكن تكلمهم بالعربي أو الإنجليزي براحتك.</div>
         </div>
       </div>
-    </div>
 
-    <div class="site-card">
-      <div class="site-icon">💬</div>
-      <div class="site-content">
-        <div class="site-title">كوكبيت ريمرين — زي ChatGPT بس أقوى</div>
-        <span class="site-url">remrin-chat.vercel.app/rem</span>
-        <div class="site-desc">لو حبّيت تجرب الذكاء الاصطناعي من غير شخصيات، ادخل هنا. تقدر تتكلم معاه عادي زي أي ذكاء اصطناعي تاني — زي ChatGPT أو Gemini — بس ده شغّال بمحرك مختلف تماماً بنيته أنا بنفسي.</div>
+      <a href="https://remrin-chat.vercel.app" target="_blank" class="link-btn">
+        <span class="link-arrow">←</span>
+        <div>
+          <div class="link-btn-text">افتح موقع الشخصيات</div>
+          <div class="link-btn-url">remrin-chat.vercel.app</div>
+        </div>
+      </a>
+
+      <div class="char-links">
+        <a href="https://remrin-chat.vercel.app/a94e8946-69ea-4ebc-b3a4-13c94d5db17b/chat?persona=kess" target="_blank" class="char-link">
+          <span class="char-link-arrow">←</span>
+          <span class="char-link-name">
+            <span class="char-emoji">✨</span>
+            <span>Kess</span>
+            <span class="char-favorite">المفضّلة عند موسى</span>
+          </span>
+        </a>
+        <a href="https://remrin-chat.vercel.app/a94e8946-69ea-4ebc-b3a4-13c94d5db17b/chat?persona=ff10d110-542c-4f44-a380-beb27ee3445f" target="_blank" class="char-link">
+          <span class="char-link-arrow">←</span>
+          <span class="char-link-name"><span class="char-emoji">🧁</span><span>Cupcake</span></span>
+        </a>
+        <a href="https://remrin-chat.vercel.app/character/932ccbb4-a07d-46c4-9c44-2560f2eb4e8a" target="_blank" class="char-link">
+          <span class="char-link-arrow">←</span>
+          <span class="char-link-name"><span class="char-emoji">🌿</span><span>Fen</span></span>
+        </a>
+        <a href="https://remrin-chat.vercel.app/a94e8946-69ea-4ebc-b3a4-13c94d5db17b/chat?persona=f9ea462d-52dd-4c48-a8e3-f535d75d934b" target="_blank" class="char-link">
+          <span class="char-link-arrow">←</span>
+          <span class="char-link-name"><span class="char-emoji">🍵</span><span>Tucup Shakur</span></span>
+        </a>
+        <a href="https://remrin-chat.vercel.app/a94e8946-69ea-4ebc-b3a4-13c94d5db17b/chat?persona=48b99c9f-b708-4ee0-9436-e34dbd0e69ef" target="_blank" class="char-link">
+          <span class="char-link-arrow">←</span>
+          <span class="char-link-name"><span class="char-emoji">💧</span><span>Sui</span></span>
+        </a>
+        <a href="https://remrin-chat.vercel.app/character/a0000000-0000-0000-0000-000000000001" target="_blank" class="char-link">
+          <span class="char-link-arrow">←</span>
+          <span class="char-link-name"><span class="char-emoji">🌑</span><span>Mother of Souls</span></span>
+        </a>
       </div>
     </div>
 
+    <!-- Cockpit -->
     <div class="site-card">
-      <div class="site-icon">🎮</div>
-      <div class="site-content">
-        <div class="site-title">اللعبة — ذكاء اصطناعي بيخدعك!</div>
-        <span class="site-url">remrin-chat.vercel.app/game</span>
-        <div class="site-desc">ده مثال مختلف جداً — بدل ما الذكاء الاصطناعي يساعدك، برمجته يحاول يخدعك ويهزمك! الهدف إنه يوضّح إن التكنولوجيا بتاعتي مش بس لمساعدة الناس، لكنها مرنة جداً وتقدر تتوظّف في أي حاجة — ألعاب، تعليم، ترفيه، أي حاجة.</div>
+      <div class="card-header">
+        <div class="site-icon">💬</div>
+        <div>
+          <div class="site-title">كوكبيت ريمرين — زي ChatGPT بس أقوى</div>
+          <div class="site-desc">لو حبّيت تجرب الذكاء الاصطناعي من غير شخصيات، ادخل هنا. تقدر تتكلم معاه عادي زي أي ذكاء اصطناعي تاني، بس شغّال بمحرك مختلف تماماً بنيته أنا بنفسي.</div>
+        </div>
       </div>
+      <a href="https://remrin-chat.vercel.app/rem" target="_blank" class="link-btn">
+        <span class="link-arrow">←</span>
+        <div>
+          <div class="link-btn-text">افتح الكوكبيت</div>
+          <div class="link-btn-url">remrin-chat.vercel.app/rem</div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Game -->
+    <div class="site-card">
+      <div class="card-header">
+        <div class="site-icon">🎮</div>
+        <div>
+          <div class="site-title">اللعبة — ذكاء اصطناعي بيخدعك!</div>
+          <div class="site-desc">بدل ما الذكاء الاصطناعي يساعدك، برمجته يحاول يخدعك ويهزمك! الهدف إنه يوضّح إن التكنولوجيا بتاعتي مرنة جداً وتقدر تتوظّف في أي حاجة — ألعاب، تعليم، ترفيه.</div>
+        </div>
+      </div>
+      <a href="https://remrin-chat.vercel.app/game" target="_blank" class="link-btn">
+        <span class="link-arrow">←</span>
+        <div>
+          <div class="link-btn-text">العب اللعبة</div>
+          <div class="link-btn-url">remrin-chat.vercel.app/game</div>
+        </div>
+      </a>
     </div>
 
     <div class="note">
@@ -373,7 +502,7 @@
     </div>
   </div>
 
-  <!-- BUSINESS SECTION -->
+  <!-- BUSINESS -->
   <div class="section">
     <div class="section-label">
       <span class="icon">💡</span>
@@ -387,7 +516,7 @@
     </div>
 
     <div class="note">
-      🔧 <strong style="color:#e0d080;">ملاحظة شفافية:</strong> أنا بشتغل لوحدي دلوقتي، فبعض الأجزاء في الموقع الرئيسي لسه تحت التطوير. اللي بتشوفه — الشخصيات، الكوكبيت، اللعبة — ده 98% جاهز وبيوضّح التكنولوجيا بالكامل. الهدف من العرض ده إنك تشوف إيه اللي ممكن يتعمل بالمحرك ده في مجالات كتير.
+      🔧 <strong style="color:#e0d080;">ملاحظة شفافية:</strong> أنا بشتغل لوحدي دلوقتي، فبعض الأجزاء في الموقع الرئيسي لسه تحت التطوير. اللي بتشوفه — الشخصيات، الكوكبيت، اللعبة — ده 98% جاهز وبيوضّح التكنولوجيا بالكامل.
     </div>
   </div>
 
