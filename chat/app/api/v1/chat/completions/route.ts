@@ -37,6 +37,7 @@ import { buildSystemPrompt, processBrainExtraction, updateMoodState, getOrCreate
 import { LOCKET_TOOLS } from '@/lib/tools/locket-tools'
 import { getOrCreateChatSession, saveMessage } from '@/lib/chat-engine/persistence'
 import { MEMORY_TOOLS } from '@/lib/tools/memory-tools'
+import { scoreTurn } from '@/lib/ai/unimatric/scorer'
 
 export const runtime = 'nodejs' // Use Node.js runtime for streaming
 
@@ -157,10 +158,25 @@ export async function POST(request: NextRequest) {
             }
         }
 
+        let chatId: string | null = null
+        let userMessageId: string | null = null
+
         if (persona) {
             const lastUserMessage = messages.filter(m => m.role === 'user').slice(-1)[0]
             const userText = lastUserMessage?.content || ''
             let memoryBlock = ""
+
+            if (personaId) {
+                try {
+                    const adminSupabase = (await import('@/lib/supabase/server')).createAdminClient()
+                    chatId = await getOrCreateChatSession(adminSupabase, userId, personaId, { customName, workspaceId })
+                    if (lastUserMessage && lastUserMessage.role === 'user') {
+                        userMessageId = await saveMessage(adminSupabase, chatId, userId, lastUserMessage)
+                    }
+                } catch (persErr) {
+                    console.error('❌ [ChatEngine] Session persistence error:', persErr)
+                }
+            }
 
             if (userText.length > 3 && personaId) {
                 try {
@@ -176,7 +192,7 @@ export async function POST(request: NextRequest) {
 
             try {
                 const adminSupabase = (await import('@/lib/supabase/server')).createAdminClient()
-                const basePrompt = await buildSystemPrompt(adminSupabase, [persona], userId, memoryBlock, false, auth.tenantId)
+                const basePrompt = await buildSystemPrompt(adminSupabase, [persona], userId, memoryBlock, false, auth.tenantId, chatId)
                 systemPrompt = (customSystemPrompt ? `${customSystemPrompt}\n\n` : '') + basePrompt
             } catch (e: any) {
                 console.error('❌ [ChatEngine] Prompt building error:', e)
@@ -308,16 +324,10 @@ export async function POST(request: NextRequest) {
                         return roundContent
                     }
 
-                    let chatId: string | null = null
-                    let userMessageId: string | null = null
+                    // chatId and userMessageId are resolved outside the stream scope
+                    const activeChatId = chatId
+                    const activeUserMessageId = userMessageId
                     const supabase = (await import('@/lib/supabase/server')).createAdminClient() // Use admin for V1 saving to bypass user RLS
-                    if (personaId) {
-                        chatId = await getOrCreateChatSession(supabase, userId, personaId, { customName, workspaceId })
-                        const lastUserMsg = messages[messages.length - 1]
-                        if (lastUserMsg.role === 'user') {
-                            userMessageId = await saveMessage(supabase, chatId, userId, lastUserMsg)
-                        }
-                    }
 
                     const formattedMessages: ChatMessageContent[] = messages.map(msg => ({
                         role: msg.role,
@@ -337,7 +347,7 @@ export async function POST(request: NextRequest) {
                             timestamp: new Date()
                         }, providerInfo.id)
 
-                        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true, userMessageId, assistantMessageId })}\n\n`))
+                        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true, userMessageId: activeUserMessageId, assistantMessageId })}\n\n`))
                         controller.enqueue(encoder.encode(`data: [DONE]\n\n`))
 
                         // Async tasks (memories, episodes, mood, brain graph, lockets)
@@ -428,6 +438,17 @@ export async function POST(request: NextRequest) {
                                     providerConfig,
                                     episodeId || undefined
                                 )
+
+                                // 5. Unimatric Engine Scoring
+                                if (activeChatId) {
+                                    await scoreTurn({
+                                        supabase: adminSupabase,
+                                        sessionId: activeChatId,
+                                        userMessage: userText,
+                                        aiResponse: cleanContent,
+                                        turnNumber: messages.length
+                                    })
+                                }
                             })()
                         ]).catch(e => console.error('❌ [ChatEngine] Background task error:', e))
                     }

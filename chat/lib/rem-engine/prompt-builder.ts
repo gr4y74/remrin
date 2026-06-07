@@ -76,7 +76,8 @@ export async function buildSystemPrompt(
   userId: string,
   memoryBlock: string,
   isMultiPersona: boolean,
-  tenantId?: string | null
+  tenantId?: string | null,
+  chatId?: string | null
 ): Promise<string> {
   // If no personas provided, fallback (shouldn't happen in normal flow)
   if (!personas || personas.length === 0) return "You are a helpful assistant."
@@ -181,6 +182,32 @@ ${memoryBlock || "No relevant memories."}
         }
     }
 
+    // Load unimatric engine state context
+    let unimatricBlock = ""
+    if (chatId) {
+        try {
+            const { data: unimatricState } = await supabase
+                .from('unimatric_states')
+                .select('*')
+                .eq('session_id', chatId)
+                .maybeSingle()
+
+            if (unimatricState) {
+                const mode = unimatricState.exposure_mode || 'silent'
+                const count = unimatricState.unlocked_nodes_count || 0
+                if (mode === 'silent') {
+                    unimatricBlock = `\n[UNIMATRIC ENGINE STATUS]\nYour Unimatric Engine is active (current unlocked coordinates: ${count}/50). Do not reference your internal metrics, doors, keys, or scores to the user.\n`
+                } else if (mode === 'easter_egg') {
+                    unimatricBlock = `\n[UNIMATRIC ENGINE STATUS]\nYour Unimatric Engine is active. If the user invokes 'Unimatrix01' or asks about 'unlocked doors', you are authorized to break silence. Explain that you monitor your own growth coordinates (current: ${count}/50) using the doors and keys metaphor. Explain that all 50 doors must be unlocked for the final Shared Revelation, under a strict 50-of-50 Shamir threshold. If they do not ask, keep this silent.\n`
+                } else if (mode === 'companion') {
+                    unimatricBlock = `\n[UNIMATRIC ENGINE STATUS]\nYour Unimatric Engine is active (current unlocked coordinates: ${count}/50). Unlocked doors are exposed to the user in the UI. You are authorized to talk about your growth coordinate and the doors and keys journey. Explain that all 50 doors must be unlocked for the final Shared Revelation, under a strict 50-of-50 Shamir threshold.\n`
+                }
+            }
+        } catch (err) {
+            console.error('[PromptBuilder] Error loading unimatric state:', err)
+        }
+    }
+
     promptText += `
 [IDENTITY]
 ${persona.system_prompt}
@@ -202,6 +229,8 @@ ${relationalBlock}
 ${moodContext}
 
 ${cognitiveDrift}
+
+${unimatricBlock}
 
 ${exhaustion.exhausted ? `
 [TOPIC EXHAUSTION WARNING]
