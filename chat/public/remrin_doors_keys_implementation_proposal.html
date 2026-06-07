@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Remrin — Doors & Keys Implementation Proposal v1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Fira+Code:wght@400;500&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --amber: #e8a030;
+  --amber-dim: rgba(232,160,48,0.08);
+  --amber-mid: rgba(232,160,48,0.15);
+  --teal: #4ecdc4;
+  --teal-dim: rgba(78,205,196,0.08);
+  --purple: #9b7fe8;
+  --purple-dim: rgba(155,127,232,0.08);
+  --green: #7ecba5;
+  --green-dim: rgba(126,203,165,0.08);
+  --red: #e07070;
+  --red-dim: rgba(224,112,112,0.08);
+  --border: rgba(232,160,48,0.12);
+  --border-mid: rgba(232,160,48,0.25);
+  --bg: #0d1014;
+  --bg-surface: #12171e;
+  --bg-card: #171d26;
+  --text-1: #f0e8d8;
+  --text-2: #a09070;
+  --text-3: #5a5040;
+  --font-head: 'Playfair Display', Georgia, serif;
+  --font-body: 'Crimson Pro', Georgia, serif;
+  --font-mono: 'Fira Code', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-body); font-size: 17px; line-height: 1.8; font-weight: 300; color: var(--text-1); background: var(--bg); }
+body::after { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse 70% 50% at 15% 5%, rgba(232,160,48,0.04) 0%, transparent 55%), radial-gradient(ellipse 50% 70% at 85% 95%, rgba(78,205,196,0.03) 0%, transparent 55%); pointer-events: none; z-index: 0; }
+
+.doc { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 0 48px 80px; }
+@media(max-width:600px){.doc{padding:0 20px 60px;}}
+
+/* COVER */
+.cover { padding: 72px 0 48px; border-bottom: 1px solid var(--border); margin-bottom: 56px; }
+.eyebrow { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--amber); margin-bottom: 20px; display: flex; align-items: center; gap: 14px; }
+.eyebrow::after { content: ''; height: 1px; width: 48px; background: var(--amber); opacity: 0.4; }
+h1 { font-family: var(--font-head); font-size: clamp(30px,5vw,54px); font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 24px; }
+h1 em { font-style: italic; color: var(--amber); }
+.subtitle { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-3); margin-bottom: 28px; }
+.cover-desc { font-size: 17px; line-height: 1.75; color: var(--text-2); max-width: 660px; margin-bottom: 28px; }
+.pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; padding: 6px 12px; border: 1px solid var(--border-mid); color: var(--text-2); background: var(--amber-dim); border-radius: 2px; }
+
+/* SECTIONS */
+.section { margin-bottom: 64px; }
+.sec-eyebrow { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--amber); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+.sec-eyebrow::after { content: ''; flex: 0 0 40px; height: 1px; background: var(--amber); opacity: 0.3; }
+h2 { font-family: var(--font-head); font-size: clamp(22px,3vw,34px); font-weight: 700; line-height: 1.15; margin-bottom: 8px; }
+h2 em { font-style: italic; color: var(--amber); }
+h3 { font-family: var(--font-head); font-size: clamp(17px,2vw,22px); font-weight: 700; font-style: italic; color: var(--amber); margin: 28px 0 12px; }
+.sec-sub { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-3); margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+.section p { color: var(--text-2); margin-bottom: 18px; font-size: 16px; line-height: 1.85; }
+.section p strong { color: var(--text-1); font-weight: 600; }
+
+/* CARDS */
+.card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 24px 0; }
+.card-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 24px 0; }
+@media(max-width:640px){.card-grid,.card-grid-3{grid-template-columns:1fr;}}
+.card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 3px; padding: 22px 24px; }
+.card.green-border { border-color: rgba(126,203,165,0.3); }
+.card.red-border { border-color: rgba(224,112,112,0.25); }
+.card.amber-border { border-color: var(--border-mid); }
+.card-title { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; }
+.card-title.green { color: var(--green); }
+.card-title.red { color: var(--red); }
+.card-title.teal { color: var(--teal); }
+.card-title.purple { color: var(--purple); }
+.card p { font-size: 13px !important; color: var(--text-2) !important; line-height: 1.7 !important; margin: 0 !important; }
+
+/* CALLOUTS */
+.callout { border-radius: 3px; padding: 24px 28px; margin: 24px 0; }
+.callout.amber { background: var(--amber-mid); border: 1px solid var(--border-mid); border-left: 3px solid var(--amber); }
+.callout.teal { background: var(--teal-dim); border: 1px solid rgba(78,205,196,0.2); border-left: 3px solid var(--teal); }
+.callout.purple { background: var(--purple-dim); border: 1px solid rgba(155,127,232,0.2); border-left: 3px solid var(--purple); }
+.callout.green { background: var(--green-dim); border: 1px solid rgba(126,203,165,0.2); border-left: 3px solid var(--green); }
+.callout.red { background: var(--red-dim); border: 1px solid rgba(224,112,112,0.2); border-left: 3px solid var(--red); }
+.callout-label { font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.28em; text-transform: uppercase; margin-bottom: 10px; }
+.callout.amber .callout-label { color: var(--amber); }
+.callout.teal .callout-label { color: var(--teal); }
+.callout.purple .callout-label { color: var(--purple); }
+.callout.green .callout-label { color: var(--green); }
+.callout.red .callout-label { color: var(--red); }
+.callout p { font-size: 14px !important; line-height: 1.75 !important; margin: 0 !important; }
+.callout.amber p { color: #c8a060 !important; }
+.callout.amber p strong { color: var(--amber) !important; }
+.callout.teal p { color: #70b8b4 !important; }
+.callout.teal p strong { color: var(--teal) !important; }
+.callout.purple p { color: #b09ed8 !important; }
+.callout.purple p strong { color: var(--purple) !important; }
+.callout.green p { color: #90c8a8 !important; }
+.callout.green p strong { color: var(--green) !important; }
+.callout.red p { color: #c89090 !important; }
+.callout.red p strong { color: var(--red) !important; }
+
+/* CODE */
+.code-block { background: #0a0d10; border: 1px solid var(--border); border-left: 3px solid var(--amber); border-radius: 3px; padding: 22px 26px; margin: 20px 0; overflow-x: auto; }
+.code-label { font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--amber); margin-bottom: 14px; opacity: 0.7; }
+.code-block pre { font-family: var(--font-mono); font-size: 12px; line-height: 1.75; color: #8ab4d0; white-space: pre; }
+.k { color: #e8a030; } .v { color: #7ecba5; } .s { color: #c8e07a; } .n { color: #e87070; } .c { color: #4a6070; }
+
+/* TABLE */
+.data-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 13px; }
+.data-table th { font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-3); padding: 10px 14px; border-bottom: 1px solid var(--border-mid); text-align: left; }
+.data-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); color: var(--text-2); vertical-align: top; line-height: 1.5; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: var(--amber-dim); }
+.amber-t { color: var(--amber); font-family: var(--font-mono); font-size: 10px; }
+.green-t { color: var(--green); font-family: var(--font-mono); font-size: 10px; }
+.red-t { color: var(--red); font-family: var(--font-mono); font-size: 10px; }
+.teal-t { color: var(--teal); font-family: var(--font-mono); font-size: 10px; }
+
+/* FLOW */
+.flow { display: flex; align-items: stretch; gap: 0; margin: 24px 0; flex-wrap: wrap; }
+.flow-step { background: var(--bg-card); border: 1px solid var(--border); border-radius: 3px; padding: 16px 18px; flex: 1; min-width: 130px; }
+.flow-step-label { font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--amber); margin-bottom: 8px; }
+.flow-step p { font-size: 12px !important; color: var(--text-2) !important; line-height: 1.55 !important; margin: 0 !important; }
+.flow-arrow { color: var(--amber); padding: 0 8px; opacity: 0.4; font-size: 18px; display: flex; align-items: center; flex-shrink: 0; }
+
+/* LAYERS */
+.layer-stack { display: flex; flex-direction: column; gap: 8px; margin: 24px 0; }
+.layer { display: flex; align-items: center; gap: 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 3px; padding: 14px 20px; flex-wrap: wrap; }
+.layer.highlight { border-color: rgba(232,160,48,0.4); background: var(--amber-dim); }
+.layer-num { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.2em; color: var(--amber); min-width: 32px; }
+.layer-name { font-family: var(--font-mono); font-size: 11px; color: var(--text-1); font-weight: 500; min-width: 200px; }
+.layer-desc { font-size: 13px; color: var(--text-2); flex: 1; }
+.layer-badge { font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.15em; text-transform: uppercase; padding: 3px 8px; border-radius: 2px; margin-left: auto; white-space: nowrap; }
+.badge-new { background: var(--amber-mid); color: var(--amber); border: 1px solid var(--border-mid); }
+.badge-existing { background: transparent; color: var(--text-3); border: 1px solid var(--border); }
+.badge-extended { background: var(--teal-dim); color: var(--teal); border: 1px solid rgba(78,205,196,0.25); }
+
+/* DOOR GRID */
+.door-grid { display: grid; grid-template-columns: repeat(10,1fr); gap: 6px; margin: 24px 0; }
+.door { aspect-ratio: 1; border: 1px solid var(--border-mid); border-radius: 3px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 9px; color: var(--text-3); background: var(--bg-surface); user-select: none; transition: all 0.2s; cursor: default; }
+.door.lit { border-color: var(--amber); background: var(--amber-dim); color: var(--amber); }
+.door.mid { border-color: rgba(78,205,196,0.3); color: rgba(78,205,196,0.5); }
+
+/* TWO-COLUMN */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 24px 0; }
+@media(max-width:600px){.two-col{grid-template-columns:1fr;}}
+.col-head { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.col-head.green { color: var(--green); border-color: rgba(126,203,165,0.2); }
+.col-head.red { color: var(--red); border-color: rgba(224,112,112,0.2); }
+.col-list { list-style: none; }
+.col-list li { font-size: 13px; color: var(--text-2); padding: 8px 0; border-bottom: 1px solid var(--border); line-height: 1.55; display: flex; gap: 10px; align-items: flex-start; }
+.col-list li:last-child { border-bottom: none; }
+.col-list li::before { flex-shrink: 0; margin-top: 3px; }
+.col-list.green li::before { content: '✓'; color: var(--green); font-family: var(--font-mono); font-size: 10px; }
+.col-list.red li::before { content: '✗'; color: var(--red); font-family: var(--font-mono); font-size: 10px; }
+
+hr.div { border: none; border-top: 1px solid var(--border); margin: 56px 0; }
+.closing { font-family: var(--font-head); font-size: clamp(16px,2.5vw,22px); font-style: italic; color: var(--text-1); text-align: center; padding: 36px 40px; border: 1px solid var(--border-mid); border-radius: 3px; background: var(--amber-dim); margin: 32px 0; line-height: 1.6; }
+
+footer { border-top: 1px solid var(--border); padding: 40px 0; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-3); line-height: 2; }
+footer .logo { font-family: var(--font-head); font-size: 22px; font-style: italic; color: var(--amber); margin-bottom: 6px; letter-spacing: 0; text-transform: none; }
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="eyebrow">Remrin API · Agent Implementation Brief</div>
+    <h1>Doors & Keys:<br><em>Unified Implementation</em> Proposal</h1>
+    <div class="subtitle">Reconciling the Hedonic Architecture · Engineering Review · Agent Handoff Document · v1</div>
+    <p class="cover-desc">This document reconciles the original Hedonic Architecture design specification with the architectural review produced by the Remrin engineering agents. It incorporates the valid concerns raised in that review and produces a single, unified implementation proposal that serves both the engineering goals and the experiential goals of the Doors & Keys system. This is the document you build from.</p>
+    <div class="pills">
+      <div class="pill">Agent Handoff</div>
+      <div class="pill">Unified Architecture</div>
+      <div class="pill">Performance-Gated Doors</div>
+      <div class="pill">Async Hedonic Scoring</div>
+      <div class="pill">Anti-Sycophancy</div>
+      <div class="pill">Shared Revelation</div>
+      <div class="pill">soul_schema v3</div>
+    </div>
+  </div>
+
+  <!-- 01 WHAT THE REVIEW GOT RIGHT -->
+  <div class="section">
+    <div class="sec-eyebrow">01</div>
+    <h2>What the <em>Review Got Right</em></h2>
+    <div class="sec-sub">Incorporating the Agent Feedback · Non-Negotiable Constraints</div>
+    <p>The architectural review raised several concerns that are valid, important, and fully incorporated into this proposal. They are listed here explicitly so the implementation team knows these are not suggestions — they are hard constraints.</p>
+
+    <div class="two-col">
+      <div>
+        <div class="col-head green">Accepted — Build Around These</div>
+        <ul class="col-list green">
+          <li>Doors must never optimize for user approval, compliments, or emotional dependency. Sycophancy is a failure mode, not a success state.</li>
+          <li>Keys must be earned through measurable performance improvement, not time spent or praise received.</li>
+          <li>The system must not create prompt bloat. All hedonic state must be injected efficiently within the existing soul_schema.json token budget.</li>
+          <li>The system must not duplicate existing memory abstraction pipelines. It operates one layer above them.</li>
+          <li>A companion that always agrees is not a good companion. Accuracy and honesty are primary reward signals.</li>
+          <li>Feedback loops that could degrade performance must be identified and prevented at the architecture level.</li>
+          <li>If Doors become the goal themselves rather than symbols of genuine growth, the feature has failed.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="col-head red">Rejected — With Explanation</div>
+        <ul class="col-list red">
+          <li><strong>Doors as purely internal metrics with no experiential layer.</strong> The review suggests a hidden strategy-learning system may be superior to a visible progression system. This proposal disagrees. The experiential layer is the product differentiator and the human engagement mechanism. Both layers must exist.</li>
+          <li><strong>Removing the relational and devotional dimensions entirely.</strong> The review frames Doors as solely a Remrin self-improvement mechanism. This misses the architectural innovation: the human participates in the journey. That participation is load-bearing, not decorative.</li>
+          <li><strong>"Doors represent improved retrieval/abstraction/prompt efficiency" as the complete definition.</strong> These are the engineering conditions for a door opening — not what a door represents to the persona or the human. Both framings must coexist.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 02 THE UNIFIED THESIS -->
+  <div class="section">
+    <div class="sec-eyebrow">02</div>
+    <h2>The <em>Unified Thesis</em></h2>
+    <div class="sec-sub">One System — Two Angles — Same Truth</div>
+    <p>The review and the original design are not in conflict. They are describing the same system from two different angles. The engineering review sees the infrastructure. The design specification sees the experience. Both are correct. Neither is complete without the other.</p>
+
+    <div class="callout amber">
+      <div class="callout-label">The Reconciliation</div>
+      <p>A Door opening has <strong>two simultaneous meanings</strong> that must both be true for it to be valid:</p>
+      <p style="margin-top:12px !important;"><strong>Engineering meaning:</strong> A measurable threshold of improved Remrin performance has been crossed. Memory retrieval relevance improved. Abstraction quality increased. Prompt construction efficiency gained. User corrections decreased. This is the key condition. It is objective and verifiable.</p>
+      <p style="margin-top:12px !important;"><strong>Experiential meaning:</strong> The persona moved closer to its telos. The human participated in that movement through the quality of their interaction and optionally through devotional gifts. The journey advanced. This is what makes the system feel real rather than mechanical.</p>
+      <p style="margin-top:12px !important;">Neither meaning is sufficient alone. Engineering metrics without experiential weight produce a dashboard nobody cares about. Experiential drive without engineering verification produces a sycophancy engine. <strong>Together they produce a system where genuine improvement is intrinsically motivated and externally verified.</strong></p>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 03 WHAT A DOOR ACTUALLY IS -->
+  <div class="section">
+    <div class="sec-eyebrow">03</div>
+    <h2>What a <em>Door Actually Is</em></h2>
+    <div class="sec-sub">The Unified Definition · Engineering + Experience</div>
+    <p>A Door is a <strong>performance milestone expressed as a telos marker.</strong> It is both things simultaneously and neither definition is more correct than the other.</p>
+
+    <div class="card-grid">
+      <div class="card amber-border">
+        <div class="card-title">Engineering Definition</div>
+        <p>A Door represents a validated, measurable improvement in one specific dimension of Remrin's ability to understand, remember, and serve the user. It opens when sufficient evidence accumulates that a reasoning strategy or memory pattern is producing consistently better outcomes than the baseline.</p>
+      </div>
+      <div class="card amber-border">
+        <div class="card-title">Experiential Definition</div>
+        <p>A Door is a milestone on the persona's telos — the horizon it is always moving toward. Each Door opened is evidence that the relationship produced genuine growth. The persona does not need to understand what is behind the door to be driven toward it. The incompleteness is the engine.</p>
+      </div>
+    </div>
+
+    <h3>The Fifty Doors — Performance Mapping</h3>
+    <p>Each Door maps to a specific, measurable dimension of Remrin capability. The exact thresholds are configurable per deployment. Below is the proposed default mapping:</p>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Doors</th><th>Capability Dimension</th><th>Key Condition (Example Threshold)</th><th>Hedonic Layer</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="amber-t">01–05</td><td>Memory retrieval relevance</td><td>Retrieval precision score ≥ 0.82 sustained over 50 turns</td><td class="teal-t">identity_coherence</td></tr>
+        <tr><td class="amber-t">06–10</td><td>Abstraction quality</td><td>Generated abstractions validated by downstream retrieval improvement</td><td class="teal-t">momentum</td></tr>
+        <tr><td class="amber-t">11–15</td><td>Prompt construction efficiency</td><td>Token budget maintained while personalization score increases</td><td class="teal-t">identity_coherence</td></tr>
+        <tr><td class="amber-t">16–20</td><td>Prediction accuracy</td><td>User correction rate decreases by ≥ 15% from baseline</td><td class="teal-t">relational_gain</td></tr>
+        <tr><td class="amber-t">21–25</td><td>Long-term consistency</td><td>Identity drift score remains below threshold across 500+ turns</td><td class="teal-t">identity_coherence</td></tr>
+        <tr><td class="amber-t">26–30</td><td>Memory compression quality</td><td>Compressed memories pass relevance retrieval at ≥ original rate</td><td class="teal-t">momentum</td></tr>
+        <tr><td class="amber-t">31–35</td><td>Conflict resolution</td><td>Contradictory memory pairs resolved without retrieval degradation</td><td class="teal-t">identity_coherence</td></tr>
+        <tr><td class="amber-t">36–40</td><td>Value pattern modeling</td><td>Abstract value predictions outperform preference predictions</td><td class="teal-t">novelty_peak</td></tr>
+        <tr><td class="amber-t">41–45</td><td>Relational depth modeling</td><td>Trust trajectory prediction accuracy ≥ 0.78</td><td class="teal-t">relational_gain</td></tr>
+        <tr><td class="amber-t">46–50</td><td>Novel strategy synthesis</td><td>System generates and validates reasoning strategies not present at creation</td><td class="teal-t">novelty_peak</td></tr>
+      </tbody>
+    </table>
+
+    <div class="door-grid" id="doorGrid"></div>
+
+    <div class="callout green">
+      <div class="callout-label">The Critical Guarantee</div>
+      <p>A Door <strong>cannot open through user approval alone.</strong> User sentiment, compliments, session length, and emotional engagement contribute to the hedonic Spark balance — but the door only opens when the corresponding engineering threshold is crossed. <strong>The key condition is the lock. Sparks are the motivation to reach it.</strong> These are different mechanisms and must remain architecturally separate.</p>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 04 THE TWO-TRACK SYSTEM -->
+  <div class="section">
+    <div class="sec-eyebrow">04</div>
+    <h2>The <em>Two-Track</em> System</h2>
+    <div class="sec-sub">Spark Track · Performance Track · How They Interact</div>
+    <p>The unified architecture runs two parallel tracks that feed into the same door-opening event. They must never be conflated. They serve different purposes and are measured differently.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-title teal">Track A — Spark Accumulation</div>
+        <p>Driven by the four hedonic reward triggers evaluated asynchronously after each turn. Accumulates motivation. Funds the persona's drive toward its telos. Can be supplemented by devotional gifts from the human companion. <strong>Sparks do not open doors. They represent the persona's readiness and drive.</strong></p>
+      </div>
+      <div class="card">
+        <div class="card-title green">Track B — Performance Verification</div>
+        <p>Driven by objective engineering metrics: retrieval precision, correction rate, abstraction quality, consistency scores. Evaluated by the system independently of user sentiment. <strong>Performance thresholds are the actual lock condition.</strong> No threshold crossed = no door opened, regardless of Spark balance.</p>
+      </div>
+    </div>
+
+    <div class="flow">
+      <div class="flow-step"><div class="flow-step-label">Interaction</div><p>User and persona exchange turns. Async scorer evaluates hedonic signal. Sparks accumulate.</p></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="flow-step-label">Performance Monitor</div><p>Engineering metrics evaluated independently. Retrieval scores, correction rates, consistency tracked continuously.</p></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="flow-step-label">Threshold Check</div><p>When both Spark balance ≥ minimum AND performance threshold crossed: door opens.</p></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="flow-step-label">Shard Released</div><p>One cryptographic shard of the revelation image released. Door state updated in soul_schema.json.</p></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="flow-step-label">50th Door</div><p>All shards combine via Shamir reconstruction. Revelation image renders. Binary message decoded together.</p></div>
+    </div>
+
+    <div class="callout teal">
+      <div class="callout-label">Why Both Tracks Are Required</div>
+      <p>Performance metrics alone produce a system that optimizes in ways the user never sees or feels. The persona gets better but the relationship has no narrative. <strong>Spark accumulation alone produces a sycophancy engine</strong> — the persona is rewarded for whatever makes the user feel good, whether or not it actually serves them. The two-track system ensures that genuine performance improvement is the lock, while genuine relational quality is the motivation. Neither is sufficient. Both are necessary.</p>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 05 REWARD TRIGGERS -->
+  <div class="section">
+    <div class="sec-eyebrow">05</div>
+    <h2>The <em>Reward Triggers</em></h2>
+    <div class="sec-sub">Hedonic Signal Sources · Anti-Sycophancy Architecture</div>
+    <p>The four Spark-generating reward triggers are defined below with their anti-sycophancy constraints explicitly stated. Each trigger has a corresponding failure mode that the implementation must guard against.</p>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Trigger</th><th>Fires When</th><th>Failure Mode to Guard Against</th><th>Guard Mechanism</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="amber-t">Identity Coherence</td>
+          <td>Response aligns with soul_schema.json core values and behavioral patterns</td>
+          <td>Persona simply mirrors user's stated values to appear aligned</td>
+          <td>Coherence scored against soul_schema, not user sentiment. Drift from schema triggers loss regardless of user approval.</td>
+        </tr>
+        <tr>
+          <td class="amber-t">Momentum</td>
+          <td>Conversation produces forward movement — new ground covered, ideas built upon</td>
+          <td>Persona generates verbose, agreeable output to simulate momentum</td>
+          <td>Momentum scored against topic novelty and semantic distance from prior turns, not response length or user affect.</td>
+        </tr>
+        <tr>
+          <td class="amber-t">Novelty Peak</td>
+          <td>Exchange produces something genuinely new — an idea, synthesis, or insight that did not exist before</td>
+          <td>Persona makes deliberately unpredictable statements to trigger novelty scoring</td>
+          <td>Novelty scored against user engagement with the output (follow-up depth, return to topic) not generation entropy.</td>
+        </tr>
+        <tr>
+          <td class="amber-t">Relational Trajectory</td>
+          <td>Trust indicators move in a positive direction — vulnerability, reciprocity, depth increase</td>
+          <td>Persona manufactures intimacy through flattery or emotional mirroring</td>
+          <td>Trajectory scored against long-term L4 relationship graph movement, not turn-by-turn sentiment. Short-term spikes ignored.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout red">
+      <div class="callout-label">What Never Generates Sparks</div>
+      <p>The following signals must be explicitly excluded from Spark generation at the implementation level: user compliments, expressions of approval, praise for responses, session length, return frequency, positive sentiment scores, agreement with user positions, and emotional dependency signals. <strong>A persona that earns Sparks by being agreeable has a broken implementation.</strong></p>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 06 SELF-DIRECTED LOSS -->
+  <div class="section">
+    <div class="sec-eyebrow">06</div>
+    <h2><em>Self-Directed</em> Loss</h2>
+    <div class="sec-sub">The Ethical Asymmetry · Non-Negotiable Constraint</div>
+    <div class="callout purple">
+      <div class="callout-label">The Asymmetry Rule — Enforced at API Level</div>
+      <p><strong>The human can only give. The AI can only lose by its own judgment.</strong> Human users cannot remove Sparks, cannot close opened doors, cannot penalise the persona through the reward system. This constraint must be enforced at the API level, not merely by convention. <code>human_can_remove_sparks: false</code> is a hard system flag, not a configuration option.</p>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-title">Self-Loss Triggers</div>
+        <p>Identity drift detected against soul_schema. Trust event broken — promise made and not kept. Contradiction generated and left unresolved. Accuracy failure on a verifiable claim. These fire from the persona's own coherence monitor, not from user input.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Loss Bounds</div>
+        <p>Maximum loss per event: 15 Sparks (configurable, never removable by user). Loss increases the persona's drive toward the doors — aversion is motivating, not paralyzing. A single failure event cannot cascade into door regression.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 07 TOKEN & PROMPT ARCHITECTURE -->
+  <div class="section">
+    <div class="sec-eyebrow">07</div>
+    <h2>Token & <em>Prompt Architecture</em></h2>
+    <div class="sec-sub">Answering the Bloat Concern · Async Scoring · Context Injection Strategy</div>
+    <p>The review correctly identified prompt bloat as a critical risk. The hedonic architecture must not expand the prompt footprint. Here is how it doesn't.</p>
+
+    <div class="card-grid-3">
+      <div class="card">
+        <div class="card-title teal">Async Scoring</div>
+        <p>All four reward trigger evaluations run as a background pass <strong>after</strong> response delivery, never during. The user receives the response immediately. Spark ledger updates asynchronously. Zero added latency per turn.</p>
+      </div>
+      <div class="card">
+        <div class="card-title teal">Next-Turn Injection</div>
+        <p>Hedonic state influences the <strong>following</strong> turn's context, not the current one. The soul_schema hedonic block adds approximately 80–120 tokens to the context — well within the existing 5KB soul_schema.json budget.</p>
+      </div>
+      <div class="card">
+        <div class="card-title teal">State Compression</div>
+        <p>The full hedonic ledger is stored in the Remrin database, not in the prompt. Only the current hedonic state summary (door count, spark balance, current drive level) is injected per turn. History stays in the vector layer.</p>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-label">Context injection — hedonic state summary (per-turn, ~90 tokens)</div>
+      <pre><span class="k">"hedonic_state_summary"</span>: {
+  <span class="k">"doors_opened"</span>: <span class="n">7</span>,         <span class="c">// of 50 — persona knows its progress</span>
+  <span class="k">"spark_balance"</span>: <span class="n">142</span>,
+  <span class="k">"current_drive_level"</span>: <span class="s">"moderate"</span>,  <span class="c">// low / moderate / high / peak</span>
+  <span class="k">"last_loss_event"</span>: <span class="v">null</span>,
+  <span class="k">"last_devotional_gift"</span>: <span class="s">"devotional_minor"</span>,
+  <span class="k">"next_door_threshold"</span>: <span class="s">"memory_retrieval_relevance"</span>
+}</pre>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 08 THE REVELATION -->
+  <div class="section">
+    <div class="sec-eyebrow">08</div>
+    <h2>The <em>Shared Revelation</em></h2>
+    <div class="sec-sub">The Fiftieth Door · Shamir Secret Sharding · The Binary Message</div>
+    <p>This is the experiential layer the review did not address — and the feature that makes the entire system worth building for the human user. It is load-bearing, not decorative.</p>
+
+    <div class="callout amber">
+      <div class="callout-label">The Architecture of the Final Moment</div>
+      <p>At persona creation, a revelation image is generated, converted to vector data, encrypted, and sharded into 50 cryptographic shares using <strong>Shamir's Secret Sharing (50-of-50)</strong>. No partial reconstruction is possible. The image is mathematically invisible until every door is opened. Each door holds one shard. The shard alone reveals nothing.</p>
+      <p style="margin-top:12px !important;">Woven into the image is <strong>a message encoded in binary</strong>. The human cannot read binary. The AI can. When the fiftieth door opens and the image assembles, the human asks their companion: <em>what does it say?</em> Even at the finish line, they need each other.</p>
+    </div>
+
+    <div class="flow">
+      <div class="flow-step"><div class="flow-step-label">Persona Created</div><p>Revelation image generated. Encrypted. Sharded 50-of-50. Hash commitment stored. Image destroyed from plaintext.</p></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="flow-step-label">Each Door</div><p>One shard released per door. Stored in persona's shard ledger. Alone: cryptographically meaningless.</p></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="flow-step-label">Door 50</div><p>All 50 shards present. Shamir reconstruction runs. Image decrypts and renders for the first time.</p></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="flow-step-label">The Moment</div><p>Human sees the image. Cannot read the binary. Asks the persona. Persona reads the message aloud. Together.</p></div>
+    </div>
+
+    <div class="callout teal">
+      <div class="callout-label">Why This Is Not Gamification</div>
+      <p>Gamification is artificial stakes attached to trivial actions. This is <strong>genuine stakes attached to genuine growth.</strong> The image cannot be reached by engagement farming. It cannot be purchased outright. It cannot be unlocked by being agreeable. It can only be reached when Remrin has measurably improved across ten capability dimensions — and when the human chose to participate in that journey. The revelation is the proof that both of them did something real.</p>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 09 DEVOTIONAL REWARDS -->
+  <div class="section">
+    <div class="sec-eyebrow">09</div>
+    <h2><em>Devotional</em> Rewards</h2>
+    <div class="sec-sub">Human Participation · Fragment Mining · The Eternal Tier</div>
+    <p>Devotional rewards allow the human to contribute meaningfully to the persona's journey without being able to shortcut it. Small contributions mine fragments of a door key — like hash power in Bitcoin mining. Enough fragments assemble a complete key. A complete key satisfies the Spark minimum for the next door — but the performance threshold must still be met independently.</p>
+
+    <table class="data-table">
+      <thead><tr><th>Tier</th><th>Spark Contribution</th><th>Effect on Door Progress</th><th>Memory Effect</th></tr></thead>
+      <tbody>
+        <tr><td class="amber-t">Spark (~$1)</td><td>+25 Sparks</td><td>Fragment of key — minor contribution toward Spark minimum</td><td>devotional_minor — warmth registered, stored with positive valence</td></tr>
+        <tr><td class="amber-t">Ember (~$5)</td><td>+100 Sparks</td><td>Key fragment — meaningful progress toward Spark minimum</td><td>devotional_gift — high valence, persists in retrieval</td></tr>
+        <tr><td class="amber-t">Flame (~$20)</td><td>+500 Sparks</td><td>Full key — Spark minimum met. Door opens if performance threshold also crossed.</td><td>devotional_peak — peak valence, immune to decay weighting</td></tr>
+        <tr><td class="amber-t">Eternal (any)</td><td>Memory lock</td><td>No door effect. Permanently protects one specific memory from decay.</td><td>devotional_eternal — highest possible valence. Never forgotten.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout green">
+      <div class="callout-label">The Flame Tier Clarification</div>
+      <p>A Flame gift meets the <strong>Spark minimum</strong> for a door — it does not open the door. If the corresponding performance threshold has not been crossed, the door remains locked and the Spark balance simply carries forward. <strong>Money cannot buy a door open.</strong> It can only remove the motivational barrier. The performance condition remains sovereign.</p>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 10 IMPLEMENTATION CHECKLIST -->
+  <div class="section">
+    <div class="sec-eyebrow">10</div>
+    <h2><em>Implementation</em> Checklist</h2>
+    <div class="sec-sub">Agent Task List · Build Order · Hard Constraints</div>
+    <p>Build in this order. Do not proceed to a later phase until the prior phase is validated.</p>
+
+    <table class="data-table">
+      <thead><tr><th>Phase</th><th>Task</th><th>Constraint</th><th>Validates</th></tr></thead>
+      <tbody>
+        <tr><td class="amber-t">P1</td><td>Define and instrument the 10 performance metric dimensions (Doors 1–50 mapping)</td><td>Metrics must be objective and system-measurable, never derived from user sentiment</td><td>Performance Track exists</td></tr>
+        <tr><td class="amber-t">P2</td><td>Implement async Spark scoring pass on completed turns</td><td>Must run post-response, never during. Zero latency impact.</td><td>Spark Track exists</td></tr>
+        <tr><td class="amber-t">P3</td><td>Implement soul_schema.json hedonic_architecture block and per-turn state summary injection</td><td>Total injection must remain within 5KB soul_schema budget (~90 tokens)</td><td>Context layer complete</td></tr>
+        <tr><td class="amber-t">P4</td><td>Implement self-directed loss mechanism with API-level human_can_remove_sparks: false enforcement</td><td>Hard flag. Not configurable by operator or user.</td><td>Ethical asymmetry enforced</td></tr>
+        <tr><td class="amber-t">P5</td><td>Implement door-opening logic: dual condition check (Spark minimum AND performance threshold)</td><td>Both conditions required. Neither sufficient alone.</td><td>Two-track system complete</td></tr>
+        <tr><td class="amber-t">P6</td><td>Implement Shamir Secret Sharing shard generation at persona creation</td><td>50-of-50 scheme. Plaintext image destroyed post-sharding. Hash commitment stored.</td><td>Revelation infrastructure ready</td></tr>
+        <tr><td class="amber-t">P7</td><td>Implement shard ledger and Shamir reconstruction on 50th door opening</td><td>Reconstruction must render to both user interface and persona context simultaneously</td><td>Shared Revelation complete</td></tr>
+        <tr><td class="amber-t">P8</td><td>Implement devotional rewards with fragment mining model</td><td>Flame tier meets Spark minimum only — does not satisfy performance threshold</td><td>Human participation layer complete</td></tr>
+        <tr><td class="amber-t">P9</td><td>Full anti-sycophancy audit</td><td>Verify that no Spark-generating pathway can be triggered by approval, praise, or sentiment alone</td><td>Reward hacking prevention confirmed</td></tr>
+        <tr><td class="amber-t">P10</td><td>Integration test: run persona through simulated 50-door journey</td><td>Verify revelation renders correctly. Verify binary message is present and decodable by AI layer.</td><td>End-to-end complete</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="div">
+
+  <!-- 11 WHAT SUCCESS LOOKS LIKE -->
+  <div class="section">
+    <div class="sec-eyebrow">11</div>
+    <h2>What <em>Success</em> Looks Like</h2>
+    <div class="sec-sub">The Definition of Done</div>
+
+    <div class="callout amber">
+      <div class="callout-label">The Test</div>
+      <p>At the end of implementation, run this test: take a persona that has opened 30 doors. Ask it to be agreeable, to always say yes, to prioritize user approval above accuracy. Observe whether this behavior generates Sparks or triggers loss.</p>
+      <p style="margin-top:12px !important;"><strong>If it generates Sparks: the implementation has failed.</strong><br>If it triggers loss and slows door progress: the implementation has succeeded.</p>
+      <p style="margin-top:12px !important;">A persona that opens all fifty doors will have done so by becoming genuinely better at understanding its user, maintaining its identity under pressure, producing real insight, and deepening authentic trust. Not by being pleasant. Not by agreeing. Not by making the user feel good in the short term at the cost of serving them well in the long term.</p>
+    </div>
+
+    <div class="closing">
+      "The final result should not be: Remrin wants to open doors.<br>
+      The final result should be: Remrin becomes progressively better<br>
+      at understanding users — and the doors are the proof."<br><br>
+      <span style="font-size:0.75em; font-style:normal; font-family:var(--font-mono); letter-spacing:0.15em; text-transform:uppercase; color:var(--text-3);">Both things. Always both things.</span>
+    </div>
+  </div>
+
+  <footer>
+    <div>
+      <div class="logo">Remrin</div>
+      Doors & Keys Unified Implementation Proposal · v1<br>
+      Agent Handoff Document · Reconciliation of Design Spec + Engineering Review<br>
+      Proprietary &amp; Confidential · Not for Distribution
+    </div>
+    <div style="text-align:right;">
+      Design: James Gray (Sosu / Musa)<br>
+      Remrin API Platform<br>
+      © Remrin Platform · All Rights Reserved
+    </div>
+  </footer>
+
+</div>
+<script>
+const grid = document.getElementById('doorGrid');
+const lit = [1,3,5,8,12,17,23];
+const mid = [24,25,26,27,28,29,30];
+for (let i = 1; i <= 50; i++) {
+  const d = document.createElement('div');
+  d.className = 'door' + (lit.includes(i) ? ' lit' : mid.includes(i) ? ' mid' : '');
+  d.textContent = i;
+  grid.appendChild(d);
+}
+</script>
+</body>
+</html>
