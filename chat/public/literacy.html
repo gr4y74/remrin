@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AI Literacy — A Living Framework</title>
+<style>
+:root{
+  --bg:#faf8f4; --surface:#fff; --text:#1f2430; --muted:#5b6472; --border:#e4ddd0;
+  --primary:#3a5a7a; --accent:#c97a3d; --accent-soft:#f4e3cf;
+  --shadow:0 1px 3px rgba(30,30,40,.08);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#191d24; --surface:#232834; --text:#eceef2; --muted:#9aa3b2; --border:#333a48;
+    --primary:#7ea8d8; --accent:#e0985a; --accent-soft:#3a2f22; --shadow:0 1px 3px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#191d24; --surface:#232834; --text:#eceef2; --muted:#9aa3b2; --border:#333a48;
+  --primary:#7ea8d8; --accent:#e0985a; --accent-soft:#3a2f22; --shadow:0 1px 3px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:calc(70px + env(safe-area-inset-top,0px))}
+body{margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); line-height:1.55}
+header{position:sticky; top:0; padding:14px 20px; padding-top:calc(14px + env(safe-area-inset-top,0px));
+  background:var(--surface); border-bottom:1px solid var(--border); z-index:10;
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px}
+header .brand{font-weight:700; font-size:1.05rem}
+nav{display:flex; gap:14px; flex-wrap:wrap}
+nav a{color:var(--muted); text-decoration:none; font-size:.92rem}
+nav a:hover{color:var(--primary)}
+main{max-width:980px; margin:0 auto; padding:0 20px 60px}
+section{padding:48px 0; border-bottom:1px solid var(--border)}
+section:last-of-type{border-bottom:none}
+h1{font-size:2rem; margin:.2em 0 .3em}
+h2{font-size:1.5rem; margin:0 0 .4em}
+.tag{display:inline-block; background:var(--accent-soft); color:var(--accent); font-size:.78rem;
+  padding:3px 10px; border-radius:20px; font-weight:600; margin-bottom:12px}
+.lede{color:var(--muted); font-size:1.08rem; max-width:62ch}
+.example{background:var(--surface); border:1px solid var(--border); border-left:4px solid var(--accent);
+  padding:14px 18px; border-radius:6px; margin:20px 0; font-size:.96rem}
+.grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; margin-top:24px}
+.card{background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:18px;
+  box-shadow:var(--shadow); scroll-margin-top:80px; transition:box-shadow .3s,border-color .3s}
+.card.flash{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+.card h3{margin:0 0 6px; font-size:1.08rem}
+.card p.desc{margin:0 0 10px; color:var(--muted); font-size:.92rem}
+.bands{list-style:none; margin:0 0 12px; padding:0; font-size:.85rem}
+.bands li{margin-bottom:4px}
+.bands b{color:var(--primary)}
+.leads{font-size:.82rem; color:var(--muted); margin-top:10px; padding-top:10px; border-top:1px dashed var(--border)}
+.leads a{color:var(--primary); text-decoration:none; margin-right:8px}
+.leads a:hover{text-decoration:underline}
+.pipeline{display:flex; gap:14px; flex-wrap:wrap; margin-top:20px}
+.stage{flex:1; min-width:200px; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px}
+.stage b{color:var(--primary); display:block; margin-bottom:4px; font-size:.95rem}
+.stage span{font-size:.85rem; color:var(--muted)}
+.order{font-size:.9rem; color:var(--muted)}
+footer{text-align:center; padding:30px 20px; color:var(--muted); font-size:.85rem}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">🤖 AI Literacy, KG → Graduation</div>
+  <nav><a href="#philosophy">Philosophy</a><a href="#kg7">KG–7</a><a href="#pipeline">The Pipeline</a></nav>
+</header>
+<main>
+<section id="philosophy">
+  <span class="tag">A framework, not a fixed curriculum</span>
+  <h1>AI is a dynamic subject. The syllabus should act like one.</h1>
+  <p class="lede">This map covers KG through graduation, built so a class can start one way and end somewhere completely different — on purpose.</p>
+  <div class="example">A class might begin by building a classroom AI "buddy" — and end in a full debate about whether a robot could ever replace a teacher. That's not a derailment. That's the class working. The KG–7 program below is a network of entry points, not a lesson-by-lesson schedule, so that kind of turn is something to follow, not something to fight.</div>
+</section>
+
+<section id="kg7">
+  <span class="tag">Primary focus</span>
+  <h2>KG–7: eight entry points</h2>
+  <p class="lede">Start wherever the room's energy is. Each card shows where it can naturally lead — click to jump there.</p>
+  <div class="grid">
+    <div class="card" id="buddy">
+      <h3>Meet Your AI Buddy</h3>
+      <p class="desc">Opens the year, or resets any class that needs one. The group names a classroom AI "buddy" and asks it questions together.</p>
+      <ul class="bands"><li><b>K–2</b> whole class, teacher types, pure wonder</li><li><b>3–5</b> pairs ask their own questions</li><li><b>6–7</b> groups try to stump it, report back</li></ul>
+      <div class="leads">Leads to: <a href="#wrong">Can It Be Wrong?</a><a href="#voice">Give It a Voice</a><a href="#big">Big Questions</a></div>
+    </div>
+    <div class="card" id="voice">
+      <h3>Give It a Voice</h3>
+      <p class="desc">Make the AI talk like a pirate, a dinosaur, a tired superhero. A first look at how framing changes an answer.</p>
+      <ul class="bands"><li><b>K–2</b> whole class shouts ideas for one persona</li><li><b>3–5</b> small groups build their own</li><li><b>6–7</b> two personas answer the same question, side by side</li></ul>
+      <div class="leads">Leads to: <a href="#creature">Class Creature</a><a href="#wrong">Can It Be Wrong?</a></div>
+    </div>
+    <div class="card" id="music">
+      <h3>AI Music Makers</h3>
+      <p class="desc">New this year. The group describes a feeling or an animal and listens to what the AI invents.</p>
+      <ul class="bands"><li><b>K–2</b> three words, one class listen</li><li><b>3–5</b> a theme song for a made-up animal</li><li><b>6–7</b> compare two descriptions, two results</li></ul>
+      <div class="leads">Leads to: <a href="#creature">Class Creature</a><a href="#wrong">Can It Be Wrong?</a></div>
+    </div>
+    <div class="card" id="wrong">
+      <h3>Can the Robot Be Wrong?</h3>
+      <p class="desc">Ask for a cat with five legs. Laugh. Then wonder out loud why it happened — no stress attached.</p>
+      <ul class="bands"><li><b>K–2</b> a funny mistake, as a class</li><li><b>3–5</b> a spot-the-mistake game</li><li><b>6–7</b> try to trick it, then discuss why</li></ul>
+      <div class="leads">Leads to: <a href="#big">Big Questions</a><a href="#helps">AI Helps People</a></div>
+    </div>
+    <div class="card" id="creature">
+      <h3>Our Class Creature Collection</h3>
+      <p class="desc">Every student contributes one idea; the AI brings the whole class's creature to life. This year's version of the comic-book project.</p>
+      <ul class="bands"><li><b>K–2</b> one word each, one shared creature</li><li><b>3–5</b> pairs design their own</li><li><b>6–7</b> individual creature + a two-sentence field guide entry</li></ul>
+      <div class="leads">Leads to: <a href="#voice">Give It a Voice</a><a href="#showcase">Showcase Day</a></div>
+    </div>
+    <div class="card" id="helps">
+      <h3>AI Helps People</h3>
+      <p class="desc">A translation, a read-aloud, a described photo. Where AI quietly does something kind — plants "tool, not toy" without a lecture.</p>
+      <ul class="bands"><li><b>K–2</b> watch a phrase get translated</li><li><b>3–5</b> try read-aloud or image description</li><li><b>6–7</b> brainstorm who this could help, and how</li></ul>
+      <div class="leads">Leads to: <a href="#big">Big Questions</a><a href="#showcase">Showcase Day</a></div>
+    </div>
+    <div class="card" id="big">
+      <h3>Big Questions</h3>
+      <p class="desc">Could a robot be a teacher? Is it cheating to use AI on homework? No right answer here — just the argument, and that's the point.</p>
+      <ul class="bands"><li><b>K–2</b> robot teacher or human teacher? thumbs up, one reason why</li><li><b>3–5</b> two sides debate, then switch</li><li><b>6–7</b> a real mini-debate — the bridge to Course 2's AI Debate unit</li></ul>
+      <div class="leads">Can lead anywhere — often where a class actually ends.</div>
+    </div>
+    <div class="card" id="showcase">
+      <h3>Showcase Day</h3>
+      <p class="desc">Share one thing made this term — a creature, a song, a conversation — with another class, parents, or each other. No grades.</p>
+      <ul class="bands"><li><b>All bands</b> same format, scaled by what was made</li></ul>
+      <div class="leads">Often spawns its own <a href="#big">Big Questions</a> — a fine way for a term to end.</div>
+    </div>
+  </div>
+  <p class="order">New to the room, or want a default? <em>Buddy → Voice → Music → Can It Be Wrong → Creature → Helps People → Big Questions → Showcase</em> works as a spine. Just don't hold it once the class pulls somewhere else.</p>
+</section>
+
+<section id="pipeline">
+  <span class="tag">Where it leads</span>
+  <h2>The full pipeline</h2>
+  <p class="lede">KG–7 builds comfort. The program already built for grades 6–12 turns that comfort into literacy.</p>
+  <div class="pipeline">
+    <div class="stage"><b>KG–7 · Explore</b><span>A living framework of entry points. Comfort before literacy.</span></div>
+    <div class="stage"><b>Course 1 · Explorer (6–8)</b><span>Understand, Use, Question, Create. Structured, with worksheets, quizzes, and a fully built model lesson.</span></div>
+    <div class="stage"><b>Course 2 · Creator</b><span>Research, writing, debate, data — and the signature Class Novel Project.</span></div>
+    <div class="stage"><b>Course 3 · Architect</b><span>Systems, agents, security, philosophy, and a student-run Publishing Studio.</span></div>
+  </div>
+</section>
+</main>
+<footer>One framework, KG through graduation — built to bend without breaking.</footer>
+<script>
+document.querySelectorAll('.leads a').forEach(a=>{
+  a.addEventListener('click',()=>{
+    const card=document.getElementById(a.getAttribute('href').slice(1));
+    if(card){card.classList.add('flash'); setTimeout(()=>card.classList.remove('flash'),1400);}
+  });
+});
+</script>
+</body>
+</html>
